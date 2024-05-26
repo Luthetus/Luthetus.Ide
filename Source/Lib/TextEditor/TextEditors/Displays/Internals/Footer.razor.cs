@@ -16,7 +16,7 @@ public partial class Footer : ComponentBase
 
     private int _previousPositionNumber;
 
-    private void SelectRowEndingKindOnChange(ChangeEventArgs changeEventArgs)
+    private async Task SelectRowEndingKindOnChange(ChangeEventArgs changeEventArgs)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
@@ -28,12 +28,13 @@ public partial class Footer : ComponentBase
 
         if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
-            TextEditorService.PostTakeMostRecent(
-                nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
-                nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
-                TextEditorService.ModelApi.SetUsingLineEndKindFactory(
-                    viewModel.ResourceUri,
-                    rowEndingKind));
+            await TextEditorService.PostTakeMostRecent(
+                    nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
+                    nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
+                    TextEditorService.ModelApi.SetUsingLineEndKindFactory(
+                        viewModel.ResourceUri,
+                        rowEndingKind))
+                .ConfigureAwait(false);
         }
     }
 

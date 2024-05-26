@@ -21,8 +21,6 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -32,7 +30,10 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
+using Luthetus.Ide.RazorLib.CSharpProjects.Models;
+using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -472,7 +473,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
     private Task AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
-        return IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm("Existing C# Project to add to solution",
+        return IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+            "Existing C# Project to add to solution",
             async absolutePath =>
             {
                 if (absolutePath is null)

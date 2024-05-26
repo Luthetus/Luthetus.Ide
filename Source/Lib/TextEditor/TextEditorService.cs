@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
@@ -21,8 +21,8 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.Events;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -116,38 +116,39 @@ public partial class TextEditorService : ITextEditorService
     //    TextEditorEdit textEditorEdit,
     //    TimeSpan? throttleTimeSpan = null)
     //{
-    //    Post(new IndependentTextEditorTask(
+    //    Post(new AsIsTextEditorTask(
     //        $"{name}_ai",
     //        textEditorEdit,
     //        throttleTimeSpan));
     //}
 
-    public void PostSimpleBatch(
+    public Task PostSimpleBatch(
         string name,
         string identifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new AsIsTextEditorTask(
+        return Post(new SimpleBatchTextEditorTask(
             $"{name}_sb",
+			identifier,
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public void PostTakeMostRecent(
+    public Task PostTakeMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new TakeMostRecentTextEditorTask(
+        return Post(new TakeMostRecentTextEditorTask(
             $"{name}_tmr",
             redundancyIdentifier,
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public void Post(ITextEditorTask innerTask)
+    public async Task Post(ITextEditorTask innerTask)
     {
         try
         {
@@ -160,7 +161,7 @@ public partial class TextEditorService : ITextEditorService
                 editContext,
                 _dispatcher);
 
-            _backgroundTaskService.EnqueueAsync(textEditorServiceTask);
+            await _backgroundTaskService.EnqueueAsync(textEditorServiceTask).ConfigureAwait(false);
         }
         catch (LuthetusTextEditorException e)
         {
@@ -192,6 +193,7 @@ public partial class TextEditorService : ITextEditorService
         public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; } = new();
         public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> ViewModelCache { get; } = new();
         public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?> CursorModifierBagCache { get; } = new();
+        public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> DiffModelCache { get; } = new();
 
         public TextEditorEditContext(
             ITextEditorService textEditorService,
@@ -297,6 +299,29 @@ public partial class TextEditorService : ITextEditorService
                 primaryCursor = cursorModifierBag.List.FirstOrDefault(x => x.IsPrimaryCursor);
 
             return primaryCursor;
+        }
+
+        public TextEditorDiffModelModifier? GetDiffModelModifier(
+            Key<TextEditorDiffModel> diffModelKey,
+            bool isReadonly = false)
+        {
+            if (diffModelKey != Key<TextEditorDiffModel>.Empty)
+            {
+                if (!DiffModelCache.TryGetValue(diffModelKey, out var diffModelModifier))
+                {
+                    var diffModel = TextEditorService.DiffApi.GetOrDefault(diffModelKey);
+                    diffModelModifier = diffModel is null ? null : new(diffModel);
+
+                    DiffModelCache.Add(diffModelKey, diffModelModifier);
+                }
+
+                if (!isReadonly && diffModelModifier is not null)
+                    diffModelModifier.WasModified = true;
+
+                return diffModelModifier;
+            }
+
+            return null;
         }
     }
 }

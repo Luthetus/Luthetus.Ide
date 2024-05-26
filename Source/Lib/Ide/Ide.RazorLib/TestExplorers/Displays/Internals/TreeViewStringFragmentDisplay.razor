@@ -1,0 +1,47 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{ var terminal = TerminalStateSelection.Value; }
+
+@if (terminal is null)
+{
+	<text>@nameof(terminal) was null</text>
+}
+else
+{
+	var output = GetTerminalCommandOutput(terminal);
+
+	RenderFragment renderFragment = @<text>?</text>;
+
+	if (output is null)
+	{
+		renderFragment = @<text>?</text>;
+	}
+	else if (!output.Contains("Duration:"))
+	{
+		renderFragment = @<IconLoading/>;
+	}
+	else
+	{
+		if (output.Contains("Passed!"))
+		{
+			renderFragment = @<em class="luth_em">Passed!</em>;
+		}
+		else
+		{
+			renderFragment = @<span class="luth_tree-view-exception">Failed!</span>;
+		}
+	}
+
+	<div style="display: flex;">
+		@renderFragment&nbsp;
+		@TreeViewStringFragment.Item.Value
+
+		@if (TreeViewStringFragment.ChildList.Count > 0)
+		{
+			<span title="Count of child nodes">
+				&nbsp;(@(TreeViewStringFragment.ChildList.Count))
+			</span>
+		}
+	</div>
+}
+

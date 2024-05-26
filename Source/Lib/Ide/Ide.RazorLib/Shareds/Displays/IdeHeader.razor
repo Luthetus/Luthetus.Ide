@@ -62,6 +62,21 @@
             </DropdownDisplay>
         </button>
 
+		<button @ref="_buttonRunElementReference"
+                @onclick="() => { InitializeMenuRun(); AddActiveDropdownKey(_dropdownKeyRun); return Task.CompletedTask; }"
+                class="luth_button"
+                style="position: relative; margin-left: 15px;">
+            Run
+            
+            <DropdownDisplay DropdownKey="_dropdownKeyRun"
+                             DropdownPositionKind="DropdownPositionKind.Vertical">
+    
+                <CascadingValue Value="RestoreFocusToButtonDisplayComponentRunAsync" Name="ReturnFocusToParentFuncAsync">
+                    <MenuDisplay MenuRecord="_menuRun"/>
+                </CascadingValue>
+            </DropdownDisplay>
+        </button>
+
         <button class="luth_button"
                 style="margin-left: 15px;"
                 @onclick="OpenInfoDialogOnClick">

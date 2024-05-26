@@ -1,0 +1,5 @@
+.luth_git-branch-checkout {
+    background-color: var(--luth_tertiary-background-color);
+    color: var(--luth_tertiary-foreground-color);
+    padding: 5px;
+}

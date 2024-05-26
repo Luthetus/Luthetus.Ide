@@ -37,6 +37,12 @@ class Program
 
         // customize window
         app.MainWindow
+			// Am doing development with a locally published version of the IDE
+			// on Ubuntu. The text editor isn't fully optimized,
+			// and the default Log for Photino is the console.
+			// So, to help the integrated terminal I'm
+			// setting verbosity to 0 (which turns off logging) for now (2024-05-14).
+			.SetLogVerbosity(0)
             .SetIconFile("favicon.ico")
             .SetTitle("Luthetus IDE")
             .SetDevToolsEnabled(true)

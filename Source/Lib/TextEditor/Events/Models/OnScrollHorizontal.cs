@@ -2,6 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
@@ -42,7 +43,15 @@ public class OnScrollHorizontal : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        return this;
+        if (oldEvent is OnScrollHorizontal)
+		{
+			// Replace the upstream event with this one,
+			// because unhandled-consecutive events of this type are redundant.
+			return this;
+		}
+        
+		// Keep both events, because they are not able to be batched.
+		return null;
     }
 
     public Task HandleEvent(CancellationToken cancellationToken)

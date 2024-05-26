@@ -1,11 +1,11 @@
 ﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 

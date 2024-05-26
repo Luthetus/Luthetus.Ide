@@ -392,7 +392,7 @@ public partial class AdhocTest
     ///         -IReadOnlyList&lt;byte&gt; DecorationByteList
     /// </summary>
     [Fact]
-    public void ContentList_Change()
+    public async Task ContentList_Change()
     {
         InitializeTextEditorServicesTestsHelper(
             out var initialContent,
@@ -402,13 +402,13 @@ public partial class AdhocTest
 
         Assert.Equal(initialContent, refModel.GetAllText());
 
-        refModel.CompilerService.ResourceWasModified(
+        await refModel.CompilerService.ResourceWasModified(
             refModel.ResourceUri,
             ImmutableArray<TextEditorTextSpan>.Empty);
 
         refModel = textEditorService.ModelApi.GetOrDefault(refModel.ResourceUri) ?? throw new ArgumentNullException();
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(ContentList_Change),
             string.Empty,
             textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));

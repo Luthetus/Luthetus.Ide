@@ -12,12 +12,18 @@ public partial record DirtyResourceUriState
             DirtyResourceUriState inState,
             AddDirtyResourceUriAction addDirtyResourceUriAction)
         {
-            if (addDirtyResourceUriAction.ResourceUri.Value.StartsWith(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix))
+            if (addDirtyResourceUriAction.ResourceUri.Value.StartsWith(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix) ||
+				addDirtyResourceUriAction.ResourceUri.Value.StartsWith(ResourceUriFacts.Git_ReservedResourceUri_Prefix))
+            {
                 return inState;
-            if (addDirtyResourceUriAction.ResourceUri == ResourceUriFacts.SettingsPreviewTextEditorResourceUri)
+            }
+           else if (addDirtyResourceUriAction.ResourceUri == ResourceUriFacts.SettingsPreviewTextEditorResourceUri ||
+				    addDirtyResourceUriAction.ResourceUri == ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri)
+            {
                 return inState;
+            }
 
-            return inState with
+			return inState with
             {
                 DirtyResourceUriList = inState.DirtyResourceUriList.Add(addDirtyResourceUriAction.ResourceUri)
             };

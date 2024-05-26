@@ -4,10 +4,10 @@ using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 
 namespace Luthetus.Ide.Tests.Basis.Menus.Models;
 

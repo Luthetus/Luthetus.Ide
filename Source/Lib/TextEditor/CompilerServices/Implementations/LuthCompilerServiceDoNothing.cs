@@ -8,8 +8,8 @@ public class LuthCompilerServiceDoNothing : LuthCompilerService
     {
     }
 
-    protected override void QueueParseRequest(ResourceUri resourceUri)
+    protected override Task QueueParseRequest(ResourceUri resourceUri)
     {
-        return;
+        return Task.CompletedTask;
     }
 }

@@ -3,7 +3,6 @@ using Fluxor;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Displays;
 using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Nugets.Displays;
@@ -13,7 +12,7 @@ using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
-using Luthetus.Ide.RazorLib.CSharpProjectForms.Displays;
+using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
@@ -22,6 +21,11 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.CompilerServices.Displays;
+using Luthetus.Ide.RazorLib.Namespaces.Displays;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
+using Luthetus.Ide.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -96,7 +100,9 @@ public static class ServiceCollectionExtensions
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
             .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
-            .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>();
+            .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
+            .AddScoped<DotNetCliOutputParser>()
+			.AddScoped<GitCliOutputParser>();
 
         services.AddFluxor(options => options.ScanAssemblies(
             typeof(ServiceCollectionExtensions).Assembly,

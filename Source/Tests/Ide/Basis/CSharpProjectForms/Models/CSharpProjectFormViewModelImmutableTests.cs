@@ -1,4 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
+﻿using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 
 namespace Luthetus.Ide.Tests.Basis.CSharpProjectForms.Models;
 

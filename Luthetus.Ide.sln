@@ -85,6 +85,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Ide.ServerSide", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Ide.Wasm", "Source\Lib\Ide\Host.BlazorWebAssembly\Luthetus.Ide.Wasm.csproj", "{ED9C3705-8848-4416-9BFB-ABA37884AFBB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Photino.Blazor", "External\photino.Blazor-2.6.0_fork\Photino.Blazor\Photino.Blazor.csproj", "{49900515-9358-41F5-85E6-5FEAD1891C31}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Photino.NET", "External\photino.NET-v.2.4.0_fork\Photino.NET\Photino.NET.csproj", "{18F50C9D-2230-43FE-B6E8-A16D285A222F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -231,6 +235,14 @@ Global
 		{ED9C3705-8848-4416-9BFB-ABA37884AFBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED9C3705-8848-4416-9BFB-ABA37884AFBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED9C3705-8848-4416-9BFB-ABA37884AFBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49900515-9358-41F5-85E6-5FEAD1891C31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49900515-9358-41F5-85E6-5FEAD1891C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49900515-9358-41F5-85E6-5FEAD1891C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49900515-9358-41F5-85E6-5FEAD1891C31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18F50C9D-2230-43FE-B6E8-A16D285A222F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F50C9D-2230-43FE-B6E8-A16D285A222F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18F50C9D-2230-43FE-B6E8-A16D285A222F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F50C9D-2230-43FE-B6E8-A16D285A222F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -273,6 +285,8 @@ Global
 		{812787B8-52A0-4AEB-88EF-BBC33AD40213} = {E8E468FF-8945-4F9D-A3EC-5EF79EA8585B}
 		{CA90F5BA-3753-41A5-A280-3E0FF277E561} = {E8E468FF-8945-4F9D-A3EC-5EF79EA8585B}
 		{ED9C3705-8848-4416-9BFB-ABA37884AFBB} = {E8E468FF-8945-4F9D-A3EC-5EF79EA8585B}
+		{49900515-9358-41F5-85E6-5FEAD1891C31} = {343EBC7C-70AD-4B2D-AF6A-5A1079E55AB9}
+		{18F50C9D-2230-43FE-B6E8-A16D285A222F} = {343EBC7C-70AD-4B2D-AF6A-5A1079E55AB9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6045BB8B-0C60-4077-93C3-16BA09C8FC27}

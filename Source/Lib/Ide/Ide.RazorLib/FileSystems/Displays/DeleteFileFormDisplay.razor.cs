@@ -20,7 +20,7 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
     [Parameter, EditorRequired]
     public bool IsDirectory { get; set; }
     [Parameter, EditorRequired]
-    public Action<IAbsolutePath> OnAfterSubmitAction { get; set; } = null!;
+    public Func<IAbsolutePath, Task> OnAfterSubmitFunc { get; set; } = null!;
 
     private IAbsolutePath? _previousAbsolutePath;
 
@@ -94,7 +94,7 @@ public partial class DeleteFileFormDisplay : ComponentBase, IDeleteFileFormRende
         if (MenuOptionCallbacks is not null)
         {
             await MenuOptionCallbacks.CompleteWidgetAsync
-                .Invoke(() => OnAfterSubmitAction.Invoke(localAbsolutePath))
+                .Invoke(async () => await OnAfterSubmitFunc.Invoke(localAbsolutePath))
                 .ConfigureAwait(false);
         }
     }

@@ -15,15 +15,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(Copy)}_{commandArgs.ViewModelKey.Guid}",
                 $"{nameof(Copy)}_{commandArgs.ViewModelKey.Guid}",
                 TextEditorCommandDefaultFunctions.CopyFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -43,15 +41,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(Cut)}_{commandArgs.ViewModelKey.Guid}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.CutFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -71,15 +67,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(PasteCommand)}_{commandArgs.ViewModelKey.Guid}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.PasteFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -99,15 +93,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(Save)}_{commandArgs.ViewModelKey.Guid}",
                 $"{nameof(Save)}_{commandArgs.ViewModelKey.Guid}",
                 TextEditorCommandDefaultFunctions.SaveFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -127,15 +119,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(SelectAll)}_{commandArgs.ViewModelKey.Guid}",
                 $"{nameof(SelectAll)}_{commandArgs.ViewModelKey.Guid}",
                 TextEditorCommandDefaultFunctions.SelectAllFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -155,15 +145,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(Undo)}_{commandArgs.ViewModelKey.Guid}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.UndoFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -183,15 +171,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(Redo)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.RedoFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -211,15 +197,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(Remeasure)}_{commandArgs.ViewModelKey}",
                 $"{nameof(Remeasure)}_{commandArgs.ViewModelKey}",
                 TextEditorCommandDefaultFunctions.RemeasureFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -239,15 +223,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(ScrollLineDown)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.ScrollLineDownFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -267,15 +249,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(ScrollLineUp)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.ScrollLineUpFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -295,15 +275,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(ScrollPageDown)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.ScrollPageDownFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -323,15 +301,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(ScrollPageUp)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.ScrollPageUpFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -351,15 +327,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(CursorMovePageBottom)}_{commandArgs.ViewModelKey}",
                 $"{nameof(CursorMovePageBottom)}_{commandArgs.ViewModelKey}",
                 TextEditorCommandDefaultFunctions.CursorMovePageBottomFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -379,15 +353,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(CursorMovePageTop)}_{commandArgs.ViewModelKey}",
                 $"{nameof(CursorMovePageTop)}_{commandArgs.ViewModelKey}",
                 TextEditorCommandDefaultFunctions.CursorMovePageTopFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -407,15 +379,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(Duplicate)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.DuplicateFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -435,15 +405,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(IndentMore)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.IndentMoreFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -463,15 +431,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(IndentLess)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.IndentLessFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -491,15 +457,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(ClearTextSelection)}_{commandArgs.ViewModelKey}",
                 $"{nameof(ClearTextSelection)}_{commandArgs.ViewModelKey}",
                 TextEditorCommandDefaultFunctions.ClearTextSelectionFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -519,15 +483,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(NewLineBelow)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.NewLineBelowFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -547,15 +509,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(NewLineAbove)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.NewLineAboveFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -576,15 +536,13 @@ public static class TextEditorCommandDefaultFacts
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.ShouldSelectText = shouldSelectText;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            return commandArgs.TextEditorService.PostSimpleBatch(
                 $"{nameof(GoToMatchingCharacterFactory)}_{commandArgs.ViewModelKey}",
                 string.Empty,
                 TextEditorCommandDefaultFunctions.GoToMatchingCharacterFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -604,15 +562,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(GoToDefinition)}_{commandArgs.ViewModelKey}",
                 $"{nameof(GoToDefinition)}_{commandArgs.ViewModelKey}",
                 TextEditorCommandDefaultFunctions.GoToDefinitionFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -632,15 +588,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(ShowFindAllDialog)}_{commandArgs.ViewModelKey}",
                 $"{nameof(ShowFindAllDialog)}_{commandArgs.ViewModelKey}",
                 TextEditorCommandDefaultFunctions.ShowFindAllDialogFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -664,15 +618,13 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(ShowTooltipByCursorPosition)}_{commandArgs.ViewModelKey}",
                 $"{nameof(ShowTooltipByCursorPosition)}_{commandArgs.ViewModelKey}",
                 TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionFactory(
                     commandArgs.ModelResourceUri,
                     commandArgs.ViewModelKey,
                     commandArgs));
-
-            return Task.CompletedTask;
         })
     {
         TextEditorEditFactory = interfaceCommandArgs =>
@@ -692,7 +644,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            return commandArgs.TextEditorService.PostTakeMostRecent(
                 $"{nameof(ShowFindOverlay)}_{commandArgs.ViewModelKey}",
                 $"{nameof(ShowFindOverlay)}_{commandArgs.ViewModelKey}",
                 async editContext =>
@@ -720,7 +672,5 @@ public static class TextEditorCommandDefaultFacts
                     
                     return;
                 });
-
-            return Task.CompletedTask;
         });
 }

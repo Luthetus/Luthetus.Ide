@@ -1,185 +1,409 @@
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Text;
 
 namespace Luthetus.Ide.RazorLib.CommandLines.Models;
 
-public static class DotNetCliOutputParser
+public class DotNetCliOutputParser : IOutputParser
 {
-    public static List<ProjectTemplate> ParseDotNetNewListTerminalOutput(string output)
+	public List<ProjectTemplate>? ProjectTemplateList { get; private set; }
+
+	public List<string>? TheFollowingTestsAreAvailableList { get; private set; }
+	private bool _hasSeenTextIndicatorForTheList;
+
+	public NewListModel NewListModelSession { get; private set; }
+
+    public Task OnAfterCommandStarted(TerminalCommand terminalCommand)
+	{
+		// Clear data
+		if (terminalCommand.FormattedCommand.Tag == TagConstants.NewList)
+		{
+			NewListModelSession = new();
+		}
+		else if (terminalCommand.FormattedCommand.Tag == TagConstants.Test)
+		{
+			TheFollowingTestsAreAvailableList = new();
+			_hasSeenTextIndicatorForTheList = false;
+		}
+
+        return Task.CompletedTask;
+	}
+
+	public List<TextEditorTextSpan> OnAfterOutputLine(TerminalCommand terminalCommand, string outputLine)
     {
-        // The columns are titled: { "Template Name", "Short Name", "Language", "Tags" }
-        var keywordTags = "Tags";
+		if (terminalCommand.FormattedCommand.Tag == TagConstants.Run)
+			return ParseOutputLineDotNetRun(terminalCommand, outputLine);
+		else if (terminalCommand.FormattedCommand.Tag == TagConstants.NewList)
+			return ParseOutputLineDotNetNewList(terminalCommand, outputLine);
+		else if (terminalCommand.FormattedCommand.Tag == TagConstants.Test)
+			return ParseOutputLineDotNetTestListTests(terminalCommand, outputLine);
 
-        var resourceUri = new ResourceUri(string.Empty);
-        var stringWalker = new StringWalker(resourceUri, output);
+		return new();
+    }
 
-        var shouldLocateKeywordTags = true;
+	public List<TextEditorTextSpan> ParseOutputLineDotNetRun(TerminalCommand terminalCommand, string outputLine)
+	{
+		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/DotNetRunOutputParser.txt"), outputLine);
+        var textSpanList = new List<TextEditorTextSpan>();
 
-        var shouldCountDashes = true;
-        var shouldLocateDashes = true;
-        int dashCounter = 0;
-
-        int? lengthOfTemplateNameColumn = null;
-        int? lengthOfShortNameColumn = null;
-        int? lengthOfLanguageColumn = null;
-        int? lengthOfTagsColumn = null;
-
-        var columnBuilder = new StringBuilder();
-        int? columnLength = null;
-
-        var projectTemplate = new ProjectTemplate(null, null, null, null);
-        var projectTemplateList = new List<ProjectTemplate>();
+        TextEditorTextSpan errorKeywordAndErrorCodeTextSpan = new(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
 
         while (!stringWalker.IsEof)
         {
-            if (shouldLocateKeywordTags)
+            // Step 1: Read filePathTextSpan
             {
-                switch (stringWalker.CurrentCharacter)
-                {
-                    case 'T':
-                        if (stringWalker.PeekForSubstring(keywordTags))
-                        {
-                            // The '-1' is due to the while loop always reading a character at the end.
-                            _ = stringWalker.ReadRange(keywordTags.Length - 1);
+                var startPositionInclusiveFilePath = stringWalker.PositionIndex;
 
-                            shouldLocateKeywordTags = false;
-                        }
+                while (true)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == '(')
+                    {
+                        _ = stringWalker.BacktrackCharacter();
+
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusiveFilePath,
+                            stringWalker,
+                            (byte)GenericDecorationKind.None));
+
                         break;
+                    }
+                    else if (stringWalker.IsEof)
+                    {
+                        break;
+                    }
                 }
             }
-            else if (shouldCountDashes)
+
+            // Step 2: Read rowAndColumnNumberTextSpan
             {
-                if (shouldLocateDashes)
+                var startPositionInclusiveRowAndColumnNumber = stringWalker.PositionIndex;
+
+                while (true)
                 {
-                    // Find the first dash to being counting
-                    while (!stringWalker.IsEof)
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == ')')
                     {
-                        if (stringWalker.CurrentCharacter != '-')
-                            _ = stringWalker.ReadCharacter();
-                        else
-                            break;
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusiveRowAndColumnNumber,
+                            stringWalker,
+                            (byte)GenericDecorationKind.None));
+
+                        break;
                     }
-
-                    shouldLocateDashes = false;
-                }
-
-                // Count the '-' (dashes) to know the character length of each column.
-                if (stringWalker.CurrentCharacter != '-')
-                {
-                    if (lengthOfTemplateNameColumn is null)
-                        lengthOfTemplateNameColumn = dashCounter;
-                    else if (lengthOfShortNameColumn is null)
-                        lengthOfShortNameColumn = dashCounter;
-                    else if (lengthOfLanguageColumn is null)
-                        lengthOfLanguageColumn = dashCounter;
-                    else if (lengthOfTagsColumn is null)
+                    else if (stringWalker.IsEof)
                     {
-                        lengthOfTagsColumn = dashCounter;
-                        shouldCountDashes = false;
-
-                        // Prep for the next step
-                        columnLength = lengthOfTemplateNameColumn;
+                        break;
                     }
-
-                    dashCounter = 0;
-                    shouldLocateDashes = true;
-
-                    // If there were to be only one space character, the end of the while loop would read a dash.
-                    _ = stringWalker.BacktrackCharacter();
                 }
-
-                dashCounter++;
             }
-            else
+
+            // Step 3: Read errorKeywordAndErrorCode
             {
-                // Skip whitespace
-                while (!stringWalker.IsEof)
+                // Consider having Step 2 use ':' as its exclusive delimiter.
+                // Because now a step is needed to skip over some text.
                 {
-                    // TODO: What if a column starts with a lot of whitespace?
-                    if (char.IsWhiteSpace(stringWalker.CurrentCharacter))
+                    if (stringWalker.CurrentCharacter == ':')
                         _ = stringWalker.ReadCharacter();
-                    else
+
+                    _ = stringWalker.ReadWhitespace();
+                }
+
+                var startPositionInclusiveErrorKeywordAndErrorCode = stringWalker.PositionIndex;
+
+                while (true)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == ':')
+                    {
+                        _ = stringWalker.BacktrackCharacter();
+
+                        errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
+                            startPositionInclusiveErrorKeywordAndErrorCode,
+                            stringWalker,
+                            (byte)TerminalDecorationKind.Warning);
+
+                        // I would rather a warning be incorrectly syntax highlighted as an error,
+                        // than for an error to be incorrectly syntax highlighted as a warning.
+                        // Therefore, presume warning, then check if the text isn't "warning".
+                        if (!errorKeywordAndErrorCodeTextSpan.GetText().StartsWith("warning", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            errorKeywordAndErrorCodeTextSpan = errorKeywordAndErrorCodeTextSpan with
+                            {
+                                DecorationByte = (byte)TerminalDecorationKind.Error
+                            };
+                        }
+
                         break;
-                }
-
-                for (int i = 0; i < columnLength; i++)
-                {
-                    columnBuilder.Append(stringWalker.ReadCharacter());
-                }
-
-                if (projectTemplate.TemplateName is null)
-                {
-                    projectTemplate = projectTemplate with
+                    }
+                    else if (stringWalker.IsEof)
                     {
-                        TemplateName = columnBuilder.ToString().Trim()
-                    };
-
-                    columnLength = lengthOfShortNameColumn;
+                        break;
+                    }
                 }
-                else if (projectTemplate.ShortName is null)
+            }
+
+            // Step 4: Read errorMessage
+            {
+                // A step is needed to skip over some text.
                 {
-                    projectTemplate = projectTemplate with
-                    {
-                        ShortName = columnBuilder.ToString().Trim()
-                    };
+                    if (stringWalker.CurrentCharacter == ':')
+                        _ = stringWalker.ReadCharacter();
 
-                    columnLength = lengthOfLanguageColumn;
+                    _ = stringWalker.ReadWhitespace();
                 }
-                else if (projectTemplate.Language is null)
+
+                var startPositionInclusiveErrorMessage = stringWalker.PositionIndex;
+
+                while (true)
                 {
-                    projectTemplate = projectTemplate with
-                    {
-                        Language = columnBuilder.ToString().Trim()
-                    };
+                    var character = stringWalker.ReadCharacter();
 
-                    columnLength = lengthOfTagsColumn;
+                    if (character == '[')
+                    {
+                        _ = stringWalker.BacktrackCharacter();
+
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusiveErrorMessage,
+                            stringWalker,
+                            errorKeywordAndErrorCodeTextSpan.DecorationByte));
+
+                        break;
+                    }
+                    else if (stringWalker.IsEof)
+                    {
+                        break;
+                    }
                 }
-                else if (projectTemplate.Tags is null)
+            }
+
+            // Step 5: Read project file path
+            {
+                var startPositionInclusiveProjectFilePath = stringWalker.PositionIndex;
+
+                while (true)
                 {
-                    projectTemplate = projectTemplate with
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == ']')
                     {
-                        Tags = columnBuilder.ToString().Trim()
-                    };
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusiveProjectFilePath,
+                            stringWalker,
+                            (byte)GenericDecorationKind.None));
 
-                    projectTemplateList.Add(projectTemplate);
-
-                    projectTemplate = new(null, null, null, null);
-                    columnLength = lengthOfTemplateNameColumn;
+                        break;
+                    }
+                    else if (stringWalker.IsEof)
+                    {
+                        break;
+                    }
                 }
-
-                columnBuilder = new();
             }
 
             _ = stringWalker.ReadCharacter();
         }
 
-        return projectTemplateList;
+        if (errorKeywordAndErrorCodeTextSpan.DecorationByte != 0)
+        {
+            for (int i = textSpanList.Count - 1; i >= 0; i--)
+            {
+                textSpanList[i] = textSpanList[i] with
+                {
+                    DecorationByte = errorKeywordAndErrorCodeTextSpan.DecorationByte
+                };
+            }
+        }
+
+        return textSpanList;
+	}
+
+	public List<TextEditorTextSpan> ParseOutputLineDotNetNewList(TerminalCommand terminalCommand, string outputLine)
+	{
+		// The columns are titled: { "Template Name", "Short Name", "Language", "Tags" }
+		var keywordTags = "Tags";
+
+		var resourceUri = new ResourceUri(string.Empty);
+		var stringWalker = new StringWalker(resourceUri, outputLine);
+
+		while (!stringWalker.IsEof)
+		{
+			if (NewListModelSession.ShouldLocateKeywordTags)
+			{
+				switch (stringWalker.CurrentCharacter)
+				{
+					case 'T':
+						if (stringWalker.PeekForSubstring(keywordTags))
+						{
+							// The '-1' is due to the while loop always reading a character at the end.
+							_ = stringWalker.ReadRange(keywordTags.Length - 1);
+
+							NewListModelSession.ShouldLocateKeywordTags = false;
+						}
+						break;
+				}
+			}
+			else if (NewListModelSession.ShouldCountDashes)
+			{
+				if (NewListModelSession.ShouldLocateDashes)
+				{
+					// Find the first dash to being counting
+					while (!stringWalker.IsEof)
+					{
+						if (stringWalker.CurrentCharacter != '-')
+							_ = stringWalker.ReadCharacter();
+						else
+							break;
+					}
+
+					NewListModelSession.ShouldLocateDashes = false;
+				}
+
+				// Count the '-' (dashes) to know the character length of each column.
+				if (stringWalker.CurrentCharacter != '-')
+				{
+					if (NewListModelSession.LengthOfTemplateNameColumn is null)
+						NewListModelSession.LengthOfTemplateNameColumn = NewListModelSession.DashCounter;
+					else if (NewListModelSession.LengthOfShortNameColumn is null)
+						NewListModelSession.LengthOfShortNameColumn = NewListModelSession.DashCounter;
+					else if (NewListModelSession.LengthOfLanguageColumn is null)
+						NewListModelSession.LengthOfLanguageColumn = NewListModelSession.DashCounter;
+					else if (NewListModelSession.LengthOfTagsColumn is null)
+					{
+						NewListModelSession.LengthOfTagsColumn = NewListModelSession.DashCounter;
+						NewListModelSession.ShouldCountDashes = false;
+
+						// Prep for the next step
+						NewListModelSession.ColumnLength = NewListModelSession.LengthOfTemplateNameColumn;
+					}
+
+					NewListModelSession.DashCounter = 0;
+					NewListModelSession.ShouldLocateDashes = true;
+
+					// If there were to be only one space character, the end of the while loop would read a dash.
+					_ = stringWalker.BacktrackCharacter();
+				}
+
+				NewListModelSession.DashCounter++;
+			}
+			else
+			{
+				// Skip whitespace
+				while (!stringWalker.IsEof)
+				{
+					// TODO: What if a column starts with a lot of whitespace?
+					if (char.IsWhiteSpace(stringWalker.CurrentCharacter))
+						_ = stringWalker.ReadCharacter();
+					else
+						break;
+				}
+
+				for (int i = 0; i < NewListModelSession.ColumnLength; i++)
+				{
+					NewListModelSession.ColumnBuilder.Append(stringWalker.ReadCharacter());
+				}
+
+				if (NewListModelSession.ProjectTemplate.TemplateName is null)
+				{
+					NewListModelSession.ProjectTemplate = NewListModelSession.ProjectTemplate with
+					{
+						TemplateName = NewListModelSession.ColumnBuilder.ToString().Trim()
+					};
+
+					NewListModelSession.ColumnLength = NewListModelSession.LengthOfShortNameColumn;
+				}
+				else if (NewListModelSession.ProjectTemplate.ShortName is null)
+				{
+					NewListModelSession.ProjectTemplate = NewListModelSession.ProjectTemplate with
+					{
+						ShortName = NewListModelSession.ColumnBuilder.ToString().Trim()
+					};
+
+					NewListModelSession.ColumnLength = NewListModelSession.LengthOfLanguageColumn;
+				}
+				else if (NewListModelSession.ProjectTemplate.Language is null)
+				{
+					NewListModelSession.ProjectTemplate = NewListModelSession.ProjectTemplate with
+					{
+						Language = NewListModelSession.ColumnBuilder.ToString().Trim()
+					};
+
+					NewListModelSession.ColumnLength = NewListModelSession.LengthOfTagsColumn;
+				}
+				else if (NewListModelSession.ProjectTemplate.Tags is null)
+				{
+					NewListModelSession.ProjectTemplate = NewListModelSession.ProjectTemplate with
+					{
+						Tags = NewListModelSession.ColumnBuilder.ToString().Trim()
+					};
+
+					NewListModelSession.ProjectTemplateList.Add(NewListModelSession.ProjectTemplate);
+
+					NewListModelSession.ProjectTemplate = new(null, null, null, null);
+					NewListModelSession.ColumnLength = NewListModelSession.LengthOfTemplateNameColumn;
+				}
+
+				NewListModelSession.ColumnBuilder = new();
+			}
+
+			_ = stringWalker.ReadCharacter();
+		}
+
+		ProjectTemplateList = NewListModelSession.ProjectTemplateList;
+
+		return new();
+	}
+
+	public List<TextEditorTextSpan> ParseOutputLineDotNetTestListTests(TerminalCommand terminalCommand, string outputLine)
+	{
+		if (!_hasSeenTextIndicatorForTheList)
+		{
+			var textIndicatorForTheList = "The following Tests are available:";
+			var indicatorIndex = outputLine.IndexOf(textIndicatorForTheList);
+
+			if (indicatorIndex != -1)
+				_hasSeenTextIndicatorForTheList = true;
+			
+			return new();
+		}
+
+		if (outputLine.StartsWith("\t") || outputLine.StartsWith(" "))
+			TheFollowingTestsAreAvailableList.Add(outputLine);
+
+		return new();
+	}
+
+	public Task OnAfterCommandFinished(TerminalCommand terminalCommand)
+	{
+		return Task.CompletedTask;
+	}
+
+	public static class TagConstants
+	{
+		public const string Test = "test";
+		public const string NewList = "info";
+		public const string Run = "run";
     }
 
-	public static List<string> ParseDotNetTestListTestsTerminalOutput(string output)
+	public class NewListModel
 	{
-		if (output is null)
-			return new();
-
-		var textIndicatorForTheList = "The following Tests are available:";
-		var indicatorIndex = output.IndexOf(textIndicatorForTheList);
-		var remainingText = output[indicatorIndex..];
-
-		var lineList = new List<string>();
-
-		using (var reader = new StringReader(remainingText))
-        {
-			var line = (string?)null;
-
-			while ((line = reader.ReadLine()) is not null)
-			{
-				if (line.StartsWith("\t") || line.StartsWith(" "))
-					lineList.Add(line);
-			}
-        }
-	
-		return lineList;
+		public bool ShouldLocateKeywordTags { get; set; } = true;
+		public bool ShouldCountDashes { get; set; } = true;
+		public bool ShouldLocateDashes { get; set; } = true;
+		public int DashCounter { get; set; } = 0;
+		public int? LengthOfTemplateNameColumn { get; set; } = null;
+		public int? LengthOfShortNameColumn { get; set; } = null;
+		public int? LengthOfLanguageColumn { get; set; } = null;
+		public int? LengthOfTagsColumn { get; set; } = null;
+		public StringBuilder ColumnBuilder { get; set; } = new StringBuilder();
+		public int? ColumnLength { get; set; } = null;
+		public ProjectTemplate ProjectTemplate { get; set; } = new ProjectTemplate(null, null, null, null);
+		public List<ProjectTemplate> ProjectTemplateList { get; set; } = new List<ProjectTemplate>();
 	}
 }

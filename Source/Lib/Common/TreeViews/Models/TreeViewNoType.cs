@@ -26,7 +26,7 @@ public abstract class TreeViewNoType
     public Key<TreeViewChanged> TreeViewChangedKey { get; set; } = Key<TreeViewChanged>.NewKey();
     public Key<TreeViewNoType> Key { get; set; } = Key<TreeViewNoType>.NewKey();
 
-    public abstract TreeViewRenderer GetTreeViewRenderer();
+	public abstract TreeViewRenderer GetTreeViewRenderer();
     public abstract Task LoadChildListAsync();
 
     /// <summary>

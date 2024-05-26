@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
@@ -43,7 +42,7 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
                     return inState;
                 }
 
-                var outStagedFileMap = new Dictionary<string, GitFile>(inState.StagedFileMap);
+                var outSelectedFileList = new List<GitFile>(inState.SelectedFileList);
 
                 foreach (var selectedNode in commandArgs.TreeViewContainer.SelectedNodeList)
                 {
@@ -51,15 +50,19 @@ public class GitTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
                     {
                         var key = treeViewGitFile.Item.AbsolutePath.Value;
 
-                        var wasRemoved = outStagedFileMap.Remove(key);
-                        if (!wasRemoved)
-                            outStagedFileMap.Add(key, treeViewGitFile.Item);
+                        var indexOf = outSelectedFileList.FindIndex(x => x.AbsolutePath.Value == key);
+
+                        // Toggle
+                        if (indexOf != -1)
+                            outSelectedFileList.RemoveAt(indexOf);
+                        else
+                            outSelectedFileList.Add(treeViewGitFile.Item);
                     }
                 }
 
                 return inState with
                 {
-                    StagedFileMap = outStagedFileMap.ToImmutableDictionary()
+                    SelectedFileList = outSelectedFileList.ToImmutableList()
                 };
             }));
         }

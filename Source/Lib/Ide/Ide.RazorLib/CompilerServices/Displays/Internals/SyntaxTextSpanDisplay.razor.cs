@@ -33,13 +33,13 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
         base.OnParametersSet();
     }
 
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
-            CompleteForm();
+            await CompleteForm().ConfigureAwait(false);
     }
 
-    private void CompleteForm()
+    private async Task CompleteForm()
     {
         var localTextSpanTuple = _textSpanTuple;
         var localInputValue = InputValue;
@@ -50,7 +50,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
         var modelText = model.GetAllText();
 
-        TextEditorService.PostSimpleBatch(
+        await TextEditorService.PostSimpleBatch(
             nameof(SyntaxTextSpanDisplay),
             string.Empty,
             async editContext =>
@@ -91,9 +91,9 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
                     .Invoke(editContext)
                     .ConfigureAwait(false);
 
-                modelModifier.CompilerService.ResourceWasModified(
+                await modelModifier.CompilerService.ResourceWasModified(
                     _textSpanTuple.TextEditorTextSpan.ResourceUri,
                     ImmutableArray<TextEditorTextSpan>.Empty);
-            });
+            }).ConfigureAwait(false);
     }
 }

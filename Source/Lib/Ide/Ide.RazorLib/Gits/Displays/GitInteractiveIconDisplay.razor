@@ -1,0 +1,38 @@
+﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{ var localGitState = GitStateWrap.Value; }
+
+<button class="luth_button luth_git-interactive-icon @CssClassString"
+        style="@CssStyleString"
+        title="@localGitState.AheadByCommitCount outgoing / @localGitState.BehindByCommitCount incoming commits"
+        @onclick="() => HandleOnClick(localGitState)">
+
+    @if (localGitState.Repo is null)
+    {
+        <text>
+            set git repo
+        </text>
+    }
+    else
+    {
+        <text>
+            @if (string.IsNullOrWhiteSpace(localGitState.Branch))
+            {
+                @: null_branch
+            }
+            else
+            {
+                @localGitState.Branch
+            }
+            &nbsp;
+
+            <IconArrowUp/>
+            @localGitState.AheadByCommitCount
+            &nbsp;
+
+            <IconArrowDown/>
+            @localGitState.BehindByCommitCount
+            &nbsp;
+        </text>
+    }
+</button>

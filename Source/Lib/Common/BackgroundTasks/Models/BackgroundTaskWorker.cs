@@ -24,6 +24,8 @@ public class BackgroundTaskWorker : BackgroundService
 
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
     {
+        var currentThread = Thread.CurrentThread;
+
         _logger.LogInformation("Queued Hosted Service is starting.");
 
         while (!cancellationToken.IsCancellationRequested)

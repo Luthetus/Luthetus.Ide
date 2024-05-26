@@ -1,7 +1,8 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -29,6 +30,7 @@ public class OnOutput : ITextEditorTask
         List<TextEditorTextSpan> outputTextSpanList,
         ResourceUri resourceUri,
         ITextEditorService textEditorService,
+        TerminalCommand terminalCommand,
         TerminalCommandBoundary terminalCommandBoundary,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -37,7 +39,8 @@ public class OnOutput : ITextEditorTask
         _outputTextSpanList = outputTextSpanList;
         ResourceUri = resourceUri;
         TextEditorService = textEditorService;
-        _terminalCommandBoundary = terminalCommandBoundary;
+        TerminalCommand = terminalCommand;
+		_terminalCommandBoundary = terminalCommandBoundary;
         ViewModelKey = viewModelKey;
     }
 
@@ -51,7 +54,8 @@ public class OnOutput : ITextEditorTask
     public string Output { get; }
     public ResourceUri ResourceUri { get; }
     public ITextEditorService TextEditorService { get; }
-    public Key<TextEditorViewModel> ViewModelKey { get; }
+	public TerminalCommand TerminalCommand { get; }
+	public Key<TextEditorViewModel> ViewModelKey { get; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
 
@@ -98,12 +102,24 @@ public class OnOutput : ITextEditorTask
             .ConfigureAwait(false);
 
         _terminalCommandBoundary.EndPositionIndexExclusive = modelModifier.GetPositionIndex(primaryCursorModifier);
-    }
+
+		TerminalCommand.TextSpan = new TextEditorTextSpan(
+		    _terminalCommandBoundary.StartPositionIndexInclusive ?? 0,
+		    _terminalCommandBoundary.EndPositionIndexExclusive ?? 0,
+		    0,
+		    ResourceUri,
+			modelModifier.GetAllText() ?? string.Empty);
+
+        await TerminalCommand.InvokeStateChangedCallbackFunc();
+	}
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         if (oldEvent is OnOutput oldEventOnOutput)
         {
+            if (TerminalCommand.TerminalCommandKey != oldEventOnOutput.TerminalCommand.TerminalCommandKey)
+                return null;
+
             var localOutputList = new List<string>
             {
                 oldEventOnOutput.Output,
@@ -122,13 +138,17 @@ public class OnOutput : ITextEditorTask
                 localOutputTextSpanAndOffsetTupleList,
                 ResourceUri,
                 TextEditorService,
+                TerminalCommand,
                 _terminalCommandBoundary,
                 ViewModelKey);
         }
 
         if (oldEvent is OnOutputBatch oldOnOutputBatch)
         {
-            oldOnOutputBatch.OutputList.Add(Output);
+			if (TerminalCommand.TerminalCommandKey != oldOnOutputBatch.TerminalCommand.TerminalCommandKey)
+				return null;
+
+			oldOnOutputBatch.OutputList.Add(Output);
             oldOnOutputBatch.OutputTextSpanAndOffsetTupleList.Add((OutputOffset, _outputTextSpanList));
             return oldOnOutputBatch;
         }

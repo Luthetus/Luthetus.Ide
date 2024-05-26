@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 
 namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
 
@@ -38,14 +37,12 @@ public class TreeViewMarkupStringTests : IdeTestBase
 
         var treeView = new TreeViewMarkupString(
             markupString,
-            ideComponentRenderers,
             fileSystemProvider,
             environmentProvider,
             isExpandable,
             isExpanded);
 
         Assert.Equal(treeView.Item, markupString);
-        Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
         Assert.Equal(treeView.FileSystemProvider, fileSystemProvider);
         Assert.Equal(treeView.EnvironmentProvider, environmentProvider);
         Assert.Equal(treeView.IsExpandable, isExpandable);

@@ -1,7 +1,12 @@
-﻿<div class="luth_ide_git-diff">
-    GitDiffDisplay
+﻿@using Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
-    <button class="luth_button" @onclick="ShowOriginalFromGitOnClick">
-        ShowOriginalFromGitOnClick
-    </button>
+<div class="luth_ide_git-diff"
+     style="height: 100%;">
+    @{ 
+        var localGitState = GitStateWrap.Value;
+        var localGitFile = GitFile;
+    }
+
+    <TextEditorDiffDisplay TextEditorDiffKey="_textEditorDiffModelKey"
+                           CssStyleString="height: 100%;"/>
 </div>

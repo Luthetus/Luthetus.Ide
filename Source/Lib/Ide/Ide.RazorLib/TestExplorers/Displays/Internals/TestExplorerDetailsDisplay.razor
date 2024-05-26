@@ -1,0 +1,14 @@
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
+@using Luthetus.Ide.RazorLib.Terminals.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Displays;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+
+<div class="luth_ide_test-explorer-details"
+	 style="@ElementDimensions.StyleString">
+
+	<ShouldRenderBoundary>
+		<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="DetailsTextEditorViewModelKey" />
+	</ShouldRenderBoundary>
+</div>

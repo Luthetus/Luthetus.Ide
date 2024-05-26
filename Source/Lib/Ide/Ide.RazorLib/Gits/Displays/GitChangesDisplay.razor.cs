@@ -22,7 +22,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
     private static readonly Key<TextEditorViewModel> InViewModelKey = Key<TextEditorViewModel>.NewKey();
     private static readonly Key<TextEditorViewModel> OutViewModelKey = Key<TextEditorViewModel>.NewKey();
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
@@ -40,7 +40,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     InResourceUri,
                     new Category(nameof(GitChangesDisplay)));
 
-                TextEditorService.PostSimpleBatch(
+                await TextEditorService.PostSimpleBatch(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
                     string.Empty,
                     async editContext =>
@@ -88,7 +88,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     OutResourceUri,
                     new Category(nameof(GitChangesDisplay)));
 
-                TextEditorService.PostSimpleBatch(
+                await TextEditorService.PostSimpleBatch(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
                     string.Empty,
                     async editContext =>
@@ -128,6 +128,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                 OutViewModelKey);
         }
 
-        return base.OnAfterRenderAsync(firstRender);
+        await base.OnAfterRenderAsync(firstRender);
     }
 }

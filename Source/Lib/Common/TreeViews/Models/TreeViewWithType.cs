@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.TreeViews.Models;
+namespace Luthetus.Common.RazorLib.TreeViews.Models;
 
 /// <summary>
 /// Implement the abstract class <see cref="TreeViewWithType{T}"/> in order to make a TreeView.<br/><br/>

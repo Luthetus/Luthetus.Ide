@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.CSharpProjectForms.Models;
+using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 

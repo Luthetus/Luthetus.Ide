@@ -157,21 +157,30 @@ public static class DotNetCliCommandFormatter
         {
             "new",
             "list",
-        });
+        })
+		{
+			Tag = DotNetCliOutputParser.TagConstants.NewList
+		};
 
     public static FormattedCommand FormatDotnetNewListDeprecated() =>
         new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
             "new",
             "--list",
-        });
+        })
+		{
+			Tag = DotNetCliOutputParser.TagConstants.NewList
+		};
 	
 	public static FormattedCommand FormatDotNetTestListTests() =>
         new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
         {
             "test",
             "-t",
-        });
+        })
+        {
+            Tag = DotNetCliOutputParser.TagConstants.Test
+        };
 
 	public static FormattedCommand FormatDotNetTestByFullyQualifiedName(string fullyQualifiedName) =>
         new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
@@ -179,5 +188,19 @@ public static class DotNetCliCommandFormatter
             "test",
             "--filter",
             $"FullyQualifiedName={fullyQualifiedName}",
+        });
+
+	public static FormattedCommand FormatDotnetBuild(string solutionAbsolutePathString) =>
+        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
+        {
+            "build",
+            solutionAbsolutePathString,
+        });
+
+	public static FormattedCommand FormatDotnetClean(string solutionAbsolutePathString) =>
+        new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
+        {
+            "clean",
+            solutionAbsolutePathString,
         });
 }

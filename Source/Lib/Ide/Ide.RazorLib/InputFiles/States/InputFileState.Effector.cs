@@ -19,7 +19,9 @@ public partial record InputFileState
 
             if (parentDirectoryTreeViewModel is not null)
             {
-                return openParentDirectoryAction.BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+                return openParentDirectoryAction.BackgroundTaskService.EnqueueAsync(
+                    Key<BackgroundTask>.NewKey(),
+                    ContinuousBackgroundTaskWorker.GetQueueKey(),
                     "Open Parent Directory",
                     async () =>
                     {
@@ -43,7 +45,9 @@ public partial record InputFileState
             {
                 currentSelection.ChildList.Clear();
 
-                return refreshCurrentSelectionAction.BackgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+                return refreshCurrentSelectionAction.BackgroundTaskService.EnqueueAsync(
+                    Key<BackgroundTask>.NewKey(),
+                    ContinuousBackgroundTaskWorker.GetQueueKey(),
                     "Refresh Current Selection",
                     async () =>
                     {

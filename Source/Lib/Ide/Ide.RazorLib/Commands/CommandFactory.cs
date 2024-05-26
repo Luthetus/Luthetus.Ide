@@ -12,12 +12,12 @@ using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 

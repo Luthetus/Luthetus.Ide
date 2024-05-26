@@ -129,7 +129,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                 return new AutocompleteEntry(
                     x.Key.TypeIdentifier,
                     AutocompleteEntryKind.Type,
-                    () =>
+                    async () =>
                     {
                         if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() == x.Key.NamespaceIdentifier ||
                             boundScope.CurrentUsingStatementNodeList.Any(usn => usn.NamespaceIdentifier.TextSpan.GetText() == x.Key.NamespaceIdentifier))
@@ -137,7 +137,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                             return;
                         }
 
-                        _textEditorService.PostSimpleBatch(
+                        await _textEditorService.PostSimpleBatch(
                             "Add using statement",
                             string.Empty,
                             async editContext =>

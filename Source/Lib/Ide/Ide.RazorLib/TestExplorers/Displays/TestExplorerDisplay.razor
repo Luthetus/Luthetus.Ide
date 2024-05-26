@@ -1,6 +1,7 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models
 @using Luthetus.Common.RazorLib.Resizes.Displays
+@using Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals
 @using Luthetus.Ide.RazorLib.TestExplorers.States
 @using Luthetus.Ide.RazorLib.TestExplorers.Models
 
@@ -31,8 +32,7 @@
         Test Explorer
     </div>
 
-    <div class="luth_ide_section-body"
-         style="width: 100%; display: flex;">
+    <div class="luth_ide_section-body">
 
 		@if (renderBatch.TreeViewContainer is null)
 		{
@@ -41,16 +41,24 @@
 		else
 		{
 			var renderBatchValidated = new TestExplorerRenderBatchValidated(renderBatch);
-
 			<CascadingValue Value="renderBatchValidated">
 
-				<TestExplorerTreeViewDisplay ElementDimensions="_treeViewElementDimensions"/>
-	
-				<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
-				                 RightElementDimensions="_detailsElementDimensions"
-								 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
-		
-				<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
+				<div class="luth_ide_test-explorer-top"
+				     style="height: 1.8em;">
+					Total: 0; Passed: 0; Failed: 0;
+				</div>
+
+				<div class="luth_ide_test-explorer-bottom"
+					 style="display: flex; height: calc(100% - 1.8em);">
+
+					<TestExplorerTreeViewDisplay ElementDimensions="_treeViewElementDimensions"/>
+
+					<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
+									 RightElementDimensions="_detailsElementDimensions"
+									 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
+
+					<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
+				</div>
 			</CascadingValue>
 		}
     </div>

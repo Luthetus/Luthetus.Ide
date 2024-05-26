@@ -2,6 +2,7 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
@@ -18,101 +19,98 @@ public class TextEditorDiffApi : ITextEditorDiffApi
     }
 
     public void Register(
-        Key<TextEditorDiffModel> diffKey,
+        Key<TextEditorDiffModel> diffModelKey,
         Key<TextEditorViewModel> inViewModelKey,
         Key<TextEditorViewModel> outViewModelKey)
     {
         _dispatcher.Dispatch(new TextEditorDiffState.RegisterAction(
-            diffKey,
+            diffModelKey,
             inViewModelKey,
             outViewModelKey));
     }
 
-    public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffKey)
+    public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffModelKey)
     {
-        return _textEditorService.DiffStateWrap.Value.DiffModelList.FirstOrDefault(x => x.DiffKey == diffKey);
+        return _textEditorService.DiffStateWrap.Value.DiffModelList
+            .FirstOrDefault(x => x.DiffKey == diffModelKey);
     }
 
-    public void Dispose(Key<TextEditorDiffModel> diffKey)
+    public void Dispose(Key<TextEditorDiffModel> diffModelKey)
     {
-        _dispatcher.Dispatch(new TextEditorDiffState.DisposeAction(diffKey));
+        _dispatcher.Dispatch(new TextEditorDiffState.DisposeAction(diffModelKey));
     }
 
-    /// <summary>
-    /// TODO: This method is being commented out as of (2024-02-23). It needs to be re-written...
-    /// ...so that it uses the text editor's edit context by using ITextEditorService.Post()
-    /// </summary>
-    //public TextEditorDiffResult? Calculate(Key<TextEditorDiffModel> textEditorDiffKey, CancellationToken cancellationToken)
-    //{
-    //    if (cancellationToken.IsCancellationRequested)
-    //        return null;
+    public TextEditorEdit CalculateFactory(
+        Key<TextEditorDiffModel> diffModelKey,
+        CancellationToken cancellationToken)
+    {
+        return async editContext =>
+        {
+            if (cancellationToken.IsCancellationRequested)
+                return;
 
-    //    var textEditorDiff = GetOrDefault(textEditorDiffKey);
+            var diffModelModifier = editContext.GetDiffModelModifier(diffModelKey);
 
-    //    if (textEditorDiff is null)
-    //        return null;
+            if (diffModelModifier is null)
+                return;
 
-    //    var inViewModel = _textEditorService.ViewModelApi.GetOrDefault(textEditorDiff.InViewModelKey);
-    //    var outViewModel = _textEditorService.ViewModelApi.GetOrDefault(textEditorDiff.OutViewModelKey);
+            var inViewModelModifier = editContext.GetViewModelModifier(diffModelModifier.DiffModel.InViewModelKey);
+            var outViewModelModifier = editContext.GetViewModelModifier(diffModelModifier.DiffModel.OutViewModelKey);
 
-    //    if (inViewModel is null || outViewModel is null)
-    //        return null;
+            if (inViewModelModifier is null || outViewModelModifier is null)
+                return;
 
-    //    var inModel = _textEditorService.ModelApi.GetOrDefault(inViewModel.ResourceUri);
-    //    var outModel = _textEditorService.ModelApi.GetOrDefault(outViewModel.ResourceUri);
+            var inModelModifier = editContext.GetModelModifier(inViewModelModifier.ViewModel.ResourceUri);
+            var outModelModifier = editContext.GetModelModifier(outViewModelModifier.ViewModel.ResourceUri);
 
-    //    if (inModel is null || outModel is null)
-    //        return null;
+            if (inModelModifier is null || outModelModifier is null)
+                return;
 
-    //    var inText = inModel.GetAllText();
-    //    var outText = outModel.GetAllText();
+            // In
+            await editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
+                    inModelModifier.ResourceUri,
+                    DiffPresentationFacts.InPresentationKey,
+                    DiffPresentationFacts.EmptyInPresentationModel)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
+            var inPresentationModel = inModelModifier.PresentationModelList.First(
+                x => x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
+            if (inPresentationModel.PendingCalculation is null)
+                return;
+            var inText = inPresentationModel.PendingCalculation.ContentAtRequest;
+            
+            // Out
+            await editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
+                    outModelModifier.ResourceUri,
+                    DiffPresentationFacts.OutPresentationKey,
+                    DiffPresentationFacts.EmptyOutPresentationModel)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
+            var outPresentationModel = outModelModifier.PresentationModelList.First(
+                x => x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
+            if (outPresentationModel.PendingCalculation is null)
+                return;
+            var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
 
-    //    var diffResult = TextEditorDiffResult.Calculate(
-    //        inModel.ResourceUri,
-    //        inText,
-    //        outModel.ResourceUri,
-    //        outText);
+            var diffResult = TextEditorDiffResult.Calculate(
+                inModelModifier.ResourceUri,
+                inText,
+                outModelModifier.ResourceUri,
+                outText);
 
-    //    // inModel Diff Presentation Model
-    //    {
-    //        var presentationModel = inModel.PresentationModelsList.FirstOrDefault(x =>
-    //            x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
+            inModelModifier.CompletePendingCalculatePresentationModel(
+                DiffPresentationFacts.InPresentationKey,
+                DiffPresentationFacts.EmptyInPresentationModel,
+                diffResult.InResultTextSpanList.ToImmutableArray());
+            
+            outModelModifier.CompletePendingCalculatePresentationModel(
+                DiffPresentationFacts.OutPresentationKey,
+                DiffPresentationFacts.EmptyOutPresentationModel,
+                diffResult.OutResultTextSpanList.ToImmutableArray());
+        };
+    }
 
-    //        if (presentationModel is not null)
-    //        {
-    //            if (presentationModel.PendingCalculation is null)
-    //                presentationModel.PendingCalculation = new(inModel.GetAllText());
-
-    //            presentationModel.PendingCalculation.TextSpanList =
-    //                diffResult.InResultTextSpanList.ToImmutableArray();
-
-    //            (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-    //                (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-    //        }
-    //    }
-
-    //    // outModel Diff Presentation Model
-    //    {
-    //        var presentationModel = outModel.PresentationModelsList.FirstOrDefault(x =>
-    //            x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
-
-    //        if (presentationModel is not null)
-    //        {
-    //            if (presentationModel.PendingCalculation is null)
-    //                presentationModel.PendingCalculation = new(outModel.GetAllText());
-
-    //            presentationModel.PendingCalculation.TextSpanList =
-    //                diffResult.OutResultTextSpanList.ToImmutableArray();
-
-    //            (presentationModel.CompletedCalculation, presentationModel.PendingCalculation) =
-    //                (presentationModel.PendingCalculation, presentationModel.CompletedCalculation);
-    //        }
-    //    }
-
-    //    return diffResult;
-    //}
-
-    public ImmutableList<TextEditorDiffModel> GetDiffs()
+    public ImmutableList<TextEditorDiffModel> GetDiffModels()
     {
         return _textEditorService.DiffStateWrap.Value.DiffModelList;
     }

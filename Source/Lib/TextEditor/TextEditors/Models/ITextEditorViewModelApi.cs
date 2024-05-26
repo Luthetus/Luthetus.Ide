@@ -139,6 +139,10 @@ public interface ITextEditorViewModelApi
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken);
+
+    public TextEditorEdit ForceRenderFactory(
+        Key<TextEditorViewModel> viewModelKey,
+        CancellationToken cancellationToken);
     #endregion
 
     #region DELETE_METHODS

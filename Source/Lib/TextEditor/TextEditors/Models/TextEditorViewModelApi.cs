@@ -1052,6 +1052,18 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             };
         };
     }
+
+    public TextEditorEdit ForceRenderFactory(
+        Key<TextEditorViewModel> viewModelKey,
+        CancellationToken cancellationToken)
+    {
+        return editContext =>
+        {
+            // Getting the ViewModel from the 'editContext' triggers a re-render
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            return Task.CompletedTask;
+        };
+    }
     #endregion
 
     #region DELETE_METHODS

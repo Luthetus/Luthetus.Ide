@@ -9,11 +9,11 @@ public partial record GitState
     public class Reducer
     {
         [ReducerMethod]
-        public static GitState ReduceSetGitFileListAction(
+        public static GitState ReduceSetStatusAction(
             GitState inState,
-            SetFileListAction setGitFileListAction)
+            SetStatusAction setStatusAction)
         {
-            if (inState.Repo != setGitFileListAction.Repo)
+            if (inState.Repo != setStatusAction.Repo)
             {
                 // Git folder was changed while the text was being parsed,
                 // throw away the result since it is thereby invalid.
@@ -22,7 +22,11 @@ public partial record GitState
 
             return inState with
             {
-                FileList = setGitFileListAction.FileList
+                UntrackedFileList = setStatusAction.UntrackedFileList,
+                StagedFileList = setStatusAction.StagedFileList,
+                UnstagedFileList = setStatusAction.UnstagedFileList,
+                BehindByCommitCount = setStatusAction.BehindByCommitCount,
+                AheadByCommitCount = setStatusAction.AheadByCommitCount,
             };
         }
 
@@ -45,6 +49,42 @@ public partial record GitState
         }
         
         [ReducerMethod]
+        public static GitState ReduceSetBranchAction(
+            GitState inState,
+            SetBranchAction setBranchAction)
+        {
+            if (inState.Repo != setBranchAction.Repo)
+            {
+                // Git folder was changed while the text was being parsed,
+                // throw away the result since it is thereby invalid.
+                return inState;
+            }
+
+            return inState with
+            {
+                Branch = setBranchAction.Branch
+            };
+        }
+        
+        [ReducerMethod]
+        public static GitState ReduceSetBranchListAction(
+            GitState inState,
+            SetBranchListAction setBranchListAction)
+        {
+            if (inState.Repo != setBranchListAction.Repo)
+            {
+                // Git folder was changed while the text was being parsed,
+                // throw away the result since it is thereby invalid.
+                return inState;
+            }
+
+            return inState with
+            {
+                BranchList = setBranchListAction.BranchList.ToImmutableList()
+            };
+        }
+        
+        [ReducerMethod]
         public static GitState ReduceSetGitFolderAction(
             GitState inState,
             SetRepoAction setRepoAction)
@@ -52,9 +92,17 @@ public partial record GitState
             return inState with
             {
                 Repo = setRepoAction.Repo,
-                FileList = ImmutableList<GitFile>.Empty,
-                StagedFileMap = ImmutableDictionary<string, GitFile>.Empty,
+                UntrackedFileList = ImmutableList<GitFile>.Empty,
+                StagedFileList = ImmutableList<GitFile>.Empty,
+                UnstagedFileList = ImmutableList<GitFile>.Empty,
+                SelectedFileList = ImmutableList<GitFile>.Empty,
                 ActiveTasks = ImmutableList<GitTask>.Empty,
+                Branch = null,
+                Origin = null,
+                AheadByCommitCount = null,
+                BehindByCommitCount = null,
+                BranchList = ImmutableList<string>.Empty,
+                Upstream = null,
             };
         }
 

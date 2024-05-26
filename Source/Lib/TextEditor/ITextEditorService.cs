@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -37,10 +38,10 @@ public partial interface ITextEditorService
     /// <summary>
     /// TODO: Should 'PostAsIs' be removed? (2024-05-08)
     //
-    /// This method will create an instance of <see cref="Events.AsIsTextEditorTask"/>,
+    /// This method will create an instance of <see cref="BackgroundTasks.Models.AsIsTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- <see cref="Events.AsIsTextEditorTask"/>.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="Events.AsIsTextEditorTask"/>
+    /// --- <see cref="BackgroundTasks.Models.AsIsTextEditorTask"/>.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="BackgroundTasks.Models.AsIsTextEditorTask"/>
     /// </summary>
     //public void PostAsIs(
     //    string name,
@@ -48,24 +49,24 @@ public partial interface ITextEditorService
     //    TimeSpan? throttleTimeSpan = null);
 
     /// <summary>
-    /// This method will create an instance of <see cref="Events.SimpleBatchTextEditorTask"/>,
+    /// This method will create an instance of <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- <see cref="Events.SimpleBatchTextEditorTask"/>.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="Events.SimpleBatchTextEditorTask"/>
+    /// --- <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>
     /// </summary>
-    public void PostSimpleBatch(
+    public Task PostSimpleBatch(
         string name,
         string identifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null);
 
     /// <summary>
-    /// This method will create an instance of <see cref="Events.TakeMostRecentTextEditorTask"/>,
+    /// This method will create an instance of <see cref="BackgroundTasks.Models.TakeMostRecentTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- <see cref="Events.TakeMostRecentTextEditorTask"/>.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="Events.TakeMostRecentTextEditorTask"/>
+    /// --- <see cref="BackgroundTasks.Models.TakeMostRecentTextEditorTask"/>.cs inheritdoc:<br/><br/>
+    /// <inheritdoc cref="BackgroundTasks.Models.TakeMostRecentTextEditorTask"/>
     /// </summary>
-    public void PostTakeMostRecent(
+    public Task PostTakeMostRecent(
         string name,
         string redundancyIdentifier,
         TextEditorEdit textEditorEdit,
@@ -79,5 +80,5 @@ public partial interface ITextEditorService
     /// When the innerTask is finished, the encapsulating <see cref="TextEditorServiceTask"/>
     /// will update any state that was modified, and trigger re-renders for the UI.
     /// </summary>
-    public void Post(ITextEditorTask textEditorTask);
+    public Task Post(ITextEditorTask textEditorTask);
 }

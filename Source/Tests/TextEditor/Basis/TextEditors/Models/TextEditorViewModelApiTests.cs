@@ -220,12 +220,12 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText()
+    public async Task MoveCursorFactory_SelectText()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
             string.Empty,
             async editContext =>
@@ -269,12 +269,12 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveLeft()
+    public async Task MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveLeft()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
             string.Empty,
             async editContext =>
@@ -354,12 +354,12 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveLeft()
+    public async Task MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveLeft()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
             string.Empty,
             async editContext =>
@@ -478,12 +478,12 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveDown()
+    public async Task MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveDown()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
             string.Empty,
             async editContext =>
@@ -563,12 +563,12 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveDown()
+    public async Task MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveDown()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
             string.Empty,
             async editContext =>
@@ -687,12 +687,12 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveUp()
+    public async Task MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveUp()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
             string.Empty,
             async editContext =>
@@ -775,12 +775,12 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveUp()
+    public async Task MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveUp()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
             string.Empty,
             async editContext =>
@@ -899,12 +899,12 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveRight()
+    public async Task MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveRight()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
             string.Empty,
             async editContext =>
@@ -984,12 +984,12 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveRight()
+    public async Task MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveRight()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
             string.Empty,
             async editContext =>
@@ -1243,7 +1243,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     /// <see cref="TextEditorViewModelApi.WithValueFactory(Key{TextEditorViewModel}, Func{TextEditorViewModel, TextEditorViewModel})"/>
     /// </summary>
     [Fact]
-    public void WithValueFactory()
+    public async Task WithValueFactory()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -1257,7 +1257,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             oppositeShouldSetFocusAfterNextRender,
             inViewModel.UnsafeState.ShouldSetFocusAfterNextRender);
 
-        textEditorService.PostSimpleBatch(
+        await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ViewModelApi.WithValueFactory),
             string.Empty,
             textEditorService.ViewModelApi.WithValueFactory(

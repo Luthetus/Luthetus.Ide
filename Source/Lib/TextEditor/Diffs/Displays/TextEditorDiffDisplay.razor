@@ -38,13 +38,23 @@
     {
         <div class="luth_te_text-editor-diff-body">
             <div class="luth_te_text-editor-diff-comparison-item">
-                <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorDiff.InViewModelKey" />
+                <div style="height: 1.5em;">
+                    Previous
+                </div>
+                <div style="height: calc(100% - 1.5em)">
+                    <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorDiff.InViewModelKey" />
+                </div>
             </div>
 
             <div class="luth_te_text-editor-diff-body-separator"></div>
 
             <div class="luth_te_text-editor-diff-comparison-item">
-                <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorDiff.OutViewModelKey" />
+                <div style="height: 1.5em;">
+                    Current
+                </div>
+                <div style="height: calc(100% - 1.5em)">
+                    <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorDiff.OutViewModelKey" />
+                </div>
             </div>
         </div>
     }

@@ -28,7 +28,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 public class USER_TYPES_OUT_CODE
 {
     [Fact]
-    public void ClassDefinition()
+    public async Task ClassDefinition()
     {
         Initialize_USER_TYPES_OUT_CODE(
             string.Empty,
@@ -44,7 +44,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostSimpleBatch(
+            await textEditorService.PostSimpleBatch(
                 nameof(USER_TYPES_OUT_CODE),
                 string.Empty,
                 async editContext =>
@@ -58,7 +58,7 @@ public class USER_TYPES_OUT_CODE
                         .ConfigureAwait(false);
                 });
 
-            cSharpCompilerService.ResourceWasModified(
+            await cSharpCompilerService.ResourceWasModified(
                 textEditorModel.ResourceUri,
                 ImmutableArray<TextEditorTextSpan>.Empty);
         }
@@ -77,7 +77,7 @@ public class USER_TYPES_OUT_CODE
     }
     
     [Fact]
-    public void ConstructorUsage()
+    public async Task ConstructorUsage()
     {
         Initialize_USER_TYPES_OUT_CODE(
             string.Empty,
@@ -98,7 +98,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostSimpleBatch(
+            await textEditorService.PostSimpleBatch(
                 nameof(USER_TYPES_OUT_CODE),
                 string.Empty,
                 async editContext =>
@@ -112,7 +112,7 @@ public class USER_TYPES_OUT_CODE
                         .ConfigureAwait(false);
                 });
 
-            cSharpCompilerService.ResourceWasModified(
+            await cSharpCompilerService.ResourceWasModified(
                 textEditorModel.ResourceUri,
                 ImmutableArray<TextEditorTextSpan>.Empty);
         }
@@ -125,7 +125,7 @@ public class USER_TYPES_OUT_CODE
     }
     
     [Fact]
-    public void BLAZOR_WASM_TEMPLATE_PROGRAM_CS()
+    public async Task BLAZOR_WASM_TEMPLATE_PROGRAM_CS()
     {
         Initialize_USER_TYPES_OUT_CODE(
             string.Empty,
@@ -157,7 +157,7 @@ await builder.Build().RunAsync();
             {
                 char character = content[i];
 
-                textEditorService.PostSimpleBatch(
+                await textEditorService.PostSimpleBatch(
                     nameof(USER_TYPES_OUT_CODE),
                     string.Empty,
                     async editContext =>
@@ -179,7 +179,7 @@ await builder.Build().RunAsync();
                 {
                     contiguousLetterOrDigitCount = 0;
 
-                    cSharpCompilerService.ResourceWasModified(
+                    await cSharpCompilerService.ResourceWasModified(
                         textEditorModel.ResourceUri,
                         ImmutableArray<TextEditorTextSpan>.Empty);
                 }
@@ -192,7 +192,7 @@ await builder.Build().RunAsync();
                 // 
                 // And since we ended on an identifier, the file has yet to be parsed
                 // for the final time.
-                cSharpCompilerService.ResourceWasModified(
+                await cSharpCompilerService.ResourceWasModified(
                         textEditorModel.ResourceUri,
                         ImmutableArray<TextEditorTextSpan>.Empty);
             }

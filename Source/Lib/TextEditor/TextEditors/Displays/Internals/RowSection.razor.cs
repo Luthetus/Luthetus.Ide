@@ -4,7 +4,6 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -37,8 +36,6 @@ public partial class RowSection : ComponentBase
     public bool IncludeContextMenuHelperComponent { get; set; }
 
     public CursorDisplay? CursorDisplayComponent { get; private set; }
-
-    private IThrottle _throttleVirtualizationDisplayItemsProviderFunc = new Throttle(TimeSpan.Zero);//new Throttle(TimeSpan.FromMilliseconds(60));
 
     private string GetRowStyleCss(int index, double? virtualizedRowLeftInPixels)
     {
@@ -100,7 +97,7 @@ public partial class RowSection : ComponentBase
         }
     }
 
-    private void VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
+    private async Task VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
@@ -108,17 +105,13 @@ public partial class RowSection : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        TextEditorService.PostTakeMostRecent(
-            nameof(VirtualizationDisplayItemsProviderFunc),
-            $"{nameof(VirtualizationDisplayItemsProviderFunc)}_{viewModel.ViewModelKey}",
-            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                virtualizationRequest.CancellationToken));
-        //_throttleVirtualizationDisplayItemsProviderFunc.PushEvent(_ => 
-        //{
-
-        //    return Task.CompletedTask;
-        //});
+        await TextEditorService.PostTakeMostRecent(
+                nameof(VirtualizationDisplayItemsProviderFunc),
+                $"{nameof(VirtualizationDisplayItemsProviderFunc)}_{viewModel.ViewModelKey}",
+                TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                    model.ResourceUri,
+                    viewModel.ViewModelKey,
+                    virtualizationRequest.CancellationToken))
+            .ConfigureAwait(false);
     }
 }

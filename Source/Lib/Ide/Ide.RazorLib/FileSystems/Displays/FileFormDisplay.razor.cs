@@ -16,7 +16,7 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
     [Parameter, EditorRequired]
     public string FileName { get; set; } = string.Empty;
     [Parameter, EditorRequired]
-    public Action<string, IFileTemplate?, ImmutableArray<IFileTemplate>> OnAfterSubmitAction { get; set; } = null!;
+    public Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task> OnAfterSubmitFunc { get; set; } = null!;
     
     [Parameter]
     public bool IsDirectory { get; set; }
@@ -81,7 +81,7 @@ public partial class FileFormDisplay : ComponentBase, IFileFormRendererType
             else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
             {
                 await MenuOptionCallbacks.CompleteWidgetAsync
-                    .Invoke(() => OnAfterSubmitAction.Invoke(
+                    .Invoke(async () => await OnAfterSubmitFunc.Invoke(
                         _fileName,
                         _fileTemplatesDisplay?.ExactMatchFileTemplate,
                         _fileTemplatesDisplay?.RelatedMatchFileTemplates ?? ImmutableArray<IFileTemplate>.Empty))

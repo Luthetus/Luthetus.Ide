@@ -7,7 +7,6 @@ using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
@@ -45,57 +44,92 @@ public class LuthetusIdeCompilerServiceBackgroundTaskApi
 
     public Task SetCompilerServiceExplorerTreeView()
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set CompilerServiceExplorer TreeView",
             async () =>
             {
                 var compilerServiceExplorerState = _compilerServiceExplorerStateWrap.Value;
 
                 var xmlCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.XmlCompilerService, _compilerServiceRegistry.XmlCompilerService.GetType(), "XML", true);
+                    _compilerServiceRegistry.XmlCompilerService,
+                    _compilerServiceRegistry.XmlCompilerService.GetType(),
+                    "XML",
+                    true);
 
                 var dotNetSolutionCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.DotNetSolutionCompilerService, _compilerServiceRegistry.DotNetSolutionCompilerService.GetType(), ".NET Solution", true);
+                    _compilerServiceRegistry.DotNetSolutionCompilerService,
+                    _compilerServiceRegistry.DotNetSolutionCompilerService.GetType(),
+                    ".NET Solution",
+                    true);
 
                 var cSharpProjectCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.CSharpProjectCompilerService, _compilerServiceRegistry.CSharpProjectCompilerService.GetType(), "C# Project", true);
+                    _compilerServiceRegistry.CSharpProjectCompilerService,
+                    _compilerServiceRegistry.CSharpProjectCompilerService.GetType(),
+                    "C# Project",
+                    true);
 
                 var cSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.CSharpCompilerService, _compilerServiceRegistry.CSharpCompilerService.GetType(), "C#", true);
+                    _compilerServiceRegistry.CSharpCompilerService,
+                    _compilerServiceRegistry.CSharpCompilerService.GetType(),
+                    "C#",
+                    true);
 
                 var razorCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.RazorCompilerService, _compilerServiceRegistry.RazorCompilerService.GetType(), "Razor", true);
+                    _compilerServiceRegistry.RazorCompilerService,
+                    _compilerServiceRegistry.RazorCompilerService.GetType(),
+                    "Razor",
+                    true);
 
                 var cssCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.CssCompilerService, _compilerServiceRegistry.CssCompilerService.GetType(), "Css", true);
+                    _compilerServiceRegistry.CssCompilerService,
+                    _compilerServiceRegistry.CssCompilerService.GetType(),
+                    "Css",
+                    true);
 
                 var fSharpCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.FSharpCompilerService, _compilerServiceRegistry.FSharpCompilerService.GetType(), "F#", true);
+                    _compilerServiceRegistry.FSharpCompilerService,
+                    _compilerServiceRegistry.FSharpCompilerService.GetType(),
+                    "F#",
+                    true);
 
                 var javaScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.JavaScriptCompilerService, _compilerServiceRegistry.JavaScriptCompilerService.GetType(), "JavaScript", true);
+                    _compilerServiceRegistry.JavaScriptCompilerService,
+                    _compilerServiceRegistry.JavaScriptCompilerService.GetType(),
+                    "JavaScript",
+                    true);
 
                 var typeScriptCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.TypeScriptCompilerService, _compilerServiceRegistry.TypeScriptCompilerService.GetType(), "TypeScript", true);
+                    _compilerServiceRegistry.TypeScriptCompilerService,
+                    _compilerServiceRegistry.TypeScriptCompilerService.GetType(),
+                    "TypeScript",
+                    true);
 
                 var jsonCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.JsonCompilerService, _compilerServiceRegistry.JsonCompilerService.GetType(), "JSON", true);
+                    _compilerServiceRegistry.JsonCompilerService,
+                    _compilerServiceRegistry.JsonCompilerService.GetType(),
+                    "JSON",
+                    true);
 
                 var terminalCompilerServiceWatchWindowObject = new WatchWindowObject(
-                    _compilerServiceRegistry.TerminalCompilerService, _compilerServiceRegistry.TerminalCompilerService.GetType(), "Terminal", true);
+                    _compilerServiceRegistry.TerminalCompilerService,
+                    _compilerServiceRegistry.TerminalCompilerService.GetType(),
+                    "Terminal",
+                    true);
 
                 var rootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(
-                    new TreeViewReflectionWithView(xmlCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(dotNetSolutionCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(cSharpProjectCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(cSharpCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(razorCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(cssCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(fSharpCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(javaScriptCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(typeScriptCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(jsonCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers),
-                    new TreeViewReflectionWithView(terminalCompilerServiceWatchWindowObject, true, false, _ideComponentRenderers, _commonComponentRenderers));
+                    new TreeViewReflection(xmlCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(dotNetSolutionCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(cSharpProjectCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(cSharpCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(razorCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(cssCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(fSharpCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(javaScriptCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(typeScriptCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(jsonCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers),
+                    new TreeViewReflection(terminalCompilerServiceWatchWindowObject, true, false, _commonComponentRenderers));
 
                 await rootNode.LoadChildListAsync().ConfigureAwait(false);
 

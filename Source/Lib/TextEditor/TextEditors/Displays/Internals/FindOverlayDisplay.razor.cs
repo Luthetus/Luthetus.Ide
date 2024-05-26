@@ -44,9 +44,9 @@ public partial class FindOverlayDisplay : ComponentBase
 
             _ = Task.Run(async () =>
             {
-                await _throttleInputValueChange.PushEvent(_ =>
+                await _throttleInputValueChange.PushEvent(async _ =>
                 {
-                    TextEditorService.PostSimpleBatch(
+                    await TextEditorService.PostSimpleBatch(
                         nameof(FindOverlayDisplay),
                         string.Empty,
                         async editContext =>
@@ -94,8 +94,6 @@ public partial class FindOverlayDisplay : ComponentBase
                             _activeIndexMatchedTextSpan = null;
                             _decorationByteChangedTargetTextSpan = null;
                         });
-
-                    return Task.CompletedTask;
                 }).ConfigureAwait(false);
             });
         }
@@ -127,7 +125,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 .FocusHtmlElementById(RenderBatch.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
-            TextEditorService.PostTakeMostRecent(
+            await TextEditorService.PostTakeMostRecent(
                 nameof(FindOverlayDisplay),
                 nameof(FindOverlayDisplay),
                 async editContext =>
@@ -168,7 +166,7 @@ public partial class FindOverlayDisplay : ComponentBase
         }
     }
 
-    private void MoveActiveIndexMatchedTextSpanUp()
+    private async Task MoveActiveIndexMatchedTextSpanUp()
     {
         var findOverlayPresentationModel = RenderBatch.Model.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
@@ -199,10 +197,10 @@ public partial class FindOverlayDisplay : ComponentBase
 			}
         }
 
-        HandleActiveIndexMatchedTextSpanChanged();
+        await HandleActiveIndexMatchedTextSpanChanged();
     }
 
-    private void MoveActiveIndexMatchedTextSpanDown()
+    private async Task MoveActiveIndexMatchedTextSpanDown()
     {
         var findOverlayPresentationModel = RenderBatch.Model.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
@@ -233,12 +231,12 @@ public partial class FindOverlayDisplay : ComponentBase
 			}
         }
 
-        HandleActiveIndexMatchedTextSpanChanged();
+        await HandleActiveIndexMatchedTextSpanChanged();
     }
 
-    private void HandleActiveIndexMatchedTextSpanChanged()
+    private async Task HandleActiveIndexMatchedTextSpanChanged()
     {
-        TextEditorService.PostSimpleBatch(
+        await TextEditorService.PostSimpleBatch(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
             string.Empty,
             async editContext =>

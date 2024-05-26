@@ -1,0 +1,20 @@
+﻿<div class="luth_git-branch-checkout">
+    
+    @{ var localGitState = GitState; }
+
+    @if (localGitState.BranchList.Count == 0)
+    {
+        @: No branches found
+    }
+    else
+    {
+        foreach (var branch in localGitState.BranchList)
+        {
+            <button class="luth_button"
+                    style="margin-top: 10px;"
+                    @onclick="() => SetActiveBranchOnClick(localGitState, branch)">
+                @branch
+            </button>
+        }
+    }
+</div>

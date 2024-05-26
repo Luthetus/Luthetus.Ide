@@ -2,25 +2,39 @@
     
     @{ var localGitState = GitState; }
 
-    <button class="luth_button"
-            @onclick="ExecuteGitStatusTerminalCommandOnClick">
-        Status
-    </button>
+    <div style="display: flex; justify-content: space-evenly; margin-top: 10px; margin-bottom: 10px;">
+        <button class="luth_button"
+                @onclick="ShowGitOriginDialogOnClick">
+            Origin
+        </button>
+        <button class="luth_button"
+                @onclick="() => ExecuteGitRefreshOnClick(localGitState)">
+            <IconRefresh /> Refresh
+        </button>
+    </div>
 
-    <button class="luth_button"
-            @onclick="ShowGitOriginDialogOnClick">
-        Origin
-    </button>
+    <div style="display: flex; justify-content: space-evenly; margin-bottom: 10px;">
+        <button class="luth_button"
+                @onclick="() => StageOnClick(localGitState)">
+            Stage
+        </button>
+        <button class="luth_button"
+                @onclick="() => UnstageOnClick(localGitState)">
+            Unstage
+        </button>
+    </div>
 
 	<GitChangesTreeViewDisplay/>
 
     <input class="luth_ide_input luth_ide_input-text"
-        placeholder="Summary"
-        @bind="_summary"
-        @bind:event="oninput" />
+           style="margin-top: 10px; width: 100%;"
+           placeholder="Summary"
+           @bind="_summary"
+           @bind:event="oninput" />
 
     <button class="luth_button"
-            @onclick="() => SubmitOnClick(localGitState)">
+            style="margin-top: 10px;"
+            @onclick="() => CommitChangesOnClick(localGitState, _summary)">
         Commit
     </button>
 </div>

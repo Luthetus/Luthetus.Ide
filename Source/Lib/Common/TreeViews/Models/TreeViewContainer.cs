@@ -18,7 +18,7 @@ public record TreeViewContainer
         TreeViewNoType? rootNode,
         ImmutableList<TreeViewNoType> selectedNodeList)
     {
-        rootNode ??= TreeViewAdhoc.ConstructTreeViewAdhoc();
+		rootNode ??= TreeViewAdhoc.ConstructTreeViewAdhoc();
 
         Key = key;
         RootNode = rootNode;

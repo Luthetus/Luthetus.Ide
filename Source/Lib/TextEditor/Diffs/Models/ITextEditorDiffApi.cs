@@ -1,5 +1,6 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
@@ -7,24 +8,20 @@ namespace Luthetus.TextEditor.RazorLib.Diffs.Models;
 public interface ITextEditorDiffApi
 {
     public void Register(
-        Key<TextEditorDiffModel> diffKey,
+        Key<TextEditorDiffModel> diffModelKey,
         Key<TextEditorViewModel> inViewModelKey,
         Key<TextEditorViewModel> outViewModelKey);
 
-    public void Dispose(Key<TextEditorDiffModel> diffKey);
+    public void Dispose(Key<TextEditorDiffModel> diffModelKey);
 
-    /// <summary>
-    /// TODO: This method is being commented out as of (2024-02-23). It needs to be re-written...
-    /// ...so that it uses the text editor's edit context by using ITextEditorService.Post()
-    /// </summary>
-    //public TextEditorDiffResult? Calculate(Key<TextEditorDiffModel> diffKey, CancellationToken cancellationToken);
+    public TextEditorEdit CalculateFactory(Key<TextEditorDiffModel> diffModelKey, CancellationToken cancellationToken);
 
-    public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffKey);
+    public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffModelKey);
 
     /// <summary>
     /// One should store the result of invoking this method in a variable, then reference that variable.
     /// If one continually invokes this, there is no guarantee that the data had not changed
     /// since the previous invocation.
     /// </summary>
-    public ImmutableList<TextEditorDiffModel> GetDiffs();
+    public ImmutableList<TextEditorDiffModel> GetDiffModels();
 }

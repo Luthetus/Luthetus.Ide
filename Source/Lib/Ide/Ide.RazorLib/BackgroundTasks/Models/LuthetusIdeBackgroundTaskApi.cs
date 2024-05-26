@@ -1,9 +1,12 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -15,9 +18,9 @@ using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
+using Luthetus.Ide.RazorLib.Gits.States;
+using Luthetus.Ide.RazorLib.CommandLines.Models;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
@@ -33,11 +36,14 @@ public class LuthetusIdeBackgroundTaskApi
     private readonly IDispatcher _dispatcher;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-    private readonly IFileSystemProvider _fileSystemProvider;
+	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
+	private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
     private readonly IState<TerminalState> _terminalStateWrap;
-    private readonly IDecorationMapperRegistry _decorationMapperRegistry;
+    private readonly IState<GitState> _gitStateWrap;
+	private readonly GitCliOutputParser _gitCliOutputParser;
+	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
 
     public LuthetusIdeBackgroundTaskApi(
         IBackgroundTaskService backgroundTaskService,
@@ -50,10 +56,13 @@ public class LuthetusIdeBackgroundTaskApi
         IDispatcher dispatcher,
         IEnvironmentProvider environmentProvider,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
+		DotNetCliOutputParser dotNetCliOutputParser,
         IFileSystemProvider fileSystemProvider,
         ITextEditorService textEditorService,
         ICompilerServiceRegistry interfaceCompilerServiceRegistry,
         IState<TerminalState> terminalStateWrap,
+        IState<GitState> gitStateWrap,
+        GitCliOutputParser gitCliOutputParser,
         IDecorationMapperRegistry decorationMapperRegistry,
         IServiceProvider serviceProvider)
     {
@@ -67,11 +76,14 @@ public class LuthetusIdeBackgroundTaskApi
         _dispatcher = dispatcher;
         _environmentProvider = environmentProvider;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-        _fileSystemProvider = fileSystemProvider;
+		_dotNetCliOutputParser = dotNetCliOutputParser;
+		_fileSystemProvider = fileSystemProvider;
         _textEditorService = textEditorService;
         _interfaceCompilerServiceRegistry = interfaceCompilerServiceRegistry;
         _terminalStateWrap = terminalStateWrap;
-        _decorationMapperRegistry = decorationMapperRegistry;
+        _gitStateWrap = gitStateWrap;
+		_gitCliOutputParser = gitCliOutputParser;
+		_decorationMapperRegistry = decorationMapperRegistry;
 
         CompilerService = new LuthetusIdeCompilerServiceBackgroundTaskApi(
             this,
@@ -139,10 +151,22 @@ public class LuthetusIdeBackgroundTaskApi
             this,
             _commonComponentRenderers,
             _treeViewService,
+			_textEditorService,
             _backgroundTaskService,
             _dotNetSolutionStateWrap,
-            _terminalStateWrap,
+			_dotNetCliOutputParser,
+			_terminalStateWrap,
             _dispatcher);
+
+		Git = new LuthetusIdeGitBackgroundTaskApi(
+			this,
+			_terminalStateWrap,
+			_gitStateWrap,
+			_gitCliOutputParser,
+			_environmentProvider,
+			_backgroundTaskService,
+            _commonComponentRenderers,
+			_dispatcher);
     }
     
     public LuthetusIdeCompilerServiceBackgroundTaskApi CompilerService { get; }
@@ -152,4 +176,5 @@ public class LuthetusIdeBackgroundTaskApi
     public LuthetusIdeFolderExplorerBackgroundTaskApi FolderExplorer { get; }
     public LuthetusIdeInputFileBackgroundTaskApi InputFile { get; }
     public LuthetusIdeTestExplorerBackgroundTaskApi TestExplorer { get; }
+    public LuthetusIdeGitBackgroundTaskApi Git { get; }
 }

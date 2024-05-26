@@ -1,8 +1,9 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -10,7 +11,6 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.TestExplorers.States;
-using Luthetus.Ide.RazorLib.TreeViewImplementations.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
@@ -20,8 +20,10 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
     private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
+    private readonly ITextEditorService _textEditorService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-    private readonly IState<TerminalState> _terminalStateWrap;
+	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
+	private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
 
@@ -29,23 +31,29 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
         LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         ILuthetusCommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
+        ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
+		DotNetCliOutputParser dotNetCliOutputParser,
         IState<TerminalState> terminalStateWrap,
         IDispatcher dispatcher)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
+		_textEditorService = textEditorService;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-        _terminalStateWrap = terminalStateWrap;
+		_dotNetCliOutputParser = dotNetCliOutputParser;
+		_terminalStateWrap = terminalStateWrap;
         _backgroundTaskService = backgroundTaskService;
         _dispatcher = dispatcher;
     }
 
     public Task DotNetSolutionStateWrap_StateChanged()
     {
-        return _backgroundTaskService.EnqueueAsync(Key<BackgroundTask>.NewKey(), ContinuousBackgroundTaskWorker.GetQueueKey(),
+        return _backgroundTaskService.EnqueueAsync(
+            Key<BackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Refresh TestExplorer",
             async () => await DotNetSolutionStateWrap_StateChangedAsync().ConfigureAwait(false));
     }
@@ -93,67 +101,55 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
                     localFormattedCommand,
                     treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery,
                     CancellationToken.None,
-                    async () =>
+                    OutputParser: _dotNetCliOutputParser,
+					ContinueWith: async () =>
                     {
-                        try
-                        {
-                            var success = executionTerminal.TryGetTerminalCommandTextSpan(
-                                treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey,
-                                out var terminalCommandTextSpan);
+						try
+						{
+							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
+								_dotNetCliOutputParser.TheFollowingTestsAreAvailableList ?? new();
 
-                            var output = terminalCommandTextSpan?.GetText();
-                            if (output is null)
-                                return;
+							// THINKING_ABOUT_TREE_VIEW();
+							{
+								var splitOutputList = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
+									.Select(x => x.Split('.'));
 
-                            treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
-                                DotNetCliOutputParser.ParseDotNetTestListTestsTerminalOutput(output);
+								var rootMap = new Dictionary<string, StringFragment>();
 
-                            // THINKING_ABOUT_TREE_VIEW();
-                            {
-                                var splitOutputList = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
-                                    .Select(x => x.Split('.'));
+								foreach (var splitOutput in splitOutputList)
+								{
+									var targetMap = rootMap;
+									var lastSeenStringFragment = (StringFragment?)null;
 
-                                var rootMap = new Dictionary<string, StringFragment>();
+									foreach (var fragment in splitOutput)
+									{
+										if (!targetMap.ContainsKey(fragment))
+											targetMap.Add(fragment, new(fragment));
 
-                                foreach (var splitOutput in splitOutputList)
-                                {
-                                    var targetMap = rootMap;
-                                    var lastSeenStringFragment = (StringFragment?)null;
+										lastSeenStringFragment = targetMap[fragment];
+										targetMap = lastSeenStringFragment.Map;
+									}
 
-                                    foreach (var fragment in splitOutput)
-                                    {
-                                        if (!targetMap.ContainsKey(fragment))
-                                            targetMap.Add(fragment, new(fragment));
+									if (lastSeenStringFragment is not null)
+										lastSeenStringFragment.IsEndpoint = true;
+								}
 
-                                        lastSeenStringFragment = targetMap[fragment];
-                                        targetMap = lastSeenStringFragment.Map;
-                                    }
+								treeViewProjectTestModel.Item.RootStringFragmentMap = rootMap;
+								await callback.Invoke(rootMap).ConfigureAwait(false);
+							}
+						}
+						catch (Exception)
+						{
+							await callback.Invoke(new()).ConfigureAwait(false);
+							throw;
+						}
+					});
 
-                                    if (lastSeenStringFragment is not null)
-                                        lastSeenStringFragment.IsEndpoint = true;
-                                }
+                treeViewProjectTestModel.Item.TerminalCommand = dotNetTestListTestsCommand;
 
-                                treeViewProjectTestModel.Item.RootStringFragmentMap = rootMap;
-                                await callback.Invoke(rootMap).ConfigureAwait(false);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            await callback.Invoke(new()).ConfigureAwait(false);
-                            throw;
-                        }
-                    },
-                    () =>
-                    {
-                        // Should the 'ClearStandardOut(...)' logic still be here? (2024-04-28)
-                        //
-                        //executionTerminal.ClearStandardOut(
-                        //    treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey);
-
-                        return Task.CompletedTask;
-                    });
-
-                await executionTerminal.EnqueueCommandAsync(dotNetTestListTestsCommand).ConfigureAwait(false);
+				await executionTerminal
+                    .EnqueueCommandAsync(dotNetTestListTestsCommand)
+                    .ConfigureAwait(false);
             };
         }
 
