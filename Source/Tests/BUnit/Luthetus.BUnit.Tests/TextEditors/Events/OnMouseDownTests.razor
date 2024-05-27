@@ -19,26 +19,26 @@
 @code
 {
 	[Fact]
-	public async Task BatchOrDefault_OnDoubleClick_OnDoubleClick()
+	public async Task BatchOrDefault_OnMouseDown_OnMouseDown()
     {
-		var testData = OnDoubleClickTestsInitialize();
+		var testData = OnMouseDownTestsInitialize();
 
-		// Assert that 'AllText' does not change, since this event should do nothing.        
+		// Assert that 'AllText' does not change, since this event should do nothing.
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
-		var upstreamOnDoubleClick = new OnDoubleClick(
+		var upstreamOnMouseDown = new OnMouseDown(
 	        new MouseEventArgs { },
 	        testData.Events,
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(upstreamOnDoubleClick);
+		testData.TextEditorService.Post(upstreamOnMouseDown);
 
-		var downstreamOnDoubleClick = new OnDoubleClick(
+		var downstreamOnMouseDown = new OnMouseDown(
 	        new MouseEventArgs { },
 	        testData.Events,
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnDoubleClick);
+		testData.TextEditorService.Post(downstreamOnMouseDown);
 
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -46,7 +46,7 @@
 		// Consecutive events of this kind are redundant;
 		// one can just take the most recent, and discard the rest.
 		Assert.Equal(1, queue.CountOfBackgroundTasks);
-		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTasks.Single());
+		Assert.Equal(downstreamOnMouseDown, queue.BackgroundTasks.Single());
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -58,9 +58,9 @@
     }
 
 	[Fact]
-	public async Task BatchOrDefault_OnDoubleClick_SomeDifferentType()
+	public async Task BatchOrDefault_OnMouseDown_SomeDifferentType()
     {
-		var testData = OnDoubleClickTestsInitialize();
+		var testData = OnMouseDownTestsInitialize();
 
 		// Assert that 'AllText' does not change, since this event should do nothing.        
 		Assert.Equal(string.Empty, testData.InModel.AllText);
@@ -72,12 +72,12 @@
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(upstreamOnMouseMove);
 
-		var downstreamOnDoubleClick = new OnDoubleClick(
+		var downstreamOnMouseDown = new OnMouseDown(
 	        new MouseEventArgs { },
 	        testData.Events,
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnDoubleClick);
+		testData.TextEditorService.Post(downstreamOnMouseDown);
 
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -85,7 +85,7 @@
 		// Do not overwrite an upstream event that is not of the same type.
 		Assert.Equal(2, queue.CountOfBackgroundTasks);
 		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTasks[0]);
-		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTasks[1]);
+		Assert.Equal(downstreamOnMouseDown, queue.BackgroundTasks[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -99,9 +99,9 @@
 	[Fact]
     public async Task HandleEvent_Result()
     {
-		var testData = OnDoubleClickTestsInitialize();
+		var testData = OnMouseDownTestsInitialize();
 
-		var onDoubleClick = new OnDoubleClick(
+		var onMouseDown = new OnMouseDown(
 	        new MouseEventArgs { },
 	        testData.Events,
 	        testData.InModel.ResourceUri,
@@ -110,7 +110,7 @@
 		// Assert that 'AllText' does not change, since this event should do nothing.      
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
-		testData.TextEditorService.Post(onDoubleClick);
+		testData.TextEditorService.Post(onMouseDown);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -121,7 +121,7 @@
 		Assert.Equal(string.Empty, outModel.AllText);
     }
 
-	private OnDoubleClickTestData OnDoubleClickTestsInitialize()
+	private OnMouseDownTestData OnMouseDownTestsInitialize()
 	{
 		SharedInitializationForTests.Initialize(this);
 		
@@ -158,7 +158,7 @@
 			refTextEditorViewModelDisplay,
 			textEditorService.OptionsStateWrap.Value.Options);
 
-		return new OnDoubleClickTestData(
+		return new OnMouseDownTestData(
 			cut,
 			refTextEditorViewModelDisplay,
 			events,
@@ -167,9 +167,9 @@
 			textEditorService);
 	}
 
-	private class OnDoubleClickTestData
+	private class OnMouseDownTestData
 	{
-		public OnDoubleClickTestData(
+		public OnMouseDownTestData(
 			IRenderedFragment cut,
 			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
 			TextEditorViewModelDisplay.TextEditorEvents events,

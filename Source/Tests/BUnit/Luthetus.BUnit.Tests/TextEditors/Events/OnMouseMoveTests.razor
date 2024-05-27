@@ -19,48 +19,9 @@
 @code
 {
 	[Fact]
-	public async Task BatchOrDefault_OnDoubleClick_OnDoubleClick()
+	public async Task BatchOrDefault_OnMouseMove_OnMouseMove()
     {
-		var testData = OnDoubleClickTestsInitialize();
-
-		// Assert that 'AllText' does not change, since this event should do nothing.        
-		Assert.Equal(string.Empty, testData.InModel.AllText);
-
-		var upstreamOnDoubleClick = new OnDoubleClick(
-	        new MouseEventArgs { },
-	        testData.Events,
-	        testData.InModel.ResourceUri,
-	        testData.ViewModelKey);
-		testData.TextEditorService.Post(upstreamOnDoubleClick);
-
-		var downstreamOnDoubleClick = new OnDoubleClick(
-	        new MouseEventArgs { },
-	        testData.Events,
-	        testData.InModel.ResourceUri,
-	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnDoubleClick);
-
-		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
-		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
-		
-		// Consecutive events of this kind are redundant;
-		// one can just take the most recent, and discard the rest.
-		Assert.Equal(1, queue.CountOfBackgroundTasks);
-		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTasks.Single());
-        
-		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
-		await backgroundTasksHandle.Stop();
-        
-		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
-
-		// Assert that 'AllText' does not change, since this event should do nothing.        
-		Assert.Equal(string.Empty, outModel.AllText);
-    }
-
-	[Fact]
-	public async Task BatchOrDefault_OnDoubleClick_SomeDifferentType()
-    {
-		var testData = OnDoubleClickTestsInitialize();
+		var testData = OnMouseMoveTestsInitialize();
 
 		// Assert that 'AllText' does not change, since this event should do nothing.        
 		Assert.Equal(string.Empty, testData.InModel.AllText);
@@ -72,20 +33,59 @@
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(upstreamOnMouseMove);
 
-		var downstreamOnDoubleClick = new OnDoubleClick(
+		var downstreamOnMouseMove = new OnMouseMove(
 	        new MouseEventArgs { },
 	        testData.Events,
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnDoubleClick);
+		testData.TextEditorService.Post(downstreamOnMouseMove);
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		
+		// Consecutive events of this kind are redundant;
+		// one can just take the most recent, and discard the rest.
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+		Assert.Equal(downstreamOnMouseMove, queue.BackgroundTasks.Single());
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+
+	[Fact]
+	public async Task BatchOrDefault_OnMouseMove_SomeDifferentType()
+    {
+		var testData = OnMouseMoveTestsInitialize();
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		var upstreamOnDoubleClick = new OnDoubleClick(
+	        new MouseEventArgs { },
+	        testData.Events,
+	        testData.InModel.ResourceUri,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(upstreamOnDoubleClick);
+
+		var downstreamOnMouseMove = new OnMouseMove(
+	        new MouseEventArgs { },
+	        testData.Events,
+	        testData.InModel.ResourceUri,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(downstreamOnMouseMove);
 
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		
 		// Do not overwrite an upstream event that is not of the same type.
 		Assert.Equal(2, queue.CountOfBackgroundTasks);
-		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTasks[0]);
-		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTasks[1]);
+		Assert.Equal(upstreamOnDoubleClick, queue.BackgroundTasks[0]);
+		Assert.Equal(downstreamOnMouseMove, queue.BackgroundTasks[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -99,9 +99,9 @@
 	[Fact]
     public async Task HandleEvent_Result()
     {
-		var testData = OnDoubleClickTestsInitialize();
+		var testData = OnMouseMoveTestsInitialize();
 
-		var onDoubleClick = new OnDoubleClick(
+		var onMouseMove = new OnMouseMove(
 	        new MouseEventArgs { },
 	        testData.Events,
 	        testData.InModel.ResourceUri,
@@ -110,7 +110,7 @@
 		// Assert that 'AllText' does not change, since this event should do nothing.      
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
-		testData.TextEditorService.Post(onDoubleClick);
+		testData.TextEditorService.Post(onMouseMove);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -121,7 +121,7 @@
 		Assert.Equal(string.Empty, outModel.AllText);
     }
 
-	private OnDoubleClickTestData OnDoubleClickTestsInitialize()
+	private OnMouseMoveTestData OnMouseMoveTestsInitialize()
 	{
 		SharedInitializationForTests.Initialize(this);
 		
@@ -158,7 +158,7 @@
 			refTextEditorViewModelDisplay,
 			textEditorService.OptionsStateWrap.Value.Options);
 
-		return new OnDoubleClickTestData(
+		return new OnMouseMoveTestData(
 			cut,
 			refTextEditorViewModelDisplay,
 			events,
@@ -167,9 +167,9 @@
 			textEditorService);
 	}
 
-	private class OnDoubleClickTestData
+	private class OnMouseMoveTestData
 	{
-		public OnDoubleClickTestData(
+		public OnMouseMoveTestData(
 			IRenderedFragment cut,
 			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
 			TextEditorViewModelDisplay.TextEditorEvents events,
