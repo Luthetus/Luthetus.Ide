@@ -1,6 +1,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Exceptions;
 using System.Collections.Immutable;
+using System.Collections.Generic;
 
 namespace Luthetus.Common.RazorLib.Reactives.Models;
 
@@ -16,7 +17,7 @@ public class ThrottleEventQueueAsync
     /// The first item in this list, is the OLDEST item in the 'queue'<br/><br/>
     /// The last item in this list, is the MOST-RECENT item in the 'queue'<br/><br/>
     /// </summary>
-    private readonly List<IBackgroundTask> _throttleEventList = new();
+    private readonly LinkedList<IBackgroundTask> _queue = new();
     /// <summary>
     /// Used when dequeueing.
     /// </summary>
@@ -31,9 +32,9 @@ public class ThrottleEventQueueAsync
     /// <summary>
     /// Returns the amount of <see cref="IBackgroundTask"/>(s) in the queue.
     /// </summary>
-    public int Count => _throttleEventList.Count;
+    public int Count => _queue.Count;
 
-	public ImmutableArray<IBackgroundTask> ThrottleEventList => _throttleEventList.ToImmutableArray();
+	public ImmutableArray<IBackgroundTask> ThrottleEventList => _queue.ToImmutableArray();
 
     /// <summary>
     /// When enqueueing an event, a batchFunc is also provided.<br/><br/>
@@ -60,11 +61,11 @@ public class ThrottleEventQueueAsync
 
 			// TODO: This looks very incorrect. (2025-05-27)
 			// ============================================
-			// Why am I looping through the '_throttleEventList',
+			// Why am I looping through the '_queue',
 			// as opposed to just batching with the most recently
 			// enqueued thing prior to "me"?
 			// --------------------------------------------------
-			// There is likely a lot of shifting within the '_throttleEventList',
+			// There is likely a lot of shifting within the '_queue',
 			// when tasks are enqueued/dequeued.
 			// Perhaps a different datastructure would be preferred?
 			// Is a linked list a good idea here?
@@ -83,22 +84,26 @@ public class ThrottleEventQueueAsync
 			//
 			// But, this way you'd avoid any of the 'TentativeKeyboardEventArgsKind'
 			// confusion.
-			if (_throttleEventList.Count > 0)
+			if (_queue.Count > 0)
 			{
-				var upstreamEvent = _throttleEventList[^1];
+				var upstreamEvent = _queue.Last.Value;
 				// TODO: Rename 'BatchOrDefault' to 'TryMergeIntoUpstream'
 				var batchEvent = downstreamEvent.BatchOrDefault(upstreamEvent);
 
 				if (batchEvent is not null)
                 {
-					_throttleEventList[^1] = batchEvent;
+					// The length of the queue has not changed,
+					// so do not release the dequeue semaphore here.
+					//
 					// The batching was successful so return early.
+					_queue.RemoveLast();
+					_queue.AddLast(batchEvent);
             		return;
 				}
 			}
 
 			// The batching was NOT successful so add to the queue.
-			_throttleEventList.Add(downstreamEvent);
+			_queue.AddLast(downstreamEvent);
 			_dequeueSemaphoreSlim.Release();
         }
         finally
@@ -118,9 +123,9 @@ public class ThrottleEventQueueAsync
         {
             await _modifyQueueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 		    
-            var firstEvent = _throttleEventList[0];
-            _throttleEventList.RemoveAt(0);
-            return firstEvent;
+            var task = _queue.First.Value;
+            _queue.RemoveFirst();
+			return task;
         }
         catch (ArgumentOutOfRangeException e)
         {
