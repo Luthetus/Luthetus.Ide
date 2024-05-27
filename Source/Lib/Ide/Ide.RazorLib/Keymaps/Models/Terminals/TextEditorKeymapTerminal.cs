@@ -94,7 +94,10 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							new TextEditorEvents(events, new TextEditorKeymapDefault()),
 							keyboardEventArgs,
 							commandArgs.ModelResourceUri,
-							commandArgs.ViewModelKey);
+							commandArgs.ViewModelKey)
+						{
+							EditContext = editContext
+						};
 
 						var selectionContainsCurrentRow = false;
 						var selectionRowCount = 0;
@@ -216,7 +219,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                         }
 										else
 										{
-                                            await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
+                                            await onKeyDown.HandleEvent(CancellationToken.None).ConfigureAwait(false);
                                             await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                                         }
                                     }
@@ -236,7 +239,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
 								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
                             {
-                                await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
+                                await onKeyDown.HandleEvent(CancellationToken.None).ConfigureAwait(false);
                             }
 							else
 							{
@@ -245,7 +248,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						}
 						else
 						{
-							await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
+							await onKeyDown.HandleEvent(CancellationToken.None).ConfigureAwait(false);
 
                             var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
 

@@ -29,61 +29,62 @@ public class OnWheelBatch : ITextEditorTask
     public List<WheelEventArgs> WheelEventArgsList { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
+	public IEditContext EditContext { get; set; }
+
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
-
-    public Task InvokeWithEditContext(IEditContext editContext)
-    {
-        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-
-        if (viewModelModifier is null)
-            return Task.CompletedTask;
-
-        double? horizontalMutateScrollPositionByPixels = null;
-        double? verticalMutateScrollPositionByPixels = null;
-
-        foreach (var wheelEventArgs in WheelEventArgsList)
-        {
-            if (wheelEventArgs.ShiftKey)
-            {
-                horizontalMutateScrollPositionByPixels ??= 0;
-                horizontalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
-            }
-            else
-            {
-                verticalMutateScrollPositionByPixels ??= 0;
-                verticalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
-            }
-        }
-
-        if (horizontalMutateScrollPositionByPixels is not null)
-        {
-            _events.TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    horizontalMutateScrollPositionByPixels.Value)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
-        }
-
-        if (verticalMutateScrollPositionByPixels is not null)
-        {
-            _events.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    verticalMutateScrollPositionByPixels.Value)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
-        }
-
-        return Task.CompletedTask;
-    }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         return null;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public async Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
-            "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
+		try
+		{
+            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+
+            if (viewModelModifier is null)
+                return;
+
+            double? horizontalMutateScrollPositionByPixels = null;
+            double? verticalMutateScrollPositionByPixels = null;
+
+            foreach (var wheelEventArgs in WheelEventArgsList)
+            {
+                if (wheelEventArgs.ShiftKey)
+                {
+                    horizontalMutateScrollPositionByPixels ??= 0;
+                    horizontalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
+                }
+                else
+                {
+                    verticalMutateScrollPositionByPixels ??= 0;
+                    verticalMutateScrollPositionByPixels += wheelEventArgs.DeltaY;
+                }
+            }
+
+            if (horizontalMutateScrollPositionByPixels is not null)
+            {
+                await _events.TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        horizontalMutateScrollPositionByPixels.Value)
+                    .Invoke(EditContext)
+                    .ConfigureAwait(false);
+            }
+
+            if (verticalMutateScrollPositionByPixels is not null)
+            {
+                await _events.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+                        viewModelModifier.ViewModel.ViewModelKey,
+                        verticalMutateScrollPositionByPixels.Value)
+                    .Invoke(EditContext)
+                    .ConfigureAwait(false);
+            }
+		}
+		finally
+		{
+			await EditContext.TextEditorService.FinalizePost(EditContext);
+		}
     }
 }

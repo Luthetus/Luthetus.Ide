@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
@@ -10,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.RazorLib.Edits.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -135,26 +137,90 @@ public partial class TextEditorService : ITextEditorService
             throttleTimeSpan));
     }
 
-    public async Task Post(ITextEditorTask innerTask)
+    public async Task Post(ITextEditorTask task)
     {
         try
         {
-            var editContext = new TextEditorEditContext(
+			task.EditContext = new TextEditorEditContext(
                 this,
                 AuthenticatedActionKey);
 
-            var textEditorServiceTask = new TextEditorServiceTask(
-                innerTask,
-                editContext,
-                _dispatcher);
-
-            await _backgroundTaskService.EnqueueAsync(textEditorServiceTask).ConfigureAwait(false);
+            await _backgroundTaskService.EnqueueAsync(task).ConfigureAwait(false);
         }
         catch (LuthetusTextEditorException e)
         {
             Console.WriteLine(e.ToString());
         }
     }
+
+	public async Task FinalizePost(IEditContext editContext)
+	{
+        foreach (var modelModifier in editContext.ModelCache.Values)
+        {
+            if (modelModifier is null || !modelModifier.WasModified)
+                continue;
+
+            _dispatcher.Dispatch(new TextEditorModelState.SetAction(
+                editContext.AuthenticatedActionKey,
+                editContext,
+                modelModifier));
+
+            var viewModelBag = editContext.TextEditorService.ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
+
+            foreach (var viewModel in viewModelBag)
+            {
+                // Invoking 'GetViewModelModifier' marks the view model to be updated.
+                editContext.GetViewModelModifier(viewModel.ViewModelKey);
+            }
+
+            if (modelModifier.WasDirty != modelModifier.IsDirty)
+            {
+                if (modelModifier.IsDirty)
+                    _dispatcher.Dispatch(new DirtyResourceUriState.AddDirtyResourceUriAction(modelModifier.ResourceUri));
+                else
+                    _dispatcher.Dispatch(new DirtyResourceUriState.RemoveDirtyResourceUriAction(modelModifier.ResourceUri));
+            }
+        }
+
+        foreach (var viewModelModifier in editContext.ViewModelCache.Values)
+        {
+            if (viewModelModifier is null || !viewModelModifier.WasModified)
+                return;
+
+            var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
+                viewModelModifier.ViewModel.ViewModelKey,
+                out var cursorModifierBag);
+
+            if (successCursorModifierBag && cursorModifierBag is not null)
+            {
+                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                {
+                    CursorList = cursorModifierBag.List
+                        .Select(x => x.ToCursor())
+                        .ToImmutableArray()
+                };
+            }
+
+            if (viewModelModifier.ScrollWasModified)
+            {
+                await ((TextEditorService)editContext.TextEditorService)
+                    .HACK_SetScrollPosition(viewModelModifier.ViewModel)
+                    .ConfigureAwait(false);
+            }
+
+            // TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
+            await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                    viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
+                .Invoke(editContext)
+                .ConfigureAwait(false);
+
+            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+                editContext.AuthenticatedActionKey,
+                editContext,
+                viewModelModifier.ViewModel.ViewModelKey,
+                inState => viewModelModifier.ViewModel));
+        }
+	}
 
     /// <summary>
     /// I want to batch any scrolling done while within an <see cref="IEditContext"/>.
@@ -172,143 +238,5 @@ public partial class TextEditorService : ITextEditorService
                 viewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft,
                 viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
             .ConfigureAwait(false);
-    }
-
-    private record TextEditorEditContext : IEditContext
-    {
-        public Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache { get; } = new();
-        public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; } = new();
-        public Dictionary<Key<TextEditorViewModel>, TextEditorViewModelModifier?> ViewModelCache { get; } = new();
-        public Dictionary<Key<TextEditorViewModel>, CursorModifierBagTextEditor?> CursorModifierBagCache { get; } = new();
-        public Dictionary<Key<TextEditorDiffModel>, TextEditorDiffModelModifier?> DiffModelCache { get; } = new();
-
-        public TextEditorEditContext(
-            ITextEditorService textEditorService,
-            Key<TextEditorAuthenticatedAction> authenticatedActionKey)
-        {
-            TextEditorService = textEditorService;
-            AuthenticatedActionKey = authenticatedActionKey;
-        }
-
-        public ITextEditorService TextEditorService { get; }
-        public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
-
-        public TextEditorModelModifier? GetModelModifier(
-            ResourceUri? modelResourceUri,
-            bool isReadonly = false)
-        {
-            if (modelResourceUri is not null)
-            {
-                if (!ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
-                {
-                    var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
-                    modelModifier = model is null ? null : new(model);
-
-                    ModelCache.Add(modelResourceUri, modelModifier);
-                }
-
-                if (!isReadonly && modelModifier is not null)
-                    modelModifier.WasModified = true;
-
-                return modelModifier;
-            }
-
-            return null;
-        }
-
-        public TextEditorModelModifier? GetModelModifierByViewModelKey(
-            Key<TextEditorViewModel> viewModelKey,
-            bool isReadonly = false)
-        {
-            if (viewModelKey != Key<TextEditorViewModel>.Empty)
-            {
-                if (!ViewModelToModelResourceUriCache.TryGetValue(viewModelKey, out var modelResourceUri))
-                {
-                    var model = TextEditorService.ViewModelApi.GetModelOrDefault(viewModelKey);
-                    modelResourceUri = model?.ResourceUri;
-
-                    ViewModelToModelResourceUriCache.Add(viewModelKey, modelResourceUri);
-                }
-
-                return GetModelModifier(modelResourceUri);
-            }
-
-            return null;
-        }
-
-        public TextEditorViewModelModifier? GetViewModelModifier(
-            Key<TextEditorViewModel> viewModelKey,
-            bool isReadonly = false)
-        {
-            if (viewModelKey != Key<TextEditorViewModel>.Empty)
-            {
-                if (!ViewModelCache.TryGetValue(viewModelKey, out var viewModelModifier))
-                {
-                    var viewModel = TextEditorService.ViewModelApi.GetOrDefault(viewModelKey);
-                    viewModelModifier = viewModel is null ? null : new(viewModel);
-
-                    ViewModelCache.Add(viewModelKey, viewModelModifier);
-                }
-
-                if (!isReadonly && viewModelModifier is not null)
-                    viewModelModifier.WasModified = true;
-
-                return viewModelModifier;
-            }
-
-            return null;
-        }
-
-        public CursorModifierBagTextEditor? GetCursorModifierBag(TextEditorViewModel? viewModel)
-        {
-            if (viewModel is not null)
-            {
-                if (!CursorModifierBagCache.TryGetValue(viewModel.ViewModelKey, out var cursorModifierBag))
-                {
-                    cursorModifierBag = new CursorModifierBagTextEditor(
-                        viewModel.ViewModelKey,
-                        viewModel.CursorList.Select(x => new TextEditorCursorModifier(x)).ToList());
-
-                    CursorModifierBagCache.Add(viewModel.ViewModelKey, cursorModifierBag);
-                }
-
-                return cursorModifierBag;
-            }
-
-            return null;
-        }
-
-        public TextEditorCursorModifier? GetPrimaryCursorModifier(CursorModifierBagTextEditor? cursorModifierBag)
-        {
-            var primaryCursor = (TextEditorCursorModifier?)null;
-
-            if (cursorModifierBag is not null)
-                primaryCursor = cursorModifierBag.List.FirstOrDefault(x => x.IsPrimaryCursor);
-
-            return primaryCursor;
-        }
-
-        public TextEditorDiffModelModifier? GetDiffModelModifier(
-            Key<TextEditorDiffModel> diffModelKey,
-            bool isReadonly = false)
-        {
-            if (diffModelKey != Key<TextEditorDiffModel>.Empty)
-            {
-                if (!DiffModelCache.TryGetValue(diffModelKey, out var diffModelModifier))
-                {
-                    var diffModel = TextEditorService.DiffApi.GetOrDefault(diffModelKey);
-                    diffModelModifier = diffModel is null ? null : new(diffModel);
-
-                    DiffModelCache.Add(diffModelKey, diffModelModifier);
-                }
-
-                if (!isReadonly && diffModelModifier is not null)
-                    diffModelModifier.WasModified = true;
-
-                return diffModelModifier;
-            }
-
-            return null;
-        }
     }
 }

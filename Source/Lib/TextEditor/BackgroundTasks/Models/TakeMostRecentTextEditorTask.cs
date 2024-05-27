@@ -41,12 +41,7 @@ public sealed class TakeMostRecentTextEditorTask : ITextEditorTask
     public TimeSpan ThrottleTimeSpan { get; set; }
     public Task? WorkProgress { get; set; }
 
-    public async Task InvokeWithEditContext(IEditContext editContext)
-    {
-        await _textEditorEdit
-            .Invoke(editContext)
-            .ConfigureAwait(false);
-    }
+	public IEditContext EditContext { get; set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -68,9 +63,17 @@ public sealed class TakeMostRecentTextEditorTask : ITextEditorTask
         return null;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public async Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
-            "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
+		try
+		{
+            await _textEditorEdit
+                .Invoke(EditContext)
+                .ConfigureAwait(false);
+		}
+		finally
+		{
+			await EditContext.TextEditorService.FinalizePost(EditContext);
+		}
     }
 }

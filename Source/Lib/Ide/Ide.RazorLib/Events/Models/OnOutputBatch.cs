@@ -39,7 +39,6 @@ public class OnOutputBatch : ITextEditorTask
         ViewModelKey = viewModelKey;
     }
 
-
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; set; } = nameof(OnOutput);
@@ -52,35 +51,9 @@ public class OnOutputBatch : ITextEditorTask
 	public TerminalCommand TerminalCommand { get; }
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 
+	public IEditContext EditContext { get; set; }
+
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
-
-    public Task InvokeWithEditContext(IEditContext editContext)
-    {
-		Name = Name + $"_{OutputList.Count}";
-
-        // Flatten 'OutputTextSpanAndOffsetTupleList'
-        var outputTextSpanList = new List<TextEditorTextSpan>();
-        foreach (var tuple in OutputTextSpanAndOffsetTupleList)
-        {
-            outputTextSpanList.AddRange(tuple.OutputTextSpanList.Select(x => x with
-            {
-                StartingIndexInclusive = x.StartingIndexInclusive + tuple.OutputOffset - BatchOutputOffset,
-                EndingIndexExclusive = x.EndingIndexExclusive + tuple.OutputOffset - BatchOutputOffset,
-            }));
-        }
-
-        var onOutput = new OnOutput(
-            BatchOutputOffset,
-            string.Join(string.Empty, OutputList),
-            outputTextSpanList,
-            ResourceUri,
-            TextEditorService,
-			TerminalCommand,
-			_terminalCommandBoundary,
-            ViewModelKey);
-
-        return onOutput.InvokeWithEditContext(editContext);
-    }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -89,8 +62,40 @@ public class OnOutputBatch : ITextEditorTask
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
-            "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
+		//try
+		//{
+            Name = Name + $"_{OutputList.Count}";
+
+            // Flatten 'OutputTextSpanAndOffsetTupleList'
+            var outputTextSpanList = new List<TextEditorTextSpan>();
+            foreach (var tuple in OutputTextSpanAndOffsetTupleList)
+            {
+                outputTextSpanList.AddRange(tuple.OutputTextSpanList.Select(x => x with
+                {
+                    StartingIndexInclusive = x.StartingIndexInclusive + tuple.OutputOffset - BatchOutputOffset,
+                    EndingIndexExclusive = x.EndingIndexExclusive + tuple.OutputOffset - BatchOutputOffset,
+                }));
+            }
+
+            var onOutput = new OnOutput(
+                BatchOutputOffset,
+                string.Join(string.Empty, OutputList),
+                outputTextSpanList,
+                ResourceUri,
+                TextEditorService,
+                TerminalCommand,
+                _terminalCommandBoundary,
+                ViewModelKey)
+            {
+                EditContext = EditContext
+            };
+
+            return onOutput.HandleEvent(cancellationToken);
+		//}
+		//finally
+		//{
+		//	await EditContext.TextEditorService.FinalizePost(EditContext);
+		//}
     }
 }
 

@@ -29,27 +29,9 @@ public class OnWheel : ITextEditorTask
     public WheelEventArgs WheelEventArgs { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
+	public IEditContext EditContext { get; set; }
+
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
-
-    public Task InvokeWithEditContext(IEditContext editContext)
-    {
-        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-        if (viewModelModifier is null)
-            return Task.CompletedTask;
-
-        if (WheelEventArgs.ShiftKey)
-        {
-            return editContext.TextEditorService.ViewModelApi
-                .MutateScrollHorizontalPositionFactory(ViewModelKey, WheelEventArgs.DeltaY)
-                .Invoke(editContext);
-        }
-        else
-        {
-            return editContext.TextEditorService.ViewModelApi
-                .MutateScrollVerticalPositionFactory(ViewModelKey, WheelEventArgs.DeltaY)
-                .Invoke(editContext);
-        }
-    }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -121,9 +103,30 @@ public class OnWheel : ITextEditorTask
         return null;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public async Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
-            "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
+		try
+		{
+            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+            if (viewModelModifier is null)
+                return;
+
+            if (WheelEventArgs.ShiftKey)
+            {
+                await EditContext.TextEditorService.ViewModelApi
+                    .MutateScrollHorizontalPositionFactory(ViewModelKey, WheelEventArgs.DeltaY)
+                    .Invoke(EditContext);
+            }
+            else
+            {
+                await EditContext.TextEditorService.ViewModelApi
+                    .MutateScrollVerticalPositionFactory(ViewModelKey, WheelEventArgs.DeltaY)
+                    .Invoke(EditContext);
+            }
+		}
+		finally
+		{
+			await EditContext.TextEditorService.FinalizePost(EditContext);
+		}
     }
 }

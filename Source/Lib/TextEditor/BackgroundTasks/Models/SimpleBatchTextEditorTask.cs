@@ -42,15 +42,7 @@ public sealed class SimpleBatchTextEditorTask : ITextEditorTask
     public TimeSpan ThrottleTimeSpan { get; set; }
     public Task? WorkProgress { get; set; }
 
-    public async Task InvokeWithEditContext(IEditContext editContext)
-    {
-        foreach (var edit in _textEditorEditList)
-        {
-            await edit
-                .Invoke(editContext)
-                .ConfigureAwait(false);
-        }
-    }
+	public IEditContext EditContext { get; set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -62,9 +54,20 @@ public sealed class SimpleBatchTextEditorTask : ITextEditorTask
         return oldSimpleBatchTextEditorTask;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public async Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
-            "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
+		try
+		{
+			foreach (var edit in _textEditorEditList)
+	        {
+	            await edit
+	                .Invoke(EditContext)
+	                .ConfigureAwait(false);
+	        }
+		}
+		finally
+		{
+			await EditContext.TextEditorService.FinalizePost(EditContext);
+		}
     }
 }

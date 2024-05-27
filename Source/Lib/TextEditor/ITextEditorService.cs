@@ -70,4 +70,6 @@ public partial interface ITextEditorService
     /// will update any state that was modified, and trigger re-renders for the UI.
     /// </summary>
     public Task Post(ITextEditorTask textEditorTask);
+
+	public Task FinalizePost(IEditContext editContext);
 }

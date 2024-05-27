@@ -55,6 +55,8 @@ public class OnKeyDown : ITextEditorTask
     public KeyboardEventArgs KeyboardEventArgs { get; }
     public CommandNoType? Command { get; }
 
+	public IEditContext EditContext { get; set; }
+
     /// <summary>
     /// The initial enqueueing of this throttle event might result in an incorrect <see cref="TentativeKeyboardEventArgsKind"/>
     /// This is due to the selection being checked, prior to the previous UI events that came before this have been handled.<br/><br/>
@@ -75,140 +77,6 @@ public class OnKeyDown : ITextEditorTask
 
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
-
-    public async Task InvokeWithEditContext(IEditContext editContext)
-    {
-        var eventName = string.Empty;
-        {
-            if (TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Command &&
-                Command is not null)
-            {
-                eventName = Command.InternalIdentifier;
-            }
-            else
-            {
-                eventName = KeyboardEventArgs.Key;
-
-                if (string.IsNullOrWhiteSpace(eventName))
-                    eventName = KeyboardEventArgs.Code;
-            }
-        }
-
-        var modelModifier = editContext.GetModelModifier(ResourceUri);
-        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-            return;
-
-        // The initial enqueueing of this throttle event might result in an incorrect KeyboardEventArgsKind
-        // This is due to the selection being checked, prior to the previous UI events that came before this have been handled.
-        //
-        // It is possible a user might at the moment of pressing a key, not have a selection.
-        // But have a previous event pending, that will result in a future selection when this event is handled.
-        var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
-
-        var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-            _events, KeyboardEventArgs, definiteHasSelection, _events.TextEditorService, out var command);
-
-        var shouldInvokeAfterOnKeyDownAsync = false;
-
-		Console.WriteLine($"definiteKeyboardEventArgsKind: {definiteKeyboardEventArgsKind}");
-
-        switch (definiteKeyboardEventArgsKind)
-        {
-            case KeyboardEventArgsKind.Command:
-                shouldInvokeAfterOnKeyDownAsync = true;
-
-                await command.CommandFunc.Invoke(new TextEditorCommandArgs(
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        definiteHasSelection,
-                        _events.ClipboardService,
-                        _events.TextEditorService,
-                        _events.Options,
-                        _events,
-                        _events.HandleMouseStoppedMovingEventAsync,
-                        _events.JsRuntime,
-                        _events.Dispatcher,
-                        _events.ServiceProvider,
-                        _events.TextEditorConfig))
-                    .ConfigureAwait(false);
-                break;
-            case KeyboardEventArgsKind.Movement:
-                if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == KeyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == KeyboardEventArgs.Key) &&
-                     _events.CursorDisplay is not null && _events.CursorDisplay.MenuKind == MenuKind.AutoCompleteMenu)
-                {
-                    await _events.CursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
-                }
-                else
-                {
-                    await _events.TextEditorService.ViewModelApi.MoveCursorFactory(
-                            KeyboardEventArgs,
-                            modelModifier.ResourceUri,
-                            viewModelModifier.ViewModel.ViewModelKey)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
-
-                    await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
-                        .ConfigureAwait(false);
-                }
-                break;
-            case KeyboardEventArgsKind.ContextMenu:
-                await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.ContextMenu) ?? Task.CompletedTask)
-                    .ConfigureAwait(false);
-                break;
-            case KeyboardEventArgsKind.Text:
-            case KeyboardEventArgsKind.Other:
-                shouldInvokeAfterOnKeyDownAsync = true;
-
-                if (!_events.IsAutocompleteMenuInvoker(KeyboardEventArgs))
-                {
-                    if (KeyboardKeyFacts.MetaKeys.ESCAPE == KeyboardEventArgs.Key ||
-                        KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
-                        KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key ||
-                        !KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
-                    {
-                        await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
-                            .ConfigureAwait(false);
-                    }
-                }
-
-                _events.TooltipViewModel = null;
-
-                await _events.TextEditorService.ModelApi.HandleKeyboardEventFactory(
-                        ResourceUri,
-                        ViewModelKey,
-                        KeyboardEventArgs,
-                        CancellationToken.None)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
-                break;
-        }
-
-        if (shouldInvokeAfterOnKeyDownAsync)
-        {
-            if (command is null ||
-                command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView)
-            {
-                viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
-            }
-
-            var cursorDisplay = _events.CursorDisplay;
-
-            if (cursorDisplay is not null)
-            {
-                await _events.HandleAfterOnKeyDownAsyncFactory(
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        KeyboardEventArgs,
-                        cursorDisplay.SetShouldDisplayMenuAsync)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
-            }
-        }
-    }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -376,10 +244,145 @@ public class OnKeyDown : ITextEditorTask
         return null;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public async Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
-            "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
+		try
+		{
+            var eventName = string.Empty;
+            {
+                if (TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Command &&
+                    Command is not null)
+                {
+                    eventName = Command.InternalIdentifier;
+                }
+                else
+                {
+                    eventName = KeyboardEventArgs.Key;
+
+                    if (string.IsNullOrWhiteSpace(eventName))
+                        eventName = KeyboardEventArgs.Code;
+                }
+            }
+
+            var modelModifier = EditContext.GetModelModifier(ResourceUri);
+            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+            var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            // The initial enqueueing of this throttle event might result in an incorrect KeyboardEventArgsKind
+            // This is due to the selection being checked, prior to the previous UI events that came before this have been handled.
+            //
+            // It is possible a user might at the moment of pressing a key, not have a selection.
+            // But have a previous event pending, that will result in a future selection when this event is handled.
+            var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+
+            var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
+                _events, KeyboardEventArgs, definiteHasSelection, _events.TextEditorService, out var command);
+
+            var shouldInvokeAfterOnKeyDownAsync = false;
+
+            Console.WriteLine($"definiteKeyboardEventArgsKind: {definiteKeyboardEventArgsKind}");
+
+            switch (definiteKeyboardEventArgsKind)
+            {
+                case KeyboardEventArgsKind.Command:
+                    shouldInvokeAfterOnKeyDownAsync = true;
+
+                    await command.CommandFunc.Invoke(new TextEditorCommandArgs(
+                            modelModifier.ResourceUri,
+                            viewModelModifier.ViewModel.ViewModelKey,
+                            definiteHasSelection,
+                            _events.ClipboardService,
+                            _events.TextEditorService,
+                            _events.Options,
+                            _events,
+                            _events.HandleMouseStoppedMovingEventAsync,
+                            _events.JsRuntime,
+                            _events.Dispatcher,
+                            _events.ServiceProvider,
+                            _events.TextEditorConfig))
+                        .ConfigureAwait(false);
+                    break;
+                case KeyboardEventArgsKind.Movement:
+                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == KeyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == KeyboardEventArgs.Key) &&
+                        _events.CursorDisplay is not null && _events.CursorDisplay.MenuKind == MenuKind.AutoCompleteMenu)
+                    {
+                        await _events.CursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await _events.TextEditorService.ViewModelApi.MoveCursorFactory(
+                                KeyboardEventArgs,
+                                modelModifier.ResourceUri,
+                                viewModelModifier.ViewModel.ViewModelKey)
+                            .Invoke(EditContext)
+                            .ConfigureAwait(false);
+
+                        await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
+                            .ConfigureAwait(false);
+                    }
+                    break;
+                case KeyboardEventArgsKind.ContextMenu:
+                    await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.ContextMenu) ?? Task.CompletedTask)
+                        .ConfigureAwait(false);
+                    break;
+                case KeyboardEventArgsKind.Text:
+                case KeyboardEventArgsKind.Other:
+                    shouldInvokeAfterOnKeyDownAsync = true;
+
+                    if (!_events.IsAutocompleteMenuInvoker(KeyboardEventArgs))
+                    {
+                        if (KeyboardKeyFacts.MetaKeys.ESCAPE == KeyboardEventArgs.Key ||
+                            KeyboardKeyFacts.MetaKeys.BACKSPACE == KeyboardEventArgs.Key ||
+                            KeyboardKeyFacts.MetaKeys.DELETE == KeyboardEventArgs.Key ||
+                            !KeyboardKeyFacts.IsMetaKey(KeyboardEventArgs))
+                        {
+                            await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
+                                .ConfigureAwait(false);
+                        }
+                    }
+
+                    _events.TooltipViewModel = null;
+
+                    await _events.TextEditorService.ModelApi.HandleKeyboardEventFactory(
+                            ResourceUri,
+                            ViewModelKey,
+                            KeyboardEventArgs,
+                            CancellationToken.None)
+                        .Invoke(EditContext)
+                        .ConfigureAwait(false);
+                    break;
+            }
+
+            if (shouldInvokeAfterOnKeyDownAsync)
+            {
+                if (command is null ||
+                    command is TextEditorCommand commandTextEditor && commandTextEditor.ShouldScrollCursorIntoView)
+                {
+                    viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+                }
+
+                var cursorDisplay = _events.CursorDisplay;
+
+                if (cursorDisplay is not null)
+                {
+                    await _events.HandleAfterOnKeyDownAsyncFactory(
+                            modelModifier.ResourceUri,
+                            viewModelModifier.ViewModel.ViewModelKey,
+                            KeyboardEventArgs,
+                            cursorDisplay.SetShouldDisplayMenuAsync)
+                        .Invoke(EditContext)
+                        .ConfigureAwait(false);
+                }
+            }
+		}
+		finally
+		{
+			await EditContext.TextEditorService.FinalizePost(EditContext);
+		}
     }
 
     private bool KeyAndModifiersAreEqual(KeyboardEventArgs x, KeyboardEventArgs y)

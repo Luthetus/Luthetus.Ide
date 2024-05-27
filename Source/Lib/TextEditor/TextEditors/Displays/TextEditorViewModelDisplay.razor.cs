@@ -538,8 +538,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostSimpleBatch(
+        await TextEditorService.PostTakeMostRecent(
                 nameof(QueueRemeasureBackgroundTask),
+				modelResourceUri,
+				viewModelKey.Value,
                 TextEditorService.ViewModelApi.RemeasureFactory(
                     modelResourceUri,
                     viewModelKey.Value,
@@ -558,8 +560,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostSimpleBatch(
+        await TextEditorService.PostTakeMostRecent(
                 nameof(QueueCalculateVirtualizationResultBackgroundTask),
+				modelResourceUri,
+				viewModelKey.Value,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     modelResourceUri,
                     viewModelKey.Value,
