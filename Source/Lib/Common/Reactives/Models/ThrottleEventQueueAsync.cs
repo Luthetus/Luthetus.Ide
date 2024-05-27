@@ -49,7 +49,7 @@ public class ThrottleEventQueueAsync
     /// 
     /// Each invocation of the 'batchFunc' will replace the 'to-be-queued' unless the 'batch event' returned was null.<br/><br/>
     /// </summary>
-    public async Task EnqueueAsync(IBackgroundTask recentEvent)
+    public async Task EnqueueAsync(IBackgroundTask downstreamEvent)
     {
         if (IsStoppingFurtherEnqueues)
             throw new LuthetusCommonException($"Cannot enqueue on a stopped {nameof(ThrottleEventQueueAsync)}");
@@ -58,8 +58,6 @@ public class ThrottleEventQueueAsync
         {
             await _modifyQueueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
-            var queueLengthIncreased = true;
-        
 			// TODO: This looks very incorrect. (2025-05-27)
 			// ============================================
 			// Why am I looping through the '_throttleEventList',
@@ -85,28 +83,23 @@ public class ThrottleEventQueueAsync
 			//
 			// But, this way you'd avoid any of the 'TentativeKeyboardEventArgsKind'
 			// confusion.
-            for (int i = _throttleEventList.Count - 1; i >= 0; i--)
-            {
-                IBackgroundTask? oldEvent = _throttleEventList[i];
-                var batchEvent = recentEvent.BatchOrDefault(oldEvent);
+			if (_throttleEventList.Count > 0)
+			{
+				var upstreamEvent = _throttleEventList[^1];
+				// TODO: Rename 'BatchOrDefault' to 'TryMergeIntoUpstream'
+				var batchEvent = downstreamEvent.BatchOrDefault(upstreamEvent);
 
-                if (batchEvent is null)
-                    break;
+				if (batchEvent is not null)
+                {
+					_throttleEventList[^1] = batchEvent;
+					// The batching was successful so return early.
+            		return;
+				}
+			}
 
-                // In this case, either the current event stays,
-                // or it is replaced with the new event.
-                //
-                // Therefore the que length does not change.
-                queueLengthIncreased = false;
-
-                _throttleEventList.RemoveAt(i);
-                recentEvent = batchEvent;
-            }
-        
-            _throttleEventList.Add(recentEvent);
-
-            if (queueLengthIncreased)
-                _dequeueSemaphoreSlim.Release();
+			// The batching was NOT successful so add to the queue.
+			_throttleEventList.Add(downstreamEvent);
+			_dequeueSemaphoreSlim.Release();
         }
         finally
         {
