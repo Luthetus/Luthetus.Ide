@@ -24,7 +24,7 @@ public class OnWheelBatch : ITextEditorTask
 
     public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name => nameof(OnWheelBatch) + $"_{WheelEventArgsList.Count}";
+    public string Name { get; private set; } = nameof(OnWheelBatch);
     public Task? WorkProgress { get; }
     public List<WheelEventArgs> WheelEventArgsList { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -42,6 +42,8 @@ public class OnWheelBatch : ITextEditorTask
     {
 		try
 		{
+			Name += $"_{WheelEventArgsList.Count}";
+
             var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
 
             if (viewModelModifier is null)

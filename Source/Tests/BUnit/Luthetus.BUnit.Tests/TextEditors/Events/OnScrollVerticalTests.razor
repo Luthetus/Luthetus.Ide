@@ -19,24 +19,24 @@
 @code
 {
 	[Fact]
-	public async Task BatchOrDefault_OnScrollHorizontal_OnScrollHorizontal()
+	public async Task BatchOrDefault_OnScrollVertical_OnScrollVertical()
     {
-		var testData = OnScrollHorizontalTestsInitialize();
+		var testData = OnScrollVerticalTestsInitialize();
 
 		// Assert that 'AllText' does not change, since this event should do nothing.        
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
-		var upstreamOnScrollHorizontal = new OnScrollHorizontal(
+		var upstreamOnScrollVertical = new OnScrollVertical(
 			10,
 	        testData.Events,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(upstreamOnScrollHorizontal);
+		testData.TextEditorService.Post(upstreamOnScrollVertical);
 
-		var downstreamOnScrollHorizontal = new OnScrollHorizontal(
+		var downstreamOnScrollVertical = new OnScrollVertical(
 	        20,
 	        testData.Events,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnScrollHorizontal);
+		testData.TextEditorService.Post(downstreamOnScrollVertical);
 
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -44,7 +44,7 @@
 		// Consecutive events of this kind are redundant;
 		// one can just take the most recent, and discard the rest.
 		Assert.Equal(1, queue.CountOfBackgroundTasks);
-		Assert.Equal(downstreamOnScrollHorizontal, queue.BackgroundTasks.Single());
+		Assert.Equal(downstreamOnScrollVertical, queue.BackgroundTasks.Single());
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -56,9 +56,9 @@
     }
 
 	[Fact]
-	public async Task BatchOrDefault_OnScrollHorizontal_SomeDifferentType()
+	public async Task BatchOrDefault_OnScrollVertical_SomeDifferentType()
     {
-		var testData = OnScrollHorizontalTestsInitialize();
+		var testData = OnScrollVerticalTestsInitialize();
 
 		// Assert that 'AllText' does not change, since this event should do nothing.        
 		Assert.Equal(string.Empty, testData.InModel.AllText);
@@ -70,11 +70,11 @@
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(upstreamOnMouseMove);
 
-		var downstreamOnScrollHorizontal = new OnScrollHorizontal(
+		var downstreamOnScrollVertical = new OnScrollVertical(
 	        10,
 	        testData.Events,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnScrollHorizontal);
+		testData.TextEditorService.Post(downstreamOnScrollVertical);
 
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -82,7 +82,7 @@
 		// Do not overwrite an upstream event that is not of the same type.
 		Assert.Equal(2, queue.CountOfBackgroundTasks);
 		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTasks[0]);
-		Assert.Equal(downstreamOnScrollHorizontal, queue.BackgroundTasks[1]);
+		Assert.Equal(downstreamOnScrollVertical, queue.BackgroundTasks[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -96,9 +96,9 @@
 	[Fact]
     public async Task HandleEvent_Result()
     {
-		var testData = OnScrollHorizontalTestsInitialize();
+		var testData = OnScrollVerticalTestsInitialize();
 
-		var onScrollHorizontal = new OnScrollHorizontal(
+		var onScrollVertical = new OnScrollVertical(
 	        10,
 	        testData.Events,
 	        testData.ViewModelKey);
@@ -106,7 +106,7 @@
 		// Assert that 'AllText' does not change, since this event should do nothing.      
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
-		testData.TextEditorService.Post(onScrollHorizontal);
+		testData.TextEditorService.Post(onScrollVertical);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -117,7 +117,7 @@
 		Assert.Equal(string.Empty, outModel.AllText);
     }
 
-	private OnScrollHorizontalTestData OnScrollHorizontalTestsInitialize()
+	private OnScrollVerticalTestData OnScrollVerticalTestsInitialize()
 	{
 		SharedInitializationForTests.Initialize(this);
 		
@@ -154,7 +154,7 @@
 			refTextEditorViewModelDisplay,
 			textEditorService.OptionsStateWrap.Value.Options);
 
-		return new OnScrollHorizontalTestData(
+		return new OnScrollVerticalTestData(
 			cut,
 			refTextEditorViewModelDisplay,
 			events,
@@ -163,9 +163,9 @@
 			textEditorService);
 	}
 
-	private class OnScrollHorizontalTestData
+	private class OnScrollVerticalTestData
 	{
-		public OnScrollHorizontalTestData(
+		public OnScrollVerticalTestData(
 			IRenderedFragment cut,
 			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
 			TextEditorViewModelDisplay.TextEditorEvents events,

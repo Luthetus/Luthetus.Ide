@@ -19,32 +19,41 @@
 @code
 {
 	[Fact]
-	public async Task BatchOrDefault_OnScrollHorizontal_OnScrollHorizontal()
+	public async Task BatchOrDefault_OnWheelBatch_OnWheelBatch()
     {
-		var testData = OnScrollHorizontalTestsInitialize();
+		var testData = OnWheelBatchTestsInitialize();
 
 		// Assert that 'AllText' does not change, since this event should do nothing.        
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
-		var upstreamOnScrollHorizontal = new OnScrollHorizontal(
-			10,
+		var upstreamOnWheelBatch = new OnWheelBatch(
+	        new List<WheelEventArgs>
+			{
+				new WheelEventArgs { DeltaY = 10 },
+				new WheelEventArgs { DeltaY = 10 },
+			},
 	        testData.Events,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(upstreamOnScrollHorizontal);
+		testData.TextEditorService.Post(upstreamOnWheelBatch);
 
-		var downstreamOnScrollHorizontal = new OnScrollHorizontal(
-	        20,
+		var downstreamOnWheelBatch = new OnWheelBatch(
+	        new List<WheelEventArgs>
+			{
+				new WheelEventArgs { DeltaY = 20 },
+				new WheelEventArgs { DeltaY = 20 },
+			},
 	        testData.Events,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnScrollHorizontal);
+		testData.TextEditorService.Post(downstreamOnWheelBatch);
 
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		
-		// Consecutive events of this kind are redundant;
-		// one can just take the most recent, and discard the rest.
-		Assert.Equal(1, queue.CountOfBackgroundTasks);
-		Assert.Equal(downstreamOnScrollHorizontal, queue.BackgroundTasks.Single());
+		// Consecutive events of this kind are not expected to occur naturally.
+		// Therefore, their "batch" method keeps them as is and does nothing.
+		Assert.Equal(2, queue.CountOfBackgroundTasks);
+		Assert.Equal(upstreamOnWheelBatch, queue.BackgroundTasks[0]);
+		Assert.Equal(downstreamOnWheelBatch, queue.BackgroundTasks[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -56,9 +65,9 @@
     }
 
 	[Fact]
-	public async Task BatchOrDefault_OnScrollHorizontal_SomeDifferentType()
+	public async Task BatchOrDefault_OnWheelBatch_SomeDifferentType()
     {
-		var testData = OnScrollHorizontalTestsInitialize();
+		var testData = OnWheelBatchTestsInitialize();
 
 		// Assert that 'AllText' does not change, since this event should do nothing.        
 		Assert.Equal(string.Empty, testData.InModel.AllText);
@@ -70,11 +79,15 @@
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(upstreamOnMouseMove);
 
-		var downstreamOnScrollHorizontal = new OnScrollHorizontal(
-	        10,
+		var downstreamOnWheelBatch = new OnWheelBatch(
+	        new List<WheelEventArgs>
+			{
+				new WheelEventArgs { DeltaY = 10 },
+				new WheelEventArgs { DeltaY = 20 },
+			},
 	        testData.Events,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnScrollHorizontal);
+		testData.TextEditorService.Post(downstreamOnWheelBatch);
 
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -82,7 +95,7 @@
 		// Do not overwrite an upstream event that is not of the same type.
 		Assert.Equal(2, queue.CountOfBackgroundTasks);
 		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTasks[0]);
-		Assert.Equal(downstreamOnScrollHorizontal, queue.BackgroundTasks[1]);
+		Assert.Equal(downstreamOnWheelBatch, queue.BackgroundTasks[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -96,17 +109,21 @@
 	[Fact]
     public async Task HandleEvent_Result()
     {
-		var testData = OnScrollHorizontalTestsInitialize();
+		var testData = OnWheelBatchTestsInitialize();
 
-		var onScrollHorizontal = new OnScrollHorizontal(
-	        10,
+		var onWheelBatch = new OnWheelBatch(
+	        new List<WheelEventArgs>
+			{
+				new WheelEventArgs { DeltaY = 10 },
+				new WheelEventArgs { DeltaY = 20 },
+			},
 	        testData.Events,
 	        testData.ViewModelKey);
   
 		// Assert that 'AllText' does not change, since this event should do nothing.      
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
-		testData.TextEditorService.Post(onScrollHorizontal);
+		testData.TextEditorService.Post(onWheelBatch);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -117,7 +134,7 @@
 		Assert.Equal(string.Empty, outModel.AllText);
     }
 
-	private OnScrollHorizontalTestData OnScrollHorizontalTestsInitialize()
+	private OnWheelBatchTestData OnWheelBatchTestsInitialize()
 	{
 		SharedInitializationForTests.Initialize(this);
 		
@@ -154,7 +171,7 @@
 			refTextEditorViewModelDisplay,
 			textEditorService.OptionsStateWrap.Value.Options);
 
-		return new OnScrollHorizontalTestData(
+		return new OnWheelBatchTestData(
 			cut,
 			refTextEditorViewModelDisplay,
 			events,
@@ -163,9 +180,9 @@
 			textEditorService);
 	}
 
-	private class OnScrollHorizontalTestData
+	private class OnWheelBatchTestData
 	{
-		public OnScrollHorizontalTestData(
+		public OnWheelBatchTestData(
 			IRenderedFragment cut,
 			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
 			TextEditorViewModelDisplay.TextEditorEvents events,

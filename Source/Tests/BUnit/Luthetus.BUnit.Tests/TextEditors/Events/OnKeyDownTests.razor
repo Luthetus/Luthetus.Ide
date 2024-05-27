@@ -19,48 +19,52 @@
 @code
 {
 	[Fact]
-	public async Task BatchOrDefault_OnScrollHorizontal_OnScrollHorizontal()
+	public async Task BatchOrDefault_OnKeyDown_OnKeyDown()
     {
-		var testData = OnScrollHorizontalTestsInitialize();
+		var testData = OnKeyDownTestsInitialize();
 
-		// Assert that 'AllText' does not change, since this event should do nothing.        
+		// Assert that 'AllText' changes, since this event should write text.
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
-		var upstreamOnScrollHorizontal = new OnScrollHorizontal(
-			10,
+		var upstreamOnKeyDown = new OnKeyDown(
 	        testData.Events,
+	        new KeyboardEventArgs { Key = "a", Code = "KeyA" },
+	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(upstreamOnScrollHorizontal);
+		testData.TextEditorService.Post(upstreamOnKeyDown);
 
-		var downstreamOnScrollHorizontal = new OnScrollHorizontal(
-	        20,
+		var downstreamOnKeyDown = new OnKeyDown(
 	        testData.Events,
+	        new KeyboardEventArgs { Key = "b", Code = "KeyB" },
+	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnScrollHorizontal);
+		testData.TextEditorService.Post(downstreamOnKeyDown);
 
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		
-		// Consecutive events of this kind are redundant;
-		// one can just take the most recent, and discard the rest.
+		// Consecutive events of this kind are batched.
 		Assert.Equal(1, queue.CountOfBackgroundTasks);
-		Assert.Equal(downstreamOnScrollHorizontal, queue.BackgroundTasks.Single());
+		var onKeyDownBatch = (OnKeyDownBatch)queue.BackgroundTasks.Single();
+		Assert.Equal(2, onKeyDownBatch.ThrottleEventOnKeyDownList.Count);
+		Assert.Equal(upstreamOnKeyDown, onKeyDownBatch.ThrottleEventOnKeyDownList[0]);
+		Assert.Equal(downstreamOnKeyDown, onKeyDownBatch.ThrottleEventOnKeyDownList[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
         
 		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
 
-		// Assert that 'AllText' does not change, since this event should do nothing.        
-		Assert.Equal(string.Empty, outModel.AllText);
+		// Assert that 'AllText' changes, since this event should write text.
+		Assert.Equal("ab", outModel.AllText);
     }
 
 	[Fact]
-	public async Task BatchOrDefault_OnScrollHorizontal_SomeDifferentType()
+	public async Task BatchOrDefault_OnKeyDown_SomeDifferentType()
     {
-		var testData = OnScrollHorizontalTestsInitialize();
+		var testData = OnKeyDownTestsInitialize();
 
-		// Assert that 'AllText' does not change, since this event should do nothing.        
+		// Assert that 'AllText' changes, since this event should write text.
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
 		var upstreamOnMouseMove = new OnMouseMove(
@@ -70,11 +74,12 @@
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(upstreamOnMouseMove);
 
-		var downstreamOnScrollHorizontal = new OnScrollHorizontal(
-	        10,
+		var downstreamOnKeyDown = new OnKeyDown(
 	        testData.Events,
+	        new KeyboardEventArgs { Key = "a", Code = "KeyA" },
+	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
-		testData.TextEditorService.Post(downstreamOnScrollHorizontal);
+		testData.TextEditorService.Post(downstreamOnKeyDown);
 
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -82,42 +87,43 @@
 		// Do not overwrite an upstream event that is not of the same type.
 		Assert.Equal(2, queue.CountOfBackgroundTasks);
 		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTasks[0]);
-		Assert.Equal(downstreamOnScrollHorizontal, queue.BackgroundTasks[1]);
+		Assert.Equal(downstreamOnKeyDown, queue.BackgroundTasks[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
         
 		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
 
-		// Assert that 'AllText' does not change, since this event should do nothing.        
-		Assert.Equal(string.Empty, outModel.AllText);
+		// Assert that 'AllText' changes, since this event should write text.
+		Assert.Equal("a", outModel.AllText);
     }
 
 	[Fact]
     public async Task HandleEvent_Result()
     {
-		var testData = OnScrollHorizontalTestsInitialize();
+		var testData = OnKeyDownTestsInitialize();
 
-		var onScrollHorizontal = new OnScrollHorizontal(
-	        10,
+		var onKeyDown = new OnKeyDown(
 	        testData.Events,
+	        new KeyboardEventArgs { Key = "a", Code = "KeyA" },
+	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
   
-		// Assert that 'AllText' does not change, since this event should do nothing.      
+		// Assert that 'AllText' changes, since this event should write text.
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
-		testData.TextEditorService.Post(onScrollHorizontal);
+		testData.TextEditorService.Post(onKeyDown);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
         
 		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
 
-		// Assert that 'AllText' does not change, since this event should do nothing.        
-		Assert.Equal(string.Empty, outModel.AllText);
+		// Assert that 'AllText' changes, since this event should write text.
+		Assert.Equal("a", outModel.AllText);
     }
 
-	private OnScrollHorizontalTestData OnScrollHorizontalTestsInitialize()
+	private OnKeyDownTestData OnKeyDownTestsInitialize()
 	{
 		SharedInitializationForTests.Initialize(this);
 		
@@ -154,7 +160,7 @@
 			refTextEditorViewModelDisplay,
 			textEditorService.OptionsStateWrap.Value.Options);
 
-		return new OnScrollHorizontalTestData(
+		return new OnKeyDownTestData(
 			cut,
 			refTextEditorViewModelDisplay,
 			events,
@@ -163,9 +169,9 @@
 			textEditorService);
 	}
 
-	private class OnScrollHorizontalTestData
+	private class OnKeyDownTestData
 	{
-		public OnScrollHorizontalTestData(
+		public OnKeyDownTestData(
 			IRenderedFragment cut,
 			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
 			TextEditorViewModelDisplay.TextEditorEvents events,

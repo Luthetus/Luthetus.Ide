@@ -60,6 +60,31 @@ public class ThrottleEventQueueAsync
 
             var queueLengthIncreased = true;
         
+			// TODO: This look very incorrect. (2025-05-27)
+			// ============================================
+			// Why am I looping through the '_throttleEventList',
+			// as opposed to just batching with the most recently
+			// enqueued thing prior to "me"?
+			// --------------------------------------------------
+			// There is likely a lot of shifting within the '_throttleEventList',
+			// when tasks are enqueued/dequeued.
+			// Perhaps a different datastructure would be preferred?
+			// Is a linked list a good idea here?
+			// --------------------------------------------------
+			// The OnKeyDown events have a special issue,
+			// in that they're not batchable until the time of their dequeueing,
+			// because the command that is invoked as a result of an OnKeyDown event
+			// is dependent on what layer the keymap is in.
+			//
+			// That being that, one can still batch all OnKeyDown events together
+			// without the intent of performing an optimized calculation, but instead
+			// a foreach-loop-batching.
+			//
+			// During the foreach-loop-batching, you can still try to optimize calculations
+			// where consecutive OnKeyDown events can be combined as well.
+			//
+			// But, this way you'd avoid any of the 'TentativeKeyboardEventArgsKind'
+			// confusion.
             for (int i = _throttleEventList.Count - 1; i >= 0; i--)
             {
                 IBackgroundTask? oldEvent = _throttleEventList[i];
