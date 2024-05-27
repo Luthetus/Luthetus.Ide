@@ -60,7 +60,7 @@ public class ThrottleEventQueueAsync
 
             var queueLengthIncreased = true;
         
-			// TODO: This look very incorrect. (2025-05-27)
+			// TODO: This looks very incorrect. (2025-05-27)
 			// ============================================
 			// Why am I looping through the '_throttleEventList',
 			// as opposed to just batching with the most recently
