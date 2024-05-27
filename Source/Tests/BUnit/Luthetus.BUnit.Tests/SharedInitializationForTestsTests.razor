@@ -70,6 +70,7 @@
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var count = 0;
 
+		// This await is in regards to the Semaphore that provides the queue with thread safety.
 		await backgroundTaskService.EnqueueAsync(
 			Key<BackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
@@ -80,6 +81,10 @@
 				return Task.CompletedTask;
 			});
 
+		// The background tasks have not yet been given a chance to execute.
+		Assert.Equal(0, count);
+
+		// Give the background tasks a chance to execute.
 		await backgroundTasksHandle.Stop();
 
 		Assert.Equal(1, count);
