@@ -174,12 +174,9 @@ public class LuthetusIdeGitBackgroundTaskApi
 		
 		        var filesBuilder =  new StringBuilder();
 		
-		        foreach (var fileAbsolutePath in localGitState.SelectedFileList)
+		        foreach (var gitFile in localGitState.SelectedFileList)
 		        {
-		            var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
-		                localGitState.Repo.AbsolutePath,
-		                fileAbsolutePath.AbsolutePath,
-		                _environmentProvider);
+		            var relativePathString = gitFile.RelativePathString;
 		
 		            if (_environmentProvider.DirectorySeparatorChar == '\\')
 		            {
@@ -233,12 +230,9 @@ public class LuthetusIdeGitBackgroundTaskApi
 		
 		        var filesBuilder =  new StringBuilder();
 		
-		        foreach (var fileAbsolutePath in localGitState.SelectedFileList)
+		        foreach (var gitFile in localGitState.SelectedFileList)
 		        {
-		            var relativePathString = PathHelper.GetRelativeFromTwoAbsolutes(
-		                localGitState.Repo.AbsolutePath,
-		                fileAbsolutePath.AbsolutePath,
-		                _environmentProvider);
+		            var relativePathString = gitFile.RelativePathString;
 		
 		            if (_environmentProvider.DirectorySeparatorChar == '\\')
 		            {

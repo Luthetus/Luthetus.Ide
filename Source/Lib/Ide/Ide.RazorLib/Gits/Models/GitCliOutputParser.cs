@@ -390,7 +390,7 @@ public class GitCliOutputParser : IOutputParser
 
                             var relativePathString = textSpan.GetText();
 
-                            var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+							var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 								localRepo.AbsolutePath,
                                 relativePathString,
                                 _environmentProvider);
@@ -410,7 +410,9 @@ public class GitCliOutputParser : IOutputParser
 							{
 								if (gitDirtyString == "modified")
 									gitDirtyReason = GitDirtyReason.Modified;
-								else if (gitDirtyString == "added")
+								else if (gitDirtyString == "added") // There is no "added" its "new file" in the output.
+									gitDirtyReason = GitDirtyReason.Added;
+								else if (gitDirtyString == "new file")
 									gitDirtyReason = GitDirtyReason.Added;
 								else if (gitDirtyString == "deleted")
 									gitDirtyReason = GitDirtyReason.Deleted;
