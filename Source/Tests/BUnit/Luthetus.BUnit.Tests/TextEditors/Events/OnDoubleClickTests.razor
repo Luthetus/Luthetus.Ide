@@ -1,0 +1,218 @@
+@using Fluxor
+@using Luthetus.Common.RazorLib.Installations.Models
+@using Luthetus.Common.RazorLib.BackgroundTasks.Models
+@using Luthetus.Common.RazorLib.Dialogs.Models
+@using Luthetus.Common.RazorLib.Dialogs.Displays
+@using Luthetus.Common.RazorLib.Dynamics.Models
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.Common.RazorLib.Notifications.Displays
+@using Luthetus.Common.RazorLib.Notifications.Models
+@using Luthetus.TextEditor.RazorLib
+@using Luthetus.TextEditor.RazorLib.Events.Models
+@using Luthetus.TextEditor.RazorLib.Installations.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.Lexes.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.Ide.RazorLib.Installations.Models
+
+@inherits TestContext
+@code
+{
+	[Fact]
+	public async Task BatchOrDefault_OnDoubleClick_OnDoubleClick()
+    {
+		var testData = OnDoubleClickTestsInitialize();
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		var upstreamOnDoubleClick = new OnDoubleClick(
+	        new MouseEventArgs { },
+	        testData.Events,
+	        testData.InModel.ResourceUri,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(upstreamOnDoubleClick);
+
+		var downstreamOnDoubleClick = new OnDoubleClick(
+	        new MouseEventArgs { },
+	        testData.Events,
+	        testData.InModel.ResourceUri,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(downstreamOnDoubleClick);
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		
+		// Consecutive events of this kind are redundant;
+		// one can just take the most recent, and discard the rest.
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTasks.Single());
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+
+	[Fact]
+	public async Task BatchOrDefault_OnDoubleClick_SomeDifferentType()
+    {
+		var testData = OnDoubleClickTestsInitialize();
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		var upstreamOnMouseMove = new OnMouseMove(
+	        new MouseEventArgs { },
+	        testData.Events,
+	        testData.InModel.ResourceUri,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(upstreamOnMouseMove);
+
+		var downstreamOnDoubleClick = new OnDoubleClick(
+	        new MouseEventArgs { },
+	        testData.Events,
+	        testData.InModel.ResourceUri,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(downstreamOnDoubleClick);
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		
+		// Do not overwrite an upstream event that is not of the same type.
+		Assert.Equal(2, queue.CountOfBackgroundTasks);
+		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTasks[0]);
+		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTasks[1]);
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+
+    public async Task HandleEvent_Null_EditContext()
+	{
+		//Assert.NotNull(EditContext);
+	}
+
+    public async Task HandleEvent_Null_ModelModifer_ViewModelModifer_CursorModifierBag_PrimaryCursorModifer()
+	{
+		//if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+        //          return;
+	}
+
+	public async Task HandleEvent_Not_Left_Click_And_Has_Selected_Text()
+	{
+		//if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
+        //    return; // Not pressing the left mouse button so assume ContextMenu is desired result.
+	}
+
+	public async Task HandleEvent_ShiftKey_Do_Not_Expand_Selection()
+	{
+        //if (MouseEventArgs.ShiftKey)
+        //        return; // Do not expand selection if user is holding shift
+	}
+
+	[Fact]
+    public async Task HandleEvent_Result()
+    {
+		var testData = OnDoubleClickTestsInitialize();
+
+		var onDoubleClick = new OnDoubleClick(
+	        new MouseEventArgs { },
+	        testData.Events,
+	        testData.InModel.ResourceUri,
+	        testData.ViewModelKey);
+  
+		// Assert that 'AllText' does not change, since this event should do nothing.      
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		testData.TextEditorService.Post(onDoubleClick);
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+
+	private OnDoubleClickTestData OnDoubleClickTestsInitialize()
+	{
+		SharedInitializationForTests.Initialize(this);
+		
+		var textEditorService = Services.GetService<ITextEditorService>();
+
+		var resourceUri = new ResourceUri("/unitTesting.txt");
+		var viewModelKey = Key<TextEditorViewModel>.NewKey();
+
+		var inModel = new TextEditorModel(
+	        resourceUri,
+	        DateTime.UtcNow,
+	        "txt",
+	        string.Empty,
+	        null,
+	        null,
+			4_096);
+
+		textEditorService.ModelApi.RegisterCustom(inModel);
+		textEditorService.ViewModelApi.Register(viewModelKey, inModel.ResourceUri, new Category("UnitTests"));
+
+		JSInterop.SetupVoid("luthetusTextEditor.disposeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeVirtualizationIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
+
+		TextEditorViewModelDisplay? refTextEditorViewModelDisplay = null;
+
+		var cut = Render(
+			@<TextEditorViewModelDisplay @ref="refTextEditorViewModelDisplay" TextEditorViewModelKey="viewModelKey"/>);
+
+		Console.WriteLine(cut.GetType());
+
+		var events = new TextEditorViewModelDisplay.TextEditorEvents(
+			refTextEditorViewModelDisplay,
+			textEditorService.OptionsStateWrap.Value.Options);
+
+		return new OnDoubleClickTestData(
+			cut,
+			refTextEditorViewModelDisplay,
+			events,
+			inModel,
+			viewModelKey,
+			textEditorService);
+	}
+
+	private class OnDoubleClickTestData
+	{
+		public OnDoubleClickTestData(
+			IRenderedFragment cut,
+			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
+			TextEditorViewModelDisplay.TextEditorEvents events,
+			TextEditorModel inModel,
+			Key<TextEditorViewModel> viewModelKey,
+			ITextEditorService textEditorService)
+		{
+			Cut = cut;
+			RefTextEditorViewModelDisplay = refTextEditorViewModelDisplay;
+			Events = events;
+			InModel = inModel;
+			ViewModelKey = viewModelKey;
+			TextEditorService = textEditorService;
+		}
+
+		public IRenderedFragment Cut { get; }
+		public TextEditorViewModelDisplay? RefTextEditorViewModelDisplay { get; }
+		public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
+		public TextEditorModel InModel { get; }
+		public Key<TextEditorViewModel> ViewModelKey { get; }
+		public ITextEditorService TextEditorService { get; }
+	}
+}
