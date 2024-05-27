@@ -96,7 +96,10 @@ public class OnKeyDown : ITextEditorTask
                             },
                             TentativeKeyboardEventArgsKind,
                             ResourceUri,
-                            ViewModelKey);
+                            ViewModelKey)
+							{
+								EditContext = EditContext
+							};
                     }
                     break;
                 case KeyboardEventArgsKind.Movement:
@@ -112,7 +115,10 @@ public class OnKeyDown : ITextEditorTask
                             },
                             TentativeKeyboardEventArgsKind,
                             ResourceUri,
-                            ViewModelKey);
+                            ViewModelKey)
+							{
+								EditContext = EditContext
+							};
                     }
                     break;
                 case KeyboardEventArgsKind.Other:
@@ -133,7 +139,10 @@ public class OnKeyDown : ITextEditorTask
                                     },
                                     TentativeKeyboardEventArgsKind,
                                     ResourceUri,
-                                    ViewModelKey);
+                                    ViewModelKey)
+									{
+										EditContext = EditContext
+									};
                             }
                         }
                     }
@@ -152,7 +161,10 @@ public class OnKeyDown : ITextEditorTask
                                 },
                                 TentativeKeyboardEventArgsKind,
                                 ResourceUri,
-                                ViewModelKey);
+                                ViewModelKey)
+								{
+									EditContext = EditContext
+								};
                         }
                     }
                     break;
@@ -174,7 +186,10 @@ public class OnKeyDown : ITextEditorTask
                             },
                             TentativeKeyboardEventArgsKind,
                             ResourceUri,
-                            ViewModelKey);
+                            ViewModelKey)
+							{
+								EditContext = EditContext
+							};
                     }
                     break;
             }
@@ -283,8 +298,6 @@ public class OnKeyDown : ITextEditorTask
                 _events, KeyboardEventArgs, definiteHasSelection, _events.TextEditorService, out var command);
 
             var shouldInvokeAfterOnKeyDownAsync = false;
-
-            Console.WriteLine($"definiteKeyboardEventArgsKind: {definiteKeyboardEventArgsKind}");
 
             switch (definiteKeyboardEventArgsKind)
             {

@@ -88,7 +88,10 @@ public class OnOutput : ITextEditorTask
                 TextEditorService,
                 TerminalCommand,
                 _terminalCommandBoundary,
-                ViewModelKey);
+                ViewModelKey)
+				{
+					EditContext = EditContext
+				};
         }
 
         if (oldEvent is OnOutputBatch oldOnOutputBatch)

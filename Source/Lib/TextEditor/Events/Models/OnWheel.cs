@@ -50,7 +50,10 @@ public class OnWheel : ITextEditorTask
                         WheelEventArgs
                     },
                     _events,
-                    ViewModelKey);
+                    ViewModelKey)
+					{
+						EditContext = EditContext
+					};
             }
             else if (oldEventOnWheel.WheelEventArgs.DeltaY < 0 &&
                      WheelEventArgs.DeltaY < 0)
@@ -62,7 +65,10 @@ public class OnWheel : ITextEditorTask
                         WheelEventArgs
                     },
                     _events,
-                    ViewModelKey);
+                    ViewModelKey)
+					{
+						EditContext = EditContext
+					};
             }
             else if (oldEventOnWheel.WheelEventArgs.DeltaY == 0 &&
                      WheelEventArgs.DeltaY == 0)
@@ -74,7 +80,10 @@ public class OnWheel : ITextEditorTask
                         WheelEventArgs
                     },
                     _events,
-                    ViewModelKey);
+                    ViewModelKey)
+					{
+						EditContext = EditContext
+					};
             }
         }
 
