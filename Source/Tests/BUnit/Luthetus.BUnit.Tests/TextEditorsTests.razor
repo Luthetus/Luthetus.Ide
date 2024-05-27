@@ -8,6 +8,7 @@
 @using Luthetus.Common.RazorLib.Notifications.Displays
 @using Luthetus.Common.RazorLib.Notifications.Models
 @using Luthetus.TextEditor.RazorLib
+@using Luthetus.TextEditor.RazorLib.Events.Models
 @using Luthetus.TextEditor.RazorLib.Installations.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
 @using Luthetus.TextEditor.RazorLib.Lexes.Models
@@ -44,8 +45,23 @@
 		JSInterop.SetupVoid("luthetusTextEditor.initializeVirtualizationIntersectionObserver", _ => true);
 		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
 
-		var cut = Render(@<TextEditorViewModelDisplay TextEditorViewModelKey="viewModelKey"/>);
+		TextEditorViewModelDisplay? refTextEditorViewModelDisplay = null;
 
-		// textEditorService.Post();
+		var cut = Render(
+			@<TextEditorViewModelDisplay @ref="refTextEditorViewModelDisplay" TextEditorViewModelKey="viewModelKey"/>);
+
+		var events = new TextEditorViewModelDisplay.TextEditorEvents(
+			refTextEditorViewModelDisplay,
+			textEditorService.OptionsStateWrap.Value.Options);
+
+		textEditorService.Post(new OnKeyDown(
+			events,
+			new KeyboardEventArgs { Key = "h", Code = "KeyH" },
+			inModel.ResourceUri,
+			viewModelKey));
+
+		var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
+
+		Assert.Equal("h", outModel.AllText);
 	}
 }

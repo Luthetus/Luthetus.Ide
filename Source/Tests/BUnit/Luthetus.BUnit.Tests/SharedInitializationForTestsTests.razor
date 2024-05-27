@@ -60,4 +60,28 @@
 					$"but was {storageService.GetType().Name}");
 		}
 	}
+
+	[Fact]
+	public async Task BackgroundTasksInitializeCorrectly()
+	{
+		SharedInitializationForTests.Initialize(this);
+
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var count = 0;
+
+		await backgroundTaskService.EnqueueAsync(
+			Key<BackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			"Unit Testing",
+			() =>
+			{
+				count++;
+				return Task.CompletedTask;
+			});
+
+		await backgroundTasksHandle.Stop();
+
+		Assert.Equal(1, count);
+	}
 }
