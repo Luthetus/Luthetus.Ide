@@ -1,4 +1,6 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
@@ -7,27 +9,37 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 /// <summary>
 /// This class allows for easy creation of a <see cref="ITextEditorTask"/>, that comes with "redundancy" checking in the queue.
-/// That is, if when enqueueing an instance of this type, the last item in the queue is already an instance of this type
-/// with the same <see cref="Identifier"/>, then this instance will overwrite the last item in
-/// the queue, because the logic has no value if ran many times one after another, therefore, just take the most recent event.
+/// That is, if when enqueueing an instance of this type, the last item in the queue
+/// is an instance of this type, has the same <see cref="Name"/>, <see cref="ResourceUri"/>, and <see cref="ViewModelKey"/>,
+/// then this instance will overwrite the last item in the queue, because the logic has no value if ran many times one after another,
+/// therefore, just take the most recent event.
 /// </summary>
-public sealed class TakeMostRecentTextEditorTask : TakeMostRecentBackgroundTask, ITextEditorTask
+public sealed class TakeMostRecentTextEditorTask : ITextEditorTask
 {
     private readonly TextEditorEdit _textEditorEdit;
 
     public TakeMostRecentTextEditorTask(
-            string name,
-            string identifier,
-            TextEditorEdit textEditorEdit,
-            TimeSpan? throttleTimeSpan = null)
-        : base(name, identifier, _ => Task.CompletedTask, throttleTimeSpan)
+        string name,
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorEdit textEditorEdit,
+        TimeSpan? throttleTimeSpan = null)
     {
         _textEditorEdit = textEditorEdit;
 
         Name = name;
-        Identifier = identifier;
+        ResourceUri = resourceUri;
+        ViewModelKey = ViewModelKey;
         ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
     }
+
+	public string Name { get; set; }
+	public ResourceUri ResourceUri { get; set; }
+    public Key<TextEditorViewModel> ViewModelKey { get; set; }
+    public Key<BackgroundTask> BackgroundTaskKey { get; set; } = Key<BackgroundTask>.NewKey();
+    public Key<BackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public TimeSpan ThrottleTimeSpan { get; set; }
+    public Task? WorkProgress { get; set; }
 
     public async Task InvokeWithEditContext(IEditContext editContext)
     {
@@ -36,7 +48,7 @@ public sealed class TakeMostRecentTextEditorTask : TakeMostRecentBackgroundTask,
             .ConfigureAwait(false);
     }
 
-    public override IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
+    public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
         if (oldEvent is not TakeMostRecentTextEditorTask oldRedundantTextEditorTask)
         {
@@ -44,10 +56,10 @@ public sealed class TakeMostRecentTextEditorTask : TakeMostRecentBackgroundTask,
             return null;
         }
 
-        if (oldRedundantTextEditorTask.Name == Name)
+        if (oldRedundantTextEditorTask.Name == Name &&
+		    oldRedundantTextEditorTask.ResourceUri == ResourceUri &&
+            oldRedundantTextEditorTask.ViewModelKey == ViewModelKey)
         {
-			// TODO: To use the 'Name' here is incorrect.
-			//
             // Keep this event (via replacement)
             return this;
         }
@@ -56,7 +68,7 @@ public sealed class TakeMostRecentTextEditorTask : TakeMostRecentBackgroundTask,
         return null;
     }
 
-    public override Task HandleEvent(CancellationToken cancellationToken)
+    public Task HandleEvent(CancellationToken cancellationToken)
     {
         throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
             "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");

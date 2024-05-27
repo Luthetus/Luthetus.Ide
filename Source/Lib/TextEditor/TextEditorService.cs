@@ -111,26 +111,26 @@ public partial class TextEditorService : ITextEditorService
 
     public Task PostSimpleBatch(
         string name,
-        string identifier,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
         return Post(new SimpleBatchTextEditorTask(
-            $"{name}_sb",
-			identifier,
+            name,
             textEditorEdit,
             throttleTimeSpan));
     }
 
     public Task PostTakeMostRecent(
         string name,
-        string redundancyIdentifier,
+		ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
         return Post(new TakeMostRecentTextEditorTask(
-            $"{name}_tmr",
-            redundancyIdentifier,
+            name,
+			resourceUri,
+            viewModelKey,
             textEditorEdit,
             throttleTimeSpan));
     }

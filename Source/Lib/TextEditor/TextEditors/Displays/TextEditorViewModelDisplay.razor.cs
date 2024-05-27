@@ -469,7 +469,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         await TextEditorService.PostSimpleBatch(
             nameof(QueueRemeasureBackgroundTask),
-            string.Empty,
             async editContext =>
 			{
                 await editContext.TextEditorService.ViewModelApi
@@ -541,7 +540,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         await TextEditorService.PostSimpleBatch(
                 nameof(QueueRemeasureBackgroundTask),
-                string.Empty,
                 TextEditorService.ViewModelApi.RemeasureFactory(
                     modelResourceUri,
                     viewModelKey.Value,
@@ -562,7 +560,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         await TextEditorService.PostSimpleBatch(
                 nameof(QueueCalculateVirtualizationResultBackgroundTask),
-                string.Empty,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     modelResourceUri,
                     viewModelKey.Value,

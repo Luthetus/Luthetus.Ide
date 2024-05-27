@@ -114,6 +114,8 @@ public class OnKeyDown : ITextEditorTask
 
         var shouldInvokeAfterOnKeyDownAsync = false;
 
+		Console.WriteLine($"definiteKeyboardEventArgsKind: {definiteKeyboardEventArgsKind}");
+
         switch (definiteKeyboardEventArgsKind)
         {
             case KeyboardEventArgsKind.Command:

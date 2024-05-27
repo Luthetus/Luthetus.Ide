@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
 
@@ -14,7 +14,6 @@ public static partial class TextEditorCommandVimFacts
 
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(Word),
-                    string.Empty,
                     WordFactory(commandArgs));
             })
         {
@@ -33,7 +32,6 @@ public static partial class TextEditorCommandVimFacts
 
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(End),
-                    string.Empty,
                     EndFactory(commandArgs));
             })
         {
@@ -52,7 +50,6 @@ public static partial class TextEditorCommandVimFacts
 
                 return commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(Back),
-                    string.Empty,
                     BackFactory(commandArgs));
             })
         {
@@ -76,7 +73,6 @@ public static partial class TextEditorCommandVimFacts
 
                     return commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(GetVisualFactory),
-                        string.Empty,
                         VisualFactory(commandArgs));
                 })
             {
@@ -103,7 +99,6 @@ public static partial class TextEditorCommandVimFacts
 
                     return commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(GetVisualLineFactory),
-                        string.Empty,
                         VisualLineFactory(commandArgs));
                 })
             {

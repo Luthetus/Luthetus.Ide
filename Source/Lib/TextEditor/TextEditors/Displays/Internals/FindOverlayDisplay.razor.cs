@@ -48,7 +48,6 @@ public partial class FindOverlayDisplay : ComponentBase
                 {
                     await TextEditorService.PostSimpleBatch(
                         nameof(FindOverlayDisplay),
-                        string.Empty,
                         async editContext =>
                         {
                             var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
@@ -127,7 +126,8 @@ public partial class FindOverlayDisplay : ComponentBase
 
             await TextEditorService.PostTakeMostRecent(
                 nameof(FindOverlayDisplay),
-                nameof(FindOverlayDisplay),
+				RenderBatch.ViewModel.ResourceUri,
+                RenderBatch.ViewModel.ViewModelKey,
                 async editContext =>
                 {
                     var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
@@ -238,7 +238,6 @@ public partial class FindOverlayDisplay : ComponentBase
     {
         await TextEditorService.PostSimpleBatch(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
-            string.Empty,
             async editContext =>
             {
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
