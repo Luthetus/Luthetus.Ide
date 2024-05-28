@@ -90,8 +90,11 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 							return;
 
-						var onKeyDown = new OnKeyDown(
-							new TextEditorEvents(events, new TextEditorKeymapDefault()),
+						// 'fakeEvents' allows for tricking 'OnKeyDownLateBatching' to use the 'TextEditorKeymapDefault'
+						var fakeEvents = new TextEditorEvents(events, new TextEditorKeymapDefault());
+
+						var onKeyDown = new OnKeyDownLateBatching(
+							fakeEvents,
 							keyboardEventArgs,
 							commandArgs.ModelResourceUri,
 							commandArgs.ViewModelKey)
@@ -99,10 +102,15 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							EditContext = editContext
 						};
 
+						var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+	
+			            var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
+	                		fakeEvents, keyboardEventArgs, definiteHasSelection, fakeEvents.TextEditorService, out var command);
+
 						var selectionContainsCurrentRow = false;
 						var selectionRowCount = 0;
 
-						if (onKeyDown.TentativeHasSelection)
+						if (definiteHasSelection)
 						{
 							var selectionBoundPositionIndices = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
 
@@ -119,8 +127,8 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							selectionRowCount = selectionBoundRowIndices.upperRowIndexExclusive - selectionBoundRowIndices.lowerRowIndexInclusive;
                         }
 
-						if (onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Text ||
-							onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
+						if (definiteKeyboardEventArgsKind == KeyboardEventArgsKind.Text ||
+							definiteKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
 						{
                             // Only the last line of the terminal is editable.
                             if (primaryCursorModifier.LineIndex == modelModifier.LineCount - 1)
@@ -212,7 +220,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 										{
                                             // Don't let them type
                                         }
-                                        else if (onKeyDown.TentativeHasSelection &&
+                                        else if (definiteHasSelection &&
                                                  mostRecentWorkingDirectoryText.StartingIndexInclusive >= TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier).lowerPositionIndexInclusive)
                                         {
                                             // Don't let them type
@@ -226,18 +234,18 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                                 }
 							}
 						}
-						else if (onKeyDown.Command is not null)
+						else if (command is not null)
 						{
-							if (onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.Copy.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.PasteCommand.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.SelectAll.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineDown.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineUp.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageDown.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageUp.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageBottom.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
+							if (command.InternalIdentifier == TextEditorCommandDefaultFacts.Copy.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.PasteCommand.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.SelectAll.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineDown.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineUp.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageDown.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageUp.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageBottom.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
                             {
                                 await onKeyDown.HandleEvent(CancellationToken.None).ConfigureAwait(false);
                             }

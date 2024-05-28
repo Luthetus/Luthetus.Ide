@@ -54,7 +54,7 @@
 			refTextEditorViewModelDisplay,
 			textEditorService.OptionsStateWrap.Value.Options);
 
-		textEditorService.Post(new OnKeyDown(
+		textEditorService.Post(new OnKeyDownLateBatching(
 			events,
 			new KeyboardEventArgs { Key = "h", Code = "KeyH" },
 			inModel.ResourceUri,
