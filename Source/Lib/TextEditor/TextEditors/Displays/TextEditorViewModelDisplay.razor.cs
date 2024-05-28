@@ -284,7 +284,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
 			return;
 
-		var onKeyDown = new OnKeyDown(
+		//var onKeyDown = new OnKeyDown(
+        //    _events,
+        //    keyboardEventArgs,
+        //    resourceUri,
+        //    viewModelKey.Value);
+
+		var onKeyDown = new OnKeyDownLateBatching(
             _events,
             keyboardEventArgs,
             resourceUri,
