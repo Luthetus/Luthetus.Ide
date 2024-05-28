@@ -175,7 +175,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         try
         {
-            var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var leftInPixels = 0d;
 
@@ -235,7 +235,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         try
         {
-            var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
                 .ToCssValue();
@@ -271,7 +271,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         try
         {
-            var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var leftInPixels = 0d;
 

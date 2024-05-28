@@ -977,7 +977,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             if (model is null || viewModel is null)
                 return (0, 0);
 
-            var charMeasurements = viewModel.VirtualizationResult.CharAndLineMeasurements;
+            var charMeasurements = viewModel.CharAndLineMeasurements;
 
             var relativeCoordinatesOnClick = await JsRuntime.GetLuthetusTextEditorApi()
                 .GetRelativePosition(

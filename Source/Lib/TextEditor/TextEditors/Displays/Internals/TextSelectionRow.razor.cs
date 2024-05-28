@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
@@ -73,7 +73,7 @@ public partial class TextSelectionRow : ComponentBase
                 fullWidthOfRowIsSelected = false;
             }
 
-            var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var charMeasurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
             var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -152,7 +152,7 @@ public partial class TextSelectionRow : ComponentBase
 
             var widthCssStyleString = "width: ";
 
-            var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
+            var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
 
             var fullWidthValue = elementMeasurements.ScrollWidth;
 

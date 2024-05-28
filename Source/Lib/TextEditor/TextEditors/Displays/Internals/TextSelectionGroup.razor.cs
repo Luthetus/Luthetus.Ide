@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -42,7 +42,7 @@ public partial class TextSelectionGroup : ComponentBase
             fullWidthOfRowIsSelected = false;
         }
 
-        var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+        var charMeasurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
         var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -90,13 +90,13 @@ public partial class TextSelectionGroup : ComponentBase
         }
 
         var widthCssStyleString = "width: ";
-        var fullWidthValue = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollWidth;
+        var fullWidthValue = RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth;
 
-        if (RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width >
-            RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollWidth)
+        if (RenderBatch.ViewModel.TextEditorDimensions.Width >
+            RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth)
         {
             // If content does not fill the viewable width of the Text Editor User Interface
-            fullWidthValue = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width;
+            fullWidthValue = RenderBatch.ViewModel.TextEditorDimensions.Width;
         }
 
         var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();

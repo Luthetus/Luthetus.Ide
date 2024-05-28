@@ -1,4 +1,4 @@
-﻿@using System.Text
+@using System.Text
 @using Luthetus.TextEditor.RazorLib.Rows.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -62,7 +62,7 @@
             @if (GlobalShowNewlines && virtualizedRow.Index < RenderBatch.Model!.LineCount)
             {
                 var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
-                    RenderBatch.ViewModel.VirtualizationResult!.CharAndLineMeasurements.CharacterWidth;
+                    RenderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
 
                 var lengthOfRow = RenderBatch.Model!.GetLineLength(virtualizedRow.Index, true);
 

@@ -44,7 +44,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
 
     private string GetSliderVerticalStyleCss()
     {
-        var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
+        var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
 
         var scrollbarHeightInPixels = elementMeasurements.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
@@ -143,7 +143,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
             var yPosition = relativeCoordinatesOfDragEvent.RelativeY - _relativeCoordinatesOnMouseDown.RelativeY;
             yPosition = Math.Max(0, yPosition);
 
-            var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
+            var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
 
             if (yPosition > elementMeasurements.Height)
                 yPosition = elementMeasurements.Height;

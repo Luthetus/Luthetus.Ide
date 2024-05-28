@@ -1,6 +1,7 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
@@ -32,6 +33,8 @@ public partial class TextEditorViewModelState
                 registerAction.DialogService,
                 registerAction.JsRuntime,
                 VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
+				new TextEditorDimensions(0, 0, 0, 0, 0, 0, 0),
+        		new CharAndLineMeasurements(0, 0),
                 false,
                 registerAction.Category);
 

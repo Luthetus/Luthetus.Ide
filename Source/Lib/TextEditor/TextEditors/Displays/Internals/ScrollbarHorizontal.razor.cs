@@ -44,7 +44,7 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
 
     private string GetScrollbarHorizontalStyleCss()
     {
-        var scrollbarWidthInPixels = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width -
+        var scrollbarWidthInPixels = RenderBatch.ViewModel.TextEditorDimensions.Width -
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         var scrollbarWidthInPixelsInvariantCulture = scrollbarWidthInPixels.ToCssValue();
@@ -55,23 +55,23 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
 
     private string GetSliderHorizontalStyleCss()
     {
-        var scrollbarWidthInPixels = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width -
+        var scrollbarWidthInPixels = RenderBatch.ViewModel.TextEditorDimensions.Width -
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         // Proportional Left
-        var sliderProportionalLeftInPixels = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft *
+        var sliderProportionalLeftInPixels = RenderBatch.ViewModel.TextEditorDimensions.ScrollLeft *
             scrollbarWidthInPixels /
-            RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollWidth;
+            RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth;
 
         var sliderProportionalLeftInPixelsInvariantCulture = sliderProportionalLeftInPixels.ToCssValue();
         var left = $"left: {sliderProportionalLeftInPixelsInvariantCulture}px;";
 
         // Proportional Width
-        var pageWidth = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width;
+        var pageWidth = RenderBatch.ViewModel.TextEditorDimensions.Width;
 
         var sliderProportionalWidthInPixels = pageWidth *
             scrollbarWidthInPixels /
-            RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollWidth;
+            RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth;
 
         var sliderProportionalWidthInPixelsInvariantCulture = sliderProportionalWidthInPixels.ToCssValue();
         var width = $"width: {sliderProportionalWidthInPixelsInvariantCulture}px;";
@@ -152,21 +152,21 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
 
             xPosition = Math.Max(0, xPosition);
 
-            if (xPosition > RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Height)
-                xPosition = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Height;
+            if (xPosition > RenderBatch.ViewModel.TextEditorDimensions.Height)
+                xPosition = RenderBatch.ViewModel.TextEditorDimensions.Height;
 
-            var scrollbarWidthInPixels = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width -
+            var scrollbarWidthInPixels = RenderBatch.ViewModel.TextEditorDimensions.Width -
                 ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
             var scrollLeft = xPosition *
-                RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollWidth /
+                RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth /
                 scrollbarWidthInPixels;
 
-            if (scrollLeft + RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width >
-                RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollWidth)
+            if (scrollLeft + RenderBatch.ViewModel.TextEditorDimensions.Width >
+                RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth)
             {
-                scrollLeft = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.ScrollWidth -
-                    RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements.Width;
+                scrollLeft = RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth -
+                    RenderBatch.ViewModel.TextEditorDimensions.Width;
             }
 
 			var throttleEventOnScrollHorizontal = new OnScrollHorizontal(

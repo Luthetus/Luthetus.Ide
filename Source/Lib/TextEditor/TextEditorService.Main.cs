@@ -235,8 +235,8 @@ public partial class TextEditorService : ITextEditorService
             .SetScrollPosition(
                 viewModel.BodyElementId,
                 viewModel.GutterElementId,
-                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollLeft,
-                viewModel.VirtualizationResult.TextEditorMeasurements.ScrollTop)
+                viewModel.TextEditorDimensions.ScrollLeft,
+                viewModel.TextEditorDimensions.ScrollTop)
             .ConfigureAwait(false);
     }
 }

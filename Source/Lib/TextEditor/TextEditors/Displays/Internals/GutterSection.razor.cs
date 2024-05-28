@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
@@ -13,7 +13,7 @@ public partial class GutterSection : ComponentBase
 
     private string GetGutterStyleCss(int index)
     {
-        var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+        var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
         var topInPixelsInvariantCulture = (index * measurements.LineHeight).ToCssValue();
         var top = $"top: {topInPixelsInvariantCulture}px;";
