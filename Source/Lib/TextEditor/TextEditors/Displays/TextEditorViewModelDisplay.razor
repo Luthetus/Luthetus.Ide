@@ -1,4 +1,4 @@
-﻿@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.TextEditor.RazorLib.Options.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
@@ -17,6 +17,59 @@
 
     var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyle} {renderBatch.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
     var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+}
+
+@if (renderBatch.Model.ResourceUri.Value.Contains("TextEditorService"))
+{
+	<div style="position: fixed; width: 1000px; height: 1000px; background-color: rgb(113, 73, 0); left: 0; top: 0;">
+		@*
+			Working on optimizing the 'ITextEditorViewModelApi.CalculateVirtualizationResultFactory' (2024-05-28).
+			======================================================================================================
+			Going to add a fixed position div that contains buttons to mess with the text editor's scrollbars.
+			
+			A bit tired at the moment but my best shot at wording the issue:
+			"does C# determine the scrollbar, or does JavaScript?"
+			
+			Because, currently the 'ITextEditorViewModelApi.CalculateVirtualizationResultFactory' is
+			measuring what JavaScript says the scrollbar is everytime it is invoked.
+	
+			I commented out this "measuring of the scrollbar with JavaScript",
+			to see what would happen.
+	
+			A rather sizeable performance improvement was the result of commenting it out.
+	
+			It doesn't fix all the performance problems, but there's less 'UI freezing' when holding down
+			a key on the keyboard, within a large file, as one example.
+	
+			I can scroll "infinitely" up or down due to having commented out the JavaScript-scrollbar-measuring.
+			i.e.: I can scroll above line 1, and have a negative scrollTop. Furthermore, I can scroll
+			beyond the document, also "infinitely".
+	
+			I think I'm struggling to word my thoughts here. The frustration is that C# initiates the
+			scrolling, which then causes the JavaScript virtualization boundary to trigger,
+			which calls C# again. It seems round-about.
+		*@
+
+		@{
+			var postNameDown = "test_ScrollDown";
+			var postEditDown = TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(renderBatch.ViewModel.ViewModelKey, 40);
+		}
+		<button @onclick="async () => await TextEditorService.PostSimpleBatch(postNameDown, postEditDown)"
+				class="luth_button"
+				style="display: inline;">
+			ScrollDown
+		</button>
+
+		@{
+			var postNameUp = "test_ScrollUp";
+			var postEditUp = TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(renderBatch.ViewModel.ViewModelKey, -40);
+		}
+		<button @onclick="async () => await TextEditorService.PostSimpleBatch(postNameUp, postEditUp)"
+				class="luth_button"
+				style="display: inline;">
+			ScrollUp
+		</button>
+	</div>
 }
 
 <ContextBoundary ContextRecord="renderBatch.ViewModelDisplayOptions.ContextRecord"
