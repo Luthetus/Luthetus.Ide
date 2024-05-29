@@ -1,4 +1,7 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -16,6 +19,7 @@ public class DisplayTracker : IDisposable
     private readonly ITextEditorService _textEditorService;
     
     private IState<TextEditorState>? _textEditorStateWrap;
+    private IState<AppDimensionState>? _appDimensionStateWrap;
     private CancellationTokenSource _calculateVirtualizationResultCancellationTokenSource = new();
 
     public DisplayTracker(
@@ -52,7 +56,7 @@ public class DisplayTracker : IDisposable
     /// </summary>
     public bool IsFirstDisplay { get; private set; } = true;
 
-    public void IncrementLinks(IState<TextEditorState> textEditorStateWrap)
+    public void IncrementLinks(IState<TextEditorState> textEditorStateWrap, IState<AppDimensionState> appDimensionStateWrap)
     {
         lock (_linksLock)
         {
@@ -68,11 +72,14 @@ public class DisplayTracker : IDisposable
 
                 _textEditorStateWrap = textEditorStateWrap;
                 _textEditorStateWrap.StateChanged += ModelsStateWrap_StateChanged;
+
+				_appDimensionStateWrap = appDimensionStateWrap;
+                _appDimensionStateWrap.StateChanged += AppDimensionStateWrap_StateChanged;
             }
         }
     }
 
-    public void DecrementLinks(IState<TextEditorState> textEditorStateWrap)
+    public void DecrementLinks(IState<TextEditorState> textEditorStateWrap, IState<AppDimensionState> appDimensionStateWrap)
     {
         lock (_linksLock)
         {
@@ -85,6 +92,9 @@ public class DisplayTracker : IDisposable
 
                 _textEditorStateWrap = textEditorStateWrap;
                 _textEditorStateWrap.StateChanged -= ModelsStateWrap_StateChanged;
+
+				_appDimensionStateWrap = appDimensionStateWrap;
+                _appDimensionStateWrap.StateChanged -= AppDimensionStateWrap_StateChanged;
             }
         }
     }
@@ -116,6 +126,36 @@ public class DisplayTracker : IDisposable
         //        model.ResourceUri,
         //        viewModel.ViewModelKey,
         //        _calculateVirtualizationResultCancellationTokenSource.Token));
+    }
+
+    private async void AppDimensionStateWrap_StateChanged(object? sender, EventArgs e)
+    {
+        //_textEditorService.Post(nameof(ModelsStateWrap_StateChanged),
+        //    _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+        //        model.ResourceUri,
+        //        viewModel.ViewModelKey,
+        //        _calculateVirtualizationResultCancellationTokenSource.Token));
+
+		var model = GetModelFunc.Invoke();
+        var viewModel = GetViewModelFunc.Invoke();
+
+        if (model is null || viewModel is null)
+            return;
+
+		// The 'Remeasure' command as of this comment
+		// does not use the 'commandArgs' parameter
+        var commandArgs = (TextEditorCommandArgs?)null;
+
+		Console.WriteLine(nameof(AppDimensionStateWrap_StateChanged));
+
+		await _textEditorService.PostTakeMostRecent(
+            nameof(AppDimensionStateWrap_StateChanged),
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            TextEditorCommandDefaultFunctions.RemeasureFactory(
+                model.ResourceUri,
+                viewModel.ViewModelKey,
+                commandArgs));
     }
 
     public void Dispose()

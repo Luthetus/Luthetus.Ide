@@ -12,10 +12,26 @@ namespace Luthetus.Common.RazorLib.Dimensions.States;
 /// Any part of the application can subscribe to this state, and be notified
 /// when a <see cref="SetAppDimensionStateAction"/> was reduced.
 /// </summary>
-/// <param name="Width">The unit of measurement is Pixels (px)</param>
-/// <param name="Height">The unit of measurement is Pixels (px)</param>
-/// <param name="Left">The unit of measurement is Pixels (px)</param>
-/// <param name="Top">The unit of measurement is Pixels (px)</param>
+///
+/// <param name="Width">
+/// The unit of measurement is Pixels (px).
+/// This describes the Width of the application.
+/// </param>
+///
+/// <param name="Height">
+/// The unit of measurement is Pixels (px).
+/// This describes the Height of the application.
+/// </param>
+///
+/// <param name="Left">
+/// The unit of measurement is Pixels (px).
+/// This describes the distance the application is from the left side of the "display/monitor".
+/// </param>
+///
+/// <param name="Top">
+/// The unit of measurement is Pixels (px).
+/// This describes the distance the application is from the top side of the "display/monitor".
+/// </param>
 [FeatureState]
 public partial record AppDimensionState(int Width, int Height, int Left, int Top)
 {

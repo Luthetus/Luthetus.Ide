@@ -8,10 +8,18 @@ public partial record AppDimensionState
 	{
 		[ReducerMethod]
 		public static AppDimensionState ReduceSetAppDimensionsAction(
-			AppDimensionState inAppDimensionState,
+			AppDimensionState inState,
 			SetAppDimensionStateAction setAppDimensionStateAction)
 		{
 			return setAppDimensionStateAction.NextAppDimensionState;
+		}
+
+		[ReducerMethod(typeof(NotifyIntraAppResizeAction))]
+		public static AppDimensionState ReduceNotifyIntraAppResizeAction(
+			AppDimensionState inState)
+		{
+			// Recreate the current state so the UI gets a state changed event
+			return inState with {};
 		}
 	}
 }

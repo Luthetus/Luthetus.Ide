@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Notifications.Models;
+namespace Luthetus.Common.RazorLib.Icons.Models;
 
 public enum IconBadgeVerticalPositionKind
 {

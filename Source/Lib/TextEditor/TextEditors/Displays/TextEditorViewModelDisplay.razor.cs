@@ -21,6 +21,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -35,6 +36,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -254,8 +257,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             if (viewKeyChanged)
             {
-                _linkedViewModel?.DisplayTracker.DecrementLinks(TextEditorStateWrap);
-                nextViewModel?.DisplayTracker.IncrementLinks(TextEditorStateWrap);
+                _linkedViewModel?.DisplayTracker.DecrementLinks(TextEditorStateWrap, AppDimensionStateWrap);
+                nextViewModel?.DisplayTracker.IncrementLinks(TextEditorStateWrap, AppDimensionStateWrap);
 
                 _linkedViewModel = nextViewModel;
 
@@ -578,7 +581,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
             if (_linkedViewModel is not null)
             {
-                _linkedViewModel.DisplayTracker.DecrementLinks(TextEditorStateWrap);
+                _linkedViewModel.DisplayTracker.DecrementLinks(TextEditorStateWrap, AppDimensionStateWrap);
                 _linkedViewModel = null;
             }
         }
