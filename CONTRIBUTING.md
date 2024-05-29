@@ -17,3 +17,20 @@ After which I will merge 'staging' into 'main'.
 Side notes:
 - I view accepting a PR as an extreme security risk. I will be meticulously looking for malicious code, perhaps hidden within a seemingly innocuous PR.
 - I need to build up the test suite more. This way people can be more confident in their changes not breaking something prior to a maintainer looking at it.
+
+Applications to test before accepting PR
+----------------------------------------
+-Luthetus.Ide.Photino.csproj
+	-Linux
+	-Windows
+	-Mac
+-Luthetus.Ide.Wasm.csproj
+	-Chromium
+	-Firefox
+-Luthetus.Ide.ServerSide.csproj
+	-Chromium
+	-Firefox
+
+Unit test before accepting PR
+-----------------------------
+-For each PR keep track of the pass/fail count after running every unit test on 'master' branch vs 'staging' branch.
