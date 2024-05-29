@@ -130,12 +130,6 @@ public class DisplayTracker : IDisposable
 
     private async void AppDimensionStateWrap_StateChanged(object? sender, EventArgs e)
     {
-        //_textEditorService.Post(nameof(ModelsStateWrap_StateChanged),
-        //    _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-        //        model.ResourceUri,
-        //        viewModel.ViewModelKey,
-        //        _calculateVirtualizationResultCancellationTokenSource.Token));
-
 		var model = GetModelFunc.Invoke();
         var viewModel = GetViewModelFunc.Invoke();
 
@@ -145,8 +139,6 @@ public class DisplayTracker : IDisposable
 		// The 'Remeasure' command as of this comment
 		// does not use the 'commandArgs' parameter
         var commandArgs = (TextEditorCommandArgs?)null;
-
-		Console.WriteLine(nameof(AppDimensionStateWrap_StateChanged));
 
 		await _textEditorService.PostTakeMostRecent(
             nameof(AppDimensionStateWrap_StateChanged),
