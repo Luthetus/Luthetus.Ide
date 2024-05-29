@@ -115,11 +115,21 @@
     border-left: 1px solid var(--luth_primary-border-color);
 }
 /* _content/Luthetus.Common/Icons/Displays/IconBadgeDisplay.razor.rz.scp.css */
-.luth_web_icon-badge[b-rqnwk7zmda] {
+.luth_icon-badge[b-rqnwk7zmda] {
     position: absolute;
-    top: 0;
-    line-height: 0.6;
+	right: 0;
+	bottom: 0;
+	border-radius: 25px;
+	width: 1.2em;
+	height: 1.2em;
+	line-height: 1.4;
 }
+
+.luth_icon-badge.luth_active[b-rqnwk7zmda] {
+    background-color: var(--luth_active-button-background-color);
+	color: var(--luth_active-button-primary-font-color);
+}
+
 /* _content/Luthetus.Common/Icons/Displays/IconLoading.razor.rz.scp.css */
 .lds-dual-ring[b-xvhigmhipw] {
     display: flex;
