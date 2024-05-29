@@ -71,6 +71,8 @@ public class OnMouseDown : ITextEditorTask
             if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
                 return; // Not pressing the left mouse button so assume ContextMenu is desired result.
 
+			// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+			// Reason being, these are likely to be huge optimizations (2024-05-29).
             await _events.CursorSetShouldDisplayMenuAsyncFunc.Invoke(MenuKind.None, false).ConfigureAwait(false);
 
             // Remember the current cursor position prior to doing anything
@@ -78,6 +80,9 @@ public class OnMouseDown : ITextEditorTask
             var inColumnIndex = primaryCursorModifier.ColumnIndex;
 
             // Move the cursor position
+			//
+			// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+			// Reason being, these are likely to be huge optimizations (2024-05-29).
             var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
             primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
             primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;

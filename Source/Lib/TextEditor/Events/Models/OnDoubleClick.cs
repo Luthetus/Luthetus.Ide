@@ -71,6 +71,8 @@ public class OnDoubleClick : ITextEditorTask
             if (MouseEventArgs.ShiftKey)
                 return; // Do not expand selection if user is holding shift
 
+			// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+			// Reason being, these are likely to be huge optimizations (2024-05-29).
             var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
 
             var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(

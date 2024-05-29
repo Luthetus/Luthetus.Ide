@@ -62,6 +62,8 @@ public class OnMouseMove : ITextEditorTask
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
+			// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+			// Reason being, these are likely to be huge optimizations (2024-05-29).
             var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
 
             primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;

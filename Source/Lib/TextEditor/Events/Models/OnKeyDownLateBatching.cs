@@ -135,6 +135,8 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
 	                        _events.CursorDisplay is not null && _events.CursorDisplay.MenuKind == MenuKind.AutoCompleteMenu)
 	                    {
+							// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+							// Reason being, these are likely to be huge optimizations (2024-05-29).
 	                        await _events.CursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
 	                    }
 	                    else
@@ -146,11 +148,15 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                            .Invoke(EditContext)
 	                            .ConfigureAwait(false);
 	
+							// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+							// Reason being, these are likely to be huge optimizations (2024-05-29).
 	                        await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
 	                            .ConfigureAwait(false);
 	                    }
 	                    break;
 	                case KeyboardEventArgsKind.ContextMenu:
+						// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+						// Reason being, these are likely to be huge optimizations (2024-05-29).
 	                    await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.ContextMenu) ?? Task.CompletedTask)
 	                        .ConfigureAwait(false);
 	                    break;
@@ -165,6 +171,8 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                            KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key ||
 	                            !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
 	                        {
+								// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+								// Reason being, these are likely to be huge optimizations (2024-05-29).
 	                            await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
 	                                .ConfigureAwait(false);
 	                        }
