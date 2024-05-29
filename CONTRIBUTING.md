@@ -7,12 +7,12 @@ Pull requests (PRs)
 - Target the 'staging' branch
 - Create a draft pull request.
 - Avoid cosmetic changes to unrelated files in the same commit.
-- I (Hunter Freeman), plan to merge 'staging' into 'master' on a weekly basis.
+- I (Hunter Freeman), plan to merge 'staging' into 'main' on a weekly basis.
 
 Summary:
 PRs will be accepted into 'staging' throughout the week.
 At the end of the week I (Hunter Freeman), will test 'staging'.
-After which I will merge 'staging' into 'master'.
+After which I will merge 'staging' into 'main'.
 
 Side notes:
 - I view accepting a PR as an extreme security risk. I will be meticulously looking for malicious code, perhaps hidden within a seemingly innocuous PR.
