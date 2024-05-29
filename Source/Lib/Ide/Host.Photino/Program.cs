@@ -1,3 +1,4 @@
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
@@ -26,7 +27,7 @@ class Program
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
 
-        appBuilder.Services.AddSingleton(new ReflectiveOptions(
+        appBuilder.Services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
             typeof(LuthetusIdeConfig).Assembly));

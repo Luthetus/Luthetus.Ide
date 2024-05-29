@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -46,8 +46,8 @@ public partial class PresentationLayerGroup : ComponentBase
     {
         try
         {
-            var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
-            var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
+            var charMeasurements = RenderBatch.ViewModel.CharAndLineMeasurements;
+            var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
 
             if (rowIndex >= RenderBatch.Model.LineEndList.Count)
                 return string.Empty;

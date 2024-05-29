@@ -28,18 +28,9 @@ public class OnScrollVertical : ITextEditorTask
     public double ScrollTop { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
+	public IEditContext EditContext { get; set; }
+
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
-
-    public Task InvokeWithEditContext(IEditContext editContext)
-    {
-        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-        if (viewModelModifier is null)
-            return Task.CompletedTask;
-
-        return editContext.TextEditorService.ViewModelApi
-            .SetScrollPositionFactory(ViewModelKey, null, ScrollTop)
-            .Invoke(editContext);
-    }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -54,9 +45,21 @@ public class OnScrollVertical : ITextEditorTask
 		return null;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public async Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
-            "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
+		try
+		{
+            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+            if (viewModelModifier is null)
+                return;
+
+            await EditContext.TextEditorService.ViewModelApi
+                .SetScrollPositionFactory(ViewModelKey, null, ScrollTop)
+                .Invoke(EditContext);
+		}
+		finally
+		{
+			await EditContext.TextEditorService.FinalizePost(EditContext);
+		}
     }
 }

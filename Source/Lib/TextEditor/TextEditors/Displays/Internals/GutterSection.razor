@@ -1,4 +1,4 @@
-﻿@using Luthetus.Common.RazorLib.Dimensions.Models;
+@using Luthetus.Common.RazorLib.Dimensions.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
 
@@ -26,7 +26,7 @@
     
     @{
         var heightOfGutter = RenderBatch.ViewModel!.VirtualizationResult.EntryList.Length *
-                             RenderBatch.ViewModel!.VirtualizationResult.CharAndLineMeasurements.LineHeight;
+                             RenderBatch.ViewModel!.CharAndLineMeasurements.LineHeight;
 
         // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
         // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
@@ -50,9 +50,9 @@
         }
 
         // '1' is added to the text editor's height in order to avoid rounding errors
-        if (heightOfGutter < 1 + RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Height)
+        if (heightOfGutter < 1 + RenderBatch.ViewModel!.TextEditorDimensions.Height)
         {
-            var remainingHeightToFill = RenderBatch.ViewModel!.VirtualizationResult.TextEditorMeasurements.Height -
+            var remainingHeightToFill = RenderBatch.ViewModel!.TextEditorDimensions.Height -
                 heightOfGutter +
                 ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
             

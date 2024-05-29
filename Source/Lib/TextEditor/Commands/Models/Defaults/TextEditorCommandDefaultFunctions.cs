@@ -171,7 +171,7 @@ public class TextEditorCommandDefaultFunctions
 
             return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
                     viewModelKey,
-                    viewModelModifier.ViewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight)
+                    viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight)
                 .Invoke(editContext);
         };
     }
@@ -191,7 +191,7 @@ public class TextEditorCommandDefaultFunctions
 
             return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
                     viewModelKey,
-                    -1 * viewModelModifier.ViewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight)
+                    -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight)
                 .Invoke(editContext);
         };
     }
@@ -211,7 +211,7 @@ public class TextEditorCommandDefaultFunctions
 
             return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
                     viewModelKey,
-                    viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.Height)
+                    viewModelModifier.ViewModel.TextEditorDimensions.Height)
                 .Invoke(editContext);
         };
     }
@@ -231,7 +231,7 @@ public class TextEditorCommandDefaultFunctions
 
             return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
                     viewModelKey,
-                    -1 * viewModelModifier.ViewModel.VirtualizationResult.TextEditorMeasurements.Height)
+                    -1 * viewModelModifier.ViewModel.TextEditorDimensions.Height)
                 .Invoke(editContext);
         };
     }
@@ -801,14 +801,14 @@ public class TextEditorCommandDefaultFunctions
             if (commandArgs.JsRuntime is null || commandArgs.HandleMouseStoppedMovingEventAsyncFunc is null)
                 return;
 
-            var elementPositionInPixels = await commandArgs.JsRuntime.GetLuthetusTextEditorApi()
+            var elementPositionInPixels = await commandArgs.TextEditorService.JsRuntimeTextEditorApi
                 .GetBoundingClientRect(viewModelModifier.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
             elementPositionInPixels = elementPositionInPixels with
             {
                 Top = elementPositionInPixels.Top +
-                    (.9 * viewModelModifier.ViewModel.VirtualizationResult.CharAndLineMeasurements.LineHeight)
+                    (.9 * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight)
             };
 
             await commandArgs.HandleMouseStoppedMovingEventAsyncFunc.Invoke(new MouseEventArgs

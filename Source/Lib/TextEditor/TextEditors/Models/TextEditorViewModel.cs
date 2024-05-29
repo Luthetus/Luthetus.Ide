@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -35,6 +36,8 @@ public record TextEditorViewModel : IDisposable
         IDialogService dialogService,
         IJSRuntime jsRuntime,
         VirtualizationResult<List<RichCharacter>> virtualizationResult,
+		TextEditorDimensions textEditorDimensions,
+        CharAndLineMeasurements charAndLineMeasurements,
         bool displayCommandBar,
         Category category)
     {
@@ -42,6 +45,8 @@ public record TextEditorViewModel : IDisposable
         ResourceUri = resourceUri;
         TextEditorService = textEditorService;
         VirtualizationResult = virtualizationResult;
+		TextEditorDimensions = textEditorDimensions;
+        CharAndLineMeasurements = charAndLineMeasurements;
         ShowCommandBar = displayCommandBar;
         Category = category;
 
@@ -98,6 +103,8 @@ public record TextEditorViewModel : IDisposable
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
     public VirtualizationResult<List<RichCharacter>> VirtualizationResult { get; init; }
+	public TextEditorDimensions TextEditorDimensions { get; init; }
+    public CharAndLineMeasurements CharAndLineMeasurements { get; init; }
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// </summary>

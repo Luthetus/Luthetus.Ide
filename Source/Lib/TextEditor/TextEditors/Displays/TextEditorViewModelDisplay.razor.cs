@@ -21,6 +21,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -32,11 +33,11 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<TextEditorModelState> TextEditorModelStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<TextEditorViewModelState> TextEditorViewModelsStateWrap { get; set; } = null!;
+    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -97,7 +98,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _events = new(this, _storedRenderBatch.Options);
 
-        TextEditorViewModelsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
+        TextEditorStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
 
         base.OnInitialized();
@@ -160,7 +161,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await JsRuntime.GetLuthetusTextEditorApi()
+            await TextEditorService.JsRuntimeTextEditorApi
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
 
@@ -184,7 +185,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     public TextEditorModel? GetModel() => TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey);
 
-    public TextEditorViewModel? GetViewModel() => TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
+    public TextEditorViewModel? GetViewModel() => TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
         x => x.ViewModelKey == TextEditorViewModelKey);
 
     public TextEditorOptions? GetOptions() => TextEditorOptionsStateWrap.Value.Options;
@@ -241,7 +242,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var localTextEditorViewModelKey = TextEditorViewModelKey;
 
             // Don't use the method 'GetViewModel()'. The logic here needs to be transactional, the TextEditorViewModelKey must not change.
-            var nextViewModel = TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
+            var nextViewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == localTextEditorViewModelKey);
 
             Key<TextEditorViewModel> nextViewModelKey;
@@ -256,8 +257,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             if (viewKeyChanged)
             {
-                _linkedViewModel?.DisplayTracker.DecrementLinks(TextEditorModelStateWrap);
-                nextViewModel?.DisplayTracker.IncrementLinks(TextEditorModelStateWrap);
+                _linkedViewModel?.DisplayTracker.DecrementLinks(TextEditorStateWrap, AppDimensionStateWrap);
+                nextViewModel?.DisplayTracker.IncrementLinks(TextEditorStateWrap, AppDimensionStateWrap);
 
                 _linkedViewModel = nextViewModel;
 
@@ -284,7 +285,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
 			return;
 
-		var onKeyDown = new OnKeyDown(
+		var onKeyDown = new OnKeyDownLateBatching(
             _events,
             keyboardEventArgs,
             resourceUri,
@@ -469,7 +470,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         await TextEditorService.PostSimpleBatch(
             nameof(QueueRemeasureBackgroundTask),
-            string.Empty,
             async editContext =>
 			{
                 await editContext.TextEditorService.ViewModelApi
@@ -539,9 +539,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostSimpleBatch(
+        await TextEditorService.PostTakeMostRecent(
                 nameof(QueueRemeasureBackgroundTask),
-                string.Empty,
+				modelResourceUri,
+				viewModelKey.Value,
                 TextEditorService.ViewModelApi.RemeasureFactory(
                     modelResourceUri,
                     viewModelKey.Value,
@@ -560,9 +561,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostSimpleBatch(
+        await TextEditorService.PostTakeMostRecent(
                 nameof(QueueCalculateVirtualizationResultBackgroundTask),
-                string.Empty,
+				modelResourceUri,
+				viewModelKey.Value,
                 TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                     modelResourceUri,
                     viewModelKey.Value,
@@ -572,14 +574,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorViewModelsStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
+        TextEditorStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
 
         lock (_linkedViewModelLock)
         {
             if (_linkedViewModel is not null)
             {
-                _linkedViewModel.DisplayTracker.DecrementLinks(TextEditorModelStateWrap);
+                _linkedViewModel.DisplayTracker.DecrementLinks(TextEditorStateWrap, AppDimensionStateWrap);
                 _linkedViewModel = null;
             }
         }
@@ -868,7 +870,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs).ConfigureAwait(false);
 
             // TODO: (2023-05-28) This shouldn't be re-calcuated in the best case scenario. That is to say, the previous line invokes 'CalculateRowAndColumnIndex(...)' which also invokes this logic
-            var relativeCoordinatesOnClick = await JsRuntime.GetLuthetusTextEditorApi()
+            var relativeCoordinatesOnClick = await TextEditorService.JsRuntimeTextEditorApi
                 .GetRelativePosition(
                     viewModel.BodyElementId,
                     mouseEventArgs.ClientX,
@@ -970,9 +972,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             if (model is null || viewModel is null)
                 return (0, 0);
 
-            var charMeasurements = viewModel.VirtualizationResult.CharAndLineMeasurements;
+            var charMeasurements = viewModel.CharAndLineMeasurements;
 
-            var relativeCoordinatesOnClick = await JsRuntime.GetLuthetusTextEditorApi()
+            var relativeCoordinatesOnClick = await TextEditorService.JsRuntimeTextEditorApi
                 .GetRelativePosition(
                     viewModel.BodyElementId,
                     mouseEventArgs.ClientX,
@@ -1000,7 +1002,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             {
                 var guid = Guid.NewGuid();
 
-                columnIndexInt = await JsRuntime.GetLuthetusTextEditorApi()
+                columnIndexInt = await TextEditorService.JsRuntimeTextEditorApi
                     .CalculateProportionalColumnIndex(
                         _viewModelDisplay.ProportionalFontMeasurementsContainerElementId,
                         $"luth_te_proportional-font-measurement-parent_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",

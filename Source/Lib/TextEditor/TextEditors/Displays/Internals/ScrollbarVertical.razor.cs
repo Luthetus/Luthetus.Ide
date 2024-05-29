@@ -44,7 +44,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
 
     private string GetSliderVerticalStyleCss()
     {
-        var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
+        var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
 
         var scrollbarHeightInPixels = elementMeasurements.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
@@ -75,7 +75,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
     {
         _thinksLeftMouseButtonIsDown = true;
 
-        _relativeCoordinatesOnMouseDown = await JsRuntime.GetLuthetusTextEditorApi()
+        _relativeCoordinatesOnMouseDown = await TextEditorService.JsRuntimeTextEditorApi
             .GetRelativePosition(
                 ScrollbarSliderElementId,
                 mouseEventArgs.ClientX,
@@ -133,7 +133,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
-            var relativeCoordinatesOfDragEvent = await JsRuntime.GetLuthetusTextEditorApi()
+            var relativeCoordinatesOfDragEvent = await TextEditorService.JsRuntimeTextEditorApi
                 .GetRelativePosition(
                     ScrollbarElementId,
                     mouseEventArgsTuple.secondMouseEventArgs.ClientX,
@@ -143,7 +143,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
             var yPosition = relativeCoordinatesOfDragEvent.RelativeY - _relativeCoordinatesOnMouseDown.RelativeY;
             yPosition = Math.Max(0, yPosition);
 
-            var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
+            var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
 
             if (yPosition > elementMeasurements.Height)
                 yPosition = elementMeasurements.Height;

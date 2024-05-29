@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
@@ -14,6 +14,8 @@ public partial class TextSelectionRow : ComponentBase
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
     public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -73,7 +75,7 @@ public partial class TextSelectionRow : ComponentBase
                 fullWidthOfRowIsSelected = false;
             }
 
-            var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var charMeasurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
             var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -94,7 +96,7 @@ public partial class TextSelectionRow : ComponentBase
 
                 var guid = Guid.NewGuid();
 
-                var nextSelectionStartingLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+                var nextSelectionStartingLeftRelativeToParentInPixels = await TextEditorService.JsRuntimeTextEditorApi
                     .CalculateProportionalLeftOffset(
                         ProportionalFontMeasurementsContainerElementId,
                         $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
@@ -130,7 +132,7 @@ public partial class TextSelectionRow : ComponentBase
 
                 var guid = Guid.NewGuid();
 
-                var selectionEndingLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+                var selectionEndingLeftRelativeToParentInPixels = await TextEditorService.JsRuntimeTextEditorApi
                     .CalculateProportionalLeftOffset(
                         ProportionalFontMeasurementsContainerElementId,
                         $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
@@ -152,7 +154,7 @@ public partial class TextSelectionRow : ComponentBase
 
             var widthCssStyleString = "width: ";
 
-            var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
+            var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
 
             var fullWidthValue = elementMeasurements.ScrollWidth;
 

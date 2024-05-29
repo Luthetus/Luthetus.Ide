@@ -1,6 +1,7 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Exceptions;
 using System.Collections.Immutable;
+using System.Collections.Generic;
 
 namespace Luthetus.Common.RazorLib.Reactives.Models;
 
@@ -16,7 +17,7 @@ public class ThrottleEventQueueAsync
     /// The first item in this list, is the OLDEST item in the 'queue'<br/><br/>
     /// The last item in this list, is the MOST-RECENT item in the 'queue'<br/><br/>
     /// </summary>
-    private readonly List<IBackgroundTask> _throttleEventList = new();
+    private readonly LinkedList<IBackgroundTask> _queue = new();
     /// <summary>
     /// Used when dequeueing.
     /// </summary>
@@ -31,9 +32,9 @@ public class ThrottleEventQueueAsync
     /// <summary>
     /// Returns the amount of <see cref="IBackgroundTask"/>(s) in the queue.
     /// </summary>
-    public int Count => _throttleEventList.Count;
+    public int Count => _queue.Count;
 
-	public ImmutableArray<IBackgroundTask> ThrottleEventList => _throttleEventList.ToImmutableArray();
+	public ImmutableArray<IBackgroundTask> ThrottleEventList => _queue.ToImmutableArray();
 
     /// <summary>
     /// When enqueueing an event, a batchFunc is also provided.<br/><br/>
@@ -49,7 +50,7 @@ public class ThrottleEventQueueAsync
     /// 
     /// Each invocation of the 'batchFunc' will replace the 'to-be-queued' unless the 'batch event' returned was null.<br/><br/>
     /// </summary>
-    public async Task EnqueueAsync(IBackgroundTask recentEvent)
+    public async Task EnqueueAsync(IBackgroundTask downstreamEvent)
     {
         if (IsStoppingFurtherEnqueues)
             throw new LuthetusCommonException($"Cannot enqueue on a stopped {nameof(ThrottleEventQueueAsync)}");
@@ -58,30 +59,52 @@ public class ThrottleEventQueueAsync
         {
             await _modifyQueueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 
-            var queueLengthIncreased = true;
-        
-            for (int i = _throttleEventList.Count - 1; i >= 0; i--)
-            {
-                IBackgroundTask? oldEvent = _throttleEventList[i];
-                var batchEvent = recentEvent.BatchOrDefault(oldEvent);
+			// TODO: This looks very incorrect. (2025-05-27)
+			// ============================================
+			// Why am I looping through the '_queue',
+			// as opposed to just batching with the most recently
+			// enqueued thing prior to "me"?
+			// --------------------------------------------------
+			// There is likely a lot of shifting within the '_queue',
+			// when tasks are enqueued/dequeued.
+			// Perhaps a different datastructure would be preferred?
+			// Is a linked list a good idea here?
+			// --------------------------------------------------
+			// The OnKeyDown events have a special issue,
+			// in that they're not batchable until the time of their dequeueing,
+			// because the command that is invoked as a result of an OnKeyDown event
+			// is dependent on what layer the keymap is in.
+			//
+			// That being that, one can still batch all OnKeyDown events together
+			// without the intent of performing an optimized calculation, but instead
+			// a foreach-loop-batching.
+			//
+			// During the foreach-loop-batching, you can still try to optimize calculations
+			// where consecutive OnKeyDown events can be combined as well.
+			//
+			// But, this way you'd avoid any of the 'TentativeKeyboardEventArgsKind'
+			// confusion.
+			if (_queue.Count > 0)
+			{
+				var upstreamEvent = _queue.Last.Value;
+				// TODO: Rename 'BatchOrDefault' to 'TryMergeIntoUpstream'
+				var batchEvent = downstreamEvent.BatchOrDefault(upstreamEvent);
 
-                if (batchEvent is null)
-                    break;
+				if (batchEvent is not null)
+                {
+					// The length of the queue has not changed,
+					// so do not release the dequeue semaphore here.
+					//
+					// The batching was successful so return early.
+					_queue.RemoveLast();
+					_queue.AddLast(batchEvent);
+            		return;
+				}
+			}
 
-                // In this case, either the current event stays,
-                // or it is replaced with the new event.
-                //
-                // Therefore the que length does not change.
-                queueLengthIncreased = false;
-
-                _throttleEventList.RemoveAt(i);
-                recentEvent = batchEvent;
-            }
-        
-            _throttleEventList.Add(recentEvent);
-
-            if (queueLengthIncreased)
-                _dequeueSemaphoreSlim.Release();
+			// The batching was NOT successful so add to the queue.
+			_queue.AddLast(downstreamEvent);
+			_dequeueSemaphoreSlim.Release();
         }
         finally
         {
@@ -100,9 +123,9 @@ public class ThrottleEventQueueAsync
         {
             await _modifyQueueSemaphoreSlim.WaitAsync().ConfigureAwait(false);
 		    
-            var firstEvent = _throttleEventList[0];
-            _throttleEventList.RemoveAt(0);
-            return firstEvent;
+            var task = _queue.First.Value;
+            _queue.RemoveFirst();
+			return task;
         }
         catch (ArgumentOutOfRangeException e)
         {

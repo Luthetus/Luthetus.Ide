@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
@@ -42,7 +42,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 
                 await TextEditorService.PostSimpleBatch(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-                    string.Empty,
                     async editContext =>
                     {
                         await TextEditorService.ModelApi.AddPresentationModelFactory(
@@ -90,7 +89,6 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 
                 await TextEditorService.PostSimpleBatch(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-                    string.Empty,
                     async editContext =>
                     {
                         await TextEditorService.ModelApi.AddPresentationModelFactory(

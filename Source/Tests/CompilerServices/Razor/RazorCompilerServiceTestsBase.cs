@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -40,7 +40,7 @@ public class RazorCompilerServiceTestsBase
                 serviceProvider.GetRequiredService<IDispatcher>()));
 
         var hostingInformation = new LuthetusHostingInformation(
-            LuthetusHostingKind.UnitTesting,
+            LuthetusHostingKind.UnitTestingSynchronous,
             new BackgroundTaskServiceSynchronous());
 
         services.AddLuthetusCommonServices(hostingInformation, commonOptions =>

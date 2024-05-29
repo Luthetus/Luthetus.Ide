@@ -8,5 +8,4 @@ public interface IVirtualizationResultWithoutTypeMask
     public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
     public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
     public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
-    public TextEditorDimensions TextEditorMeasurements { get; init; }
 }

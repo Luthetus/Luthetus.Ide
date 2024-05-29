@@ -1,0 +1,191 @@
+@using Fluxor
+@using Luthetus.Common.RazorLib.Installations.Models
+@using Luthetus.Common.RazorLib.BackgroundTasks.Models
+@using Luthetus.Common.RazorLib.Dialogs.Models
+@using Luthetus.Common.RazorLib.Dialogs.Displays
+@using Luthetus.Common.RazorLib.Dynamics.Models
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.Common.RazorLib.Notifications.Displays
+@using Luthetus.Common.RazorLib.Notifications.Models
+@using Luthetus.TextEditor.RazorLib
+@using Luthetus.TextEditor.RazorLib.Events.Models
+@using Luthetus.TextEditor.RazorLib.Installations.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.Lexes.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.Ide.RazorLib.Installations.Models
+
+@inherits TestContext
+@code
+{
+	[Fact]
+	public async Task BatchOrDefault_OnScrollHorizontal_OnScrollHorizontal()
+    {
+		var testData = OnScrollHorizontalTestsInitialize();
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		var upstreamOnScrollHorizontal = new OnScrollHorizontal(
+			10,
+	        testData.Events,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(upstreamOnScrollHorizontal);
+
+		var downstreamOnScrollHorizontal = new OnScrollHorizontal(
+	        20,
+	        testData.Events,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(downstreamOnScrollHorizontal);
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		
+		// Consecutive events of this kind are redundant;
+		// one can just take the most recent, and discard the rest.
+		Assert.Equal(1, queue.CountOfBackgroundTasks);
+		Assert.Equal(downstreamOnScrollHorizontal, queue.BackgroundTasks.Single());
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+
+	[Fact]
+	public async Task BatchOrDefault_OnScrollHorizontal_SomeDifferentType()
+    {
+		var testData = OnScrollHorizontalTestsInitialize();
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		var upstreamOnMouseMove = new OnMouseMove(
+	        new MouseEventArgs { },
+	        testData.Events,
+	        testData.InModel.ResourceUri,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(upstreamOnMouseMove);
+
+		var downstreamOnScrollHorizontal = new OnScrollHorizontal(
+	        10,
+	        testData.Events,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(downstreamOnScrollHorizontal);
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		
+		// Do not overwrite an upstream event that is not of the same type.
+		Assert.Equal(2, queue.CountOfBackgroundTasks);
+		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTasks[0]);
+		Assert.Equal(downstreamOnScrollHorizontal, queue.BackgroundTasks[1]);
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+
+	[Fact]
+    public async Task HandleEvent_Result()
+    {
+		var testData = OnScrollHorizontalTestsInitialize();
+
+		var onScrollHorizontal = new OnScrollHorizontal(
+	        10,
+	        testData.Events,
+	        testData.ViewModelKey);
+  
+		// Assert that 'AllText' does not change, since this event should do nothing.      
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		testData.TextEditorService.Post(onScrollHorizontal);
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+
+	private OnScrollHorizontalTestData OnScrollHorizontalTestsInitialize()
+	{
+		SharedInitializationForTests.Initialize(this);
+		
+		var textEditorService = Services.GetService<ITextEditorService>();
+
+		var resourceUri = new ResourceUri("/unitTesting.txt");
+		var viewModelKey = Key<TextEditorViewModel>.NewKey();
+
+		var inModel = new TextEditorModel(
+	        resourceUri,
+	        DateTime.UtcNow,
+	        "txt",
+	        string.Empty,
+	        null,
+	        null,
+			4_096);
+
+		textEditorService.ModelApi.RegisterCustom(inModel);
+		textEditorService.ViewModelApi.Register(viewModelKey, inModel.ResourceUri, new Category("UnitTests"));
+
+		JSInterop.SetupVoid("luthetusTextEditor.disposeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeVirtualizationIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
+
+		TextEditorViewModelDisplay? refTextEditorViewModelDisplay = null;
+
+		var cut = Render(
+			@<TextEditorViewModelDisplay @ref="refTextEditorViewModelDisplay" TextEditorViewModelKey="viewModelKey"/>);
+
+		Console.WriteLine(cut.GetType());
+
+		var events = new TextEditorViewModelDisplay.TextEditorEvents(
+			refTextEditorViewModelDisplay,
+			textEditorService.OptionsStateWrap.Value.Options);
+
+		return new OnScrollHorizontalTestData(
+			cut,
+			refTextEditorViewModelDisplay,
+			events,
+			inModel,
+			viewModelKey,
+			textEditorService);
+	}
+
+	private class OnScrollHorizontalTestData
+	{
+		public OnScrollHorizontalTestData(
+			IRenderedFragment cut,
+			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
+			TextEditorViewModelDisplay.TextEditorEvents events,
+			TextEditorModel inModel,
+			Key<TextEditorViewModel> viewModelKey,
+			ITextEditorService textEditorService)
+		{
+			Cut = cut;
+			RefTextEditorViewModelDisplay = refTextEditorViewModelDisplay;
+			Events = events;
+			InModel = inModel;
+			ViewModelKey = viewModelKey;
+			TextEditorService = textEditorService;
+		}
+
+		public IRenderedFragment Cut { get; }
+		public TextEditorViewModelDisplay? RefTextEditorViewModelDisplay { get; }
+		public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
+		public TextEditorModel InModel { get; }
+		public Key<TextEditorViewModel> ViewModelKey { get; }
+		public ITextEditorService TextEditorService { get; }
+	}
+}

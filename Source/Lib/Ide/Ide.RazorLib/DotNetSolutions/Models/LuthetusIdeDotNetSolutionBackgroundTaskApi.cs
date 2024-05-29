@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -148,7 +148,6 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         {
             await _textEditorService.PostSimpleBatch(
                 nameof(Website_AddExistingProjectToSolutionAsync),
-                string.Empty,
                 _textEditorService.ModelApi.ReloadFactory(
                     solutionTextEditorModel.ResourceUri,
                     outDotNetSolutionModel.SolutionFileContents,

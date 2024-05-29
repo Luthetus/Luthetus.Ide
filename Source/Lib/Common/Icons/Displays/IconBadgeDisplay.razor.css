@@ -1,5 +1,15 @@
-.luth_web_icon-badge {
+.luth_icon-badge {
     position: absolute;
-    top: 0;
-    line-height: 0.6;
+	right: 0;
+	bottom: 0;
+	border-radius: 25px;
+	width: 1.2em;
+	height: 1.2em;
+	line-height: 1.4;
 }
+
+.luth_icon-badge.luth_active {
+    background-color: var(--luth_active-button-background-color);
+	color: var(--luth_active-button-primary-font-color);
+}
+

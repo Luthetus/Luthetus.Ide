@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Misc;
@@ -42,7 +42,7 @@ public class TextEditorTestBase
         ITextEditorService textEditorService) InitializeBackgroundTasks()
     {
         var backgroundTaskService = new BackgroundTaskService();
-        var hostingInformation = new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService);
+        var hostingInformation = new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService);
 
         var services = new ServiceCollection()
             .AddScoped<ILoggerFactory, NullLoggerFactory>()

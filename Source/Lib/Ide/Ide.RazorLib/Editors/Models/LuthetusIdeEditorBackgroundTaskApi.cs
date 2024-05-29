@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -130,7 +130,6 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
             await _textEditorService.PostSimpleBatch(
                 nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-                string.Empty,
                 async editContext =>
                 {
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -201,7 +200,6 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
         await _textEditorService.PostSimpleBatch(
             nameof(TryRegisterViewModelFunc),
-            string.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
                 viewModelKey,
                 textEditorViewModel =>
@@ -233,7 +231,6 @@ public class LuthetusIdeEditorBackgroundTaskApi
                     {
                         await _textEditorService.PostSimpleBatch(
                             nameof(HandleOnSaveRequested),
-                            string.Empty,
                             _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
                                 writtenDateTime.Value));
@@ -361,7 +358,6 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
                                             await _textEditorService.PostSimpleBatch(
                                                 nameof(CheckIfContentsWereModifiedAsync),
-                                                string.Empty,
                                                 async editContext =>
                                                 {
                                                     await _textEditorService.ModelApi

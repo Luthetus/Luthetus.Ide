@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -240,7 +240,6 @@ public static class SyntaxTextObjectVim
 
                                 return commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneColumnLeftFactory),
-                                    string.Empty,
                                     MoveCursorOneColumnLeftFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -273,7 +272,6 @@ public static class SyntaxTextObjectVim
 
                                 return commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneRowDownFactory),
-                                    string.Empty,
                                     MoveCursorOneRowDownFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -306,7 +304,6 @@ public static class SyntaxTextObjectVim
 
                                 return commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneRowUpFactory),
-                                    string.Empty,
                                     MoveCursorOneRowUpFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -339,7 +336,6 @@ public static class SyntaxTextObjectVim
 
                                 return commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneColumnRightFactory),
-                                    string.Empty,
                                     MoveCursorOneColumnRightFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -378,7 +374,6 @@ public static class SyntaxTextObjectVim
 
                                 return commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorEndCurrentLineFactory),
-                                    string.Empty,
                                     MoveCursorEndCurrentLineFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
@@ -411,7 +406,6 @@ public static class SyntaxTextObjectVim
 
                                 return commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorStartCurrentLineFactory),
-                                    string.Empty,
                                     MoveCursorStartCurrentLineFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,

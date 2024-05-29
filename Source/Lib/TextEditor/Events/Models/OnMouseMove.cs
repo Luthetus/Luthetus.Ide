@@ -33,28 +33,9 @@ public class OnMouseMove : ITextEditorTask
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 
+	public IEditContext EditContext { get; set; }
+
     public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
-
-    public async Task InvokeWithEditContext(IEditContext editContext)
-    {
-        var modelModifier = editContext.GetModelModifier(ResourceUri, true);
-        var viewModelModifier = editContext.GetViewModelModifier(ViewModelKey);
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-        if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-            return;
-
-        var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
-
-        primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
-        primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
-        primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
-
-        _events.CursorPauseBlinkAnimationAction.Invoke();
-
-        primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-    }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -69,9 +50,33 @@ public class OnMouseMove : ITextEditorTask
 		return null;
     }
 
-    public Task HandleEvent(CancellationToken cancellationToken)
+    public async Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
-            "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
+		try
+		{
+            var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
+            var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
+            var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+			// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+			// Reason being, these are likely to be huge optimizations (2024-05-29).
+            var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
+
+            primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
+            primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
+            primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
+
+            _events.CursorPauseBlinkAnimationAction.Invoke();
+
+            primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+		}
+		finally
+		{
+			await EditContext.TextEditorService.FinalizePost(EditContext);
+		}
     }
 }

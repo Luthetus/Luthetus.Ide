@@ -21,7 +21,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private IState<CompilerServiceExplorerState> CompilerServiceExplorerStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
+    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
     [Inject]
@@ -53,7 +53,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     protected override void OnInitialized()
     {
         CompilerServiceExplorerStateWrap.StateChanged += RerenderAfterEventWithArgs;
-        TextEditorViewModelStateWrap.StateChanged += RerenderAfterEventWithArgs;
+        TextEditorStateWrap.StateChanged += RerenderAfterEventWithArgs;
         TextEditorGroupStateWrap.StateChanged += RerenderAfterEventWithArgs;
 
         _compilerServiceExplorerTreeViewKeymap = new CompilerServiceExplorerTreeViewKeyboardEventHandler(
@@ -111,7 +111,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     public void Dispose()
     {
         CompilerServiceExplorerStateWrap.StateChanged -= RerenderAfterEventWithArgs;
-        TextEditorViewModelStateWrap.StateChanged -= RerenderAfterEventWithArgs;
+        TextEditorStateWrap.StateChanged -= RerenderAfterEventWithArgs;
         TextEditorGroupStateWrap.StateChanged -= RerenderAfterEventWithArgs;
     }
 }

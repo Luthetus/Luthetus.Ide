@@ -94,7 +94,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             var guid = Guid.NewGuid();
 
-            var nextLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+            var nextLeftRelativeToParentInPixels = await TextEditorService.JsRuntimeTextEditorApi
                 .CalculateProportionalLeftOffset(
                     ProportionalFontMeasurementsContainerElementId,
                     $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
@@ -113,7 +113,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         if (_previouslyObservedCursorDisplayId != CursorDisplayId && IsFocusTarget)
         {
-            await JsRuntime.GetLuthetusTextEditorApi()
+            await TextEditorService.JsRuntimeTextEditorApi
                 .InitializeTextEditorCursorIntersectionObserver(
                     _intersectionObserverMapKey.ToString(),
                     DotNetObjectReference.Create(this),
@@ -132,11 +132,6 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 var localRenderBatch = RenderBatch;
 
-                var id = nameof(CursorDisplay) +
-                    ", " +
-                    nameof(TextEditorService.ViewModelApi.ScrollIntoViewFactory) +
-                    localRenderBatch.ViewModel.ViewModelKey.ToString();
-
                 await _throttleShouldRevealCursor.PushEvent(async _ =>
                 {
                     // TODO: Need to add 'TextEditorService.PostTakeMostRecent' and simple batch combination.
@@ -144,8 +139,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     // I think after removing the throttle, that this is an infinite loop on WASM,
                     // i.e. holding down ArrowRight
                     await TextEditorService.PostSimpleBatch(
-                        id,
-                        id,
+                        nameof(_throttleShouldRevealCursor),
                         editContext =>
                         {
                             var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
@@ -181,7 +175,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         try
         {
-            var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var leftInPixels = 0d;
 
@@ -241,7 +235,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         try
         {
-            var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
                 .ToCssValue();
@@ -277,7 +271,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         try
         {
-            var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var leftInPixels = 0d;
 
@@ -405,7 +399,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 try
                 {
-                    await JsRuntime.GetLuthetusTextEditorApi()
+                    await TextEditorService.JsRuntimeTextEditorApi
                         .DisposeTextEditorCursorIntersectionObserver(
                             CancellationToken.None,
                             _intersectionObserverMapKey.ToString())
