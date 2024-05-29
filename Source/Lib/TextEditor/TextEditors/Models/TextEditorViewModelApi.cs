@@ -23,8 +23,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 {
     private readonly ITextEditorService _textEditorService;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly IState<TextEditorViewModelState> _viewModelStateWrap;
-    private readonly IState<TextEditorModelState> _modelStateWrap;
+    private readonly IState<TextEditorState> _textEditorStateWrap;
     private readonly IDispatcher _dispatcher;
     private readonly IDialogService _dialogService;
 
@@ -34,16 +33,14 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public TextEditorViewModelApi(
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
-        IState<TextEditorViewModelState> viewModelStateWrap,
-        IState<TextEditorModelState> modelStateWrap,
+        IState<TextEditorState> textEditorStateWrap,
         IJSRuntime jsRuntime,
         IDispatcher dispatcher,
         IDialogService dialogService)
     {
         _textEditorService = textEditorService;
         _backgroundTaskService = backgroundTaskService;
-        _viewModelStateWrap = viewModelStateWrap;
-        _modelStateWrap = modelStateWrap;
+        _textEditorStateWrap = textEditorStateWrap;
         _jsRuntime = jsRuntime;
         _dispatcher = dispatcher;
         _dialogService = dialogService;
@@ -110,7 +107,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         ResourceUri resourceUri,
         Category category)
     {
-        _dispatcher.Dispatch(new TextEditorViewModelState.RegisterAction(
+        _dispatcher.Dispatch(new TextEditorState.RegisterViewModelAction(
             viewModelKey,
             resourceUri,
             category,
@@ -122,23 +119,23 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     #endregion
 
     #region READ_METHODS
-    public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
+    public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-        return _textEditorService.ViewModelStateWrap.Value.ViewModelList.FirstOrDefault(
-            x => x.ViewModelKey == textEditorViewModelKey);
+        return _textEditorService.TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
+            x => x.ViewModelKey == viewModelKey);
     }
 
     public ImmutableList<TextEditorViewModel> GetViewModels()
     {
-        return _textEditorService.ViewModelStateWrap.Value.ViewModelList;
+        return _textEditorService.TextEditorStateWrap.Value.ViewModelList;
     }
 
-    public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> textEditorViewModelKey)
+    public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-        var viewModelState = _textEditorService.ViewModelStateWrap.Value;
+        var textEditorState = _textEditorService.TextEditorStateWrap.Value;
 
-        var viewModel = viewModelState.ViewModelList.FirstOrDefault(
-            x => x.ViewModelKey == textEditorViewModelKey);
+        var viewModel = textEditorState.ViewModelList.FirstOrDefault(
+            x => x.ViewModelKey == viewModelKey);
 
         if (viewModel is null)
             return null;
@@ -146,9 +143,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         return _textEditorService.ModelApi.GetOrDefault(viewModel.ResourceUri);
     }
 
-    public string? GetAllText(Key<TextEditorViewModel> textEditorViewModelKey)
+    public string? GetAllText(Key<TextEditorViewModel> viewModelKey)
     {
-        var textEditorModel = GetModelOrDefault(textEditorViewModelKey);
+        var textEditorModel = GetModelOrDefault(viewModelKey);
 
         return textEditorModel is null
             ? null
@@ -181,7 +178,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         return editContext =>
         {
-            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+            _dispatcher.Dispatch(new TextEditorState.SetViewModelWithAction(
                 TextEditorService.AuthenticatedActionKey,
                 editContext,
                 viewModelKey,
@@ -202,7 +199,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             if (viewModelModifier is null)
                 return;
 
-            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+            _dispatcher.Dispatch(new TextEditorState.SetViewModelWithAction(
                 TextEditorService.AuthenticatedActionKey,
                 editContext,
                 viewModelKey,
@@ -1056,9 +1053,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     #endregion
 
     #region DELETE_METHODS
-    public void Dispose(Key<TextEditorViewModel> textEditorViewModelKey)
+    public void Dispose(Key<TextEditorViewModel> viewModelKey)
     {
-        _dispatcher.Dispatch(new TextEditorViewModelState.DisposeAction(textEditorViewModelKey));
+        _dispatcher.Dispatch(new TextEditorState.DisposeViewModelAction(viewModelKey));
     }
     #endregion
 }

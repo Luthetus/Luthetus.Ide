@@ -28,12 +28,10 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
     public ICompilerServiceRegistry InterfaceCompilerServiceRegistry { get; set; } = null!;
     [Inject]
     private IState<CompilerServiceEditorState> CompilerServiceEditorStateWrap { get; set; } = null!;
+	[Inject]
+    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<TextEditorModelState> TextEditorModelStateWrap { get; set; } = null!;
 
     private readonly ThrottleAsync _throttleEventCausingReRender = new ThrottleAsync(TimeSpan.FromMilliseconds(75));
 
@@ -54,12 +52,8 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
         _cSharpCompilerService.CursorMovedInSyntaxTree += CSharpCompilerService_StateChanged;
 
         CompilerServiceEditorStateWrap.StateChanged += CompilerServiceEditorStateWrap_StateChanged;
-
         TextEditorGroupStateWrap.StateChanged += TextEditorGroupStateWrap_StateChanged;
-
-        TextEditorViewModelStateWrap.StateChanged += TextEditorViewModelStateWrap_StateChanged;
-
-        TextEditorModelStateWrap.StateChanged += TextEditorModelStateWrap_StateChanged; ;
+        TextEditorStateWrap.StateChanged += TextEditorStateWrap_StateChanged;
 
         base.OnInitialized();
     }
@@ -71,15 +65,14 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
             var localCSharpCompilerService = _cSharpCompilerService;
             var localCompilerServiceEditorState = CompilerServiceEditorStateWrap.Value;
             var localTextEditorGroupState = TextEditorGroupStateWrap.Value;
-            var localTextEditorViewModelState = TextEditorViewModelStateWrap.Value;
-            var localTextEditorModelState = TextEditorModelStateWrap.Value;
+            var localTextEditorState = TextEditorStateWrap.Value;
 
             var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
                 x => x.GroupKey ==  LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
 
             var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
 
-            var viewModel = localTextEditorViewModelState.ViewModelList.FirstOrDefault(
+            var viewModel = localTextEditorState.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == activeViewModelKey);
 
             var interfaceCompilerServiceResource = viewModel is null
@@ -92,7 +85,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
             var textEditorModel = viewModel is null
                 ? null
-                : localTextEditorModelState.ModelList.FirstOrDefault(x => x.ResourceUri == viewModel.ResourceUri);
+                : localTextEditorState.ModelList.FirstOrDefault(x => x.ResourceUri == viewModel.ResourceUri);
 
             Nullable<int> primaryCursorPositionIndex = textEditorModel is null || viewModel is null
                 ? null
@@ -107,8 +100,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
                 LocalCSharpCompilerService = localCSharpCompilerService,
                 LocalCompilerServiceEditorState = localCompilerServiceEditorState,
                 LocalTextEditorGroupState = localTextEditorGroupState,
-                LocalTextEditorViewModelState = localTextEditorViewModelState,
-                LocalTextEditorModelState = localTextEditorModelState,
+                LocalTextEditorState = localTextEditorState,
                 EditorTextEditorGroup = editorTextEditorGroup,
                 ActiveViewModelKey = activeViewModelKey,
                 ViewModel = viewModel,
@@ -125,12 +117,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
         }
     }
 
-    private async void TextEditorModelStateWrap_StateChanged(object? sender, EventArgs e)
-    {
-        await ThrottledReRender();
-    }
-
-    private async void TextEditorViewModelStateWrap_StateChanged(object? sender, EventArgs e)
+    private async void TextEditorStateWrap_StateChanged(object? sender, EventArgs e)
     {
         await ThrottledReRender();
     }
@@ -167,12 +154,8 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
         _cSharpCompilerService.CursorMovedInSyntaxTree -= CSharpCompilerService_StateChanged;
 
         CompilerServiceEditorStateWrap.StateChanged -= CompilerServiceEditorStateWrap_StateChanged;
-
         TextEditorGroupStateWrap.StateChanged -= TextEditorGroupStateWrap_StateChanged;
-
-        TextEditorViewModelStateWrap.StateChanged -= TextEditorViewModelStateWrap_StateChanged;
-
-        TextEditorModelStateWrap.StateChanged -= TextEditorModelStateWrap_StateChanged; ;
+        TextEditorStateWrap.StateChanged -= TextEditorStateWrap_StateChanged;
     }
 
     private class CompilerServiceEditorViewModel
@@ -180,8 +163,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
         public CSharpCompilerService? LocalCSharpCompilerService { get; set; }
         public CompilerServiceEditorState? LocalCompilerServiceEditorState { get; set; }
         public TextEditorGroupState? LocalTextEditorGroupState { get; set; }
-        public TextEditorViewModelState? LocalTextEditorViewModelState { get; set; }
-        public TextEditorModelState? LocalTextEditorModelState { get; set; }
+        public TextEditorState? LocalTextEditorState { get; set; }
         public TextEditorGroup? EditorTextEditorGroup { get; set; }
         public Key<TextEditorViewModel> ActiveViewModelKey { get; set; }
         public TextEditorViewModel? ViewModel { get; set; }

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Fluxor;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
@@ -21,7 +22,6 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -46,8 +46,7 @@ public partial class TextEditorService : ITextEditorService
     private readonly LuthetusCommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorService(
-        IState<TextEditorModelState> modelStateWrap,
-        IState<TextEditorViewModelState> viewModelStateWrap,
+        IState<TextEditorState> textEditorStateWrap,
         IState<TextEditorGroupState> groupStateWrap,
         IState<TextEditorDiffState> diffStateWrap,
         IState<ThemeState> themeStateWrap,
@@ -62,8 +61,7 @@ public partial class TextEditorService : ITextEditorService
         IDispatcher dispatcher,
         IDialogService dialogService)
     {
-        ModelStateWrap = modelStateWrap;
-        ViewModelStateWrap = viewModelStateWrap;
+        TextEditorStateWrap = textEditorStateWrap;
         GroupStateWrap = groupStateWrap;
         DiffStateWrap = diffStateWrap;
         ThemeStateWrap = themeStateWrap;
@@ -81,14 +79,13 @@ public partial class TextEditorService : ITextEditorService
         _dialogService = dialogService;
 
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap.DecorationMapperRegistry, _textEditorRegistryWrap.CompilerServiceRegistry, _backgroundTaskService, _dispatcher);
-        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, ViewModelStateWrap, ModelStateWrap, _jsRuntime, _dispatcher, _dialogService);
+        ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, TextEditorStateWrap, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
         OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _commonBackgroundTaskApi, _dispatcher);
     }
 
-    public IState<TextEditorModelState> ModelStateWrap { get; }
-    public IState<TextEditorViewModelState> ViewModelStateWrap { get; }
+    public IState<TextEditorState> TextEditorStateWrap { get; }
     public IState<TextEditorGroupState> GroupStateWrap { get; }
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }
@@ -158,15 +155,15 @@ public partial class TextEditorService : ITextEditorService
 
 	public async Task FinalizePost(IEditContext editContext)
 	{
+		var modelModifierNeedRenderList = new List<TextEditorModelModifier>();
+		var viewModelModifierNeedRenderList = new List<TextEditorViewModelModifier>();
+
         foreach (var modelModifier in editContext.ModelCache.Values)
         {
             if (modelModifier is null || !modelModifier.WasModified)
                 continue;
 
-            _dispatcher.Dispatch(new TextEditorModelState.SetAction(
-                editContext.AuthenticatedActionKey,
-                editContext,
-                modelModifier));
+			modelModifierNeedRenderList.Add(modelModifier);
 
             var viewModelBag = editContext.TextEditorService.ModelApi.GetViewModelsOrEmpty(modelModifier.ResourceUri);
 
@@ -189,6 +186,8 @@ public partial class TextEditorService : ITextEditorService
         {
             if (viewModelModifier is null || !viewModelModifier.WasModified)
                 return;
+
+			viewModelModifierNeedRenderList.Add(viewModelModifier);
 
             var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
                 viewModelModifier.ViewModel.ViewModelKey,
@@ -221,11 +220,11 @@ public partial class TextEditorService : ITextEditorService
                 .Invoke(editContext)
                 .ConfigureAwait(false);
 
-            _dispatcher.Dispatch(new TextEditorViewModelState.SetViewModelWithAction(
+			_dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(
                 editContext.AuthenticatedActionKey,
                 editContext,
-                viewModelModifier.ViewModel.ViewModelKey,
-                inState => viewModelModifier.ViewModel));
+                modelModifierNeedRenderList,
+				viewModelModifierNeedRenderList));
         }
 	}
 }

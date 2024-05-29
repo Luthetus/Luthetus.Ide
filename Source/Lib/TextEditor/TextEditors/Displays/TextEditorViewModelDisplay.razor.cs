@@ -32,9 +32,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<TextEditorModelState> TextEditorModelStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<TextEditorViewModelState> TextEditorViewModelsStateWrap { get; set; } = null!;
+    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
@@ -97,7 +95,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _events = new(this, _storedRenderBatch.Options);
 
-        TextEditorViewModelsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
+        TextEditorStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
 
         base.OnInitialized();
@@ -184,7 +182,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     public TextEditorModel? GetModel() => TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey);
 
-    public TextEditorViewModel? GetViewModel() => TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
+    public TextEditorViewModel? GetViewModel() => TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
         x => x.ViewModelKey == TextEditorViewModelKey);
 
     public TextEditorOptions? GetOptions() => TextEditorOptionsStateWrap.Value.Options;
@@ -241,7 +239,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var localTextEditorViewModelKey = TextEditorViewModelKey;
 
             // Don't use the method 'GetViewModel()'. The logic here needs to be transactional, the TextEditorViewModelKey must not change.
-            var nextViewModel = TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
+            var nextViewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == localTextEditorViewModelKey);
 
             Key<TextEditorViewModel> nextViewModelKey;
@@ -256,8 +254,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             if (viewKeyChanged)
             {
-                _linkedViewModel?.DisplayTracker.DecrementLinks(TextEditorModelStateWrap);
-                nextViewModel?.DisplayTracker.IncrementLinks(TextEditorModelStateWrap);
+                _linkedViewModel?.DisplayTracker.DecrementLinks(TextEditorStateWrap);
+                nextViewModel?.DisplayTracker.IncrementLinks(TextEditorStateWrap);
 
                 _linkedViewModel = nextViewModel;
 
@@ -579,14 +577,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     public void Dispose()
     {
-        TextEditorViewModelsStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
+        TextEditorStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
 
         lock (_linkedViewModelLock)
         {
             if (_linkedViewModel is not null)
             {
-                _linkedViewModel.DisplayTracker.DecrementLinks(TextEditorModelStateWrap);
+                _linkedViewModel.DisplayTracker.DecrementLinks(TextEditorStateWrap);
                 _linkedViewModel = null;
             }
         }

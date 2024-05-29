@@ -30,8 +30,7 @@ public partial interface ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public IState<TextEditorModelState> ModelStateWrap { get; }
-    public IState<TextEditorViewModelState> ViewModelStateWrap { get; }
+    public IState<TextEditorState> TextEditorStateWrap { get; }
     public IState<TextEditorGroupState> GroupStateWrap { get; }
     public IState<TextEditorDiffState> DiffStateWrap { get; }
     public IState<ThemeState> ThemeStateWrap { get; }

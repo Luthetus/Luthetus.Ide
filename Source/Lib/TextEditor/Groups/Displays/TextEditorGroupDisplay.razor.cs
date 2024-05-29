@@ -16,7 +16,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
 	[Inject]
-    private IState<TextEditorViewModelState> TextEditorViewModelStateWrap { get; set; } = null!;
+    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
@@ -48,7 +48,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         TextEditorGroupStateWrap.StateChanged += TextEditorGroupWrapOnStateChanged;
-        TextEditorViewModelStateWrap.StateChanged += TextEditorViewModelStateWrapOnStateChanged;
+        TextEditorStateWrap.StateChanged += TextEditorViewModelStateWrapOnStateChanged;
 
         base.OnInitialized();
     }
@@ -70,12 +70,12 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
 	private ImmutableArray<ITab> GetTabList(TextEditorGroup textEditorGroup)
 	{
-        var viewModelState = TextEditorViewModelStateWrap.Value;
+        var textEditorState = TextEditorStateWrap.Value;
 		var tabList = new List<ITab>();
 
 		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
 		{
-            var viewModel = viewModelState.ViewModelList.FirstOrDefault(x => x.ViewModelKey == viewModelKey);
+            var viewModel = textEditorState.ViewModelList.FirstOrDefault(x => x.ViewModelKey == viewModelKey);
             
             if (viewModel is not null)
             {
@@ -90,6 +90,6 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         TextEditorGroupStateWrap.StateChanged -= TextEditorGroupWrapOnStateChanged;
-		TextEditorViewModelStateWrap.StateChanged -= TextEditorViewModelStateWrapOnStateChanged;
+		TextEditorStateWrap.StateChanged -= TextEditorViewModelStateWrapOnStateChanged;
     }
 }
