@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>
 /// The unit of measurement is Pixels (px)<br/><br/>
@@ -122,5 +122,71 @@ public record TextEditorDimensions(
         (int)Math.Ceiling(dimensionsJson.Height))
     {
     }
+
+	public TextEditorDimensions MutateScrollLeft(int pixels)
+	{
+		var scrollLeftResult = ScrollLeft + pixels;
+
+		if (scrollLeftResult < 0)
+		{
+			scrollLeftResult = 0;
+		}
+
+		return this with
+		{
+			ScrollLeft = scrollLeftResult
+		};
+	}
+
+	public TextEditorDimensions SetScrollLeft(int pixels)
+	{
+		var scrollLeftResult = pixels;
+
+		if (scrollLeftResult < 0)
+		{
+			scrollLeftResult = 0;
+		}
+
+		return this with
+		{
+			ScrollLeft = scrollLeftResult
+		};
+	}
+
+	public TextEditorDimensions MutateScrollTop(int pixels)
+	{
+		var scrollTopResult = ScrollTop + pixels;
+
+		var maxScrollTop = ScrollHeight - Height;
+
+		if (scrollTopResult < 0)
+		{
+			scrollTopResult = 0;
+		}
+		else if (scrollTopResult > maxScrollTop)
+		{
+			scrollTopResult = maxScrollTop;
+		}
+
+		return this with
+		{
+			ScrollTop = scrollTopResult
+		};
+	}
+
+	public TextEditorDimensions SetScrollTop(int pixels)
+	{
+		var scrollTopResult = pixels;
+
+		if (scrollTopResult < 0)
+		{
+			scrollTopResult = 0;
+		}
+
+		return this with
+		{
+			ScrollTop = scrollTopResult
+		};
+	}
 }
 

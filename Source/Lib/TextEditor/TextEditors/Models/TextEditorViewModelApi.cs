@@ -226,18 +226,23 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
             viewModelModifier.ScrollWasModified = true;
 
-            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-            {
-                TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions with
-                {
-                    ScrollLeft = scrollLeftInPixels is not null
-                        ? (int)Math.Floor(scrollLeftInPixels.Value)
-                        : viewModelModifier.ViewModel.TextEditorDimensions.ScrollLeft,
-                    ScrollTop = scrollTopInPixels is not null
-                        ? (int)Math.Floor(scrollTopInPixels.Value)
-                        : viewModelModifier.ViewModel.TextEditorDimensions.ScrollTop,
-                }
-            };
+			if (scrollLeftInPixels is not null)
+			{
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+					TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions
+						.SetScrollLeft((int)Math.Floor(scrollLeftInPixels.Value))
+				};
+			}
+
+			if (scrollTopInPixels is not null)
+			{
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+					TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions
+						.SetScrollTop((int)Math.Floor(scrollTopInPixels.Value))
+				};
+			}
 
             return Task.CompletedTask;
         };
@@ -257,11 +262,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
             viewModelModifier.ViewModel = viewModelModifier.ViewModel with
             {
-				TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions with
-                {
-                    ScrollTop = (int)Math.Ceiling(pixels) +
-                        viewModelModifier.ViewModel.TextEditorDimensions.ScrollTop,
-                }
+				TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions
+					.MutateScrollTop((int)Math.Ceiling(pixels))
             };
 
             return Task.CompletedTask;
@@ -280,13 +282,10 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
             viewModelModifier.ScrollWasModified = true;
 
-            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
             {
-                TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions with
-                {
-                    ScrollLeft = (int)Math.Ceiling(pixels) +
-                        viewModelModifier.ViewModel.TextEditorDimensions.ScrollLeft,
-                }
+				TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions
+					.MutateScrollLeft((int)Math.Ceiling(pixels))
             };
 
             return Task.CompletedTask;
