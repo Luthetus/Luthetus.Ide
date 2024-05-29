@@ -9,6 +9,8 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public IVirtualizationResultWithoutTypeMask VirtualizationResultWithoutTypeMask { get; set; } = null!;
@@ -71,7 +73,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                     });
                 }
 
-                await JsRuntime.GetLuthetusTextEditorApi()
+                await TextEditorService.JsRuntimeTextEditorApi
                     .InitializeVirtualizationIntersectionObserver(
                         _virtualizationDisplayGuid.ToString(),
                         DotNetObjectReference.Create(this),
@@ -104,7 +106,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
         {
             _ = Task.Run(async () =>
             {
-                await JsRuntime.GetLuthetusTextEditorApi()
+                await TextEditorService.JsRuntimeTextEditorApi
                     .DisposeVirtualizationIntersectionObserver(
                         CancellationToken.None,
                         _virtualizationDisplayGuid.ToString())

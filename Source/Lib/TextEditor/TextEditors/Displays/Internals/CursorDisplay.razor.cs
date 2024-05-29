@@ -94,7 +94,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             var guid = Guid.NewGuid();
 
-            var nextLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+            var nextLeftRelativeToParentInPixels = await TextEditorService.JsRuntimeTextEditorApi
                 .CalculateProportionalLeftOffset(
                     ProportionalFontMeasurementsContainerElementId,
                     $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
@@ -113,7 +113,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         if (_previouslyObservedCursorDisplayId != CursorDisplayId && IsFocusTarget)
         {
-            await JsRuntime.GetLuthetusTextEditorApi()
+            await TextEditorService.JsRuntimeTextEditorApi
                 .InitializeTextEditorCursorIntersectionObserver(
                     _intersectionObserverMapKey.ToString(),
                     DotNetObjectReference.Create(this),
@@ -399,7 +399,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 try
                 {
-                    await JsRuntime.GetLuthetusTextEditorApi()
+                    await TextEditorService.JsRuntimeTextEditorApi
                         .DisposeTextEditorCursorIntersectionObserver(
                             CancellationToken.None,
                             _intersectionObserverMapKey.ToString())

@@ -14,6 +14,8 @@ public partial class TextSelectionRow : ComponentBase
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
     public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -94,7 +96,7 @@ public partial class TextSelectionRow : ComponentBase
 
                 var guid = Guid.NewGuid();
 
-                var nextSelectionStartingLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+                var nextSelectionStartingLeftRelativeToParentInPixels = await TextEditorService.JsRuntimeTextEditorApi
                     .CalculateProportionalLeftOffset(
                         ProportionalFontMeasurementsContainerElementId,
                         $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",
@@ -130,7 +132,7 @@ public partial class TextSelectionRow : ComponentBase
 
                 var guid = Guid.NewGuid();
 
-                var selectionEndingLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+                var selectionEndingLeftRelativeToParentInPixels = await TextEditorService.JsRuntimeTextEditorApi
                     .CalculateProportionalLeftOffset(
                         ProportionalFontMeasurementsContainerElementId,
                         $"luth_te_proportional-font-measurement-parent_{RenderBatch.ViewModel.ViewModelKey.Guid}_selection_{guid}",

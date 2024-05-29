@@ -75,6 +75,7 @@ public partial class TextEditorService : ITextEditorService
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _storageService = storageService;
         _jsRuntime = jsRuntime;
+		JsRuntimeTextEditorApi = _jsRuntime.GetLuthetusTextEditorApi();
         _commonBackgroundTaskApi = commonBackgroundTaskApi;
         _dispatcher = dispatcher;
         _dialogService = dialogService;
@@ -93,6 +94,8 @@ public partial class TextEditorService : ITextEditorService
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
+
+	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 
 #if DEBUG
     public string StorageKey => "luth_te_text-editor-options-debug";
@@ -203,9 +206,13 @@ public partial class TextEditorService : ITextEditorService
 
             if (viewModelModifier.ScrollWasModified)
             {
-                await ((TextEditorService)editContext.TextEditorService)
-                    .HACK_SetScrollPosition(viewModelModifier.ViewModel)
-                    .ConfigureAwait(false);
+                await JsRuntimeTextEditorApi
+		            .SetScrollPosition(
+		                viewModelModifier.ViewModel.BodyElementId,
+		                viewModelModifier.ViewModel.GutterElementId,
+		                viewModelModifier.ViewModel.TextEditorDimensions.ScrollLeft,
+		                viewModelModifier.ViewModel.TextEditorDimensions.ScrollTop)
+		            .ConfigureAwait(false);
             }
 
             // TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
@@ -221,22 +228,4 @@ public partial class TextEditorService : ITextEditorService
                 inState => viewModelModifier.ViewModel));
         }
 	}
-
-    /// <summary>
-    /// I want to batch any scrolling done while within an <see cref="IEditContext"/>.
-    /// The <see cref="TextEditorServiceTask"/> needs the <see cref="IJSRuntime"/>,
-    /// in order to perform the scroll once the <see cref="IEditContext"/> is completed.
-    /// That being said, I didn't want to pass the <see cref="IJSRuntime"/> to the <see cref="TextEditorServiceTask"/>
-    /// so I'm doing this for the moment (2024-05-09).
-    /// </summary>
-    public async Task HACK_SetScrollPosition(TextEditorViewModel viewModel)
-    {
-        await _jsRuntime.GetLuthetusTextEditorApi()
-            .SetScrollPosition(
-                viewModel.BodyElementId,
-                viewModel.GutterElementId,
-                viewModel.TextEditorDimensions.ScrollLeft,
-                viewModel.TextEditorDimensions.ScrollTop)
-            .ConfigureAwait(false);
-    }
 }

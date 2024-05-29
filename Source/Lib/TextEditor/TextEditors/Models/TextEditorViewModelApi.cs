@@ -157,7 +157,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public async Task<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId)
     {
-        return await _jsRuntime.GetLuthetusTextEditorApi()
+        return await _textEditorService.JsRuntimeTextEditorApi
             .GetTextEditorMeasurementsInPixelsById(elementId)
             .ConfigureAwait(false);
     }
@@ -166,7 +166,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters)
     {
-        return await _jsRuntime.GetLuthetusTextEditorApi()
+        return await _textEditorService.JsRuntimeTextEditorApi
             .GetCharAndLineMeasurementsInPixelsById(
                 measureCharacterWidthAndLineHeightElementId,
                 countOfTestCharacters)

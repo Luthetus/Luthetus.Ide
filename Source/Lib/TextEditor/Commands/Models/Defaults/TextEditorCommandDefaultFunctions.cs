@@ -801,7 +801,7 @@ public class TextEditorCommandDefaultFunctions
             if (commandArgs.JsRuntime is null || commandArgs.HandleMouseStoppedMovingEventAsyncFunc is null)
                 return;
 
-            var elementPositionInPixels = await commandArgs.JsRuntime.GetLuthetusTextEditorApi()
+            var elementPositionInPixels = await commandArgs.TextEditorService.JsRuntimeTextEditorApi
                 .GetBoundingClientRect(viewModelModifier.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 

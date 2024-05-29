@@ -160,7 +160,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await JsRuntime.GetLuthetusTextEditorApi()
+            await TextEditorService.JsRuntimeTextEditorApi
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
 
@@ -875,7 +875,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs).ConfigureAwait(false);
 
             // TODO: (2023-05-28) This shouldn't be re-calcuated in the best case scenario. That is to say, the previous line invokes 'CalculateRowAndColumnIndex(...)' which also invokes this logic
-            var relativeCoordinatesOnClick = await JsRuntime.GetLuthetusTextEditorApi()
+            var relativeCoordinatesOnClick = await TextEditorService.JsRuntimeTextEditorApi
                 .GetRelativePosition(
                     viewModel.BodyElementId,
                     mouseEventArgs.ClientX,
@@ -979,7 +979,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             var charMeasurements = viewModel.CharAndLineMeasurements;
 
-            var relativeCoordinatesOnClick = await JsRuntime.GetLuthetusTextEditorApi()
+            var relativeCoordinatesOnClick = await TextEditorService.JsRuntimeTextEditorApi
                 .GetRelativePosition(
                     viewModel.BodyElementId,
                     mouseEventArgs.ClientX,
@@ -1007,7 +1007,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             {
                 var guid = Guid.NewGuid();
 
-                columnIndexInt = await JsRuntime.GetLuthetusTextEditorApi()
+                columnIndexInt = await TextEditorService.JsRuntimeTextEditorApi
                     .CalculateProportionalColumnIndex(
                         _viewModelDisplay.ProportionalFontMeasurementsContainerElementId,
                         $"luth_te_proportional-font-measurement-parent_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
