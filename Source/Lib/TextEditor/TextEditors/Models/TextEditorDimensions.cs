@@ -126,10 +126,15 @@ public record TextEditorDimensions(
 	public TextEditorDimensions MutateScrollLeft(int pixels)
 	{
 		var scrollLeftResult = ScrollLeft + pixels;
+		var maxScrollLeft = ScrollWidth - Width;
 
 		if (scrollLeftResult < 0)
 		{
 			scrollLeftResult = 0;
+		}
+		else if (scrollLeftResult > maxScrollLeft)
+		{
+			scrollLeftResult = maxScrollLeft;
 		}
 
 		return this with
@@ -141,10 +146,15 @@ public record TextEditorDimensions(
 	public TextEditorDimensions SetScrollLeft(int pixels)
 	{
 		var scrollLeftResult = pixels;
+		var maxScrollLeft = (int)Math.Ceiling(ScrollHeight - Height);
 
 		if (scrollLeftResult < 0)
 		{
 			scrollLeftResult = 0;
+		}
+		else if (scrollLeftResult > maxScrollLeft)
+		{
+			scrollLeftResult = maxScrollLeft;
 		}
 
 		return this with
@@ -156,7 +166,6 @@ public record TextEditorDimensions(
 	public TextEditorDimensions MutateScrollTop(int pixels)
 	{
 		var scrollTopResult = ScrollTop + pixels;
-
 		var maxScrollTop = ScrollHeight - Height;
 
 		if (scrollTopResult < 0)
@@ -177,10 +186,15 @@ public record TextEditorDimensions(
 	public TextEditorDimensions SetScrollTop(int pixels)
 	{
 		var scrollTopResult = pixels;
+		var maxScrollTop = (int)Math.Ceiling(ScrollHeight - Height);
 
 		if (scrollTopResult < 0)
 		{
 			scrollTopResult = 0;
+		}
+		else if (scrollTopResult > maxScrollTop)
+		{
+			scrollTopResult = maxScrollTop;
 		}
 
 		return this with

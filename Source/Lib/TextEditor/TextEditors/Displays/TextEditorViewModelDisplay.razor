@@ -50,25 +50,49 @@
 			which calls C# again. It seems round-about.
 		*@
 
-		@{
-			var postNameDown = "test_ScrollDown";
-			var postEditDown = TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(renderBatch.ViewModel.ViewModelKey, 40);
-		}
-		<button @onclick="async () => await TextEditorService.PostSimpleBatch(postNameDown, postEditDown)"
-				class="luth_button"
-				style="display: inline;">
-			ScrollDown
-		</button>
+		<div class="test_vertical">
+			@{
+				var postNameDown = "test_ScrollDown";
+				var postEditDown = TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(renderBatch.ViewModel.ViewModelKey, 40);
+			}
+			<button @onclick="async () => await TextEditorService.PostSimpleBatch(postNameDown, postEditDown)"
+					class="luth_button"
+					style="display: inline;">
+				ScrollDown
+			</button>
 
-		@{
-			var postNameUp = "test_ScrollUp";
-			var postEditUp = TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(renderBatch.ViewModel.ViewModelKey, -40);
-		}
-		<button @onclick="async () => await TextEditorService.PostSimpleBatch(postNameUp, postEditUp)"
-				class="luth_button"
-				style="display: inline;">
-			ScrollUp
-		</button>
+			@{
+				var postNameUp = "test_ScrollUp";
+				var postEditUp = TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(renderBatch.ViewModel.ViewModelKey, -40);
+			}
+			<button @onclick="async () => await TextEditorService.PostSimpleBatch(postNameUp, postEditUp)"
+					class="luth_button"
+					style="display: inline;">
+				ScrollUp
+			</button>
+		</div>
+
+		<div class="test_horizontal">
+			@{
+				var postNameLeft = "test_ScrollLeft";
+				var postEditLeft = TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(renderBatch.ViewModel.ViewModelKey, -40);
+			}
+			<button @onclick="async () => await TextEditorService.PostSimpleBatch(postNameLeft, postEditLeft)"
+					class="luth_button"
+					style="display: inline;">
+				ScrollLeft
+			</button>
+
+			@{
+				var postNameRight = "test_ScrollRight";
+				var postEditRight = TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(renderBatch.ViewModel.ViewModelKey, 40);
+			}
+			<button @onclick="async () => await TextEditorService.PostSimpleBatch(postNameRight, postEditRight)"
+					class="luth_button"
+					style="display: inline;">
+				ScrollRight
+			</button>
+		</div>
 
 		<div>
 			@renderBatch.ViewModel.TextEditorDimensions
