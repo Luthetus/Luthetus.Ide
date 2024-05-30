@@ -20,16 +20,16 @@ Side notes:
 
 Applications should be tested before a maintainer merges a PR
 -------------------------------------------------------------
--Luthetus.Ide.Photino.csproj
-	-Linux
-	-Windows
-	-Mac
--Luthetus.Ide.Wasm.csproj
-	-Chromium
-	-Firefox
--Luthetus.Ide.ServerSide.csproj
-	-Chromium
-	-Firefox
+- Luthetus.Ide.Photino.csproj
+	- Linux
+	- Windows
+	- Mac
+- Luthetus.Ide.Wasm.csproj
+	- Chromium
+	- Firefox
+- Luthetus.Ide.ServerSide.csproj
+	- Chromium
+	- Firefox
 
 Unit tests should be ran before a maintainer merges a PR
 --------------------------------------------------------
