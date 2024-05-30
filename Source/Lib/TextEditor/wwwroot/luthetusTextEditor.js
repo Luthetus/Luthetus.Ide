@@ -294,20 +294,12 @@ window.luthetusTextEditor = {
     getElementMeasurementsInPixelsByElementReference: function (elementReference) {
         if (!elementReference) {
             return {
-                ScrollLeft: 0,
-                ScrollTop: 0,
-                ScrollWidth: 0,
-                ScrollHeight: 0,
                 Width: 0,
                 Height: 0,
             };
         }
 
         return {
-            ScrollLeft: Math.ceil(elementReference.scrollLeft),
-            ScrollTop: Math.ceil(elementReference.scrollTop),
-            ScrollWidth: Math.ceil(elementReference.scrollWidth),
-            ScrollHeight: Math.ceil(elementReference.scrollHeight),
             Width: Math.ceil(elementReference.offsetWidth),
             Height: Math.ceil(elementReference.offsetHeight),
         };

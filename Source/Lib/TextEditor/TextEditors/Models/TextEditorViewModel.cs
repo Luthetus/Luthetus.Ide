@@ -37,6 +37,7 @@ public record TextEditorViewModel : IDisposable
         IJSRuntime jsRuntime,
         VirtualizationResult<List<RichCharacter>> virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
+		ScrollbarDimensions scrollbarDimensions,
         CharAndLineMeasurements charAndLineMeasurements,
         bool displayCommandBar,
         Category category)
@@ -46,6 +47,7 @@ public record TextEditorViewModel : IDisposable
         TextEditorService = textEditorService;
         VirtualizationResult = virtualizationResult;
 		TextEditorDimensions = textEditorDimensions;
+		ScrollbarDimensions = scrollbarDimensions;
         CharAndLineMeasurements = charAndLineMeasurements;
         ShowCommandBar = displayCommandBar;
         Category = category;
@@ -104,6 +106,7 @@ public record TextEditorViewModel : IDisposable
     /// </summary>
     public VirtualizationResult<List<RichCharacter>> VirtualizationResult { get; init; }
 	public TextEditorDimensions TextEditorDimensions { get; init; }
+	public ScrollbarDimensions ScrollbarDimensions { get; init; }
     public CharAndLineMeasurements CharAndLineMeasurements { get; init; }
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
