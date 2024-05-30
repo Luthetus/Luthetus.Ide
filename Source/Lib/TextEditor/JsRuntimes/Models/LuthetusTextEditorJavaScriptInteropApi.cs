@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
@@ -97,30 +97,6 @@ public class LuthetusTextEditorJavaScriptInteropApi
             clientY);
     }
 
-    public ValueTask MutateScrollVerticalPositionByPixels(
-        string textEditorBodyId,
-        string gutterElementId,
-        double pixels)
-    {
-        return _jsRuntime.InvokeVoidAsync(
-            "luthetusTextEditor.mutateScrollVerticalPositionByPixels",
-            textEditorBodyId,
-            gutterElementId,
-            pixels);
-    }
-
-    public ValueTask MutateScrollHorizontalPositionByPixels(
-        string bodyElementId,
-        string gutterElementId,
-        double pixels)
-    {
-        return _jsRuntime.InvokeVoidAsync(
-            "luthetusTextEditor.mutateScrollHorizontalPositionByPixels",
-            bodyElementId,
-            gutterElementId,
-            pixels);
-    }
-
     public ValueTask SetScrollPosition(
         string bodyElementId,
         string gutterElementId,
@@ -132,33 +108,6 @@ public class LuthetusTextEditorJavaScriptInteropApi
             bodyElementId,
             gutterElementId,
             scrollLeftInPixels,
-            scrollTopInPixels);
-    }
-
-    /// <summary>
-    /// TODO: This javascript function is only invoked by other javascript functions.
-    /// </summary>
-    public ValueTask ValidateTextEditorBodyScrollPosition(
-        string bodyElementId,
-        string gutterElementId,
-        double? scrollLeftInPixels,
-        double? scrollTopInPixels)
-    {
-        return _jsRuntime.InvokeVoidAsync(
-            "luthetusTextEditor.validateTextEditorBodyScrollPosition",
-            bodyElementId,
-            gutterElementId,
-            scrollLeftInPixels,
-            scrollTopInPixels);
-    }
-
-    public ValueTask SetGutterScrollTop(
-        string gutterElementId,
-        double scrollTopInPixels)
-    {
-        return _jsRuntime.InvokeVoidAsync(
-            "luthetusTextEditor.setGutterScrollTop",
-            gutterElementId,
             scrollTopInPixels);
     }
 
