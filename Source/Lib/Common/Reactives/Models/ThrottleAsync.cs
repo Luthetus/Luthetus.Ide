@@ -29,27 +29,12 @@ public class ThrottleAsync
             WorkItemSemaphore.Release();
         }
 
-        var localDelayTask = DelayTask;
-        var localWorkItemTask = WorkItemTask;
+        var previousTask = WorkItemTask;
 
         WorkItemTask = Task.Run(async () =>
         {
             // Await the previous work item task.
-            await localWorkItemTask.ConfigureAwait(false);
-
-            await localDelayTask.ConfigureAwait(false);
-
-            DelayTask = Task.Run(async () =>
-            {
-                try
-                {
-                    await Task.Delay(ThrottleTimeSpan, CancellationToken.None).ConfigureAwait(false);
-                }
-                catch (TaskCanceledException)
-                {
-                    // Eat the task cancelled exception.
-                }
-            });
+            await previousTask.ConfigureAwait(false);
 
             Func<CancellationToken, Task> popWorkItem;
             try
@@ -67,7 +52,10 @@ public class ThrottleAsync
                 WorkItemSemaphore.Release();
             }
 
-            await popWorkItem.Invoke(CancellationToken.None).ConfigureAwait(false);
+			await Task.WhenAll(
+					popWorkItem.Invoke(CancellationToken.None),
+					Task.Delay(ThrottleTimeSpan, CancellationToken.None))
+				.ConfigureAwait(false);
         });
     }
 

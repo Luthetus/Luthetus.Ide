@@ -227,8 +227,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 			{
 				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
-					TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions
-						.SetScrollLeft((int)Math.Floor(scrollLeftInPixels.Value))
+					ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
+						.SetScrollLeft((int)Math.Floor(scrollLeftInPixels.Value), viewModelModifier.ViewModel.TextEditorDimensions)
 				};
 			}
 
@@ -236,8 +236,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 			{
 				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
-					TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions
-						.SetScrollTop((int)Math.Floor(scrollTopInPixels.Value))
+					ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
+						.SetScrollTop((int)Math.Floor(scrollTopInPixels.Value), viewModelModifier.ViewModel.TextEditorDimensions)
 				};
 			}
 
@@ -259,8 +259,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
             viewModelModifier.ViewModel = viewModelModifier.ViewModel with
             {
-				TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions
-					.MutateScrollTop((int)Math.Ceiling(pixels))
+				ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
+					.MutateScrollTop((int)Math.Ceiling(pixels), viewModelModifier.ViewModel.TextEditorDimensions)
             };
 
             return Task.CompletedTask;
@@ -281,8 +281,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
 			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
             {
-				TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions
-					.MutateScrollLeft((int)Math.Ceiling(pixels))
+				ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
+					.MutateScrollLeft((int)Math.Ceiling(pixels), viewModelModifier.ViewModel.TextEditorDimensions)
             };
 
             return Task.CompletedTask;
@@ -320,7 +320,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             {
                 // scrollLeft needs to be modified?
                 {
-                    var currentScrollLeft = viewModelModifier.ViewModel.TextEditorDimensions.ScrollLeft;
+                    var currentScrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
                     var currentWidth = viewModelModifier.ViewModel.TextEditorDimensions.Width;
 
                     var caseA = currentScrollLeft <= scrollLeft;
@@ -332,7 +332,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 // scrollTop needs to be modified?
                 {
-                    var currentScrollTop = viewModelModifier.ViewModel.TextEditorDimensions.ScrollTop;
+                    var currentScrollTop = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop;
                     var currentHeight = viewModelModifier.ViewModel.TextEditorDimensions.Height;
 
                     var caseA = currentScrollTop <= scrollTop;
@@ -742,7 +742,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
 
                 var verticalStartingIndex = (int)Math.Floor(
-                    viewModelModifier.ViewModel.TextEditorDimensions.ScrollTop /
+                    viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
 
                 var verticalTake = (int)Math.Ceiling(
@@ -765,7 +765,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 }
 
                 var horizontalStartingIndex = (int)Math.Floor(
-                    viewModelModifier.ViewModel.TextEditorDimensions.ScrollLeft /
+                    viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
 
                 var horizontalTake = (int)Math.Ceiling(
@@ -957,12 +957,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                 {
                     VirtualizationResult = virtualizationResult,
-					TextEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions with
+					ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions with
 					{
 						ScrollWidth = totalWidth,
                         ScrollHeight = totalHeight,
                         MarginScrollHeight = marginScrollHeight
-					}
+					},
                 };
             }
             catch (LuthetusTextEditorException exception)
@@ -990,7 +990,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 primaryCursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
 
-                Console.WriteLine(exception);
+#if DEBUG
+				// This exception happens a lot while using the editor.
+				// It is believed that the published demo WASM app is being slowed down
+				// in part from logging this a lot.
+				Console.WriteLine(exception);
+#endif
             }
         };
     }

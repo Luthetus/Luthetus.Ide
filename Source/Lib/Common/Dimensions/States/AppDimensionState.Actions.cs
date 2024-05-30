@@ -2,7 +2,7 @@ namespace Luthetus.Common.RazorLib.Dimensions.States;
 
 public partial record AppDimensionState
 {
-	public record SetAppDimensionStateAction(AppDimensionState NextAppDimensionState);
+	public record SetAppDimensionStateAction(Func<AppDimensionState, AppDimensionState> WithFunc);
 
 	/// <summary>
 	/// This action is for resizing that is done to an HTML element that is rendered.
