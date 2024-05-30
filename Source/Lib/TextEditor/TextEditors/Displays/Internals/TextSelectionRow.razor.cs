@@ -154,12 +154,13 @@ public partial class TextSelectionRow : ComponentBase
 
             var widthCssStyleString = "width: ";
 
-            var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
+            var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
+            var scrollbarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
 
-            var fullWidthValue = elementMeasurements.ScrollWidth;
+            var fullWidthValue = scrollbarDimensions.ScrollWidth;
 
-            if (elementMeasurements.Width > elementMeasurements.ScrollWidth)
-                fullWidthValue = elementMeasurements.Width; // If content does not fill the viewable width of the Text Editor User Interface
+            if (textEditorDimensions.Width > scrollbarDimensions.ScrollWidth)
+                fullWidthValue = textEditorDimensions.Width; // If content does not fill the viewable width of the Text Editor User Interface
 
             var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
 

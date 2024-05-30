@@ -253,33 +253,6 @@ window.luthetusTextEditor = {
             RelativeScrollTop: element.scrollTop
         }
     },
-    mutateScrollVerticalPositionByPixels: function (textEditorBodyId, gutterElementId, pixels) {
-        let textEditorBody = document.getElementById(textEditorBodyId);
-        let textEditorGutter = document.getElementById(gutterElementId);
-        
-        if (!textEditorBody) {
-            return;
-        }
-        
-        textEditorBody.scrollTop += pixels;
-
-        this.validateTextEditorBodyScrollPosition(textEditorBody);
-        
-        if (textEditorGutter) {
-            textEditorGutter.scrollTop = textEditorBody.scrollTop;
-        }
-    },
-    mutateScrollHorizontalPositionByPixels: function (textEditorBodyId, gutterElementId, pixels) {
-        let textEditorBody = document.getElementById(textEditorBodyId);
-
-        if (!textEditorBody) {
-            return;
-        }
-        
-        textEditorBody.scrollLeft += pixels;
-
-        this.validateTextEditorBodyScrollPosition(textEditorBody);
-    },
     setScrollPosition: function (textEditorBodyId, gutterElementId, scrollLeft, scrollTop) {
         let textEditorBody = document.getElementById(textEditorBodyId);
         let textEditorGutter = document.getElementById(gutterElementId);
@@ -288,39 +261,20 @@ window.luthetusTextEditor = {
             return;
         }
         
+		// 0 is falsey
         if (scrollLeft || scrollLeft === 0) {
             textEditorBody.scrollLeft = scrollLeft;
         }
         
+		// 0 is falsey
         if (scrollTop || scrollTop === 0) {
             textEditorBody.scrollTop = scrollTop;
         }
-
-        this.validateTextEditorBodyScrollPosition(textEditorBody);
 
         if (textEditorGutter) {
             textEditorGutter.scrollTop = textEditorBody.scrollTop;
         }
     },
-    validateTextEditorBodyScrollPosition: function (textEditorBodyElement) {
-        // Validate scrollLeft
-        let currentLargestLeftPosition = 
-            textEditorBodyElement.scrollLeft + textEditorBodyElement.offsetWidth;
-
-        if (currentLargestLeftPosition > textEditorBodyElement.scrollWidth) {
-            textEditorBodyElement.scrollLeft =
-                textEditorBodyElement.scrollWidth - textEditorBodyElement.offsetWidth;
-        }
-
-        // Validate scrollTop
-        let currentLargestTopPosition =
-            textEditorBodyElement.scrollTop + textEditorBodyElement.offsetHeight;
-
-        if (currentLargestTopPosition > textEditorBodyElement.scrollHeight) {
-            textEditorBodyElement.scrollTop =
-                textEditorBodyElement.scrollHeight - textEditorBodyElement.offsetHeight;
-        }
-    }, 
     setGutterScrollTop: function (gutterElementId, scrollTop) {
         let textEditorGutter = document.getElementById(gutterElementId);
 
@@ -340,20 +294,12 @@ window.luthetusTextEditor = {
     getElementMeasurementsInPixelsByElementReference: function (elementReference) {
         if (!elementReference) {
             return {
-                ScrollLeft: 0,
-                ScrollTop: 0,
-                ScrollWidth: 0,
-                ScrollHeight: 0,
                 Width: 0,
                 Height: 0,
             };
         }
 
         return {
-            ScrollLeft: Math.ceil(elementReference.scrollLeft),
-            ScrollTop: Math.ceil(elementReference.scrollTop),
-            ScrollWidth: Math.ceil(elementReference.scrollWidth),
-            ScrollHeight: Math.ceil(elementReference.scrollHeight),
             Width: Math.ceil(elementReference.offsetWidth),
             Height: Math.ceil(elementReference.offsetHeight),
         };

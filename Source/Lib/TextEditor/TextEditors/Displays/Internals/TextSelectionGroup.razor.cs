@@ -90,10 +90,10 @@ public partial class TextSelectionGroup : ComponentBase
         }
 
         var widthCssStyleString = "width: ";
-        var fullWidthValue = RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth;
+        var fullWidthValue = RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
 
         if (RenderBatch.ViewModel.TextEditorDimensions.Width >
-            RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth)
+            RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth)
         {
             // If content does not fill the viewable width of the Text Editor User Interface
             fullWidthValue = RenderBatch.ViewModel.TextEditorDimensions.Width;

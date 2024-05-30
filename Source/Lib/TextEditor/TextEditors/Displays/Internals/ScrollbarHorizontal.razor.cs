@@ -59,9 +59,9 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         // Proportional Left
-        var sliderProportionalLeftInPixels = RenderBatch.ViewModel.TextEditorDimensions.ScrollLeft *
+        var sliderProportionalLeftInPixels = RenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft *
             scrollbarWidthInPixels /
-            RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth;
+            RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
 
         var sliderProportionalLeftInPixelsInvariantCulture = sliderProportionalLeftInPixels.ToCssValue();
         var left = $"left: {sliderProportionalLeftInPixelsInvariantCulture}px;";
@@ -71,7 +71,7 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
 
         var sliderProportionalWidthInPixels = pageWidth *
             scrollbarWidthInPixels /
-            RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth;
+            RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
 
         var sliderProportionalWidthInPixelsInvariantCulture = sliderProportionalWidthInPixels.ToCssValue();
         var width = $"width: {sliderProportionalWidthInPixelsInvariantCulture}px;";
@@ -159,13 +159,13 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
                 ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
             var scrollLeft = xPosition *
-                RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth /
+                RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth /
                 scrollbarWidthInPixels;
 
             if (scrollLeft + RenderBatch.ViewModel.TextEditorDimensions.Width >
-                RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth)
+                RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth)
             {
-                scrollLeft = RenderBatch.ViewModel.TextEditorDimensions.ScrollWidth -
+                scrollLeft = RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth -
                     RenderBatch.ViewModel.TextEditorDimensions.Width;
             }
 

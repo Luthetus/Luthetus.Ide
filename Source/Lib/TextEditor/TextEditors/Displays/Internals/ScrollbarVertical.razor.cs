@@ -44,25 +44,26 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
 
     private string GetSliderVerticalStyleCss()
     {
-        var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
+        var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
+        var scrollBarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
 
-        var scrollbarHeightInPixels = elementMeasurements.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+        var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         // Proportional Top
-        var sliderProportionalTopInPixels = elementMeasurements.ScrollTop *
+        var sliderProportionalTopInPixels = scrollBarDimensions.ScrollTop *
             scrollbarHeightInPixels /
-            elementMeasurements.ScrollHeight;
+            scrollBarDimensions.ScrollHeight;
 
         var sliderProportionalTopInPixelsInvariantCulture = sliderProportionalTopInPixels.ToCssValue();
 
         var top = $"top: {sliderProportionalTopInPixelsInvariantCulture}px;";
 
         // Proportional Height
-        var pageHeight = elementMeasurements.Height;
+        var pageHeight = textEditorDimensions.Height;
 
         var sliderProportionalHeightInPixels = pageHeight *
             scrollbarHeightInPixels /
-            elementMeasurements.ScrollHeight;
+            scrollBarDimensions.ScrollHeight;
 
         var sliderProportionalHeightInPixelsInvariantCulture = sliderProportionalHeightInPixels.ToCssValue();
 
@@ -143,19 +144,20 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
             var yPosition = relativeCoordinatesOfDragEvent.RelativeY - _relativeCoordinatesOnMouseDown.RelativeY;
             yPosition = Math.Max(0, yPosition);
 
-            var elementMeasurements = RenderBatch.ViewModel.TextEditorDimensions;
+            var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
+            var scrollbarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
 
-            if (yPosition > elementMeasurements.Height)
-                yPosition = elementMeasurements.Height;
+            if (yPosition > textEditorDimensions.Height)
+                yPosition = textEditorDimensions.Height;
 
-            var scrollbarHeightInPixels = elementMeasurements.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+            var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
             var scrollTop = yPosition *
-                elementMeasurements.ScrollHeight /
+                scrollbarDimensions.ScrollHeight /
                 scrollbarHeightInPixels;
 
-            if (scrollTop + elementMeasurements.Height > elementMeasurements.ScrollHeight)
-                scrollTop = elementMeasurements.ScrollHeight - elementMeasurements.Height;
+            if (scrollTop + textEditorDimensions.Height > scrollbarDimensions.ScrollHeight)
+                scrollTop = scrollbarDimensions.ScrollHeight - textEditorDimensions.Height;
 
 			var throttleEventOnScrollVertical = new OnScrollVertical(
 				scrollTop,

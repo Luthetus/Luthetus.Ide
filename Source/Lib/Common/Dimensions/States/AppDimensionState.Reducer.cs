@@ -11,7 +11,7 @@ public partial record AppDimensionState
 			AppDimensionState inState,
 			SetAppDimensionStateAction setAppDimensionStateAction)
 		{
-			return setAppDimensionStateAction.NextAppDimensionState;
+			return setAppDimensionStateAction.WithFunc.Invoke(inState);
 		}
 
 		[ReducerMethod(typeof(NotifyIntraAppResizeAction))]

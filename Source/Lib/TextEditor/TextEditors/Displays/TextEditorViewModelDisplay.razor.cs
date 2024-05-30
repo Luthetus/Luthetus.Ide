@@ -637,7 +637,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             };
 		}
 
-		public static TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
+		public static TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(60);
         public static TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
         public static TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
         public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
