@@ -990,7 +990,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 primaryCursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
 
-                Console.WriteLine(exception);
+#if DEBUG
+				// This exception happens a lot while using the editor.
+				// It is believed that the published demo WASM app is being slowed down
+				// in part from logging this a lot.
+				Console.WriteLine(exception);
+#endif
             }
         };
     }
