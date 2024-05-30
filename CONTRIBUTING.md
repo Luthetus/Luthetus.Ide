@@ -6,7 +6,7 @@ Pull requests (PRs)
 
 - Target the 'staging' branch
 - Create a draft pull request.
-- Avoid cosmetic changes to unrelated files in the same commit.
+- Don't modify or add unrelated files.
 - I (Hunter Freeman), plan to merge 'staging' into 'main' on a weekly basis.
 
 Summary:
