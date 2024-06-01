@@ -1,35 +1,27 @@
-// This file was commented out because 'TextEditorModelState' and 'TextEditorViewModelState'
-// have been combined into the same type 'TextEditorState'.
-//
-// TODO: Make tests for 'TextEditorState' and then delete the tests for ...
-//       ...'TextEditorModelState' and 'TextEditorViewModelState'
-
-/*
 using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
-using static Luthetus.TextEditor.RazorLib.TextEditors.States.TextEditorModelState;
-using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.Tests.JsRuntimes;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.States;
 
 /// <summary>
-/// <see cref="TextEditorModelState"/>
+/// <see cref="TextEditorState"/>
 /// </summary>
-public class TextEditorModelStateReducerTests
+public class TextEditorStateReducerTests
 {
-    /// <summary>
+	/// <summary>
     /// <see cref="Reducer.ReduceRegisterAction(TextEditorModelState, RegisterAction)"/>
     /// </summary>
     [Fact]
@@ -174,4 +166,3 @@ public class TextEditorModelStateReducerTests
         textEditorService = serviceProvider.GetRequiredService<ITextEditorService>();
     }
 }
-*/

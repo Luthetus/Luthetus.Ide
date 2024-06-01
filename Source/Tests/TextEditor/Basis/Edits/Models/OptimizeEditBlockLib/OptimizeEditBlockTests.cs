@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 public class OptimizeEditBlockTests
 {

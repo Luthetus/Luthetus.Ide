@@ -64,20 +64,20 @@ public struct TextEditorEditOther : ITextEditorEdit
 	public TextEditorEditKind EditKind => TextEditorEditKind.Other;
 }
 
-public class TextEditorEditGroup
-{
-	public TextEditorEditGroup(TextEditorEditKind editKind)
-	{
-		TextEditorEditKind = editKind;
-	}
-
-	public TextEditorEditKind TextEditorEditKind { get; }
-	public List<ITextEditorEdit> EditList { get; } = new();
-}
+// public class TextEditorEditGroup
+// {
+// 	public TextEditorEditGroup(TextEditorEditKind editKind)
+// 	{
+// 		TextEditorEditKind = editKind;
+// 	}
+// 
+// 	public TextEditorEditKind TextEditorEditKind { get; }
+// 	public List<ITextEditorEdit> EditList { get; } = new();
+// }
 
 public class OptimizeTextEditor
 {
-	public readonly List<TextEditorEditGroup> EditGroupList = new();
+	public readonly List<ITextEditorEdit> EditGroupList = new();
 
 	private readonly StringBuilder _content = new();
 
