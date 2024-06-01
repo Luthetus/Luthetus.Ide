@@ -1,4 +1,11 @@
-﻿using Fluxor;
+// This file was commented out because 'TextEditorModelState' and 'TextEditorViewModelState'
+// have been combined into the same type 'TextEditorState'.
+//
+// TODO: Make tests for 'TextEditorState' and then delete the tests for ...
+//       ...'TextEditorModelState' and 'TextEditorViewModelState'
+
+/*
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
@@ -214,3 +221,4 @@ public class TextEditorViewModelStateReducerTests
            ?? throw new ArgumentNullException();
     }
 }
+*/
