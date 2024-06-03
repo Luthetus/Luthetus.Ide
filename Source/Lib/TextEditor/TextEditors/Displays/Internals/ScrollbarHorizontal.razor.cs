@@ -152,8 +152,8 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
 
             xPosition = Math.Max(0, xPosition);
 
-            if (xPosition > RenderBatch.ViewModel.TextEditorDimensions.Height)
-                xPosition = RenderBatch.ViewModel.TextEditorDimensions.Height;
+            if (xPosition > RenderBatch.ViewModel.TextEditorDimensions.Width)
+                xPosition = RenderBatch.ViewModel.TextEditorDimensions.Width;
 
             var scrollbarWidthInPixels = RenderBatch.ViewModel.TextEditorDimensions.Width -
                 ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
