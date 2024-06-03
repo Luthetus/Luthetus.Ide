@@ -108,7 +108,7 @@ public class OptimizeTextEditor
 
 	private void PerformBackspace(int positionIndex, int count)
 	{
-		var positionIndex = positionIndex - count;
+		positionIndex = positionIndex - count;
 		
 		if (positionIndex < 0)
 		{

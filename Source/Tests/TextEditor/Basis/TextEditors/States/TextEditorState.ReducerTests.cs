@@ -31,7 +31,7 @@ public class TextEditorStateReducerTests
             out var textEditorService,
             out var serviceProvider);
 
-        var textEditorModelStateWrap = serviceProvider.GetRequiredService<IState<TextEditorModelState>>();
+        var textEditorModelStateWrap = serviceProvider.GetRequiredService<IState<TextEditorState>>();
         var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
         var authenticatedActionKey = TextEditorService.AuthenticatedActionKey;
@@ -55,9 +55,9 @@ public class TextEditorStateReducerTests
         }
 
         // Fact: new RegisterAction(...)
-        RegisterAction registerAction;
+        TextEditorState.RegisterModelAction registerAction;
         {
-            registerAction = new RegisterAction(authenticatedActionKey, model);
+            registerAction = new TextEditorState.RegisterModelAction(authenticatedActionKey, model);
             Assert.Equal(authenticatedActionKey, registerAction.AuthenticatedActionKey);
             Assert.Equal(model, registerAction.Model);
         }
@@ -79,7 +79,7 @@ public class TextEditorStateReducerTests
                 null,
                 null);
 
-            dispatcher.Dispatch(new RegisterAction(authenticatedActionKey, otherModel));
+            dispatcher.Dispatch(new TextEditorState.RegisterModelAction(authenticatedActionKey, otherModel));
             Assert.Equal(2, textEditorModelStateWrap.Value.ModelList.Count);
         }
 

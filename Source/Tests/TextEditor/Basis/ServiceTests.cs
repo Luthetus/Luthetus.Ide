@@ -33,8 +33,7 @@ public class ServiceTests
             out var serviceProvider);
 
         Assert.NotNull(textEditorService);
-        Assert.NotNull(textEditorService.ModelStateWrap);
-        Assert.NotNull(textEditorService.ViewModelStateWrap);
+        Assert.NotNull(textEditorService.TextEditorStateWrap);
         Assert.NotNull(textEditorService.GroupStateWrap);
         Assert.NotNull(textEditorService.DiffStateWrap);
         Assert.NotNull(textEditorService.ThemeStateWrap);
