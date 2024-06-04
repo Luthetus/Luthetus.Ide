@@ -13,3 +13,5 @@ public struct TextEditorEditInsert : ITextEditorEdit
 
 	public TextEditorEditKind EditKind => TextEditorEditKind.Insert;
 }
+
+

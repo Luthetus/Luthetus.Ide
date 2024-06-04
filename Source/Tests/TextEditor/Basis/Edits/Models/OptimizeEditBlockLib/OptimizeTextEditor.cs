@@ -1,4 +1,5 @@
 using System.Text;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
@@ -91,25 +92,30 @@ public class OptimizeTextEditor
 	{
 		PerformInsert(positionIndex, content);
 		EditList.Add(new TextEditorEditInsert(positionIndex, content));
+		EditIndex++;
 	}
 
 	public void Backspace(int positionIndex, int count)
 	{
 		PerformBackspace(positionIndex, count);
 		EditList.Add(new TextEditorEditBackspace(positionIndex, count));
+		EditIndex++;
 	}
 
 	public void Delete(int positionIndex, int count)
 	{
 		PerformDelete(positionIndex, count);
 		EditList.Add(new TextEditorEditDelete(positionIndex, count));
+		EditIndex++;
 	}
 
 	public void Undo()
 	{
-		var mostRecentEdit = EditList[EditList.Count - 1];
-		EditList.RemoveAt(EditList.Count - 1);
+		if (EditIndex <= 0)
+			throw new LuthetusTextEditorException("No edits are available to perform 'undo' on");
 
+		var mostRecentEdit = EditList[EditIndex];
+		EditIndex--;
 		var undoEdit = mostRecentEdit.ToUndo();
 
 		switch (undoEdit.EditKind)
@@ -135,7 +141,32 @@ public class OptimizeTextEditor
 
 	public void Redo()
 	{
-		throw new NotImplementedException();
+		// If there is no next then throw exception
+		if (EditIndex >= EditList.Count - 1)
+			throw new LuthetusTextEditorException("No edits are available to perform 'redo' on");
+
+		EditIndex++;
+		var redoEdit = EditList[EditIndex];
+
+		switch (redoEdit.EditKind)
+		{
+			case TextEditorEditKind.Insert:
+				var insertEdit = (TextEditorEditInsert)redoEdit;
+				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
+				break;
+			case TextEditorEditKind.Backspace:
+				var backspaceEdit = (TextEditorEditBackspace)redoEdit;
+				PerformBackspace(backspaceEdit.PositionIndex, backspaceEdit.Count);
+				break;
+			case TextEditorEditKind.Delete: 
+				var deleteEdit = (TextEditorEditDelete)redoEdit;
+				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
+				break;
+			case TextEditorEditKind.Other: 
+				throw new NotImplementedException("TODO: Handle {nameof(TextEditorEditKind)}.{redoEdit.EditKind}");
+			default:
+				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {redoEdit.EditKind} was not recognized.");
+		}
 	}
 
 	private void PerformInsert(int positionIndex, string content)
