@@ -2,18 +2,26 @@ namespace Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 public class OptimizeEditBlockTests
 {
+	// TODO: IDEA: Is the context menu a presentation layer?
+
     [Fact]
 	public void Insert_One()
 	{
 		var textEditor = new OptimizeTextEditor();
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(1, textEditor.EditList.Count);
+		Assert.IsType<TextEditorEditConstructor>(textEditor.EditList.Single());
 
 		textEditor.Insert(0, "Hello");
 		Assert.Equal("Hello", textEditor.AllText);
-		Assert.Equal(1, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditList.Count);
 
 		textEditor.Undo();
 		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(0, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditList.Count);
+
+		textEditor.Redo();
+		Assert.Equal("Hello", textEditor.AllText);
 	}
 
 	[Fact]
@@ -74,5 +82,7 @@ public class OptimizeEditBlockTests
 		Assert.Equal(1, textEditor.EditList.Count);
 
 		textEditor.Undo();
+		Assert.Equal(initialContent, textEditor.AllText);
+		Assert.Equal(1, textEditor.EditList.Count);
 	}
 }
