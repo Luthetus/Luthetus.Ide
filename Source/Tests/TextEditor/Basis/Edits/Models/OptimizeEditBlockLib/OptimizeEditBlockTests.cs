@@ -10,18 +10,22 @@ public class OptimizeEditBlockTests
 		var textEditor = new OptimizeTextEditor();
 		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(1, textEditor.EditList.Count);
+		Assert.Equal(0, textEditor.EditIndex);
 		Assert.IsType<TextEditorEditConstructor>(textEditor.EditList.Single());
 
 		textEditor.Insert(0, "Hello");
 		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
 
 		textEditor.Undo();
 		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
+		Assert.Equal(0, textEditor.EditIndex);
 
 		textEditor.Redo();
 		Assert.Equal("Hello", textEditor.AllText);
+		Assert.Equal(1, textEditor.EditIndex);
 	}
 
 	[Fact]

@@ -133,6 +133,11 @@ public class OptimizeTextEditor
 		}
 	}
 
+	public void Redo()
+	{
+		throw new NotImplementedException();
+	}
+
 	private void PerformInsert(int positionIndex, string content)
 	{
 		_content.Insert(positionIndex, content);
