@@ -12,8 +12,14 @@ public class TextEditorEditDeleteBatch : ITextEditorEdit
 	}
 
 	public int PositionIndex { get; }
-	public int Count { get; }
+	public int Count { get; private set; }
 	public StringBuilder TextDeletedBuilder { get; }
 
 	public TextEditorEditKind EditKind => TextEditorEditKind.DeleteBatch;
+
+	public void Add(int count, string textDeleted)
+	{
+		Count += count;
+		TextDeletedBuilder.Append(textDeleted);
+	}
 }

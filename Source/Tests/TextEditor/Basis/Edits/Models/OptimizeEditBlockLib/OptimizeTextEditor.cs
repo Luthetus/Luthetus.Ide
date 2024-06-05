@@ -48,22 +48,11 @@ public class OptimizeTextEditor
 
 		var mostRecentEdit = EditList[EditIndex];
 
-		// Each if statement should return if it modifies the edit list.
-		//
-		// I'm unsure how I feel about 'editListWasModified' because you either return
-		// from every if statement, or you set a boolean like this.
-		//
-		// Yet, here I am doing both.
-		// The reason is just an anxious feeling that I should have both, and is not
-		// at all backed by evidence. In fact I strongly believe I do not need this boolean.
-		// But yeah, TODO: Delete this boolean.
-		var editListWasModified = false;
-
-		if (!editListWasModified && mostRecentEdit.EditKind == TextEditorEditKind.Insert)
+		if (mostRecentEdit.EditKind == TextEditorEditKind.Insert)
 		{
 			var mostRecentEditInsert = (TextEditorEditInsert)mostRecentEdit;
 
-			// Only batch consecutive, and contiguous, insertions.
+			// Only batch if consecutive, and contiguous.
 			if (positionIndex == mostRecentEditInsert.PositionIndex + mostRecentEditInsert.Content.Length)
 			{
 				var contentBuilder = new StringBuilder();
@@ -74,24 +63,25 @@ public class OptimizeTextEditor
 					mostRecentEditInsert.PositionIndex,
 					contentBuilder);
 	
-				editListWasModified = true;
 				EditList[EditIndex] = insertBatch;
 				return;
 			}
 		}
 		
-		if (!editListWasModified && mostRecentEdit.EditKind == TextEditorEditKind.InsertBatch)
+		if (mostRecentEdit.EditKind == TextEditorEditKind.InsertBatch)
 		{
 			var mostRecentEditInsertBatch = (TextEditorEditInsertBatch)mostRecentEdit;
 
-			editListWasModified = true;
-			mostRecentEditInsertBatch.ContentBuilder.Append(content);
-			return;
+			// Only batch if consecutive, and contiguous.
+			if (positionIndex == mostRecentEditInsertBatch.PositionIndex + mostRecentEditInsertBatch.ContentBuilder.Length)
+			{
+				mostRecentEditInsertBatch.ContentBuilder.Append(content);
+				return;
+			}
 		}
 		
-		if (!editListWasModified)
+		// Default case
 		{
-			editListWasModified = true;
 			EditList.Add(new TextEditorEditInsert(positionIndex, content));
 			EditIndex++;
 			return;
@@ -108,11 +98,50 @@ public class OptimizeTextEditor
 
 	public void Delete(int positionIndex, int count)
 	{
-		var editDelete = new TextEditorEditDelete(positionIndex, count);
-		editDelete.TextDeleted = _content.ToString(positionIndex, count);
+		var textDeleted = _content.ToString(positionIndex, count);
 		PerformDelete(positionIndex, count);
-		EditList.Add(editDelete);
-		EditIndex++;
+
+		var mostRecentEdit = EditList[EditIndex];
+
+		if (mostRecentEdit.EditKind == TextEditorEditKind.Delete)
+		{
+			var mostRecentEditDelete = (TextEditorEditDelete)mostRecentEdit;
+
+			// Only batch if consecutive, and contiguous.
+			if (positionIndex == mostRecentEditDelete.PositionIndex)
+			{
+				var textDeletedBuilder = new StringBuilder();
+				textDeletedBuilder.Append(mostRecentEditDelete.TextDeleted);
+				textDeletedBuilder.Append(textDeleted);
+
+				var editDeleteBatch = new TextEditorEditDeleteBatch(
+					positionIndex,
+					count + mostRecentEditDelete.Count,
+					textDeletedBuilder);
+				return;
+			}
+		}
+
+		if (mostRecentEdit.EditKind == TextEditorEditKind.DeleteBatch)
+		{
+			var mostRecentEditDeleteBatch = (TextEditorEditDeleteBatch)mostRecentEdit;
+
+			// Only batch if consecutive, and contiguous.
+			if (positionIndex == mostRecentEditDeleteBatch.PositionIndex)
+			{
+				mostRecentEditDeleteBatch.Add(count, textDeleted);
+				return;
+			}
+		}
+		
+		// Default case
+		{
+			var editDelete = new TextEditorEditDelete(positionIndex, count);
+			editDelete.TextDeleted = textDeleted;
+			EditList.Add(editDelete);
+			EditIndex++;
+			return;
+		}
 	}
 
 	public void Undo()

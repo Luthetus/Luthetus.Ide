@@ -3,29 +3,33 @@ using Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
-public class OptimizeEditInsertBatch
+public class OptimizeEditDeleteBatch
 {
 	[Fact]
-	public void Insert_Batches()
+	public void Delete_Batches()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor();
+		var textEditor = new OptimizeTextEditor("abc123Do-Re-Mi");
 
-		// Insert One (normal insert)
-		textEditor.Insert(0, "abc");
-		Assert.Equal("abc", textEditor.AllText);
+		var lengthAbc = "abc".Length;
+		var length123 = "123".Length;
+		var lengthDoReMi = "Do-Re-Mi".Length;
+
+		// Delete One (normal delete)
+		textEditor.Delete(0, lengthAbc);
+		Assert.Equal("123Do-Re-Mi", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Insert Two (cause a batch to be created)
-		textEditor.Insert(textEditor.AllText.Length, "123");
-		Assert.Equal("abc123", textEditor.AllText);
+		// Delete Two (cause a batch to be created)
+		textEditor.Delete(0, length123);
+		Assert.Equal("Do-Re-Mi", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Insert Three (add to existing batch)
-		textEditor.Insert(textEditor.AllText.Length, "Do-Re-Mi");
-		Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
+		// Delete Three (add to existing batch)
+		textEditor.Delete(0, lengthDoReMi);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
@@ -33,7 +37,7 @@ public class OptimizeEditInsertBatch
 		
 		// Undo One
 		textEditor.Undo();
-		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(0, textEditor.EditIndex);
 
@@ -42,7 +46,7 @@ public class OptimizeEditInsertBatch
 
 		// Redo One
 		textEditor.Redo();
-		Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
