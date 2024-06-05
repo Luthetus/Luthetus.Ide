@@ -3,52 +3,6 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
-/*
-public readonly List<ITextEditorEdit> EditList = new();
-public readonly List<ITextEditorEdit> RedoEditList = new();
-
-textEditor.Insert(0, "Hello World!");
-|
-textEditor.AllText == "Hello World!";
-EditList { EditInsert(0, "Hello World!") }
-
-textEditor.Undo();
-|
-EditList {  }
-RedoEditList { EditInsert(0, "Hello World!") }
-
-textEditor.Redo();
-|
-textEditor.AllText == "Hello World!";
-EditList { EditInsert(0, "Hello World!") }
-
-// There is a question of whether the 'undo' edit should make an entry
-// in the EditList.
-//
-// I think the answer to this is, one never wants to make an entry in the EditList
-// from the 'undo' edit.
-//
-// Instead one is moving the current edit "somewhere else"
-// so it can be redo'd.
-//
-// And in order to undo the edit one converts the parameters to the edit
-// into the opposite edit.
-
-// Furthermore, should one implement the edits via two separate List(s), or a single List?
-//
-// For the case of two separate List(s):
-// - One can create an 'EditList' which contains the active edits (limited by the most recent 'x' edits).
-// - And, for the 'RedoList', everytime an 'undo' is performed, then move the edit from the 'EditList' to the 'RedoList'.
-// - If an edit is added to the 'EditList', then clear the 'RedoList'.
-//
-// For the case of a single List:
-// - One creates the 'EditList'.
-// - Track the index within the 'EditList' at which the document is.
-// - Then, every time an 'undo' is performed, decrement the index.
-// - Once, a 'redo' is performed, then increment the index by 1, and execute textEditor.Insert(...) with the current edit.
-// - If an edit is added to the 'EditList', then clear any entries which exist at an index greater than the current.
-*/
-
 public class OptimizeTextEditor
 {
 	public OptimizeTextEditor()
@@ -104,8 +58,10 @@ public class OptimizeTextEditor
 
 	public void Delete(int positionIndex, int count)
 	{
+		var editDelete = new TextEditorEditDelete(positionIndex, count);
+		editDelete.TextDeleted = _content.ToString(positionIndex, count);
 		PerformDelete(positionIndex, count);
-		EditList.Add(new TextEditorEditDelete(positionIndex, count));
+		EditList.Add(editDelete);
 		EditIndex++;
 	}
 

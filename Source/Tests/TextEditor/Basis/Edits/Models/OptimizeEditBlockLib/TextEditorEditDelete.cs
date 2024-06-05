@@ -11,6 +11,8 @@ public struct TextEditorEditDelete : ITextEditorEdit
 
 	public int PositionIndex { get; }
 	public int Count { get; }
+
+	// TODO: Use Span<T>
 	public string? TextDeleted { get; set; }
 
 	public TextEditorEditKind EditKind => TextEditorEditKind.Delete;

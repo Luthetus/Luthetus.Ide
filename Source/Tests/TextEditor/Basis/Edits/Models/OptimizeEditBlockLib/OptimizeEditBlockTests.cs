@@ -1,3 +1,5 @@
+using Luthetus.TextEditor.RazorLib.Exceptions;
+
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 public class OptimizeEditBlockTests
@@ -48,128 +50,14 @@ public class OptimizeEditBlockTests
 		// Insert One
 		textEditor.Insert(0, "Hello");
 		Assert.Equal("Hello", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
+		Assert.Equal(2, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
 
 		// Insert Two		
 		textEditor.Insert(0, "Abc");
 		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
-
-		// Case 1: undo, undo, redo, redo
-		{
-			// Undo One
-			textEditor.Undo();
-			throw new NotImplementedException();
-	
-			// Undo Two
-			textEditor.Undo();
-			throw new NotImplementedException();
-	
-			// Redo One
-			textEditor.Redo();
-			throw new NotImplementedException();
-	
-			// Redo Two
-			textEditor.Redo();
-			throw new NotImplementedException();
-		}
-		
-		// Case 2: redo, undo, undo, redo
-		{
-			// Redo One
-			textEditor.Redo();
-			throw new NotImplementedException();
-
-			// Undo One
-			textEditor.Undo();
-			throw new NotImplementedException();
-	
-			// Undo Two
-			textEditor.Undo();
-			throw new NotImplementedException();
-	
-			// Redo Two
-			textEditor.Redo();
-			throw new NotImplementedException();
-		}
-
-		// Case 3: undo, redo, undo, redo
-		{
-			// Undo One
-			textEditor.Undo();
-			throw new NotImplementedException();
-	
-			// Redo One
-			textEditor.Redo();
-			throw new NotImplementedException();
-
-			// Undo Two
-			textEditor.Undo();
-			throw new NotImplementedException();
-	
-			// Redo Two
-			textEditor.Redo();
-			throw new NotImplementedException();
-		}
-
-		// Case 4: undo, redo, redo, undo
-		{
-			// Undo One
-			textEditor.Undo();
-			throw new NotImplementedException();
-
-			// Redo One
-			textEditor.Redo();
-			throw new NotImplementedException();
-	
-			// Redo Two
-			textEditor.Redo();
-			throw new NotImplementedException();
-	
-			// Undo Two
-			textEditor.Undo();
-			throw new NotImplementedException();
-		}
-
-		// Case 5: redo, undo, redo, undo
-		{
-			// Redo One
-			textEditor.Redo();
-			throw new NotImplementedException();
-
-			// Undo One
-			textEditor.Undo();
-			throw new NotImplementedException();
-	
-			// Redo Two
-			textEditor.Redo();
-			throw new NotImplementedException();
-
-			// Undo Two
-			textEditor.Undo();
-			throw new NotImplementedException();
-		}
-
-		// Case 6: redo, redo, undo, undo
-		{
-			// Redo One
-			textEditor.Redo();
-			throw new NotImplementedException();
-	
-			// Redo Two
-			textEditor.Redo();
-			throw new NotImplementedException();
-
-			// Undo One
-			textEditor.Undo();
-			throw new NotImplementedException();
-	
-			// Undo Two
-			textEditor.Undo();
-			throw new NotImplementedException();
-		}
 	}
 
 	[Fact]
