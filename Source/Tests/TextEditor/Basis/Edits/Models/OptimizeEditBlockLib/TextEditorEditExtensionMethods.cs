@@ -11,6 +11,9 @@ public static class TextEditorEditExtensionMethods
 			case TextEditorEditKind.Insert:
 				var editInsert = (TextEditorEditInsert)edit;
 				return new TextEditorEditDelete(editInsert.PositionIndex, editInsert.Content.Length);
+			case TextEditorEditKind.InsertBatch:
+				var editInsertBatch = (TextEditorEditInsertBatch)edit;
+				return new TextEditorEditDelete(editInsertBatch.PositionIndex, editInsertBatch.ContentBuilder.Length);
 			case TextEditorEditKind.Backspace:
 				var editBackspace = (TextEditorEditBackspace)edit;
 				return new TextEditorEditInsert(editBackspace.PositionIndex - editBackspace.TextDeleted.Length, editBackspace.TextDeleted);

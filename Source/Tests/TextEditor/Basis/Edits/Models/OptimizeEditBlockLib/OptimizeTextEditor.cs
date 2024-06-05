@@ -45,8 +45,57 @@ public class OptimizeTextEditor
 	public void Insert(int positionIndex, string content)
 	{
 		PerformInsert(positionIndex, content);
-		EditList.Add(new TextEditorEditInsert(positionIndex, content));
-		EditIndex++;
+
+		var mostRecentEdit = EditList[EditIndex];
+
+		// Each if statement should return if it modifies the edit list.
+		//
+		// I'm unsure how I feel about 'editListWasModified' because you either return
+		// from every if statement, or you set a boolean like this.
+		//
+		// Yet, here I am doing both.
+		// The reason is just an anxious feeling that I should have both, and is not
+		// at all backed by evidence. In fact I strongly believe I do not need this boolean.
+		// But yeah, TODO: Delete this boolean.
+		var editListWasModified = false;
+
+		if (!editListWasModified && mostRecentEdit.EditKind == TextEditorEditKind.Insert)
+		{
+			var mostRecentEditInsert = (TextEditorEditInsert)mostRecentEdit;
+
+			// Only batch consecutive, and contiguous, insertions.
+			if (positionIndex == mostRecentEditInsert.PositionIndex + mostRecentEditInsert.Content.Length)
+			{
+				var contentBuilder = new StringBuilder();
+				contentBuilder.Append(mostRecentEditInsert.Content);
+				contentBuilder.Append(content);
+	
+				var insertBatch = new TextEditorEditInsertBatch(
+					mostRecentEditInsert.PositionIndex,
+					contentBuilder);
+	
+				editListWasModified = true;
+				EditList[EditIndex] = insertBatch;
+				return;
+			}
+		}
+		
+		if (!editListWasModified && mostRecentEdit.EditKind == TextEditorEditKind.InsertBatch)
+		{
+			var mostRecentEditInsertBatch = (TextEditorEditInsertBatch)mostRecentEdit;
+
+			editListWasModified = true;
+			mostRecentEditInsertBatch.ContentBuilder.Append(content);
+			return;
+		}
+		
+		if (!editListWasModified)
+		{
+			editListWasModified = true;
+			EditList.Add(new TextEditorEditInsert(positionIndex, content));
+			EditIndex++;
+			return;
+		}
 	}
 
 	public void Backspace(int positionIndex, int count)
@@ -111,6 +160,10 @@ public class OptimizeTextEditor
 			case TextEditorEditKind.Insert:
 				var insertEdit = (TextEditorEditInsert)redoEdit;
 				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
+				break;
+			case TextEditorEditKind.InsertBatch:
+				var insertBatchEdit = (TextEditorEditInsertBatch)redoEdit;
+				PerformInsert(insertBatchEdit.PositionIndex, insertBatchEdit.ContentBuilder.ToString());
 				break;
 			case TextEditorEditKind.Backspace:
 				var backspaceEdit = (TextEditorEditBackspace)redoEdit;
