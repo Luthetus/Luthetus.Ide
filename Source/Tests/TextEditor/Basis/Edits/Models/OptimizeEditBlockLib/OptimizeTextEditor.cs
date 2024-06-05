@@ -51,8 +51,9 @@ public class OptimizeTextEditor
 
 	public void Backspace(int positionIndex, int count)
 	{
-		PerformBackspace(positionIndex, count);
-		EditList.Add(new TextEditorEditBackspace(positionIndex, count));
+		var editBackspace = new TextEditorEditBackspace(positionIndex, count);
+		editBackspace.TextDeleted = PerformBackspace(positionIndex, count);
+		EditList.Add(editBackspace);
 		EditIndex++;
 	}
 
@@ -78,6 +79,7 @@ public class OptimizeTextEditor
 		{
 			case TextEditorEditKind.Insert:
 				var insertEdit = (TextEditorEditInsert)undoEdit;
+				Console.WriteLine($"{insertEdit.PositionIndex}, '{insertEdit.Content}'");
 				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
 				break;
 			case TextEditorEditKind.Backspace:
@@ -130,7 +132,7 @@ public class OptimizeTextEditor
 		_content.Insert(positionIndex, content);
 	}
 
-	private void PerformBackspace(int positionIndex, int count)
+	private string PerformBackspace(int positionIndex, int count)
 	{
 		positionIndex = positionIndex - count;
 		
@@ -141,7 +143,9 @@ public class OptimizeTextEditor
 			count -= underflow;
 		}
 
+		var toBeDeletedText = _content.ToString(positionIndex, count);
 		_content.Remove(positionIndex, count);
+		return toBeDeletedText;
 	}
 
 	private void PerformDelete(int positionIndex, int count)

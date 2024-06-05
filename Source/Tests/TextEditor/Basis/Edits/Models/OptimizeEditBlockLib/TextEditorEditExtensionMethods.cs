@@ -13,7 +13,7 @@ public static class TextEditorEditExtensionMethods
 				return new TextEditorEditDelete(editInsert.PositionIndex, editInsert.Content.Length);
 			case TextEditorEditKind.Backspace:
 				var editBackspace = (TextEditorEditBackspace)edit;
-				return new TextEditorEditInsert(editBackspace.PositionIndex, editBackspace.TextDeleted);
+				return new TextEditorEditInsert(editBackspace.PositionIndex - editBackspace.TextDeleted.Length, editBackspace.TextDeleted);
 			case TextEditorEditKind.BackspaceBatch:
 				var editBackspaceBatch = (TextEditorEditBackspaceBatch)edit;
 				return new TextEditorEditInsert(editBackspaceBatch.PositionIndex, editBackspaceBatch.TextDeletedBuilder.ToString());
