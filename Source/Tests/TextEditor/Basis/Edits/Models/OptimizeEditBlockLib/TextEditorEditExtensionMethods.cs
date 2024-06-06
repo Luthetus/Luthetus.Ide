@@ -27,9 +27,9 @@ public static class TextEditorEditExtensionMethods
 				var editDeleteBatch = (TextEditorEditDeleteBatch)edit;
 				return new TextEditorEditInsert(editDeleteBatch.PositionIndex, editDeleteBatch.TextRemovedBuilder.ToString());
 			case TextEditorEditKind.Constructor:
-				throw new LuthetusTextEditorException("The {nameof(TextEditorEditKind)}: {edit.EditKind}, cannot be un-done. This edit represents the initial state.");
+				throw new LuthetusTextEditorException($"The {nameof(TextEditorEditKind)}: {edit.EditKind}, cannot be un-done. This edit represents the initial state.");
 			case TextEditorEditKind.Other: 
-				throw new NotImplementedException("TODO: Handle {nameof(TextEditorEditKind)}.{edit.EditKind}");
+				return edit;
 			default:
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {edit.EditKind} was not recognized.");
 		}

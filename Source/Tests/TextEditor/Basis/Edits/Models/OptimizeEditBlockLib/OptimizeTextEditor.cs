@@ -20,6 +20,11 @@ public class OptimizeTextEditor
 	public List<ITextEditorEdit> EditList { get; } = new();
 
 	/// <summary>
+	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
+	/// </summary>
+	public Stack<TextEditorEditOther> OtherEditStack { get; } = new();
+
+	/// <summary>
 	/// <see cref="EditIndex"/> identifies the index within <see cref="EditList"/> that the text editor is synced with.
 	/// i.e.: the most recently applied edit is <see cref="EditList"/>[<see cref="EditIndex"/>]
 	/// </summary>
@@ -189,6 +194,28 @@ public class OptimizeTextEditor
 		}
 	}
 
+	public void OpenOtherEdit(TextEditorEditOther editOther)
+	{
+		OtherEditStack.Push(editOther);
+		EditList.Add(editOther);
+		EditIndex++;
+	}
+
+	public void CloseOtherEdit(string predictedTag)
+	{
+		var peek = OtherEditStack.Peek();
+		if (peek.Tag != predictedTag)
+		{
+			throw new LuthetusTextEditorException(
+				$"Attempted to close other edit with {nameof(TextEditorEditOther.Tag)}: '{peek.Tag}'." + 
+				$" but, the {nameof(predictedTag)} was: '{predictedTag}'");
+		}
+
+		var pop = OtherEditStack.Pop();
+		EditList.Add(pop);
+		EditIndex++;
+	}
+
 	public void Undo()
 	{
 		if (EditIndex <= 0)
@@ -216,8 +243,52 @@ public class OptimizeTextEditor
 				var deleteEdit = (TextEditorEditDelete)undoEdit;
 				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
 				break;
-			case TextEditorEditKind.Other: 
-				throw new NotImplementedException("TODO: Handle {nameof(TextEditorEditKind)}.{undoEdit.EditKind}");
+			case TextEditorEditKind.Other:
+				while (true)
+				{
+					if (EditIndex == 0)
+					{
+						// TODO: How does one handle the 'undo limit'...
+						//       ...with respect to 'other' edits?
+						//       If one does an 'other edit' with more child edits than
+						//       the amount of undo history one can have.
+						//
+						//       Then it would be impossible
+						//       to handle that 'other edit' properly.
+						//
+						//       Furthermore, one could have a small 'other edit' yet,
+						//       by way of future edits moving the undo history,
+						//       the 'other edit' opening will be lost.
+						break;
+					}
+
+					mostRecentEdit = EditList[EditIndex];
+
+					if (mostRecentEdit.EditKind == TextEditorEditKind.Other)
+					{
+						var mostRecentEditOther = (TextEditorEditOther)mostRecentEdit;
+	
+						// Nothing needs to be done when the tags don't match
+						// other than continuing the while loop.
+						//
+						// Given that the 'CloseOtherEdit(...)'
+						// will throw an exception when attempting to close a mismatching other edit.
+						//
+						// Finding the opening to the child 'other edit' is irrelevant since it is encompassed
+						// within the parent.
+						if (mostRecentEditOther.Tag == (((TextEditorEditOther)undoEdit).Tag))
+						{
+							// Need to go one further than the opening,
+							EditIndex--;
+							break;
+						}
+					}
+					else
+					{
+						Undo();
+					}
+				}
+				break;
 			default:
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {undoEdit.EditKind} was not recognized.");
 		}
@@ -228,6 +299,8 @@ public class OptimizeTextEditor
 		// If there is no next then throw exception
 		if (EditIndex >= EditList.Count - 1)
 			throw new LuthetusTextEditorException("No edits are available to perform 'redo' on");
+		
+		Console.WriteLine("enter" + EditIndex);
 
 		EditIndex++;
 		var redoEdit = EditList[EditIndex];
@@ -235,6 +308,9 @@ public class OptimizeTextEditor
 		switch (redoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
+				Console.WriteLine("TextEditorEditKind.Insert");
+				Console.WriteLine("TextEditorEditKind.Insert");
+				Console.WriteLine("TextEditorEditKind.Insert");
 				var insertEdit = (TextEditorEditInsert)redoEdit;
 				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
 				break;
@@ -258,8 +334,36 @@ public class OptimizeTextEditor
 				var deleteBatchEdit = (TextEditorEditDeleteBatch)redoEdit;
 				PerformDelete(deleteBatchEdit.PositionIndex, deleteBatchEdit.Count);
 				break;
-			case TextEditorEditKind.Other: 
-				throw new NotImplementedException("TODO: Handle {nameof(TextEditorEditKind)}.{redoEdit.EditKind}");
+			case TextEditorEditKind.Other:
+				while (true)
+				{
+					if (EditIndex >= EditList.Count - 1)
+					{
+						// The 'Redo()' method deals with the next-edit
+						// as opposed to the 'Undo()' method that deals with the current-edit
+						//
+						// Therefore, if there is no 'next-edit' then break out
+						break;
+					}
+
+					var nextEdit = EditList[EditIndex + 1];
+
+					if (nextEdit.EditKind == TextEditorEditKind.Other)
+					{
+						var nextEditOther = (TextEditorEditOther)nextEdit;
+
+						// Regardless of the tag of the next edit. One will need to increment EditIndex.
+						EditIndex++;
+
+						if (nextEditOther.Tag == (((TextEditorEditOther)redoEdit).Tag))
+							break;
+					}
+					else
+					{
+						Redo();
+					}
+				}
+				break;
 			default:
 				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {redoEdit.EditKind} was not recognized.");
 		}
