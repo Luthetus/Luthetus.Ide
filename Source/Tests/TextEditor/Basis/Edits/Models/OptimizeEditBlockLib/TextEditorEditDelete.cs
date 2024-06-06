@@ -6,14 +6,14 @@ public struct TextEditorEditDelete : ITextEditorEdit
 	{
 		PositionIndex = positionIndex;
 		Count = count;
-		TextDeleted = string.Empty;
+		TextRemoved = string.Empty;
 	}
 
 	public int PositionIndex { get; }
 	public int Count { get; }
 
 	// TODO: Use Span<T>
-	public string? TextDeleted { get; set; }
+	public string? TextRemoved { get; set; }
 
 	public TextEditorEditKind EditKind => TextEditorEditKind.Delete;
 }

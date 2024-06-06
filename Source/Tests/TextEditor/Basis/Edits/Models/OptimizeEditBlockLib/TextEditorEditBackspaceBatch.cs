@@ -4,16 +4,22 @@ namespace Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 public class TextEditorEditBackspaceBatch : ITextEditorEdit
 {
-	public TextEditorEditBackspaceBatch(int positionIndex, int count, StringBuilder textDeletedBuilder)
+	public TextEditorEditBackspaceBatch(int positionIndex, int count, StringBuilder textRemovedBuilder)
 	{
 		PositionIndex = positionIndex;
 		Count = count;
-		TextDeletedBuilder = textDeletedBuilder;
+		TextRemovedBuilder = textRemovedBuilder;
 	}
 
 	public int PositionIndex { get; }
-	public int Count { get; }
-	public StringBuilder TextDeletedBuilder { get; }
+	public int Count { get; private set; }
+	public StringBuilder TextRemovedBuilder { get; }
 
 	public TextEditorEditKind EditKind => TextEditorEditKind.BackspaceBatch;
+
+	public void Add(int count, string textRemoved)
+	{
+		Count += count;
+		TextRemovedBuilder.Insert(0, textRemoved);
+	}
 }

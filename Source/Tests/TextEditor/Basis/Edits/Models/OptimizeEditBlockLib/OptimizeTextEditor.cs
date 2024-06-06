@@ -90,15 +90,58 @@ public class OptimizeTextEditor
 
 	public void Backspace(int positionIndex, int count)
 	{
-		var editBackspace = new TextEditorEditBackspace(positionIndex, count);
-		editBackspace.TextDeleted = PerformBackspace(positionIndex, count);
-		EditList.Add(editBackspace);
-		EditIndex++;
+		var textRemoved = PerformBackspace(positionIndex, count);
+
+		var mostRecentEdit = EditList[EditIndex];
+
+		if (mostRecentEdit.EditKind == TextEditorEditKind.Backspace)
+		{
+			var mostRecentEditBackspace = (TextEditorEditBackspace)mostRecentEdit;
+
+			// Only batch if consecutive, and contiguous.
+			if (positionIndex == mostRecentEditBackspace.PositionIndex - mostRecentEditBackspace.TextRemoved.Length)
+			{
+				// NOTE: The most recently removed text should go first, this is contrary to the Delete(...) method.
+				var textRemovedBuilder = new StringBuilder();
+				textRemovedBuilder.Append(textRemoved);
+				textRemovedBuilder.Append(mostRecentEditBackspace.TextRemoved);
+				
+
+				var editBackspaceBatch = new TextEditorEditBackspaceBatch(
+					mostRecentEditBackspace.PositionIndex,
+					count + mostRecentEditBackspace.Count,
+					textRemovedBuilder);
+
+				EditList[EditIndex] = editBackspaceBatch;
+				return;
+			}
+		}
+
+		if (mostRecentEdit.EditKind == TextEditorEditKind.BackspaceBatch)
+		{
+			var mostRecentEditBackspaceBatch = (TextEditorEditBackspaceBatch)mostRecentEdit;
+
+			// Only batch if consecutive, and contiguous.
+			if (positionIndex == mostRecentEditBackspaceBatch.PositionIndex - mostRecentEditBackspaceBatch.TextRemovedBuilder.Length)
+			{
+				mostRecentEditBackspaceBatch.Add(count, textRemoved);
+				return;
+			}
+		}
+		
+		// Default case
+		{
+			var editBackspace = new TextEditorEditBackspace(positionIndex, count);
+			editBackspace.TextRemoved = textRemoved;
+			EditList.Add(editBackspace);
+			EditIndex++;
+			return;
+		}
 	}
 
 	public void Delete(int positionIndex, int count)
 	{
-		var textDeleted = _content.ToString(positionIndex, count);
+		var textRemoved = _content.ToString(positionIndex, count);
 		PerformDelete(positionIndex, count);
 
 		var mostRecentEdit = EditList[EditIndex];
@@ -110,14 +153,16 @@ public class OptimizeTextEditor
 			// Only batch if consecutive, and contiguous.
 			if (positionIndex == mostRecentEditDelete.PositionIndex)
 			{
-				var textDeletedBuilder = new StringBuilder();
-				textDeletedBuilder.Append(mostRecentEditDelete.TextDeleted);
-				textDeletedBuilder.Append(textDeleted);
+				var textRemovedBuilder = new StringBuilder();
+				textRemovedBuilder.Append(mostRecentEditDelete.TextRemoved);
+				textRemovedBuilder.Append(textRemoved);
 
 				var editDeleteBatch = new TextEditorEditDeleteBatch(
 					positionIndex,
 					count + mostRecentEditDelete.Count,
-					textDeletedBuilder);
+					textRemovedBuilder);
+
+				EditList[EditIndex] = editDeleteBatch;
 				return;
 			}
 		}
@@ -129,7 +174,7 @@ public class OptimizeTextEditor
 			// Only batch if consecutive, and contiguous.
 			if (positionIndex == mostRecentEditDeleteBatch.PositionIndex)
 			{
-				mostRecentEditDeleteBatch.Add(count, textDeleted);
+				mostRecentEditDeleteBatch.Add(count, textRemoved);
 				return;
 			}
 		}
@@ -137,7 +182,7 @@ public class OptimizeTextEditor
 		// Default case
 		{
 			var editDelete = new TextEditorEditDelete(positionIndex, count);
-			editDelete.TextDeleted = textDeleted;
+			editDelete.TextRemoved = textRemoved;
 			EditList.Add(editDelete);
 			EditIndex++;
 			return;
@@ -150,8 +195,11 @@ public class OptimizeTextEditor
 			throw new LuthetusTextEditorException("No edits are available to perform 'undo' on");
 
 		var mostRecentEdit = EditList[EditIndex];
-		EditIndex--;
 		var undoEdit = mostRecentEdit.ToUndo();
+		
+		// In case the 'ToUndo(...)' throws an exception, the decrement to the EditIndex
+		// is being done only after a successful ToUndo(...)
+		EditIndex--;
 
 		switch (undoEdit.EditKind)
 		{
@@ -198,9 +246,17 @@ public class OptimizeTextEditor
 				var backspaceEdit = (TextEditorEditBackspace)redoEdit;
 				PerformBackspace(backspaceEdit.PositionIndex, backspaceEdit.Count);
 				break;
+			case TextEditorEditKind.BackspaceBatch:
+				var backspaceBatchEdit = (TextEditorEditBackspaceBatch)redoEdit;
+				PerformBackspace(backspaceBatchEdit.PositionIndex, backspaceBatchEdit.Count);
+				break;
 			case TextEditorEditKind.Delete: 
 				var deleteEdit = (TextEditorEditDelete)redoEdit;
 				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
+				break;
+			case TextEditorEditKind.DeleteBatch: 
+				var deleteBatchEdit = (TextEditorEditDeleteBatch)redoEdit;
+				PerformDelete(deleteBatchEdit.PositionIndex, deleteBatchEdit.Count);
 				break;
 			case TextEditorEditKind.Other: 
 				throw new NotImplementedException("TODO: Handle {nameof(TextEditorEditKind)}.{redoEdit.EditKind}");

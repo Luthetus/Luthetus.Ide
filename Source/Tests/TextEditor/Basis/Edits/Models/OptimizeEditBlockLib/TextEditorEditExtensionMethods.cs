@@ -16,16 +16,16 @@ public static class TextEditorEditExtensionMethods
 				return new TextEditorEditDelete(editInsertBatch.PositionIndex, editInsertBatch.ContentBuilder.Length);
 			case TextEditorEditKind.Backspace:
 				var editBackspace = (TextEditorEditBackspace)edit;
-				return new TextEditorEditInsert(editBackspace.PositionIndex - editBackspace.TextDeleted.Length, editBackspace.TextDeleted);
+				return new TextEditorEditInsert(editBackspace.PositionIndex - editBackspace.TextRemoved.Length, editBackspace.TextRemoved);
 			case TextEditorEditKind.BackspaceBatch:
 				var editBackspaceBatch = (TextEditorEditBackspaceBatch)edit;
-				return new TextEditorEditInsert(editBackspaceBatch.PositionIndex, editBackspaceBatch.TextDeletedBuilder.ToString());
+				return new TextEditorEditInsert(editBackspaceBatch.PositionIndex - editBackspaceBatch.TextRemovedBuilder.Length, editBackspaceBatch.TextRemovedBuilder.ToString());
 			case TextEditorEditKind.Delete:
 				var editDelete = (TextEditorEditDelete)edit;
-				return new TextEditorEditInsert(editDelete.PositionIndex, editDelete.TextDeleted);
+				return new TextEditorEditInsert(editDelete.PositionIndex, editDelete.TextRemoved);
 			case TextEditorEditKind.DeleteBatch:
 				var editDeleteBatch = (TextEditorEditDeleteBatch)edit;
-				return new TextEditorEditInsert(editDeleteBatch.PositionIndex, editDeleteBatch.TextDeletedBuilder.ToString());
+				return new TextEditorEditInsert(editDeleteBatch.PositionIndex, editDeleteBatch.TextRemovedBuilder.ToString());
 			case TextEditorEditKind.Constructor:
 				throw new LuthetusTextEditorException("The {nameof(TextEditorEditKind)}: {edit.EditKind}, cannot be un-done. This edit represents the initial state.");
 			case TextEditorEditKind.Other: 
