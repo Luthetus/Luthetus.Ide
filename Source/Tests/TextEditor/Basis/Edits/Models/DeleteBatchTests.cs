@@ -3,7 +3,7 @@ using Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
-public class OptimizeEditDeleteBatch
+public class DeleteBatchTests
 {
 	[Fact]
 	public void Delete_Batches()

@@ -3,23 +3,26 @@ using Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
-public class OptimizeEditInsertTwoStart
+public class BackspaceTests
 {
 	[Fact]
-	public void Insert_Two_SecondInsert_At_Start_Case_One()
+	public void Backspace_Case_One()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor();
+		var textEditor = new OptimizeTextEditor("AbcHello");
 
-		// Insert One
-		textEditor.Insert(0, "Hello");
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Backspace One
+		textEditor.Backspace(3, lengthAbc);
 		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Insert Two
-		textEditor.Insert(0, "Abc");
-		Assert.Equal("AbcHello", textEditor.AllText);
+		// Backspace Two		
+		textEditor.Backspace(5, lengthHello);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -33,7 +36,7 @@ public class OptimizeEditInsertTwoStart
 
 		// Undo Two
 		textEditor.Undo();
-		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(0, textEditor.EditIndex);
 
@@ -45,26 +48,29 @@ public class OptimizeEditInsertTwoStart
 
 		// Redo Two
 		textEditor.Redo();
-		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 	}
 
 	[Fact]
-	public void Insert_Two_SecondInsert_At_Start_Case_Two()
+	public void Backspace_Case_Two()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor();
+		var textEditor = new OptimizeTextEditor("AbcHello");
 
-		// Insert One
-		textEditor.Insert(0, "Hello");
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Backspace One
+		textEditor.Backspace(3, lengthAbc);
 		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Insert Two		
-		textEditor.Insert(0, "Abc");
-		Assert.Equal("AbcHello", textEditor.AllText);
+		// Backspace Two		
+		textEditor.Backspace(5, lengthHello);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -81,7 +87,7 @@ public class OptimizeEditInsertTwoStart
 
 		// Undo Two
 		textEditor.Undo();
-		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(0, textEditor.EditIndex);
 
@@ -93,20 +99,23 @@ public class OptimizeEditInsertTwoStart
 	}
 
 	[Fact]
-	public void Insert_Two_SecondInsert_At_Start_Case_Three()
+	public void Backspace_Case_Three()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor();
+		var textEditor = new OptimizeTextEditor("AbcHello");
 
-		// Insert One
-		textEditor.Insert(0, "Hello");
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Backspace One
+		textEditor.Backspace(3, lengthAbc);
 		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Insert Two		
-		textEditor.Insert(0, "Abc");
-		Assert.Equal("AbcHello", textEditor.AllText);
+		// Backspace Two		
+		textEditor.Backspace(5, lengthHello);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -120,7 +129,7 @@ public class OptimizeEditInsertTwoStart
 
 		// Redo One
 		textEditor.Redo();
-		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -132,26 +141,29 @@ public class OptimizeEditInsertTwoStart
 
 		// Redo Two
 		textEditor.Redo();
-		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 	}
 
 	[Fact]
-	public void Insert_Two_SecondInsert_At_Start_Case_Four()
+	public void Backspace_Case_Four()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor();
+		var textEditor = new OptimizeTextEditor("AbcHello");
 
-		// Insert One
-		textEditor.Insert(0, "Hello");
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Backspace One
+		textEditor.Backspace(3, lengthAbc);
 		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Insert Two		
-		textEditor.Insert(0, "Abc");
-		Assert.Equal("AbcHello", textEditor.AllText);
+		// Backspace Two		
+		textEditor.Backspace(5, lengthHello);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -165,7 +177,7 @@ public class OptimizeEditInsertTwoStart
 
 		// Redo One
 		textEditor.Redo();
-		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -180,20 +192,23 @@ public class OptimizeEditInsertTwoStart
 	}
 
 	[Fact]
-	public void Insert_Two_SecondInsert_At_Start_Case_Five()
+	public void Backspace_Case_Five()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor();
+		var textEditor = new OptimizeTextEditor("AbcHello");
 
-		// Insert One
-		textEditor.Insert(0, "Hello");
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Backspace One
+		textEditor.Backspace(3, lengthAbc);
 		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Insert Two		
-		textEditor.Insert(0, "Abc");
-		Assert.Equal("AbcHello", textEditor.AllText);
+		// Backspace Two		
+		textEditor.Backspace(5, lengthHello);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -210,7 +225,7 @@ public class OptimizeEditInsertTwoStart
 
 		// Redo Two
 		textEditor.Redo();
-		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -222,20 +237,23 @@ public class OptimizeEditInsertTwoStart
 	}
 
 	[Fact]
-	public void Insert_Two_SecondInsert_At_Start_Case_Six()
+	public void Backspace_Case_Six()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor();
+		var textEditor = new OptimizeTextEditor("AbcHello");
 
-		// Insert One
-		textEditor.Insert(0, "Hello");
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Backspace One
+		textEditor.Backspace(3, lengthAbc);
 		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Insert Two		
-		textEditor.Insert(0, "Abc");
-		Assert.Equal("AbcHello", textEditor.AllText);
+		// Backspace Two		
+		textEditor.Backspace(5, lengthHello);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -255,7 +273,7 @@ public class OptimizeEditInsertTwoStart
 
 		// Undo Two
 		textEditor.Undo();
-		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(0, textEditor.EditIndex);
 	}

@@ -3,26 +3,23 @@ using Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
-public class OptimizeEditDeleteTwoStart
+public class InsertTests
 {
 	[Fact]
-	public void Delete_Two_SecondDelete_At_Start_Case_One()
+	public void Insert_Case_One()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
+		var textEditor = new OptimizeTextEditor();
 
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
+		// Insert One
+		textEditor.Insert(0, "Hello");
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
+		// Insert Two
+		textEditor.Insert(0, "Abc");
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -30,47 +27,44 @@ public class OptimizeEditDeleteTwoStart
 		
 		// Undo One
 		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
 		// Undo Two
 		textEditor.Undo();
-		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(0, textEditor.EditIndex);
 
 		// Redo One
 		textEditor.Redo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
 		// Redo Two
 		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 	}
 
 	[Fact]
-	public void Delete_Two_SecondDelete_At_Start_Case_Two()
+	public void Insert_Case_Two()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
+		var textEditor = new OptimizeTextEditor();
 
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
+		// Insert One
+		textEditor.Insert(0, "Hello");
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
+		// Insert Two		
+		textEditor.Insert(0, "Abc");
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -81,41 +75,38 @@ public class OptimizeEditDeleteTwoStart
 
 		// Undo One
 		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
 		// Undo Two
 		textEditor.Undo();
-		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(0, textEditor.EditIndex);
 
 		// Redo Two
 		textEditor.Redo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 	}
 
 	[Fact]
-	public void Delete_Two_SecondDelete_At_Start_Case_Three()
+	public void Insert_Case_Three()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
+		var textEditor = new OptimizeTextEditor();
 
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
+		// Insert One
+		textEditor.Insert(0, "Hello");
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
+		// Insert Two		
+		textEditor.Insert(0, "Abc");
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -123,47 +114,44 @@ public class OptimizeEditDeleteTwoStart
 		
 		// Undo One
 		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
 		// Redo One
 		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
 		// Undo Two
 		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
 		// Redo Two
 		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 	}
 
 	[Fact]
-	public void Delete_Two_SecondDelete_At_Start_Case_Four()
+	public void Insert_Case_Four()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
+		var textEditor = new OptimizeTextEditor();
 
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
+		// Insert One
+		textEditor.Insert(0, "Hello");
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
+		// Insert Two		
+		textEditor.Insert(0, "Abc");
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -171,13 +159,13 @@ public class OptimizeEditDeleteTwoStart
 		
 		// Undo One
 		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
 		// Redo One
 		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -186,29 +174,26 @@ public class OptimizeEditDeleteTwoStart
 
 		// Undo Two
 		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 	}
 
 	[Fact]
-	public void Delete_Two_SecondDelete_At_Start_Case_Five()
+	public void Insert_Case_Five()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
+		var textEditor = new OptimizeTextEditor();
 
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
+		// Insert One
+		textEditor.Insert(0, "Hello");
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
+		// Insert Two		
+		textEditor.Insert(0, "Abc");
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -219,41 +204,38 @@ public class OptimizeEditDeleteTwoStart
 
 		// Undo One
 		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
 		// Redo Two
 		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
 		// Undo Two
 		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 	}
 
 	[Fact]
-	public void Delete_Two_SecondDelete_At_Start_Case_Six()
+	public void Insert_Case_Six()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
+		var textEditor = new OptimizeTextEditor();
 
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
+		// Insert One
+		textEditor.Insert(0, "Hello");
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
+		// Insert Two		
+		textEditor.Insert(0, "Abc");
+		Assert.Equal("AbcHello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
 
@@ -267,13 +249,13 @@ public class OptimizeEditDeleteTwoStart
 
 		// Undo One
 		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal("Hello", textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
 		// Undo Two
 		textEditor.Undo();
-		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(0, textEditor.EditIndex);
 	}

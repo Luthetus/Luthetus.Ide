@@ -3,7 +3,7 @@ using Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
-public class OptimizeEditInsertBatch
+public class InsertBatchTests
 {
 	[Fact]
 	public void Insert_Batches()

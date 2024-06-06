@@ -3,10 +3,10 @@ using Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
-public class OptimizeEditBackspaceTwoStart
+public class DeleteTests
 {
 	[Fact]
-	public void Backspace_Two_SecondBackspace_At_Start_Case_One()
+	public void Delete_Case_One()
 	{
 		// Construct
 		var textEditor = new OptimizeTextEditor("AbcHello");
@@ -14,14 +14,14 @@ public class OptimizeEditBackspaceTwoStart
 		var lengthHello = "Hello".Length;
 		var lengthAbc = "Abc".Length;
 
-		// Backspace One
-		textEditor.Backspace(8, lengthHello);
+		// Delete One
+		textEditor.Delete(3, lengthHello);
 		Assert.Equal("Abc", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Backspace Two		
-		textEditor.Backspace(3, lengthAbc);
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
 		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
@@ -54,7 +54,7 @@ public class OptimizeEditBackspaceTwoStart
 	}
 
 	[Fact]
-	public void Backspace_Two_SecondBackspace_At_Start_Case_Two()
+	public void Delete_Case_Two()
 	{
 		// Construct
 		var textEditor = new OptimizeTextEditor("AbcHello");
@@ -62,14 +62,14 @@ public class OptimizeEditBackspaceTwoStart
 		var lengthHello = "Hello".Length;
 		var lengthAbc = "Abc".Length;
 
-		// Backspace One
-		textEditor.Backspace(8, lengthHello);
+		// Delete One
+		textEditor.Delete(3, lengthHello);
 		Assert.Equal("Abc", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Backspace Two		
-		textEditor.Backspace(3, lengthAbc);
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
 		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
@@ -99,7 +99,7 @@ public class OptimizeEditBackspaceTwoStart
 	}
 
 	[Fact]
-	public void Backspace_Two_SecondBackspace_At_Start_Case_Three()
+	public void Delete_Case_Three()
 	{
 		// Construct
 		var textEditor = new OptimizeTextEditor("AbcHello");
@@ -107,14 +107,14 @@ public class OptimizeEditBackspaceTwoStart
 		var lengthHello = "Hello".Length;
 		var lengthAbc = "Abc".Length;
 
-		// Backspace One
-		textEditor.Backspace(8, lengthHello);
+		// Delete One
+		textEditor.Delete(3, lengthHello);
 		Assert.Equal("Abc", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Backspace Two		
-		textEditor.Backspace(3, lengthAbc);
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
 		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
@@ -147,7 +147,7 @@ public class OptimizeEditBackspaceTwoStart
 	}
 
 	[Fact]
-	public void Backspace_Two_SecondBackspace_At_Start_Case_Four()
+	public void Delete_Case_Four()
 	{
 		// Construct
 		var textEditor = new OptimizeTextEditor("AbcHello");
@@ -155,14 +155,14 @@ public class OptimizeEditBackspaceTwoStart
 		var lengthHello = "Hello".Length;
 		var lengthAbc = "Abc".Length;
 
-		// Backspace One
-		textEditor.Backspace(8, lengthHello);
+		// Delete One
+		textEditor.Delete(3, lengthHello);
 		Assert.Equal("Abc", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Backspace Two		
-		textEditor.Backspace(3, lengthAbc);
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
 		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
@@ -192,7 +192,7 @@ public class OptimizeEditBackspaceTwoStart
 	}
 
 	[Fact]
-	public void Backspace_Two_SecondBackspace_At_Start_Case_Five()
+	public void Delete_Case_Five()
 	{
 		// Construct
 		var textEditor = new OptimizeTextEditor("AbcHello");
@@ -200,14 +200,14 @@ public class OptimizeEditBackspaceTwoStart
 		var lengthHello = "Hello".Length;
 		var lengthAbc = "Abc".Length;
 
-		// Backspace One
-		textEditor.Backspace(8, lengthHello);
+		// Delete One
+		textEditor.Delete(3, lengthHello);
 		Assert.Equal("Abc", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Backspace Two		
-		textEditor.Backspace(3, lengthAbc);
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
 		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);
@@ -237,7 +237,7 @@ public class OptimizeEditBackspaceTwoStart
 	}
 
 	[Fact]
-	public void Backspace_Two_SecondBackspace_At_Start_Case_Six()
+	public void Delete_Case_Six()
 	{
 		// Construct
 		var textEditor = new OptimizeTextEditor("AbcHello");
@@ -245,14 +245,14 @@ public class OptimizeEditBackspaceTwoStart
 		var lengthHello = "Hello".Length;
 		var lengthAbc = "Abc".Length;
 
-		// Backspace One
-		textEditor.Backspace(8, lengthHello);
+		// Delete One
+		textEditor.Delete(3, lengthHello);
 		Assert.Equal("Abc", textEditor.AllText);
 		Assert.Equal(2, textEditor.EditList.Count);
 		Assert.Equal(1, textEditor.EditIndex);
 
-		// Backspace Two		
-		textEditor.Backspace(3, lengthAbc);
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
 		Assert.Equal(string.Empty, textEditor.AllText);
 		Assert.Equal(3, textEditor.EditList.Count);
 		Assert.Equal(2, textEditor.EditIndex);

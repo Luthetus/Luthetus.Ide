@@ -3,7 +3,7 @@ using Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
-public class OptimizeEditBackspaceBatch
+public class BackspaceBatchTests
 {
 	[Fact]
 	public void Backspace_Batches()
