@@ -232,7 +232,6 @@ public class OptimizeTextEditor
 		{
 			case TextEditorEditKind.Insert:
 				var insertEdit = (TextEditorEditInsert)undoEdit;
-				Console.WriteLine($"{insertEdit.PositionIndex}, '{insertEdit.Content}'");
 				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
 				break;
 			case TextEditorEditKind.Backspace:
@@ -299,8 +298,6 @@ public class OptimizeTextEditor
 		// If there is no next then throw exception
 		if (EditIndex >= EditList.Count - 1)
 			throw new LuthetusTextEditorException("No edits are available to perform 'redo' on");
-		
-		Console.WriteLine("enter" + EditIndex);
 
 		EditIndex++;
 		var redoEdit = EditList[EditIndex];
@@ -308,9 +305,6 @@ public class OptimizeTextEditor
 		switch (redoEdit.EditKind)
 		{
 			case TextEditorEditKind.Insert:
-				Console.WriteLine("TextEditorEditKind.Insert");
-				Console.WriteLine("TextEditorEditKind.Insert");
-				Console.WriteLine("TextEditorEditKind.Insert");
 				var insertEdit = (TextEditorEditInsert)redoEdit;
 				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
 				break;
