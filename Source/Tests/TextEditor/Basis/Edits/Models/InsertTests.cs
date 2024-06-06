@@ -1,5 +1,5 @@
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 

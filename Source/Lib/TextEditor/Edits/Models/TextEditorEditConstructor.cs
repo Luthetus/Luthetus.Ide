@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
+namespace Luthetus.TextEditor.RazorLib.Edits.Models;
 
 public struct TextEditorEditConstructor : ITextEditorEdit
 {

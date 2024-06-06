@@ -1,7 +1,8 @@
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
-namespace Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
+namespace Luthetus.TextEditor.Tests.Basis.Edits.Models;
 
 public class OptimizeTextEditor
 {

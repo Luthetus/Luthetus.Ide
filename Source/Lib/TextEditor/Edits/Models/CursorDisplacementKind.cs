@@ -1,4 +1,4 @@
-namespace Luthetus.TextEditor.Tests.Basis.Edits.Models.OptimizeEditBlockLib;
+namespace Luthetus.TextEditor.RazorLib.Edits.Models;
 
 /// <summary>
 /// This enum describes which direction the cursor's column index moves based on the
