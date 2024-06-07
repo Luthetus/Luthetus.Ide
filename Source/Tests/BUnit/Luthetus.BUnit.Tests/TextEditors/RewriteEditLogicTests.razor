@@ -48,6 +48,16 @@
         
 		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
 		Assert.Equal("abc", outModel.AllText);
+
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+
+		Assert.Equal(1, outModel.EditBlockList.Count);
     }
 
 	private EditLogicTestData EditLogicTestsInitialize()
