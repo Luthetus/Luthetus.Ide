@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -37,7 +37,7 @@ public interface ITextEditorModel
 {
     public ImmutableList<RichCharacter> RichCharacterList { get; }
     public ImmutableList<TextEditorPartition> PartitionList { get; }
-    public IList<EditBlock> EditBlockList { get; }
+    public IList<ITextEditorEdit> EditBlockList { get; }
     /// <summary>
     /// Convert an index for a <see cref="LineEnd"/> to a <see cref="LineInformation"/>, use the method:
     /// <see cref="TextEditorModelExtensionMethods.GetLineInformation(ITextEditorModel, int)"/>

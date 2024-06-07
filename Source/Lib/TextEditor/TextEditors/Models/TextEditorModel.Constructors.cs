@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
@@ -50,7 +50,7 @@ public partial class TextEditorModel
         ImmutableList<RichCharacter> richCharacterList,
         int partitionSize,
         ImmutableList<TextEditorPartition> partitionList,
-		ImmutableList<EditBlock> editBlocksList,
+		ImmutableList<ITextEditorEdit> editBlocksList,
 		ImmutableList<LineEnd> rowEndingPositionsList,
 		ImmutableList<(LineEndKind rowEndingKind, int count)> rowEndingKindCountsList,
 		ImmutableList<TextEditorPresentationModel> presentationModelsList,

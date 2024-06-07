@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
@@ -48,7 +48,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public ImmutableList<RichCharacter> RichCharacterList => _richCharacterList is null ? _textEditorModel.RichCharacterList : _richCharacterList;
     public ImmutableList<TextEditorPartition> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
 
-    public IList<EditBlock> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList;
+    public IList<ITextEditorEdit> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList;
     public IList<LineEnd> LineEndList => _lineEndList is null ? _textEditorModel.LineEndList : _lineEndList;
     public IList<(LineEndKind lineEndKind, int count)> LineEndKindCountList => _lineEndKindCountList is null ? _textEditorModel.LineEndKindCountList : _lineEndKindCountList;
     public IList<TextEditorPresentationModel> PresentationModelList => _presentationModelsList is null ? _textEditorModel.PresentationModelList : _presentationModelsList;
@@ -90,7 +90,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     /// </summary>
     private ImmutableList<TextEditorPartition> _partitionList = new TextEditorPartition[] { new(Array.Empty<RichCharacter>().ToImmutableList()) }.ToImmutableList();
 
-    private List<EditBlock>? _editBlocksList;
+    private List<ITextEditorEdit>? _editBlocksList;
     private List<LineEnd>? _lineEndList;
     private List<(LineEndKind lineEndKind, int count)>? _lineEndKindCountList;
     private List<TextEditorPresentationModel>? _presentationModelsList;
@@ -1129,54 +1129,376 @@ public partial class TextEditorModelModifier : ITextEditorModel
         EditBlockList.Clear();
     }
 
-    /// <summary>
-    /// The, "if (EditBlockIndex == _editBlocksPersisted.Count)", is done because the active EditBlock is not yet persisted.<br/><br/>
-    /// The active EditBlock is instead being 'created' as the user continues to make edits of the same <see cref="TextEditKind"/>.<br/><br/>
-    /// For complete clarity, this comment refers to one possibly expecting to see, "if (EditBlockIndex == _editBlocksPersisted.Count - 1)".
-    /// </summary>
-    public void UndoEdit()
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+	private void EnsureUndoPoint(ITextEditorEdit newEdit)
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
-        if (!this.CanUndoEdit())
-            return;
+		if (newEdit.EditKind == TextEditorEditKind.Insert)
+		{
+			var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
 
-        if (EditBlockIndex == EditBlockList.Count)
-        {
-            // If the edit block is pending then persist it before
-            // reverting back to the previous persisted edit block.
-            EnsureUndoPoint(TextEditKind.ForcePersistEditBlock);
-            _editBlockIndex--;
-        }
+			var newEditInsert = (TextEditorEditInsert)newEdit;
+			var positionIndex = newEditInsert.PositionIndex;
+			var content = newEditInsert.Content;
 
-        _editBlockIndex--;
+			if (mostRecentEdit.EditKind == TextEditorEditKind.Insert)
+			{
+				var mostRecentEditInsert = (TextEditorEditInsert)mostRecentEdit;
+	
+				// Only batch if consecutive, and contiguous.
+				if (positionIndex == mostRecentEditInsert.PositionIndex + mostRecentEditInsert.Content.Length)
+				{
+					var contentBuilder = new StringBuilder();
+					contentBuilder.Append(mostRecentEditInsert.Content);
+					contentBuilder.Append(content);
+		
+					var insertBatch = new TextEditorEditInsertBatch(
+						mostRecentEditInsert.PositionIndex,
+						contentBuilder);
+		
+					_editBlocksList[_editBlockIndex.Value] = insertBatch;
+					return;
+				}
+			}
+			
+			if (mostRecentEdit.EditKind == TextEditorEditKind.InsertBatch)
+			{
+				var mostRecentEditInsertBatch = (TextEditorEditInsertBatch)mostRecentEdit;
+	
+				// Only batch if consecutive, and contiguous.
+				if (positionIndex == mostRecentEditInsertBatch.PositionIndex + mostRecentEditInsertBatch.ContentBuilder.Length)
+				{
+					mostRecentEditInsertBatch.ContentBuilder.Append(content);
+					return;
+				}
+			}
+			
+			// Default case
+			{
+				_editBlocksList.Add(new TextEditorEditInsert(positionIndex, content));
+				_editBlockIndex++;
+				return;
+			}
+		}
+		else if (newEdit.EditKind == TextEditorEditKind.Backspace)
+		{
+			var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
 
-        var restoreEditBlock = EditBlockList[EditBlockIndex];
+			var newEditBackspace = (TextEditorEditBackspace)newEdit;
+			var positionIndex = newEditBackspace.PositionIndex;
+			var count = newEditBackspace.Count;
+			var textRemoved = newEditBackspace.TextRemoved;
 
-        SetContent(restoreEditBlock.ContentSnapshot);
-    }
+			if (mostRecentEdit.EditKind == TextEditorEditKind.Backspace)
+			{
+				var mostRecentEditBackspace = (TextEditorEditBackspace)mostRecentEdit;
+	
+				// Only batch if consecutive, and contiguous.
+				if (positionIndex == mostRecentEditBackspace.PositionIndex - mostRecentEditBackspace.TextRemoved.Length)
+				{
+					// NOTE: The most recently removed text should go first, this is contrary to the Delete(...) method.
+					var textRemovedBuilder = new StringBuilder();
+					textRemovedBuilder.Append(textRemoved);
+					textRemovedBuilder.Append(mostRecentEditBackspace.TextRemoved);
+					
+	
+					var editBackspaceBatch = new TextEditorEditBackspaceBatch(
+						mostRecentEditBackspace.PositionIndex,
+						count + mostRecentEditBackspace.Count,
+						textRemovedBuilder);
+	
+					_editBlocksList[_editBlockIndex.Value] = editBackspaceBatch;
+					return;
+				}
+			}
+	
+			if (mostRecentEdit.EditKind == TextEditorEditKind.BackspaceBatch)
+			{
+				var mostRecentEditBackspaceBatch = (TextEditorEditBackspaceBatch)mostRecentEdit;
+	
+				// Only batch if consecutive, and contiguous.
+				if (positionIndex == mostRecentEditBackspaceBatch.PositionIndex - mostRecentEditBackspaceBatch.TextRemovedBuilder.Length)
+				{
+					mostRecentEditBackspaceBatch.Add(count, textRemoved);
+					return;
+				}
+			}
+			
+			// Default case
+			{
+				var editBackspace = new TextEditorEditBackspace(positionIndex, count);
+				editBackspace.TextRemoved = textRemoved;
+				_editBlocksList.Add(editBackspace);
+				_editBlockIndex++;
+				return;
+			}
+		}
+		else if (newEdit.EditKind == TextEditorEditKind.Delete)
+		{
+			var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
 
-    public void RedoEdit()
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+			var newEditDelete = (TextEditorEditDelete)newEdit;
+			var positionIndex = newEditDelete.PositionIndex;
+			var count = newEditDelete.Count;
+			var textRemoved = newEditDelete.TextRemoved;
+
+			if (mostRecentEdit.EditKind == TextEditorEditKind.Delete)
+			{
+				var mostRecentEditDelete = (TextEditorEditDelete)mostRecentEdit;
+	
+				// Only batch if consecutive, and contiguous.
+				if (positionIndex == mostRecentEditDelete.PositionIndex)
+				{
+					var textRemovedBuilder = new StringBuilder();
+					textRemovedBuilder.Append(mostRecentEditDelete.TextRemoved);
+					textRemovedBuilder.Append(textRemoved);
+	
+					var editDeleteBatch = new TextEditorEditDeleteBatch(
+						positionIndex,
+						count + mostRecentEditDelete.Count,
+						textRemovedBuilder);
+	
+					_editBlocksList[_editBlockIndex.Value] = editDeleteBatch;
+					return;
+				}
+			}
+	
+			if (mostRecentEdit.EditKind == TextEditorEditKind.DeleteBatch)
+			{
+				var mostRecentEditDeleteBatch = (TextEditorEditDeleteBatch)mostRecentEdit;
+	
+				// Only batch if consecutive, and contiguous.
+				if (positionIndex == mostRecentEditDeleteBatch.PositionIndex)
+				{
+					mostRecentEditDeleteBatch.Add(count, textRemoved);
+					return;
+				}
+			}
+			
+			// Default case
+			{
+				var editDelete = new TextEditorEditDelete(positionIndex, count);
+				editDelete.TextRemoved = textRemoved;
+				_editBlocksList.Add(editDelete);
+				_editBlockIndex++;
+				return;
+			}
+		}
+
+	// TODO: the following multi line comment contains code from the original implementation...
+	//       ...which deleted outdated history. This logic needs to be re-added in some way.
+	/*
+		var mostRecentEditBlock = EditBlockList.LastOrDefault();
+	
+	    if (mostRecentEditBlock is null || mostRecentEditBlock.TextEditKind != textEditKind)
+	    {
+	        var newEditBlockIndex = EditBlockIndex;
+	
+	        EditBlockList.Insert(newEditBlockIndex, new EditBlock(
+	            textEditKind,
+	            textEditKind.ToString(),
+	            this.GetAllText(),
+	            otherTextEditKindIdentifier));
+	
+	        var removeBlocksStartingAt = newEditBlockIndex + 1;
+	
+	        _editBlocksList.RemoveRange(removeBlocksStartingAt, EditBlockList.Count - removeBlocksStartingAt);
+	
+	        _editBlockIndex++;
+	    }
+	
+	    while (EditBlockList.Count > TextEditorModel.MAXIMUM_EDIT_BLOCKS && EditBlockList.Count != 0)
+	    {
+	        _editBlockIndex--;
+	        EditBlockList.RemoveAt(0);
+	    }
+	*/
+	}
+
+	public void OpenOtherEdit(TextEditorEditOther editOther)
+	{
+		OtherEditStack.Push(editOther);
+		_editBlocksList.Add(editOther);
+		_editBlockIndex++;
+	}
+
+	public void CloseOtherEdit(string predictedTag)
+	{
+		var peek = OtherEditStack.Peek();
+		if (peek.Tag != predictedTag)
+		{
+			throw new LuthetusTextEditorException(
+				$"Attempted to close other edit with {nameof(TextEditorEditOther.Tag)}: '{peek.Tag}'." + 
+				$" but, the {nameof(predictedTag)} was: '{predictedTag}'");
+		}
+
+		var pop = OtherEditStack.Pop();
+		_editBlocksList.Add(pop);
+		_editBlockIndex++;
+	}
+
+	public void UndoEdit()
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
-        if (!this.CanRedoEdit())
-            return;
+		if (_editBlockIndex <= 0)
+			throw new LuthetusTextEditorException("No edits are available to perform 'undo' on");
 
-        _editBlockIndex++;
+		var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
+		var undoEdit = mostRecentEdit.ToUndo();
+		
+		// In case the 'ToUndo(...)' throws an exception, the decrement to the EditIndex
+		// is being done only after a successful ToUndo(...)
+		_editBlockIndex--;
 
-        var restoreEditBlock = EditBlockList[EditBlockIndex];
+		switch (undoEdit.EditKind)
+		{
+			case TextEditorEditKind.Insert:
+				var insertEdit = (TextEditorEditInsert)undoEdit;
+				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
+				break;
+			case TextEditorEditKind.Backspace:
+				var backspaceEdit = (TextEditorEditBackspace)undoEdit;
+				PerformBackspace(backspaceEdit.PositionIndex, backspaceEdit.Count);
+				break;
+			case TextEditorEditKind.Delete: 
+				var deleteEdit = (TextEditorEditDelete)undoEdit;
+				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
+				break;
+			case TextEditorEditKind.Other:
+				while (true)
+				{
+					if (_editBlockIndex == 0)
+					{
+						// TODO: How does one handle the 'undo limit'...
+						//       ...with respect to 'other' edits?
+						//       If one does an 'other edit' with more child edits than
+						//       the amount of undo history one can have.
+						//
+						//       Then it would be impossible
+						//       to handle that 'other edit' properly.
+						//
+						//       Furthermore, one could have a small 'other edit' yet,
+						//       by way of future edits moving the undo history,
+						//       the 'other edit' opening will be lost.
+						break;
+					}
 
-        SetContent(restoreEditBlock.ContentSnapshot);
-    }
+					mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
+
+					if (mostRecentEdit.EditKind == TextEditorEditKind.Other)
+					{
+						var mostRecentEditOther = (TextEditorEditOther)mostRecentEdit;
+	
+						// Nothing needs to be done when the tags don't match
+						// other than continuing the while loop.
+						//
+						// Given that the 'CloseOtherEdit(...)'
+						// will throw an exception when attempting to close a mismatching other edit.
+						//
+						// Finding the opening to the child 'other edit' is irrelevant since it is encompassed
+						// within the parent.
+						if (mostRecentEditOther.Tag == (((TextEditorEditOther)undoEdit).Tag))
+						{
+							// Need to go one further than the opening,
+							_editBlockIndex--;
+							break;
+						}
+					}
+					else
+					{
+						UndoEdit();
+					}
+				}
+				break;
+			default:
+				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {undoEdit.EditKind} was not recognized.");
+		}
+	}
+
+	public void RedoEdit()
+	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
+            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
+        }
+
+		// If there is no next then throw exception
+		if (_editBlockIndex >= _editBlocksList.Count - 1)
+			throw new LuthetusTextEditorException("No edits are available to perform 'redo' on");
+
+		_editBlockIndex++;
+		var redoEdit = _editBlocksList[_editBlockIndex.Value];
+
+		switch (redoEdit.EditKind)
+		{
+			case TextEditorEditKind.Insert:
+				var insertEdit = (TextEditorEditInsert)redoEdit;
+				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
+				break;
+			case TextEditorEditKind.InsertBatch:
+				var insertBatchEdit = (TextEditorEditInsertBatch)redoEdit;
+				PerformInsert(insertBatchEdit.PositionIndex, insertBatchEdit.ContentBuilder.ToString());
+				break;
+			case TextEditorEditKind.Backspace:
+				var backspaceEdit = (TextEditorEditBackspace)redoEdit;
+				PerformBackspace(backspaceEdit.PositionIndex, backspaceEdit.Count);
+				break;
+			case TextEditorEditKind.BackspaceBatch:
+				var backspaceBatchEdit = (TextEditorEditBackspaceBatch)redoEdit;
+				PerformBackspace(backspaceBatchEdit.PositionIndex, backspaceBatchEdit.Count);
+				break;
+			case TextEditorEditKind.Delete: 
+				var deleteEdit = (TextEditorEditDelete)redoEdit;
+				PerformDelete(deleteEdit.PositionIndex, deleteEdit.Count);
+				break;
+			case TextEditorEditKind.DeleteBatch: 
+				var deleteBatchEdit = (TextEditorEditDeleteBatch)redoEdit;
+				PerformDelete(deleteBatchEdit.PositionIndex, deleteBatchEdit.Count);
+				break;
+			case TextEditorEditKind.Other:
+				while (true)
+				{
+					if (_editBlockIndex >= _editBlocksList.Count - 1)
+					{
+						// The 'Redo()' method deals with the next-edit
+						// as opposed to the 'Undo()' method that deals with the current-edit
+						//
+						// Therefore, if there is no 'next-edit' then break out
+						break;
+					}
+
+					var nextEdit = _editBlocksList[_editBlockIndex.Value + 1];
+
+					if (nextEdit.EditKind == TextEditorEditKind.Other)
+					{
+						var nextEditOther = (TextEditorEditOther)nextEdit;
+
+						// Regardless of the tag of the next edit. One will need to increment EditIndex.
+						_editBlockIndex++;
+
+						if (nextEditOther.Tag == (((TextEditorEditOther)redoEdit).Tag))
+							break;
+					}
+					else
+					{
+						RedoEdit();
+					}
+				}
+				break;
+			default:
+				throw new NotImplementedException($"The {nameof(TextEditorEditKind)}: {redoEdit.EditKind} was not recognized.");
+		}
+	}
 
     public void SetIsDirtyTrue()
     {
@@ -1317,43 +1639,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
                 _onlyLineEndKind = null;
             }
-        }
-    }
-
-    private void EnsureUndoPoint(TextEditKind textEditKind, string? otherTextEditKindIdentifier = null)
-    {
-        // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
-        {
-            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
-            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
-        }
-
-        if (textEditKind == TextEditKind.Other && otherTextEditKindIdentifier is null)
-            TextEditorCommand.ThrowOtherTextEditKindIdentifierWasExpectedException(textEditKind);
-
-        var mostRecentEditBlock = EditBlockList.LastOrDefault();
-
-        if (mostRecentEditBlock is null || mostRecentEditBlock.TextEditKind != textEditKind)
-        {
-            var newEditBlockIndex = EditBlockIndex;
-
-            EditBlockList.Insert(newEditBlockIndex, new EditBlock(
-                textEditKind,
-                textEditKind.ToString(),
-                this.GetAllText(),
-                otherTextEditKindIdentifier));
-
-            var removeBlocksStartingAt = newEditBlockIndex + 1;
-
-            _editBlocksList.RemoveRange(removeBlocksStartingAt, EditBlockList.Count - removeBlocksStartingAt);
-
-            _editBlockIndex++;
-        }
-
-        while (EditBlockList.Count > TextEditorModel.MAXIMUM_EDIT_BLOCKS && EditBlockList.Count != 0)
-        {
-            _editBlockIndex--;
-            EditBlockList.RemoveAt(0);
         }
     }
 

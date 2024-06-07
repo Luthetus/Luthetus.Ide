@@ -1,0 +1,105 @@
+(2024-06-07)
+------------
+
+Relating to the namespace: 'Luthetus.TextEditor.RazorLib.Edits.Models'
+Swap the old EditBlock.cs code for the new rewritten version that was put in the same namespace.
+
+Where is the current EditBlock.cs used (regarding the library code; ignoring external things like unit tests)?
+- TextEditorModelExtensionMethods.cs
+      - line 436: in the 'CanUndoEdit(...)' method
+	  - line 441: in the 'CanRedoEdit(...)' method
+- TextEditorModel.Variables.cs
+      - line 27: the property 'EditBlockList'
+      - line 51: the property 'EditBlockIndex'
+- TextEditorModelModifier.cs
+      - line 51: the property 'EditBlockList'
+      - line 64: the property 'EditBlockIndex'
+      - line 93: the field '_editBlocksList'
+      - line 132: in the 'ToModel()' method
+      - line 1120: in the 'ClearEditBlocks()' method
+      - line 1137: in the 'UndoEdit()' method
+      - line 1163: in the 'RedoEdit()' method
+      - line 1323: in the 'EnsureUndoPoint(...)' method
+- TextEditorModel.Constructors.cs
+      - line 48 in the 'TextEditorModel(...)' constructor
+- ITextEditorModel.cs
+      - line 40 in the 'EditBlockList' property
+      - line 76 in the 'EditBlockIndex' property
+- TextEditorModel.ITextEditorModel.cs
+      - line 15 in the 'EditBlockList' property
+
+Given the places where the current 'EditBlock.cs' is being used. Are there any concerns
+    relating to the replacement of the current code with the rewritten version?
+- TextEditorModelExtensionMethods.cs
+      - line 436: in the 'CanUndoEdit(...)' method
+	        - Good: the new code tracks the edit index, within the edit list.
+	  - line 441: in the 'CanRedoEdit(...)' method
+			- Good: the new code tracks the edit index, within the edit list.
+- TextEditorModel.Variables.cs
+      - line 27: the property 'EditBlockList'
+		    - Good: this property exists in the new code.
+      - line 51: the property 'EditBlockIndex'
+		    - Good: this property exists in the new code.
+- TextEditorModelModifier.cs
+      - line 51: the property 'EditBlockList'
+		    - Good: this property exists in the new code.
+      - line 64: the property 'EditBlockIndex'
+		    - Good: this property exists in the new code.
+      - line 93: the field '_editBlocksList'
+		    - Good: the equivalent property exists in the new code.
+      - line 132: in the 'ToModel()' method
+		    - Good: all parameters have their respective new code version.
+      - line 1120: in the 'ClearEditBlocks()' method
+		    - Good: the edit index, and edit list, are tracked in the new code. Therefore, this is doable.
+      - line 1137: in the 'UndoEdit()' method
+		    - Good: this method exists in the new code.
+      - line 1163: in the 'RedoEdit()' method
+		    - Good: this method exists in the new code.
+      - line 1323: in the 'EnsureUndoPoint(...)' method
+		    - Good: this logic exists in the new code, albeit not a 1 to 1 method equivalent.
+- TextEditorModel.Constructors.cs
+      - line 48 in the 'TextEditorModel(...)' constructor
+		    - Good: all parameters have their respective new code version.
+- ITextEditorModel.cs
+      - line 40 in the 'EditBlockList' property
+		    - Good: this property exists in the new code.
+      - line 76 in the 'EditBlockIndex' property
+		    - Good: this property exists in the new code.
+- TextEditorModel.ITextEditorModel.cs
+      - line 15 in the 'EditBlockList' property
+		    - Good: this property exists in the new code.
+
+It seems the code can be replaced with minimal issues.
+But, are there any concerns in relation to the new code? Perhaps bugs or such.
+- The new code needs to change how the 'TextEditorEditOther' is done.
+      If an edit of this kind has more child edits than there are available slots for edit history,
+	  then the edit will not be undone properly since the first part of the edit was lost.
+      -Perhaps a fix for this would be to have the 'TextEditorEditOther' have a property which
+	       is a collection of the child edits. Then, regardless of the amount of child edits,
+		   all 'TextEditorEditOther' will only take 1 slot in the edit history.
+
+In what order should the code replacements be made?
+- ITextEditorModel.cs
+      - line 40 in the 'EditBlockList' property
+      - line 76 in the 'EditBlockIndex' property
+- TextEditorModel.Variables.cs
+      - line 27: the property 'EditBlockList'
+      - line 51: the property 'EditBlockIndex'
+- TextEditorModel.ITextEditorModel.cs
+      - line 15 in the 'EditBlockList' property
+- TextEditorModel.Constructors.cs
+      - line 48 in the 'TextEditorModel(...)' constructor
+- TextEditorModelModifier.cs
+      - line 51: the property 'EditBlockList'
+      - line 64: the property 'EditBlockIndex'
+      - line 93: the field '_editBlocksList'
+      - line 132: in the 'ToModel()' method
+      - line 1120: in the 'ClearEditBlocks()' method
+      - line 1137: in the 'UndoEdit()' method
+      - line 1163: in the 'RedoEdit()' method
+      - line 1323: in the 'EnsureUndoPoint(...)' method
+- TextEditorModelExtensionMethods.cs
+      - line 436: in the 'CanUndoEdit(...)' method
+	  - line 441: in the 'CanRedoEdit(...)' method
+
+The UndoEdit() and RedoEdit() methods needs to be replaced.
