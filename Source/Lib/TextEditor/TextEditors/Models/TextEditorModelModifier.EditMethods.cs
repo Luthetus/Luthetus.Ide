@@ -298,6 +298,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
             if (TextEditorSelectionHelper.HasSelectedText(cursorModifier))
             {
                 Delete(
+					// TODO: 'cursorModifierBag' is not the correcy parameter here...
+					//       ...one needs to create a new cursor modifier bag which contains the single cursor that is being looked at. 
                     cursorModifierBag,
                     1,
                     false,
@@ -572,18 +574,14 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
 	private void PerformBackspace(int positionIndex, int count)
 	{
-		/*
-		CursorModifierBagTextEditor cursorModifierBag,
-		        int columnCount,
-		        bool expandWord,
-		        DeleteKind deleteKind,
-		        CancellationToken cancellationToken = default
-		*/
-
-		throw new NotImplementedException();
+		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
+		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
+		var cursorModifierBag = new CursorModifierBagTextEditor(
+			Key<TextEditorViewModel>.Empty,
+			new List<TextEditorCursorModifier> { new(cursor) });
 
 		Delete(
-			null,
+			cursorModifierBag,
 			count,
 			false,
 			DeleteKind.Backspace,
@@ -592,7 +590,18 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
 	private void PerformDelete(int positionIndex, int count)
 	{
-		throw new NotImplementedException();
+		var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(positionIndex);
+		var cursor = new TextEditorCursor(lineIndex, columnIndex, true);
+		var cursorModifierBag = new CursorModifierBagTextEditor(
+			Key<TextEditorViewModel>.Empty,
+			new List<TextEditorCursorModifier> { new(cursor) });
+
+		Delete(
+			cursorModifierBag,
+			count,
+			false,
+			DeleteKind.Delete,
+			CancellationToken.None);
 	}
 
     /// <summary>
