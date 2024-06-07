@@ -1,0 +1,408 @@
+@using Fluxor
+@using Luthetus.Common.RazorLib.Installations.Models
+@using Luthetus.Common.RazorLib.BackgroundTasks.Models
+@using Luthetus.Common.RazorLib.Dialogs.Models
+@using Luthetus.Common.RazorLib.Dialogs.Displays
+@using Luthetus.Common.RazorLib.Dynamics.Models
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.Common.RazorLib.Notifications.Displays
+@using Luthetus.Common.RazorLib.Notifications.Models
+@using Luthetus.TextEditor.RazorLib
+@using Luthetus.TextEditor.RazorLib.Events.Models
+@using Luthetus.TextEditor.RazorLib.Installations.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.Lexes.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.Ide.RazorLib.Installations.Models
+
+@inherits TestContext
+@code
+{
+	[Fact]
+	public void Delete_Case_One()
+	{
+		// Construct
+		var textEditor = new OptimizeTextEditor("AbcHello");
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Delete One
+		textEditor.Delete(3, lengthHello);
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(2, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+
+		// undo, undo, redo, redo
+		
+		// Undo One
+		textEditor.Undo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Undo Two
+		textEditor.Undo();
+		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(0, textEditor.EditIndex);
+
+		// Redo One
+		textEditor.Redo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Redo Two
+		textEditor.Redo();
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+	}
+
+	[Fact]
+	public void Delete_Case_Two()
+	{
+		// Construct
+		var textEditor = new OptimizeTextEditor("AbcHello");
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Delete One
+		textEditor.Delete(3, lengthHello);
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(2, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+
+		// redo, undo, undo, redo
+		
+		// Redo One
+		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+
+		// Undo One
+		textEditor.Undo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Undo Two
+		textEditor.Undo();
+		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(0, textEditor.EditIndex);
+
+		// Redo Two
+		textEditor.Redo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+	}
+
+	[Fact]
+	public void Delete_Case_Three()
+	{
+		// Construct
+		var textEditor = new OptimizeTextEditor("AbcHello");
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Delete One
+		textEditor.Delete(3, lengthHello);
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(2, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+
+		// undo, redo, undo, redo
+		
+		// Undo One
+		textEditor.Undo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Redo One
+		textEditor.Redo();
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+
+		// Undo Two
+		textEditor.Undo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Redo Two
+		textEditor.Redo();
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+	}
+
+	[Fact]
+	public void Delete_Case_Four()
+	{
+		// Construct
+		var textEditor = new OptimizeTextEditor("AbcHello");
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Delete One
+		textEditor.Delete(3, lengthHello);
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(2, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+
+		// undo, redo, redo, undo
+		
+		// Undo One
+		textEditor.Undo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Redo One
+		textEditor.Redo();
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+
+		// Redo Two
+		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+
+		// Undo Two
+		textEditor.Undo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+	}
+
+	[Fact]
+	public void Delete_Case_Five()
+	{
+		// Construct
+		var textEditor = new OptimizeTextEditor("AbcHello");
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Delete One
+		textEditor.Delete(3, lengthHello);
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(2, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+
+		// redo, undo, redo, undo
+		
+		// Redo One
+		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+
+		// Undo One
+		textEditor.Undo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Redo Two
+		textEditor.Redo();
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+
+		// Undo Two
+		textEditor.Undo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+	}
+
+	[Fact]
+	public void Delete_Case_Six()
+	{
+		// Construct
+		var textEditor = new OptimizeTextEditor("AbcHello");
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Delete One
+		textEditor.Delete(3, lengthHello);
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(2, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Delete Two		
+		textEditor.Delete(0, lengthAbc);
+		Assert.Equal(string.Empty, textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(2, textEditor.EditIndex);
+
+		// redo, redo, undo, undo
+		
+		// Redo One
+		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+
+		// Redo Two
+		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+
+		// Undo One
+		textEditor.Undo();
+		Assert.Equal("Abc", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(1, textEditor.EditIndex);
+
+		// Undo Two
+		textEditor.Undo();
+		Assert.Equal("AbcHello", textEditor.AllText);
+		Assert.Equal(3, textEditor.EditList.Count);
+		Assert.Equal(0, textEditor.EditIndex);
+	}
+
+	[Fact]
+	public async Task EditLogicTest()
+    {
+		var testData = EditLogicTestsInitialize();
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
+
+		testData.TextEditorService.PostSimpleBatch(
+			nameof(RewriteEditLogicTests),
+			editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					return Task.CompletedTask;
+
+				modelModifier.Insert("abc", cursorModifierBag, useLineEndKindPreference: false);
+				return Task.CompletedTask;
+			});
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+		Assert.Equal("abc", outModel.AllText);
+
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+
+		Assert.Equal(2, outModel.EditBlockList.Count);
+    }
+
+	private EditLogicTestData EditLogicTestsInitialize()
+	{
+		SharedInitializationForTests.Initialize(this);
+		
+		var textEditorService = Services.GetService<ITextEditorService>();
+
+		var resourceUri = new ResourceUri("/unitTesting.txt");
+		var viewModelKey = Key<TextEditorViewModel>.NewKey();
+
+		var inModel = new TextEditorModel(
+	        resourceUri,
+	        DateTime.UtcNow,
+	        "txt",
+	        string.Empty,
+	        null,
+	        null,
+			4_096);
+
+		textEditorService.ModelApi.RegisterCustom(inModel);
+		textEditorService.ViewModelApi.Register(viewModelKey, inModel.ResourceUri, new Category("UnitTests"));
+
+		JSInterop.SetupVoid("luthetusTextEditor.disposeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeVirtualizationIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
+
+		TextEditorViewModelDisplay? refTextEditorViewModelDisplay = null;
+
+		var cut = Render(
+			@<TextEditorViewModelDisplay @ref="refTextEditorViewModelDisplay" TextEditorViewModelKey="viewModelKey"/>);
+
+		Console.WriteLine(cut.GetType());
+
+		var events = new TextEditorViewModelDisplay.TextEditorEvents(
+			refTextEditorViewModelDisplay,
+			textEditorService.OptionsStateWrap.Value.Options);
+
+		return new EditLogicTestData(
+			cut,
+			refTextEditorViewModelDisplay,
+			events,
+			inModel,
+			viewModelKey,
+			textEditorService);
+	}
+
+	private class EditLogicTestData
+	{
+		public EditLogicTestData(
+			IRenderedFragment cut,
+			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
+			TextEditorViewModelDisplay.TextEditorEvents events,
+			TextEditorModel inModel,
+			Key<TextEditorViewModel> viewModelKey,
+			ITextEditorService textEditorService)
+		{
+			Cut = cut;
+			RefTextEditorViewModelDisplay = refTextEditorViewModelDisplay;
+			Events = events;
+			InModel = inModel;
+			ViewModelKey = viewModelKey;
+			TextEditorService = textEditorService;
+		}
+
+		public IRenderedFragment Cut { get; }
+		public TextEditorViewModelDisplay? RefTextEditorViewModelDisplay { get; }
+		public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
+		public TextEditorModel InModel { get; }
+		public Key<TextEditorViewModel> ViewModelKey { get; }
+		public ITextEditorService TextEditorService { get; }
+	}
+}
