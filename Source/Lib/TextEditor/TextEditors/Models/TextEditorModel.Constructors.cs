@@ -43,6 +43,8 @@ public partial class TextEditorModel
 		OnlyLineEndKind = modifier.OnlyLineEndKind;
 		LineEndKindPreference = modifier.LineEndKindPreference;
 		MostCharactersOnASingleLineTuple = modifier.MostCharactersOnASingleLineTuple;
+		EditBlockList = modifier.EditBlockList.ToImmutableList();
+		EditBlockIndex = modifier.EditBlockIndex;
 	}
 
 	public TextEditorModel(

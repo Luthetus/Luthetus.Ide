@@ -23,6 +23,7 @@
     {
 		var testData = EditLogicTestsInitialize();
 		Assert.Equal(string.Empty, testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
 
 		testData.TextEditorService.PostSimpleBatch(
 			nameof(RewriteEditLogicTests),
@@ -57,7 +58,7 @@
 		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
 		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
 
-		Assert.Equal(1, outModel.EditBlockList.Count);
+		Assert.Equal(2, outModel.EditBlockList.Count);
     }
 
 	private EditLogicTestData EditLogicTestsInitialize()

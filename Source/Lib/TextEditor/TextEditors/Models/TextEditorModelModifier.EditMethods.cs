@@ -102,9 +102,14 @@ public partial class TextEditorModelModifier : ITextEditorModel
             _lineEndList ??= _textEditorModel.LineEndList.ToList();
             _tabKeyPositionsList ??= _textEditorModel.TabKeyPositionList.ToList();
             _lineEndKindCountList ??= _textEditorModel.LineEndKindCountList.ToList();
+            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
+            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
         ClearAllStatesButKeepEditHistory();
+
+		if (_editBlocksList.Count == 0 && _editBlockIndex == 0)
+			_editBlocksList.Add(new TextEditorEditConstructor());
 
         var rowIndex = 0;
         var previousCharacter = '\0';
