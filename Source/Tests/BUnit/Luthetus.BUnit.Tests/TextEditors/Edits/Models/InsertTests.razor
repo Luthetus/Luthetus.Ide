@@ -170,22 +170,22 @@
 				// redo, undo, undo, redo
 				
 				// Redo One
-				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+				Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
 		
 				// Undo One
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("Hello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Undo Two
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal(string.Empty, textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(0, textEditor.EditBlockIndex);
 		
 				// Redo Two
-				textEditor.Redo();
+				textEditor.RedoEdit();
 				Assert.Equal("Hello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
@@ -258,25 +258,25 @@
 				// undo, redo, undo, redo
 				
 				// Undo One
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("Hello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo One
-				textEditor.Redo();
+				textEditor.RedoEdit();
 				Assert.Equal("AbcHello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(2, textEditor.EditBlockIndex);
 		
 				// Undo Two
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("Hello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo Two
-				textEditor.Redo();
+				textEditor.RedoEdit();
 				Assert.Equal("AbcHello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(2, textEditor.EditBlockIndex);
@@ -349,22 +349,22 @@
 				// undo, redo, redo, undo
 				
 				// Undo One
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("Hello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo One
-				textEditor.Redo();
+				textEditor.RedoEdit();
 				Assert.Equal("AbcHello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(2, textEditor.EditBlockIndex);
 		
 				// Redo Two
-				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+				Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
 		
 				// Undo Two
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("Hello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
@@ -437,22 +437,22 @@
 				// redo, undo, redo, undo
 				
 				// Redo One
-				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+				Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
 		
 				// Undo One
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("Hello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo Two
-				textEditor.Redo();
+				textEditor.RedoEdit();
 				Assert.Equal("AbcHello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(2, textEditor.EditBlockIndex);
 		
 				// Undo Two
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("Hello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
@@ -525,19 +525,19 @@
 				// redo, redo, undo, undo
 				
 				// Redo One
-				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+				Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
 		
 				// Redo Two
-				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+				Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
 		
 				// Undo One
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("Hello", textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Undo Two
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal(string.Empty, textEditor.AllText);
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(0, textEditor.EditBlockIndex);
