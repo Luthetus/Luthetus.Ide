@@ -13,6 +13,7 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
 @using Luthetus.TextEditor.RazorLib.Lexes.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.TextEditor.RazorLib.Exceptions
 @using Luthetus.Ide.RazorLib.Installations.Models
 
 @inherits TestContext
@@ -21,46 +22,17 @@
 	/// The wording 'other' in this class is
 	/// in reference to <see cref="TextEditorEditKind.Other"/>
 	[Fact]
-	public void Paste()
+	public async Task Paste()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor();
-
-		var otherEdit = new TextEditorEditOther("paste");
-
-		// Paste
-		textEditor.OpenOtherEdit(otherEdit);
-
-		var clipboardContent = "abc123";
-		textEditor.Insert(0, clipboardContent);
-
-		textEditor.CloseOtherEdit(otherEdit.Tag);
-
-		Assert.Equal("abc123", textEditor.AllText);
-		Assert.Equal(4, textEditor.EditList.Count);
-		Assert.Equal(3, textEditor.EditIndex);
-
-		textEditor.Undo();
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(4, textEditor.EditList.Count);
-		Assert.Equal(0, textEditor.EditIndex);
-
-		textEditor.Redo();
-		Assert.Equal(4, textEditor.EditList.Count);
-		Assert.Equal(3, textEditor.EditIndex);
-
-		Assert.Equal("abc123", textEditor.AllText);
-
-	}
-
-	[Fact]
-	public async Task EditLogicTest()
-    {
-		var testData = EditLogicTestsInitialize();
+		var testData = EditLogicTestsInitialize(string.Empty);
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 		Assert.Equal(1, testData.InModel.EditBlockList.Count);
 
-		testData.TextEditorService.PostSimpleBatch(
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+
+		await testData.TextEditorService.PostSimpleBatch(
 			nameof(RewriteEditLogicTests),
 			editContext =>
 			{
@@ -72,31 +44,42 @@
 				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 					return Task.CompletedTask;
 
-				modelModifier.Insert("abc", cursorModifierBag, useLineEndKindPreference: false);
+				var textEditor = modelModifier;
+
+				var otherEdit = new TextEditorEditOther("paste");
+
+				// Paste
+				textEditor.OpenOtherEdit(otherEdit);
+		
+				var clipboardContent = "abc123";
+				textEditor.Insert(0, clipboardContent);
+		
+				textEditor.CloseOtherEdit(otherEdit.Tag);
+		
+				Assert.Equal("abc123", textEditor.AllText);
+				Assert.Equal(4, textEditor.EditList.Count);
+				Assert.Equal(3, textEditor.EditIndex);
+		
+				textEditor.Undo();
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(4, textEditor.EditList.Count);
+				Assert.Equal(0, textEditor.EditIndex);
+		
+				textEditor.Redo();
+				Assert.Equal(4, textEditor.EditList.Count);
+				Assert.Equal(3, textEditor.EditIndex);
+		
+				Assert.Equal("abc123", textEditor.AllText);
+
 				return Task.CompletedTask;
 			});
 
-		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
-		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
-        
-		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
-		await backgroundTasksHandle.Stop();
-        
-		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
-		Assert.Equal("abc", outModel.AllText);
+		await SharedInitializationForTests
+			.StartBackgroundTasks(this)
+			.Stop();
+	}
 
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-
-		Assert.Equal(2, outModel.EditBlockList.Count);
-    }
-
-	private EditLogicTestData EditLogicTestsInitialize()
+	private EditLogicTestData EditLogicTestsInitialize(string initialContent)
 	{
 		SharedInitializationForTests.Initialize(this);
 		
@@ -109,7 +92,7 @@
 	        resourceUri,
 	        DateTime.UtcNow,
 	        "txt",
-	        string.Empty,
+	        initialContent,
 	        null,
 	        null,
 			4_096);

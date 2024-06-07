@@ -13,68 +13,28 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
 @using Luthetus.TextEditor.RazorLib.Lexes.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.TextEditor.RazorLib.Exceptions
 @using Luthetus.Ide.RazorLib.Installations.Models
 
 @inherits TestContext
 @code
 {
 	[Fact]
-	public void Delete_Batches()
+	public async Task Delete_Batches()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor("abc123Do-Re-Mi");
+		var testData = EditLogicTestsInitialize("abc123Do-Re-Mi");
+		Assert.Equal("abc123Do-Re-Mi", testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
 
 		var lengthAbc = "abc".Length;
 		var length123 = "123".Length;
 		var lengthDoReMi = "Do-Re-Mi".Length;
 
-		// Delete One (normal delete)
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal("123Do-Re-Mi", textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 
-		// Delete Two (cause a batch to be created)
-		textEditor.Delete(0, length123);
-		Assert.Equal("Do-Re-Mi", textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Delete Three (add to existing batch)
-		textEditor.Delete(0, lengthDoReMi);
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// undo, undo, redo, redo
-		
-		// Undo One
-		textEditor.Undo();
-		Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(0, textEditor.EditIndex);
-
-		// Undo Two
-		Assert.Throws<LuthetusTextEditorException>(textEditor.Undo);
-
-		// Redo One
-		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Redo Two
-		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
-	}
-
-	[Fact]
-	public async Task EditLogicTest()
-    {
-		var testData = EditLogicTestsInitialize();
-		Assert.Equal(string.Empty, testData.InModel.AllText);
-		Assert.Equal(1, testData.InModel.EditBlockList.Count);
-
-		testData.TextEditorService.PostSimpleBatch(
+		await testData.TextEditorService.PostSimpleBatch(
 			nameof(RewriteEditLogicTests),
 			editContext =>
 			{
@@ -86,31 +46,55 @@
 				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 					return Task.CompletedTask;
 
-				modelModifier.Insert("abc", cursorModifierBag, useLineEndKindPreference: false);
+				var textEditor = modelModifier;
+
+				// Delete One (normal delete)
+				textEditor.Delete(0, lengthAbc);
+				Assert.Equal("123Do-Re-Mi", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Delete Two (cause a batch to be created)
+				textEditor.Delete(0, length123);
+				Assert.Equal("Do-Re-Mi", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Delete Three (add to existing batch)
+				textEditor.Delete(0, lengthDoReMi);
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// undo, undo, redo, redo
+				
+				// Undo One
+				textEditor.Undo();
+				Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(0, textEditor.EditIndex);
+		
+				// Undo Two
+				Assert.Throws<LuthetusTextEditorException>(textEditor.Undo);
+		
+				// Redo One
+				textEditor.Redo();
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Redo Two
+				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+
 				return Task.CompletedTask;
 			});
 
-		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
-		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
-        
-		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
-		await backgroundTasksHandle.Stop();
-        
-		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
-		Assert.Equal("abc", outModel.AllText);
+		await SharedInitializationForTests
+			.StartBackgroundTasks(this)
+			.Stop();
+	}
 
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-
-		Assert.Equal(2, outModel.EditBlockList.Count);
-    }
-
-	private EditLogicTestData EditLogicTestsInitialize()
+	private EditLogicTestData EditLogicTestsInitialize(string initialContent)
 	{
 		SharedInitializationForTests.Initialize(this);
 		
@@ -123,7 +107,7 @@
 	        resourceUri,
 	        DateTime.UtcNow,
 	        "txt",
-	        string.Empty,
+	        initialContent,
 	        null,
 	        null,
 			4_096);

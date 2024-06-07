@@ -13,292 +13,30 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
 @using Luthetus.TextEditor.RazorLib.Lexes.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.TextEditor.RazorLib.Exceptions
 @using Luthetus.Ide.RazorLib.Installations.Models
 
 @inherits TestContext
 @code
 {
 	[Fact]
-	public void Delete_Case_One()
+	public async Task Delete_Case_One()
 	{
 		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
-
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-
-		// undo, undo, redo, redo
-		
-		// Undo One
-		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Undo Two
-		textEditor.Undo();
-		Assert.Equal("AbcHello", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(0, textEditor.EditIndex);
-
-		// Redo One
-		textEditor.Redo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Redo Two
-		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-	}
-
-	[Fact]
-	public void Delete_Case_Two()
-	{
-		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
-
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-
-		// redo, undo, undo, redo
-		
-		// Redo One
-		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
-
-		// Undo One
-		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Undo Two
-		textEditor.Undo();
-		Assert.Equal("AbcHello", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(0, textEditor.EditIndex);
-
-		// Redo Two
-		textEditor.Redo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-	}
-
-	[Fact]
-	public void Delete_Case_Three()
-	{
-		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
-
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-
-		// undo, redo, undo, redo
-		
-		// Undo One
-		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Redo One
-		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-
-		// Undo Two
-		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Redo Two
-		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-	}
-
-	[Fact]
-	public void Delete_Case_Four()
-	{
-		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
-
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-
-		// undo, redo, redo, undo
-		
-		// Undo One
-		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Redo One
-		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-
-		// Redo Two
-		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
-
-		// Undo Two
-		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-	}
-
-	[Fact]
-	public void Delete_Case_Five()
-	{
-		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
-
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-
-		// redo, undo, redo, undo
-		
-		// Redo One
-		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
-
-		// Undo One
-		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Redo Two
-		textEditor.Redo();
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-
-		// Undo Two
-		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-	}
-
-	[Fact]
-	public void Delete_Case_Six()
-	{
-		// Construct
-		var textEditor = new OptimizeTextEditor("AbcHello");
-
-		var lengthHello = "Hello".Length;
-		var lengthAbc = "Abc".Length;
-
-		// Delete One
-		textEditor.Delete(3, lengthHello);
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(2, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Delete Two		
-		textEditor.Delete(0, lengthAbc);
-		Assert.Equal(string.Empty, textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(2, textEditor.EditIndex);
-
-		// redo, redo, undo, undo
-		
-		// Redo One
-		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
-
-		// Redo Two
-		Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
-
-		// Undo One
-		textEditor.Undo();
-		Assert.Equal("Abc", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(1, textEditor.EditIndex);
-
-		// Undo Two
-		textEditor.Undo();
-		Assert.Equal("AbcHello", textEditor.AllText);
-		Assert.Equal(3, textEditor.EditList.Count);
-		Assert.Equal(0, textEditor.EditIndex);
-	}
-
-	[Fact]
-	public async Task EditLogicTest()
-    {
-		var testData = EditLogicTestsInitialize();
-		Assert.Equal(string.Empty, testData.InModel.AllText);
+		var testData = EditLogicTestsInitialize("AbcHello");
+		Assert.Equal("AbcHello", testData.InModel.AllText);
 		Assert.Equal(1, testData.InModel.EditBlockList.Count);
 
-		testData.TextEditorService.PostSimpleBatch(
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		// Construct
+		var textEditor = new OptimizeTextEditor("AbcHello");
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+
+		await testData.TextEditorService.PostSimpleBatch(
 			nameof(RewriteEditLogicTests),
 			editContext =>
 			{
@@ -310,31 +48,410 @@
 				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 					return Task.CompletedTask;
 
-				modelModifier.Insert("abc", cursorModifierBag, useLineEndKindPreference: false);
+				var textEditor = modelModifier;
+
+				// Delete One
+				textEditor.Delete(3, lengthHello);
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Delete Two		
+				textEditor.Delete(0, lengthAbc);
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+		
+				// undo, undo, redo, redo
+				
+				// Undo One
+				textEditor.Undo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Undo Two
+				textEditor.Undo();
+				Assert.Equal("AbcHello", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(0, textEditor.EditIndex);
+		
+				// Redo One
+				textEditor.Redo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Redo Two
+				textEditor.Redo();
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+
 				return Task.CompletedTask;
 			});
 
+		await SharedInitializationForTests
+			.StartBackgroundTasks(this)
+			.Stop();
+	}
+
+	[Fact]
+	public async Task Delete_Case_Two()
+	{
+		// Construct
+		var testData = EditLogicTestsInitialize("AbcHello");
+		Assert.Equal("AbcHello", testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
-        
-		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
-		await backgroundTasksHandle.Stop();
-        
-		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
-		Assert.Equal("abc", outModel.AllText);
 
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
-		Console.WriteLine($"EditBlockList.Count: {outModel.EditBlockList.Count}");
+		await testData.TextEditorService.PostSimpleBatch(
+			nameof(RewriteEditLogicTests),
+			editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-		Assert.Equal(2, outModel.EditBlockList.Count);
-    }
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					return Task.CompletedTask;
 
-	private EditLogicTestData EditLogicTestsInitialize()
+				var textEditor = modelModifier;
+
+				// Delete One
+				textEditor.Delete(3, lengthHello);
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Delete Two		
+				textEditor.Delete(0, lengthAbc);
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+		
+				// redo, undo, undo, redo
+				
+				// Redo One
+				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+		
+				// Undo One
+				textEditor.Undo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Undo Two
+				textEditor.Undo();
+				Assert.Equal("AbcHello", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(0, textEditor.EditIndex);
+		
+				// Redo Two
+				textEditor.Redo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+
+				return Task.CompletedTask;
+			});
+
+		await SharedInitializationForTests
+			.StartBackgroundTasks(this)
+			.Stop();
+	}
+
+	[Fact]
+	public async Task Delete_Case_Three()
+	{
+		// Construct
+		var testData = EditLogicTestsInitialize("AbcHello");
+		Assert.Equal("AbcHello", testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+
+		await testData.TextEditorService.PostSimpleBatch(
+			nameof(RewriteEditLogicTests),
+			editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					return Task.CompletedTask;
+
+				var textEditor = modelModifier;
+
+				// Delete One
+				textEditor.Delete(3, lengthHello);
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Delete Two		
+				textEditor.Delete(0, lengthAbc);
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+		
+				// undo, redo, undo, redo
+				
+				// Undo One
+				textEditor.Undo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Redo One
+				textEditor.Redo();
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+		
+				// Undo Two
+				textEditor.Undo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Redo Two
+				textEditor.Redo();
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+
+				return Task.CompletedTask;
+			});
+
+		await SharedInitializationForTests
+			.StartBackgroundTasks(this)
+			.Stop();
+	}
+
+	[Fact]
+	public async Task Delete_Case_Four()
+	{
+		// Construct
+		var testData = EditLogicTestsInitialize("AbcHello");
+		Assert.Equal("AbcHello", testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+
+		await testData.TextEditorService.PostSimpleBatch(
+			nameof(RewriteEditLogicTests),
+			editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					return Task.CompletedTask;
+
+				var textEditor = modelModifier;
+
+				// Delete One
+				textEditor.Delete(3, lengthHello);
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Delete Two		
+				textEditor.Delete(0, lengthAbc);
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+		
+				// undo, redo, redo, undo
+				
+				// Undo One
+				textEditor.Undo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Redo One
+				textEditor.Redo();
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+		
+				// Redo Two
+				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+		
+				// Undo Two
+				textEditor.Undo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+
+				return Task.CompletedTask;
+			});
+
+		await SharedInitializationForTests
+			.StartBackgroundTasks(this)
+			.Stop();
+	}
+
+	[Fact]
+	public async Task Delete_Case_Five()
+	{
+		// Construct
+		var testData = EditLogicTestsInitialize("AbcHello");
+		Assert.Equal("AbcHello", testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+
+		await testData.TextEditorService.PostSimpleBatch(
+			nameof(RewriteEditLogicTests),
+			editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					return Task.CompletedTask;
+
+				var textEditor = modelModifier;
+
+				// Delete One
+				textEditor.Delete(3, lengthHello);
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Delete Two		
+				textEditor.Delete(0, lengthAbc);
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+		
+				// redo, undo, redo, undo
+				
+				// Redo One
+				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+		
+				// Undo One
+				textEditor.Undo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Redo Two
+				textEditor.Redo();
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+		
+				// Undo Two
+				textEditor.Undo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+
+				return Task.CompletedTask;
+			});
+
+		await SharedInitializationForTests
+			.StartBackgroundTasks(this)
+			.Stop();
+	}
+
+	[Fact]
+	public async Task Delete_Case_Six()
+	{
+		// Construct
+		var testData = EditLogicTestsInitialize("AbcHello");
+		Assert.Equal("AbcHello", testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
+
+		var lengthHello = "Hello".Length;
+		var lengthAbc = "Abc".Length;
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+
+		await testData.TextEditorService.PostSimpleBatch(
+			nameof(RewriteEditLogicTests),
+			editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					return Task.CompletedTask;
+
+				var textEditor = modelModifier;
+
+				// Delete One
+				textEditor.Delete(3, lengthHello);
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Delete Two		
+				textEditor.Delete(0, lengthAbc);
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(2, textEditor.EditIndex);
+		
+				// redo, redo, undo, undo
+				
+				// Redo One
+				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+		
+				// Redo Two
+				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+		
+				// Undo One
+				textEditor.Undo();
+				Assert.Equal("Abc", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(1, textEditor.EditIndex);
+		
+				// Undo Two
+				textEditor.Undo();
+				Assert.Equal("AbcHello", textEditor.AllText);
+				Assert.Equal(3, textEditor.EditList.Count);
+				Assert.Equal(0, textEditor.EditIndex);
+
+				return Task.CompletedTask;
+			});
+
+		await SharedInitializationForTests
+			.StartBackgroundTasks(this)
+			.Stop();
+	}
+
+	private EditLogicTestData EditLogicTestsInitialize(string initialContent)
 	{
 		SharedInitializationForTests.Initialize(this);
 		
@@ -347,7 +464,7 @@
 	        resourceUri,
 	        DateTime.UtcNow,
 	        "txt",
-	        string.Empty,
+	        initialContent,
 	        null,
 	        null,
 			4_096);
