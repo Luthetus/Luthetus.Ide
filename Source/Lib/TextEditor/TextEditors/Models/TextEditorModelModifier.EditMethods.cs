@@ -570,27 +570,30 @@ public partial class TextEditorModelModifier : ITextEditorModel
             }));
     }
 
-private void PerformBackspace(int positionIndex, int count)
-{
-/*
-CursorModifierBagTextEditor cursorModifierBag,
-        int columnCount,
-        bool expandWord,
-        DeleteKind deleteKind,
-        CancellationToken cancellationToken = default
-*/
+	private void PerformBackspace(int positionIndex, int count)
+	{
+		/*
+		CursorModifierBagTextEditor cursorModifierBag,
+		        int columnCount,
+		        bool expandWord,
+		        DeleteKind deleteKind,
+		        CancellationToken cancellationToken = default
+		*/
 
-	Delete(
-null,
-count,
-false,
-DeleteKind.Backspace,
-CancellationToken.None);
-}
+		throw new NotImplementedException();
 
-private void PerformDelete(int positionIndex, int count)
-{
-}
+		Delete(
+			null,
+			count,
+			false,
+			DeleteKind.Backspace,
+			CancellationToken.None);
+	}
+
+	private void PerformDelete(int positionIndex, int count)
+	{
+		throw new NotImplementedException();
+	}
 
     /// <summary>
     /// This method allows for a "RemoveRange" like operation on the text editor's contents.

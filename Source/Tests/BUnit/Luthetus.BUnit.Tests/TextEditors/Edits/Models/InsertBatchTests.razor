@@ -45,22 +45,52 @@
 				var textEditor = modelModifier;
 
 				// Insert One (normal insert)
-				textEditor.Insert(0, "abc");
-				Assert.Equal("abc", textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				{
+					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					primaryCursorModifier.LineIndex = lineIndex;
+					primaryCursorModifier.ColumnIndex = columnIndex;
+
+					textEditor.Insert(
+						"abc",
+				        cursorModifierBag,
+				        useLineEndKindPreference: false);
+
+					Assert.Equal("abc", textEditor.AllText);
+					Assert.Equal(2, textEditor.EditList.Count);
+					Assert.Equal(1, textEditor.EditIndex);
+				}
 		
 				// Insert Two (cause a batch to be created)
-				textEditor.Insert(textEditor.AllText.Length, "123");
-				Assert.Equal("abc123", textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				{
+					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+					primaryCursorModifier.LineIndex = lineIndex;
+					primaryCursorModifier.ColumnIndex = columnIndex;
+
+					textEditor.Insert(
+						"123",
+				        cursorModifierBag,
+				        useLineEndKindPreference: false);
+
+					Assert.Equal("abc123", textEditor.AllText);
+					Assert.Equal(2, textEditor.EditList.Count);
+					Assert.Equal(1, textEditor.EditIndex);
+				}
 		
 				// Insert Three (add to existing batch)
-				textEditor.Insert(textEditor.AllText.Length, "Do-Re-Mi");
-				Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				{
+					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+					primaryCursorModifier.LineIndex = lineIndex;
+					primaryCursorModifier.ColumnIndex = columnIndex;
+
+					textEditor.Insert(
+						"Do-Re-Mi",
+				        cursorModifierBag,
+				        useLineEndKindPreference: false);
+
+					Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
+					Assert.Equal(2, textEditor.EditList.Count);
+					Assert.Equal(1, textEditor.EditIndex);
+				}
 		
 				// undo, undo, redo, redo
 				

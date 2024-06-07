@@ -52,7 +52,15 @@
 				textEditor.OpenOtherEdit(otherEdit);
 		
 				var clipboardContent = "abc123";
-				textEditor.Insert(0, clipboardContent);
+
+				var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+				primaryCursorModifier.LineIndex = lineIndex;
+				primaryCursorModifier.ColumnIndex = columnIndex;
+				
+				textEditor.Insert(
+					clipboardContent,
+			        cursorModifierBag,
+			        useLineEndKindPreference: false);
 		
 				textEditor.CloseOtherEdit(otherEdit.Tag);
 		

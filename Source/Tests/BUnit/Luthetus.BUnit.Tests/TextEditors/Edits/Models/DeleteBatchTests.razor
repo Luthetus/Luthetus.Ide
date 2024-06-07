@@ -49,22 +49,58 @@
 				var textEditor = modelModifier;
 
 				// Delete One (normal delete)
-				textEditor.Delete(0, lengthAbc);
-				Assert.Equal("123Do-Re-Mi", textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				{
+					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					primaryCursorModifier.LineIndex = lineIndex;
+					primaryCursorModifier.ColumnIndex = columnIndex;
+
+					textEditor.Delete(
+						cursorModifierBag,
+				        lengthAbc,
+				        false,
+				        TextEditorModelModifier.DeleteKind.Delete);
+
+					textEditor.Delete(0, lengthAbc);
+					Assert.Equal("123Do-Re-Mi", textEditor.AllText);
+					Assert.Equal(2, textEditor.EditList.Count);
+					Assert.Equal(1, textEditor.EditIndex);
+				}
 		
 				// Delete Two (cause a batch to be created)
-				textEditor.Delete(0, length123);
-				Assert.Equal("Do-Re-Mi", textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				{
+					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					primaryCursorModifier.LineIndex = lineIndex;
+					primaryCursorModifier.ColumnIndex = columnIndex;
+
+					textEditor.Delete(
+						cursorModifierBag,
+				        length123,
+				        false,
+				        TextEditorModelModifier.DeleteKind.Delete);
+
+					textEditor.Delete(0, length123);
+					Assert.Equal("Do-Re-Mi", textEditor.AllText);
+					Assert.Equal(2, textEditor.EditList.Count);
+					Assert.Equal(1, textEditor.EditIndex);
+				}
 		
 				// Delete Three (add to existing batch)
-				textEditor.Delete(0, lengthDoReMi);
-				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				{
+					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					primaryCursorModifier.LineIndex = lineIndex;
+					primaryCursorModifier.ColumnIndex = columnIndex;
+
+					textEditor.Delete(
+						cursorModifierBag,
+				        lengthDoReMi,
+				        false,
+				        TextEditorModelModifier.DeleteKind.Delete);
+
+					textEditor.Delete(0, lengthDoReMi);
+					Assert.Equal(string.Empty, textEditor.AllText);
+					Assert.Equal(2, textEditor.EditList.Count);
+					Assert.Equal(1, textEditor.EditIndex);
+				}
 		
 				// undo, undo, redo, redo
 				

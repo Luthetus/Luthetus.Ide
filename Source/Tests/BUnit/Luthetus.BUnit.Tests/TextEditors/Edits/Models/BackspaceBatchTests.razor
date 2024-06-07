@@ -48,23 +48,56 @@
 
 				var textEditor = modelModifier;
 
-				// Backspace One (normal delete)
-				textEditor.Backspace(textEditor.AllText.Length, lengthDoReMi);
-				Assert.Equal("abc123", textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				// Backspace One (normal backspace)
+				{
+					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+					primaryCursorModifier.LineIndex = lineIndex;
+					primaryCursorModifier.ColumnIndex = columnIndex;
+	
+					textEditor.Delete(
+						cursorModifierBag,
+				        lengthDoReMi,
+				        false,
+				        TextEditorModelModifier.DeleteKind.Backspace);
+	
+					Assert.Equal("abc123", textEditor.AllText);
+					Assert.Equal(2, textEditor.EditList.Count);
+					Assert.Equal(1, textEditor.EditIndex);
+				}
 
 				// Backspace Two (cause a batch to be created)
-				textEditor.Backspace(textEditor.AllText.Length, length123);
-				Assert.Equal("abc", textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				{
+					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+					primaryCursorModifier.LineIndex = lineIndex;
+					primaryCursorModifier.ColumnIndex = columnIndex;
+
+					textEditor.Delete(
+						cursorModifierBag,
+				        length123,
+				        false,
+				        TextEditorModelModifier.DeleteKind.Backspace);
+
+					Assert.Equal("abc", textEditor.AllText);
+					Assert.Equal(2, textEditor.EditList.Count);
+					Assert.Equal(1, textEditor.EditIndex);
+				}
 
 				// Backspace Three (add to existing batch)
-				textEditor.Backspace(textEditor.AllText.Length, lengthAbc);
-				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				{
+					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+					primaryCursorModifier.LineIndex = lineIndex;
+					primaryCursorModifier.ColumnIndex = columnIndex;
+
+					textEditor.Delete(
+						cursorModifierBag,
+				        lengthAbc,
+				        false,
+				        TextEditorModelModifier.DeleteKind.Backspace);
+
+					Assert.Equal(string.Empty, textEditor.AllText);
+					Assert.Equal(2, textEditor.EditList.Count);
+					Assert.Equal(1, textEditor.EditIndex);
+				}
 
 				// undo, undo, redo, redo
 
