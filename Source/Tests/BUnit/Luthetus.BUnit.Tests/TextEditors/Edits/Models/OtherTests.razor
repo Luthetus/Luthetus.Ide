@@ -53,7 +53,7 @@
 		
 				var clipboardContent = "abc123";
 
-				var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+				var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 				primaryCursorModifier.LineIndex = lineIndex;
 				primaryCursorModifier.ColumnIndex = columnIndex;
 				
@@ -65,17 +65,17 @@
 				textEditor.CloseOtherEdit(otherEdit.Tag);
 		
 				Assert.Equal("abc123", textEditor.AllText);
-				Assert.Equal(4, textEditor.EditList.Count);
-				Assert.Equal(3, textEditor.EditIndex);
+				Assert.Equal(4, textEditor.EditBlockList.Count);
+				Assert.Equal(3, textEditor.EditBlockIndex);
 		
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(4, textEditor.EditList.Count);
-				Assert.Equal(0, textEditor.EditIndex);
+				Assert.Equal(4, textEditor.EditBlockList.Count);
+				Assert.Equal(0, textEditor.EditBlockIndex);
 		
-				textEditor.Redo();
-				Assert.Equal(4, textEditor.EditList.Count);
-				Assert.Equal(3, textEditor.EditIndex);
+				textEditor.RedoEdit();
+				Assert.Equal(4, textEditor.EditBlockList.Count);
+				Assert.Equal(3, textEditor.EditBlockIndex);
 		
 				Assert.Equal("abc123", textEditor.AllText);
 

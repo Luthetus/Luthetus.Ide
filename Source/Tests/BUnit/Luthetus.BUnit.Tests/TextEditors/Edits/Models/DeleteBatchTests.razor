@@ -50,7 +50,7 @@
 
 				// Delete One (normal delete)
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -60,15 +60,14 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(0, lengthAbc);
 					Assert.Equal("123Do-Re-Mi", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditList.Count);
-					Assert.Equal(1, textEditor.EditIndex);
+					Assert.Equal(2, textEditor.EditBlockList.Count);
+					Assert.Equal(1, textEditor.EditBlockIndex);
 				}
 		
 				// Delete Two (cause a batch to be created)
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -78,15 +77,14 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(0, length123);
 					Assert.Equal("Do-Re-Mi", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditList.Count);
-					Assert.Equal(1, textEditor.EditIndex);
+					Assert.Equal(2, textEditor.EditBlockList.Count);
+					Assert.Equal(1, textEditor.EditBlockIndex);
 				}
 		
 				// Delete Three (add to existing batch)
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -96,31 +94,30 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(0, lengthDoReMi);
 					Assert.Equal(string.Empty, textEditor.AllText);
-					Assert.Equal(2, textEditor.EditList.Count);
-					Assert.Equal(1, textEditor.EditIndex);
+					Assert.Equal(2, textEditor.EditBlockList.Count);
+					Assert.Equal(1, textEditor.EditBlockIndex);
 				}
 		
 				// undo, undo, redo, redo
 				
 				// Undo One
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(0, textEditor.EditIndex);
+				Assert.Equal(2, textEditor.EditBlockList.Count);
+				Assert.Equal(0, textEditor.EditBlockIndex);
 		
 				// Undo Two
-				Assert.Throws<LuthetusTextEditorException>(textEditor.Undo);
+				Assert.Throws<LuthetusTextEditorException>(textEditor.UndoEdit);
 		
 				// Redo One
-				textEditor.Redo();
+				textEditor.RedoEdit();
 				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(2, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(2, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo Two
-				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
+				Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
 
 				return Task.CompletedTask;
 			});

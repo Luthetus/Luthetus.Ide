@@ -52,25 +52,24 @@
 
 				// Delete One
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(3);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(3);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
 					textEditor.Delete(
 						cursorModifierBag,
-				        lengthHello,
+				        lengthHello,EditBlockIndex
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(3, lengthHello);
 					Assert.Equal("Abc", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditList.Count);
-					Assert.Equal(1, textEditor.EditIndex);
+					Assert.Equal(2, textEditor.EditBlockList.Count);
+					Assert.Equal(1, textEditor.EditBlockIndex);
 				}
 		
 				// Delete Two		
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -80,37 +79,36 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(0, lengthAbc);
 					Assert.Equal(string.Empty, textEditor.AllText);
-					Assert.Equal(3, textEditor.EditList.Count);
-					Assert.Equal(2, textEditor.EditIndex);
+					Assert.Equal(3, textEditor.EditBlockList.Count);
+					Assert.Equal(2, textEditor.EditBlockIndex);
 				}
 		
 				// undo, undo, redo, redo
 				
 				// Undo One
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Undo Two
-				textEditor.Undo();
+				textEditor.UndoEdit();
 				Assert.Equal("AbcHello", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(0, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(0, textEditor.EditBlockIndex);
 		
 				// Redo One
-				textEditor.Redo();
+				textEditor.RedoEdit();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo Two
-				textEditor.Redo();
+				textEditor.RedoEdit();
 				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(2, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(2, textEditor.EditBlockIndex);
 
 				return Task.CompletedTask;
 			});
@@ -150,7 +148,7 @@
 
 				// Delete One
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(3);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(3);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -160,15 +158,14 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(3, lengthHello);
 					Assert.Equal("Abc", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditList.Count);
-					Assert.Equal(1, textEditor.EditIndex);
+					Assert.Equal(2, textEditor.EditBlockList.Count);
+					Assert.Equal(1, textEditor.EditBlockIndex);
 				}
 		
 				// Delete Two		
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -178,10 +175,9 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(0, lengthAbc);
 					Assert.Equal(string.Empty, textEditor.AllText);
-					Assert.Equal(3, textEditor.EditList.Count);
-					Assert.Equal(2, textEditor.EditIndex);
+					Assert.Equal(3, textEditor.EditBlockList.Count);
+					Assert.Equal(2, textEditor.EditBlockIndex);
 				}
 		
 				// redo, undo, undo, redo
@@ -192,20 +188,20 @@
 				// Undo One
 				textEditor.Undo();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Undo Two
 				textEditor.Undo();
 				Assert.Equal("AbcHello", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(0, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(0, textEditor.EditBlockIndex);
 		
 				// Redo Two
 				textEditor.Redo();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 
 				return Task.CompletedTask;
 			});
@@ -245,7 +241,7 @@
 
 				// Delete One
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(3);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(3);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -255,15 +251,14 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(3, lengthHello);
 					Assert.Equal("Abc", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditList.Count);
-					Assert.Equal(1, textEditor.EditIndex);
+					Assert.Equal(2, textEditor.EditBlockList.Count);
+					Assert.Equal(1, textEditor.EditBlockIndex);
 				}
 		
 				// Delete Two		
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -273,10 +268,9 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(0, lengthAbc);
 					Assert.Equal(string.Empty, textEditor.AllText);
-					Assert.Equal(3, textEditor.EditList.Count);
-					Assert.Equal(2, textEditor.EditIndex);
+					Assert.Equal(3, textEditor.EditBlockList.Count);
+					Assert.Equal(2, textEditor.EditBlockIndex);
 				}
 		
 				// undo, redo, undo, redo
@@ -284,26 +278,26 @@
 				// Undo One
 				textEditor.Undo();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo One
 				textEditor.Redo();
 				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(2, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(2, textEditor.EditBlockIndex);
 		
 				// Undo Two
 				textEditor.Undo();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo Two
 				textEditor.Redo();
 				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(2, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(2, textEditor.EditBlockIndex);
 
 				return Task.CompletedTask;
 			});
@@ -343,7 +337,7 @@
 
 				// Delete One
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(3);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(3);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -353,15 +347,14 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(3, lengthHello);
 					Assert.Equal("Abc", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditList.Count);
-					Assert.Equal(1, textEditor.EditIndex);
+					Assert.Equal(2, textEditor.EditBlockList.Count);
+					Assert.Equal(1, textEditor.EditBlockIndex);
 				}
 		
 				// Delete Two		
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -371,10 +364,9 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(0, lengthAbc);
 					Assert.Equal(string.Empty, textEditor.AllText);
-					Assert.Equal(3, textEditor.EditList.Count);
-					Assert.Equal(2, textEditor.EditIndex);
+					Assert.Equal(3, textEditor.EditBlockList.Count);
+					Assert.Equal(2, textEditor.EditBlockIndex);
 				}
 		
 				// undo, redo, redo, undo
@@ -382,14 +374,14 @@
 				// Undo One
 				textEditor.Undo();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo One
 				textEditor.Redo();
 				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(2, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(2, textEditor.EditBlockIndex);
 		
 				// Redo Two
 				Assert.Throws<LuthetusTextEditorException>(textEditor.Redo);
@@ -397,8 +389,8 @@
 				// Undo Two
 				textEditor.Undo();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 
 				return Task.CompletedTask;
 			});
@@ -438,7 +430,7 @@
 
 				// Delete One
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(3);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(3);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -448,15 +440,14 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(3, lengthHello);
 					Assert.Equal("Abc", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditList.Count);
-					Assert.Equal(1, textEditor.EditIndex);
+					Assert.Equal(2, textEditor.EditBlockList.Count);
+					Assert.Equal(1, textEditor.EditBlockIndex);
 				}
 		
 				// Delete Two		
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -466,10 +457,9 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(0, lengthAbc);
 					Assert.Equal(string.Empty, textEditor.AllText);
-					Assert.Equal(3, textEditor.EditList.Count);
-					Assert.Equal(2, textEditor.EditIndex);
+					Assert.Equal(3, textEditor.EditBlockList.Count);
+					Assert.Equal(2, textEditor.EditBlockIndex);
 				}
 		
 				// redo, undo, redo, undo
@@ -480,20 +470,20 @@
 				// Undo One
 				textEditor.Undo();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Redo Two
 				textEditor.Redo();
 				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(2, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(2, textEditor.EditBlockIndex);
 		
 				// Undo Two
 				textEditor.Undo();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 
 				return Task.CompletedTask;
 			});
@@ -533,7 +523,7 @@
 
 				// Delete One
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(3);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(3);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -543,15 +533,14 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(3, lengthHello);
 					Assert.Equal("Abc", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditList.Count);
-					Assert.Equal(1, textEditor.EditIndex);
+					Assert.Equal(2, textEditor.EditBlockList.Count);
+					Assert.Equal(1, textEditor.EditBlockIndex);
 				}
 		
 				// Delete Two		
 				{
-					var (lineIndex, columnIndex) = this.GetLineAndColumnIndicesFromPositionIndex(0);
+					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
 					primaryCursorModifier.LineIndex = lineIndex;
 					primaryCursorModifier.ColumnIndex = columnIndex;
 
@@ -561,10 +550,9 @@
 				        false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 
-					textEditor.Delete(0, lengthAbc);
 					Assert.Equal(string.Empty, textEditor.AllText);
-					Assert.Equal(3, textEditor.EditList.Count);
-					Assert.Equal(2, textEditor.EditIndex);
+					Assert.Equal(3, textEditor.EditBlockList.Count);
+					Assert.Equal(2, textEditor.EditBlockIndex);
 				}
 		
 				// redo, redo, undo, undo
@@ -578,14 +566,14 @@
 				// Undo One
 				textEditor.Undo();
 				Assert.Equal("Abc", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(1, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
 		
 				// Undo Two
 				textEditor.Undo();
 				Assert.Equal("AbcHello", textEditor.AllText);
-				Assert.Equal(3, textEditor.EditList.Count);
-				Assert.Equal(0, textEditor.EditIndex);
+				Assert.Equal(3, textEditor.EditBlockList.Count);
+				Assert.Equal(0, textEditor.EditBlockIndex);
 
 				return Task.CompletedTask;
 			});
