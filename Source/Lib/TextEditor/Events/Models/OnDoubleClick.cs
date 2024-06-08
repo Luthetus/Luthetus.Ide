@@ -73,7 +73,12 @@ public class OnDoubleClick : ITextEditorTask
 
 			// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
 			// Reason being, these are likely to be huge optimizations (2024-05-29).
-            var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
+            var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+					ResourceUri,
+					ViewModelKey,
+					MouseEventArgs,
+					EditContext)
+				.ConfigureAwait(false);
 
             var lowerColumnIndexExpansion = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                 rowAndColumnIndex.rowIndex,

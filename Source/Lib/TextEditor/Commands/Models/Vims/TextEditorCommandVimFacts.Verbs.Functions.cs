@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
@@ -57,7 +57,6 @@ public static partial class TextEditorCommandVimFacts
                     commandArgs.TextEditorService,
                     commandArgs.Options,
                     commandArgs.Events,
-                    commandArgs.HandleMouseStoppedMovingEventAsyncFunc,
                     commandArgs.JsRuntime,
                     commandArgs.Dispatcher,
                     commandArgs.ServiceProvider,

@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -7,11 +8,11 @@ using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Microsoft.AspNetCore.Components.Web;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
@@ -112,7 +113,6 @@ public class OnKeyDownLateBatching : ITextEditorTask
                             _events.TextEditorService,
                             _events.Options,
                             _events,
-                            _events.HandleMouseStoppedMovingEventAsync,
                             _events.JsRuntime,
                             _events.Dispatcher,
                             _events.ServiceProvider,
@@ -137,7 +137,7 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                    break;
 	                case KeyboardEventArgsKind.Movement:
 	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
-	                        _events.CursorDisplay is not null && _events.CursorDisplay.MenuKind == MenuKind.AutoCompleteMenu)
+	                        viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
 	                    {
 							// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
 							// Reason being, these are likely to be huge optimizations (2024-05-29).
@@ -152,37 +152,40 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                            .Invoke(EditContext)
 	                            .ConfigureAwait(false);
 	
-							// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
-							// Reason being, these are likely to be huge optimizations (2024-05-29).
-	                        await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
-	                            .ConfigureAwait(false);
+							viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+							{
+								MenuKind = MenuKind.None
+							};
 	                    }
 	                    break;
 	                case KeyboardEventArgsKind.ContextMenu:
-						// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
-						// Reason being, these are likely to be huge optimizations (2024-05-29).
-	                    await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.ContextMenu) ?? Task.CompletedTask)
-	                        .ConfigureAwait(false);
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.ContextMenu
+						};
 	                    break;
 	                case KeyboardEventArgsKind.Text:
 	                case KeyboardEventArgsKind.Other:
 	                    shouldInvokeAfterOnKeyDownAsync = true;
 	
-	                    if (!_events.IsAutocompleteMenuInvoker(keyboardEventArgs))
+	                    if (!EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
 	                    {
 	                        if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key ||
 	                            KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
 	                            KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key ||
 	                            !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
 	                        {
-								// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
-								// Reason being, these are likely to be huge optimizations (2024-05-29).
-	                            await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
-	                                .ConfigureAwait(false);
+								viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+								{
+									MenuKind = MenuKind.None
+								};
 	                        }
 	                    }
 	
-	                    _events.TooltipViewModel = null;
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							TooltipViewModel = null
+						};
 
 						if (definiteKeyboardEventArgsKind == KeyboardEventArgsKind.Text)
 						{
@@ -298,13 +301,12 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	
 	                if (cursorDisplay is not null)
 	                {
-						if (_viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory is not null)
+						if (ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory is not null)
 				        {
 				            await ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory.Invoke(
-					                resourceUri,
-					                viewModelKey,
-					                keyboardEventArgs,
-					                cursorDisplay.SetShouldDisplayMenuAsync)
+					                ResourceUri,
+					                ViewModelKey,
+					                keyboardEventArgs)
 								.Invoke(EditContext)
 		                        .ConfigureAwait(false);
 ;
@@ -314,8 +316,7 @@ public class OnKeyDownLateBatching : ITextEditorTask
 							await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsyncFactory(
 		                            modelModifier.ResourceUri,
 		                            viewModelModifier.ViewModel.ViewModelKey,
-		                            keyboardEventArgs,
-		                            cursorDisplay.SetShouldDisplayMenuAsync)
+		                            keyboardEventArgs)
 		                        .Invoke(EditContext)
 		                        .ConfigureAwait(false);
 						}

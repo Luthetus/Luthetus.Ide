@@ -628,7 +628,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     public class TextEditorEvents
     {
         private readonly TextEditorViewModelDisplay _viewModelDisplay;
-        private readonly ThrottleAsync _throttleApplySyntaxHighlighting = new ThrottleAsync(TimeSpan.FromMilliseconds(500));
 
         public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay, TextEditorOptions? options)
         {
@@ -678,112 +677,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             MouseNoLongerOverTooltipCancellationTokenSource = new();
 
             return Task.CompletedTask;
-        }
-
-        public async Task<(int rowIndex, int columnIndex)> CalculateRowAndColumnIndex(MouseEventArgs mouseEventArgs)
-        {
-            var model = _viewModelDisplay.GetModel();
-            var viewModel = _viewModelDisplay.GetViewModel();
-            var globalTextEditorOptions = TextEditorService.OptionsStateWrap.Value.Options;
-
-            if (model is null || viewModel is null)
-                return (0, 0);
-
-            var charMeasurements = viewModel.CharAndLineMeasurements;
-
-            var relativeCoordinatesOnClick = await TextEditorService.JsRuntimeTextEditorApi
-                .GetRelativePosition(
-                    viewModel.BodyElementId,
-                    mouseEventArgs.ClientX,
-                    mouseEventArgs.ClientY)
-                .ConfigureAwait(false);
-
-            var positionX = relativeCoordinatesOnClick.RelativeX;
-            var positionY = relativeCoordinatesOnClick.RelativeY;
-
-            // Scroll position offset
-            {
-                positionX += relativeCoordinatesOnClick.RelativeScrollLeft;
-                positionY += relativeCoordinatesOnClick.RelativeScrollTop;
-            }
-
-            var rowIndex = (int)(positionY / charMeasurements.LineHeight);
-
-            rowIndex = rowIndex > model.LineCount - 1
-                ? model.LineCount - 1
-                : rowIndex;
-
-            int columnIndexInt;
-
-            if (!globalTextEditorOptions.UseMonospaceOptimizations)
-            {
-                var guid = Guid.NewGuid();
-
-                columnIndexInt = await TextEditorService.JsRuntimeTextEditorApi
-                    .CalculateProportionalColumnIndex(
-                        _viewModelDisplay.ProportionalFontMeasurementsContainerElementId,
-                        $"luth_te_proportional-font-measurement-parent_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
-                        $"luth_te_proportional-font-measurement-cursor_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
-                        positionX,
-                        charMeasurements.CharacterWidth,
-                        model.GetLineText(rowIndex))
-                    .ConfigureAwait(false);
-
-                if (columnIndexInt == -1)
-                {
-                    var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
-                    columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-                }
-            }
-            else
-            {
-                var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
-                columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-            }
-
-            var lengthOfRow = model.GetLineLength(rowIndex);
-
-            // Tab key column offset
-            {
-                var parameterForGetTabsCountOnSameRowBeforeCursor = columnIndexInt > lengthOfRow
-                    ? lengthOfRow
-                    : columnIndexInt;
-
-                int tabsOnSameRowBeforeCursor;
-
-                try
-                {
-                    tabsOnSameRowBeforeCursor = model.GetTabCountOnSameLineBeforeCursor(
-                        rowIndex,
-                        parameterForGetTabsCountOnSameRowBeforeCursor);
-                }
-                catch (LuthetusTextEditorException)
-                {
-                    tabsOnSameRowBeforeCursor = 0;
-                }
-
-                // 1 of the character width is already accounted for
-                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-
-                columnIndexInt -= extraWidthPerTabKey * tabsOnSameRowBeforeCursor;
-            }
-
-            columnIndexInt = columnIndexInt > lengthOfRow
-                ? lengthOfRow
-                : columnIndexInt;
-
-            rowIndex = Math.Max(rowIndex, 0);
-            columnIndexInt = Math.Max(columnIndexInt, 0);
-
-            return (rowIndex, columnIndexInt);
-        }
-
-        private Task ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
-        {
-            return _throttleApplySyntaxHighlighting.PushEvent(_ =>
-            {
-                return modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
-            });
         }
     }
 }

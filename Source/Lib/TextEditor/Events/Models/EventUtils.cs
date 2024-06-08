@@ -6,6 +6,8 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.AspNetCore.Components.Web;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
@@ -145,5 +147,107 @@ public static class EventUtils
         return (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
                     KeyboardKeyFacts.IsPunctuationCharacter(keyboardEventArgs.Key.First())) &&
                 !keyboardEventArgs.CtrlKey;
+    }
+
+	public static async Task<(int rowIndex, int columnIndex)> CalculateRowAndColumnIndex(
+		ResourceUri resourceUri,
+		Key<TextEditorViewModel> viewModelKey,
+		MouseEventArgs mouseEventArgs,
+		IEditContext editContext)
+    {
+        var modelModifier = editContext.GetModelModifier(resourceUri);
+        var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+        var globalTextEditorOptions = editContext.TextEditorService.OptionsStateWrap.Value.Options;
+
+        if (modelModifier is null || viewModelModifier is null)
+            return (0, 0);
+
+        var charMeasurements = viewModelModifier.CharAndLineMeasurements;
+
+        var relativeCoordinatesOnClick = await editContext.TextEditorService.JsRuntimeTextEditorApi
+            .GetRelativePosition(
+                viewModelModifier.BodyElementId,
+                mouseEventArgs.ClientX,
+                mouseEventArgs.ClientY)
+            .ConfigureAwait(false);
+
+        var positionX = relativeCoordinatesOnClick.RelativeX;
+        var positionY = relativeCoordinatesOnClick.RelativeY;
+
+        // Scroll position offset
+        {
+            positionX += relativeCoordinatesOnClick.RelativeScrollLeft;
+            positionY += relativeCoordinatesOnClick.RelativeScrollTop;
+        }
+
+        var rowIndex = (int)(positionY / charMeasurements.LineHeight);
+
+        rowIndex = rowIndex > modelModifier.LineCount - 1
+            ? modelModifier.LineCount - 1
+            : rowIndex;
+
+        int columnIndexInt;
+
+        if (!globalTextEditorOptions.UseMonospaceOptimizations)
+        {
+            var guid = Guid.NewGuid();
+
+            columnIndexInt = await editContext.TextEditorService.JsRuntimeTextEditorApi
+                .CalculateProportionalColumnIndex(
+                    _viewModelDisplay.ProportionalFontMeasurementsContainerElementId,
+                    $"luth_te_proportional-font-measurement-parent_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
+                    $"luth_te_proportional-font-measurement-cursor_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
+                    positionX,
+                    charMeasurements.CharacterWidth,
+                    modelModifier.GetLineText(rowIndex))
+                .ConfigureAwait(false);
+
+            if (columnIndexInt == -1)
+            {
+                var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
+                columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
+            }
+        }
+        else
+        {
+            var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
+            columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
+        }
+
+        var lengthOfRow = modelModifier.GetLineLength(rowIndex);
+
+        // Tab key column offset
+        {
+            var parameterForGetTabsCountOnSameRowBeforeCursor = columnIndexInt > lengthOfRow
+                ? lengthOfRow
+                : columnIndexInt;
+
+            int tabsOnSameRowBeforeCursor;
+
+            try
+            {
+                tabsOnSameRowBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
+                    rowIndex,
+                    parameterForGetTabsCountOnSameRowBeforeCursor);
+            }
+            catch (LuthetusTextEditorException)
+            {
+                tabsOnSameRowBeforeCursor = 0;
+            }
+
+            // 1 of the character width is already accounted for
+            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+            columnIndexInt -= extraWidthPerTabKey * tabsOnSameRowBeforeCursor;
+        }
+
+        columnIndexInt = columnIndexInt > lengthOfRow
+            ? lengthOfRow
+            : columnIndexInt;
+
+        rowIndex = Math.Max(rowIndex, 0);
+        columnIndexInt = Math.Max(columnIndexInt, 0);
+
+        return (rowIndex, columnIndexInt);
     }
 }

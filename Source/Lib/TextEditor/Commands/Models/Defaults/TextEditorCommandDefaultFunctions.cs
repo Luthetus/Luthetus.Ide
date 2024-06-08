@@ -800,7 +800,7 @@ public class TextEditorCommandDefaultFunctions
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            if (commandArgs.JsRuntime is null || commandArgs.HandleMouseStoppedMovingEventAsyncFunc is null)
+            if (commandArgs.JsRuntime is null)
                 return;
 
             var elementPositionInPixels = await commandArgs.TextEditorService.JsRuntimeTextEditorApi
@@ -813,11 +813,16 @@ public class TextEditorCommandDefaultFunctions
                     (.9 * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight)
             };
 
-            await commandArgs.HandleMouseStoppedMovingEventAsyncFunc.Invoke(new MouseEventArgs
-            {
-                ClientX = elementPositionInPixels.Left,
-                ClientY = elementPositionInPixels.Top
-            }).ConfigureAwait(false);
+            await HandleMouseStoppedMovingEventAsyncFactory(
+					new MouseEventArgs
+		            {
+		                ClientX = elementPositionInPixels.Left,
+		                ClientY = elementPositionInPixels.Top
+		            },
+					modelResourceUri,
+					viewModelKey)
+				.Invoke(editContext)
+				.ConfigureAwait(false);
         };
     }
 
@@ -825,8 +830,7 @@ public class TextEditorCommandDefaultFunctions
 	public static TextEditorEdit HandleAfterOnKeyDownAsyncFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        KeyboardEventArgs keyboardEventArgs,
-        Func<MenuKind, bool, Task> setTextEditorMenuKind)
+        KeyboardEventArgs keyboardEventArgs)
     {
         return async editContext =>
         {
@@ -864,30 +868,49 @@ public class TextEditorCommandDefaultFunctions
 
             if (EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
             {
-                await setTextEditorMenuKind
-                    .Invoke(MenuKind.AutoCompleteMenu, true)
-                    .ConfigureAwait(false);
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+					MenuKind = MenuKind.AutoCompleteMenu
+				};
             }
             else if (EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
             {
-                await ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+                await viewModelModifier.ViewModel.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
             }
         };
     }
 
-	public TextEditorEdit HandleAfterOnKeyDownRangeAsyncFactory(
+	/// <summary>
+	/// This method was being used in the 'OnKeyDownBatch.cs' class, which no longer exists.
+	/// The replacement for 'OnKeyDownBatch.cs' is 'OnKeyDownLateBatching.cs'.
+	///
+	/// But, during the replacement process, this method was overlooked.
+	///
+	/// One would likely want to use this method when appropriate because
+	/// it permits every batched keyboard event to individually be given a chance
+	/// to trigger 'HandleAfterOnKeyDownAsyncFactory(...)'
+	///
+	/// Example: a 'space' keyboard event, batched with the letter 'a' keyboard event.
+	/// Depending on what 'OnKeyDownLateBatching.cs' does, perhaps it takes the last keyboard event
+	/// and uses that to fire 'HandleAfterOnKeyDownAsyncFactory(...)'.
+	///
+	/// Well, a 'space' keyboard event would have trigger syntax highlighting to be refreshed.
+	/// Whereas, the letter 'a' keyboard event won't do anything beyond inserting the letter.
+	/// Therefore, the syntax highlighting was erroneously not refreshed due to batching.
+	/// This method is intended to solve this problem, but it was forgotten at some point.
+	/// </summary>
+	public static TextEditorEdit HandleAfterOnKeyDownRangeAsyncFactory(
+		ViewModelDisplayOptions viewModelDisplayOptions,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        List<KeyboardEventArgs> keyboardEventArgsList,
-        Func<MenuKind, bool, Task> setTextEditorMenuKind)
+        List<KeyboardEventArgs> keyboardEventArgsList)
     {
-        if (_viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory is not null)
+        if (viewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory is not null)
         {
-            return _viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory.Invoke(
+            return viewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory.Invoke(
                 resourceUri,
                 viewModelKey,
-                keyboardEventArgsList,
-                setTextEditorMenuKind);
+                keyboardEventArgsList);
         }
 
         return async editContext =>
@@ -906,12 +929,12 @@ public class TextEditorCommandDefaultFunctions
 
             foreach (var keyboardEventArgs in keyboardEventArgsList)
             {
-                if (!seenIsAutocompleteIndexerInvoker && IsAutocompleteIndexerInvoker(keyboardEventArgs))
+                if (!seenIsAutocompleteIndexerInvoker && EventUtils.IsAutocompleteIndexerInvoker(keyboardEventArgs))
                     seenIsAutocompleteIndexerInvoker = true;
 
-                if (!seenIsAutocompleteMenuInvoker && IsAutocompleteMenuInvoker(keyboardEventArgs))
+                if (!seenIsAutocompleteMenuInvoker && EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
                     seenIsAutocompleteMenuInvoker = true;
-                else if (!seenIsSyntaxHighlightingInvoker && IsSyntaxHighlightingInvoker(keyboardEventArgs))
+                else if (!seenIsSyntaxHighlightingInvoker && EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
                     seenIsSyntaxHighlightingInvoker = true;
             }
 
@@ -930,7 +953,7 @@ public class TextEditorCommandDefaultFunctions
 
                         if (word is not null)
                         {
-                            await _viewModelDisplay.AutocompleteIndexer
+                            await editContext.TextEditorService.AutocompleteIndexer
                                 .IndexWordAsync(word)
                                 .ConfigureAwait(false);
                         }
@@ -940,24 +963,25 @@ public class TextEditorCommandDefaultFunctions
 
             if (seenIsAutocompleteMenuInvoker)
             {
-                await setTextEditorMenuKind
-                    .Invoke(MenuKind.AutoCompleteMenu, true)
-                    .ConfigureAwait(false);
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+					MenuKind = MenuKind.AutoCompleteMenu
+				};
             }
 
             if (seenIsSyntaxHighlightingInvoker)
             {
-                await ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+                await viewModelModifier.ViewModel.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
             }
         };
     }
 
-	public TextEditorEdit HandleMouseStoppedMovingEventAsyncFactory(
+	public static TextEditorEdit HandleMouseStoppedMovingEventAsyncFactory(
 		MouseEventArgs mouseEventArgs,		
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
-		return editContext =>
+		return async editContext =>
 		{
 			var modelModifier = editContext.GetModelModifier(resourceUri);
 	        var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -1056,6 +1080,6 @@ public class TextEditorCommandDefaultFunctions
 	        }
 	
 	        // TODO: Measure the tooltip, and reposition if it would go offscreen.
-		}
+		};
     }
 }

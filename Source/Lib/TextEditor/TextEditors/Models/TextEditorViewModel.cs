@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -28,6 +29,8 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public record TextEditorViewModel : IDisposable
 {
+	private readonly ThrottleAsync _throttleApplySyntaxHighlighting = new ThrottleAsync(TimeSpan.FromMilliseconds(500));
+
     public TextEditorViewModel(
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
@@ -171,6 +174,14 @@ public record TextEditorViewModel : IDisposable
     public TextEditorEdit FocusFactory()
     {
         return TextEditorService.ViewModelApi.FocusPrimaryCursorFactory(PrimaryCursorContentId);
+    }
+
+	public Task ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
+    {
+        return _throttleApplySyntaxHighlighting.PushEvent(_ =>
+        {
+            return modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+        });
     }
 	
     public void Dispose()
