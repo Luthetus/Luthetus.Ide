@@ -72,6 +72,15 @@
 			        TextEditorModelModifier.DeleteKind.Backspace);
 
 				Assert.Equal(string.Empty, textEditor.AllText);
+				Console.WriteLine($"b2: textEditor.EditBlockList.Count: {textEditor.EditBlockList.Count}");
+
+				foreach (var edit in textEditor.EditBlockList)
+				{
+					Console.Write($"{edit.EditKind}, ");
+				}
+
+				Console.WriteLine();
+
 				Assert.Equal(3, textEditor.EditBlockList.Count);
 				Assert.Equal(2, textEditor.EditBlockIndex);
 			}
@@ -79,8 +88,11 @@
 			// undo, undo, redo, redo
 			
 			// Undo One
+			Console.WriteLine($"before: textEditor.UndoEdit();");
 			textEditor.UndoEdit();
+			Console.WriteLine($"after: textEditor.UndoEdit();");
 			Assert.Equal("Hello", textEditor.AllText);
+			Console.WriteLine($"uo: textEditor.EditBlockList.Count: {textEditor.EditBlockList.Count}");
 			Assert.Equal(3, textEditor.EditBlockList.Count);
 			Assert.Equal(1, textEditor.EditBlockIndex);
 	

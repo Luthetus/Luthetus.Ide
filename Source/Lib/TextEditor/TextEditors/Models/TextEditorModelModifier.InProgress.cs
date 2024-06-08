@@ -375,6 +375,8 @@ public partial class TextEditorModelModifier
 	        for (var cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
 	        {
 	            var cursorModifier = cursorModifierBag.List[cursorIndex];
+
+				var initialPositionIndex = this.GetPositionIndex(cursorModifier);
 	
 	            var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
 	
@@ -385,14 +387,17 @@ public partial class TextEditorModelModifier
 				}
 
             var (positionIndex, charCount) = tuple.Value;
+
+			var textRemoved = this.GetString(positionIndex, charCount);
+
             DeleteValue(positionIndex, charCount, cancellationToken);
 
 			if (shouldCreateEditHistory)
 			{
 				if (deleteKind == DeleteKind.Delete)
-					EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount));
+					EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount) { TextRemoved = textRemoved });
 				else if (deleteKind == DeleteKind.Backspace)
-					EnsureUndoPoint(new TextEditorEditBackspace(positionIndex, charCount));
+					EnsureUndoPoint(new TextEditorEditBackspace(initialPositionIndex, charCount) { TextRemoved = textRemoved });
 				else
 					throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");
 			}
