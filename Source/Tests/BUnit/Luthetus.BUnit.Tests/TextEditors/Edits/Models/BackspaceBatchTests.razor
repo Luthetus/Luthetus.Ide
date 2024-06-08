@@ -31,114 +31,90 @@
 		var length123 = "123".Length;
 		var lengthDoReMi = "Do-Re-Mi".Length;
 
-		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
-		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
-
-		Exception? backgroundTaskException = null;
-
-		await testData.TextEditorService.PostSimpleBatch(
-			nameof(RewriteEditLogicTests),
-			editContext =>
-			{
-				try
-				{
-					var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
-					var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
-					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-	
-					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-						return Task.CompletedTask;
-	
-					var textEditor = modelModifier;
-	
-					// Backspace One (normal backspace)
-					{
-						var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
-						primaryCursorModifier.LineIndex = lineIndex;
-						primaryCursorModifier.ColumnIndex = columnIndex;
-		
-						textEditor.Delete(
-							cursorModifierBag,
-					        lengthDoReMi,
-					        false,
-					        TextEditorModelModifier.DeleteKind.Backspace);
-		
-						Assert.Equal("abc123", textEditor.AllText);
-						Assert.Equal(2, textEditor.EditBlockList.Count);
-						Assert.Equal(1, textEditor.EditBlockIndex);
-					}
-	
-					// Backspace Two (cause a batch to be created)
-					{
-						var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
-						primaryCursorModifier.LineIndex = lineIndex;
-						primaryCursorModifier.ColumnIndex = columnIndex;
-	
-						textEditor.Delete(
-							cursorModifierBag,
-					        length123,
-					        false,
-					        TextEditorModelModifier.DeleteKind.Backspace);
-	
-						Assert.Equal("abc", textEditor.AllText);
-						Assert.Equal(2, textEditor.EditBlockList.Count);
-						Assert.Equal(1, textEditor.EditBlockIndex);
-					}
-	
-					// Backspace Three (add to existing batch)
-					{
-						var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
-						primaryCursorModifier.LineIndex = lineIndex;
-						primaryCursorModifier.ColumnIndex = columnIndex;
-	
-						textEditor.Delete(
-							cursorModifierBag,
-					        lengthAbc,
-					        false,
-					        TextEditorModelModifier.DeleteKind.Backspace);
-	
-						Assert.Equal(string.Empty, textEditor.AllText);
-						Assert.Equal(2, textEditor.EditBlockList.Count);
-						Assert.Equal(1, textEditor.EditBlockIndex);
-					}
-	
-					// undo, undo, redo, redo
-	
-					// Undo One
-					textEditor.UndoEdit();
-					Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditBlockList.Count);
-					Assert.Equal(0, textEditor.EditBlockIndex);
-	
-					// Undo Two
-					Assert.Throws<LuthetusTextEditorException>(textEditor.UndoEdit);
-	
-					// Redo One
-					textEditor.RedoEdit();
-					Assert.Equal(string.Empty, textEditor.AllText);
-					Assert.Equal(2, textEditor.EditBlockList.Count);
-					Assert.Equal(1, textEditor.EditBlockIndex);
-	
-					// Redo Two
-					Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
-	
-					return Task.CompletedTask;
-				}
-				catch (Exception exception)
-				{
-					backgroundTaskException = exception;
-					throw;
-				}
-			});
-
-		await SharedInitializationForTests
-			.StartBackgroundTasks(this)
-			.Stop();
-
-		if (backgroundTaskException is not null)
+		await RunTextEditorBackgroundTaskTest(editContext =>
 		{
-			throw backgroundTaskException;
-		}
+			var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+			var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+			var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+			if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+				return Task.CompletedTask;
+
+			var textEditor = modelModifier;
+
+			// Backspace One (normal backspace)
+			{
+				var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+				primaryCursorModifier.LineIndex = lineIndex;
+				primaryCursorModifier.ColumnIndex = columnIndex;
+
+				textEditor.Delete(
+					cursorModifierBag,
+			        lengthDoReMi,
+			        false,
+			        TextEditorModelModifier.DeleteKind.Backspace);
+
+				Assert.Equal("abc123", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
+			}
+
+			// Backspace Two (cause a batch to be created)
+			{
+				var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+				primaryCursorModifier.LineIndex = lineIndex;
+				primaryCursorModifier.ColumnIndex = columnIndex;
+
+				textEditor.Delete(
+					cursorModifierBag,
+			        length123,
+			        false,
+			        TextEditorModelModifier.DeleteKind.Backspace);
+
+				Assert.Equal("abc", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
+			}
+
+			// Backspace Three (add to existing batch)
+			{
+				var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+				primaryCursorModifier.LineIndex = lineIndex;
+				primaryCursorModifier.ColumnIndex = columnIndex;
+
+				textEditor.Delete(
+					cursorModifierBag,
+			        lengthAbc,
+			        false,
+			        TextEditorModelModifier.DeleteKind.Backspace);
+
+				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal(2, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
+			}
+
+			// undo, undo, redo, redo
+
+			// Undo One
+			textEditor.UndoEdit();
+			Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
+			Assert.Equal(2, textEditor.EditBlockList.Count);
+			Assert.Equal(0, textEditor.EditBlockIndex);
+
+			// Undo Two
+			Assert.Throws<LuthetusTextEditorException>(textEditor.UndoEdit);
+
+			// Redo One
+			textEditor.RedoEdit();
+			Assert.Equal(string.Empty, textEditor.AllText);
+			Assert.Equal(2, textEditor.EditBlockList.Count);
+			Assert.Equal(1, textEditor.EditBlockIndex);
+
+			// Redo Two
+			Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
+
+			return Task.CompletedTask;
+		});
 	}
 }

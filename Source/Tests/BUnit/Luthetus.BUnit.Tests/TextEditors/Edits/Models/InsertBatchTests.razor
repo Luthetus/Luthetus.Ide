@@ -27,96 +27,87 @@
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 		Assert.Equal(1, testData.InModel.EditBlockList.Count);
 
-		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
-		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		await RunTextEditorBackgroundTaskTest(editContext =>
+		{
+			var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+			var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+			var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-		await testData.TextEditorService.PostSimpleBatch(
-			nameof(RewriteEditLogicTests),
-			editContext =>
+			if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+				return Task.CompletedTask;
+
+			var textEditor = modelModifier;
+
+			// Insert One (normal insert)
 			{
-				var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
-				var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
-				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+				var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
+				primaryCursorModifier.LineIndex = lineIndex;
+				primaryCursorModifier.ColumnIndex = columnIndex;
 
-				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-					return Task.CompletedTask;
+				textEditor.Insert(
+					"abc",
+			        cursorModifierBag,
+			        useLineEndKindPreference: false);
 
-				var textEditor = modelModifier;
-
-				// Insert One (normal insert)
-				{
-					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
-					primaryCursorModifier.LineIndex = lineIndex;
-					primaryCursorModifier.ColumnIndex = columnIndex;
-
-					textEditor.Insert(
-						"abc",
-				        cursorModifierBag,
-				        useLineEndKindPreference: false);
-
-					Assert.Equal("abc", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditBlockList.Count);
-					Assert.Equal(1, textEditor.EditBlockIndex);
-				}
-		
-				// Insert Two (cause a batch to be created)
-				{
-					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
-					primaryCursorModifier.LineIndex = lineIndex;
-					primaryCursorModifier.ColumnIndex = columnIndex;
-
-					textEditor.Insert(
-						"123",
-				        cursorModifierBag,
-				        useLineEndKindPreference: false);
-
-					Assert.Equal("abc123", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditBlockList.Count);
-					Assert.Equal(1, textEditor.EditBlockIndex);
-				}
-		
-				// Insert Three (add to existing batch)
-				{
-					var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
-					primaryCursorModifier.LineIndex = lineIndex;
-					primaryCursorModifier.ColumnIndex = columnIndex;
-
-					textEditor.Insert(
-						"Do-Re-Mi",
-				        cursorModifierBag,
-				        useLineEndKindPreference: false);
-
-					Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
-					Assert.Equal(2, textEditor.EditBlockList.Count);
-					Assert.Equal(1, textEditor.EditBlockIndex);
-				}
-		
-				// undo, undo, redo, redo
-				
-				// Undo One
-				textEditor.UndoEdit();
-				Assert.Equal(string.Empty, textEditor.AllText);
+				Assert.Equal("abc", textEditor.AllText);
 				Assert.Equal(2, textEditor.EditBlockList.Count);
-				Assert.Equal(0, textEditor.EditBlockIndex);
-		
-				// Undo Two
-				Assert.Throws<LuthetusTextEditorException>(textEditor.UndoEdit);
-		
-				// Redo One
-				textEditor.RedoEdit();
+				Assert.Equal(1, textEditor.EditBlockIndex);
+			}
+	
+			// Insert Two (cause a batch to be created)
+			{
+				var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+				primaryCursorModifier.LineIndex = lineIndex;
+				primaryCursorModifier.ColumnIndex = columnIndex;
+
+				textEditor.Insert(
+					"123",
+			        cursorModifierBag,
+			        useLineEndKindPreference: false);
+
+				Assert.Equal("abc123", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
+			}
+	
+			// Insert Three (add to existing batch)
+			{
+				var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(textEditor.AllText.Length);
+				primaryCursorModifier.LineIndex = lineIndex;
+				primaryCursorModifier.ColumnIndex = columnIndex;
+
+				textEditor.Insert(
+					"Do-Re-Mi",
+			        cursorModifierBag,
+			        useLineEndKindPreference: false);
+
 				Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
 				Assert.Equal(2, textEditor.EditBlockList.Count);
 				Assert.Equal(1, textEditor.EditBlockIndex);
-		
-				// Redo Two
-				Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
+			}
+	
+			// undo, undo, redo, redo
+			
+			// Undo One
+			textEditor.UndoEdit();
+			Assert.Equal(string.Empty, textEditor.AllText);
+			Assert.Equal(2, textEditor.EditBlockList.Count);
+			Assert.Equal(0, textEditor.EditBlockIndex);
+	
+			// Undo Two
+			Assert.Throws<LuthetusTextEditorException>(textEditor.UndoEdit);
+	
+			// Redo One
+			textEditor.RedoEdit();
+			Assert.Equal("abc123Do-Re-Mi", textEditor.AllText);
+			Assert.Equal(2, textEditor.EditBlockList.Count);
+			Assert.Equal(1, textEditor.EditBlockIndex);
+	
+			// Redo Two
+			Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
 
-				return Task.CompletedTask;
-			});
-
-		await SharedInitializationForTests
-			.StartBackgroundTasks(this)
-			.Stop();
+			return Task.CompletedTask;
+		});
 	}
 }

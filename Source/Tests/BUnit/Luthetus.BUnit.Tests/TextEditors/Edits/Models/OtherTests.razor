@@ -30,61 +30,52 @@
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 		Assert.Equal(1, testData.InModel.EditBlockList.Count);
 
-		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
-		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		await RunTextEditorBackgroundTaskTest(editContext =>
+		{
+			var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+			var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+			var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-		await testData.TextEditorService.PostSimpleBatch(
-			nameof(RewriteEditLogicTests),
-			editContext =>
-			{
-				var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
-				var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
-				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-					return Task.CompletedTask;
-
-				var textEditor = modelModifier;
-
-				var otherEdit = new TextEditorEditOther("paste");
-
-				// Paste
-				textEditor.OpenOtherEdit(otherEdit);
-		
-				var clipboardContent = "abc123";
-
-				var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
-				primaryCursorModifier.LineIndex = lineIndex;
-				primaryCursorModifier.ColumnIndex = columnIndex;
-				
-				textEditor.Insert(
-					clipboardContent,
-			        cursorModifierBag,
-			        useLineEndKindPreference: false);
-		
-				textEditor.CloseOtherEdit(otherEdit.Tag);
-		
-				Assert.Equal("abc123", textEditor.AllText);
-				Assert.Equal(4, textEditor.EditBlockList.Count);
-				Assert.Equal(3, textEditor.EditBlockIndex);
-		
-				textEditor.UndoEdit();
-				Assert.Equal(string.Empty, textEditor.AllText);
-				Assert.Equal(4, textEditor.EditBlockList.Count);
-				Assert.Equal(0, textEditor.EditBlockIndex);
-		
-				textEditor.RedoEdit();
-				Assert.Equal(4, textEditor.EditBlockList.Count);
-				Assert.Equal(3, textEditor.EditBlockIndex);
-		
-				Assert.Equal("abc123", textEditor.AllText);
-
+			if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 				return Task.CompletedTask;
-			});
 
-		await SharedInitializationForTests
-			.StartBackgroundTasks(this)
-			.Stop();
+			var textEditor = modelModifier;
+
+			var otherEdit = new TextEditorEditOther("paste");
+
+			// Paste
+			textEditor.OpenOtherEdit(otherEdit);
+	
+			var clipboardContent = "abc123";
+
+			var (lineIndex, columnIndex) = modelModifier.GetLineAndColumnIndicesFromPositionIndex(0);
+			primaryCursorModifier.LineIndex = lineIndex;
+			primaryCursorModifier.ColumnIndex = columnIndex;
+			
+			textEditor.Insert(
+				clipboardContent,
+		        cursorModifierBag,
+		        useLineEndKindPreference: false);
+	
+			textEditor.CloseOtherEdit(otherEdit.Tag);
+	
+			Assert.Equal("abc123", textEditor.AllText);
+			Assert.Equal(4, textEditor.EditBlockList.Count);
+			Assert.Equal(3, textEditor.EditBlockIndex);
+	
+			textEditor.UndoEdit();
+			Assert.Equal(string.Empty, textEditor.AllText);
+			Assert.Equal(4, textEditor.EditBlockList.Count);
+			Assert.Equal(0, textEditor.EditBlockIndex);
+	
+			textEditor.RedoEdit();
+			Assert.Equal(4, textEditor.EditBlockList.Count);
+			Assert.Equal(3, textEditor.EditBlockIndex);
+	
+			Assert.Equal("abc123", textEditor.AllText);
+
+			return Task.CompletedTask;
+		});
 	}
 }
