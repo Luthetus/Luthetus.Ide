@@ -522,13 +522,38 @@ public partial class TextEditorModelModifier
 
 	public void OpenOtherEdit(TextEditorEditOther editOther)
 	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
+            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
+        }
+
+		Console.WriteLine("start: OpenOtherEdit");
+
+		Console.WriteLine("before: OtherEditStack.Push(editOther);");
 		OtherEditStack.Push(editOther);
+		Console.WriteLine("after: OtherEditStack.Push(editOther);");
+
+		Console.WriteLine("before: _editBlocksList.Add(editOther);");
 		_editBlocksList.Add(editOther);
+		Console.WriteLine("after: _editBlocksList.Add(editOther);");
+
+		Console.WriteLine("before: _editBlockIndex++;");
 		_editBlockIndex++;
+		Console.WriteLine("after: _editBlockIndex++;");
+
+		Console.WriteLine("end: OpenOtherEdit");
 	}
 
 	public void CloseOtherEdit(string predictedTag)
 	{
+		// Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
+        {
+            _editBlocksList ??= _textEditorModel.EditBlockList.ToList();
+            _editBlockIndex ??= _textEditorModel.EditBlockIndex;
+        }
+
+		Console.WriteLine("start: CloseOtherEdit");
 		var peek = OtherEditStack.Peek();
 		if (peek.Tag != predictedTag)
 		{
@@ -540,6 +565,8 @@ public partial class TextEditorModelModifier
 		var pop = OtherEditStack.Pop();
 		_editBlocksList.Add(pop);
 		_editBlockIndex++;
+
+		Console.WriteLine("end: CloseOtherEdit");
 	}
 
 	public void UndoEdit()
