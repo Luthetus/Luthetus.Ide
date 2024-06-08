@@ -16,7 +16,7 @@
 @using Luthetus.TextEditor.RazorLib.Exceptions
 @using Luthetus.Ide.RazorLib.Installations.Models
 
-@inherits TestContext
+@inherits EditLogicTestBase
 @code
 {
 	[Fact]
@@ -548,77 +548,5 @@
 		await SharedInitializationForTests
 			.StartBackgroundTasks(this)
 			.Stop();
-	}
-
-	private EditLogicTestData EditLogicTestsInitialize(string initialContent)
-	{
-		SharedInitializationForTests.Initialize(this);
-		
-		var textEditorService = Services.GetService<ITextEditorService>();
-
-		var resourceUri = new ResourceUri("/unitTesting.txt");
-		var viewModelKey = Key<TextEditorViewModel>.NewKey();
-
-		var inModel = new TextEditorModel(
-	        resourceUri,
-	        DateTime.UtcNow,
-	        "txt",
-	        initialContent,
-	        null,
-	        null,
-			4_096);
-
-		textEditorService.ModelApi.RegisterCustom(inModel);
-		textEditorService.ViewModelApi.Register(viewModelKey, inModel.ResourceUri, new Category("UnitTests"));
-
-		JSInterop.SetupVoid("luthetusTextEditor.disposeTextEditorCursorIntersectionObserver", _ => true);
-		JSInterop.SetupVoid("luthetusTextEditor.initializeTextEditorCursorIntersectionObserver", _ => true);
-		JSInterop.SetupVoid("luthetusTextEditor.initializeVirtualizationIntersectionObserver", _ => true);
-		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
-
-		TextEditorViewModelDisplay? refTextEditorViewModelDisplay = null;
-
-		var cut = Render(
-			@<TextEditorViewModelDisplay @ref="refTextEditorViewModelDisplay" TextEditorViewModelKey="viewModelKey"/>);
-
-		Console.WriteLine(cut.GetType());
-
-		var events = new TextEditorViewModelDisplay.TextEditorEvents(
-			refTextEditorViewModelDisplay,
-			textEditorService.OptionsStateWrap.Value.Options);
-
-		return new EditLogicTestData(
-			cut,
-			refTextEditorViewModelDisplay,
-			events,
-			inModel,
-			viewModelKey,
-			textEditorService);
-	}
-
-	private class EditLogicTestData
-	{
-		public EditLogicTestData(
-			IRenderedFragment cut,
-			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
-			TextEditorViewModelDisplay.TextEditorEvents events,
-			TextEditorModel inModel,
-			Key<TextEditorViewModel> viewModelKey,
-			ITextEditorService textEditorService)
-		{
-			Cut = cut;
-			RefTextEditorViewModelDisplay = refTextEditorViewModelDisplay;
-			Events = events;
-			InModel = inModel;
-			ViewModelKey = viewModelKey;
-			TextEditorService = textEditorService;
-		}
-
-		public IRenderedFragment Cut { get; }
-		public TextEditorViewModelDisplay? RefTextEditorViewModelDisplay { get; }
-		public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
-		public TextEditorModel InModel { get; }
-		public Key<TextEditorViewModel> ViewModelKey { get; }
-		public ITextEditorService TextEditorService { get; }
 	}
 }
