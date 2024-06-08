@@ -332,6 +332,15 @@ public partial class TextEditorModelModifier
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
+		if (_editBlockIndex.Value < _editBlocksList.Count - 1)
+		{
+			// Clear redo history
+			for (int i = _editBlockIndex.Value + 1; i < _editBlocksList.Count; i++)
+			{
+				_editBlocksList.RemoveAt(i);
+			}
+		}
+
 		if (newEdit.EditKind == TextEditorEditKind.Insert)
 		{
 			var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];

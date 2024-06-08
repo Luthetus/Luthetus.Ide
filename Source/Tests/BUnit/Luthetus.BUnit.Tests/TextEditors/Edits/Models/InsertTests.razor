@@ -495,4 +495,86 @@
 			return Task.CompletedTask;
 		});
 	}
+	
+	/// <summary>
+	/// An oddity occurs when I insert an enter key press.
+	/// I've copy and pasted the text that it was hapening with,
+	/// but still need to boil it down to the simplest case where it occurs.
+	/// </summary>
+	[Fact]
+	public async Task Insert_Case_Seven()
+	{
+		var initialContent = "using BlazorCrudApp.Wasm;";
+
+		// Construct
+		var testData = EditLogicTestsInitialize(initialContent);
+		Assert.Equal(initialContent, testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
+
+		await RunTextEditorBackgroundTaskTest(editContext =>
+		{
+			var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+			var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+			var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+			if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+				return Task.CompletedTask;
+
+			var textEditor = modelModifier;
+
+			// Insert One
+			{
+				primaryCursorModifier.LineIndex = 0;
+				primaryCursorModifier.ColumnIndex = 1;
+
+				textEditor.Insert(
+					"\n",
+			        cursorModifierBag,
+			        useLineEndKindPreference: false);
+
+				Assert.Equal("u\nsing BlazorCrudApp.Wasm;", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
+			}
+
+			// Undo One
+			textEditor.UndoEdit();
+			Assert.Equal("using BlazorCrudApp.Wasm;", textEditor.AllText);
+			Assert.Equal(2, textEditor.EditBlockList.Count);
+			Assert.Equal(0, textEditor.EditBlockIndex);
+
+			// Insert Two
+			{
+				primaryCursorModifier.LineIndex = 0;
+				primaryCursorModifier.ColumnIndex = 2;
+
+				textEditor.Insert(
+					"\n",
+			        cursorModifierBag,
+			        useLineEndKindPreference: false);
+
+				Assert.Equal("us\ning BlazorCrudApp.Wasm;", textEditor.AllText);
+				Assert.Equal(2, textEditor.EditBlockList.Count);
+				Assert.Equal(1, textEditor.EditBlockIndex);
+			}
+
+			// Undo Two
+			textEditor.UndoEdit();
+			Assert.Equal("using BlazorCrudApp.Wasm;", textEditor.AllText);
+			Assert.Equal(2, textEditor.EditBlockList.Count);
+			Assert.Equal(0, textEditor.EditBlockIndex);
+	
+			// Redo One
+			textEditor.RedoEdit();
+			Assert.Equal("us\ning BlazorCrudApp.Wasm;", textEditor.AllText);
+			Assert.Equal(2, textEditor.EditBlockList.Count);
+			Assert.Equal(1, textEditor.EditBlockIndex);
+	
+			// Redo Two
+			Assert.Throws<LuthetusTextEditorException>(textEditor.RedoEdit);
+
+			return Task.CompletedTask;
+		});
+	}
 }
