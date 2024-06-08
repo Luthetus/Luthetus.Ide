@@ -116,7 +116,7 @@ public partial class TextEditorModelModifier
 			Key<TextEditorViewModel>.Empty,
 			new List<TextEditorCursorModifier> { new(cursor) });
 	
-		Insert(content, cursorModifierBag, false, CancellationToken.None);
+		Insert(content, cursorModifierBag, false, CancellationToken.None, shouldCreateEditHistory: false);
 	}
 
 	private void PerformBackspace(int positionIndex, int count)
@@ -132,7 +132,8 @@ public partial class TextEditorModelModifier
 			count,
 			false,
 			DeleteKind.Backspace,
-			CancellationToken.None);
+			CancellationToken.None,
+			shouldCreateEditHistory: false);
 	}
 
 	private void PerformDelete(int positionIndex, int count)
@@ -148,7 +149,8 @@ public partial class TextEditorModelModifier
 			count,
 			false,
 			DeleteKind.Delete,
-			CancellationToken.None);
+			CancellationToken.None,
+			shouldCreateEditHistory: false);
 	}
 
 	public void DeleteTextByMotion(

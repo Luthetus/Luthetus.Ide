@@ -33,7 +33,8 @@ public partial class TextEditorModelModifier
         string value,
         CursorModifierBagTextEditor cursorModifierBag,
         bool useLineEndKindPreference = true,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+		bool shouldCreateEditHistory = true)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
@@ -86,7 +87,8 @@ public partial class TextEditorModelModifier
             // So, use the 'cursorPositionIndex' variable that was calculated prior to the metadata step.
             InsertValue(value, initialCursorPositionIndex, useLineEndKindPreference, cancellationToken);
 
-			EnsureUndoPoint(new TextEditorEditInsert(initialCursorPositionIndex, value));
+			if (shouldCreateEditHistory)
+				EnsureUndoPoint(new TextEditorEditInsert(initialCursorPositionIndex, value));
 
             // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'InsertMetadata(...)'
             //       method because this specific metadata is being calculated by counting the characters, which
@@ -357,7 +359,8 @@ public partial class TextEditorModelModifier
         int columnCount,
         bool expandWord,
         DeleteKind deleteKind,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+		bool shouldCreateEditHistory = true)
 	{
         if (columnCount < 0)
             throw new LuthetusTextEditorException($"{nameof(columnCount)} < 0");
@@ -384,12 +387,15 @@ public partial class TextEditorModelModifier
             var (positionIndex, charCount) = tuple.Value;
             DeleteValue(positionIndex, charCount, cancellationToken);
 
-			if (deleteKind == DeleteKind.Delete)
-				EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount));
-			else if (deleteKind == DeleteKind.Backspace)
-				EnsureUndoPoint(new TextEditorEditBackspace(positionIndex, charCount));
-			else
-				throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");
+			if (shouldCreateEditHistory)
+			{
+				if (deleteKind == DeleteKind.Delete)
+					EnsureUndoPoint(new TextEditorEditDelete(positionIndex, charCount));
+				else if (deleteKind == DeleteKind.Backspace)
+					EnsureUndoPoint(new TextEditorEditBackspace(positionIndex, charCount));
+				else
+					throw new NotImplementedException($"The {nameof(DeleteKind)}: {deleteKind} was not recognized.");
+			}
 
             // NOTE: One cannot obtain the 'MostCharactersOnASingleLineTuple' from within the 'DeleteMetadata(...)'
             //       method because this specific metadata is being calculated by counting the characters, which
