@@ -4,6 +4,7 @@
 @using Luthetus.Common.RazorLib.Dimensions.Models;
 
 @{
+	var localRenderBatch = RenderBatch;
     var leftRelativeToParentInPixelsCssStyle = string.Empty;
     var textEditorKeymap = (ITextEditorKeymap)RenderBatch.Options!.Keymap!;
 }
@@ -26,7 +27,7 @@
      style="@CaretRowStyleCss">
 </div>
 
-@if (_menuKind != MenuKind.None && IncludeContextMenuHelperComponent)
+@if (localRenderBatch.ViewModel.MenuKind != MenuKind.None && IncludeContextMenuHelperComponent)
 {
     <div @onkeydown:stopPropagation="true"
          @onmousedown:stopPropagation="true"
@@ -39,7 +40,7 @@
             <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
                             Value="TextEditorMenuShouldTakeFocus">
 
-                @switch (_menuKind)
+                @switch (localRenderBatch.ViewModel.MenuKind)
                 {
                     case MenuKind.ContextMenu:
                             @OnContextMenuRenderFragment

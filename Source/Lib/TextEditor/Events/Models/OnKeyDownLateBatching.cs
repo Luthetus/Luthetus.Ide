@@ -20,20 +20,23 @@ public class OnKeyDownLateBatching : ITextEditorTask
     private readonly TextEditorEvents _events;
 
     public OnKeyDownLateBatching(
+			ViewModelDisplayOptions viewModelDisplayOptions,
 	        TextEditorEvents events,
 	        KeyboardEventArgs keyboardEventArgs,
 	        ResourceUri resourceUri,
 	        Key<TextEditorViewModel> viewModelKey)
-		: this(events, new List<KeyboardEventArgs>() { keyboardEventArgs }, resourceUri, viewModelKey)
+		: this(viewModelDisplayOptions, events, new List<KeyboardEventArgs>() { keyboardEventArgs }, resourceUri, viewModelKey)
     {
     }
 
 	public OnKeyDownLateBatching(
+		ViewModelDisplayOptions viewModelDisplayOptions,
         TextEditorEvents events,
         List<KeyboardEventArgs> keyboardEventArgsList,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
+		ViewModelDisplayOptions = viewModelDisplayOptions;
         _events = events;
 
         KeyboardEventArgsList = keyboardEventArgsList;
@@ -50,6 +53,7 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public IEditContext EditContext { get; set; }
+	public ViewModelDisplayOptions ViewModelDisplayOptions { get; set; }
 
 	/// <summary>
 	/// Global variable used during <see cref="HandleEvent"/> to
@@ -294,13 +298,27 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	
 	                if (cursorDisplay is not null)
 	                {
-	                    await _events.HandleAfterOnKeyDownAsyncFactory(
-	                            modelModifier.ResourceUri,
-	                            viewModelModifier.ViewModel.ViewModelKey,
-	                            keyboardEventArgs,
-	                            cursorDisplay.SetShouldDisplayMenuAsync)
-	                        .Invoke(EditContext)
-	                        .ConfigureAwait(false);
+						if (_viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory is not null)
+				        {
+				            await ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory.Invoke(
+					                resourceUri,
+					                viewModelKey,
+					                keyboardEventArgs,
+					                cursorDisplay.SetShouldDisplayMenuAsync)
+								.Invoke(EditContext)
+		                        .ConfigureAwait(false);
+;
+				        }
+						else
+						{
+							await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsyncFactory(
+		                            modelModifier.ResourceUri,
+		                            viewModelModifier.ViewModel.ViewModelKey,
+		                            keyboardEventArgs,
+		                            cursorDisplay.SetShouldDisplayMenuAsync)
+		                        .Invoke(EditContext)
+		                        .ConfigureAwait(false);
+						}
 	                }
 	            }
 			}

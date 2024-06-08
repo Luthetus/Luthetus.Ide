@@ -46,7 +46,6 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     private readonly ThrottleAsync _throttleShouldRevealCursor = new(TimeSpan.FromMilliseconds(333));
 
     private ElementReference? _cursorDisplayElementReference;
-    private MenuKind _menuKind;
     private int _menuShouldGetFocusRequestCount;
     private string _previousGetCursorStyleCss = string.Empty;
     private string _previousGetCaretRowStyleCss = string.Empty;
@@ -66,8 +65,6 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
         ? "luth_te_blink"
         : string.Empty;
-
-    public MenuKind MenuKind => _menuKind;
 
     protected override void OnInitialized()
     {
@@ -341,27 +338,9 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         }
     }
 
-    public void PauseBlinkAnimation()
-    {
-        TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
-    }
-
     private void HandleOnKeyDown()
     {
-        PauseBlinkAnimation();
-    }
-
-    public async Task SetShouldDisplayMenuAsync(MenuKind textEditorMenuKind, bool shouldFocusCursor = true)
-    {
-        // Clear the counter of requests for the Menu to take focus
-        _ = TextEditorMenuShouldTakeFocus();
-
-        _menuKind = textEditorMenuKind;
-
-        await InvokeAsync(StateHasChanged);
-
-        if (shouldFocusCursor && _menuKind == MenuKind.None)
-            await FocusAsync().ConfigureAwait(false);
+        TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
     }
 
     public async Task SetFocusToActiveMenuAsync()

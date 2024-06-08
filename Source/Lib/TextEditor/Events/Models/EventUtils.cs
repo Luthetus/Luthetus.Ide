@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -113,5 +113,37 @@ public static class EventUtils
     public static bool CheckIfKeyboardEventArgsMapsToMovement(KeyboardEventArgs keyboardEventArgs, CommandNoType command)
     {
         return KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key) && command is null;
+    }
+
+	public static bool IsAutocompleteMenuInvoker(KeyboardEventArgs keyboardEventArgs)
+    {
+        // Is {Ctrl + Space} or LetterOrDigit was hit without Ctrl being held
+        return keyboardEventArgs.CtrlKey &&
+                   keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
+               !keyboardEventArgs.CtrlKey &&
+                   !KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) &&
+                   !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs);
+    }
+
+	public static bool IsSyntaxHighlightingInvoker(KeyboardEventArgs keyboardEventArgs)
+    {
+        return keyboardEventArgs.Key == ";" ||
+               KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
+               keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "s" ||
+               keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "v" ||
+               keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "z" ||
+               keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "y";
+    }
+
+    /// <summary>
+    /// All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
+    /// are to be 1 character long, as well either whitespace or punctuation.
+    /// Therefore 1 character behind might be a word that can be indexed.
+    /// </summary>
+    public static bool IsAutocompleteIndexerInvoker(KeyboardEventArgs keyboardEventArgs)
+    {
+        return (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
+                    KeyboardKeyFacts.IsPunctuationCharacter(keyboardEventArgs.Key.First())) &&
+                !keyboardEventArgs.CtrlKey;
     }
 }

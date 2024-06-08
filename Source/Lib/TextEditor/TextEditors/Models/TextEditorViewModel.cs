@@ -112,6 +112,8 @@ public record TextEditorViewModel : IDisposable
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// </summary>
     public bool ShowCommandBar { get; init; }
+    public MenuKind MenuKind { get; init; }
+    public TooltipViewModel? TooltipViewModel { get; init; }
     /// <summary>
     /// <inheritdoc cref="Models.Category"/>
     /// </summary>

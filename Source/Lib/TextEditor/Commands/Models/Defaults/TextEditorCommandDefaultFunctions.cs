@@ -1,15 +1,17 @@
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Common.RazorLib.Keyboards.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
+using Luthetus.TextEditor.RazorLib.Events.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -817,5 +819,243 @@ public class TextEditorCommandDefaultFunctions
                 ClientY = elementPositionInPixels.Top
             }).ConfigureAwait(false);
         };
+    }
+
+	/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
+	public static TextEditorEdit HandleAfterOnKeyDownAsyncFactory(
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        KeyboardEventArgs keyboardEventArgs,
+        Func<MenuKind, bool, Task> setTextEditorMenuKind)
+    {
+        return async editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(resourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            // Indexing can be invoked and this method still check for syntax highlighting and such
+            if (EventUtils.IsAutocompleteIndexerInvoker(keyboardEventArgs))
+            {
+                _ = Task.Run(async () =>
+                {
+                    if (primaryCursorModifier.ColumnIndex > 0)
+                    {
+                        // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
+                        // are to be 1 character long, as well either specific whitespace or punctuation.
+                        // Therefore 1 character behind might be a word that can be indexed.
+                        var word = modelModifier.ReadPreviousWordOrDefault(
+                            primaryCursorModifier.LineIndex,
+                            primaryCursorModifier.ColumnIndex);
+
+                        if (word is not null)
+                        {
+                            await editContext.TextEditorService.AutocompleteIndexer
+                                .IndexWordAsync(word)
+                                .ConfigureAwait(false);
+                        }
+                    }
+                });
+            }
+
+            if (EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
+            {
+                await setTextEditorMenuKind
+                    .Invoke(MenuKind.AutoCompleteMenu, true)
+                    .ConfigureAwait(false);
+            }
+            else if (EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
+            {
+                await ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+            }
+        };
+    }
+
+	public TextEditorEdit HandleAfterOnKeyDownRangeAsyncFactory(
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        List<KeyboardEventArgs> keyboardEventArgsList,
+        Func<MenuKind, bool, Task> setTextEditorMenuKind)
+    {
+        if (_viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory is not null)
+        {
+            return _viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory.Invoke(
+                resourceUri,
+                viewModelKey,
+                keyboardEventArgsList,
+                setTextEditorMenuKind);
+        }
+
+        return async editContext =>
+        {
+            var modelModifier = editContext.GetModelModifier(resourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            var seenIsAutocompleteIndexerInvoker = false;
+            var seenIsAutocompleteMenuInvoker = false;
+            var seenIsSyntaxHighlightingInvoker = false;
+
+            foreach (var keyboardEventArgs in keyboardEventArgsList)
+            {
+                if (!seenIsAutocompleteIndexerInvoker && IsAutocompleteIndexerInvoker(keyboardEventArgs))
+                    seenIsAutocompleteIndexerInvoker = true;
+
+                if (!seenIsAutocompleteMenuInvoker && IsAutocompleteMenuInvoker(keyboardEventArgs))
+                    seenIsAutocompleteMenuInvoker = true;
+                else if (!seenIsSyntaxHighlightingInvoker && IsSyntaxHighlightingInvoker(keyboardEventArgs))
+                    seenIsSyntaxHighlightingInvoker = true;
+            }
+
+            if (seenIsAutocompleteIndexerInvoker)
+            {
+                _ = Task.Run(async () =>
+                {
+                    if (primaryCursorModifier.ColumnIndex > 0)
+                    {
+                        // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
+                        // are to be 1 character long, as well either specific whitespace or punctuation.
+                        // Therefore 1 character behind might be a word that can be indexed.
+                        var word = modelModifier.ReadPreviousWordOrDefault(
+                            primaryCursorModifier.LineIndex,
+                            primaryCursorModifier.ColumnIndex);
+
+                        if (word is not null)
+                        {
+                            await _viewModelDisplay.AutocompleteIndexer
+                                .IndexWordAsync(word)
+                                .ConfigureAwait(false);
+                        }
+                    }
+                });
+            }
+
+            if (seenIsAutocompleteMenuInvoker)
+            {
+                await setTextEditorMenuKind
+                    .Invoke(MenuKind.AutoCompleteMenu, true)
+                    .ConfigureAwait(false);
+            }
+
+            if (seenIsSyntaxHighlightingInvoker)
+            {
+                await ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+            }
+        };
+    }
+
+	public TextEditorEdit HandleMouseStoppedMovingEventAsyncFactory(
+		MouseEventArgs mouseEventArgs,		
+        ResourceUri resourceUri,
+        Key<TextEditorViewModel> viewModelKey)
+    {
+		return editContext =>
+		{
+			var modelModifier = editContext.GetModelModifier(resourceUri);
+	        var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+	
+	        if (modelModifier is null || viewModelModifier is null)
+	            return;
+	
+	        // Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
+	        var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs).ConfigureAwait(false);
+	
+	        // TODO: (2023-05-28) This shouldn't be re-calcuated in the best case scenario. That is to say, the previous line invokes 'CalculateRowAndColumnIndex(...)' which also invokes this logic
+	        var relativeCoordinatesOnClick = await TextEditorService.JsRuntimeTextEditorApi
+	            .GetRelativePosition(
+	                viewModelModifier.ViewModel.BodyElementId,
+	                mouseEventArgs.ClientX,
+	                mouseEventArgs.ClientY)
+	            .ConfigureAwait(false);
+	
+	        var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
+	            rowAndColumnIndex.rowIndex,
+	            rowAndColumnIndex.columnIndex,
+	            true));
+	
+	        var foundMatch = false;
+	
+	        var symbols = modelModifier.CompilerService.GetSymbolsFor(modelModifier.ResourceUri);
+	        var diagnostics = modelModifier.CompilerService.GetDiagnosticsFor(modelModifier.ResourceUri);
+	
+	        if (diagnostics.Length != 0)
+	        {
+	            foreach (var diagnostic in diagnostics)
+	            {
+	                if (cursorPositionIndex >= diagnostic.TextSpan.StartingIndexInclusive &&
+	                    cursorPositionIndex < diagnostic.TextSpan.EndingIndexExclusive)
+	                {
+	                    // Prefer showing a diagnostic over a symbol when both exist at the mouse location.
+	                    foundMatch = true;
+	
+	                    var parameterMap = new Dictionary<string, object?>
+	                    {
+	                        {
+	                            nameof(ITextEditorDiagnosticRenderer.Diagnostic),
+	                            diagnostic
+	                        }
+	                    };
+	
+	                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							TooltipViewModel = new(
+			                    _viewModelDisplay.LuthetusTextEditorComponentRenderers.DiagnosticRendererType,
+			                    parameterMap,
+			                    relativeCoordinatesOnClick,
+			                    null,
+			                    ContinueRenderingTooltipAsync)
+						};
+	                }
+	            }
+	        }
+	
+	        if (!foundMatch && symbols.Length != 0)
+	        {
+	            foreach (var symbol in symbols)
+	            {
+	                if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+	                    cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
+	                {
+	                    foundMatch = true;
+	
+	                    var parameters = new Dictionary<string, object?>
+	                    {
+	                        {
+	                            nameof(ITextEditorSymbolRenderer.Symbol),
+	                            symbol
+	                        }
+	                    };
+	
+	                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							TooltipViewModel = new(
+		                        _viewModelDisplay.LuthetusTextEditorComponentRenderers.SymbolRendererType,
+		                        parameters,
+		                        relativeCoordinatesOnClick,
+		                        null,
+		                        ContinueRenderingTooltipAsync)
+						};
+	                }
+	            }
+	        }
+	
+	        if (!foundMatch)
+	        {
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+	            	TooltipViewModel = null
+				};
+	        }
+	
+	        // TODO: Measure the tooltip, and reposition if it would go offscreen.
+		}
     }
 }

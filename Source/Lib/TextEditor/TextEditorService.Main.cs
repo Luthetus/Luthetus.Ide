@@ -2,6 +2,11 @@ using System.Collections.Immutable;
 using Fluxor;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Themes.States;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
@@ -13,11 +18,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Edits.States;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -25,6 +25,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -59,7 +60,9 @@ public partial class TextEditorService : ITextEditorService
         IJSRuntime jsRuntime,
         LuthetusCommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher,
-        IDialogService dialogService)
+        IDialogService dialogService,
+		IAutocompleteIndexer autocompleteIndexer,
+		IAutocompleteService autocompleteService)
     {
         TextEditorStateWrap = textEditorStateWrap;
         GroupStateWrap = groupStateWrap;
@@ -78,6 +81,9 @@ public partial class TextEditorService : ITextEditorService
         _dispatcher = dispatcher;
         _dialogService = dialogService;
 
+		AutocompleteIndexer = autocompleteIndexer;
+		AutocompleteService = autocompleteService;
+
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap.DecorationMapperRegistry, _textEditorRegistryWrap.CompilerServiceRegistry, _backgroundTaskService, _dispatcher);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, TextEditorStateWrap, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
@@ -93,6 +99,8 @@ public partial class TextEditorService : ITextEditorService
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
+	public IAutocompleteIndexer AutocompleteIndexer { get; }
+	public IAutocompleteService AutocompleteService { get; }
 
 #if DEBUG
     public string StorageKey => "luth_te_text-editor-options-debug";
