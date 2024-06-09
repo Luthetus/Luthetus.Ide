@@ -16,6 +16,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -41,6 +42,7 @@ public partial interface ITextEditorService
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public IAutocompleteIndexer AutocompleteIndexer { get; }
 	public IAutocompleteService AutocompleteService { get; }
+	public LuthetusTextEditorConfig TextEditorConfig { get; }
 
     /// <summary>
     /// This method will create an instance of <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>,

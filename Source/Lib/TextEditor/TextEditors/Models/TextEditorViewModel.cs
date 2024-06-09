@@ -166,6 +166,14 @@ public record TextEditorViewModel : IDisposable
     public ImmutableArray<WidgetBlock> TextEditorWidgetBlockList { get; init; } = ImmutableArray<WidgetBlock>.Empty;
     public ImmutableArray<WidgetInline> TextEditorWidgetInlineList { get; init; } = ImmutableArray<WidgetInline>.Empty;
 
+	public static TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(60);
+    public static TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
+    public static TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
+    public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
+    public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;
+    public CancellationTokenSource MouseNoLongerOverTooltipCancellationTokenSource { get; set; } = new();
+    public CancellationTokenSource MouseStoppedMovingCancellationTokenSource { get; set; } = new();
+
     public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
@@ -182,6 +190,14 @@ public record TextEditorViewModel : IDisposable
         {
             return modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
         });
+    }
+
+	public Task ContinueRenderingTooltipAsync()
+    {
+        MouseNoLongerOverTooltipCancellationTokenSource.Cancel();
+        MouseNoLongerOverTooltipCancellationTokenSource = new();
+
+        return Task.CompletedTask;
     }
 	
     public void Dispose()

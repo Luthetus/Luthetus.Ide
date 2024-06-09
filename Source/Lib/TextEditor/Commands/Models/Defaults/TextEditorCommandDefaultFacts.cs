@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 
@@ -651,12 +653,10 @@ public static class TextEditorCommandDefaultFacts
                     if (viewModelModifier is null)
                         return;
 
-                    if (viewModelModifier.ViewModel.ShowFindOverlay &&
-                        commandArgs.JsRuntime is not null)
+                    if (viewModelModifier.ViewModel.ShowFindOverlay)
                     {
-                        await commandArgs.JsRuntime.GetLuthetusCommonApi()
-                            .FocusHtmlElementById(
-                                viewModelModifier.ViewModel.FindOverlayId)
+                        await commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>().GetLuthetusCommonApi()
+                            .FocusHtmlElementById(viewModelModifier.ViewModel.FindOverlayId)
                             .ConfigureAwait(false);
                     }
                     else

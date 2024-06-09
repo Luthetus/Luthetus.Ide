@@ -69,6 +69,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     // private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
     private TextEditorEvents _events = null!;
+    private TextEditorComponentData _componentData = null!;
     private bool _thinksTouchIsOccurring;
     private TouchEventArgs? _previousTouchEventArgs = null;
     private DateTime? _touchStartDateTime = null;
@@ -97,6 +98,11 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         ConstructRenderBatch();
 
         _events = new(this, _storedRenderBatch.Options);
+
+		_componentData = new(
+			ProportionalFontMeasurementsContainerElementId,
+			_textEditorHtmlElementId,
+			ViewModelDisplayOptions);
 
         TextEditorStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
@@ -199,7 +205,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             ITextEditorRenderBatch.DEFAULT_FONT_FAMILY,
             TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
             ViewModelDisplayOptions,
-            _events);
+            _events,
+			_componentData);
 
         if (!string.IsNullOrWhiteSpace(renderBatch.Options?.CommonOptions?.FontFamily))
         {
@@ -286,7 +293,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 			return;
 
 		var onKeyDown = new OnKeyDownLateBatching(
-			ViewModelDisplayOptions,
+			_componentData,
             _events,
             keyboardEventArgs,
             resourceUri,
@@ -312,6 +319,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 				{
 					MenuKind = MenuKind.ContextMenu
 				};
+				
+				return Task.CompletedTask;
 			});
     }
 
@@ -325,6 +334,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         var onDoubleClick = new OnDoubleClick(
             mouseEventArgs,
+			_componentData,
             _events,
             modelResourceUri,
             viewModelKey.Value);
@@ -350,6 +360,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
 		var onMouseDown = new OnMouseDown(
             mouseEventArgs,
+			_componentData,
             _events,
             modelResourceUri,
             viewModelKey.Value);
@@ -649,34 +660,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             };
 		}
 
-		public static TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(60);
-        public static TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
-        public static TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
-        public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
-        public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;
-        public CancellationTokenSource MouseNoLongerOverTooltipCancellationTokenSource { get; set; } = new();
-        public CancellationTokenSource MouseStoppedMovingCancellationTokenSource { get; set; } = new();
-
         /// <summary>This accounts for one who might hold down Left Mouse Button from outside the TextEditorDisplay's content div then move their mouse over the content div while holding the Left Mouse Button down.</summary>
         public bool ThinksLeftMouseButtonIsDown { get; set; }
 
         public ViewModelDisplayOptions ViewModelDisplayOptions => _viewModelDisplay.ViewModelDisplayOptions;
-        public CursorDisplay? CursorDisplay => _viewModelDisplay.CursorDisplay;
         public ITextEditorService TextEditorService => _viewModelDisplay.TextEditorService;
-        public IClipboardService ClipboardService => _viewModelDisplay.ClipboardService;
-        public IJSRuntime JsRuntime => _viewModelDisplay.JsRuntime;
-        public IDispatcher Dispatcher => _viewModelDisplay.Dispatcher;
         public IServiceProvider ServiceProvider => _viewModelDisplay.ServiceProvider;
-        public LuthetusTextEditorConfig TextEditorConfig => _viewModelDisplay.TextEditorConfig;
 
 		public TextEditorOptions Options { get; init; }
-
-        public Task ContinueRenderingTooltipAsync()
-        {
-            MouseNoLongerOverTooltipCancellationTokenSource.Cancel();
-            MouseNoLongerOverTooltipCancellationTokenSource = new();
-
-            return Task.CompletedTask;
-        }
     }
 }

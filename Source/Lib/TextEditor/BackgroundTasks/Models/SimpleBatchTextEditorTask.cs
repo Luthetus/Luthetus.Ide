@@ -33,7 +33,7 @@ public sealed class SimpleBatchTextEditorTask : ITextEditorTask
         _textEditorEditList = textEditorEditList;
 
         Name = name;
-        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModel.ThrottleDelayDefault;
     }
 
 	public string Name { get; set; }

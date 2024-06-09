@@ -1,14 +1,15 @@
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Common.RazorLib.Commands.Models;
-using Luthetus.Common.RazorLib.Clipboards.Models;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Fluxor;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models;
 
@@ -18,31 +19,26 @@ public class TextEditorCommandArgs : ICommandArgs
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         bool hasTextSelection,
-        IClipboardService clipboardService,
-        ITextEditorService textEditorService,
+		ITextEditorService textEditorService,
         TextEditorOptions options,
+		TextEditorComponentData componentData,
         TextEditorViewModelDisplay.TextEditorEvents events,
-        IJSRuntime? jsRuntime,
-        IDispatcher dispatcher,
         IServiceProvider serviceProvider,
         LuthetusTextEditorConfig textEditorConfig)
     {
         ModelResourceUri = modelResourceUri;
         ViewModelKey = viewModelKey;
         HasTextSelection = hasTextSelection;
-        ClipboardService = clipboardService;
         TextEditorService = textEditorService;
 		Options = options;
+		ComponentData = componentData;
         Events = events;
-        JsRuntime = jsRuntime;
-        Dispatcher = dispatcher;
         ServiceProvider = serviceProvider;
         TextEditorConfig = textEditorConfig;
     }
 
     public ResourceUri ModelResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
-    public IClipboardService ClipboardService { get; }
     public ITextEditorService TextEditorService { get; }
 
     /// <summary>
@@ -50,10 +46,9 @@ public class TextEditorCommandArgs : ICommandArgs
     /// of the event.
     /// </summary>
 	public TextEditorOptions Options { get; }
-    public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
 
-    public IJSRuntime? JsRuntime { get; }
-    public IDispatcher Dispatcher { get; }
+    public TextEditorComponentData ComponentData { get; }
+    public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
     public IServiceProvider ServiceProvider { get; }
     public LuthetusTextEditorConfig TextEditorConfig { get; }
     public bool HasTextSelection { get; set; }

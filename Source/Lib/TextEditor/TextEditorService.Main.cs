@@ -39,7 +39,6 @@ public partial class TextEditorService : ITextEditorService
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     private readonly IDialogService _dialogService;
-    private readonly LuthetusTextEditorConfig _textEditorOptions;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
@@ -54,7 +53,7 @@ public partial class TextEditorService : ITextEditorService
         IState<TextEditorOptionsState> optionsStateWrap,
         IState<TextEditorFindAllState> findAllStateWrap,
         IBackgroundTaskService backgroundTaskService,
-        LuthetusTextEditorConfig textEditorOptions,
+        LuthetusTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
         IJSRuntime jsRuntime,
@@ -72,7 +71,7 @@ public partial class TextEditorService : ITextEditorService
         FindAllStateWrap = findAllStateWrap;
 
         _backgroundTaskService = backgroundTaskService;
-        _textEditorOptions = textEditorOptions;
+        TextEditorConfig = textEditorConfig;
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _storageService = storageService;
         _jsRuntime = jsRuntime;
@@ -88,7 +87,7 @@ public partial class TextEditorService : ITextEditorService
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, TextEditorStateWrap, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
-        OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _commonBackgroundTaskApi, _dispatcher);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _commonBackgroundTaskApi, _dispatcher);
     }
 
     public IState<TextEditorState> TextEditorStateWrap { get; }
@@ -101,6 +100,7 @@ public partial class TextEditorService : ITextEditorService
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public IAutocompleteIndexer AutocompleteIndexer { get; }
 	public IAutocompleteService AutocompleteService { get; }
+	public LuthetusTextEditorConfig TextEditorConfig { get; }
 
 #if DEBUG
     public string StorageKey => "luth_te_text-editor-options-debug";

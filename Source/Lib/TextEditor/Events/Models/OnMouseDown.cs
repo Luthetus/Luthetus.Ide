@@ -16,10 +16,12 @@ public class OnMouseDown : ITextEditorTask
 
     public OnMouseDown(
         MouseEventArgs mouseEventArgs,
+		TextEditorComponentData componentData,
         TextEditorViewModelDisplay.TextEditorEvents events,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
+		ComponentData = componentData;
         _events = events;
 
         MouseEventArgs = mouseEventArgs;
@@ -34,10 +36,11 @@ public class OnMouseDown : ITextEditorTask
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
+	public TextEditorComponentData ComponentData { get; }
 
 	public IEditContext EditContext { get; set; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorViewModel.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -88,6 +91,7 @@ public class OnMouseDown : ITextEditorTask
 					ResourceUri,
 					ViewModelKey,
 					MouseEventArgs,
+					ComponentData,
 					EditContext)
 				.ConfigureAwait(false);
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -67,7 +67,6 @@ public partial class ContextMenu : ComponentBase
             RenderBatch.Model.ResourceUri,
             RenderBatch.ViewModel.ViewModelKey,
             hasSelection,
-            ClipboardService,
             TextEditorService,
             RenderBatch.Options,
             RenderBatch.Events,

@@ -30,7 +30,7 @@ public sealed class TakeMostRecentTextEditorTask : ITextEditorTask
         Name = name;
         ResourceUri = resourceUri;
         ViewModelKey = ViewModelKey;
-        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModel.ThrottleDelayDefault;
     }
 
 	public string Name { get; set; }

@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -12,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
+using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -41,7 +45,7 @@ public class TextEditorCommandDefaultFunctions
             var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
             selectedText ??= modelModifier.GetLineTextRange(primaryCursorModifier.LineIndex, 1);
 
-            await commandArgs.ClipboardService.SetClipboard(selectedText).ConfigureAwait(false);
+            await commandArgs.ServiceProvider.GetRequiredService<IClipboardService>().SetClipboard(selectedText).ConfigureAwait(false);
             await viewModelModifier.ViewModel.FocusFactory().Invoke(editContext).ConfigureAwait(false);
         };
     }
@@ -69,7 +73,7 @@ public class TextEditorCommandDefaultFunctions
             }
 
             var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier) ?? string.Empty;
-            await commandArgs.ClipboardService.SetClipboard(selectedText).ConfigureAwait(false);
+            await commandArgs.ServiceProvider.GetRequiredService<IClipboardService>().SetClipboard(selectedText).ConfigureAwait(false);
 
             await viewModelModifier.ViewModel.FocusFactory().Invoke(editContext).ConfigureAwait(false);
 
@@ -93,7 +97,7 @@ public class TextEditorCommandDefaultFunctions
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            var clipboard = await commandArgs.ClipboardService.ReadClipboard().ConfigureAwait(false);
+            var clipboard = await commandArgs.ServiceProvider.GetRequiredService<IClipboardService>().ReadClipboard().ConfigureAwait(false);
             modelModifier.Insert(clipboard, cursorModifierBag, cancellationToken: CancellationToken.None);
         };
     }
@@ -800,9 +804,6 @@ public class TextEditorCommandDefaultFunctions
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-            if (commandArgs.JsRuntime is null)
-                return;
-
             var elementPositionInPixels = await commandArgs.TextEditorService.JsRuntimeTextEditorApi
                 .GetBoundingClientRect(viewModelModifier.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
@@ -819,6 +820,8 @@ public class TextEditorCommandDefaultFunctions
 		                ClientX = elementPositionInPixels.Left,
 		                ClientY = elementPositionInPixels.Top
 		            },
+					commandArgs.ComponentData,
+					commandArgs.ServiceProvider.GetRequiredService<ILuthetusTextEditorComponentRenderers>(),
 					modelResourceUri,
 					viewModelKey)
 				.Invoke(editContext)
@@ -978,6 +981,8 @@ public class TextEditorCommandDefaultFunctions
 
 	public static TextEditorEdit HandleMouseStoppedMovingEventAsyncFactory(
 		MouseEventArgs mouseEventArgs,		
+		TextEditorComponentData componentData,
+		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -988,12 +993,18 @@ public class TextEditorCommandDefaultFunctions
 	
 	        if (modelModifier is null || viewModelModifier is null)
 	            return;
-	
+
 	        // Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
-	        var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs).ConfigureAwait(false);
+	        var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+					resourceUri,
+					viewModelKey,
+					mouseEventArgs,
+					componentData,
+					editContext)
+				.ConfigureAwait(false);
 	
 	        // TODO: (2023-05-28) This shouldn't be re-calcuated in the best case scenario. That is to say, the previous line invokes 'CalculateRowAndColumnIndex(...)' which also invokes this logic
-	        var relativeCoordinatesOnClick = await TextEditorService.JsRuntimeTextEditorApi
+	        var relativeCoordinatesOnClick = await editContext.TextEditorService.JsRuntimeTextEditorApi
 	            .GetRelativePosition(
 	                viewModelModifier.ViewModel.BodyElementId,
 	                mouseEventArgs.ClientX,
@@ -1031,11 +1042,11 @@ public class TextEditorCommandDefaultFunctions
 	                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 						{
 							TooltipViewModel = new(
-			                    _viewModelDisplay.LuthetusTextEditorComponentRenderers.DiagnosticRendererType,
+			                    textEditorComponentRenderers.DiagnosticRendererType,
 			                    parameterMap,
 			                    relativeCoordinatesOnClick,
 			                    null,
-			                    ContinueRenderingTooltipAsync)
+			                    viewModelModifier.ViewModel.ContinueRenderingTooltipAsync)
 						};
 	                }
 	            }
@@ -1061,11 +1072,11 @@ public class TextEditorCommandDefaultFunctions
 	                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 						{
 							TooltipViewModel = new(
-		                        _viewModelDisplay.LuthetusTextEditorComponentRenderers.SymbolRendererType,
+		                        textEditorComponentRenderers.SymbolRendererType,
 		                        parameters,
 		                        relativeCoordinatesOnClick,
 		                        null,
-		                        ContinueRenderingTooltipAsync)
+		                        viewModelModifier.ViewModel.ContinueRenderingTooltipAsync)
 						};
 	                }
 	            }

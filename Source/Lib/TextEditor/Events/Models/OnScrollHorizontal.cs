@@ -2,6 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
@@ -12,9 +13,11 @@ public class OnScrollHorizontal : ITextEditorTask
 
     public OnScrollHorizontal(
         double scrollLeft,
+		TextEditorComponentData componentData,
         TextEditorViewModelDisplay.TextEditorEvents events,
         Key<TextEditorViewModel> viewModelKey)
     {
+		ComponentData = componentData;
         _events = events;
 
         ScrollLeft = scrollLeft;
@@ -27,10 +30,11 @@ public class OnScrollHorizontal : ITextEditorTask
     public Task? WorkProgress { get; }
     public double ScrollLeft { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
+    public TextEditorComponentData ComponentData { get; }
 
 	public IEditContext EditContext { get; set; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorViewModel.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {

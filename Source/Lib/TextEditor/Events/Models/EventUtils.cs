@@ -7,7 +7,9 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Microsoft.AspNetCore.Components.Web;
 using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
@@ -153,6 +155,7 @@ public static class EventUtils
 		ResourceUri resourceUri,
 		Key<TextEditorViewModel> viewModelKey,
 		MouseEventArgs mouseEventArgs,
+		TextEditorComponentData componentData,
 		IEditContext editContext)
     {
         var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -162,11 +165,11 @@ public static class EventUtils
         if (modelModifier is null || viewModelModifier is null)
             return (0, 0);
 
-        var charMeasurements = viewModelModifier.CharAndLineMeasurements;
+        var charMeasurements = viewModelModifier.ViewModel.CharAndLineMeasurements;
 
         var relativeCoordinatesOnClick = await editContext.TextEditorService.JsRuntimeTextEditorApi
             .GetRelativePosition(
-                viewModelModifier.BodyElementId,
+                viewModelModifier.ViewModel.BodyElementId,
                 mouseEventArgs.ClientX,
                 mouseEventArgs.ClientY)
             .ConfigureAwait(false);
@@ -194,9 +197,9 @@ public static class EventUtils
 
             columnIndexInt = await editContext.TextEditorService.JsRuntimeTextEditorApi
                 .CalculateProportionalColumnIndex(
-                    _viewModelDisplay.ProportionalFontMeasurementsContainerElementId,
-                    $"luth_te_proportional-font-measurement-parent_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
-                    $"luth_te_proportional-font-measurement-cursor_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
+                    componentData.ProportionalFontMeasurementsContainerElementId,
+                    $"luth_te_proportional-font-measurement-parent_{componentData.TextEditorHtmlElementId}_{guid}",
+                    $"luth_te_proportional-font-measurement-cursor_{componentData.TextEditorHtmlElementId}_{guid}",
                     positionX,
                     charMeasurements.CharacterWidth,
                     modelModifier.GetLineText(rowIndex))

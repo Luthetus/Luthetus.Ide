@@ -8,5 +8,17 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// </summary>
 public class TextEditorComponentData
 {
-	
+	public TextEditorComponentData(
+		string proportionalFontMeasurementsContainerElementId,
+		Guid textEditorHtmlElementId,
+		ViewModelDisplayOptions viewModelDisplayOptions)
+	{
+		ProportionalFontMeasurementsContainerElementId = proportionalFontMeasurementsContainerElementId;
+		TextEditorHtmlElementId = textEditorHtmlElementId;
+		ViewModelDisplayOptions = viewModelDisplayOptions;
+	}
+
+	public string ProportionalFontMeasurementsContainerElementId { get; }
+	public Guid TextEditorHtmlElementId { get; }
+	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
 }

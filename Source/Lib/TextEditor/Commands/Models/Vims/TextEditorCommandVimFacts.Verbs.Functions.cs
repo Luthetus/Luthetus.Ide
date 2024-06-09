@@ -53,12 +53,10 @@ public static partial class TextEditorCommandVimFacts
                     modelModifier.ResourceUri,
                     viewModelModifier.ViewModel.ViewModelKey,
                     commandArgs.HasTextSelection,
-                    commandArgs.ClipboardService,
                     commandArgs.TextEditorService,
                     commandArgs.Options,
+					commandArgs.ComponentData,
                     commandArgs.Events,
-                    commandArgs.JsRuntime,
-                    commandArgs.Dispatcher,
                     commandArgs.ServiceProvider,
                     commandArgs.TextEditorConfig);
 

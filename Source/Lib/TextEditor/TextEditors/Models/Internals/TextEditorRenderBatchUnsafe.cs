@@ -12,7 +12,8 @@ public record TextEditorRenderBatchUnsafe(
         string FontFamily,
         int FontSizeInPixels,
         ViewModelDisplayOptions ViewModelDisplayOptions,
-        TextEditorViewModelDisplay.TextEditorEvents Events)
+        TextEditorViewModelDisplay.TextEditorEvents Events,
+		TextEditorComponentData ComponentData)
     : ITextEditorRenderBatch
 {
     private double? _gutterWidthInPixels;
