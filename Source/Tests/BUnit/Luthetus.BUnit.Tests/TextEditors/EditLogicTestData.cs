@@ -11,27 +11,28 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.Ide.RazorLib.Installations.Models;
 
-namespace Luthetus.BUnit.Tests.TextEditors.Edits.Models;
+namespace Luthetus.BUnit.Tests.TextEditors;
 
 public class EditLogicTestData
 {
 	public EditLogicTestData(
 		IRenderedFragment cut,
 		TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
-		TextEditorViewModelDisplay.TextEditorEvents events,
+		TextEditorComponentData componentData,
 		TextEditorModel inModel,
 		Key<TextEditorViewModel> viewModelKey,
 		ITextEditorService textEditorService)
 	{
 		Cut = cut;
 		RefTextEditorViewModelDisplay = refTextEditorViewModelDisplay;
-		Events = events;
+		ComponentData = componentData;
 		InModel = inModel;
 		ViewModelKey = viewModelKey;
 		TextEditorService = textEditorService;
@@ -39,7 +40,7 @@ public class EditLogicTestData
 
 	public IRenderedFragment Cut { get; }
 	public TextEditorViewModelDisplay? RefTextEditorViewModelDisplay { get; }
-	public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
+	public TextEditorComponentData ComponentData { get; }
 	public TextEditorModel InModel { get; }
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 	public ITextEditorService TextEditorService { get; }

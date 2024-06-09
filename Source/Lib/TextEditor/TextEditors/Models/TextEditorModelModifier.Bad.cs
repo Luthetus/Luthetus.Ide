@@ -390,8 +390,6 @@ public partial class TextEditorModelModifier
 		}
 		else if (newEdit.EditKind == TextEditorEditKind.Backspace)
 		{
-			Console.WriteLine("newEdit.EditKind == TextEditorEditKind.Backspace");
-
 			var mostRecentEdit = _editBlocksList[_editBlockIndex.Value];
 
 			var newEditBackspace = (TextEditorEditBackspace)newEdit;
@@ -401,16 +399,11 @@ public partial class TextEditorModelModifier
 
 			if (mostRecentEdit.EditKind == TextEditorEditKind.Backspace)
 			{
-				Console.WriteLine("mostRecentEdit.EditKind == TextEditorEditKind.Backspace");
-
 				var mostRecentEditBackspace = (TextEditorEditBackspace)mostRecentEdit;
 	
 				// Only batch if consecutive, and contiguous.
 				if (positionIndex == mostRecentEditBackspace.PositionIndex - mostRecentEditBackspace.TextRemoved.Length)
 				{
-					Console.WriteLine("positionIndex == mostRecentEditBackspace.PositionIndex - mostRecentEditBackspace.TextRemoved.Length");
-					Console.WriteLine($"{positionIndex} == {mostRecentEditBackspace.PositionIndex} - {mostRecentEditBackspace.TextRemoved.Length}");
-
 					// NOTE: The most recently removed text should go first, this is contrary to the Delete(...) method.
 					var textRemovedBuilder = new StringBuilder();
 					textRemovedBuilder.Append(textRemoved);
@@ -537,21 +530,9 @@ public partial class TextEditorModelModifier
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
-		Console.WriteLine("start: OpenOtherEdit");
-
-		Console.WriteLine("before: OtherEditStack.Push(editOther);");
 		OtherEditStack.Push(editOther);
-		Console.WriteLine("after: OtherEditStack.Push(editOther);");
-
-		Console.WriteLine("before: _editBlocksList.Add(editOther);");
 		_editBlocksList.Add(editOther);
-		Console.WriteLine("after: _editBlocksList.Add(editOther);");
-
-		Console.WriteLine("before: _editBlockIndex++;");
 		_editBlockIndex++;
-		Console.WriteLine("after: _editBlockIndex++;");
-
-		Console.WriteLine("end: OpenOtherEdit");
 	}
 
 	public void CloseOtherEdit(string predictedTag)
@@ -562,7 +543,6 @@ public partial class TextEditorModelModifier
             _editBlockIndex ??= _textEditorModel.EditBlockIndex;
         }
 
-		Console.WriteLine("start: CloseOtherEdit");
 		var peek = OtherEditStack.Peek();
 		if (peek.Tag != predictedTag)
 		{
@@ -574,8 +554,6 @@ public partial class TextEditorModelModifier
 		var pop = OtherEditStack.Pop();
 		_editBlocksList.Add(pop);
 		_editBlockIndex++;
-
-		Console.WriteLine("end: CloseOtherEdit");
 	}
 
 	public void UndoEdit()
@@ -600,8 +578,6 @@ public partial class TextEditorModelModifier
 		{
 			case TextEditorEditKind.Insert:
 				var insertEdit = (TextEditorEditInsert)undoEdit;
-				Console.WriteLine("PerformInsert(insertEdit.PositionIndex, insertEdit.Content);");
-				Console.WriteLine($"PerformInsert({insertEdit.PositionIndex}, {insertEdit.Content});");
 				PerformInsert(insertEdit.PositionIndex, insertEdit.Content);
 				break;
 			case TextEditorEditKind.Backspace:

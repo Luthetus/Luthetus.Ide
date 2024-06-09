@@ -15,26 +15,26 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 @using Luthetus.Ide.RazorLib.Installations.Models
 
-@inherits TestContext
+@inherits EditLogicTestBase
 @code
 {
 	[Fact]
 	public async Task BatchOrDefault_OnKeyDown_OnKeyDown()
     {
-		var testData = OnKeyDownTestsInitialize();
+		var testData = EditLogicTestsInitialize(string.Empty);
 
 		// Assert that 'AllText' changes, since this event should write text.
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
 		var upstreamOnKeyDown = new OnKeyDownLateBatching(
-	        testData.Events,
+	        testData.ComponentData,
 	        new KeyboardEventArgs { Key = "a", Code = "KeyA" },
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(upstreamOnKeyDown);
 
 		var downstreamOnKeyDown = new OnKeyDownLateBatching(
-	        testData.Events,
+	        testData.ComponentData,
 	        new KeyboardEventArgs { Key = "b", Code = "KeyB" },
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
@@ -62,20 +62,20 @@
 	[Fact]
 	public async Task BatchOrDefault_OnKeyDown_SomeDifferentType()
     {
-		var testData = OnKeyDownTestsInitialize();
+		var testData = EditLogicTestsInitialize(string.Empty);
 
 		// Assert that 'AllText' changes, since this event should write text.
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 
 		var upstreamOnMouseMove = new OnMouseMove(
 	        new MouseEventArgs { },
-	        testData.Events,
+	        testData.ComponentData,
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(upstreamOnMouseMove);
 
 		var downstreamOnKeyDown = new OnKeyDownLateBatching(
-	        testData.Events,
+	        testData.ComponentData,
 	        new KeyboardEventArgs { Key = "a", Code = "KeyA" },
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
@@ -101,10 +101,10 @@
 	[Fact]
     public async Task HandleEvent_Result()
     {
-		var testData = OnKeyDownTestsInitialize();
+		var testData = EditLogicTestsInitialize(string.Empty);
 
 		var onKeyDown = new OnKeyDownLateBatching(
-	        testData.Events,
+	        testData.ComponentData,
 	        new KeyboardEventArgs { Key = "a", Code = "KeyA" },
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
@@ -122,76 +122,4 @@
 		// Assert that 'AllText' changes, since this event should write text.
 		Assert.Equal("a", outModel.AllText);
     }
-
-	private OnKeyDownTestData OnKeyDownTestsInitialize()
-	{
-		SharedInitializationForTests.Initialize(this);
-		
-		var textEditorService = Services.GetService<ITextEditorService>();
-
-		var resourceUri = new ResourceUri("/unitTesting.txt");
-		var viewModelKey = Key<TextEditorViewModel>.NewKey();
-
-		var inModel = new TextEditorModel(
-	        resourceUri,
-	        DateTime.UtcNow,
-	        "txt",
-	        string.Empty,
-	        null,
-	        null,
-			4_096);
-
-		textEditorService.ModelApi.RegisterCustom(inModel);
-		textEditorService.ViewModelApi.Register(viewModelKey, inModel.ResourceUri, new Category("UnitTests"));
-
-		JSInterop.SetupVoid("luthetusTextEditor.disposeTextEditorCursorIntersectionObserver", _ => true);
-		JSInterop.SetupVoid("luthetusTextEditor.initializeTextEditorCursorIntersectionObserver", _ => true);
-		JSInterop.SetupVoid("luthetusTextEditor.initializeVirtualizationIntersectionObserver", _ => true);
-		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
-
-		TextEditorViewModelDisplay? refTextEditorViewModelDisplay = null;
-
-		var cut = Render(
-			@<TextEditorViewModelDisplay @ref="refTextEditorViewModelDisplay" TextEditorViewModelKey="viewModelKey"/>);
-
-		Console.WriteLine(cut.GetType());
-
-		var events = new TextEditorViewModelDisplay.TextEditorEvents(
-			refTextEditorViewModelDisplay,
-			textEditorService.OptionsStateWrap.Value.Options);
-
-		return new OnKeyDownTestData(
-			cut,
-			refTextEditorViewModelDisplay,
-			events,
-			inModel,
-			viewModelKey,
-			textEditorService);
-	}
-
-	private class OnKeyDownTestData
-	{
-		public OnKeyDownTestData(
-			IRenderedFragment cut,
-			TextEditorViewModelDisplay? refTextEditorViewModelDisplay,
-			TextEditorViewModelDisplay.TextEditorEvents events,
-			TextEditorModel inModel,
-			Key<TextEditorViewModel> viewModelKey,
-			ITextEditorService textEditorService)
-		{
-			Cut = cut;
-			RefTextEditorViewModelDisplay = refTextEditorViewModelDisplay;
-			Events = events;
-			InModel = inModel;
-			ViewModelKey = viewModelKey;
-			TextEditorService = textEditorService;
-		}
-
-		public IRenderedFragment Cut { get; }
-		public TextEditorViewModelDisplay? RefTextEditorViewModelDisplay { get; }
-		public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
-		public TextEditorModel InModel { get; }
-		public Key<TextEditorViewModel> ViewModelKey { get; }
-		public ITextEditorService TextEditorService { get; }
-	}
 }

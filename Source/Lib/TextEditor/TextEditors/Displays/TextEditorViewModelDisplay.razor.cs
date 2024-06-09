@@ -86,6 +86,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private string ContentElementId => $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
     private string ProportionalFontMeasurementsContainerElementId => $"luth_te_text-editor-proportional-font-measurement-container_{_textEditorHtmlElementId}";
 
+	public TextEditorComponentData ComponentData => _componentData;
+
     protected override async Task OnParametersSetAsync()
     {
         HandleTextEditorViewModelKeyChange();

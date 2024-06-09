@@ -39,18 +39,14 @@
 			{
 				try
 				{
-					Console.WriteLine("EditLogicTestBase1");
 					await testFunc.Invoke(editContext);
 				}
 				catch (Exception exception)
 				{
-					Console.WriteLine("EditLogicTestBase2");
 					backgroundTaskException = exception;
 					throw;
 				}
 			});
-
-		Console.WriteLine("EditLogicTestBase3");
 
 		await SharedInitializationForTests
 			.StartBackgroundTasks(this)
@@ -93,16 +89,10 @@
 		var cut = Render(
 			@<TextEditorViewModelDisplay @ref="refTextEditorViewModelDisplay" TextEditorViewModelKey="viewModelKey"/>);
 
-		Console.WriteLine(cut.GetType());
-
-		var events = new TextEditorViewModelDisplay.TextEditorEvents(
-			refTextEditorViewModelDisplay,
-			textEditorService.OptionsStateWrap.Value.Options);
-
 		return new EditLogicTestData(
 			cut,
 			refTextEditorViewModelDisplay,
-			events,
+			refTextEditorViewModelDisplay.ComponentData,
 			inModel,
 			viewModelKey,
 			textEditorService);
