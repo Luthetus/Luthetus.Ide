@@ -712,9 +712,9 @@ public class TextEditorCommandDefaultFunctions
 
             if (definitionModel is null)
             {
-                if (commandArgs.TextEditorConfig.RegisterModelFunc is not null)
+                if (commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc is not null)
                 {
-                    commandArgs.TextEditorConfig.RegisterModelFunc.Invoke(
+                    commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc.Invoke(
                         new RegisterModelArgs(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider));
 
                     var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
@@ -732,9 +732,9 @@ public class TextEditorCommandDefaultFunctions
 
             if (!definitionViewModels.Any())
             {
-                if (commandArgs.TextEditorConfig.TryRegisterViewModelFunc is not null)
+                if (commandArgs.TextEditorService.TextEditorConfig.TryRegisterViewModelFunc is not null)
                 {
-                    commandArgs.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+                    commandArgs.TextEditorService.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
                         Key<TextEditorViewModel>.NewKey(),
                         definitionTextSpan.ResourceUri,
                         new Category("main"),
@@ -769,9 +769,9 @@ public class TextEditorCommandDefaultFunctions
             definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
             definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
 
-            if (commandArgs.TextEditorConfig.TryShowViewModelFunc is not null)
+            if (commandArgs.TextEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
             {
-                commandArgs.TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+                commandArgs.TextEditorService.TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
                     definitionViewModelKey,
                     Key<TextEditorGroup>.Empty,
                     commandArgs.ServiceProvider));
@@ -833,7 +833,8 @@ public class TextEditorCommandDefaultFunctions
 	public static TextEditorEdit HandleAfterOnKeyDownAsyncFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        KeyboardEventArgs keyboardEventArgs)
+        KeyboardEventArgs keyboardEventArgs,
+		TextEditorComponentData componentData)
     {
         return async editContext =>
         {
@@ -878,7 +879,7 @@ public class TextEditorCommandDefaultFunctions
             }
             else if (EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
             {
-                await viewModelModifier.ViewModel.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+                await componentData.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
             }
         };
     }
@@ -906,7 +907,8 @@ public class TextEditorCommandDefaultFunctions
 		ViewModelDisplayOptions viewModelDisplayOptions,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        List<KeyboardEventArgs> keyboardEventArgsList)
+        List<KeyboardEventArgs> keyboardEventArgsList,
+		TextEditorComponentData componentData)
     {
         if (viewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory is not null)
         {
@@ -974,7 +976,7 @@ public class TextEditorCommandDefaultFunctions
 
             if (seenIsSyntaxHighlightingInvoker)
             {
-                await viewModelModifier.ViewModel.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+                await componentData.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
             }
         };
     }
@@ -1046,7 +1048,7 @@ public class TextEditorCommandDefaultFunctions
 			                    parameterMap,
 			                    relativeCoordinatesOnClick,
 			                    null,
-			                    viewModelModifier.ViewModel.ContinueRenderingTooltipAsync)
+			                    componentData.ContinueRenderingTooltipAsync)
 						};
 	                }
 	            }
@@ -1076,7 +1078,7 @@ public class TextEditorCommandDefaultFunctions
 		                        parameters,
 		                        relativeCoordinatesOnClick,
 		                        null,
-		                        viewModelModifier.ViewModel.ContinueRenderingTooltipAsync)
+		                        componentData.ContinueRenderingTooltipAsync)
 						};
 	                }
 	            }

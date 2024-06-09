@@ -24,7 +24,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -52,13 +52,9 @@ public static partial class TextEditorCommandVimFacts
                 var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
                     modelModifier.ResourceUri,
                     viewModelModifier.ViewModel.ViewModelKey,
-                    commandArgs.HasTextSelection,
-                    commandArgs.TextEditorService,
-                    commandArgs.Options,
 					commandArgs.ComponentData,
-                    commandArgs.Events,
-                    commandArgs.ServiceProvider,
-                    commandArgs.TextEditorConfig);
+                    commandArgs.TextEditorService,
+                    commandArgs.ServiceProvider);
 
                 var inCursor = primaryCursorModifier.ToCursor();
 
@@ -101,7 +97,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -116,7 +112,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -138,7 +134,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -151,7 +147,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 

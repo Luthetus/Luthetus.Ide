@@ -65,7 +65,7 @@
             @if (renderBatchValidated is not null)
             {
                 <CascadingValue Value="renderBatchValidated">
-                    <CascadingValue Value="_events.TooltipViewModel">
+                    <CascadingValue Value="renderBatchValidated.ViewModel.TooltipViewModel">
                         @if (ViewModelDisplayOptions.IncludeGutterComponent)
                         {
                             <GutterSection />

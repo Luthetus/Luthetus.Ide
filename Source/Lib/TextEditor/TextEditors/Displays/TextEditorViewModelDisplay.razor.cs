@@ -11,6 +11,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -53,7 +54,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
-    private ILuthetusTextEditorComponentRenderers LuthetusTextEditorComponentRenderers { get; set; } = null!;
+    private ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
@@ -68,7 +69,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private readonly object _linkedViewModelLock = new();
     // private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
-    private TextEditorEvents _events = null!;
     private TextEditorComponentData _componentData = null!;
     private bool _thinksTouchIsOccurring;
     private TouchEventArgs? _previousTouchEventArgs = null;
@@ -97,12 +97,20 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         ConstructRenderBatch();
 
-        _events = new(this, _storedRenderBatch.Options);
-
+		// TODO: This line is why one cannot switch to a vim keymap, without needing to restart the IDE...
+		//       ...for the change to take effect.
+		//       |
+		//       In short, there is a sort of hack for "keymap overriding".
+		//       'Keymap = renderBatch.ViewModelDisplayOptions.KeymapOverride'
+		//       |
+		//	   This is done 'OnInitialized', which for the main editor only happens one when initially opening the app.
+		//       Therefore, one can never change their keymap for the main editor.
 		_componentData = new(
 			ProportionalFontMeasurementsContainerElementId,
 			_textEditorHtmlElementId,
-			ViewModelDisplayOptions);
+			ViewModelDisplayOptions,
+			_storedRenderBatch.Options,
+			ServiceProvider);
 
         TextEditorStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
@@ -112,23 +120,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override bool ShouldRender()
     {
-        //var shouldRender = _throttleAvailabilityShouldRender.CheckAvailability();
-
-   //     if (!shouldRender)
-   //     {
-   //         _countShouldRenderFalse++;
-
-			//if (_shouldRenderSkipTask.IsCompleted)
-			//{
-			//	_shouldRenderSkipTask = Task.Run(async () =>
-			//	{
-			//		await InvokeAsync(StateHasChanged);
-			//	});
-			//}
-            
-   //         return false;
-   //     }
-
         var shouldRender = true;
 
         if (_linkedViewModel is null)
@@ -205,7 +196,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             ITextEditorRenderBatch.DEFAULT_FONT_FAMILY,
             TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
             ViewModelDisplayOptions,
-            _events,
 			_componentData);
 
         if (!string.IsNullOrWhiteSpace(renderBatch.Options?.CommonOptions?.FontFamily))
@@ -294,7 +284,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
 		var onKeyDown = new OnKeyDownLateBatching(
 			_componentData,
-            _events,
             keyboardEventArgs,
             resourceUri,
             viewModelKey.Value);
@@ -335,7 +324,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var onDoubleClick = new OnDoubleClick(
             mouseEventArgs,
 			_componentData,
-            _events,
             modelResourceUri,
             viewModelKey.Value);
 
@@ -344,8 +332,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private async Task ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
     {
-        _events.ThinksLeftMouseButtonIsDown = true;
-
+        _componentData.ThinksLeftMouseButtonIsDown = true;
 
         var modelResourceUri = GetModel()?.ResourceUri;
         var viewModel = GetViewModel();
@@ -361,7 +348,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 		var onMouseDown = new OnMouseDown(
             mouseEventArgs,
 			_componentData,
-            _events,
             modelResourceUri,
             viewModelKey.Value);
 
@@ -374,51 +360,75 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         _userMouseIsInside = true;
 
         if ((mouseEventArgs.Buttons & 1) == 0)
-            _events.ThinksLeftMouseButtonIsDown = false;
+            _componentData.ThinksLeftMouseButtonIsDown = false;
 
-        var localThinksLeftMouseButtonIsDown = _events.ThinksLeftMouseButtonIsDown;
+        var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
+
+        var modelResourceUri = GetModel()?.ResourceUri;
+        var viewModel = GetViewModel();
+        var viewModelKey = viewModel?.ViewModelKey;
 
         // MouseStoppedMovingEvent
+		if (viewModel is not null)
         {
             // Hide the tooltip, if the user moves their cursor out of the tooltips UI.
-            if (_events.TooltipViewModel is not null && _events.MouseNoLongerOverTooltipTask.IsCompleted)
+            if (viewModel.TooltipViewModel is not null && _componentData.MouseNoLongerOverTooltipTask.IsCompleted)
             {
-                var mouseNoLongerOverTooltipCancellationToken = _events.MouseNoLongerOverTooltipCancellationTokenSource.Token;
+                var mouseNoLongerOverTooltipCancellationToken = _componentData.MouseNoLongerOverTooltipCancellationTokenSource.Token;
 
-                _events.MouseNoLongerOverTooltipTask = Task.Run(async () =>
+                _componentData.MouseNoLongerOverTooltipTask = Task.Run(async () =>
                 {
-                    await Task.Delay(TextEditorEvents.OnMouseOutTooltipDelay, mouseNoLongerOverTooltipCancellationToken).ConfigureAwait(false);
+                    await Task.Delay(TextEditorComponentData.OnMouseOutTooltipDelay, mouseNoLongerOverTooltipCancellationToken).ConfigureAwait(false);
 
                     if (!mouseNoLongerOverTooltipCancellationToken.IsCancellationRequested)
                     {
-                        _events.TooltipViewModel = null;
-                        await InvokeAsync(StateHasChanged);
+						await TextEditorService.PostSimpleBatch(
+								nameof(ContextMenu),
+								editContext =>
+								{
+									var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+				
+									viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
+									{
+										TooltipViewModel = null
+									};
+
+									return Task.CompletedTask;
+								})
+							.ConfigureAwait(false);
                     }
                 });
             }
 
-            _events.MouseStoppedMovingCancellationTokenSource.Cancel();
-            _events.MouseStoppedMovingCancellationTokenSource = new();
+            _componentData.MouseStoppedMovingCancellationTokenSource.Cancel();
+            _componentData.MouseStoppedMovingCancellationTokenSource = new();
 
-            var mouseStoppedMovingCancellationToken = _events.MouseStoppedMovingCancellationTokenSource.Token;
+            var mouseStoppedMovingCancellationToken = _componentData.MouseStoppedMovingCancellationTokenSource.Token;
 
-            _events.MouseStoppedMovingTask = Task.Run(async () =>
+            _componentData.MouseStoppedMovingTask = Task.Run(async () =>
             {
-                await Task.Delay(TextEditorEvents.MouseStoppedMovingDelay, mouseStoppedMovingCancellationToken).ConfigureAwait(false);
+                await Task.Delay(TextEditorComponentData.MouseStoppedMovingDelay, mouseStoppedMovingCancellationToken).ConfigureAwait(false);
 
                 if (!mouseStoppedMovingCancellationToken.IsCancellationRequested && _userMouseIsInside)
                 {
-                    await _events.ContinueRenderingTooltipAsync().ConfigureAwait(false);
-                    await _events.HandleMouseStoppedMovingEventAsync(mouseEventArgs).ConfigureAwait(false);
+                    await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
+
+					
+                    await TextEditorService.PostSimpleBatch(
+							nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory),
+							TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory(
+								mouseEventArgs,
+								_componentData,
+								TextEditorComponentRenderers,
+						        modelResourceUri,
+						        viewModelKey.Value))
+						.ConfigureAwait(false);
                 }
             });
         }
 
-        if (!_events.ThinksLeftMouseButtonIsDown)
+        if (!_componentData.ThinksLeftMouseButtonIsDown)
             return;
-
-        var modelResourceUri = GetModel()?.ResourceUri;
-        var viewModelKey = GetViewModel()?.ViewModelKey;
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
@@ -428,7 +438,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
 			var onMouseMove = new OnMouseMove(
                 mouseEventArgs,
-                _events,
+                _componentData,
                 modelResourceUri,
                 viewModelKey.Value);
 
@@ -436,7 +446,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         }
         else
         {
-            _events.ThinksLeftMouseButtonIsDown = false;
+            _componentData.ThinksLeftMouseButtonIsDown = false;
         }
     }
 
@@ -454,7 +464,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
 		var onWheel = new OnWheel(
             wheelEventArgs,
-            _events,
+            _componentData,
             viewModelKey.Value);
 
         await TextEditorService.Post(onWheel).ConfigureAwait(false);
@@ -610,63 +620,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             }
         }
 
-        _events.MouseStoppedMovingCancellationTokenSource.Cancel();
-    }
-
-    /// <summary>
-    /// The goal of this class is to allow external classes to access private members of the <see cref="TextEditorViewModelDisplay"/>.<br/><br/>
-    /// 
-    /// The reason for this class is that handling of UI events continues to necesitate more complexity.
-    /// At the time of making this class, a <see cref="ThrottleController"/> is being written,
-    /// to handle UI events in the order that they occurred, yet each one is individually throttled at a different timespan.<br/><br/>
-    /// 
-    /// The issue that was encountered is that, when moving the UI event code to a different class, one needed to
-    /// somehow access all the dependency injected state from that instantiated class. This led to massive constructors
-    /// where one would just be passing the '[Inject]' attribute marked properties due to them being private in the <see cref="TextEditorViewModelDisplay"/>.<br/><br/>
-    /// 
-    /// Refutations: why not just make the '[Inject]' attribute marked properties public and then pass a reference to the
-    /// <see cref="TextEditorViewModelDisplay"/> when constructing the external event classes?<br/><br/>
-    /// 
-    /// Response to refutations: Creation of this class allows for a "trust" system of sorts. The text editor is okay
-    /// with the event classes seeing these private, and dependency injected properties. Otherwise,
-    /// one just lets anyone see these if they're public.<br/><br/>
-    /// 
-    /// Remarks: this class is not tied to any <see cref="TextEditorModel"/>, nor <see cref="TextEditorViewModel"/>.
-    /// It has the same relationship to the models/viewmodels as the <see cref="TextEditorViewModelDisplay"/> does.
-    /// That is to say, a <see cref="TextEditorViewModelDisplay"/> gets constructed, then if one chooses to do so,
-    /// can swap out the parameter for 'TextEditorViewModel'. This change then gets propogated to this class.<br/><br/>
-    /// </summary>
-    public class TextEditorEvents
-    {
-        private readonly TextEditorViewModelDisplay _viewModelDisplay;
-
-        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay, TextEditorOptions? options)
-        {
-            _viewModelDisplay = viewModelDisplay;
-			Options = options ?? TextEditorService.OptionsStateWrap.Value.Options;
-		}
-
-        /// <summary>
-        /// (2024-04-05) The code I'm writing today feels like spaghetti code / technical debt.
-        /// That being said, I'll call today's hacky code a "technical loan".
-        /// </summary>
-		public TextEditorEvents(TextEditorEvents events, TextEditorKeymapDefault textEditorKeymapDefault)
-		{
-            _viewModelDisplay = events._viewModelDisplay;
-
-            Options = events.Options with
-            {
-                Keymap = textEditorKeymapDefault
-            };
-		}
-
-        /// <summary>This accounts for one who might hold down Left Mouse Button from outside the TextEditorDisplay's content div then move their mouse over the content div while holding the Left Mouse Button down.</summary>
-        public bool ThinksLeftMouseButtonIsDown { get; set; }
-
-        public ViewModelDisplayOptions ViewModelDisplayOptions => _viewModelDisplay.ViewModelDisplayOptions;
-        public ITextEditorService TextEditorService => _viewModelDisplay.TextEditorService;
-        public IServiceProvider ServiceProvider => _viewModelDisplay.ServiceProvider;
-
-		public TextEditorOptions Options { get; init; }
+        _componentData.MouseStoppedMovingCancellationTokenSource.Cancel();
     }
 }

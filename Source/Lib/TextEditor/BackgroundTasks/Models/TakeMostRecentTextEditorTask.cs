@@ -1,8 +1,8 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -30,7 +30,7 @@ public sealed class TakeMostRecentTextEditorTask : ITextEditorTask
         Name = name;
         ResourceUri = resourceUri;
         ViewModelKey = ViewModelKey;
-        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModel.ThrottleDelayDefault;
+        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorComponentData.ThrottleDelayDefault;
     }
 
 	public string Name { get; set; }

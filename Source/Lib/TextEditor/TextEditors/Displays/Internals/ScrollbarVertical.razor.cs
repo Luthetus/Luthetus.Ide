@@ -161,7 +161,7 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
 
 			var throttleEventOnScrollVertical = new OnScrollVertical(
 				scrollTop,
-				RenderBatch.Events,
+				RenderBatch.ComponentData,
 				RenderBatch.ViewModel.ViewModelKey);
 
             await TextEditorService.Post(throttleEventOnScrollVertical);

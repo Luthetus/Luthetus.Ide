@@ -2,6 +2,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -33,7 +34,7 @@ public sealed class SimpleBatchTextEditorTask : ITextEditorTask
         _textEditorEditList = textEditorEditList;
 
         Name = name;
-        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorViewModel.ThrottleDelayDefault;
+        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorComponentData.ThrottleDelayDefault;
     }
 
 	public string Name { get; set; }

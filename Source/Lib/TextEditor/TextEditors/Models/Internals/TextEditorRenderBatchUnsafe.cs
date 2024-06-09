@@ -1,7 +1,6 @@
+using System.Text;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using System.Text;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -12,7 +11,6 @@ public record TextEditorRenderBatchUnsafe(
         string FontFamily,
         int FontSizeInPixels,
         ViewModelDisplayOptions ViewModelDisplayOptions,
-        TextEditorViewModelDisplay.TextEditorEvents Events,
 		TextEditorComponentData ComponentData)
     : ITextEditorRenderBatch
 {

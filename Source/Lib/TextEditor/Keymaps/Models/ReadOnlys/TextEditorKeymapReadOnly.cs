@@ -1,13 +1,13 @@
-﻿using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
-using Microsoft.AspNetCore.Components.Web;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.ReadOnlys;
 
@@ -15,11 +15,9 @@ public class TextEditorKeymapReadOnly : Keymap, ITextEditorKeymap
 {
 	private readonly Func<Key<TextEditorViewModel>> _getViewModelKeyFunc;
 
-	public TextEditorKeymapReadOnly(
-		    Func<Key<TextEditorViewModel>> getViewModelKeyFunc)
-        : base(
-            new Key<Keymap>(Guid.Parse("326d1b3b-4d8a-43be-a377-330375593d0d")),
-            "ReadOnly")
+	public TextEditorKeymapReadOnly(Func<Key<TextEditorViewModel>> getViewModelKeyFunc)
+        : base(new Key<Keymap>(Guid.Parse("326d1b3b-4d8a-43be-a377-330375593d0d")),
+               "ReadOnly")
     {
 		_getViewModelKeyFunc = getViewModelKeyFunc;
         
@@ -249,7 +247,7 @@ public class TextEditorKeymapReadOnly : Keymap, ITextEditorKeymap
         }, TextEditorCommandDefaultFacts.ScrollPageUp);
     }
 
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command)
+	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
 	{
         return Map.TryGetValue(keymapArgument, out command);
 	}

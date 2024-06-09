@@ -10,16 +10,12 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnWheel : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
-
     public OnWheel(
         WheelEventArgs wheelEventArgs,
 		TextEditorComponentData componentData,
-        TextEditorViewModelDisplay.TextEditorEvents events,
         Key<TextEditorViewModel> viewModelKey)
     {
 		ComponentData = componentData;
-        _events = events;
 
         WheelEventArgs = wheelEventArgs;
         ViewModelKey = viewModelKey;
@@ -35,7 +31,7 @@ public class OnWheel : ITextEditorTask
 
 	public IEditContext EditContext { get; set; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModel.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -73,7 +69,6 @@ public class OnWheel : ITextEditorTask
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    _events,
 	                    ViewModelKey)
 						{
 							EditContext = EditContext
@@ -89,7 +84,6 @@ public class OnWheel : ITextEditorTask
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    _events,
 	                    ViewModelKey)
 						{
 							EditContext = EditContext
@@ -105,7 +99,6 @@ public class OnWheel : ITextEditorTask
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    _events,
 	                    ViewModelKey)
 						{
 							EditContext = EditContext
@@ -124,7 +117,6 @@ public class OnWheel : ITextEditorTask
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    _events,
 	                    ViewModelKey)
 						{
 							EditContext = EditContext
@@ -140,7 +132,6 @@ public class OnWheel : ITextEditorTask
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    _events,
 	                    ViewModelKey)
 						{
 							EditContext = EditContext
@@ -156,7 +147,6 @@ public class OnWheel : ITextEditorTask
 	                        WheelEventArgs
 	                    },
 						ComponentData,
-	                    _events,
 	                    ViewModelKey)
 						{
 							EditContext = EditContext

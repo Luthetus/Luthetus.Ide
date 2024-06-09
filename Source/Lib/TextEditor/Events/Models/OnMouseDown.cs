@@ -1,9 +1,9 @@
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -12,17 +12,13 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnMouseDown : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
-
     public OnMouseDown(
         MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
-        TextEditorViewModelDisplay.TextEditorEvents events,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
 		ComponentData = componentData;
-        _events = events;
 
         MouseEventArgs = mouseEventArgs;
         ResourceUri = resourceUri;
@@ -40,7 +36,7 @@ public class OnMouseDown : ITextEditorTask
 
 	public IEditContext EditContext { get; set; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModel.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {

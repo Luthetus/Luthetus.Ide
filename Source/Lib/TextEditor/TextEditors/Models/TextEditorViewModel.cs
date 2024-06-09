@@ -1,6 +1,9 @@
 using System.Collections.Immutable;
+using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -10,9 +13,6 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Microsoft.JSInterop;
-using Fluxor;
-using Luthetus.Common.RazorLib.Dialogs.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -29,9 +29,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public record TextEditorViewModel : IDisposable
 {
-	private readonly ThrottleAsync _throttleApplySyntaxHighlighting = new ThrottleAsync(TimeSpan.FromMilliseconds(500));
-
-    public TextEditorViewModel(
+	public TextEditorViewModel(
         Key<TextEditorViewModel> viewModelKey,
         ResourceUri resourceUri,
         ITextEditorService textEditorService,
@@ -110,12 +108,25 @@ public record TextEditorViewModel : IDisposable
     public VirtualizationResult<List<RichCharacter>> VirtualizationResult { get; init; }
 	public TextEditorDimensions TextEditorDimensions { get; init; }
 	public ScrollbarDimensions ScrollbarDimensions { get; init; }
+	/// <summary>
+	/// TODO: Rename 'CharAndLineMeasurements' to 'CharAndLineDimensions'...
+	///       ...as to bring it inline with 'TextEditorDimensions' and 'ScrollbarDimensions'.
+	/// </summary>
     public CharAndLineMeasurements CharAndLineMeasurements { get; init; }
     /// <summary>
     /// The command bar is referring to the <see cref="Keymaps.Models.Vims.TextEditorKeymapVim"/>.
     /// </summary>
     public bool ShowCommandBar { get; init; }
+	/// <summary>
+	/// This property determines the menu that is shown in the text editor.
+	///
+	/// For example, when this property is <see cref="MenuKind.AutoCompleteMenu"/>,
+	/// then the autocomplete menu is displayed in the text editor.
+	/// </summary>
     public MenuKind MenuKind { get; init; }
+	/// <summary>
+	/// This property determines the tooltip that is shown in the text editor.
+	/// </summary>
     public TooltipViewModel? TooltipViewModel { get; init; }
     /// <summary>
     /// <inheritdoc cref="Models.Category"/>
@@ -157,24 +168,26 @@ public record TextEditorViewModel : IDisposable
     /// This property is what the find overlay input element binds to.
     /// </summary>
     public string FindOverlayValue { get; set; } = string.Empty;
+	/// <inheritdoc cref="ViewModelUnsafeState"/>
     public ViewModelUnsafeState UnsafeState { get; }
     /// <summary>
     /// This property contains all data, and logic, necessary to render a text editor from within a dialog,
     /// a panel tab, or a text editor group tab.
     /// </summary>
     public DynamicViewModelAdapterTextEditor DynamicViewModelAdapter { get; init; }
+	/// <summary>
+	/// This property is intended to be used for displaying 'code lens' comments.
+	/// For example, above a property perhaps the text "3 references".
+	/// </summary>
     public ImmutableArray<WidgetBlock> TextEditorWidgetBlockList { get; init; } = ImmutableArray<WidgetBlock>.Empty;
+	/// <summary>
+	/// This property is intended to be used for displaying 'inline hints'.
+	/// For example, if the type of a lambda's parameter is not deemed obvious,
+	/// one could inline the parameter's type. This inline hint wouldn't be actual text in the document.
+	/// </summary>
     public ImmutableArray<WidgetInline> TextEditorWidgetInlineList { get; init; } = ImmutableArray<WidgetInline>.Empty;
 
-	public static TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(60);
-    public static TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
-    public static TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
-    public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
-    public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;
-    public CancellationTokenSource MouseNoLongerOverTooltipCancellationTokenSource { get; set; } = new();
-    public CancellationTokenSource MouseStoppedMovingCancellationTokenSource { get; set; } = new();
-
-    public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
+	public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
     public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
@@ -184,22 +197,6 @@ public record TextEditorViewModel : IDisposable
         return TextEditorService.ViewModelApi.FocusPrimaryCursorFactory(PrimaryCursorContentId);
     }
 
-	public Task ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
-    {
-        return _throttleApplySyntaxHighlighting.PushEvent(_ =>
-        {
-            return modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
-        });
-    }
-
-	public Task ContinueRenderingTooltipAsync()
-    {
-        MouseNoLongerOverTooltipCancellationTokenSource.Cancel();
-        MouseNoLongerOverTooltipCancellationTokenSource = new();
-
-        return Task.CompletedTask;
-    }
-	
     public void Dispose()
     {
         DisplayTracker.Dispose();

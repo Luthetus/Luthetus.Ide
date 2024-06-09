@@ -48,16 +48,9 @@ public partial class Header : ComponentBase
         return new TextEditorCommandArgs(
             textEditorModel.ResourceUri,
             viewModel.ViewModelKey,
-            hasSelection,
-            ClipboardService,
-            TextEditorService,
-            RenderBatch.Options ?? TextEditorService.OptionsStateWrap.Value.Options,
-            RenderBatch.Events,
-            null,
-            null,
-            Dispatcher,
-            ServiceProvider,
-            TextEditorConfig);
+            RenderBatch.ComponentData,
+			TextEditorService,
+            ServiceProvider);
     }
 
     private async Task DoCopyOnClick(MouseEventArgs arg)

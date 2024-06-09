@@ -61,29 +61,33 @@ public partial class ContextMenu : ComponentBase
     private TextEditorCommandArgs ConstructCommandArgs()
     {
         var cursorSnapshotsList = new TextEditorCursor[] { RenderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
             RenderBatch.Model.ResourceUri,
             RenderBatch.ViewModel.ViewModelKey,
-            hasSelection,
-            TextEditorService,
-            RenderBatch.Options,
-            RenderBatch.Events,
-            null,
-            null,
-            Dispatcher,
-            ServiceProvider,
-            TextEditorConfig);
+			RenderBatch.ComponentData,
+			TextEditorService,
+            ServiceProvider);
     }
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
         {
-            await SetShouldDisplayMenuAsync
-                .Invoke(MenuKind.None, true)
-                .ConfigureAwait(false);
+            await TextEditorService.PostSimpleBatch(
+					nameof(ContextMenu),
+					editContext =>
+					{
+						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+	
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.None
+						};
+
+						return Task.CompletedTask;
+					})
+				.ConfigureAwait(false);
         }
     }
 
@@ -91,9 +95,20 @@ public partial class ContextMenu : ComponentBase
     {
         try
         {
-            await SetShouldDisplayMenuAsync
-                .Invoke(MenuKind.None, true)
-                .ConfigureAwait(false);
+            await TextEditorService.PostSimpleBatch(
+					nameof(ContextMenu),
+					editContext =>
+					{
+						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+	
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.None
+						};
+
+						return Task.CompletedTask;
+					})
+				.ConfigureAwait(false);
         }
         catch (Exception e)
         {
@@ -127,9 +142,20 @@ public partial class ContextMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync
-                    .Invoke(MenuKind.None, true)
-                    .ConfigureAwait(false);
+				await TextEditorService.PostSimpleBatch(
+					nameof(ContextMenu),
+					editContext =>
+					{
+						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+	
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.None
+						};
+
+						return Task.CompletedTask;
+					})
+				.ConfigureAwait(false);
 
                 await menuOptionAction.Invoke().ConfigureAwait(false);
             }

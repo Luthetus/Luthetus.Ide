@@ -22,8 +22,6 @@ public partial class AutocompleteMenu : ComponentBase
 
     [CascadingParameter]
     public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
-    [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
-    public Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
     [CascadingParameter(Name = "TextEditorMenuShouldTakeFocusFunc")]
     public Func<bool> TextEditorMenuShouldTakeFocusFunc { get; set; } = null!;
 
@@ -41,14 +39,42 @@ public partial class AutocompleteMenu : ComponentBase
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true).ConfigureAwait(false);
+		{
+			await TextEditorService.PostSimpleBatch(
+					nameof(AutocompleteMenu),
+					editContext =>
+					{
+						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+	
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.None
+						};
+
+						return Task.CompletedTask;
+					})
+				.ConfigureAwait(false);
+		}
     }
 
     private async Task ReturnFocusToThisAsync()
     {
         try
         {
-            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true).ConfigureAwait(false);
+            await TextEditorService.PostSimpleBatch(
+					nameof(AutocompleteMenu),
+					editContext =>
+					{
+						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+	
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.None
+						};
+
+						return Task.CompletedTask;
+					})
+				.ConfigureAwait(false);
         }
         catch (Exception e)
         {
@@ -150,7 +176,21 @@ public partial class AutocompleteMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true).ConfigureAwait(false);
+				await TextEditorService.PostSimpleBatch(
+					nameof(AutocompleteMenu),
+					editContext =>
+					{
+						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+	
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.None
+						};
+
+						return Task.CompletedTask;
+					})
+				.ConfigureAwait(false);
+
                 await menuOptionAction.Invoke().ConfigureAwait(false);
             }
             catch (Exception e)

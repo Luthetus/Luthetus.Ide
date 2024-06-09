@@ -12,33 +12,27 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnKeyDownLateBatching : ITextEditorTask
 {
-    private readonly TextEditorEvents _events;
-
     public OnKeyDownLateBatching(
 			TextEditorComponentData componentData,
-	        TextEditorEvents events,
 	        KeyboardEventArgs keyboardEventArgs,
 	        ResourceUri resourceUri,
 	        Key<TextEditorViewModel> viewModelKey)
-		: this(componentData, events, new List<KeyboardEventArgs>() { keyboardEventArgs }, resourceUri, viewModelKey)
+		: this(componentData, new List<KeyboardEventArgs>() { keyboardEventArgs }, resourceUri, viewModelKey)
     {
     }
 
 	public OnKeyDownLateBatching(
 		TextEditorComponentData componentData,
-        TextEditorEvents events,
         List<KeyboardEventArgs> keyboardEventArgsList,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
 		ComponentData = componentData;
-        _events = events;
 
         KeyboardEventArgsList = keyboardEventArgsList;
         ResourceUri = resourceUri;
@@ -49,7 +43,7 @@ public class OnKeyDownLateBatching : ITextEditorTask
     public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; private set; } = nameof(OnKeyDownLateBatching);
     public Task? WorkProgress { get; }
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModel.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
     public List<KeyboardEventArgs> KeyboardEventArgsList { get; }
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -96,7 +90,7 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	            var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 	
 	            var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-	                _events, keyboardEventArgs, definiteHasSelection, _events.TextEditorService, out var command);
+	                ComponentData, keyboardEventArgs, definiteHasSelection, EditContext.TextEditorService, out var command);
 	
 	            var shouldInvokeAfterOnKeyDownAsync = false;
 	
@@ -108,13 +102,9 @@ public class OnKeyDownLateBatching : ITextEditorTask
 						var commandArgs = new TextEditorCommandArgs(
                             modelModifier.ResourceUri,
                             viewModelModifier.ViewModel.ViewModelKey,
-                            TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier),
-                            _events.TextEditorService,
-                            _events.Options,
 							ComponentData,
-                            _events,
-                            _events.ServiceProvider,
-                            EditContext.TextEditorService.TextEditorConfig);
+							EditContext.TextEditorService,
+							ComponentData.ServiceProvider);
 
                         if (command is TextEditorCommand textEditorCommand &&
                             textEditorCommand.TextEditorEditFactory is not null)
@@ -145,7 +135,7 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                    }
 	                    else
 	                    {
-	                        await _events.TextEditorService.ViewModelApi.MoveCursorFactory(
+	                        await EditContext.TextEditorService.ViewModelApi.MoveCursorFactory(
 	                                keyboardEventArgs,
 	                                modelModifier.ResourceUri,
 	                                viewModelModifier.ViewModel.ViewModelKey)
@@ -198,10 +188,10 @@ public class OnKeyDownLateBatching : ITextEditorTask
 								var innerKeyboardEventArgs = KeyboardEventArgsList[innerIndex];
 
 								var innerKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-									_events,
+									ComponentData,
 									innerKeyboardEventArgs,
 									definiteHasSelection,
-									_events.TextEditorService,
+									EditContext.TextEditorService,
 									out _);
 
 								if (innerKeyboardEventArgsKind == KeyboardEventArgsKind.Text)
@@ -233,10 +223,10 @@ public class OnKeyDownLateBatching : ITextEditorTask
 									var innerKeyboardEventArgs = KeyboardEventArgsList[innerIndex];
 	
 									var innerKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-										_events,
+										ComponentData,
 										innerKeyboardEventArgs,
 										definiteHasSelection,
-										_events.TextEditorService,
+										EditContext.TextEditorService,
 										out _);
 	
 									// If the user has a text selection, one cannot batch here.
@@ -277,7 +267,7 @@ public class OnKeyDownLateBatching : ITextEditorTask
 			                }
 							else
 							{
-								await _events.TextEditorService.ModelApi.HandleKeyboardEventFactory(
+								await EditContext.TextEditorService.ModelApi.HandleKeyboardEventFactory(
 				                        ResourceUri,
 				                        ViewModelKey,
 				                        keyboardEventArgs,
@@ -311,7 +301,8 @@ public class OnKeyDownLateBatching : ITextEditorTask
 						await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsyncFactory(
 	                            modelModifier.ResourceUri,
 	                            viewModelModifier.ViewModel.ViewModelKey,
-	                            keyboardEventArgs)
+	                            keyboardEventArgs,
+								ComponentData)
 	                        .Invoke(EditContext)
 	                        .ConfigureAwait(false);
 					}

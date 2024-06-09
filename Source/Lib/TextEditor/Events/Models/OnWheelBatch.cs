@@ -10,16 +10,12 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnWheelBatch : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
-
     public OnWheelBatch(
         List<WheelEventArgs> wheelEventArgsList,
 		TextEditorComponentData componentData,
-        TextEditorViewModelDisplay.TextEditorEvents events,
         Key<TextEditorViewModel> viewModelKey)
     {
 		ComponentData = componentData;
-        _events = events;
 
         WheelEventArgsList = wheelEventArgsList;
         ViewModelKey = viewModelKey;
@@ -35,7 +31,7 @@ public class OnWheelBatch : ITextEditorTask
 
 	public IEditContext EditContext { get; set; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModel.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -72,7 +68,7 @@ public class OnWheelBatch : ITextEditorTask
 
             if (horizontalMutateScrollPositionByPixels is not null)
             {
-                await _events.TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
+                await EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
                         viewModelModifier.ViewModel.ViewModelKey,
                         horizontalMutateScrollPositionByPixels.Value)
                     .Invoke(EditContext)
@@ -81,7 +77,7 @@ public class OnWheelBatch : ITextEditorTask
 
             if (verticalMutateScrollPositionByPixels is not null)
             {
-                await _events.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
+                await EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
                         viewModelModifier.ViewModel.ViewModelKey,
                         verticalMutateScrollPositionByPixels.Value)
                     .Invoke(EditContext)
