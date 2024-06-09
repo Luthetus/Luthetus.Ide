@@ -1,7 +1,9 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -40,6 +42,22 @@ public class TextEditorComponentData
 		ViewModelDisplayOptions = viewModelDisplayOptions;
 		Options = options;
 		ServiceProvider = serviceProvider;
+	}
+
+	public TextEditorComponentData(
+		TextEditorComponentData otherComponentData,
+		Keymap keymap)
+	{
+		ProportionalFontMeasurementsContainerElementId = otherComponentData.ProportionalFontMeasurementsContainerElementId;
+		TextEditorHtmlElementId = otherComponentData.TextEditorHtmlElementId;
+		ViewModelDisplayOptions = otherComponentData.ViewModelDisplayOptions;
+
+		Options = otherComponentData.Options with
+		{
+			Keymap = keymap
+		};
+
+		ServiceProvider = otherComponentData.ServiceProvider;
 	}
 
 	/// <summary>

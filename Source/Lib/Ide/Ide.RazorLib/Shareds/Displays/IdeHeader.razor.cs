@@ -180,7 +180,7 @@ public partial class IdeHeader : ComponentBase
 
 		// Menu Option Code Search
         {
-            var menuOptionPermissions = new MenuOptionRecord(
+            var menuOptionCodeSearch = new MenuOptionRecord(
 				"Code Search",
                 MenuOptionKind.Delete,
                 () =>
@@ -197,12 +197,12 @@ public partial class IdeHeader : ComponentBase
                     return Task.CompletedTask;
 				});
 
-            menuOptionsList.Add(menuOptionPermissions);
+            menuOptionsList.Add(menuOptionCodeSearch);
         }
 
 		// Menu Option Find
         {
-            var menuOptionPermissions = new MenuOptionRecord(
+            var menuOptionFind = new MenuOptionRecord(
 				"Find (in text editor)",
                 MenuOptionKind.Delete,
                 () =>
@@ -221,26 +221,19 @@ public partial class IdeHeader : ComponentBase
 						new TextEditorCommandArgs(
 							new(string.Empty),
 					        activeViewModel.ViewModelKey,
-					        false,
-							ClipboardService,
-					        TextEditorService,
-							TextEditorService.OptionsStateWrap.Value.Options,
-                            null,
 							null,
-					        JsRuntime,
-					        Dispatcher,
-					        ServiceProvider,
-					        TextEditorConfig));
+							TextEditorService,
+					        ServiceProvider));
 
 					return Task.CompletedTask;
 				});
 
-            menuOptionsList.Add(menuOptionPermissions);
+            menuOptionsList.Add(menuOptionFind);
 		}
 
 		// Menu Option BackgroundTasks
         {
-            var menuOptionPermissions = new MenuOptionRecord(
+            var menuOptionBackgroundTasks = new MenuOptionRecord(
 				"BackgroundTasks",
                 MenuOptionKind.Delete,
                 () => 
@@ -253,7 +246,7 @@ public partial class IdeHeader : ComponentBase
                     return localActiveBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick();
                 });
 
-            menuOptionsList.Add(menuOptionPermissions);
+            menuOptionsList.Add(menuOptionBackgroundTasks);
         }
 
         _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());

@@ -1,26 +1,27 @@
-using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components.Web;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
-using Luthetus.Common.RazorLib.Commands.Models;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
-using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Ide.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+
 using Luthetus.TextEditor.RazorLib.Events.Models;
 
 namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
@@ -66,7 +67,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 	public bool TryMap(
 		KeyboardEventArgs keyboardEventArgs,
 		KeymapArgument keymapArgument,
-		TextEditorEvents events,
+		TextEditorComponentData componentData,
 		out CommandNoType? command)
 	{
 		var terminalKey = _getTerminalKeyFunc.Invoke();
@@ -91,7 +92,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							return;
 
 						// 'fakeEvents' allows for tricking 'OnKeyDownLateBatching' to use the 'TextEditorKeymapDefault'
-						var fakeEvents = new TextEditorEvents(events, new TextEditorKeymapDefault());
+						var fakeEvents = new TextEditorComponentData(componentData, new TextEditorKeymapDefault());
 
 						var onKeyDown = new OnKeyDownLateBatching(
 							fakeEvents,
@@ -105,7 +106,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 	
 			            var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-	                		fakeEvents, keyboardEventArgs, definiteHasSelection, fakeEvents.TextEditorService, out var command);
+	                		fakeEvents, keyboardEventArgs, definiteHasSelection, editContext.TextEditorService, out var command);
 
 						var selectionContainsCurrentRow = false;
 						var selectionRowCount = 0;
