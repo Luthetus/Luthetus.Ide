@@ -4,7 +4,7 @@
 <div class="luth_output-display">
 	Output Display
 
-	@{ var localErrorList = DotNetCliOutputParser.ErrorList?.ToImmutableArray() ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray(); }
+	@{ var localErrorList = DotNetCliOutputParser.ErrorList?.ToImmutableArray() ?? Array.Empty<List<TextEditorTextSpan>>().ToImmutableArray(); }
 
 	DotNetCliOutputParser: @localErrorList.Length
 
@@ -18,9 +18,10 @@
 			<th>?</th>
 		</thead>
 		<tbody>
-			@foreach (var textSpan in localErrorList)
+			@foreach (var textSpanList in localErrorList)
 			{
-				<td class="luth_tree-view-exception">@textSpan.GetText()</td>
+				var outputString = string.Join(" ", textSpanList.Select(x => x.GetText()));
+				<td class="luth_tree-view-exception">@outputString</td>
 			}
 		</tbody>
 	</table>

@@ -9,7 +9,7 @@ namespace Luthetus.Ide.RazorLib.CommandLines.Models;
 
 public class DotNetCliOutputParser : IOutputParser
 {
-	public List<TextEditorTextSpan> ErrorList { get; private set; }
+	public List<List<TextEditorTextSpan>> ErrorList { get; private set; }
 
 	public List<ProjectTemplate>? ProjectTemplateList { get; private set; }
 
@@ -227,7 +227,7 @@ public class DotNetCliOutputParser : IOutputParser
 
 		if (errorKeywordAndErrorCodeTextSpan.DecorationByte == (byte)TerminalDecorationKind.Error)
 		{
-			ErrorList.Add(errorKeywordAndErrorCodeTextSpan);
+			ErrorList.Add(textSpanList);
 		}
 
         return textSpanList;
