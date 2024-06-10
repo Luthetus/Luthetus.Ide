@@ -178,7 +178,10 @@ public partial class TextEditorService : ITextEditorService
             foreach (var viewModel in viewModelBag)
             {
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
-                editContext.GetViewModelModifier(viewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+
+				if (!viewModelModifier.ShouldReloadVirtualizationResult)
+					viewModelModifier.ShouldReloadVirtualizationResult = modelModifier.ShouldReloadVirtualizationResult;
             }
 
             if (modelModifier.WasDirty != modelModifier.IsDirty)
@@ -222,12 +225,15 @@ public partial class TextEditorService : ITextEditorService
 		            .ConfigureAwait(false);
             }
 
-            // TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
-            await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                    viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
-
+			if (viewModelModifier.ShouldReloadVirtualizationResult)
+			{
+				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
+	            await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+	                    viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
+	                .Invoke(editContext)
+	                .ConfigureAwait(false);
+			}
+            
 			_dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(
                 editContext.AuthenticatedActionKey,
                 editContext,

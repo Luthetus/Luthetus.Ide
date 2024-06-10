@@ -130,7 +130,17 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public bool WasDirty { get; }
 
     private int PartitionSize { get; }
+
+	/// <summary>
+	/// This property decides whether or not to replace the existing model in IState<TextEditorState> with
+	/// the instance that comes from this modifier.
+	/// </summary>
     public bool WasModified { get; internal set; }
+	
+	/// <summary>
+	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
+	/// </summary>
+    public bool ShouldReloadVirtualizationResult { get; internal set; }
 
     public string AllText => _allText ??= new string(RichCharacterList.Select(x => x.Value).ToArray());
 

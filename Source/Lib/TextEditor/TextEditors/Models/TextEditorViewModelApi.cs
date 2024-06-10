@@ -707,20 +707,18 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
             try
             {
-                var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
+				var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
 
-                var verticalStartingIndex = (int)Math.Floor(
+				verticalStartingIndex = (int)Math.Floor(
                     viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
 
-                var verticalTake = (int)Math.Ceiling(
+                verticalTake = (int)Math.Ceiling(
                     viewModelModifier.ViewModel.TextEditorDimensions.Height /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
 
                 // Vertical Padding (render some offscreen data)
-                {
-                    verticalTake += 1;
-                }
+                verticalTake += 1;
 
                 // Check index boundaries
                 {
@@ -732,14 +730,13 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     verticalTake = Math.Max(0, verticalTake);
                 }
 
-                var horizontalStartingIndex = (int)Math.Floor(
+                horizontalStartingIndex = (int)Math.Floor(
                     viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
 
-                var horizontalTake = (int)Math.Ceiling(
+                horizontalTake = (int)Math.Ceiling(
                     viewModelModifier.ViewModel.TextEditorDimensions.Width /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
-
 
 // Goal: Optimize 'CalculateVirtualizationResultFactory(...)' method (2024-06-10).
 // ===============================================================================
@@ -791,6 +788,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 //       - I like the idea of mutating the virtualization result from the IEditContext,
 //         I feel it avoids any possibility of desync between the actual text and what the user sees.
 //       - But, what about 'enumeration was modified' exceptions?
+//       - I wonder, could there be "two" of this method.
+//       - One that is invoked via the virtualization provider.
+//       - The second that is invoked via the 'ITextEditorService.FinalizePost(...)' method.
+//       - If the second version was provided the lineIndexMinimum, lineIndexMaximum,
+//         columnIndexMinimum, and columnIndexMaximum; (which would get cached when invoking from the
+//         virtualization provider). Then can a large part of the calculaton be skipped?
 // - Implement IEnumerable for the 'partition' logic.
 //       - I believe that I maintain an immutable list, of immutable list, of RichCharacter(s).
 //         And, separately I maintain a List<RichCharacter>.

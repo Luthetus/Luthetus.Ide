@@ -114,6 +114,7 @@ public partial class TextEditorModelModifier
         }
 
         SetIsDirtyTrue();
+		ShouldReloadVirtualizationResult = true;
     }
 
 	private string InsertMetadata(
@@ -430,6 +431,7 @@ public partial class TextEditorModelModifier
         }
 
         SetIsDirtyTrue();
+		ShouldReloadVirtualizationResult = true;
     }
 
 	/// <summary>
