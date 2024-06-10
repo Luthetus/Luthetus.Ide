@@ -707,39 +707,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
             try
             {
-                // throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-                //
-                // Preferably I'd throw "throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");"
-                // here, but this is the final piece of the puzzle to change, otherwise nothing will work.
-                // =======================================================================================
-                //
-                // (2024-05-11)
-                // I believe a few days ago I partially optimized the scrolling.
-                // I can now in the editContext modify the scrollbar's C# model, and wait until after
-                // the editContext is finished to actually invoke the JavaScript that moves the scrollbar UI.
-                //
-                // The next goal would be to continue those optimizations.
-                //
-                // For example: I don't believe this line that invokes 'GetTextEditorMeasurementsAsync(...)'
-                //              is necessary, provided that an accurrate measurement is initially taken,
-                //              then only re-measured when some corrupting event occurs.
-                //              |
-                //              For example, a user resizing the browser, or the user resizing 'intra-browser'
-                //              some grid layout.
-				//
-                //var textEditorMeasurements = await _textEditorService.ViewModelApi
-                //    .GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
-                //    .ConfigureAwait(false);
-
-                //if (textEditorMeasurements is null)
-                //    return;
-
-                //var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult with
-                //{
-                //    TextEditorMeasurements = textEditorMeasurements
-                //};
-
-				var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
+                var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
 
                 var verticalStartingIndex = (int)Math.Floor(
                     viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop /
@@ -771,6 +739,68 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 var horizontalTake = (int)Math.Ceiling(
                     viewModelModifier.ViewModel.TextEditorDimensions.Width /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+
+
+// Goal: Optimize 'CalculateVirtualizationResultFactory(...)' method (2024-06-10).
+// ===============================================================================
+// Ideas:
+// - Loop?
+//       - I see LINQ is being used to loop over the virtualized line list result. This loop is done to
+//         provide the horizontal virtualization.
+//             - Is LINQ a good fit for this performance critical method?
+//               Perhaps a 'for' loop is executed faster?
+// - Horizontal?
+//       - Does any other text editor do horizontal virtualization?
+//         I wonder if the virtualization brings about any issues with performance.
+//
+//       - But, how does a videogame handle virtualization? A 3D game would surely be
+//         virtualizing in 3 dimensions?
+//
+//       - I've never made a videogame, but presuming 3D games virtualize in 3 dimensions,
+//	     for me to virtualization in 2 dimensions shouldn't be the issue?
+// - Anything cache-able?
+//       - In the last few days, I have made many caching optimizations relating to JavaScript measuring HTML elements.
+//             - Perhaps some caching could be done here too?
+// - Garbage collection?
+//       - Check if frequently instantiated objects are a struct.
+//       - If they are NOT a struct, can they be changed to a struct, and should they?
+// - Sealed keyword?
+// - IBackgroundTaskService implementation?
+//       - Considering that all the text editor logic passes through the IBackgroundTaskService,
+//         then it needs be written well.
+//       - The BlazorServerSide app uses a hosted service for the IBackgroundTaskService.
+//		 Whereas the Photino app uses a fire and forget task that is started in 'Program.cs'.
+// - Inside the 'ITextEditorService.FinalizePost(...)' method, I am invoking this method everytime.
+//       - This invocation is horrendous thing. 
+//       - So, if I know it is horrendous to invoke this method from 'ITextEditorService.FinalizePost(...)',
+//         why did I do it?
+//       - The reason was for text insertion/deletion.
+//       - The rendered text is only gotten via this method. So, when one types a letter,
+//         the only way to have the UI show that typed letter was to invoke this method.
+//       - There has to be a better way to render edits, without having to re-invoke this method.
+//       - The text editor is currently immutable. Whether this is a good or bad thing I'm not certain.
+//         But, is there perhaps a way to make the virtualization result mutable?
+//       - A concern I have with a mutable virtualization result, is a desync between
+//         the actual text, and what the user sees. Althought, this desync would likely only happen,
+//         if I make a mistake. So, "just don't make a mistake".
+//       - As of this comment, the virtualization result is an immutable list of rows,
+//         but a mutable list of columns.
+//       - Furthermore, all edits are done in a thread safe way via the IEditContext.
+//         So, the IEditContext perhaps could facilitate the mutation of the virtualization result,
+//         by way of seeing all the edits that are occurring during the lifetime of the IEditContext?
+//       - I like the idea of mutating the virtualization result from the IEditContext,
+//         I feel it avoids any possibility of desync between the actual text and what the user sees.
+//       - But, what about 'enumeration was modified' exceptions?
+// - Implement IEnumerable for the 'partition' logic.
+//       - I believe that I maintain an immutable list, of immutable list, of RichCharacter(s).
+//         And, separately I maintain a List<RichCharacter>.
+//       - The reason is, I use the immutable list, of immutable list, of RichCharacter(s)
+//         to perform edits. Whereas the List<RichCharacter> I use for the UI, and as a means
+//         to access an IEnumerable<RichCharacter>.
+//       - The cost incurred here is that after every edit, I create the List<RichCharacter>,
+//         from the immutable list, of immutable list, of RichCharacter(s).
+//       - Given that the goal of the partition logic is performance, to then afterwards
+//         move everything into a List<RichCharacter> seems silly.
 
                 var virtualizedEntryBag = modelModifier
                     .GetLineRichCharacterRange(verticalStartingIndex, verticalTake)
