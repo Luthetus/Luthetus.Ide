@@ -83,12 +83,14 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
     {
         _thinksLeftMouseButtonIsDown = true;
 
-        _relativeCoordinatesOnMouseDown = await TextEditorService.JsRuntimeTextEditorApi
-            .GetRelativePosition(
-                ScrollbarSliderElementId,
-                mouseEventArgs.ClientX,
-                mouseEventArgs.ClientY)
-            .ConfigureAwait(false);
+		var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
+		var scrollbarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
+	
+		_relativeCoordinatesOnMouseDown = new RelativeCoordinates(
+		    mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft,
+		    mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop,
+		    scrollbarDimensions.ScrollLeft,
+		    scrollbarDimensions.ScrollTop);
 
         SubscribeToDragEventForScrolling();
     }
@@ -141,12 +143,14 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (mouseEventArgsTuple.secondMouseEventArgs.Buttons & 1) == 1)
         {
-            var relativeCoordinatesOfDragEvent = await TextEditorService.JsRuntimeTextEditorApi
-                .GetRelativePosition(
-                    ScrollbarElementId,
-                    mouseEventArgsTuple.secondMouseEventArgs.ClientX,
-                    mouseEventArgsTuple.secondMouseEventArgs.ClientY)
-                .ConfigureAwait(false);
+			var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
+			var scrollbarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
+		
+			var relativeCoordinatesOfDragEvent = new RelativeCoordinates(
+			    mouseEventArgsTuple.secondMouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft,
+			    mouseEventArgsTuple.secondMouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop,
+			    scrollbarDimensions.ScrollLeft,
+			    scrollbarDimensions.ScrollTop);
 
             var xPosition = relativeCoordinatesOfDragEvent.RelativeX - _relativeCoordinatesOnMouseDown.RelativeX;
 

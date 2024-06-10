@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -1004,14 +1005,15 @@ public class TextEditorCommandDefaultFunctions
 					componentData,
 					editContext)
 				.ConfigureAwait(false);
-	
-	        // TODO: (2023-05-28) This shouldn't be re-calcuated in the best case scenario. That is to say, the previous line invokes 'CalculateRowAndColumnIndex(...)' which also invokes this logic
-	        var relativeCoordinatesOnClick = await editContext.TextEditorService.JsRuntimeTextEditorApi
-	            .GetRelativePosition(
-	                viewModelModifier.ViewModel.BodyElementId,
-	                mouseEventArgs.ClientX,
-	                mouseEventArgs.ClientY)
-	            .ConfigureAwait(false);
+
+			var textEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions;
+			var scrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
+		
+			var relativeCoordinatesOnClick = new RelativeCoordinates(
+			    mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft,
+			    mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop,
+			    scrollbarDimensions.ScrollLeft,
+			    scrollbarDimensions.ScrollTop);
 	
 	        var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
 	            rowAndColumnIndex.rowIndex,

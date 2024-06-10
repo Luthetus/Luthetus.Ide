@@ -165,21 +165,19 @@ public static class EventUtils
             return (0, 0);
 
         var charMeasurements = viewModelModifier.ViewModel.CharAndLineMeasurements;
+		var textEditorDimensions = viewModelModifier.ViewModel.TextEditorDimensions;
+		var scrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
 
-        var relativeCoordinatesOnClick = await editContext.TextEditorService.JsRuntimeTextEditorApi
-            .GetRelativePosition(
-                viewModelModifier.ViewModel.BodyElementId,
-                mouseEventArgs.ClientX,
-                mouseEventArgs.ClientY)
-            .ConfigureAwait(false);
+		var relativeX = mouseEventArgs.ClientX - textEditorDimensions.BoundingClientRectLeft;
+        var relativeY = mouseEventArgs.ClientY - textEditorDimensions.BoundingClientRectTop;
 
-        var positionX = relativeCoordinatesOnClick.RelativeX;
-        var positionY = relativeCoordinatesOnClick.RelativeY;
+        var positionX = relativeX;
+        var positionY = relativeY;
 
         // Scroll position offset
         {
-            positionX += relativeCoordinatesOnClick.RelativeScrollLeft;
-            positionY += relativeCoordinatesOnClick.RelativeScrollTop;
+            positionX += scrollbarDimensions.ScrollLeft;
+            positionY += scrollbarDimensions.ScrollTop;
         }
 
         var rowIndex = (int)(positionY / charMeasurements.LineHeight);
