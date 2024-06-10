@@ -1,0 +1,27 @@
+@using System.Collections.Immutable
+@using Luthetus.TextEditor.RazorLib.Lexes.Models
+
+<div class="luth_output-display">
+	Output Display
+
+	@{ var localErrorList = DotNetCliOutputParser.ErrorList?.ToImmutableArray() ?? Array.Empty<TextEditorTextSpan>().ToImmutableArray(); }
+
+	DotNetCliOutputParser: @localErrorList.Length
+
+	<button class="luth_button"
+		    @onclick="() => {}">
+		ReRender
+	</button>
+
+	<table>
+		<thead>
+			<th>?</th>
+		</thead>
+		<tbody>
+			@foreach (var textSpan in localErrorList)
+			{
+				<td class="luth_tree-view-exception">@textSpan.GetText()</td>
+			}
+		</tbody>
+	</table>
+</div>

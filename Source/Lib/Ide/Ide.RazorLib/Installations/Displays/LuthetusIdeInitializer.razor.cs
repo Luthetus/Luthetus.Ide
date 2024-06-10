@@ -1,5 +1,6 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Themes.States;
@@ -9,8 +10,12 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.Outputs.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
@@ -20,10 +25,6 @@ using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.Common.RazorLib.Dialogs.Models;
-using Microsoft.JSInterop;
-using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
@@ -230,6 +231,20 @@ public partial class LuthetusIdeInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(terminalGroupPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false));
+
+		// outputPanel
+        var outputPanel = new Panel(
+			"Output",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+			Key<ContextRecord>.Empty,
+            typeof(OutputPanelDisplay),
+            null,
+            Dispatcher,
+            DialogService,
+            JsRuntime);
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(outputPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, outputPanel, false));
 
         // nuGetPanel
         var nuGetPanel = new Panel(
