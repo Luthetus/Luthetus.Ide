@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
@@ -16,7 +16,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
     [Parameter, EditorRequired]
     public IAbsolutePath AbsolutePath { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Action<IAbsolutePath> OnAfterSubmitAction { get; set; } = null!;
+    public Func<IAbsolutePath, Task> OnAfterSubmitFunc { get; set; } = null!;
 
     private IAbsolutePath? _previousAbsolutePath;
     private ElementReference? _cancelButtonElementReference;
@@ -75,7 +75,7 @@ public partial class RemoveCSharpProjectFromSolutionDisplay : ComponentBase,
         if (MenuOptionCallbacks is not null)
         {
             await MenuOptionCallbacks.CompleteWidgetAsync.Invoke(
-                    () => OnAfterSubmitAction.Invoke(localAbsolutePath))
+                    () => OnAfterSubmitFunc.Invoke(localAbsolutePath))
                 .ConfigureAwait(false);
         }
     }

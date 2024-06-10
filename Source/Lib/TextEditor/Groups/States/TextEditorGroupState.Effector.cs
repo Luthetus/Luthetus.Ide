@@ -36,6 +36,16 @@ public partial class TextEditorGroupState
 			return PostScroll(setActiveViewModelOfGroupAction.GroupKey, setActiveViewModelOfGroupAction.ViewModelKey);
 		}
 
+		[EffectMethod]
+		public Task HandleRemoveViewModelFromGroupAction(
+			RemoveViewModelFromGroupAction removeViewModelFromGroupAction,
+			IDispatcher dispatcher)
+		{
+			// NOTE: The action has a viewModelKey, BUT it is the key for the viewModel which is being removed.
+			var group = _textEditorService.GroupApi.GetOrDefault(removeViewModelFromGroupAction.GroupKey);
+			return PostScroll(removeViewModelFromGroupAction.GroupKey, group.ActiveViewModelKey);
+		}
+
 		private Task PostScroll(
 			Key<TextEditorGroup> groupKey,
         	Key<TextEditorViewModel> viewModelKey)
