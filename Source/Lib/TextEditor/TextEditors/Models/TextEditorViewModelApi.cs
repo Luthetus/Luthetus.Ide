@@ -709,11 +709,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             {
 				var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
 
-				verticalStartingIndex = (int)Math.Floor(
+				var verticalStartingIndex = (int)Math.Floor(
                     viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
 
-                verticalTake = (int)Math.Ceiling(
+                var verticalTake = (int)Math.Ceiling(
                     viewModelModifier.ViewModel.TextEditorDimensions.Height /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
 
@@ -730,11 +730,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     verticalTake = Math.Max(0, verticalTake);
                 }
 
-                horizontalStartingIndex = (int)Math.Floor(
+                var horizontalStartingIndex = (int)Math.Floor(
                     viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
 
-                horizontalTake = (int)Math.Ceiling(
+                var horizontalTake = (int)Math.Ceiling(
                     viewModelModifier.ViewModel.TextEditorDimensions.Width /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
 
