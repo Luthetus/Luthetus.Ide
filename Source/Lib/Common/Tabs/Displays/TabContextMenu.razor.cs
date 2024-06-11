@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
@@ -39,5 +40,21 @@ public partial class TabContextMenu : ComponentBase
             return MenuRecord.Empty;
 
         return new MenuRecord(menuOptionList.ToImmutableArray());
+    }
+
+	public static string GetContextMenuCssStyleString(TabContextMenuEventArgs? tabContextMenuEventArgs)
+    {
+		if (tabContextMenuEventArgs?.MouseEventArgs is null)
+		{
+			return "display: none;";
+		}
+
+        var left =
+            $"left: {tabContextMenuEventArgs.MouseEventArgs.ClientX.ToCssValue()}px;";
+
+        var top =
+            $"top: {tabContextMenuEventArgs.MouseEventArgs.ClientY.ToCssValue()}px;";
+
+        return $"{left} {top}";
     }
 }
