@@ -62,8 +62,8 @@ public record TextEditorViewModel : IDisposable
 
         DisplayTracker = new(
             textEditorService,
-            () => textEditorService.ViewModelApi.GetOrDefault(viewModelKey),
-            () => textEditorService.ViewModelApi.GetModelOrDefault(viewModelKey));
+            resourceUri,
+            viewModelKey);
 
         UnsafeState = new();
         

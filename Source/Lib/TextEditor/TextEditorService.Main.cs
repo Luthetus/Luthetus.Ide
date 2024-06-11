@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
@@ -61,7 +62,8 @@ public partial class TextEditorService : ITextEditorService
         IDispatcher dispatcher,
         IDialogService dialogService,
 		IAutocompleteIndexer autocompleteIndexer,
-		IAutocompleteService autocompleteService)
+		IAutocompleteService autocompleteService,
+		IState<AppDimensionState> appDimensionStateWrap)
     {
         TextEditorStateWrap = textEditorStateWrap;
         GroupStateWrap = groupStateWrap;
@@ -69,6 +71,7 @@ public partial class TextEditorService : ITextEditorService
         ThemeStateWrap = themeStateWrap;
         OptionsStateWrap = optionsStateWrap;
         FindAllStateWrap = findAllStateWrap;
+		AppDimensionStateWrap = appDimensionStateWrap;
 
         _backgroundTaskService = backgroundTaskService;
         TextEditorConfig = textEditorConfig;
@@ -96,6 +99,7 @@ public partial class TextEditorService : ITextEditorService
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
+	public IState<AppDimensionState> AppDimensionStateWrap { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
 	public IAutocompleteIndexer AutocompleteIndexer { get; }

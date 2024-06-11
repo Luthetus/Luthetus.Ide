@@ -256,8 +256,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             if (viewKeyChanged)
             {
-                _linkedViewModel?.DisplayTracker.DecrementLinks(TextEditorStateWrap, AppDimensionStateWrap);
-                nextViewModel?.DisplayTracker.IncrementLinks(TextEditorStateWrap, AppDimensionStateWrap);
+                _linkedViewModel?.DisplayTracker.DecrementLinks();
+                nextViewModel?.DisplayTracker.IncrementLinks();
 
                 _linkedViewModel = nextViewModel;
 
@@ -617,7 +617,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
             if (_linkedViewModel is not null)
             {
-                _linkedViewModel.DisplayTracker.DecrementLinks(TextEditorStateWrap, AppDimensionStateWrap);
+                _linkedViewModel.DisplayTracker.DecrementLinks();
                 _linkedViewModel = null;
             }
         }
