@@ -76,10 +76,14 @@ public class DisplayTracker : IDisposable
             }
 			else if (Links > 1)
 			{
-				throw new LuthetusFatalException($"{nameof(DisplayTracker)} detected a {nameof(TextEditorViewModel)}" +
-												 " was being displayed in two places simultaneously." +
-												 " A {nameof(TextEditorViewModel)} can only be displayed by a single" +
-												 " {nameof(TextEditorViewModelDisplay)} at a time.");
+				// TODO: This exception is getting commented out for now because dragging a text editor
+				//       tab off the text editor group display is using the same view model for the dialog
+				//       as it was in the group tab.
+				//
+				//throw new LuthetusFatalException($"{nameof(DisplayTracker)} detected a {nameof(TextEditorViewModel)}" +
+				//								 " was being displayed in two places simultaneously." +
+				//								 " A {nameof(TextEditorViewModel)} can only be displayed by a single" +
+				//								 " {nameof(TextEditorViewModelDisplay)} at a time.");
 			}
         }
 
