@@ -25,14 +25,15 @@ public partial class TabContextMenu : ComponentBase
     {
         var menuOptionList = new List<MenuOptionRecord>();
 
-        // TODO: Convert all UI models to use async API,
-        //       as of (2024-04-04) the MenuOptionRecord is currently a synchronous onclick,
-        //       when it ought to be async
         menuOptionList.Add(new MenuOptionRecord(
             "Close All",
             MenuOptionKind.Delete,
             () => tabContextMenuEventArgs.Tab.TabGroup.CloseAllAsync()));
 
+		menuOptionList.Add(new MenuOptionRecord(
+            "Close Others",
+            MenuOptionKind.Delete,
+            () => tabContextMenuEventArgs.Tab.TabGroup.CloseOthersAsync(tabContextMenuEventArgs.Tab)));
 
 		if (!menuOptionList.Any())
             return MenuRecord.Empty;

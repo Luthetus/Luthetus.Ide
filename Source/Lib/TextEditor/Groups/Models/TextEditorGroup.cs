@@ -73,4 +73,32 @@ public record TextEditorGroup(
                 .ConfigureAwait(false);
         }
     }
+
+	public async Task CloseOthersAsync(ITab safeTab)
+    {
+        var localViewModelKeyList = ViewModelKeyList;
+
+		if (safeTab is not ITabTextEditor safeTextEditorTab)
+			return;
+		
+		// Invoke 'OnClickAsync' to set the active tab to the "safe tab"
+		// OnClickAsync does not currently use its mouse event args argument.
+		await OnClickAsync(safeTab, null);
+
+        foreach (var viewModelKey in localViewModelKeyList)
+        {
+			var shouldClose = safeTextEditorTab.ViewModelKey != viewModelKey;
+
+			if (shouldClose)
+			{
+				await CloseAsync(new DynamicViewModelAdapterTextEditor(
+	                    viewModelKey,
+	                    TextEditorService,
+	                    Dispatcher,
+	                    DialogService,
+	                    JsRuntime))
+	                .ConfigureAwait(false);
+			}
+        }
+    }
 }

@@ -9,4 +9,5 @@ public interface ITabGroup
     public Task OnClickAsync(ITab tab, MouseEventArgs mouseEventArgs);
 	public Task CloseAsync(ITab tab);
 	public Task CloseAllAsync();
+	public Task CloseOthersAsync(ITab tab);
 }
