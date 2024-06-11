@@ -161,7 +161,8 @@ public partial class AutocompleteMenu : ComponentBase
                 new("No results", MenuOptionKind.Other)
             }.ToImmutableArray());
         }
-        catch (LuthetusTextEditorException)
+		// Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."
+        catch (Exception e) when (e is LuthetusTextEditorException || e is InvalidOperationException)
         {
             return new MenuRecord(new MenuOptionRecord[]
             {
