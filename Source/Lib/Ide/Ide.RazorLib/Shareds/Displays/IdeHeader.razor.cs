@@ -323,7 +323,11 @@ public partial class IdeHeader : ComponentBase
             var menuOption = new MenuOptionRecord(
 				"Build",
                 MenuOptionKind.Create,
-                () => BuildOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value));
+                () =>
+				{
+					BuildOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
+					return Task.CompletedTask;
+				});
 
             menuOptionsList.Add(menuOption);
         }
@@ -333,7 +337,11 @@ public partial class IdeHeader : ComponentBase
             var menuOption = new MenuOptionRecord(
 				"Clean",
                 MenuOptionKind.Delete,
-                () => CleanOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value));
+                () =>
+				{
+					CleanOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
+					return Task.CompletedTask;
+				});
 
             menuOptionsList.Add(menuOption);
         }
@@ -341,7 +349,7 @@ public partial class IdeHeader : ComponentBase
         _menuRun = new MenuRecord(menuOptionsList.ToImmutableArray());
 	}
 
-	private Task BuildOnClick(string solutionAbsolutePathString)
+	private void BuildOnClick(string solutionAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -352,10 +360,10 @@ public partial class IdeHeader : ComponentBase
             null,
             CancellationToken.None);
 
-        return generalTerminal.EnqueueCommandAsync(terminalCommand);
+        generalTerminal.EnqueueCommand(terminalCommand);
 	}
 
-	private Task CleanOnClick(string solutionAbsolutePathString)
+	private void CleanOnClick(string solutionAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetClean(solutionAbsolutePathString);
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -366,7 +374,7 @@ public partial class IdeHeader : ComponentBase
             null,
             CancellationToken.None);
 
-        return generalTerminal.EnqueueCommandAsync(terminalCommand);
+        generalTerminal.EnqueueCommand(terminalCommand);
 	}
 
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)

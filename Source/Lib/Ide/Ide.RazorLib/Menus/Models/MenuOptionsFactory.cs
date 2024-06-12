@@ -234,12 +234,18 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
-            OnClickFunc: () => PerformAddProjectToProjectReference(
-                projectReceivingReference,
-                terminal,
-                dispatcher,
-                ideBackgroundTaskApi,
-                onAfterCompletion));
+            OnClickFunc: 
+			() =>
+			{
+				PerformAddProjectToProjectReference(
+	                projectReceivingReference,
+	                terminal,
+	                dispatcher,
+	                ideBackgroundTaskApi,
+	                onAfterCompletion);
+
+				return Task.CompletedTask;
+			});
     }
 
     public MenuOptionRecord RemoveProjectToProjectReference(
@@ -277,14 +283,18 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IFileFormRendererType.IsDirectory), false },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(async (nextName, _, _) =>
-                        await PerformMoveProjectToSolutionFolder(
+                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>((nextName, _, _) =>
+					{
+                        PerformMoveProjectToSolutionFolder(
                             treeViewSolution,
                             treeViewProjectToMove,
                             nextName,
                             terminal,
                             dispatcher,
-                            onAfterCompletion))
+                            onAfterCompletion);
+
+						return Task.CompletedTask;
+					})
                 },
             });
     }
@@ -297,12 +307,17 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Remove NuGet Package Reference", MenuOptionKind.Other,
-            OnClickFunc: () => PerformRemoveNuGetPackageReferenceFromProject(
-                modifyProjectNamespacePath,
-                treeViewCSharpProjectNugetPackageReference,
-                terminal,
-                dispatcher,
-                onAfterCompletion));
+            OnClickFunc: () =>
+			{
+				PerformRemoveNuGetPackageReferenceFromProject(
+	                modifyProjectNamespacePath,
+	                treeViewCSharpProjectNugetPackageReference,
+	                terminal,
+	                dispatcher,
+	                onAfterCompletion);
+	
+				return Task.CompletedTask;
+			});
     }
 
     private void PerformNewFile(
@@ -507,7 +522,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                 if (successfullyPasted && clipboardPhrase.Command == ClipboardFacts.CutCommand)
                                 {
                                     // TODO: Rerender the parent of the deleted due to cut file
-                                    await PerformDeleteFile(clipboardAbsolutePath, onAfterCompletion).ConfigureAwait(false);
+                                    PerformDeleteFile(clipboardAbsolutePath, onAfterCompletion);
                                 }
                                 else
                                 {
@@ -593,18 +608,18 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () => await onAfterCompletion.Invoke().ConfigureAwait(false));
 
-                await terminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
+                terminal.EnqueueCommand(terminalCommand);
             });
     }
 
-    public Task PerformAddProjectToProjectReference(
+    public void PerformAddProjectToProjectReference(
         TreeViewNamespacePath projectReceivingReference,
         Terminal terminal,
         IDispatcher dispatcher,
         LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         Func<Task> onAfterCompletion)
     {
-        return ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+        ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
             async referencedProject =>
             {
@@ -626,7 +641,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
-                await terminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
+                terminal.EnqueueCommand(terminalCommand);
             },
             absolutePath =>
             {
@@ -671,7 +686,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
-                await terminal.EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand).ConfigureAwait(false);
+                terminal.EnqueueCommand(removeProjectToProjectReferenceTerminalCommand);
             });
     }
 
@@ -710,7 +725,11 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     treeViewProjectToMove,
                     terminal,
                     dispatcher,
-                    async () => await terminal.EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand).ConfigureAwait(false));
+                    () =>
+					{
+						terminal.EnqueueCommand(moveProjectToSolutionFolderTerminalCommand);
+						return Task.CompletedTask;
+					});
 
                 return Task.CompletedTask;
             });
@@ -744,7 +763,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
-                await terminal.EnqueueCommandAsync(removeNugetPackageReferenceFromProjectTerminalCommand).ConfigureAwait(false);
+                terminal.EnqueueCommand(removeNugetPackageReferenceFromProjectTerminalCommand);
             });
     }
 
