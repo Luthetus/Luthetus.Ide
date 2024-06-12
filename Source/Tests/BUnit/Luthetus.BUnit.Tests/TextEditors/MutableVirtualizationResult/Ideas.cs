@@ -57,6 +57,10 @@ of said virtualization result with this idea being described.
 
 Afterwards, I can assert that the "modified virtualization result" equals what would have
 been calculated had I re-invoked the calculate virtualization result method.
+
+======================================================
+
+Deletion of text might bring downstream unloaded text into view.
 */
 
 /// <summary>TODO: Delete the file: "Ideas.cs"</summary>

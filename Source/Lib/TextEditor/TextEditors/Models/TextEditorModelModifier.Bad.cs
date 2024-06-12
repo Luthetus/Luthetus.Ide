@@ -201,8 +201,6 @@ public partial class TextEditorModelModifier
 
 	public void SetContent(string content)
     {
-        SetIsDirtyTrue();
-
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
@@ -310,6 +308,8 @@ public partial class TextEditorModelModifier
         }
 
         CheckRowEndingPositions(true);
+        SetIsDirtyTrue();
+		ShouldReloadVirtualizationResult = true;
     }
 
 	public void ClearEditBlocks()

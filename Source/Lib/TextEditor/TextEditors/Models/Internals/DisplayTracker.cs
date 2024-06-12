@@ -163,6 +163,18 @@ public class DisplayTracker : IDisposable
 					.Invoke(editContext)
 					.ConfigureAwait(false);
 
+				// This virtualization result calculation is intentionally posted from within a post,
+				// in order to ensure that the preceeding remeasure is executed and the state is updated first
+				await _textEditorService.PostTakeMostRecent(
+		                nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory),
+						model.ResourceUri,
+		                viewModel.ViewModelKey,
+		                _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+		                    model.ResourceUri,
+		                	viewModel.ViewModelKey,
+		                    CancellationToken.None))
+		            .ConfigureAwait(false);
+
 				return;
 			});
 	}
