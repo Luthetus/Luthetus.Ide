@@ -47,8 +47,8 @@ public class OnOutput : ITextEditorTask
 
     private List<TextEditorTextSpan> _outputTextSpanList;
 
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnOutput);
     public Task? WorkProgress { get; }
     public int OutputOffset { get; }

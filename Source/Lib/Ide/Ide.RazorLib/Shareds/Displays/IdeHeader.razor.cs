@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -24,10 +28,6 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using System.Collections.Immutable;
-using Fluxor;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -116,22 +116,38 @@ public partial class IdeHeader : ComponentBase
             var menuOptionOpenFile = new MenuOptionRecord(
                 "File",
                 MenuOptionKind.Other,
-                IdeBackgroundTaskApi.Editor.ShowInputFile);
+                () =>
+				{
+					IdeBackgroundTaskApi.Editor.ShowInputFile();
+					return Task.CompletedTask;
+				});
 
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
                 MenuOptionKind.Other,
-                IdeBackgroundTaskApi.FolderExplorer.ShowInputFile);
+                () =>
+				{
+					IdeBackgroundTaskApi.FolderExplorer.ShowInputFile();
+					return Task.CompletedTask;
+				});
 
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",
                 MenuOptionKind.Other,
-                IdeBackgroundTaskApi.Editor.ShowInputFile);
+                () =>
+				{
+					IdeBackgroundTaskApi.Editor.ShowInputFile();
+					return Task.CompletedTask;
+				});
 
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
-                () => DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi));
+                () =>
+				{
+					DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi);
+					return Task.CompletedTask;
+				});
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",

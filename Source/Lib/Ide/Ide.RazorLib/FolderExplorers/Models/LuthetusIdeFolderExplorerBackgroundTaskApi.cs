@@ -1,4 +1,5 @@
-﻿using Fluxor;
+using Fluxor;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -9,7 +10,6 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
@@ -44,19 +44,19 @@ public class LuthetusIdeFolderExplorerBackgroundTaskApi
         _dispatcher = dispatcher;
     }
 
-    public Task SetFolderExplorerState(IAbsolutePath folderAbsolutePath)
+    public void SetFolderExplorerState(IAbsolutePath folderAbsolutePath)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set FolderExplorer State",
             async () => await SetFolderExplorerAsync(folderAbsolutePath).ConfigureAwait(false));
     }
 
-    public Task SetFolderExplorerTreeView(IAbsolutePath folderAbsolutePath)
+    public void SetFolderExplorerTreeView(IAbsolutePath folderAbsolutePath)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set FolderExplorer TreeView",
             async () => await SetFolderExplorerTreeViewAsync(folderAbsolutePath).ConfigureAwait(false));
@@ -64,25 +64,24 @@ public class LuthetusIdeFolderExplorerBackgroundTaskApi
 
     public async Task ShowInputFile()
     {
-        await _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
-                "Folder Explorer",
-                async absolutePath =>
-                {
-                    if (absolutePath is not null)
-                        await SetFolderExplorerAsync(absolutePath).ConfigureAwait(false);
-                },
-                absolutePath =>
-                {
-                    if (absolutePath is null || !absolutePath.IsDirectory)
-                        return Task.FromResult(false);
+        _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+            "Folder Explorer",
+            async absolutePath =>
+            {
+                if (absolutePath is not null)
+                    await SetFolderExplorerAsync(absolutePath).ConfigureAwait(false);
+            },
+            absolutePath =>
+            {
+                if (absolutePath is null || !absolutePath.IsDirectory)
+                    return Task.FromResult(false);
 
-                    return Task.FromResult(true);
-                },
-                new[]
-                {
-                    new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-                }.ToImmutableArray())
-            .ConfigureAwait(false);
+                return Task.FromResult(true);
+            },
+            new[]
+            {
+                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
+            }.ToImmutableArray());
     }
 
     private async Task SetFolderExplorerAsync(IAbsolutePath folderAbsolutePath)

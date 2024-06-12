@@ -3,8 +3,8 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Ide.RazorLib.Shareds.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
@@ -27,7 +27,7 @@ public partial class ActiveBackgroundTaskDisplay : IDisposable
     {
         _backgroundTaskDialogModel = new(_seenBackgroundTasks);
 
-        _continuousBackgroundTaskWorker = BackgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+        _continuousBackgroundTaskWorker = (BackgroundTaskQueue)BackgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
         _continuousBackgroundTaskWorker.ExecutingBackgroundTaskChanged += ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged;
 
         base.OnInitialized();

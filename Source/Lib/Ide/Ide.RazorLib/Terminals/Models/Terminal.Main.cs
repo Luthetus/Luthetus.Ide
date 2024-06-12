@@ -1,3 +1,8 @@
+using CliWrap;
+using CliWrap.EventStream;
+using Fluxor;
+using System.Collections.Immutable;
+using System.Reactive.Linq;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -6,11 +11,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using CliWrap;
-using CliWrap.EventStream;
-using Fluxor;
-using System.Collections.Immutable;
-using System.Reactive.Linq;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -98,10 +98,10 @@ public partial class Terminal
             await WriteWorkingDirectory(true);
 	}
 
-    public Task EnqueueCommandAsync(TerminalCommand terminalCommand)
+    public void EnqueueCommand(TerminalCommand terminalCommand)
     {
-		return _backgroundTaskService.EnqueueAsync(
-			Key<BackgroundTask>.NewKey(),
+		_backgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
 			BlockingBackgroundTaskWorker.GetQueueKey(),
 			"Enqueue Command",
 			() => HandleCommand(terminalCommand));

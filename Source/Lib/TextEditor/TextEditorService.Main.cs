@@ -157,7 +157,7 @@ public partial class TextEditorService : ITextEditorService
                 this,
                 AuthenticatedActionKey);
 
-            await _backgroundTaskService.EnqueueAsync(task).ConfigureAwait(false);
+            _backgroundTaskService.Enqueue(task);
         }
         catch (LuthetusTextEditorException e)
         {

@@ -25,8 +25,8 @@ public class OnDoubleClick : ITextEditorTask
         ViewModelKey = viewModelKey;
     }
 
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnDoubleClick);
     public Task? WorkProgress { get; }
     public MouseEventArgs MouseEventArgs { get; }

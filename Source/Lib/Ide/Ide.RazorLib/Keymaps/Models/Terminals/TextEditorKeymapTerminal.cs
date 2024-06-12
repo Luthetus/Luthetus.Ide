@@ -187,7 +187,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 											.Invoke(editContext)
 											.ConfigureAwait(false);
 
-                                        await generalTerminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
+                                        generalTerminal.EnqueueCommand(terminalCommand);
                                     }
                                     else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
                                     {

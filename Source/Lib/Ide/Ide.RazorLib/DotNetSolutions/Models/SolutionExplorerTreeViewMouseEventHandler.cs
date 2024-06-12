@@ -26,6 +26,10 @@ public class SolutionExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandl
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewNamespacePath treeViewNamespacePath)
             return Task.CompletedTask;
 
-        return _ideBackgroundTaskApi.Editor.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, true);
+        _ideBackgroundTaskApi.Editor.OpenInEditor(
+			treeViewNamespacePath.Item.AbsolutePath,
+			true);
+
+		return Task.CompletedTask;
     }
 }

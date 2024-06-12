@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
@@ -12,10 +12,8 @@ public partial class IdePromptOpenSolutionDisplay : ComponentBase
     [Parameter, EditorRequired]
     public IAbsolutePath AbsolutePath { get; set; } = null!;
 
-    private async Task OpenSolutionOnClick()
+    private void OpenSolutionOnClick()
     {
-        await IdeBackgroundTaskApi.DotNetSolution
-            .SetDotNetSolution(AbsolutePath)
-            .ConfigureAwait(false);
+        IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(AbsolutePath);
     }
 }

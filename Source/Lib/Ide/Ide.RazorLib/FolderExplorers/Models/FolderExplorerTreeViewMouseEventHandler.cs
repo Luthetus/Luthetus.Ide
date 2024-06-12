@@ -26,8 +26,8 @@ public class FolderExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewAbsolutePath treeViewAbsolutePath)
             return;
 
-        await _ideBackgroundTaskApi.Editor
-            .OpenInEditor(treeViewAbsolutePath.Item, true)
-            .ConfigureAwait(false);
+        _ideBackgroundTaskApi.Editor.OpenInEditor(
+			treeViewAbsolutePath.Item,
+			true);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Microsoft.AspNetCore.Components;
@@ -47,11 +47,7 @@ public partial class InputAppTheme : IDisposable
             var existingThemeRecord = themesInScopeList.FirstOrDefault(btr => btr.Key.Guid == guidValue);
 
             if (existingThemeRecord is not null)
-            {
-                await AppOptionsService
-                    .SetActiveThemeRecordKey(existingThemeRecord.Key)
-                    .ConfigureAwait(false);
-            }
+                AppOptionsService.SetActiveThemeRecordKey(existingThemeRecord.Key);
         }
     }
 

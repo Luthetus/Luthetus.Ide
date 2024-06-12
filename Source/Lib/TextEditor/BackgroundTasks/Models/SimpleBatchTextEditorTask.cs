@@ -38,8 +38,8 @@ public sealed class SimpleBatchTextEditorTask : ITextEditorTask
     }
 
 	public string Name { get; set; }
-    public Key<BackgroundTask> BackgroundTaskKey { get; set; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public TimeSpan ThrottleTimeSpan { get; set; }
     public Task? WorkProgress { get; set; }
 

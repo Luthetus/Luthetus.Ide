@@ -10,7 +10,7 @@ public class BackgroundTaskWorker : BackgroundService
     private bool _hasActiveExecutionActive;
 
     public BackgroundTaskWorker(
-        Key<BackgroundTaskQueue> queueKey,
+        Key<IBackgroundTaskQueue> queueKey,
         IBackgroundTaskService backgroundTaskService,
         ILoggerFactory loggerFactory)
     {
@@ -19,7 +19,7 @@ public class BackgroundTaskWorker : BackgroundService
         _logger = loggerFactory.CreateLogger<BackgroundTaskWorker>();
     }
 
-    public Key<BackgroundTaskQueue> QueueKey { get; }
+    public Key<IBackgroundTaskQueue> QueueKey { get; }
     public IBackgroundTaskService BackgroundTaskService { get; }
 
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
@@ -81,7 +81,7 @@ public class BackgroundTaskWorker : BackgroundService
         while (BackgroundTaskService.Queues.Any(x => x.ExecutingBackgroundTask is not null) ||
                 _hasActiveExecutionActive ||
                 // TODO: Here a check is done for if there are background tasks pending for a hacky-concurrency solution
-                BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTasks).Any())
+                BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTaskList).Any())
         {
             await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
         }

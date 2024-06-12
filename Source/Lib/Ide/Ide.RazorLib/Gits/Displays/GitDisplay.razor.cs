@@ -1,5 +1,7 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Microsoft.AspNetCore.Components;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -12,8 +14,6 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
-using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -163,14 +163,16 @@ public partial class GitDisplay : FluxorComponent
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
                     new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
                         async (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
-                            await PerformNewFile(localGitState, fileName))
+                            await PerformBranchNewEnqueue(localGitState, fileName))
                 },
             });
 
-        async Task PerformNewFile(GitState localGitState, string fileName)
+        Task PerformBranchNewEnqueue(GitState localGitState, string fileName)
         {
             if (localGitState.Repo is not null)
-                await IdeBackgroundTaskApi.Git.BranchNewEnqueue(localGitState.Repo, fileName);
+                IdeBackgroundTaskApi.Git.BranchNewEnqueue(localGitState.Repo, fileName);
+
+			return Task.CompletedTask;
         }
     }
     
@@ -193,13 +195,12 @@ public partial class GitDisplay : FluxorComponent
             MenuOptionKind.Other,
             DoAction);
 
-        async Task DoAction()
+        Task DoAction()
         {
-            if (localGitState.Repo is null)
-                return;
+            if (localGitState.Repo is not null)
+            	IdeBackgroundTaskApi.Git.PushToOriginWithTrackingEnqueue(localGitState.Repo);
 
-            await IdeBackgroundTaskApi.Git.PushToOriginWithTrackingEnqueue(localGitState.Repo)
-                .ConfigureAwait(false);
+			return Task.CompletedTask;
         }
     }
     
@@ -210,13 +211,12 @@ public partial class GitDisplay : FluxorComponent
             MenuOptionKind.Other,
             DoAction);
 
-        async Task DoAction()
+        Task DoAction()
         {
-            if (localGitState.Repo is null)
-                return;
+            if (localGitState.Repo is not null)
+                IdeBackgroundTaskApi.Git.PullEnqueue(localGitState.Repo);
 
-            await IdeBackgroundTaskApi.Git.PullEnqueue(localGitState.Repo)
-                .ConfigureAwait(false);
+            return Task.CompletedTask;
         }
     }
     
@@ -227,13 +227,12 @@ public partial class GitDisplay : FluxorComponent
             MenuOptionKind.Other,
             DoAction);
 
-        async Task DoAction()
+        Task DoAction()
         {
-            if (localGitState.Repo is null)
-                return;
+            if (localGitState.Repo is not null)
+                IdeBackgroundTaskApi.Git.FetchEnqueue(localGitState.Repo);
 
-            await IdeBackgroundTaskApi.Git.FetchEnqueue(localGitState.Repo)
-                .ConfigureAwait(false);
+            return Task.CompletedTask;
         }
     }
 }

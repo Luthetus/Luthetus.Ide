@@ -1,4 +1,5 @@
 using Fluxor;
+using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
@@ -7,7 +8,6 @@ using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -32,18 +32,17 @@ public partial class GitOriginDisplay : ComponentBase
     
     public Key<TerminalCommand> GitSetOriginTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 
-    private async Task GetOriginOnClick()
+    private void GetOriginOnClick()
     {
         var localGitState = GitStateWrap.Value;
 
         if (localGitState.Repo is null)
             return;
         
-        await IdeBackgroundTaskApi.Git.GetOriginNameEnqueue(localGitState.Repo)
-            .ConfigureAwait(false);
+        IdeBackgroundTaskApi.Git.GetOriginNameEnqueue(localGitState.Repo);
     }
 
-    private async Task SetGitOriginOnClick(string localCommandArgs)
+    private void SetGitOriginOnClick(string localCommandArgs)
     {
         var localGitState = GitStateWrap.Value;
 
@@ -65,8 +64,6 @@ public partial class GitOriginDisplay : ComponentBase
             OutputParser: GitCliOutputParser);
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal
-            .EnqueueCommandAsync(gitStatusCommand)
-            .ConfigureAwait(false);
+        generalTerminal.EnqueueCommand(gitStatusCommand);
     }
 }
