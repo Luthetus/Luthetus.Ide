@@ -63,6 +63,7 @@ public partial class IdeHeader : ComponentBase
 	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -79,8 +80,6 @@ public partial class IdeHeader : ComponentBase
 	private Key<DropdownRecord> _dropdownKeyRun = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuRun = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonRunElementReference;
-
-    private ActiveBackgroundTaskDisplay? _activeBackgroundTaskDisplayComponent;
 
     protected override Task OnInitializedAsync()
     {
@@ -254,12 +253,16 @@ public partial class IdeHeader : ComponentBase
                 MenuOptionKind.Delete,
                 () => 
                 {
-                    var localActiveBackgroundTaskDisplayComponent = _activeBackgroundTaskDisplayComponent;
-
-                    if (localActiveBackgroundTaskDisplayComponent is null)
-                        return Task.CompletedTask;
-
-                    return localActiveBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick();
+					var dialogRecord = new DialogViewModel(
+			            _backgroundTaskDialogKey,
+			            "Background Tasks",
+			            typeof(BackgroundTaskDialogDisplay),
+			            null,
+			            null,
+						true);
+			
+			        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+			        return Task.CompletedTask;
                 });
 
             menuOptionsList.Add(menuOptionBackgroundTasks);
