@@ -129,7 +129,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
             _textEditorService.ModelApi.RegisterCustom(model);
 
-            await _textEditorService.PostSimpleBatch(
+            _textEditorService.PostSimpleBatch(
                 nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
                 async editContext =>
                 {
@@ -199,7 +199,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
             registerViewModelArgs.ResourceUri.Value,
             false);
 
-        await _textEditorService.PostSimpleBatch(
+        _textEditorService.PostSimpleBatch(
             nameof(TryRegisterViewModelFunc),
             _textEditorService.ViewModelApi.WithValueFactory(
                 viewModelKey,
@@ -230,7 +230,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
                 {
                     if (writtenDateTime is not null)
                     {
-                        await _textEditorService.PostSimpleBatch(
+                        _textEditorService.PostSimpleBatch(
                             nameof(HandleOnSaveRequested),
                             _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
@@ -357,7 +357,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
                                                 .ReadAllTextAsync(inputFileAbsolutePathString)
                                                 .ConfigureAwait(false);
 
-                                            await _textEditorService.PostSimpleBatch(
+                                            _textEditorService.PostSimpleBatch(
                                                 nameof(CheckIfContentsWereModifiedAsync),
                                                 async editContext =>
                                                 {

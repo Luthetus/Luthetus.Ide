@@ -1,12 +1,12 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Displays.Internals;
 
@@ -50,7 +50,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
         var modelText = model.GetAllText();
 
-        await TextEditorService.PostSimpleBatch(
+        TextEditorService.PostSimpleBatch(
             nameof(SyntaxTextSpanDisplay),
             async editContext =>
             {
@@ -90,9 +90,9 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
                     .Invoke(editContext)
                     .ConfigureAwait(false);
 
-                await modelModifier.CompilerService.ResourceWasModified(
+                modelModifier.CompilerService.ResourceWasModified(
                     _textSpanTuple.TextEditorTextSpan.ResourceUri,
                     ImmutableArray<TextEditorTextSpan>.Empty);
-            }).ConfigureAwait(false);
+            });
     }
 }

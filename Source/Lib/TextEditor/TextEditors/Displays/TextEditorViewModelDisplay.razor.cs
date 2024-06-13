@@ -4,6 +4,13 @@ using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
@@ -16,13 +23,6 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Common.RazorLib.Clipboards.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -137,20 +137,17 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var previousOptionsRenderStateKey = _previousRenderBatch?.Options?.RenderStateKey ?? Key<RenderState>.Empty;
             var currentOptionsRenderStateKey = _storedRenderBatch.Options.RenderStateKey;
 
-			_ = Task.Run(async () =>
-			{
-				if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
-	            {
-	                await QueueRemeasureBackgroundTask(
-	                    _storedRenderBatch,
-	                    MeasureCharacterWidthAndRowHeightElementId,
-	                    _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
-	                    CancellationToken.None);
-	            }
-	
-	            if (isFirstDisplay)
-					await QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
-			});
+			if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
+            {
+                QueueRemeasureBackgroundTask(
+                    _storedRenderBatch,
+                    MeasureCharacterWidthAndRowHeightElementId,
+                    _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
+                    CancellationToken.None);
+            }
+
+            if (isFirstDisplay)
+				QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
         }
 
         return shouldRender;
@@ -164,13 +161,13 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
 
-            await QueueRemeasureBackgroundTask(
+            QueueRemeasureBackgroundTask(
                 _storedRenderBatch,
                 MeasureCharacterWidthAndRowHeightElementId,
                 _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
                 CancellationToken.None);
 
-            await QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
+            QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
         }
 
         if (_storedRenderBatch?.ViewModel is not null && _storedRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender)
@@ -273,7 +270,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync().ConfigureAwait(false);
     }
 
-    private async Task ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs))
             return;
@@ -290,15 +287,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             resourceUri,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onKeyDown).ConfigureAwait(false);
+        TextEditorService.Post(onKeyDown);
 	}
 
-    private async Task ReceiveOnContextMenuAsync()
+    private void ReceiveOnContextMenu()
     {
 		var localViewModelKey = TextEditorViewModelKey;
 
-		await TextEditorService.PostSimpleBatch(
-			nameof(ReceiveOnContextMenuAsync),
+		TextEditorService.PostSimpleBatch(
+			nameof(ReceiveOnContextMenu),
 			editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
@@ -315,7 +312,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 			});
     }
 
-    private async Task ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
+    private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
         var modelResourceUri = GetModel()?.ResourceUri;
         var viewModelKey = GetViewModel()?.ViewModelKey;
@@ -329,10 +326,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             modelResourceUri,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onDoubleClick).ConfigureAwait(false);
+        TextEditorService.Post(onDoubleClick);
     }
 
-    private async Task ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
+    private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
     {
         _componentData.ThinksLeftMouseButtonIsDown = true;
 
@@ -353,11 +350,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             modelResourceUri,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onMouseDown).ConfigureAwait(false);
+        TextEditorService.Post(onMouseDown);
     }
 
-    /// <summary>OnMouseUp is un-necessary</summary>
-    private async Task ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
+    private void ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
     {
         _userMouseIsInside = true;
 
@@ -384,20 +380,19 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                     if (!mouseNoLongerOverTooltipCancellationToken.IsCancellationRequested)
                     {
-						await TextEditorService.PostSimpleBatch(
-								nameof(ContextMenu),
-								editContext =>
+						TextEditorService.PostSimpleBatch(
+							nameof(ContextMenu),
+							editContext =>
+							{
+								var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+			
+								viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
 								{
-									var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
-				
-									viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
-									{
-										TooltipViewModel = null
-									};
+									TooltipViewModel = null
+								};
 
-									return Task.CompletedTask;
-								})
-							.ConfigureAwait(false);
+								return Task.CompletedTask;
+							});
                     }
                 });
             }
@@ -415,16 +410,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 {
                     await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
-					
-                    await TextEditorService.PostSimpleBatch(
-							nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory),
-							TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory(
-								mouseEventArgs,
-								_componentData,
-								TextEditorComponentRenderers,
-						        modelResourceUri,
-						        viewModelKey.Value))
-						.ConfigureAwait(false);
+                    TextEditorService.PostSimpleBatch(
+						nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory),
+						TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory(
+							mouseEventArgs,
+							_componentData,
+							TextEditorComponentRenderers,
+					        modelResourceUri,
+					        viewModelKey.Value));
                 }
             });
         }
@@ -444,7 +437,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 modelResourceUri,
                 viewModelKey.Value);
 
-            await TextEditorService.Post(onMouseMove).ConfigureAwait(false);
+            TextEditorService.Post(onMouseMove);
         }
         else
         {
@@ -457,7 +450,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         _userMouseIsInside = false;
     }
     
-    private async Task ReceiveOnWheel(WheelEventArgs wheelEventArgs)
+    private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
         var viewModelKey = GetViewModel()?.ViewModelKey;
 
@@ -469,20 +462,18 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             _componentData,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onWheel).ConfigureAwait(false);
+        TextEditorService.Post(onWheel);
     }
 
-    private Task ReceiveOnTouchStartAsync(TouchEventArgs touchEventArgs)
+    private void ReceiveOnTouchStart(TouchEventArgs touchEventArgs)
     {
         _touchStartDateTime = DateTime.UtcNow;
 
         _previousTouchEventArgs = touchEventArgs;
         _thinksTouchIsOccurring = true;
-
-        return Task.CompletedTask;
     }
 
-    private async Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
+    private void ReceiveOnTouchMove(TouchEventArgs touchEventArgs)
     {
         var localThinksTouchIsOccurring = _thinksTouchIsOccurring;
 
@@ -504,7 +495,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        await TextEditorService.PostSimpleBatch(
+        TextEditorService.PostSimpleBatch(
             nameof(QueueRemeasureBackgroundTask),
             async editContext =>
 			{
@@ -517,7 +508,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     .MutateScrollVerticalPositionFactory(viewModel.ViewModelKey, diffY)
                     .Invoke(editContext)
                     .ConfigureAwait(false);
-			}).ConfigureAwait(false);
+			});
 
         _previousTouchEventArgs = touchEventArgs;
     }
@@ -534,7 +525,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return $"height: {heightInPixelsInvariantCulture}px;";
     }
 
-    private async Task ClearTouch(TouchEventArgs touchEventArgs)
+    private void ClearTouch(TouchEventArgs touchEventArgs)
     {
         var rememberStartTouchEventArgs = _previousTouchEventArgs;
 
@@ -554,7 +545,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             if (startTouchPoint is null)
                 return;
 
-            await ReceiveContentOnMouseDown(new MouseEventArgs
+            ReceiveContentOnMouseDown(new MouseEventArgs
             {
                 Buttons = 1,
                 ClientX = startTouchPoint.ClientX,
@@ -563,7 +554,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         }
     }
 
-    private async Task QueueRemeasureBackgroundTask(
+    private void QueueRemeasureBackgroundTask(
         ITextEditorRenderBatch localRefCurrentRenderBatch,
         string localMeasureCharacterWidthAndRowHeightElementId,
         int countOfTestCharacters,
@@ -575,20 +566,19 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostTakeMostRecent(
-                nameof(QueueRemeasureBackgroundTask),
-				modelResourceUri,
-				viewModelKey.Value,
-                TextEditorService.ViewModelApi.RemeasureFactory(
-                    modelResourceUri,
-                    viewModelKey.Value,
-                    localMeasureCharacterWidthAndRowHeightElementId,
-                    countOfTestCharacters,
-                    CancellationToken.None))
-            .ConfigureAwait(false);
+        TextEditorService.PostTakeMostRecent(
+            nameof(QueueRemeasureBackgroundTask),
+			modelResourceUri,
+			viewModelKey.Value,
+            TextEditorService.ViewModelApi.RemeasureFactory(
+                modelResourceUri,
+                viewModelKey.Value,
+                localMeasureCharacterWidthAndRowHeightElementId,
+                countOfTestCharacters,
+                CancellationToken.None));
     }
 
-    private async Task QueueCalculateVirtualizationResultBackgroundTask(
+    private void QueueCalculateVirtualizationResultBackgroundTask(
 		ITextEditorRenderBatch localCurrentRenderBatch)
     {
         var modelResourceUri = GetModel()?.ResourceUri;
@@ -597,15 +587,14 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostTakeMostRecent(
-                nameof(QueueCalculateVirtualizationResultBackgroundTask),
-				modelResourceUri,
-				viewModelKey.Value,
-                TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                    modelResourceUri,
-                    viewModelKey.Value,
-                    CancellationToken.None))
-            .ConfigureAwait(false);
+        TextEditorService.PostTakeMostRecent(
+            nameof(QueueCalculateVirtualizationResultBackgroundTask),
+			modelResourceUri,
+			viewModelKey.Value,
+            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                modelResourceUri,
+                viewModelKey.Value,
+                CancellationToken.None));
     }
 
     public void Dispose()

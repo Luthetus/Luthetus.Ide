@@ -122,12 +122,12 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
         }
     }
 
-    private async Task DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
+    private Task DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
     {
         var localThinksLeftMouseButtonIsDown = _thinksLeftMouseButtonIsDown;
 
         if (!localThinksLeftMouseButtonIsDown)
-            return;
+            return Task.CompletedTask;
 
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
@@ -168,12 +168,14 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
 					RenderBatch.ViewModel.ViewModelKey);
 			}
 
-			await TextEditorService.Post(onScrollVertical);
+			TextEditorService.Post(onScrollVertical);
         }
         else
         {
             _thinksLeftMouseButtonIsDown = false;
         }
+
+        return Task.CompletedTask;
     }
 
     public void Dispose()

@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.Common.RazorLib.Menus.Models;
-using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 
@@ -36,45 +36,44 @@ public partial class AutocompleteMenu : ComponentBase
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
 		{
-			await TextEditorService.PostSimpleBatch(
-					nameof(AutocompleteMenu),
-					editContext =>
-					{
-						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
-	
-						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-						{
-							MenuKind = MenuKind.None
-						};
+			TextEditorService.PostSimpleBatch(
+				nameof(AutocompleteMenu),
+				editContext =>
+				{
+					var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
 
-						return Task.CompletedTask;
-					})
-				.ConfigureAwait(false);
+					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					{
+						MenuKind = MenuKind.None
+					};
+
+					return Task.CompletedTask;
+				});
 		}
     }
 
-    private async Task ReturnFocusToThisAsync()
+    private Task ReturnFocusToThisAsync()
     {
         try
         {
-            await TextEditorService.PostSimpleBatch(
-					nameof(AutocompleteMenu),
-					editContext =>
-					{
-						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
-	
-						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-						{
-							MenuKind = MenuKind.None
-						};
+            TextEditorService.PostSimpleBatch(
+				nameof(AutocompleteMenu),
+				editContext =>
+				{
+					var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
 
-						return Task.CompletedTask;
-					})
-				.ConfigureAwait(false);
+					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					{
+						MenuKind = MenuKind.None
+					};
+
+					return Task.CompletedTask;
+				});
+			return Task.CompletedTask;
         }
         catch (Exception e)
         {
@@ -177,7 +176,7 @@ public partial class AutocompleteMenu : ComponentBase
         {
             try
             {
-				await TextEditorService.PostSimpleBatch(
+				TextEditorService.PostSimpleBatch(
 					nameof(AutocompleteMenu),
 					editContext =>
 					{
@@ -189,8 +188,7 @@ public partial class AutocompleteMenu : ComponentBase
 						};
 
 						return Task.CompletedTask;
-					})
-				.ConfigureAwait(false);
+					});
 
                 await menuOptionAction.Invoke().ConfigureAwait(false);
             }
@@ -209,12 +207,13 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        return TextEditorService.PostSimpleBatch(
+        TextEditorService.PostSimpleBatch(
             nameof(InsertAutocompleteMenuOption),
             TextEditorService.ModelApi.InsertTextFactory(
                 viewModel.ResourceUri,
                 viewModel.ViewModelKey,
                 autocompleteEntry.DisplayName.Substring(word.Length),
                 CancellationToken.None));
+		return Task.CompletedTask;
     }
 }

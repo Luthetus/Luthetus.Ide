@@ -1,17 +1,17 @@
+using Microsoft.AspNetCore.Components.Web;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
-using Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
@@ -129,15 +129,15 @@ public sealed class CSharpCompilerService : LuthCompilerService
                 return new AutocompleteEntry(
                     x.Key.TypeIdentifier,
                     AutocompleteEntryKind.Type,
-                    async () =>
+                    () =>
                     {
                         if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() == x.Key.NamespaceIdentifier ||
                             boundScope.CurrentUsingStatementNodeList.Any(usn => usn.NamespaceIdentifier.TextSpan.GetText() == x.Key.NamespaceIdentifier))
                         {
-                            return;
+                            return Task.CompletedTask;
                         }
 
-                        await _textEditorService.PostSimpleBatch(
+                        _textEditorService.PostSimpleBatch(
                             "Add using statement",
                             async editContext =>
                             {
@@ -190,6 +190,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                                         .ConfigureAwait(false);
                                 }
                             });
+						return Task.CompletedTask;
                     });
             }));
 

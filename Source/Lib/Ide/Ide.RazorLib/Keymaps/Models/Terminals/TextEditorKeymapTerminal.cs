@@ -79,7 +79,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                await commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostSimpleBatch(
 					nameof(commandDisplayName),
                     async editContext =>
 					{
@@ -229,7 +229,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 										else
 										{
                                             await onKeyDown.HandleEvent(CancellationToken.None).ConfigureAwait(false);
-                                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                                            terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                                         }
                                     }
                                 }
@@ -265,7 +265,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                             if (terminalResource is null)
                                 return;
 
-                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                            terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                         }
 					});
 			});

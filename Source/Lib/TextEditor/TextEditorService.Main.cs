@@ -123,25 +123,25 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public Task PostSimpleBatch(
+    public void PostSimpleBatch(
         string name,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        return Post(new SimpleBatchTextEditorTask(
+        Post(new SimpleBatchTextEditorTask(
             name,
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public Task PostTakeMostRecent(
+    public void PostTakeMostRecent(
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        return Post(new TakeMostRecentTextEditorTask(
+        Post(new TakeMostRecentTextEditorTask(
             name,
 			resourceUri,
             viewModelKey,
@@ -149,20 +149,13 @@ public partial class TextEditorService : ITextEditorService
             throttleTimeSpan));
     }
 
-    public async Task Post(ITextEditorTask task)
+    public void Post(ITextEditorTask task)
     {
-        try
-        {
-			task.EditContext = new TextEditorEditContext(
-                this,
-                AuthenticatedActionKey);
+        task.EditContext = new TextEditorEditContext(
+            this,
+            AuthenticatedActionKey);
 
-            _backgroundTaskService.Enqueue(task);
-        }
-        catch (LuthetusTextEditorException e)
-        {
-            Console.WriteLine(e.ToString());
-        }
+        _backgroundTaskService.Enqueue(task);
     }
 
 	public async Task FinalizePost(IEditContext editContext)

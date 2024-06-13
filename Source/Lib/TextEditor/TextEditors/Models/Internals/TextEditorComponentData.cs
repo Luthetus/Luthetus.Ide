@@ -86,7 +86,8 @@ public class TextEditorComponentData
     {
         return _throttleApplySyntaxHighlighting.PushEvent(_ =>
         {
-            return modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+            modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+			return Task.CompletedTask;
         });
     }
 

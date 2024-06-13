@@ -132,19 +132,19 @@ public class DisplayTracker : IDisposable
 		await PostScrollAndRemeasure();
     }
 
-	private async Task PostScrollAndRemeasure()
+	private Task PostScrollAndRemeasure()
 	{
 		var model = _textEditorService.ModelApi.GetOrDefault(_resourceUri);
         var viewModel = _textEditorService.ViewModelApi.GetOrDefault(_viewModelKey);
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
 		// The 'Remeasure' command as of this comment
 		// does not use the 'commandArgs' parameter
         var commandArgs = (TextEditorCommandArgs?)null;
 
-		await _textEditorService.PostTakeMostRecent(
+		_textEditorService.PostTakeMostRecent(
 			nameof(AppDimensionStateWrap_StateChanged),
 			model.ResourceUri,
             viewModel.ViewModelKey,
@@ -165,18 +165,18 @@ public class DisplayTracker : IDisposable
 
 				// This virtualization result calculation is intentionally posted from within a post,
 				// in order to ensure that the preceeding remeasure is executed and the state is updated first
-				await _textEditorService.PostTakeMostRecent(
-		                nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory),
-						model.ResourceUri,
-		                viewModel.ViewModelKey,
-		                _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-		                    model.ResourceUri,
-		                	viewModel.ViewModelKey,
-		                    CancellationToken.None))
-		            .ConfigureAwait(false);
+				_textEditorService.PostTakeMostRecent(
+	                nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory),
+					model.ResourceUri,
+	                viewModel.ViewModelKey,
+	                _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+	                    model.ResourceUri,
+	                	viewModel.ViewModelKey,
+	                    CancellationToken.None));
 
 				return;
 			});
+		return Task.CompletedTask;
 	}
 
     public void Dispose()
