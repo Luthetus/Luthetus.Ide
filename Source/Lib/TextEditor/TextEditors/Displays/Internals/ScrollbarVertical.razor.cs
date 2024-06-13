@@ -135,12 +135,12 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
 			var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
 			var scrollbarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
 
-			OnScrollVertical throttleEventOnScrollVertical;
+			OnScrollVertical onScrollVertical;
 
 			if (onDragMouseEventArgs.ClientX < _clientXThresholdToResetScrollTopPosition)
 			{
 				// Drag far left to reset scroll to original
-				throttleEventOnScrollVertical = new OnScrollVertical(
+				onScrollVertical = new OnScrollVertical(
 					_scrollTopOnMouseDown,
 					RenderBatch.ComponentData,
 					RenderBatch.ViewModel.ViewModelKey);
@@ -162,13 +162,13 @@ public partial class ScrollbarVertical : ComponentBase, IDisposable
 				if (scrollTop < 0)
 					scrollTop = 0;
 	
-				throttleEventOnScrollVertical = new OnScrollVertical(
+				onScrollVertical = new OnScrollVertical(
 					scrollTop,
 					RenderBatch.ComponentData,
 					RenderBatch.ViewModel.ViewModelKey);
 			}
 
-			await TextEditorService.Post(throttleEventOnScrollVertical);
+			await TextEditorService.Post(onScrollVertical);
         }
         else
         {
