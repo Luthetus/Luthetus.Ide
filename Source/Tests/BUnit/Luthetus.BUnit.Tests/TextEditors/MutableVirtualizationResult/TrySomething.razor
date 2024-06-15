@@ -152,6 +152,122 @@ DisplayTracker:
 			        CancellationToken.None)
 				.Invoke(editContext);
 
+			// Left virtualization boundary assertion(s)
+			{
+				var expectedVirtualizationBoundary = new VirtualizationBoundary(
+					WidthInPixels: 0,
+					HeightInPixels: 690,
+					LeftInPixels: 0,
+					TopInPixels: 0);
+				var actualVirtualizationBoundary = viewModelModifier.ViewModel.VirtualizationResult.LeftVirtualizationBoundary;
+				Assert.Equal(expectedVirtualizationBoundary, actualVirtualizationBoundary);
+			}
+
+			// Right virtualization boundary assertion(s)
+			{
+				var expectedVirtualizationBoundary = new VirtualizationBoundary(
+					WidthInPixels: -1600,
+					HeightInPixels: 690,
+					LeftInPixels: 2000,
+					TopInPixels: 0);
+				var actualVirtualizationBoundary = viewModelModifier.ViewModel.VirtualizationResult.RightVirtualizationBoundary;
+				Assert.Equal(expectedVirtualizationBoundary, actualVirtualizationBoundary);
+			}
+
+			// Top virtualization boundary assertion(s)
+			{
+				var expectedVirtualizationBoundary = new VirtualizationBoundary(
+					WidthInPixels: 400,
+					HeightInPixels: 0,
+					LeftInPixels: 0,
+					TopInPixels: 0);
+				var actualVirtualizationBoundary = viewModelModifier.ViewModel.VirtualizationResult.TopVirtualizationBoundary;
+				Assert.Equal(expectedVirtualizationBoundary, actualVirtualizationBoundary);
+			}
+
+			// Bottom virtualization boundary assertion(s)
+			{
+				var expectedVirtualizationBoundary = new VirtualizationBoundary(
+					WidthInPixels: 400,
+					HeightInPixels: 490,
+					LeftInPixels: 0,
+					TopInPixels: 200);
+				var actualVirtualizationBoundary = viewModelModifier.ViewModel.VirtualizationResult.BottomVirtualizationBoundary;
+				Assert.Equal(expectedVirtualizationBoundary, actualVirtualizationBoundary);
+			}
+
+			// 0 index virtualization entry assertion(s)
+			{
+				var expectedVirtualizationEntry = new VirtualizationEntry<RichCharacter>(
+					Index: 0,
+					Item: new List<RichCharacter>(),
+					WidthInPixels: 336,
+					HeightInPixels: 40,
+					LeftInPixels: 0,
+					TopInPixels: 0);
+				var actualVirtualizationEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList[0];
+				Assert.Equal(expectedVirtualizationEntry, actualVirtualizationEntry);
+			}
+
+			// 1 index virtualization entry assertion(s)
+			{
+				var expectedVirtualizationEntry = new VirtualizationEntry<RichCharacter>(
+					Index: 1,
+					Item: new List<RichCharacter>(),
+					WidthInPixels: 32,
+					HeightInPixels: 40,
+					LeftInPixels: 0,
+					TopInPixels: 40);
+				var actualVirtualizationEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList[0];
+				Assert.Equal(expectedVirtualizationEntry, actualVirtualizationEntry);
+			}
+
+			// 2 index virtualization entry assertion(s)
+			{
+				var expectedVirtualizationEntry = new VirtualizationEntry<RichCharacter>(
+					Index: 2,
+					Item: new List<RichCharacter>(),
+					WidthInPixels: 80,
+					HeightInPixels: 40,
+					LeftInPixels: 0,
+					TopInPixels: 80);
+				var actualVirtualizationEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList[0];
+				Assert.Equal(expectedVirtualizationEntry, actualVirtualizationEntry);
+			}
+
+			// 3 index virtualization entry assertion(s)
+			{
+				var expectedVirtualizationEntry = new VirtualizationEntry<RichCharacter>(
+					Index: 3,
+					Item: new List<RichCharacter>(),
+					WidthInPixels: 32,
+					HeightInPixels: 40,
+					LeftInPixels: 0,
+					TopInPixels: 120);
+				var actualVirtualizationEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList[0];
+				Assert.Equal(expectedVirtualizationEntry, actualVirtualizationEntry);
+			}
+
+			// 4 index virtualization entry assertion(s)
+			{
+				var expectedVirtualizationEntry = new VirtualizationEntry<RichCharacter>(
+					Index: 4,
+					Item: new List<RichCharacter>(),
+					WidthInPixels: 0,
+					HeightInPixels: 40,
+					LeftInPixels: 0,
+					TopInPixels: 160);
+				var actualVirtualizationEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList[0];
+				Assert.Equal(expectedVirtualizationEntry, actualVirtualizationEntry);
+			}
+
+			// DisplayTracker assertion(s)
+			{
+				var actualDisplayTracker = viewModelModifier.ViewModel.DisplayTracker;
+				Assert.Equal(1, actualDisplayTracker.Links);
+				Assert.Equal(false, actualDisplayTracker.IsFirstDisplay);
+			}
+
 			WriteViewModelToConsole(viewModelModifier.ViewModel);
 			return Task.CompletedTask;
 		});
