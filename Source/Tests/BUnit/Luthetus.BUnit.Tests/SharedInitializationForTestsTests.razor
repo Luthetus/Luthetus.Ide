@@ -71,8 +71,8 @@
 		var count = 0;
 
 		// This await is in regards to the Semaphore that provides the queue with thread safety.
-		await backgroundTaskService.EnqueueAsync(
-			Key<BackgroundTask>.NewKey(),
+		backgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
 			"Unit Testing",
 			() =>

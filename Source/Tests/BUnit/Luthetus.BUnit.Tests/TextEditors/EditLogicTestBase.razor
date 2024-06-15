@@ -33,7 +33,7 @@
 
 		var textEditorService = Services.GetService<ITextEditorService>();
 
-		await textEditorService.PostSimpleBatch(
+		textEditorService.PostSimpleBatch(
 			nameof(RewriteEditLogicTests),
 			async editContext =>
 			{

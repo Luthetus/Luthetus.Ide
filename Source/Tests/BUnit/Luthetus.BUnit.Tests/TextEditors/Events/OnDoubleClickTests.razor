@@ -45,8 +45,8 @@
 		
 		// Consecutive events of this kind are redundant;
 		// one can just take the most recent, and discard the rest.
-		Assert.Equal(1, queue.CountOfBackgroundTasks);
-		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTasks.Single());
+		Assert.Equal(1, queue.Count);
+		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTaskList.Single());
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -83,9 +83,9 @@
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		
 		// Do not overwrite an upstream event that is not of the same type.
-		Assert.Equal(2, queue.CountOfBackgroundTasks);
-		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTasks[0]);
-		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTasks[1]);
+		Assert.Equal(2, queue.Count);
+		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTaskList[0]);
+		Assert.Equal(downstreamOnDoubleClick, queue.BackgroundTaskList[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();

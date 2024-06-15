@@ -51,9 +51,9 @@
 		
 		// Consecutive events of this kind are not expected to occur naturally.
 		// Therefore, their "batch" method keeps them as is and does nothing.
-		Assert.Equal(2, queue.CountOfBackgroundTasks);
-		Assert.Equal(upstreamOnWheelBatch, queue.BackgroundTasks[0]);
-		Assert.Equal(downstreamOnWheelBatch, queue.BackgroundTasks[1]);
+		Assert.Equal(2, queue.Count);
+		Assert.Equal(upstreamOnWheelBatch, queue.BackgroundTaskList[0]);
+		Assert.Equal(downstreamOnWheelBatch, queue.BackgroundTaskList[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
@@ -93,9 +93,9 @@
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
 		
 		// Do not overwrite an upstream event that is not of the same type.
-		Assert.Equal(2, queue.CountOfBackgroundTasks);
-		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTasks[0]);
-		Assert.Equal(downstreamOnWheelBatch, queue.BackgroundTasks[1]);
+		Assert.Equal(2, queue.Count);
+		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTaskList[0]);
+		Assert.Equal(downstreamOnWheelBatch, queue.BackgroundTaskList[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();
