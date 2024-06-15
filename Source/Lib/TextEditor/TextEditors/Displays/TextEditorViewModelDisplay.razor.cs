@@ -81,6 +81,9 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private TextEditorViewModel? _linkedViewModel;
 	private Task _shouldRenderSkipTask = Task.CompletedTask;
 
+	// TODO: Delete '_countQueueCalculateVirtualizationResultBackgroundTaskInvocations'
+	private int _countQueueCalculateVirtualizationResultBackgroundTaskInvocations;
+
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
     private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
     private string ContentElementId => $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
@@ -586,6 +589,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
+
+		Console.WriteLine($"{nameof(QueueCalculateVirtualizationResultBackgroundTask)}:{++_countQueueCalculateVirtualizationResultBackgroundTaskInvocations}");
 
         TextEditorService.PostTakeMostRecent(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),

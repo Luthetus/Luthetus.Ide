@@ -1,3 +1,4 @@
+@using System.Threading
 @using Fluxor
 @using Luthetus.Common.RazorLib.Installations.Models
 @using Luthetus.Common.RazorLib.BackgroundTasks.Models
@@ -51,6 +52,39 @@
 		await SharedInitializationForTests
 			.StartBackgroundTasks(this)
 			.Stop();
+
+		if (backgroundTaskException is not null)
+		{
+			throw backgroundTaskException;
+		}
+	}
+
+	protected async Task DONT_START_NOR_STOP_BTS_RunTextEditorBackgroundTaskTest(Func<IEditContext, Task> testFunc)
+	{
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+
+		Exception? backgroundTaskException = null;
+
+		var textEditorService = Services.GetService<ITextEditorService>();
+
+		textEditorService.PostSimpleBatch(
+			nameof(RewriteEditLogicTests),
+			async editContext =>
+			{
+				try
+				{
+					await testFunc.Invoke(editContext);
+				}
+				catch (Exception exception)
+				{
+					backgroundTaskException = exception;
+					throw;
+				}
+			});
+
+		var continuousBackgroundTaskService = Services.GetService<ContinuousBackgroundTaskWorker>();
+		await continuousBackgroundTaskService.FlushAsync(CancellationToken.None);
 
 		if (backgroundTaskException is not null)
 		{

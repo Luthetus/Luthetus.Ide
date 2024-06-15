@@ -33,6 +33,9 @@ public class DisplayTracker : IDisposable
         _viewModelKey = viewModelKey;
     }
 
+	// TODO: Delete '_countPostScrollAndRemeasureInvocations'
+	private int _countPostScrollAndRemeasureInvocations;
+
     /// <summary>
     /// <see cref="Links"/> refers to a Blazor TextEditorViewModelDisplay having had its OnParametersSet invoked
     /// and the ViewModelKey that was passed as a parameter matches this encompasing ViewModel's key. In this situation
@@ -162,6 +165,8 @@ public class DisplayTracker : IDisposable
 		                commandArgs)
 					.Invoke(editContext)
 					.ConfigureAwait(false);
+
+				Console.WriteLine($"{nameof(PostScrollAndRemeasure)}:{++_countPostScrollAndRemeasureInvocations}");
 
 				// This virtualization result calculation is intentionally posted from within a post,
 				// in order to ensure that the preceeding remeasure is executed and the state is updated first

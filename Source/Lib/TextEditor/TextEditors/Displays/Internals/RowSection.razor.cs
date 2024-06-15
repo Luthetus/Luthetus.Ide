@@ -105,6 +105,8 @@ public partial class RowSection : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
+		Console.WriteLine(nameof(VirtualizationDisplayItemsProviderFunc));
+
         TextEditorService.PostTakeMostRecent(
             nameof(VirtualizationDisplayItemsProviderFunc),
             model.ResourceUri,

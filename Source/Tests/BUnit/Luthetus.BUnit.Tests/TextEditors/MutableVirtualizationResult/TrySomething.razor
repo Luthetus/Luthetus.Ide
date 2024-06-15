@@ -1,3 +1,4 @@
+@using System.Threading
 @using Fluxor
 @using Luthetus.Common.RazorLib.Installations.Models
 @using Luthetus.Common.RazorLib.BackgroundTasks.Models
@@ -26,8 +27,10 @@
 		var testData = EditLogicTestsInitialize("public class MyClass\n{\n\t\n}\n");
 		Assert.Equal("public class MyClass\n{\n\t\n}\n", testData.InModel.AllText);
 		Assert.Equal(1, testData.InModel.EditBlockList.Count);
+		
+		var backgroundTaskHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 
-		await RunTextEditorBackgroundTaskTest(editContext =>
+		await DONT_START_NOR_STOP_BTS_RunTextEditorBackgroundTaskTest(editContext =>
 		{
 			var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
 			var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
@@ -37,7 +40,148 @@
 			if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 				return Task.CompletedTask;
 
+			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+			{
+				CharAndLineMeasurements = new(
+					CharacterWidth: 16,
+					LineHeight: 40),
+				TextEditorDimensions = new(
+					Width: 1987,
+					Height: 1223,
+					BoundingClientRectLeft: 668.890625,
+					BoundingClientRectTop: 242.28125),
+				ScrollbarDimensions = new(
+					ScrollLeft: 0,
+				    ScrollTop: 0,
+				    ScrollWidth: 400,
+				    ScrollHeight: 690,
+				    MarginScrollHeight: 490),
+			};
+
+/*
+NOTE: To get the values in this comment,
+      I copy and pasted the test data into its own file, using the IDE itself.
+	  Then I opened the 'WatchWindowDisplay.razor' dialog that shows all the values.
+
+LeftVirtualizationBoundary:
+	WidthInPixels: 0
+	HeightInPixels: 690
+	LeftInPixels: 0
+	TopInPixels: 0
+
+RightVirtualizationBoundary:
+	WidthInPixels: -1600
+	HeightInPixels: 690
+	LeftInPixels: 2000
+	TopInPixels: 0
+
+TopVirtualizationBoundary:
+	WidthInPixels: 400
+	HeightInPixels: 0
+	LeftInPixels: 0
+	TopInPixels: 0
+
+BottomVirtualizationBoundary:
+	WidthInPixels: 400
+	HeightInPixels: 490
+	LeftInPixels: 0
+	TopInPixels: 200
+
+EntryList:
+	[0] VirtualizationEntry`1:
+		Index: 0
+		Item: List`1
+		WidthInPixels: 336
+		HeightInPixels: 40
+		LeftInPixels: 0
+		TopInPixels: 0
+	[1] VirtualizationEntry`1:
+		Index: 1
+		Item: List`1
+		WidthInPixels: 32
+		HeightInPixels: 40
+		LeftInPixels: 0
+		TopInPixels: 40
+	[2] VirtualizationEntry`1:
+		Index: 2
+		Item: List`1
+		WidthInPixels: 80
+		HeightInPixels: 40
+		LeftInPixels: 0
+		TopInPixels: 80
+	[3] VirtualizationEntry`1:
+		Index: 3
+		Item: List`1
+		WidthInPixels: 32
+		HeightInPixels: 40
+		LeftInPixels: 0
+		TopInPixels: 120
+	[4] VirtualizationEntry`1:
+		Index: 4
+		Item: List`1
+		WidthInPixels: 0
+		HeightInPixels: 40
+		LeftInPixels: 0
+		TopInPixels: 160
+
+DisplayTracker:
+	Links: 1
+	IsFirstDisplay: False
+*/
+
+			WriteViewModelToConsole(viewModelModifier.ViewModel);
+
 			return Task.CompletedTask;
 		});
+
+		await DONT_START_NOR_STOP_BTS_RunTextEditorBackgroundTaskTest(editContext =>
+		{
+			Console.WriteLine($"SECOND");
+
+			var modelModifier = editContext.GetModelModifier(testData.InModel.ResourceUri);
+			var viewModelModifier = editContext.GetViewModelModifier(testData.ViewModelKey);
+			var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+			if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+				return Task.CompletedTask;
+
+			editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+			        testData.InModel.ResourceUri,
+			        testData.ViewModelKey,
+			        CancellationToken.None)
+				.Invoke(editContext);
+
+			WriteViewModelToConsole(viewModelModifier.ViewModel);
+			return Task.CompletedTask;
+		});
+
+		await backgroundTaskHandle.Stop();
+	}
+
+	[Fact]
+	public async Task TrySomethingB()
+	{
+		// Construct
+		var testData = EditLogicTestsInitialize("public class MyClass\n{\n\t\n}\n");
+		Assert.Equal("public class MyClass\n{\n\t\n}\n", testData.InModel.AllText);
+		Assert.Equal(1, testData.InModel.EditBlockList.Count);
+		
+		var backgroundTaskHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+
+		await backgroundTaskHandle.Stop();
+	}
+
+	private void WriteViewModelToConsole(TextEditorViewModel viewModel)
+	{
+		Console.WriteLine(viewModel.CharAndLineMeasurements);
+		Console.WriteLine(viewModel.TextEditorDimensions);
+		Console.WriteLine(viewModel.ScrollbarDimensions);
+
+		Console.WriteLine(viewModel.VirtualizationResult.LeftVirtualizationBoundary);
+		Console.WriteLine(viewModel.VirtualizationResult.RightVirtualizationBoundary);
+		Console.WriteLine(viewModel.VirtualizationResult.TopVirtualizationBoundary);
+		Console.WriteLine(viewModel.VirtualizationResult.BottomVirtualizationBoundary);
+		Console.WriteLine($"EntryList.Length: {viewModel.VirtualizationResult.EntryList.Length}");
 	}
 }
