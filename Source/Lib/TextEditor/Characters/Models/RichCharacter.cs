@@ -1,5 +1,9 @@
 namespace Luthetus.TextEditor.RazorLib.Characters.Models;
 
+/// <summary>
+/// Why is this class not a struct?
+/// (current named: 'RichCharacter' and only contains two properties: a char, and a byte)
+/// </summary>
 public class RichCharacter
 {
     public char Value { get; init; }
