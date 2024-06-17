@@ -4,9 +4,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record VariableDeclarationNode : ISyntaxNode
+public sealed record PropertyDefinitionNode : ISyntaxNode
 {
-    public VariableDeclarationNode(
+	public PropertyDefinitionNode(
         TypeClauseNode typeClauseNode,
         IdentifierToken identifierToken,
         VariableKind variableKind,
@@ -48,5 +48,5 @@ public sealed record VariableDeclarationNode : ISyntaxNode
     public ImmutableArray<ISyntax> ChildList { get; }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.PropertyDefinitionNode;
 }

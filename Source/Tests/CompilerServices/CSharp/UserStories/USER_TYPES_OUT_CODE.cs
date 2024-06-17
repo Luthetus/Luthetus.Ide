@@ -1,22 +1,22 @@
-﻿using Fluxor;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Misc;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.Misc;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 
@@ -44,9 +44,8 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostSimpleBatch(
                 nameof(USER_TYPES_OUT_CODE),
-                string.Empty,
                 async editContext =>
                 {
                     await textEditorService.ModelApi.InsertTextFactory(
@@ -58,7 +57,7 @@ public class USER_TYPES_OUT_CODE
                         .ConfigureAwait(false);
                 });
 
-            await cSharpCompilerService.ResourceWasModified(
+            cSharpCompilerService.ResourceWasModified(
                 textEditorModel.ResourceUri,
                 ImmutableArray<TextEditorTextSpan>.Empty);
         }
@@ -98,9 +97,8 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostSimpleBatch(
                 nameof(USER_TYPES_OUT_CODE),
-                string.Empty,
                 async editContext =>
                 {
                     await textEditorService.ModelApi.InsertTextFactory(
@@ -112,7 +110,7 @@ public class USER_TYPES_OUT_CODE
                         .ConfigureAwait(false);
                 });
 
-            await cSharpCompilerService.ResourceWasModified(
+            cSharpCompilerService.ResourceWasModified(
                 textEditorModel.ResourceUri,
                 ImmutableArray<TextEditorTextSpan>.Empty);
         }
@@ -157,9 +155,8 @@ await builder.Build().RunAsync();
             {
                 char character = content[i];
 
-                await textEditorService.PostSimpleBatch(
+                textEditorService.PostSimpleBatch(
                     nameof(USER_TYPES_OUT_CODE),
-                    string.Empty,
                     async editContext =>
                     {
                         await textEditorService.ModelApi.InsertTextFactory(
@@ -179,7 +176,7 @@ await builder.Build().RunAsync();
                 {
                     contiguousLetterOrDigitCount = 0;
 
-                    await cSharpCompilerService.ResourceWasModified(
+                    cSharpCompilerService.ResourceWasModified(
                         textEditorModel.ResourceUri,
                         ImmutableArray<TextEditorTextSpan>.Empty);
                 }
@@ -192,7 +189,7 @@ await builder.Build().RunAsync();
                 // 
                 // And since we ended on an identifier, the file has yet to be parsed
                 // for the final time.
-                await cSharpCompilerService.ResourceWasModified(
+                cSharpCompilerService.ResourceWasModified(
                         textEditorModel.ResourceUri,
                         ImmutableArray<TextEditorTextSpan>.Empty);
             }
