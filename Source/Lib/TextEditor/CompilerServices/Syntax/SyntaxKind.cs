@@ -189,6 +189,7 @@ public enum SyntaxKind
     VariableAssignmentExpressionNode,
     VariableExpressionNode,
 	PropertyDefinitionNode,
+	FieldDefinitionNode,
     ConstructorDefinitionNode,
     ConstructorInvocationExpressionNode,
     ObjectInitializationParametersListingNode,

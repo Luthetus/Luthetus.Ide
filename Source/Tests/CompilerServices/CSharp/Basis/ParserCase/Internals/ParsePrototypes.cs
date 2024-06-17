@@ -16,7 +16,7 @@ The other 13 of 16 are passing.
 public class ParsePrototypes
 {
 	[Fact]
-	public void PropertyDeclarationNode_BEFORE_ASSIGNMENT()
+	public void PropertyDefinitionNode_BEFORE_ASSIGNMENT()
 	{
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText =
@@ -45,11 +45,20 @@ public class ParsePrototypes
 		var constructorDefinitionNode = (ConstructorDefinitionNode)
 			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[1];
 
+		var variableAssignmentExpression = (VariableAssignmentExpressionNode)
+			constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+
+		Assert.Equal(
+			"FirstName",
+			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
+
+		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
+
 		throw new NotImplementedException();
     }
 
 	[Fact]
-	public void PropertyDeclarationNode_AFTER_ASSIGNMENT()
+	public void PropertyDefinitionNode_AFTER_ASSIGNMENT()
 	{
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText =
@@ -69,21 +78,39 @@ public class ParsePrototypes
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.Equal(2, typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Length);
+
+		var constructorDefinitionNode = (ConstructorDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+
+		var variableAssignmentExpression = (VariableAssignmentExpressionNode)
+			constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+
+		Assert.Equal(
+			"FirstName",
+			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
+
+		var propertyDefinitionNode = (PropertyDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+
+		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
+
 		throw new NotImplementedException();
     }
 
 	[Fact]
-	public void FieldDeclarationNode_BEFORE_ASSIGNMENT()
+	public void FieldDefinitionNode_BEFORE_ASSIGNMENT()
 	{
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText =
 @"public class MyClass
 {
-	public string _firstName;
+	private string _firstName;
 
 	public MyClass(string firstName)
 	{
-		FirstName = firstName;
+		_firstName = firstName;
 	}
 }";
 
@@ -93,11 +120,29 @@ public class ParsePrototypes
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.Equal(2, typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Length);
+
+		var fieldDefinitionNode = (FieldDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+		
+		var constructorDefinitionNode = (ConstructorDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[1];
+
+		var variableAssignmentExpression = (VariableAssignmentExpressionNode)
+			constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+
+		Assert.Equal(
+			"_firstName",
+			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
+
+		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
+
 		throw new NotImplementedException();
     }
 
 	[Fact]
-	public void FieldDeclarationNode_AFTER_ASSIGNMENT()
+	public void FieldDefinitionNode_AFTER_ASSIGNMENT()
 	{
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText =
@@ -105,10 +150,10 @@ public class ParsePrototypes
 {
 	public MyClass(string firstName)
 	{
-		FirstName = firstName;
+		_firstName = firstName;
 	}
 
-	public string _firstName;
+	private string _firstName;
 }";
 
         var lexer = new CSharpLexer(resourceUri, sourceText);
@@ -116,6 +161,207 @@ public class ParsePrototypes
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.Equal(2, typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Length);
+
+		var constructorDefinitionNode = (ConstructorDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+
+		var variableAssignmentExpression = (VariableAssignmentExpressionNode)
+			constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+
+		Assert.Equal(
+			"_firstName",
+			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
+
+		var fieldDefinitionNode = (FieldDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+
+		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
+
+		throw new NotImplementedException();
+    }
+
+	[Fact]
+	public void VariableDeclarationNode_BEFORE_ASSIGNMENT()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText =
+@"public class MyClass
+{
+	public MyClass(string firstName)
+	{
+		string localFirstName;
+		localFirstName = firstName;
+	}
+}";
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.Equal(1, typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Length);
+
+		var constructorDefinitionNode = (ConstructorDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+
+		var variableDeclarationNode = (VariableDeclarationNode)
+			constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[0];
+
+		var variableAssignmentExpression = (VariableAssignmentExpressionNode)
+			constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[1];
+
+		Assert.Equal(
+			"localFirstName",
+			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
+
+		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
+    }
+
+	[Fact]
+	public void VariableDeclarationNode_AFTER_ASSIGNMENT()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText =
+@"public class MyClass
+{
+	public MyClass(string firstName)
+	{
+		localFirstName = firstName;
+		string localFirstName;
+	}
+}";
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.Equal(1, typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Length);
+
+		var constructorDefinitionNode = (ConstructorDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+
+		var variableAssignmentExpression = (VariableAssignmentExpressionNode)
+			constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[0];
+
+		var variableDeclarationNode = (VariableDeclarationNode)
+			constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[1];
+
+		Assert.Equal(
+			"localFirstName",
+			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
+
+		Assert.Equal(1, compilationUnit.DiagnosticsList.Length);
+    }
+
+	[Fact]
+	public void Variable_Reference()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText =
+@"public class MyClass
+{
+	private string _firstName;
+
+	public MyClass(string firstName)
+	{
+		string localFirstName;
+		
+		_firstName = firstName;
+		localFirstName = firstName;
+		FirstName = firstName;
+
+		Console.WriteLine(_firstName);
+		Console.WriteLine(localFirstName);
+		Console.WriteLine(FirstName);
+	}
+
+	public string FirstName { get; set; }
+}";
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.Equal(3, typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Length);
+
+		var fieldDefinitionNode = (FieldDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+
+		var constructorDefinitionNode = (ConstructorDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[1];
+
+		var propertyDefinitionNode = (PropertyDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[2];
+
+		// Inside constructorDefinitionNode
+		{
+			var localVariableDeclarationNode = (VariableDeclarationNode)
+				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[0];
+
+			var fieldVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)
+				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[1];
+			{
+				Assert.Equal(
+					"_firstName",
+					fieldVariableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText());
+			}
+
+			var localVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)
+				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[2];
+			{
+				Assert.Equal(
+					"localFirstName",
+					localVariableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText());
+			}
+
+			var propertyVariableAssignmentExpressionNode = (VariableAssignmentExpressionNode)
+				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[3];
+			{
+				Assert.Equal(
+					"FirstName",
+					propertyVariableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText());
+			}
+
+			var fieldFunctionInvocationNode = (FunctionInvocationNode)
+				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[4];
+			{
+				var fieldVariableReferenceNode = (VariableReferenceNode)
+					fieldFunctionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodes.Single();
+
+				Assert.Equal(fieldDefinitionNode, fieldVariableReferenceNode.VariableDeclarationNode);
+			}
+
+			var localFunctionInvocationNode = (FunctionInvocationNode)
+				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[5];
+			{
+				var localVariableReferenceNode = (VariableReferenceNode)
+					localFunctionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodes.Single();
+
+				Assert.Equal(localVariableDeclarationNode, localVariableReferenceNode.VariableDeclarationNode);
+			}
+
+			var propertyFunctionInvocationNode = (FunctionInvocationNode)
+				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[6];
+			{
+				var propertyVariableReferenceNode = (VariableReferenceNode)
+					propertyFunctionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodes.Single();
+
+				Assert.Equal(propertyDefinitionNode, propertyVariableReferenceNode.VariableDeclarationNode);
+			}
+		}
+
+		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
 
 		throw new NotImplementedException();
     }
