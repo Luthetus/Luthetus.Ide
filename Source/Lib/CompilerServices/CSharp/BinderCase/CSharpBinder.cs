@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Variables;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
@@ -310,7 +311,7 @@ public partial class CSharpBinder : ILuthBinder
     }
 
     public void BindVariableDeclarationNode(
-        VariableDeclarationNode variableDeclarationNode,
+        IVariableDeclarationNode variableDeclarationNode,
         ParserModel model)
     {
         CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, model);
@@ -835,7 +836,7 @@ public partial class CSharpBinder : ILuthBinder
     public bool TryGetVariableDeclarationHierarchically(
         string text,
         CSharpBoundScope? initialScope,
-        out VariableDeclarationNode? variableDeclarationStatementNode)
+        out IVariableDeclarationNode? variableDeclarationStatementNode)
     {
         var localScope = initialScope;
 

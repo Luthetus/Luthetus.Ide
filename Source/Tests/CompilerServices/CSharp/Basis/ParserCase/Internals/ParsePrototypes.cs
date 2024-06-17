@@ -199,8 +199,6 @@ public class ParsePrototypes
 			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
 
 		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
-
-		throw new NotImplementedException();
     }
 
 	[Fact]
@@ -238,11 +236,9 @@ public class ParsePrototypes
 			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
 
 		var propertyDefinitionNode = (PropertyDefinitionNode)
-			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[1];
 
 		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
-
-		throw new NotImplementedException();
     }
 
 	[Fact]
@@ -283,8 +279,6 @@ public class ParsePrototypes
 			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
 
 		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
-
-		throw new NotImplementedException();
     }
 
 	[Fact]
@@ -322,11 +316,9 @@ public class ParsePrototypes
 			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
 
 		var fieldDefinitionNode = (FieldDefinitionNode)
-			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[1];
 
 		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
-
-		throw new NotImplementedException();
     }
 
 	[Fact]
@@ -483,7 +475,7 @@ public class ParsePrototypes
 				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[4];
 			{
 				var fieldVariableReferenceNode = (VariableReferenceNode)
-					fieldFunctionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodes.Single();
+					fieldFunctionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Single().ExpressionNode;
 
 				Assert.Equal(fieldDefinitionNode, fieldVariableReferenceNode.VariableDeclarationNode);
 			}
@@ -492,7 +484,7 @@ public class ParsePrototypes
 				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[5];
 			{
 				var localVariableReferenceNode = (VariableReferenceNode)
-					localFunctionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodes.Single();
+					localFunctionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Single().ExpressionNode;
 
 				Assert.Equal(localVariableDeclarationNode, localVariableReferenceNode.VariableDeclarationNode);
 			}
@@ -501,7 +493,7 @@ public class ParsePrototypes
 				constructorDefinitionNode.FunctionBodyCodeBlockNode.ChildList[6];
 			{
 				var propertyVariableReferenceNode = (VariableReferenceNode)
-					propertyFunctionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodes.Single();
+					propertyFunctionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Single().ExpressionNode;
 
 				Assert.Equal(propertyDefinitionNode, propertyVariableReferenceNode.VariableDeclarationNode);
 			}

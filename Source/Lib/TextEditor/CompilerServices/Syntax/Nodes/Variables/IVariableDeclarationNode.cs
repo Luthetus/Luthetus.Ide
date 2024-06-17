@@ -1,3 +1,8 @@
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Variables;
+
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Variables;
 
 public interface IVariableDeclarationNode : ISyntaxNode

@@ -1,6 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Variables;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
@@ -15,7 +16,7 @@ public sealed record CSharpBoundScope : IBoundScope
         ResourceUri resourceUri,
         Dictionary<string, TypeDefinitionNode> typeDefinitionMap,
         Dictionary<string, FunctionDefinitionNode> functionDefinitionMap,
-        Dictionary<string, VariableDeclarationNode> variableDeclarationMap,
+        Dictionary<string, IVariableDeclarationNode> variableDeclarationMap,
         NamespaceStatementNode encompassingNamespaceStatementNode,
         List<UsingStatementNode> currentUsingStatementNodeList)
     {
@@ -46,7 +47,7 @@ public sealed record CSharpBoundScope : IBoundScope
     /// </summary>
     public Dictionary<string, TypeDefinitionNode> TypeDefinitionMap { get; init; }
     public Dictionary<string, FunctionDefinitionNode> FunctionDefinitionMap { get; init; }
-    public Dictionary<string, VariableDeclarationNode> VariableDeclarationMap { get; init; }
+    public Dictionary<string, IVariableDeclarationNode> VariableDeclarationMap { get; init; }
     public NamespaceStatementNode EncompassingNamespaceStatementNode { get; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; }
 }
