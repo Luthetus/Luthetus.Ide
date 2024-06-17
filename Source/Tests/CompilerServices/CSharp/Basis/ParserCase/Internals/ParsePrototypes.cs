@@ -84,18 +84,18 @@ would be located on the definition.
 
 Regarding autocompletion in the text editor.
 I can store locals, fields, and properties in the same collection by using
-the interface 'IVariableDeclaration'.
+the interface 'IVariableDeclarationNode'.
 
 But, whether a variable is in scope, would this be ambiguous?
 I cannot anymore presume, that all variables are treated the same.
-Is the solution to add a 'bool IVariableDeclaration.IsInScope(...)' method?
+Is the solution to add a 'bool IVariableDeclarationNode.IsInScope(...)' method?
 
 I'm not fond of this method idea.
 If I presume that the autocompletion should only show variables which are in scope.
 Am I then to invoke the 'IsInScope(...)' method on every variable that
 is possibly in scope.
 
-I could maybe add an enum to the 'IVariableDeclaration' interface that indicates
+I could maybe add an enum to the 'IVariableDeclarationNode' interface that indicates
 whether the variable is in scope for the text blow its declaration, above, or both.
 
 By using the enum to determine where the scope is, am I limiting
@@ -106,7 +106,7 @@ An example of scope beyond text position is a using statement to bring
 a namespace into scope.
 
 Properties have a getter, setter, and an underlying field.
-How would these come into play regarding the 'IVariableDeclaration'?
+How would these come into play regarding the 'IVariableDeclarationNode'?
 
 I presume that since I'm not actually assigning values,
 and that type checking does not require me to evaluate the 'setter' of a property,
@@ -120,6 +120,32 @@ For example, its getter. That can be done on the concrete implementaton
 PropertyDefinitionNode, none of this complexity needs to leak out
 into variable assignment.
 
+========================================================================================
+
+There is likely a lot of vestigial parts to the 'VariableDeclarationNode' once
+these changes are made.
+
+For example, the hacky 'HasGetter' bool would no longer need be part of
+a 'VariableDeclarationNode'.
+
+========================================================================================
+
+I just started to make the changes.
+But, since the IDE cannot 'Find by reference' yet, I have to use the 'Find All' tool,
+and search 'VariableDeclarationNode'.
+
+Then furthermore, since the 'Find All' tool only tells you whether a file contains
+the text, and not how many times it occurred, or where. I have to
+open the file from the 'Find All' tool, and then use the 'Find (in text editor)'
+tool to go to the line and column where the text occurred.
+
+After I have found the text occurrence, I have to then determine various things,
+such as if the text is denoting a type clause or not. Perhaps the occurrence
+was just within a comment rather than actual code.
+
+But, since the compiler will tell me all the errors, I'd like to just make the other changes
+first, and swap (some) usages of 'VariableDeclarationNode' as a type clause to instead
+be using the interface 'IVariableDeclarationNode'.
 
 */
 
