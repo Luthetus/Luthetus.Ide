@@ -147,6 +147,16 @@ But, since the compiler will tell me all the errors, I'd like to just make the o
 first, and swap (some) usages of 'VariableDeclarationNode' as a type clause to instead
 be using the interface 'IVariableDeclarationNode'.
 
+========================================================================================
+
+The 'VariableDeclarationNode' constructor takes as an argument a 'VariableKind' enum.
+Therefore, I can find all invocations of the constructor which take
+'VariableKind.Property' or 'VariableKind.Field' to instead invoke
+either the 'PropertyDefinitionNode' or 'FieldDefinitionNode' respectively.
+
+At ParseVariables.cs:22 I have the method 'HandleVariableDeclaration(...)'.
+I believe inside here is where I need to construct the various new types.
+
 */
 
 public class ParsePrototypes
