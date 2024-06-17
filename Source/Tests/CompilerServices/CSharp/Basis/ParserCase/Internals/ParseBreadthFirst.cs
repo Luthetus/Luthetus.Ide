@@ -129,6 +129,44 @@ an order in which one parses "scopes" but also an order
 for parsing any syntax at all.
 
 All the syntaxes need to define the order in which to parse their "sub-syntax"?
+
+Regarding the 'Builder' idea. Am I going to create a second class for every node type?
+In other words TypeDefinitionNode needs a TypeDefinitionNodeBuilder.
+Or do I use one 'Builder' type for all the nodes?
+
+If the child list of nodes is immutable. Then everytime I 'Build' a 'Builder'
+I'd need to replace the entire list of nodes?
+
+I guess I can start with "create a second class for every node type",
+and only focus on creating a second class for those that are necessary
+to solve this unit test specifically.
+
+Then after I solve this unit test, I'll have a better intuition
+for how to go about things.
+
+I don't need to add the nodes as I see them?
+
+I can just track the "would be index" alongisde each node.
+
+Then build the list at the end?
+
+I need to see where the class definition parsing code is.
+Because I want to identify the point that it goes into the
+class's code block.
+
+I'm not sure what I want to do but I just think
+its a good start.
+
+- Parse(...)
+	  - while (true)
+	      - ParseKeywordToken(...)
+	            - HandleClassTokenKeyword(...)
+		              - HandleStorageModifierTokenKeyword(...)
+		                    - model.SyntaxStack.Push(typeDefinitionNode);
+				            - return;
+		              - return;
+	            - return;
+	      - continue;
 */
 
 		throw new NotImplementedException();
