@@ -13,6 +13,41 @@ The following tests in 'ParseVariablesTests' are failing:
 The other 13 of 16 are passing.
 */
 
+/*
+I cannot just change the parser, such that it creates
+a 'PropertyDefinitionNode' instead of a 'VariableDeclarationNode'.
+
+This is because the 'VariableReferenceNode' is expecting
+a 'VariableDeclarationNode'.
+
+Thus all the code will break, where the 'PropertyDefinitionNode' starts
+being provided as a parameter to the 'VariableReferenceNode' constructor.
+
+I could have 'PropertyDefinitionNode' inherit from 'VariableDeclarationNode'.
+But, I'd prefer to avoid as much inheritance as possible.
+
+So, the second option could be making an 'IVariableDeclarationNode'.
+This bothers me because of the word "Declaration" being in the interface.
+
+I want to be consistent in using "Declaration" where scope extends below the text itself,
+and that "Definition" says the scope extends above and below the text itself.
+
+But, is it fair to say that "Declaration" does not say it cannot be a "Defintion"?
+Instead, it says that it is known that the scope extends below, as for above
+it is unknown.
+
+Maintaining consistency with "Declaration" and "Definition" is enough trouble
+as it is.
+
+I don't think adding another word into the mix will provide much.
+I'll go with the idea that "Declaration" states the scope extends below the text itself,
+but that it makes no comment on whether it extends above.
+
+I suppose "Definition" is derived from "Declaration"?
+
+
+*/
+
 public class ParsePrototypes
 {
 	[Fact]
