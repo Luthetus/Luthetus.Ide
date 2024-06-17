@@ -62,7 +62,8 @@ public class ParseBreadthFirst
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		Assert.Equal(1, 2);
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		Console.WriteLine(typeDefinitionNode);
 
 /*
 I want to type out what I would do if someone asked me as a human to manually parse this.
@@ -167,6 +168,24 @@ its a good start.
 		              - return;
 	            - return;
 	      - continue;
+
+I'm noticing that the class's code block does not track the open and closing braces?
+
+There is a method named 'HandleStorageModifierTokenKeyword(...)'.
+This method accepts a parameter 'ISyntaxToken consumedStorageModifierToken'.
+Therefore, one would presume if I invoked 'HandleStorageModifierTokenKeyword(...)',
+that I would provide a "storage modifier token".
+
+But when parsing the class token keyword, I pass the 'class' token to the
+'HandleStorageModifierTokenKeyword(...)'.
+
+And the argument 'ISyntaxToken consumedStorageModifierToken' is actually the
+'class' keyword?!?!?
+
+Maybe I wrote the method with the idea that one provides the preceeding keyword,
+and I named the method argument incorrectly?
+
+
 */
 
 		throw new NotImplementedException();

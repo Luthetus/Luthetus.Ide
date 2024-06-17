@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
@@ -827,6 +827,8 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         ParserModel model)
     {
+		Console.WriteLine(consumedKeywordToken);
+
         HandleStorageModifierTokenKeyword(
             consumedKeywordToken,
             model);
