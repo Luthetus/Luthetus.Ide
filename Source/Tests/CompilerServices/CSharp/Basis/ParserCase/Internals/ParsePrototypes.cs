@@ -45,6 +45,81 @@ but that it makes no comment on whether it extends above.
 
 I suppose "Definition" is derived from "Declaration"?
 
+========================================================================================
+
+I want to make all the non-breaking changes first.
+
+So, I want to make 'VariableDeclarationNode' implement the interface 'IVariableDeclarationNode'
+
+Then, have the constructor for 'VariableReferenceNode' accept an interface 'IVariableDeclarationNode' rather
+than the current concrete class 'VariableDeclarationNode'
+
+I believe these two changes can be done without anything breaking.
+
+If I keep 'VariableDeclarationNode' as is (for now).
+I can just make 'PropertyDefinitionNode' and 'FieldDefinitionNode' exact copies of the
+'VariableDeclarationNode' class (for now).
+
+With this, I can then swap the constructor invocation to 'VariableDeclarationNode'
+to invoke the 'PropertyDefinitionNode' and 'FieldDefinitionNode' where appropriate.
+
+But, I need to see where 'VariableDeclarationNode' is being used currently,
+because it likely is used in more places than what I've thought of up to this point.
+
+Anywhere 'VariableDeclarationNode' is referenced, I likely need to replace it
+with the interface 'IVariableDeclarationNode'.
+
+========================================================================================
+
+I'm confused though, why would what is done to 'VariableDeclarationNode',
+not also done to 'VariableReferenceNode'.
+
+I presume the reason is that the syntax for a would be 'PropertyReferenceNode'
+is identical to that of 'VariableReferenceNode'.
+
+And that all of the details that differ between a local variable and a property
+would be located on the definition.
+
+========================================================================================
+
+Regarding autocompletion in the text editor.
+I can store locals, fields, and properties in the same collection by using
+the interface 'IVariableDeclaration'.
+
+But, whether a variable is in scope, would this be ambiguous?
+I cannot anymore presume, that all variables are treated the same.
+Is the solution to add a 'bool IVariableDeclaration.IsInScope(...)' method?
+
+I'm not fond of this method idea.
+If I presume that the autocompletion should only show variables which are in scope.
+Am I then to invoke the 'IsInScope(...)' method on every variable that
+is possibly in scope.
+
+I could maybe add an enum to the 'IVariableDeclaration' interface that indicates
+whether the variable is in scope for the text blow its declaration, above, or both.
+
+By using the enum to determine where the scope is, am I limiting
+any future decision to have scope not be tied to text position?
+
+I say no, because currently there are many ways to determine scope.
+An example of scope beyond text position is a using statement to bring
+a namespace into scope.
+
+Properties have a getter, setter, and an underlying field.
+How would these come into play regarding the 'IVariableDeclaration'?
+
+I presume that since I'm not actually assigning values,
+and that type checking does not require me to evaluate the 'setter' of a property,
+then there is no issue here?
+
+It is fine to just treat variable assignment as being done with the '=' token and
+checking that the types align.
+
+As for the case where one wants to know more information about their property.
+For example, its getter. That can be done on the concrete implementaton
+PropertyDefinitionNode, none of this complexity needs to leak out
+into variable assignment.
+
 
 */
 
