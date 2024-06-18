@@ -42,7 +42,7 @@ public class ParseBreadthFirst
 	/// and somehow "remember" to go back and inside the constructor scope.
 	/// </summary>
 	[Fact]
-	public void ClassDefinition()
+	public void One_ClassDefinitions()
 	{
 		var resourceUri = new ResourceUri("UnitTests");
         var sourceText =
@@ -448,6 +448,22 @@ This is kind of the inverse case where a "downwards" only scope gives a child
 "upwards and downwards" scope. That is, if what I'm thinking even is a thing,
 I need to check, but not get distracted at the moment.
 
+Okay, inside 'ParseOpenBraceToken(...)' I have access to the variable
+'model.CurrentCodeBlockBuilder'.
+
+And, the type 'CodeBlockBuilder' has a property for the 'ISyntaxNode? CodeBlockOwner'
+
+I want to have the codeBlockOwner tell me whether it supports "upwards and downwards" scope or not.
+And yet, the CodeBlockOwner property has a very general interface for its type, 'ISyntaxNode?'.
+
+Is it the case that all syntax nodes are capable of being a code block owner?
+If it isn't the case, I'd prefer not add a property on every syntax node, where
+some use it and others don't.
+
+I think a new interface 'ICodeBlockOwner' could be useful here.
+Then on this interface the property to know if "upwards and downwards" scope is supported
+would exist.
+
 
 
 - Parse(...)
@@ -467,7 +483,7 @@ I need to check, but not get distracted at the moment.
 	}
 
 	[Fact]
-	public void ClassDefinition()
+	public void Two_ClassDefinitions()
 	{
 		var resourceUri = new ResourceUri("UnitTests");
         var sourceText =
