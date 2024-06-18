@@ -373,6 +373,81 @@ I mean I guess thats not that many lines of code,
 but I'm horribly sensitive to complexity at the moment
 due to the anxiety I'm feeling while working on this feature.
 
+The 'ParseOpenBraceToken(...)' has a lot of if, else if, else; going on.
+
+I'm going to copy and paste it here and continually abstract away
+parts of it.
+
+public static void ParseOpenBraceToken(
+    OpenBraceToken consumedOpenBraceToken,
+    ParserModel model)
+{
+    var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
+    ISyntaxNode? nextCodeBlockOwner = null;
+    TypeClauseNode? scopeReturnTypeClauseNode = null;
+
+    {
+        nextCodeBlockOwner = ...;
+
+        model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
+        {
+            closureCurrentCodeBlockBuilder.ChildList.Add(codeBlockNode);
+        });
+    }
+
+    model.Binder.RegisterBoundScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan, model);
+
+    if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+    {
+        var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
+
+        var namespaceString = namespaceStatementNode
+            .IdentifierToken
+            .TextSpan
+            .GetText();
+
+        model.Binder.AddNamespaceToCurrentScope(namespaceString, model);
+        model.SyntaxStack.Push(namespaceStatementNode);
+    }
+
+    model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+}
+
+I wonder if I could enqueue 'ParseOpenBraceToken(...)' exactly as it is,
+then dequeue everything once I find a 'CloseBraceToken' of the current scope
+that everything would "just work"?
+
+Althought, not every programming language supports an "upwards and downwards" scope.
+As well, even within C#, not every "code block owner" supports an "upwards and downwards" scope.
+
+I think the "code block owner" needs to define whether they support "upwards and downwards" scope or not.
+
+And yet, I need to invoke 'ParseOpenBraceToken(...)' in order to determine
+the "code block owner" (given the current way the code is written).
+
+Inside of 'ParseOpenBraceToken(...)' I'm thinking of adding code that would
+invoke a new method named 'EnqueueParseChildScope(...)'.
+
+But, I realize now, its not the to be parsed child scope that matters in relation to
+whether it supports "upwards and downwards" scope.
+
+It instead is the parent scope that I need to look at for whether it supports "upwards and downwards" scope.
+
+Could a parent scope which supports "upwards and downwards" scope have an exception to this case
+where a specific kind of child scope is only allowed to receive the downwards scope?
+
+I guess it doesn't matter, because if this is the case, I can determine the child scope,
+and I'll have both the parent and child scope, compare them, then choose to enqueue the child scope or not.
+So, by "this doesn't matter", I mean to say, "this is already possible".
+
+I wonder if a local function definition, within a method, can access the parent scope,
+"upwards and downwards", regardless of where the local function definition exists
+within that method?
+
+This is kind of the inverse case where a "downwards" only scope gives a child
+"upwards and downwards" scope. That is, if what I'm thinking even is a thing,
+I need to check, but not get distracted at the moment.
+
 
 
 - Parse(...)
