@@ -344,9 +344,40 @@ track "inner while loops".
 And it would be entirely abstracted from the CSharpParser's
 while true loop.
 
+So, if I continue from where I currently am,
+the current token is an open brace token for the class definition.
+
+I need to therefore enqueue the parsing from inclusive TokenWalker.Index
+to some undertermined exclusive ending index.
+
+The "undertermined exclusive ending index" would be the closing brace.
+In my mind I'm feeling very uncomfortable because how would I handle
+syntax "matching". So invalid syntax maybe a missing closing brace?
+
+I guess the exclusive ending index would just be the matched token index...
+or one more than that I'm not sure.
+
+Also, an inner scope, which is invalid due to missing its closing token,
+would it be closed by the closing token of the parent scope,
+in order to perserve the validity of any scopes below it?
+
+How would I track these things?
+
+Anyway I should focus on the simple case first. Then build up test cases
+over time, lest I just sit here worrying and making zero progress.
+
+From the while true loop, the 'ParseOpenBraceToken(...)' method is invoked.
+
+Gee, 'ParseOpenBraceToken(...)' is 130 lines of code.
+I mean I guess thats not that many lines of code,
+but I'm horribly sensitive to complexity at the moment
+due to the anxiety I'm feeling while working on this feature.
+
+
+
 - Parse(...)
 	  - while (true)
-	      - ParseKeywordToken(...)
+	      - ParseTokens.ParseOpenBraceToken(...)
 	            - HandleClassTokenKeyword(...)
 		              - HandleStorageModifierTokenKeyword(...)
 		                    - model.SyntaxStack.Push(typeDefinitionNode);
