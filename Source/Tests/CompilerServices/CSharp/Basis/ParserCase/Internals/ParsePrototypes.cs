@@ -185,6 +185,72 @@ as opposed to a possible infinite loop in the parser?
 public class ParsePrototypes
 {
 	[Fact]
+	public void TypeDefinitionNode_Test()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText =
+@"public class MyClass
+{
+	public string FirstName { get; set; }
+
+	public MyClass(string firstName)
+	{
+		FirstName = firstName;
+	}
+}";
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+
+		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
+    }
+
+	[Fact]
+	public void PropertyDefinitionNode_Function()
+	{
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText =
+@"public class MyClass
+{
+	public void Aaa(string firstName)
+	{
+		FirstName = firstName;
+	}
+
+	public string FirstName { get; set; }
+}";
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		Assert.Equal(2, typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Length);
+
+		var functionDefinitionNode = (FunctionDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+
+		var variableAssignmentExpression = (VariableAssignmentExpressionNode)
+			functionDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+
+		Assert.Equal(
+			"FirstName",
+			variableAssignmentExpression.VariableIdentifierToken.TextSpan.GetText());
+
+		var propertyDefinitionNode = (PropertyDefinitionNode)
+			typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[1];
+
+		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
+    }
+
+	[Fact]
 	public void PropertyDefinitionNode_BEFORE_ASSIGNMENT()
 	{
         var resourceUri = new ResourceUri("UnitTests");

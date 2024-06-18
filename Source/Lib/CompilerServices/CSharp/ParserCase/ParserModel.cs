@@ -1,7 +1,8 @@
-﻿using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
@@ -48,4 +49,5 @@ public class ParserModel
     /// That is to say, this action would create the function definition node and then append it.
     /// </summary>
     public Stack<Action<CodeBlockNode>> FinalizeCodeBlockNodeActionStack { get; set; }
+	public Queue<Action<int>> ParseChildScopeQueue { get; set; } = new();
 }

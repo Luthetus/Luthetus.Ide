@@ -1,9 +1,11 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record NamespaceStatementNode : ISyntaxNode
+public sealed record NamespaceStatementNode : ICodeBlockOwner
 {
     public NamespaceStatementNode(
         KeywordToken keywordToken,
@@ -27,6 +29,8 @@ public sealed record NamespaceStatementNode : ISyntaxNode
     public KeywordToken KeywordToken { get; }
     public IdentifierToken IdentifierToken { get; }
     public CodeBlockNode CodeBlockNode { get; }
+
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
     public ImmutableArray<ISyntax> ChildList { get; }
 

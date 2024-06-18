@@ -464,22 +464,36 @@ I think a new interface 'ICodeBlockOwner' could be useful here.
 Then on this interface the property to know if "upwards and downwards" scope is supported
 would exist.
 
+I made all the changes I'd previously described.
 
+At this point the TokenWalker is changing its underlying '_index'
+to the opening of the child scope, then tracking the token
+index for the closing of the child scope.
 
-- Parse(...)
-	  - while (true)
-	      - ParseTokens.ParseOpenBraceToken(...)
-	            - HandleClassTokenKeyword(...)
-		              - HandleStorageModifierTokenKeyword(...)
-		                    - model.SyntaxStack.Push(typeDefinitionNode);
-				            - return;
-		              - return;
-	            - return;
-	      - continue;
+When '_index' gets to the closing, then restore the original _index.
+
+But, I need to set the Stack somehow to what it was at the time
+that I first saw the opening of the child scope.
+
+For example:
+
+public class MyClass
+{
+}
+
+I'm seeing the open brace, then tracking this spot.
+
+But when I return to this spot, the fact that its a class definition
+is lost. So, the parser thinks its just an arbitrary code block.
+
+I know that I'm looking at a class definition when I track the spot,
+so I can either recreate the stack when I return, or
+I track the start of the class definition instead of its start of body.
+
+Then the parser would once again parse over the "public class" part and realize
+its a class definition.
 
 */
-
-		throw new NotImplementedException();
 	}
 
 	[Fact]
@@ -513,7 +527,7 @@ public class MyClassTwo
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
-		Console.WriteLine(typeDefinitionNode);
+		var typeDefinitionNodeOne = (TypeDefinitionNode)topCodeBlock.ChildList[0];
+		var typeDefinitionNodeTwo = (TypeDefinitionNode)topCodeBlock.ChildList[1];
 	}
 }

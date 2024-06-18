@@ -521,10 +521,11 @@ public static class ParseTokens
 
     public static void ParseOpenBraceToken(
         OpenBraceToken consumedOpenBraceToken,
-        ParserModel model)
+        ParserModel model,
+		bool wasEnqueued = false)
     {
-        var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
-        ISyntaxNode? nextCodeBlockOwner = null;
+		var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
+        ICodeBlockOwner? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
 
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
@@ -547,6 +548,14 @@ public static class ParseTokens
         }
         else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
+			if (!wasEnqueued &&
+				model.CurrentCodeBlockBuilder?.CodeBlockOwner is not null &&
+				ScopeDirectionKind.Both == model.CurrentCodeBlockBuilder.CodeBlockOwner.ScopeDirectionKind)
+			{
+				model.TokenWalker.DeferParsingOfChildScope(consumedOpenBraceToken, model);
+				return;
+			}
+
             var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = typeDefinitionNode;
 
@@ -571,6 +580,14 @@ public static class ParseTokens
         }
         else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
         {
+			if (!wasEnqueued &&
+				model.CurrentCodeBlockBuilder?.CodeBlockOwner is not null &&
+				ScopeDirectionKind.Both == model.CurrentCodeBlockBuilder.CodeBlockOwner.ScopeDirectionKind)
+			{
+				model.TokenWalker.DeferParsingOfChildScope(consumedOpenBraceToken, model);
+				return;
+			}
+
             var functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = functionDefinitionNode;
             scopeReturnTypeClauseNode = functionDefinitionNode.ReturnTypeClauseNode;
@@ -593,6 +610,14 @@ public static class ParseTokens
         }
         else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
         {
+			//if (!wasEnqueued &&
+			//	model.CurrentCodeBlockBuilder?.CodeBlockOwner is not null &&
+			//	ScopeDirectionKind.Both == model.CurrentCodeBlockBuilder.CodeBlockOwner.ScopeDirectionKind)
+			//{
+			//	model.TokenWalker.DeferParsingOfChildScope(consumedOpenBraceToken, model);
+			//	return;
+			//}
+
             var constructorDefinitionNode = (ConstructorDefinitionNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = constructorDefinitionNode;
             scopeReturnTypeClauseNode = constructorDefinitionNode.ReturnTypeClauseNode;
@@ -661,6 +686,12 @@ public static class ParseTokens
         CloseBraceToken consumedCloseBraceToken,
         ParserModel model)
     {
+		while (model.ParseChildScopeQueue.TryDequeue(out var action))
+		{
+			action.Invoke(model.TokenWalker.Index);
+			return;
+		}
+
         model.Binder.DisposeBoundScope(consumedCloseBraceToken.TextSpan, model);
 
         if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
@@ -881,7 +912,7 @@ public static class ParseTokens
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var closureCurrentCompilationUnitBuilder = model.CurrentCodeBlockBuilder;
-            ISyntaxNode? nextCodeBlockOwner = null;
+            ICodeBlockOwner? nextCodeBlockOwner = null;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
 
             var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();

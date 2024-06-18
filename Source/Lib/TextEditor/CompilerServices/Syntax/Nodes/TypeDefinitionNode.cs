@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -7,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// <see cref="TypeDefinitionNode"/> is used anywhere a type is defined.
 /// </summary>
-public sealed record TypeDefinitionNode : ISyntaxNode
+public sealed record TypeDefinitionNode : ICodeBlockOwner
 {
     public TypeDefinitionNode(
         AccessModifierKind accessModifierKind,
@@ -73,6 +74,8 @@ public sealed record TypeDefinitionNode : ISyntaxNode
     public TypeClauseNode? InheritedTypeClauseNode { get; }
     public CodeBlockNode? TypeBodyCodeBlockNode { get; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
+
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
     public ImmutableArray<ISyntax> ChildList { get; }
 
