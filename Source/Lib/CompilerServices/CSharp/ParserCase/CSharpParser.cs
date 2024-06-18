@@ -1,4 +1,4 @@
-﻿using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -62,6 +62,9 @@ public class CSharpParser : ILuthParser
         while (true)
         {
             var token = model.TokenWalker.Consume();
+
+			// TODO: Delete this 'Console.WriteLine(token.SyntaxKind);', I am debugging something.
+			Console.WriteLine($"{nameof(Parse)}:{token.SyntaxKind}");
 
             switch (token.SyntaxKind)
             {
