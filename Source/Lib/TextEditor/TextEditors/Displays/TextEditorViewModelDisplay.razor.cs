@@ -590,8 +590,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-		Console.WriteLine($"{nameof(QueueCalculateVirtualizationResultBackgroundTask)}:{++_countQueueCalculateVirtualizationResultBackgroundTaskInvocations}");
-
         TextEditorService.PostTakeMostRecent(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
 			modelResourceUri,

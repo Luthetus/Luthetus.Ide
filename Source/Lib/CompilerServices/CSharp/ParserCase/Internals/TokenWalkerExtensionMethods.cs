@@ -20,8 +20,6 @@ internal static class TokenWalkerExtensionMethods
 		var currentCodeBlockBuilderChildListCount = model.CurrentCodeBlockBuilder.ChildList.Count;
 		_ = model.SyntaxStack.TryPeek(out var syntax);
 
-		Console.WriteLine($"enqueued::{syntax.SyntaxKind}");
-
 		var openTokenIndex = tokenWalker.Index - 1;
 
 		var openBraceCounter = 1;

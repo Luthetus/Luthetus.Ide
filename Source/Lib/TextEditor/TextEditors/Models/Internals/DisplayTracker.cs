@@ -166,8 +166,6 @@ public class DisplayTracker : IDisposable
 					.Invoke(editContext)
 					.ConfigureAwait(false);
 
-				Console.WriteLine($"{nameof(PostScrollAndRemeasure)}:{++_countPostScrollAndRemeasureInvocations}");
-
 				// This virtualization result calculation is intentionally posted from within a post,
 				// in order to ensure that the preceeding remeasure is executed and the state is updated first
 				_textEditorService.PostTakeMostRecent(

@@ -715,45 +715,33 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				var verticalStartingIndex = (int)Math.Floor(
                     viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
-				Console.WriteLine($"verticalStartingIndex:{verticalStartingIndex}");
 
                 var verticalTake = (int)Math.Ceiling(
                     viewModelModifier.ViewModel.TextEditorDimensions.Height /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
-				Console.WriteLine($"verticalTake:{verticalTake}");
-
-				Console.WriteLine($"{nameof(CalculateVirtualizationResultFactory)}:{++_countCalculateVirtualizationResultFactoryInvocations}");
 
                 // Vertical Padding (render some offscreen data)
                 verticalTake += 1;
-				Console.WriteLine($"verticalTake with padding:{verticalTake}");
 
                 // Check index boundaries
                 {
                     verticalStartingIndex = Math.Max(0, verticalStartingIndex);
-					Console.WriteLine($"verticalStartingIndex with check index boundaries:{verticalStartingIndex}");
 
                     if (verticalStartingIndex + verticalTake > modelModifier.LineEndList.Count)
 					{
-						Console.WriteLine("verticalTake = modelModifier.LineEndList.Count - verticalStartingIndex;");
-						Console.WriteLine($"{verticalTake} = {modelModifier.LineEndList.Count} - {verticalStartingIndex};");
                         verticalTake = modelModifier.LineEndList.Count - verticalStartingIndex;
-						Console.WriteLine($"verticalTake with check line end list index boundaries:{verticalTake}");
 					}
 
                     verticalTake = Math.Max(0, verticalTake);
-					Console.WriteLine($"verticalTake with check zero index boundaries:{verticalTake}");
                 }
 
                 var horizontalStartingIndex = (int)Math.Floor(
                     viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
-				Console.WriteLine($"horizontalStartingIndex:{horizontalStartingIndex}");
 
                 var horizontalTake = (int)Math.Ceiling(
                     viewModelModifier.ViewModel.TextEditorDimensions.Width /
                     viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
-				Console.WriteLine($"horizontalTake:{horizontalTake}");
 
                 var virtualizedEntryBag = modelModifier
                     .GetLineRichCharacterRange(verticalStartingIndex, verticalTake)

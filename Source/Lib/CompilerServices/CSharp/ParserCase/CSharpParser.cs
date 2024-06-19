@@ -63,8 +63,6 @@ public class CSharpParser : ILuthParser
         {
             var token = model.TokenWalker.Consume();
 
-			Console.WriteLine($"seen::{token.SyntaxKind}");
-
             switch (token.SyntaxKind)
             {
                 case SyntaxKind.NumericLiteralToken:
@@ -168,7 +166,6 @@ public class CSharpParser : ILuthParser
 			{
 				if (model.ParseChildScopeQueue.TryDequeue(out var action))
 				{
-					Console.WriteLine("close::global");
 					action.Invoke(model.TokenWalker.Index - 1);
 					model.DequeueChildScopeCounter++;
 				}
