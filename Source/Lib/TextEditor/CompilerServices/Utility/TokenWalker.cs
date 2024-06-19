@@ -124,8 +124,6 @@ public class TokenWalker
 	/// </summary>
 	public void DeferredParsing(int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)
 	{
-		Console.WriteLine("DeferredParsing");
-
 		_index = openTokenIndex;
 		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore);
 	}

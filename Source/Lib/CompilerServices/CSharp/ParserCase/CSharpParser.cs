@@ -63,8 +63,7 @@ public class CSharpParser : ILuthParser
         {
             var token = model.TokenWalker.Consume();
 
-			// TODO: Delete this 'Console.WriteLine(token.SyntaxKind);', I am debugging something.
-			Console.WriteLine($"{nameof(Parse)}:{token.SyntaxKind}");
+			Console.WriteLine($"seen::{token.SyntaxKind}");
 
             switch (token.SyntaxKind)
             {
@@ -166,7 +165,18 @@ public class CSharpParser : ILuthParser
             }
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
-                break;
+			{
+				if (model.ParseChildScopeQueue.TryDequeue(out var action))
+				{
+					Console.WriteLine("close::global");
+					action.Invoke(model.TokenWalker.Index - 1);
+					model.DequeueChildScopeCounter++;
+				}
+				else
+				{
+					break;
+				}
+			}
         }
 
         if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null &&

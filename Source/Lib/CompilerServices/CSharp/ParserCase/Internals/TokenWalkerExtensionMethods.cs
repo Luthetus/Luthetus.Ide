@@ -19,11 +19,27 @@ internal static class TokenWalkerExtensionMethods
     {
 		_ = model.SyntaxStack.TryPeek(out var syntax);
 
+		Console.WriteLine($"enqueued::{syntax.SyntaxKind}");
+
 		var openTokenIndex = tokenWalker.Index - 1;
 
-		while (tokenWalker.Current.SyntaxKind != SyntaxKind.CloseBraceToken &&
-			   !tokenWalker.IsEof)
+		var openBraceCounter = 1;
+
+		while (true)
 		{
+			if (tokenWalker.IsEof)
+				break;
+
+			if (tokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			{
+				++openBraceCounter;
+			}
+			else if (tokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+			{
+				if (--openBraceCounter <= 0)
+					break;
+			}
+
 			_ = tokenWalker.Consume();
 		}
 
@@ -32,6 +48,7 @@ internal static class TokenWalkerExtensionMethods
 
         model.ParseChildScopeQueue.Enqueue(tokenIndexToRestore =>
 		{
+			Console.WriteLine($"dequeued::{syntax.SyntaxKind}");
 			tokenWalker.DeferredParsing(openTokenIndex, closeTokenIndex, tokenIndexToRestore);
 			model.SyntaxStack.Push(syntax);
 		});
