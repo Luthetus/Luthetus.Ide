@@ -50,11 +50,12 @@ public class TokenWalker
 
 		if (_deferredParsingTuple is not null)
 		{
-			if (_index == _deferredParsingTuple.Value.endIndexExclusive)
+			if (_index == _deferredParsingTuple.Value.endIndexExclusive - 1)
 			{
+				var closeChildScopeToken = _tokenList[_index];
 				_index = _deferredParsingTuple.Value.tokenIndexToRestore;
 				_deferredParsingTuple = null;
-				return Consume();
+				return closeChildScopeToken;
 			}
 		}
 
@@ -123,6 +124,8 @@ public class TokenWalker
 	/// </summary>
 	public void DeferredParsing(int startIndexInclusive, int endIndexExclusive, int tokenIndexToRestore)
 	{
+		Console.WriteLine("DeferredParsing");
+
 		_index = startIndexInclusive;
 		_deferredParsingTuple = (startIndexInclusive, endIndexExclusive, tokenIndexToRestore);
 	}

@@ -636,6 +636,74 @@ Summary of my thoughts:
                   but this holds true for 'NamespaceStatementNode' and etc...
             - Therefore, perhaps I only need to push that singular
                   "most recent syntax" back onto the stack when I dequeue.
+
+I want to wite out what I think the code is/should be doing,
+for the enqueue to work.
+===========================
+Parse:NamespaceTokenKeyword
+Parse:StatementDelimiterToken
+Parse:PublicTokenKeyword
+Parse:ClassTokenKeyword
+Parse:OpenBraceToken
+TokenWalker:FindCloseBraceToken
+Parse:EndOfFileToken
+
+Actually... I think the indices are off by
+one beause the while loop 'consumes' the token,
+i.e.: it moves the index forward by 1 after returning
+the token that was current.
+
+I want to console write out TokenWalker.TokenList[index];
+Where 'index' is all the indices I'm tracking for the
+enqueueing code. I presume the output won't
+be what I intended.
+
+The output was:
+===============
+Parse:NamespaceTokenKeyword
+Parse:StatementDelimiterToken
+Parse:PublicTokenKeyword
+Parse:ClassTokenKeyword
+Parse:OpenBraceToken
+TokenWalker::startIndexInclusive::7::CloseBraceToken
+TokenWalker::endIndexExclusive::8::EndOfFileToken
+Parse:EndOfFileToken
+
+What immediately stands out in the console write output, is that
+the 'startIndexInclusive' is pointing to the class definition's
+CloseBraceToken.
+
+This makes sense considering that I was thinking how I am off by 1.
+There is no syntax between the open and closing braces of the type
+definition, since it is empty.
+
+So off by 1 puts me at the close brace.
+
+I went and subtracted 1 from the 'startIndexInclusive', and
+now I'm seeing the 'startIndexInclusive' correctly pointing at
+the 'OpenBraceToken' for the type definition.
+
+Yet, even with the off by 1 for the 'startIndexInclusive' having
+been fixed, the 'Parse:...' output lines are identical.
+
+The initial 'Parse:OpenBraceToken' makes sense,
+as what follows is that the parsing of the open brace
+gets enqueued.
+
+With the off by 1 fixed, it is intended that the
+'Parse:OpenBraceToken' would occur for a second time.
+
+I added a console write line to the 'DeferredParsing(...)'
+method, which should be getting invoked upon dequeueing.
+
+But, this output never got written, the 'DeferredParsing(...)'
+isn't getting invoked.
+
+The reason appears to be my reliance on a close brace token,
+being the indicator for the end of the parent/current scope.
+
+Since this test uses a file scoped namespace, then the dequeueing never occurs.
+
 */
 
 		var resourceUri = new ResourceUri("UnitTests");
