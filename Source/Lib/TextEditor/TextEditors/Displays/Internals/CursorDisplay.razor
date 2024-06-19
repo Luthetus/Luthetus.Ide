@@ -4,6 +4,7 @@
 @using Luthetus.Common.RazorLib.Dimensions.Models;
 
 @{
+	var localRenderBatch = RenderBatch;
     var leftRelativeToParentInPixelsCssStyle = string.Empty;
     var textEditorKeymap = (ITextEditorKeymap)RenderBatch.Options!.Keymap!;
 }
@@ -26,7 +27,7 @@
      style="@CaretRowStyleCss">
 </div>
 
-@if (_menuKind != MenuKind.None && IncludeContextMenuHelperComponent)
+@if (localRenderBatch.ViewModel.MenuKind != MenuKind.None && IncludeContextMenuHelperComponent)
 {
     <div @onkeydown:stopPropagation="true"
          @onmousedown:stopPropagation="true"
@@ -34,21 +35,18 @@
          class="luth_te_text-editor-context-menu"
          style="@MenuStyleCss">
 
-        <CascadingValue Name="SetShouldDisplayMenuAsync"
-                        Value="new Func<MenuKind, bool, Task>(SetShouldDisplayMenuAsync)">
-            <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
-                            Value="TextEditorMenuShouldTakeFocus">
+        <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
+                        Value="TextEditorMenuShouldTakeFocus">
 
-                @switch (_menuKind)
-                {
-                    case MenuKind.ContextMenu:
-                            @OnContextMenuRenderFragment
-                        break;
-                    case MenuKind.AutoCompleteMenu:
-                            @AutoCompleteMenuRenderFragment
-                        break;
-                }
-            </CascadingValue>
+            @switch (localRenderBatch.ViewModel.MenuKind)
+            {
+                case MenuKind.ContextMenu:
+                        @OnContextMenuRenderFragment
+                    break;
+                case MenuKind.AutoCompleteMenu:
+                        @AutoCompleteMenuRenderFragment
+                    break;
+            }
         </CascadingValue>
     </div>
 }

@@ -1,13 +1,13 @@
-﻿using Fluxor;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Nugets.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.Nugets.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Nugets.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 
 namespace Luthetus.Ide.RazorLib.Nugets.Displays;
 
@@ -87,23 +87,22 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
                 await InvokeAsync(StateHasChanged);
             }
 
-            await BackgroundTaskService.EnqueueAsync(
-                    Key<BackgroundTask>.NewKey(),
-                    ContinuousBackgroundTaskWorker.GetQueueKey(),
-                    "Submit NuGet Query",
-                    async () =>
-                    {
-                        var localNugetResult = await NugetPackageManagerProvider
-                            .QueryForNugetPackagesAsync(query)
-                            .ConfigureAwait(false);
+            BackgroundTaskService.Enqueue(
+                Key<IBackgroundTask>.NewKey(),
+                ContinuousBackgroundTaskWorker.GetQueueKey(),
+                "Submit NuGet Query",
+                async () =>
+                {
+                    var localNugetResult = await NugetPackageManagerProvider
+                        .QueryForNugetPackagesAsync(query)
+                        .ConfigureAwait(false);
 
-                        var setMostRecentQueryResultAction =
-                            new NuGetPackageManagerState.SetMostRecentQueryResultAction(
-                                localNugetResult);
+                    var setMostRecentQueryResultAction =
+                        new NuGetPackageManagerState.SetMostRecentQueryResultAction(
+                            localNugetResult);
 
-                        Dispatcher.Dispatch(setMostRecentQueryResultAction);
-                    })
-                .ConfigureAwait(false);
+                    Dispatcher.Dispatch(setMostRecentQueryResultAction);
+                });
         }
         catch (Exception e)
         {

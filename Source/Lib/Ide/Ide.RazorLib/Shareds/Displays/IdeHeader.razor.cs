@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
@@ -24,10 +28,6 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using System.Collections.Immutable;
-using Fluxor;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -63,6 +63,7 @@ public partial class IdeHeader : ComponentBase
 	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -79,8 +80,6 @@ public partial class IdeHeader : ComponentBase
 	private Key<DropdownRecord> _dropdownKeyRun = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuRun = new(ImmutableArray<MenuOptionRecord>.Empty);
     private ElementReference? _buttonRunElementReference;
-
-    private ActiveBackgroundTaskDisplay? _activeBackgroundTaskDisplayComponent;
 
     protected override Task OnInitializedAsync()
     {
@@ -116,22 +115,38 @@ public partial class IdeHeader : ComponentBase
             var menuOptionOpenFile = new MenuOptionRecord(
                 "File",
                 MenuOptionKind.Other,
-                IdeBackgroundTaskApi.Editor.ShowInputFile);
+                () =>
+				{
+					IdeBackgroundTaskApi.Editor.ShowInputFile();
+					return Task.CompletedTask;
+				});
 
             var menuOptionOpenDirectory = new MenuOptionRecord(
                 "Directory",
                 MenuOptionKind.Other,
-                IdeBackgroundTaskApi.FolderExplorer.ShowInputFile);
+                () =>
+				{
+					IdeBackgroundTaskApi.FolderExplorer.ShowInputFile();
+					return Task.CompletedTask;
+				});
 
             var menuOptionOpenCSharpProject = new MenuOptionRecord(
                 "C# Project - TODO: Adhoc Sln",
                 MenuOptionKind.Other,
-                IdeBackgroundTaskApi.Editor.ShowInputFile);
+                () =>
+				{
+					IdeBackgroundTaskApi.Editor.ShowInputFile();
+					return Task.CompletedTask;
+				});
 
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
-                () => DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi));
+                () =>
+				{
+					DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi);
+					return Task.CompletedTask;
+				});
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
@@ -180,7 +195,7 @@ public partial class IdeHeader : ComponentBase
 
 		// Menu Option Code Search
         {
-            var menuOptionPermissions = new MenuOptionRecord(
+            var menuOptionCodeSearch = new MenuOptionRecord(
 				"Code Search",
                 MenuOptionKind.Delete,
                 () =>
@@ -197,12 +212,12 @@ public partial class IdeHeader : ComponentBase
                     return Task.CompletedTask;
 				});
 
-            menuOptionsList.Add(menuOptionPermissions);
+            menuOptionsList.Add(menuOptionCodeSearch);
         }
 
 		// Menu Option Find
         {
-            var menuOptionPermissions = new MenuOptionRecord(
+            var menuOptionFind = new MenuOptionRecord(
 				"Find (in text editor)",
                 MenuOptionKind.Delete,
                 () =>
@@ -221,39 +236,36 @@ public partial class IdeHeader : ComponentBase
 						new TextEditorCommandArgs(
 							new(string.Empty),
 					        activeViewModel.ViewModelKey,
-					        false,
-							ClipboardService,
-					        TextEditorService,
-							TextEditorService.OptionsStateWrap.Value.Options,
-                            null,
 							null,
-					        JsRuntime,
-					        Dispatcher,
-					        ServiceProvider,
-					        TextEditorConfig));
+							TextEditorService,
+					        ServiceProvider));
 
 					return Task.CompletedTask;
 				});
 
-            menuOptionsList.Add(menuOptionPermissions);
+            menuOptionsList.Add(menuOptionFind);
 		}
 
 		// Menu Option BackgroundTasks
         {
-            var menuOptionPermissions = new MenuOptionRecord(
+            var menuOptionBackgroundTasks = new MenuOptionRecord(
 				"BackgroundTasks",
                 MenuOptionKind.Delete,
                 () => 
                 {
-                    var localActiveBackgroundTaskDisplayComponent = _activeBackgroundTaskDisplayComponent;
-
-                    if (localActiveBackgroundTaskDisplayComponent is null)
-                        return Task.CompletedTask;
-
-                    return localActiveBackgroundTaskDisplayComponent.ShowBackgroundTaskDialogOnClick();
+					var dialogRecord = new DialogViewModel(
+			            _backgroundTaskDialogKey,
+			            "Background Tasks",
+			            typeof(BackgroundTaskDialogDisplay),
+			            null,
+			            null,
+						true);
+			
+			        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+			        return Task.CompletedTask;
                 });
 
-            menuOptionsList.Add(menuOptionPermissions);
+            menuOptionsList.Add(menuOptionBackgroundTasks);
         }
 
         _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
@@ -314,7 +326,11 @@ public partial class IdeHeader : ComponentBase
             var menuOption = new MenuOptionRecord(
 				"Build",
                 MenuOptionKind.Create,
-                () => BuildOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value));
+                () =>
+				{
+					BuildOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
+					return Task.CompletedTask;
+				});
 
             menuOptionsList.Add(menuOption);
         }
@@ -324,7 +340,11 @@ public partial class IdeHeader : ComponentBase
             var menuOption = new MenuOptionRecord(
 				"Clean",
                 MenuOptionKind.Delete,
-                () => CleanOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value));
+                () =>
+				{
+					CleanOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
+					return Task.CompletedTask;
+				});
 
             menuOptionsList.Add(menuOption);
         }
@@ -332,7 +352,7 @@ public partial class IdeHeader : ComponentBase
         _menuRun = new MenuRecord(menuOptionsList.ToImmutableArray());
 	}
 
-	private Task BuildOnClick(string solutionAbsolutePathString)
+	private void BuildOnClick(string solutionAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -343,10 +363,10 @@ public partial class IdeHeader : ComponentBase
             null,
             CancellationToken.None);
 
-        return generalTerminal.EnqueueCommandAsync(terminalCommand);
+        generalTerminal.EnqueueCommand(terminalCommand);
 	}
 
-	private Task CleanOnClick(string solutionAbsolutePathString)
+	private void CleanOnClick(string solutionAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetClean(solutionAbsolutePathString);
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
@@ -357,7 +377,7 @@ public partial class IdeHeader : ComponentBase
             null,
             CancellationToken.None);
 
-        return generalTerminal.EnqueueCommandAsync(terminalCommand);
+        generalTerminal.EnqueueCommand(terminalCommand);
 	}
 
     private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)

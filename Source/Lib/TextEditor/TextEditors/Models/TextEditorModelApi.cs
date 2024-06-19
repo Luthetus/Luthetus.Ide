@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -37,7 +37,7 @@ public class TextEditorModelApi : ITextEditorModelApi
     #region CREATE_METHODS
     public void RegisterCustom(TextEditorModel model)
     {
-        _dispatcher.Dispatch(new TextEditorModelState.RegisterAction(
+        _dispatcher.Dispatch(new TextEditorState.RegisterModelAction(
             TextEditorService.AuthenticatedActionKey,
             model));
     }
@@ -57,7 +57,7 @@ public class TextEditorModelApi : ITextEditorModelApi
             _decorationMapperRegistry.GetDecorationMapper(extensionNoPeriod),
             _compilerServiceRegistry.GetCompilerService(extensionNoPeriod));
 
-        _dispatcher.Dispatch(new TextEditorModelState.RegisterAction(
+        _dispatcher.Dispatch(new TextEditorState.RegisterModelAction(
             TextEditorService.AuthenticatedActionKey,
             model));
     }
@@ -66,27 +66,27 @@ public class TextEditorModelApi : ITextEditorModelApi
     #region READ_METHODS
     public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
-        return _textEditorService.ViewModelStateWrap.Value.ViewModelList
+        return _textEditorService.TextEditorStateWrap.Value.ViewModelList
             .Where(x => x.ResourceUri == resourceUri)
             .ToImmutableArray();
     }
 
     public string? GetAllText(ResourceUri resourceUri)
     {
-        return _textEditorService.ModelStateWrap.Value.ModelList
+        return _textEditorService.TextEditorStateWrap.Value.ModelList
             .FirstOrDefault(x => x.ResourceUri == resourceUri)
             ?.GetAllText();
     }
 
     public TextEditorModel? GetOrDefault(ResourceUri resourceUri)
     {
-        return _textEditorService.ModelStateWrap.Value.ModelList
+        return _textEditorService.TextEditorStateWrap.Value.ModelList
             .FirstOrDefault(x => x.ResourceUri == resourceUri);
     }
 
     public ImmutableList<TextEditorModel> GetModels()
     {
-        return _textEditorService.ModelStateWrap.Value.ModelList;
+        return _textEditorService.TextEditorStateWrap.Value.ModelList;
     }
     #endregion
 
@@ -452,7 +452,7 @@ public class TextEditorModelApi : ITextEditorModelApi
     #region DELETE_METHODS
     public void Dispose(ResourceUri resourceUri)
     {
-        _dispatcher.Dispatch(new TextEditorModelState.DisposeAction(
+        _dispatcher.Dispatch(new TextEditorState.DisposeModelAction(
             TextEditorService.AuthenticatedActionKey,
             resourceUri));
     }

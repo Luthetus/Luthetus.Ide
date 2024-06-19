@@ -1,11 +1,11 @@
-﻿@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 @using System.Collections.Immutable;
 
 <div class="luth_te_text-editor-header @TextEditorService.ThemeCssClassString">
     <div class="luth_te_text-editor-header-listing">
         @{
-            var model = TextEditorService.ModelStateWrap.Value;
+            var model = TextEditorService.TextEditorStateWrap.Value;
 
             if (model is not null)
             {

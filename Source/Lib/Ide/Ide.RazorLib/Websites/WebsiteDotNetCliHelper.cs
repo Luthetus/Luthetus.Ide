@@ -4,10 +4,10 @@ using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.RazorLib.Websites;
 
@@ -49,12 +49,11 @@ public class WebsiteDotNetCliHelper
             cSharpProjectAbsolutePathString,
             false);
 
-        await ideBackgroundTaskApi.DotNetSolution.Website_AddExistingProjectToSolution(
-                immutableView.DotNetSolutionModel.Key,
-                immutableView.ProjectTemplateShortNameValue,
-                immutableView.CSharpProjectNameValue,
-                cSharpAbsolutePath)
-            .ConfigureAwait(false);
+        ideBackgroundTaskApi.DotNetSolution.Website_AddExistingProjectToSolution(
+            immutableView.DotNetSolutionModel.Key,
+            immutableView.ProjectTemplateShortNameValue,
+            immutableView.CSharpProjectNameValue,
+            cSharpAbsolutePath);
 
         // Close Dialog
         dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.DynamicViewModelKey));

@@ -1,5 +1,7 @@
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +28,7 @@ class Program
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
 
-        appBuilder.Services.AddSingleton(new ReflectiveOptions(
+        appBuilder.Services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
             typeof(LuthetusIdeConfig).Assembly));
@@ -50,7 +52,44 @@ class Program
             .SetUseOsDefaultSize(false)
             .SetSize(2470, 2000)
             .SetLeft(50)
-            .SetTop(50);
+            .SetTop(50)
+			.RegisterSizeChangedHandler((_, size) => 
+			{
+				var store = app.Services.GetRequiredService<IStore>();
+				if (!store.Initialized.IsCompleted)
+					return;
+
+				var dispatcher = app.Services.GetRequiredService<IDispatcher>();
+				dispatcher.Dispatch(new AppDimensionState.SetAppDimensionStateAction(inState => inState with
+				{
+					Width = size.Width,
+					Height = size.Height
+				}));
+			})
+			.RegisterMaximizedHandler((_, _) =>
+			{
+				// The 'RegisterSizeChangedHandler' will update the width and height appropriately,
+				// when there is a 'maximized' event. But there seems to be a timing issue?
+				// Adding this did NOT fix the issue.
+				var store = app.Services.GetRequiredService<IStore>();
+				if (!store.Initialized.IsCompleted)
+					return;
+
+				var dispatcher = app.Services.GetRequiredService<IDispatcher>();
+				dispatcher.Dispatch(new AppDimensionState.NotifyIntraAppResizeAction());
+			})
+			.RegisterRestoredHandler((_, _) =>
+			{
+				// The 'RegisterSizeChangedHandler' will update the width and height appropriately,
+				// when there is a 'restored' event. But there seems to be a timing issue?
+				// Adding this did NOT fix the issue.
+				var store = app.Services.GetRequiredService<IStore>();
+				if (!store.Initialized.IsCompleted)
+					return;
+
+				var dispatcher = app.Services.GetRequiredService<IDispatcher>();
+				dispatcher.Dispatch(new AppDimensionState.NotifyIntraAppResizeAction());
+			});
 
         // Personal settings to have closing and reopening the IDE be exactly where I want while developing.
         {

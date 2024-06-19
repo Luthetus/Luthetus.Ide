@@ -1,10 +1,17 @@
-﻿@using Fluxor.Blazor.Web.Components;
-@inherits FluxorComponent
+@using Luthetus.Common.RazorLib.Icons.Models
 
-@{ var appOptionsState = AppOptionsStateWrap.Value; }
+@{
+	var positionHorizontalStyle = IconBadgeHorizontalPositionKind == Models.IconBadgeHorizontalPositionKind.Left
+		? "left: 0;"
+		: "right: 0;";
 
-<div class="luth_web_icon-badge"
-     style="@GetStyleString(appOptionsState)">
+	var positionVerticalStyle = IconBadgeVerticalPositionKind == Models.IconBadgeVerticalPositionKind.Top
+		? "top: 0;"
+		: "bottom: 0;";
+}
+
+<div class="luth_icon-badge @CssClassString"
+     style="@positionHorizontalStyle @positionVerticalStyle">
 
     @ChildContent
 </div>

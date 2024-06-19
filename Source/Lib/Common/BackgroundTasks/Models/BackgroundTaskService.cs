@@ -1,47 +1,53 @@
-using Luthetus.Common.RazorLib.Keys.Models;
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public class BackgroundTaskService : IBackgroundTaskService
 {
-    private readonly Dictionary<Key<BackgroundTaskQueue>, BackgroundTaskQueue> _queueContainerMap = new();
+    private readonly Dictionary<Key<IBackgroundTaskQueue>, BackgroundTaskQueue> _queueContainerMap = new();
 
     private bool _enqueuesAreDisabled;
 
-    public ImmutableArray<BackgroundTaskQueue> Queues => _queueContainerMap.Values.ToImmutableArray();
+    public ImmutableArray<IBackgroundTaskQueue> Queues => _queueContainerMap.Values.Select(x => (IBackgroundTaskQueue)x).ToImmutableArray();
 
-    public Task EnqueueAsync(IBackgroundTask backgroundTask)
+    public void Enqueue(IBackgroundTask backgroundTask)
     {
         // TODO: Could there be concurrency issues regarding '_enqueuesAreDisabled'? (2023-11-19)
         if (_enqueuesAreDisabled)
-            return Task.CompletedTask;
+            return;
 
-        var queue = _queueContainerMap[backgroundTask.QueueKey];
-
-        return queue.Queue.EnqueueAsync(backgroundTask);
+        _queueContainerMap[backgroundTask.QueueKey]
+			.Enqueue(backgroundTask);
     }
 
-    public Task EnqueueAsync(Key<BackgroundTask> taskKey, Key<BackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
+    public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
     {
-        return EnqueueAsync(new BackgroundTask(taskKey, queueKey, name, runFunc));
+        Enqueue(new BackgroundTask(taskKey, queueKey, name, runFunc));
     }
 
-    public Task<IBackgroundTask> DequeueAsync(
-        Key<BackgroundTaskQueue> queueKey,
+	public IBackgroundTask? Dequeue(Key<IBackgroundTaskQueue> queueKey)
+    {
+        var queue = _queueContainerMap[queueKey];
+        return queue.DequeueOrDefault();
+    }
+
+    public async Task<IBackgroundTask?> DequeueAsync(
+        Key<IBackgroundTaskQueue> queueKey,
         CancellationToken cancellationToken)
     {
         var queue = _queueContainerMap[queueKey];
-        return queue.Queue.DequeueOrDefaultAsync();
+		await queue.DequeueSemaphoreSlim.WaitAsync();
+        return queue.DequeueOrDefault();
     }
 
-    public void RegisterQueue(BackgroundTaskQueue queue)
+    public void RegisterQueue(IBackgroundTaskQueue queue)
     {
-        _queueContainerMap.Add(queue.Key, queue);
+        _queueContainerMap.Add(queue.Key, (BackgroundTaskQueue)queue);
     }
 
     public void SetExecutingBackgroundTask(
-        Key<BackgroundTaskQueue> queueKey,
+        Key<IBackgroundTaskQueue> queueKey,
         IBackgroundTask? backgroundTask)
     {
         var queue = _queueContainerMap[queueKey];
@@ -49,7 +55,7 @@ public class BackgroundTaskService : IBackgroundTaskService
         queue.ExecutingBackgroundTask = backgroundTask;
     }
     
-    public BackgroundTaskQueue GetQueue(Key<BackgroundTaskQueue> queueKey)
+    public IBackgroundTaskQueue GetQueue(Key<IBackgroundTaskQueue> queueKey)
     {
         return _queueContainerMap[queueKey];
     }
@@ -59,7 +65,7 @@ public class BackgroundTaskService : IBackgroundTaskService
         _enqueuesAreDisabled = true;
 
         // TODO: Polling solution for now, perhaps change to a more optimal solution? (2023-11-19)
-        while (_queueContainerMap.Values.SelectMany(x => x.BackgroundTasks).Any())
+        while (_queueContainerMap.Values.SelectMany(x => x.BackgroundTaskList).Any())
         {
             await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
         }

@@ -2,24 +2,24 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.Ide.RazorLib.Websites;
-using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjects.Displays;
 
@@ -78,30 +78,29 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private string GetIsActiveCssClassString(CSharpProjectFormPanelKind panelKind) =>
         _viewModel.ActivePanelKind == panelKind ? "luth_active" : string.Empty;
 
-    private async Task RequestInputFileForParentDirectory(string message)
+    private void RequestInputFileForParentDirectory(string message)
     {
-        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
-                message,
-                async absolutePath =>
-                {
-                    if (absolutePath is null)
-                        return;
+        IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+            message,
+            async absolutePath =>
+            {
+                if (absolutePath is null)
+                    return;
 
-                    _viewModel.ParentDirectoryNameValue = absolutePath.Value;
-                    await InvokeAsync(StateHasChanged);
-                },
-                absolutePath =>
-                {
-                    if (absolutePath is null || !absolutePath.IsDirectory)
-                        return Task.FromResult(false);
+                _viewModel.ParentDirectoryNameValue = absolutePath.Value;
+                await InvokeAsync(StateHasChanged);
+            },
+            absolutePath =>
+            {
+                if (absolutePath is null || !absolutePath.IsDirectory)
+                    return Task.FromResult(false);
 
-                    return Task.FromResult(true);
-                },
-                new[]
-                {
-                    new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-                }.ToImmutableArray())
-            .ConfigureAwait(false);
+                return Task.FromResult(true);
+            },
+            new[]
+            {
+                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
+            }.ToImmutableArray());
     }
 
     private async Task ReadProjectTemplates()
@@ -139,7 +138,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 					await InvokeAsync(StateHasChanged);
                 });
 
-            await generalTerminal.EnqueueCommandAsync(newCSharpProjectCommand).ConfigureAwait(false);
+            generalTerminal.EnqueueCommand(newCSharpProjectCommand);
         }
         finally
         {
@@ -172,7 +171,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 					await InvokeAsync(StateHasChanged);
 				});
 
-            await generalTerminal.EnqueueCommandAsync(newCSharpProjectCommand).ConfigureAwait(false);
+            generalTerminal.EnqueueCommand(newCSharpProjectCommand);
         }
         finally
         {
@@ -227,17 +226,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         {
                             Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
-                            await IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
-                                    immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath)
-                                .ConfigureAwait(false);
+                            IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
+                                immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
                         });
 
-                    await generalTerminal
-                        .EnqueueCommandAsync(addExistingProjectToSolutionCommand)
-                        .ConfigureAwait(false);
+                    generalTerminal.EnqueueCommand(addExistingProjectToSolutionCommand);
                 });
 
-            await generalTerminal.EnqueueCommandAsync(newCSharpProjectCommand).ConfigureAwait(false);
+            generalTerminal.EnqueueCommand(newCSharpProjectCommand);
         }
         else
         {

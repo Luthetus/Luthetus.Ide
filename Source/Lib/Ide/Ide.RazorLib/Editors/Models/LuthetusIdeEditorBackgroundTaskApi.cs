@@ -1,23 +1,23 @@
-﻿using Fluxor;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.Models;
@@ -61,13 +61,13 @@ public class LuthetusIdeEditorBackgroundTaskApi
         _serviceProvider = serviceProvider;
     }
 
-    public Task OpenInEditor(
+    public void OpenInEditor(
         IAbsolutePath? absolutePath,
         bool shouldSetFocusToEditor,
         Key<TextEditorGroup>? editorTextEditorGroupKey = null)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "OpenInEditor",
             async () => await OpenInEditorAsync(
@@ -76,13 +76,14 @@ public class LuthetusIdeEditorBackgroundTaskApi
                 editorTextEditorGroupKey));
     }
 
-    public Task ShowInputFile()
+    public void ShowInputFile()
     {
-        return _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+        _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             "TextEditor",
             absolutePath =>
             {
-                return OpenInEditor(absolutePath, true);
+                OpenInEditor(absolutePath, true);
+				return Task.CompletedTask;
             },
             absolutePath =>
             {
@@ -128,9 +129,8 @@ public class LuthetusIdeEditorBackgroundTaskApi
 
             _textEditorService.ModelApi.RegisterCustom(model);
 
-            await _textEditorService.PostSimpleBatch(
+            _textEditorService.PostSimpleBatch(
                 nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-                string.Empty,
                 async editContext =>
                 {
                     await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -199,9 +199,8 @@ public class LuthetusIdeEditorBackgroundTaskApi
             registerViewModelArgs.ResourceUri.Value,
             false);
 
-        await _textEditorService.PostSimpleBatch(
+        _textEditorService.PostSimpleBatch(
             nameof(TryRegisterViewModelFunc),
-            string.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
                 viewModelKey,
                 textEditorViewModel =>
@@ -231,9 +230,8 @@ public class LuthetusIdeEditorBackgroundTaskApi
                 {
                     if (writtenDateTime is not null)
                     {
-                        await _textEditorService.PostSimpleBatch(
+                        _textEditorService.PostSimpleBatch(
                             nameof(HandleOnSaveRequested),
-                            string.Empty,
                             _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
                                 writtenDateTime.Value));
@@ -346,8 +344,8 @@ public class LuthetusIdeEditorBackgroundTaskApi
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
                             new Func<Task>(async () =>
                             {
-                                await _backgroundTaskService.EnqueueAsync(
-                                        Key<BackgroundTask>.NewKey(),
+                                _backgroundTaskService.Enqueue(
+                                        Key<IBackgroundTask>.NewKey(),
                                         ContinuousBackgroundTaskWorker.GetQueueKey(),
                                         "Check If Contexts Were Modified",
                                         async () =>
@@ -359,9 +357,8 @@ public class LuthetusIdeEditorBackgroundTaskApi
                                                 .ReadAllTextAsync(inputFileAbsolutePathString)
                                                 .ConfigureAwait(false);
 
-                                            await _textEditorService.PostSimpleBatch(
+                                            _textEditorService.PostSimpleBatch(
                                                 nameof(CheckIfContentsWereModifiedAsync),
-                                                string.Empty,
                                                 async editContext =>
                                                 {
                                                     await _textEditorService.ModelApi
@@ -377,8 +374,7 @@ public class LuthetusIdeEditorBackgroundTaskApi
                                                         .Invoke(editContext)
                                                         .ConfigureAwait(false);
                                                 });
-                                        })
-                                    .ConfigureAwait(false);
+                                        });
                             })
                         },
                         {

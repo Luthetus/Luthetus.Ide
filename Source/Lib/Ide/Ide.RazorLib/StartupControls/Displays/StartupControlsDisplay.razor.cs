@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -5,7 +6,6 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.Displays;
 
@@ -44,15 +44,13 @@ public partial class StartupControlsDisplay : FluxorComponent
             OutputParser: DotNetCliOutputParser);
     }
 
-    private async Task StartProgramWithoutDebuggingOnClick()
+    private void StartProgramWithoutDebuggingOnClick()
     {
         var startProgramTerminalCommand = GetStartProgramTerminalCommand();
         if (startProgramTerminalCommand is null)
             return;
 
         var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-        await executionTerminal
-            .EnqueueCommandAsync(startProgramTerminalCommand)
-            .ConfigureAwait(false);
+        executionTerminal.EnqueueCommand(startProgramTerminalCommand);
     }
 }

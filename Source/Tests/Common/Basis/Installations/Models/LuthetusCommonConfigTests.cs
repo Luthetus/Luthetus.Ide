@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
@@ -68,7 +68,7 @@ public record LuthetusCommonConfigTests
         // Assert that 'LocalStorageService' is used for the default CommonFactories
         {
             var hostingInformation = new LuthetusHostingInformation(
-                LuthetusHostingKind.UnitTesting,
+                LuthetusHostingKind.UnitTestingSynchronous,
                 new BackgroundTaskServiceSynchronous());
 
             var services = new ServiceCollection()
@@ -88,7 +88,7 @@ public record LuthetusCommonConfigTests
         // 'DoNothingStorageService' in place of 'LocalStorageService' works.
         {
             var hostingInformation = new LuthetusHostingInformation(
-                LuthetusHostingKind.UnitTesting,
+                LuthetusHostingKind.UnitTestingSynchronous,
                 new BackgroundTaskServiceSynchronous());
 
             var services = new ServiceCollection()

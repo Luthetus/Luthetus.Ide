@@ -1,0 +1,92 @@
+@using Fluxor
+@using Luthetus.Common.RazorLib.Installations.Models
+@using Luthetus.Common.RazorLib.BackgroundTasks.Models
+@using Luthetus.Common.RazorLib.Dialogs.Models
+@using Luthetus.Common.RazorLib.Dialogs.Displays
+@using Luthetus.Common.RazorLib.Dynamics.Models
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.Common.RazorLib.Notifications.Displays
+@using Luthetus.Common.RazorLib.FileSystems.Models
+@using Luthetus.Common.RazorLib.Exceptions
+@using Luthetus.Common.RazorLib.Clipboards.Models
+@using Luthetus.Common.RazorLib.Storages.Models
+@using Luthetus.TextEditor.RazorLib.Installations.Models
+@using Luthetus.Ide.RazorLib.Installations.Models
+
+@inherits TestContext
+@code
+{
+	[Fact]
+	public void TestsInitializeCorrectly()
+	{
+		SharedInitializationForTests.Initialize(this);
+
+		// Hide these local variables in their own scope as to avoid
+		// possibility of issues in the future.
+
+		{
+			var fileSystemProvider = Services.GetService<IFileSystemProvider>();
+			if (fileSystemProvider is not InMemoryFileSystemProvider)
+				throw new LuthetusUnitTestException(
+					$"A UnitTest's {nameof(IFileSystemProvider)} must be " +
+					$"{nameof(InMemoryFileSystemProvider)}, " +
+					$"but was {fileSystemProvider.GetType().Name}");
+		}
+		
+		{
+			var environmentProvider = Services.GetService<IEnvironmentProvider>();
+			if (environmentProvider is not InMemoryEnvironmentProvider)
+				throw new LuthetusUnitTestException(
+					$"A UnitTest's {nameof(IEnvironmentProvider)} must be " +
+					$"{nameof(InMemoryEnvironmentProvider)}, " +
+					$"but was {environmentProvider.GetType().Name}");
+		}
+
+		{
+			var clipboardService = Services.GetService<IClipboardService>();
+			if (clipboardService is not InMemoryClipboardService)
+				throw new LuthetusUnitTestException(
+					$"A UnitTest's {nameof(IClipboardService)} must be " +
+					$"{nameof(InMemoryClipboardService)}, " +
+					$"but was {clipboardService.GetType().Name}");
+		}
+
+		{
+			var storageService = Services.GetService<IStorageService>();
+			if (storageService is not InMemoryStorageService)
+				throw new LuthetusUnitTestException(
+					$"A UnitTest's {nameof(IStorageService)} must be " +
+					$"{nameof(InMemoryStorageService)}, " +
+					$"but was {storageService.GetType().Name}");
+		}
+	}
+
+	[Fact]
+	public async Task BackgroundTasksInitializeCorrectly()
+	{
+		SharedInitializationForTests.Initialize(this);
+
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var count = 0;
+
+		// This await is in regards to the Semaphore that provides the queue with thread safety.
+		backgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			"Unit Testing",
+			() =>
+			{
+				count++;
+				return Task.CompletedTask;
+			});
+
+		// The background tasks have not yet been given a chance to execute.
+		Assert.Equal(0, count);
+
+		// Give the background tasks a chance to execute.
+		await backgroundTasksHandle.Stop();
+
+		Assert.Equal(1, count);
+	}
+}

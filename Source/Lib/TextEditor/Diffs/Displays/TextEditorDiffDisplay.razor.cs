@@ -16,7 +16,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     [Inject]
     private IState<TextEditorDiffState> TextEditorDiffStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorModelState> TextEditorModelStateWrap { get; set; } = null!;
+    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
@@ -60,7 +60,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         TextEditorDiffStateWrap.StateChanged += TextEditorDiffWrapOnStateChanged;
-        TextEditorModelStateWrap.StateChanged += TextEditorModelsCollectionWrapOnStateChanged;
+        TextEditorStateWrap.StateChanged += TextEditorModelsCollectionWrapOnStateChanged;
         TextEditorOptionsStateWrap.StateChanged += TextEditorOptionsStateWrapOnStateChanged;
 
         base.OnInitialized();
@@ -122,7 +122,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     public void Dispose()
     {
         TextEditorDiffStateWrap.StateChanged -= TextEditorDiffWrapOnStateChanged;
-        TextEditorModelStateWrap.StateChanged -= TextEditorModelsCollectionWrapOnStateChanged;
+        TextEditorStateWrap.StateChanged -= TextEditorModelsCollectionWrapOnStateChanged;
         TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrapOnStateChanged;
 
         _calculateDiffCancellationTokenSource.Cancel();

@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.Common.RazorLib.Menus.Models;
-using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 
@@ -22,8 +22,6 @@ public partial class AutocompleteMenu : ComponentBase
 
     [CascadingParameter]
     public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
-    [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
-    public Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
     [CascadingParameter(Name = "TextEditorMenuShouldTakeFocusFunc")]
     public Func<bool> TextEditorMenuShouldTakeFocusFunc { get; set; } = null!;
 
@@ -38,17 +36,44 @@ public partial class AutocompleteMenu : ComponentBase
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true).ConfigureAwait(false);
+		{
+			TextEditorService.PostSimpleBatch(
+				nameof(AutocompleteMenu),
+				editContext =>
+				{
+					var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+
+					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					{
+						MenuKind = MenuKind.None
+					};
+
+					return Task.CompletedTask;
+				});
+		}
     }
 
-    private async Task ReturnFocusToThisAsync()
+    private Task ReturnFocusToThisAsync()
     {
         try
         {
-            await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true).ConfigureAwait(false);
+            TextEditorService.PostSimpleBatch(
+				nameof(AutocompleteMenu),
+				editContext =>
+				{
+					var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+
+					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					{
+						MenuKind = MenuKind.None
+					};
+
+					return Task.CompletedTask;
+				});
+			return Task.CompletedTask;
         }
         catch (Exception e)
         {
@@ -135,7 +160,8 @@ public partial class AutocompleteMenu : ComponentBase
                 new("No results", MenuOptionKind.Other)
             }.ToImmutableArray());
         }
-        catch (LuthetusTextEditorException)
+		// Catching 'InvalidOperationException' is for the currently occurring case: "Collection was modified; enumeration operation may not execute."
+        catch (Exception e) when (e is LuthetusTextEditorException || e is InvalidOperationException)
         {
             return new MenuRecord(new MenuOptionRecord[]
             {
@@ -150,7 +176,20 @@ public partial class AutocompleteMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync.Invoke(MenuKind.None, true).ConfigureAwait(false);
+				TextEditorService.PostSimpleBatch(
+					nameof(AutocompleteMenu),
+					editContext =>
+					{
+						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+	
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.None
+						};
+
+						return Task.CompletedTask;
+					});
+
                 await menuOptionAction.Invoke().ConfigureAwait(false);
             }
             catch (Exception e)
@@ -168,13 +207,13 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        return TextEditorService.PostSimpleBatch(
+        TextEditorService.PostSimpleBatch(
             nameof(InsertAutocompleteMenuOption),
-            string.Empty,
             TextEditorService.ModelApi.InsertTextFactory(
                 viewModel.ResourceUri,
                 viewModel.ViewModelKey,
                 autocompleteEntry.DisplayName.Substring(word.Length),
                 CancellationToken.None));
+		return Task.CompletedTask;
     }
 }

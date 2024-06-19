@@ -4,8 +4,8 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public interface IBackgroundTask
 {
-    public Key<BackgroundTask> BackgroundTaskKey { get; }
-    public Key<BackgroundTaskQueue> QueueKey { get; }
+    public Key<IBackgroundTask> BackgroundTaskKey { get; }
+    public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
     public Task? WorkProgress { get; }
 

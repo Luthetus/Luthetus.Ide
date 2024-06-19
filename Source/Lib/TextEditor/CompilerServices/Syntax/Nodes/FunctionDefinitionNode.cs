@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -7,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// TODO: Track the open and close braces for the function body.
 /// </summary>
-public sealed record FunctionDefinitionNode : ISyntaxNode
+public sealed record FunctionDefinitionNode : ICodeBlockOwner
 {
     public FunctionDefinitionNode(
         AccessModifierKind accessModifierKind,
@@ -53,6 +54,8 @@ public sealed record FunctionDefinitionNode : ISyntaxNode
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? FunctionBodyCodeBlockNode { get; }
     public ConstraintNode? ConstraintNode { get; }
+
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
     public ImmutableArray<ISyntax> ChildList { get; }
 

@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
 
@@ -12,10 +12,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                return commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(Word),
-                    string.Empty,
                     WordFactory(commandArgs));
+				return Task.CompletedTask;
             })
         {
             TextEditorEditFactory = interfaceCommandArgs =>
@@ -31,10 +31,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                return commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(End),
-                    string.Empty,
                     EndFactory(commandArgs));
+				return Task.CompletedTask;
             })
         {
             TextEditorEditFactory = interfaceCommandArgs =>
@@ -50,10 +50,10 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                return commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(Back),
-                    string.Empty,
                     BackFactory(commandArgs));
+				return Task.CompletedTask;
             })
         {
             TextEditorEditFactory = interfaceCommandArgs =>
@@ -74,10 +74,10 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(GetVisualFactory),
-                        string.Empty,
                         VisualFactory(commandArgs));
+					return Task.CompletedTask;
                 })
             {
                 TextEditorEditFactory = interfaceCommandArgs =>
@@ -101,10 +101,10 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(GetVisualLineFactory),
-                        string.Empty,
                         VisualLineFactory(commandArgs));
+					return Task.CompletedTask;
                 })
             {
                 TextEditorEditFactory = interfaceCommandArgs =>

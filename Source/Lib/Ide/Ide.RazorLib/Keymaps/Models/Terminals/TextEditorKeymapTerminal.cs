@@ -1,26 +1,27 @@
-﻿using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components.Web;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
-using Luthetus.Common.RazorLib.Commands.Models;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
-using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Ide.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Fluxor;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+
 using Luthetus.TextEditor.RazorLib.Events.Models;
 
 namespace Luthetus.Ide.RazorLib.Keymaps.Models.Terminals;
@@ -58,7 +59,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
         TextEditorViewModel textEditorViewModel,
         TextEditorOptions textEditorOptions)
     {
-		var characterWidthInPixels = textEditorViewModel.VirtualizationResult.CharAndLineMeasurements.CharacterWidth;
+		var characterWidthInPixels = textEditorViewModel.CharAndLineMeasurements.CharacterWidth;
 		var characterWidthInPixelsInvariantCulture = characterWidthInPixels.ToCssValue();
 		return $"width: {characterWidthInPixelsInvariantCulture}px;";
 	}
@@ -66,7 +67,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 	public bool TryMap(
 		KeyboardEventArgs keyboardEventArgs,
 		KeymapArgument keymapArgument,
-		TextEditorEvents events,
+		TextEditorComponentData componentData,
 		out CommandNoType? command)
 	{
 		var terminalKey = _getTerminalKeyFunc.Invoke();
@@ -78,9 +79,8 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                await commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostSimpleBatch(
 					nameof(commandDisplayName),
-                    string.Empty,
                     async editContext =>
 					{
 						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
@@ -91,16 +91,27 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 							return;
 
-						var onKeyDown = new OnKeyDown(
-							new TextEditorEvents(events, new TextEditorKeymapDefault()),
+						// 'fakeEvents' allows for tricking 'OnKeyDownLateBatching' to use the 'TextEditorKeymapDefault'
+						var fakeEvents = new TextEditorComponentData(componentData, new TextEditorKeymapDefault());
+
+						var onKeyDown = new OnKeyDownLateBatching(
+							fakeEvents,
 							keyboardEventArgs,
 							commandArgs.ModelResourceUri,
-							commandArgs.ViewModelKey);
+							commandArgs.ViewModelKey)
+						{
+							EditContext = editContext
+						};
+
+						var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
+	
+			            var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
+	                		fakeEvents, keyboardEventArgs, definiteHasSelection, editContext.TextEditorService, out var command);
 
 						var selectionContainsCurrentRow = false;
 						var selectionRowCount = 0;
 
-						if (onKeyDown.TentativeHasSelection)
+						if (definiteHasSelection)
 						{
 							var selectionBoundPositionIndices = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
 
@@ -117,8 +128,8 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 							selectionRowCount = selectionBoundRowIndices.upperRowIndexExclusive - selectionBoundRowIndices.lowerRowIndexInclusive;
                         }
 
-						if (onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Text ||
-							onKeyDown.TentativeKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
+						if (definiteKeyboardEventArgsKind == KeyboardEventArgsKind.Text ||
+							definiteKeyboardEventArgsKind == KeyboardEventArgsKind.Other)
 						{
                             // Only the last line of the terminal is editable.
                             if (primaryCursorModifier.LineIndex == modelModifier.LineCount - 1)
@@ -176,7 +187,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 											.Invoke(editContext)
 											.ConfigureAwait(false);
 
-                                        await generalTerminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
+                                        generalTerminal.EnqueueCommand(terminalCommand);
                                     }
                                     else if (keyboardEventArgs.Code == "Backspace" && primaryCursorModifier.ColumnIndex == 0)
                                     {
@@ -210,34 +221,34 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 										{
                                             // Don't let them type
                                         }
-                                        else if (onKeyDown.TentativeHasSelection &&
+                                        else if (definiteHasSelection &&
                                                  mostRecentWorkingDirectoryText.StartingIndexInclusive >= TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier).lowerPositionIndexInclusive)
                                         {
                                             // Don't let them type
                                         }
 										else
 										{
-                                            await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
-                                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                                            await onKeyDown.HandleEvent(CancellationToken.None).ConfigureAwait(false);
+                                            terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                                         }
                                     }
                                 }
 							}
 						}
-						else if (onKeyDown.Command is not null)
+						else if (command is not null)
 						{
-							if (onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.Copy.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.PasteCommand.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.SelectAll.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineDown.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineUp.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageDown.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageUp.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageBottom.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
-								onKeyDown.Command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
+							if (command.InternalIdentifier == TextEditorCommandDefaultFacts.Copy.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.PasteCommand.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.SelectAll.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineDown.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollLineUp.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageDown.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ScrollPageUp.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageBottom.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.CursorMovePageTop.InternalIdentifier ||
+								command.InternalIdentifier == TextEditorCommandDefaultFacts.ShowFindOverlay.InternalIdentifier)
                             {
-                                await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
+                                await onKeyDown.HandleEvent(CancellationToken.None).ConfigureAwait(false);
                             }
 							else
 							{
@@ -246,7 +257,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 						}
 						else
 						{
-							await onKeyDown.InvokeWithEditContext(editContext).ConfigureAwait(false);
+							await onKeyDown.HandleEvent(CancellationToken.None).ConfigureAwait(false);
 
                             var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
 
@@ -254,7 +265,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                             if (terminalResource is null)
                                 return;
 
-                            await terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+                            terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                         }
 					});
 			});

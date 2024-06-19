@@ -1,16 +1,17 @@
+using System.Text;
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.TestExplorers.Models;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.Common.RazorLib.TreeViews.Models;
-using System.Text;
+using Luthetus.Ide.RazorLib.TestExplorers.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using System.Xml.Linq;
+
 using Luthetus.Ide.RazorLib.TestExplorers.States;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
@@ -103,8 +104,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 				};
 			}	
 
-			await TextEditorService.PostSimpleBatch(
-				nameof(TestExplorerDetailsDisplay),
+			TextEditorService.PostSimpleBatch(
 				nameof(TestExplorerDetailsDisplay),
 				editContext =>
 				{

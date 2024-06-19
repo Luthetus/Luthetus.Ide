@@ -1,0 +1,136 @@
+@using Fluxor
+@using Luthetus.Common.RazorLib.Installations.Models
+@using Luthetus.Common.RazorLib.BackgroundTasks.Models
+@using Luthetus.Common.RazorLib.Dialogs.Models
+@using Luthetus.Common.RazorLib.Dialogs.Displays
+@using Luthetus.Common.RazorLib.Dynamics.Models
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.Common.RazorLib.Notifications.Displays
+@using Luthetus.Common.RazorLib.Notifications.Models
+@using Luthetus.TextEditor.RazorLib
+@using Luthetus.TextEditor.RazorLib.Events.Models
+@using Luthetus.TextEditor.RazorLib.Installations.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.Lexes.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.Ide.RazorLib.Installations.Models
+
+@inherits EditLogicTestBase
+@code
+{
+	[Fact]
+	public async Task BatchOrDefault_OnWheelBatch_OnWheelBatch()
+    {
+		var testData = EditLogicTestsInitialize(string.Empty);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		var upstreamOnWheelBatch = new OnWheelBatch(
+	        new List<WheelEventArgs>
+			{
+				new WheelEventArgs { DeltaY = 10 },
+				new WheelEventArgs { DeltaY = 10 },
+			},
+	        testData.ComponentData,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(upstreamOnWheelBatch);
+
+		var downstreamOnWheelBatch = new OnWheelBatch(
+	        new List<WheelEventArgs>
+			{
+				new WheelEventArgs { DeltaY = 20 },
+				new WheelEventArgs { DeltaY = 20 },
+			},
+	        testData.ComponentData,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(downstreamOnWheelBatch);
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		
+		// Consecutive events of this kind are not expected to occur naturally.
+		// Therefore, their "batch" method keeps them as is and does nothing.
+		Assert.Equal(2, queue.Count);
+		Assert.Equal(upstreamOnWheelBatch, queue.BackgroundTaskList[0]);
+		Assert.Equal(downstreamOnWheelBatch, queue.BackgroundTaskList[1]);
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+
+	[Fact]
+	public async Task BatchOrDefault_OnWheelBatch_SomeDifferentType()
+    {
+		var testData = EditLogicTestsInitialize(string.Empty);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		var upstreamOnMouseMove = new OnMouseMove(
+	        new MouseEventArgs { },
+	        testData.ComponentData,
+	        testData.InModel.ResourceUri,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(upstreamOnMouseMove);
+
+		var downstreamOnWheelBatch = new OnWheelBatch(
+	        new List<WheelEventArgs>
+			{
+				new WheelEventArgs { DeltaY = 10 },
+				new WheelEventArgs { DeltaY = 20 },
+			},
+	        testData.ComponentData,
+	        testData.ViewModelKey);
+		testData.TextEditorService.Post(downstreamOnWheelBatch);
+
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+		
+		// Do not overwrite an upstream event that is not of the same type.
+		Assert.Equal(2, queue.Count);
+		Assert.Equal(upstreamOnMouseMove, queue.BackgroundTaskList[0]);
+		Assert.Equal(downstreamOnWheelBatch, queue.BackgroundTaskList[1]);
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+
+	[Fact]
+    public async Task HandleEvent_Result()
+    {
+		var testData = EditLogicTestsInitialize(string.Empty);
+
+		var onWheelBatch = new OnWheelBatch(
+	        new List<WheelEventArgs>
+			{
+				new WheelEventArgs { DeltaY = 10 },
+				new WheelEventArgs { DeltaY = 20 },
+			},
+	        testData.ComponentData,
+	        testData.ViewModelKey);
+  
+		// Assert that 'AllText' does not change, since this event should do nothing.      
+		Assert.Equal(string.Empty, testData.InModel.AllText);
+
+		testData.TextEditorService.Post(onWheelBatch);
+        
+		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
+		await backgroundTasksHandle.Stop();
+        
+		var outModel = testData.TextEditorService.ModelApi.GetOrDefault(testData.InModel.ResourceUri);
+
+		// Assert that 'AllText' does not change, since this event should do nothing.        
+		Assert.Equal(string.Empty, outModel.AllText);
+    }
+}

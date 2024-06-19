@@ -1,3 +1,6 @@
+using System.Collections.Immutable;
+using System.Reactive.Linq;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -5,11 +8,8 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using System.Collections.Immutable;
-using System.Reactive.Linq;
-using Microsoft.AspNetCore.Components.Web;
-using Luthetus.Ide.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.Events.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -43,9 +43,8 @@ public partial class Terminal
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
-        await _textEditorService.PostSimpleBatch(
+        _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-            string.Empty,
             async editContext =>
             {
                 await _textEditorService.ModelApi.AddPresentationModelFactory(
@@ -81,9 +80,8 @@ public partial class Terminal
             FindOverlayPresentationFacts.PresentationKey,
         }.ToImmutableArray();
 
-        await _textEditorService.PostSimpleBatch(
+        _textEditorService.PostSimpleBatch(
             nameof(Terminal),
-            string.Empty,
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
                 textEditorViewModel => textEditorViewModel with
@@ -91,9 +89,8 @@ public partial class Terminal
                         FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
                     }));
 
-        await _textEditorService.PostSimpleBatch(
+        _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -137,9 +134,8 @@ public partial class Terminal
 
     public async Task WriteWorkingDirectory(bool prependNewLine = false)
     {
-        await _textEditorService.PostSimpleBatch(
+        _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -185,9 +181,8 @@ public partial class Terminal
     
     public async Task MoveCursorToEnd()
     {
-        await _textEditorService.PostSimpleBatch(
+        _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -214,9 +209,8 @@ public partial class Terminal
 
     public async Task ClearTerminal()
     {
-        await _textEditorService.PostSimpleBatch(
+        _textEditorService.PostSimpleBatch(
             nameof(ClearTerminal),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
@@ -258,7 +252,7 @@ public partial class Terminal
         TerminalCommand terminalCommand,
 		TerminalCommandBoundary terminalCommandBoundary)
     {
-		return _textEditorService.Post(new OnOutput(
+		_textEditorService.Post(new OnOutput(
 		    outputOffset,
 		    output,
 		    outputTextSpanList,
@@ -267,5 +261,6 @@ public partial class Terminal
 			terminalCommand,
 			terminalCommandBoundary,
 		    TextEditorViewModelKey));
+		return Task.CompletedTask;
 	}
 }

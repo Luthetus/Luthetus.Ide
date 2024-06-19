@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Events.Models;
@@ -39,9 +40,8 @@ public class OnOutputBatch : ITextEditorTask
         ViewModelKey = viewModelKey;
     }
 
-
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; set; } = nameof(OnOutput);
     public Task? WorkProgress { get; }
     public int BatchOutputOffset { get; }
@@ -52,35 +52,9 @@ public class OnOutputBatch : ITextEditorTask
 	public TerminalCommand TerminalCommand { get; }
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+	public IEditContext EditContext { get; set; }
 
-    public Task InvokeWithEditContext(IEditContext editContext)
-    {
-		Name = Name + $"_{OutputList.Count}";
-
-        // Flatten 'OutputTextSpanAndOffsetTupleList'
-        var outputTextSpanList = new List<TextEditorTextSpan>();
-        foreach (var tuple in OutputTextSpanAndOffsetTupleList)
-        {
-            outputTextSpanList.AddRange(tuple.OutputTextSpanList.Select(x => x with
-            {
-                StartingIndexInclusive = x.StartingIndexInclusive + tuple.OutputOffset - BatchOutputOffset,
-                EndingIndexExclusive = x.EndingIndexExclusive + tuple.OutputOffset - BatchOutputOffset,
-            }));
-        }
-
-        var onOutput = new OnOutput(
-            BatchOutputOffset,
-            string.Join(string.Empty, OutputList),
-            outputTextSpanList,
-            ResourceUri,
-            TextEditorService,
-			TerminalCommand,
-			_terminalCommandBoundary,
-            ViewModelKey);
-
-        return onOutput.InvokeWithEditContext(editContext);
-    }
+    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -89,8 +63,40 @@ public class OnOutputBatch : ITextEditorTask
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
-        throw new NotImplementedException($"{nameof(ITextEditorTask)} should not implement {nameof(HandleEvent)}" +
-            "because they instead are contained within an 'IBackgroundTask' that came from the 'TextEditorService'");
+		//try
+		//{
+            Name = Name + $"_{OutputList.Count}";
+
+            // Flatten 'OutputTextSpanAndOffsetTupleList'
+            var outputTextSpanList = new List<TextEditorTextSpan>();
+            foreach (var tuple in OutputTextSpanAndOffsetTupleList)
+            {
+                outputTextSpanList.AddRange(tuple.OutputTextSpanList.Select(x => x with
+                {
+                    StartingIndexInclusive = x.StartingIndexInclusive + tuple.OutputOffset - BatchOutputOffset,
+                    EndingIndexExclusive = x.EndingIndexExclusive + tuple.OutputOffset - BatchOutputOffset,
+                }));
+            }
+
+            var onOutput = new OnOutput(
+                BatchOutputOffset,
+                string.Join(string.Empty, OutputList),
+                outputTextSpanList,
+                ResourceUri,
+                TextEditorService,
+                TerminalCommand,
+                _terminalCommandBoundary,
+                ViewModelKey)
+            {
+                EditContext = EditContext
+            };
+
+            return onOutput.HandleEvent(cancellationToken);
+		//}
+		//finally
+		//{
+		//	await EditContext.TextEditorService.FinalizePost(EditContext);
+		//}
     }
 }
 

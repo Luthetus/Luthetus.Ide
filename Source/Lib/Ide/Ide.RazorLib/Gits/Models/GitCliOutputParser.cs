@@ -339,17 +339,29 @@ public class GitCliOutputParser : IOutputParser
                             // Discard the leading whitespace on the line (one tab)
                             _ = stringWalker.ReadCharacter();
 
+							var gitDirtyString = string.Empty;
+
                             if (_stageKind == StageKind.IsReadingStagedFiles ||
                                 _stageKind == StageKind.IsReadingUnstagedFiles)
                             {
-                                // Skip the git description
+                                // Read the git description
                                 //
                                 // Example: "new file:   BlazorApp4NetCoreDbg/Persons/Abc.cs"
                                 //           ^^^^^^^^^^^^
+
+								var gitDirtyStartPositionInclusive = stringWalker.PositionIndex;
+
                                 while (!stringWalker.IsEof)
                                 {
                                     if (stringWalker.CurrentCharacter == ':')
                                     {
+										var gitDirtyTextSpan = new TextEditorTextSpan(
+			                                gitDirtyStartPositionInclusive,
+			                                stringWalker,
+			                                (byte)TerminalDecorationKind.None);
+
+										gitDirtyString = gitDirtyTextSpan.GetText();
+
                                         // Read the ':'
                                         _ = stringWalker.ReadCharacter();
 
@@ -378,7 +390,7 @@ public class GitCliOutputParser : IOutputParser
 
                             var relativePathString = textSpan.GetText();
 
-                            var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+							var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
 								localRepo.AbsolutePath,
                                 relativePathString,
                                 _environmentProvider);
@@ -388,11 +400,25 @@ public class GitCliOutputParser : IOutputParser
 
                             var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
 
-                            var gitDirtyReason =
-                                _stageKind == StageKind.IsReadingUntrackedFiles ? GitDirtyReason.Untracked :
-                                _stageKind == StageKind.IsReadingStagedFiles ? GitDirtyReason.Added :
-                                _stageKind == StageKind.IsReadingUnstagedFiles ? GitDirtyReason.Added :
-                                GitDirtyReason.None;
+                            GitDirtyReason gitDirtyReason;
+
+							if (_stageKind == StageKind.IsReadingUntrackedFiles)
+							{
+								gitDirtyReason = GitDirtyReason.Untracked;
+							}
+							else
+							{
+								if (gitDirtyString == "modified")
+									gitDirtyReason = GitDirtyReason.Modified;
+								else if (gitDirtyString == "added") // There is no "added" its "new file" in the output.
+									gitDirtyReason = GitDirtyReason.Added;
+								else if (gitDirtyString == "new file")
+									gitDirtyReason = GitDirtyReason.Added;
+								else if (gitDirtyString == "deleted")
+									gitDirtyReason = GitDirtyReason.Deleted;
+								else
+									gitDirtyReason = GitDirtyReason.None;
+							}
 
                             var gitFile = new GitFile(
                                 absolutePath,
@@ -470,7 +496,7 @@ public class GitCliOutputParser : IOutputParser
             _ = stringWalker.ReadCharacter();
 
             // Skip the 'UTF-8 with BOM'
-            if (stringWalker.CurrentCharacter == '�' && stringWalker.PeekForSubstring("﻿"))
+            if (stringWalker.CurrentCharacter == '�' && stringWalker.PeekForSubstring("﻿"))
                 _ = stringWalker.ReadRange("﻿".Length);
 
             var loggedLineTextSpan = new TextEditorTextSpan(

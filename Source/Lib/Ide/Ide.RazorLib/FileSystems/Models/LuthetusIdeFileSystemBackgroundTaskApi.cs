@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -30,14 +30,14 @@ public class LuthetusIdeFileSystemBackgroundTaskApi
         _dispatcher = dispatcher;
     }
 
-    public Task SaveFile(
+    public void SaveFile(
         IAbsolutePath absolutePath,
         string content,
         Func<DateTime?, Task> onAfterSaveCompletedWrittenDateTimeFunc,
         CancellationToken cancellationToken = default)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Save File",
             async () => await SaveFileAsync(

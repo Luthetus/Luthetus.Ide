@@ -46,7 +46,8 @@ public partial class PanelGroupDisplay : FluxorComponent
     {
         if (!firstRender)
         {
-            await PassAlongSizeIfHiddenAsync()
+			// TODO: Why is 'PassAlongSizeIfNoActiveTab()' only invoked if its the firstRender?
+            await PassAlongSizeIfNoActiveTab()
                 .ConfigureAwait(false);
         }
 
@@ -85,10 +86,9 @@ public partial class PanelGroupDisplay : FluxorComponent
         return $"luth_ide_panel_{position}";
     }
 
-    private async Task PassAlongSizeIfHiddenAsync()
+    private async Task PassAlongSizeIfNoActiveTab()
     {
         var panelState = PanelStateWrap.Value;
-
         var panelGroup = panelState.PanelGroupList.FirstOrDefault(x => x.Key == PanelGroupKey);
 
         if (panelGroup is not null)

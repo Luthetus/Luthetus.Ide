@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -82,32 +82,46 @@ public partial class TextEditorGroupState
             if (indexOfViewModelKeyToRemove == -1)
                 return inState;
 
-            var nextViewModelKeyList = inGroup.ViewModelKeyList.Remove(
-                removeViewModelFromGroupAction.ViewModelKey);
+			var viewModelKeyToRemove = inGroup.ViewModelKeyList[indexOfViewModelKeyToRemove];
 
-            // This variable is done for renaming
-            var activeViewModelKeyIndex = indexOfViewModelKeyToRemove;
+            var nextViewModelKeyList = inGroup.ViewModelKeyList.RemoveAt(
+                indexOfViewModelKeyToRemove);
 
-            // If last item in list
-            if (activeViewModelKeyIndex >= inGroup.ViewModelKeyList.Count - 1)
-            {
-                activeViewModelKeyIndex--;
-            }
-            else
-            {
-                // ++ operation because nothing yet has been removed.
-                // The new active TextEditor is set prior to actually removing the current active TextEditor.
-                activeViewModelKeyIndex++;
-            }
+			Key<TextEditorViewModel> nextActiveTextEditorModelKey;
 
-            Key<TextEditorViewModel> nextActiveTextEditorModelKey;
+			if (inGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty &&
+				inGroup.ActiveViewModelKey != viewModelKeyToRemove)
+			{
+				// Because the active tab was not removed, do not bother setting a different
+				// active tab.
+				nextActiveTextEditorModelKey = inGroup.ActiveViewModelKey;
+			}
+			else
+			{
+				// The active tab was removed, therefore a new active tab must be chosen.
 
-            // If removing the active will result in empty list set the active as an Empty TextEditorViewModelKey
-            if (inGroup.ViewModelKeyList.Count - 1 == 0)
-                nextActiveTextEditorModelKey = Key<TextEditorViewModel>.Empty;
-            else
-                nextActiveTextEditorModelKey = inGroup.ViewModelKeyList[activeViewModelKeyIndex];
-            
+				// This variable is done for renaming
+	            var activeViewModelKeyIndex = indexOfViewModelKeyToRemove;
+	
+	            // If last item in list
+	            if (activeViewModelKeyIndex >= inGroup.ViewModelKeyList.Count - 1)
+	            {
+	                activeViewModelKeyIndex--;
+	            }
+	            else
+	            {
+	                // ++ operation because this calculation is using the immutable list where
+					// the view model was not removed.
+	                activeViewModelKeyIndex++;
+	            }
+	
+	            // If removing the active will result in empty list set the active as an Empty TextEditorViewModelKey
+	            if (inGroup.ViewModelKeyList.Count - 1 == 0)
+	                nextActiveTextEditorModelKey = Key<TextEditorViewModel>.Empty;
+	            else
+	                nextActiveTextEditorModelKey = inGroup.ViewModelKeyList[activeViewModelKeyIndex];
+			}
+
             var outGroupList = inState.GroupList.Replace(inGroup, inGroup with
             {
                 ViewModelKeyList = nextViewModelKeyList,

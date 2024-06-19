@@ -1,8 +1,29 @@
-﻿<span title="@TreeViewGitFile.Item.AbsolutePath.Value">
+@using Luthetus.Ide.RazorLib.Gits.Models
+
+<div style="display: flex; align-items: center;" title="@TreeViewGitFile.Item.AbsolutePath.Value">
 
     @{ var nameWithExtension = TreeViewGitFile.Item.AbsolutePath.NameWithExtension; }
 
     <input type="checkbox" @bind="IsChecked" @bind:event="oninput" />
+
+	@switch (TreeViewGitFile.Item.GitDirtyReason)
+	{
+		case GitDirtyReason.None:
+			<em class="luth_em" title="None">N:</em>
+			break;
+    	case GitDirtyReason.Untracked:
+			<em class="luth_em" title="Untracked">U:</em>
+			break;
+    	case GitDirtyReason.Added:
+			<em class="luth_em" title="Added">A:</em>
+			break;
+	    case GitDirtyReason.Modified:
+			<em class="luth_em" title="Modified">M:</em>
+			break;
+	    case GitDirtyReason.Deleted:
+			<em class="luth_em" title="Deleted">D:</em>
+			break;
+	}
 
     @if (string.IsNullOrWhiteSpace(nameWithExtension))
     {
@@ -12,4 +33,4 @@
     {
         @nameWithExtension
     }
-</span>
+</div>

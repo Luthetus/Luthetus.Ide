@@ -9,6 +9,8 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public IVirtualizationResultWithoutTypeMask VirtualizationResultWithoutTypeMask { get; set; } = null!;
@@ -71,7 +73,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                     });
                 }
 
-                await JsRuntime.GetLuthetusTextEditorApi()
+                await TextEditorService.JsRuntimeTextEditorApi
                     .InitializeVirtualizationIntersectionObserver(
                         _virtualizationDisplayGuid.ToString(),
                         DotNetObjectReference.Create(this),
@@ -87,6 +89,16 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
     [JSInvokable]
     public async Task OnScrollEventAsync(VirtualizationScrollPosition scrollPosition)
     {
+		// TODO: (this is more so just an idea or question). Should JavaScript...
+		//       ...state the scrollPosition to be used in a 'VirtualizationRequest',
+		//       or should JavaScript just notify C# that the rendered content ran out?
+		//       Theres some code that takes C# word for what the scrollPosition is,
+		//      and there is code that takes JavaScripts word for what the scrollPosition is.
+		//      |
+		//      One can at times randomly get an empty part of the text editor rendered
+		//      because of a discrepancy with the C# scrollPosition and the JavaScript scrollPosition. (2024-05-29)
+
+
         _scrollEventCancellationTokenSource.Cancel();
         _scrollEventCancellationTokenSource = new CancellationTokenSource();
 
@@ -104,7 +116,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
         {
             _ = Task.Run(async () =>
             {
-                await JsRuntime.GetLuthetusTextEditorApi()
+                await TextEditorService.JsRuntimeTextEditorApi
                     .DisposeVirtualizationIntersectionObserver(
                         CancellationToken.None,
                         _virtualizationDisplayGuid.ToString())

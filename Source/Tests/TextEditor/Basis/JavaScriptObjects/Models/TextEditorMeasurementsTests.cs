@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.JavaScriptObjects.Models;
 
@@ -32,21 +32,23 @@ public class TextEditorMeasurementsTests
 		var width = 3000;
 		var height = 4000;
 
-        var textEditorMeasurements = new TextEditorDimensions(
+        var textEditorDimensions = new TextEditorDimensions(
+            width,
+            height);
+		
+		var scrollbarDimensions = new ScrollbarDimensions(
             scrollLeft,
             scrollTop,
             scrollWidth,
             scrollHeight,
-            marginScrollHeight,
-            width,
-            height);
+            marginScrollHeight);
 
-		Assert.Equal(scrollLeft, textEditorMeasurements.ScrollLeft);
-		Assert.Equal(scrollTop, textEditorMeasurements.ScrollTop);
-		Assert.Equal(scrollWidth, textEditorMeasurements.ScrollWidth);
-		Assert.Equal(scrollHeight, textEditorMeasurements.ScrollHeight);
-		Assert.Equal(marginScrollHeight, textEditorMeasurements.MarginScrollHeight);
-		Assert.Equal(width, textEditorMeasurements.Width);
-		Assert.Equal(height, textEditorMeasurements.Height);
+		Assert.Equal(scrollLeft, scrollbarDimensions.ScrollLeft);
+		Assert.Equal(scrollTop, scrollbarDimensions.ScrollTop);
+		Assert.Equal(scrollWidth, scrollbarDimensions.ScrollWidth);
+		Assert.Equal(scrollHeight, scrollbarDimensions.ScrollHeight);
+		Assert.Equal(marginScrollHeight, scrollbarDimensions.MarginScrollHeight);
+		Assert.Equal(width, textEditorDimensions.Width);
+		Assert.Equal(height, textEditorDimensions.Height);
 	}
 }

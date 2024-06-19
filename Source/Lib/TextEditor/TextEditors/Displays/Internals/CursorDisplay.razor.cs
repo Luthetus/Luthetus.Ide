@@ -1,15 +1,15 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -46,7 +46,6 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     private readonly ThrottleAsync _throttleShouldRevealCursor = new(TimeSpan.FromMilliseconds(333));
 
     private ElementReference? _cursorDisplayElementReference;
-    private MenuKind _menuKind;
     private int _menuShouldGetFocusRequestCount;
     private string _previousGetCursorStyleCss = string.Empty;
     private string _previousGetCaretRowStyleCss = string.Empty;
@@ -66,8 +65,6 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
         ? "luth_te_blink"
         : string.Empty;
-
-    public MenuKind MenuKind => _menuKind;
 
     protected override void OnInitialized()
     {
@@ -94,7 +91,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             var guid = Guid.NewGuid();
 
-            var nextLeftRelativeToParentInPixels = await JsRuntime.GetLuthetusTextEditorApi()
+            var nextLeftRelativeToParentInPixels = await TextEditorService.JsRuntimeTextEditorApi
                 .CalculateProportionalLeftOffset(
                     ProportionalFontMeasurementsContainerElementId,
                     $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
@@ -113,7 +110,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
         if (_previouslyObservedCursorDisplayId != CursorDisplayId && IsFocusTarget)
         {
-            await JsRuntime.GetLuthetusTextEditorApi()
+            await TextEditorService.JsRuntimeTextEditorApi
                 .InitializeTextEditorCursorIntersectionObserver(
                     _intersectionObserverMapKey.ToString(),
                     DotNetObjectReference.Create(this),
@@ -132,20 +129,14 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 var localRenderBatch = RenderBatch;
 
-                var id = nameof(CursorDisplay) +
-                    ", " +
-                    nameof(TextEditorService.ViewModelApi.ScrollIntoViewFactory) +
-                    localRenderBatch.ViewModel.ViewModelKey.ToString();
-
-                await _throttleShouldRevealCursor.PushEvent(async _ =>
+                await _throttleShouldRevealCursor.PushEvent(_ =>
                 {
                     // TODO: Need to add 'TextEditorService.PostTakeMostRecent' and simple batch combination.
                     //
                     // I think after removing the throttle, that this is an infinite loop on WASM,
                     // i.e. holding down ArrowRight
-                    await TextEditorService.PostSimpleBatch(
-                        id,
-                        id,
+                    TextEditorService.PostSimpleBatch(
+                        nameof(_throttleShouldRevealCursor),
                         editContext =>
                         {
                             var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
@@ -163,6 +154,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                                     cursorTextSpan)
                                 .Invoke(editContext);
                         });
+					return Task.CompletedTask;
                 }).ConfigureAwait(false);
             }
         }
@@ -181,7 +173,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         try
         {
-            var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var leftInPixels = 0d;
 
@@ -241,7 +233,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         try
         {
-            var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
                 .ToCssValue();
@@ -277,7 +269,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
         try
         {
-            var measurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
+            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
 
             var leftInPixels = 0d;
 
@@ -347,27 +339,9 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         }
     }
 
-    public void PauseBlinkAnimation()
-    {
-        TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
-    }
-
     private void HandleOnKeyDown()
     {
-        PauseBlinkAnimation();
-    }
-
-    public async Task SetShouldDisplayMenuAsync(MenuKind textEditorMenuKind, bool shouldFocusCursor = true)
-    {
-        // Clear the counter of requests for the Menu to take focus
-        _ = TextEditorMenuShouldTakeFocus();
-
-        _menuKind = textEditorMenuKind;
-
-        await InvokeAsync(StateHasChanged);
-
-        if (shouldFocusCursor && _menuKind == MenuKind.None)
-            await FocusAsync().ConfigureAwait(false);
+        TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
     }
 
     public async Task SetFocusToActiveMenuAsync()
@@ -405,7 +379,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 try
                 {
-                    await JsRuntime.GetLuthetusTextEditorApi()
+                    await TextEditorService.JsRuntimeTextEditorApi
                         .DisposeTextEditorCursorIntersectionObserver(
                             CancellationToken.None,
                             _intersectionObserverMapKey.ToString())

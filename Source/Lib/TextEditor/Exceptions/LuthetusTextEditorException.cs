@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Exceptions;
+using Luthetus.Common.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.Exceptions;
 

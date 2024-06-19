@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -12,7 +12,7 @@ public class BlockingBackgroundTaskWorker : BackgroundTaskWorker
 {
     public const string QUEUE_DISPLAY_NAME = "BlockingBackgroundTaskWorker";
 
-    private static readonly Key<BackgroundTaskQueue> _queueKey = new(Guid.Parse("7905c763-c3fd-418e-b73d-4ca18666c20c"));
+    private static readonly Key<IBackgroundTaskQueue> _queueKey = new(Guid.Parse("7905c763-c3fd-418e-b73d-4ca18666c20c"));
 
     public BlockingBackgroundTaskWorker(
             IBackgroundTaskService backgroundTaskService,
@@ -21,5 +21,5 @@ public class BlockingBackgroundTaskWorker : BackgroundTaskWorker
     {
     }
 
-    public static Key<BackgroundTaskQueue> GetQueueKey() => _queueKey;
+    public static Key<IBackgroundTaskQueue> GetQueueKey() => _queueKey;
 }

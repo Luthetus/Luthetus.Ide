@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 /// <summary>
 /// This class is a hack and was made on (2024-03-09).<br/><br/>

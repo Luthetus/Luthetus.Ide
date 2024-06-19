@@ -1,10 +1,10 @@
-﻿@using Luthetus.Common.RazorLib.Menus.Displays
+@using Luthetus.Common.RazorLib.Menus.Displays
 @using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 <div @ref="_autocompleteMenuElementReference"
      tab-index="-1"
      class="luth_ide_text-editor-autocomplete-menu"
-     @onkeydown="HandleOnKeyDownAsync">
+     @onkeydown="HandleOnKeyDown">
     
     <CascadingValue Name="ReturnFocusToParentFuncAsync"
                     Value="ReturnFocusToThisAsync">

@@ -6,7 +6,7 @@ input[type="checkbox"]{
 .luth_ide_main-layout {
     width: 100vw;
     height: 100vh;
-    overflow: auto;
+    overflow: hidden;
     color: var(--luth_primary-foreground-color);
     background-color: var(--luth_primary-background-color);
 }

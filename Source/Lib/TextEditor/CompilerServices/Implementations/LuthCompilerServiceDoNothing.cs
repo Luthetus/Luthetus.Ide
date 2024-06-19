@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
@@ -8,8 +8,9 @@ public class LuthCompilerServiceDoNothing : LuthCompilerService
     {
     }
 
-    protected override Task QueueParseRequest(ResourceUri resourceUri)
+    protected override void QueueParseRequest(ResourceUri resourceUri)
     {
-        return Task.CompletedTask;
+		// Intentionally do nothing
+        return;
     }
 }

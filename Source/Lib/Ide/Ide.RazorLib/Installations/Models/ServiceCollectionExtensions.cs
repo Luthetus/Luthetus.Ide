@@ -104,11 +104,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<DotNetCliOutputParser>()
 			.AddScoped<GitCliOutputParser>();
 
-        services.AddFluxor(options => options.ScanAssemblies(
-            typeof(ServiceCollectionExtensions).Assembly,
-            typeof(LuthetusCommonConfig).Assembly,
-            typeof(LuthetusTextEditorConfig).Assembly));
-
         return services;
     }
 

@@ -141,7 +141,7 @@ public class TreeViewService : ITreeViewService
             treeViewNoType =>
             {
                 var backgroundTask = new BackgroundTask(
-                    Key<BackgroundTask>.NewKey(),
+                    Key<IBackgroundTask>.NewKey(),
                     ContinuousBackgroundTaskWorker.GetQueueKey(),
                     "TreeView.LoadChildListAsync()",
                     async () =>
@@ -163,7 +163,7 @@ public class TreeViewService : ITreeViewService
                         }
                     });
 
-                _backgroundTaskService.EnqueueAsync(backgroundTask);
+                _backgroundTaskService.Enqueue(backgroundTask);
             });
 
         _dispatcher.Dispatch(moveRightAction);

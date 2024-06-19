@@ -4,6 +4,13 @@ using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
@@ -11,16 +18,11 @@ using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Common.RazorLib.Clipboards.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -32,11 +34,11 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<TextEditorModelState> TextEditorModelStateWrap { get; set; } = null!;
-    [Inject]
-    private IState<TextEditorViewModelState> TextEditorViewModelsStateWrap { get; set; } = null!;
+    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
     private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -52,7 +54,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
-    private ILuthetusTextEditorComponentRenderers LuthetusTextEditorComponentRenderers { get; set; } = null!;
+    private ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
@@ -67,7 +69,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private readonly object _linkedViewModelLock = new();
     // private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
-    private TextEditorEvents _events = null!;
+    private TextEditorComponentData _componentData = null!;
     private bool _thinksTouchIsOccurring;
     private TouchEventArgs? _previousTouchEventArgs = null;
     private DateTime? _touchStartDateTime = null;
@@ -79,10 +81,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private TextEditorViewModel? _linkedViewModel;
 	private Task _shouldRenderSkipTask = Task.CompletedTask;
 
+	// TODO: Delete '_countQueueCalculateVirtualizationResultBackgroundTaskInvocations'
+	private int _countQueueCalculateVirtualizationResultBackgroundTaskInvocations;
+
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
     private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
     private string ContentElementId => $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
     private string ProportionalFontMeasurementsContainerElementId => $"luth_te_text-editor-proportional-font-measurement-container_{_textEditorHtmlElementId}";
+
+	public TextEditorComponentData ComponentData => _componentData;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -95,9 +102,22 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         ConstructRenderBatch();
 
-        _events = new(this, _storedRenderBatch.Options);
+		// TODO: This line is why one cannot switch to a vim keymap, without needing to restart the IDE...
+		//       ...for the change to take effect.
+		//       |
+		//       In short, there is a sort of hack for "keymap overriding".
+		//       'Keymap = renderBatch.ViewModelDisplayOptions.KeymapOverride'
+		//       |
+		//	   This is done 'OnInitialized', which for the main editor only happens one when initially opening the app.
+		//       Therefore, one can never change their keymap for the main editor.
+		_componentData = new(
+			ProportionalFontMeasurementsContainerElementId,
+			_textEditorHtmlElementId,
+			ViewModelDisplayOptions,
+			_storedRenderBatch.Options,
+			ServiceProvider);
 
-        TextEditorViewModelsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
+        TextEditorStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
 
         base.OnInitialized();
@@ -105,23 +125,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override bool ShouldRender()
     {
-        //var shouldRender = _throttleAvailabilityShouldRender.CheckAvailability();
-
-   //     if (!shouldRender)
-   //     {
-   //         _countShouldRenderFalse++;
-
-			//if (_shouldRenderSkipTask.IsCompleted)
-			//{
-			//	_shouldRenderSkipTask = Task.Run(async () =>
-			//	{
-			//		await InvokeAsync(StateHasChanged);
-			//	});
-			//}
-            
-   //         return false;
-   //     }
-
         var shouldRender = true;
 
         if (_linkedViewModel is null)
@@ -137,20 +140,17 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var previousOptionsRenderStateKey = _previousRenderBatch?.Options?.RenderStateKey ?? Key<RenderState>.Empty;
             var currentOptionsRenderStateKey = _storedRenderBatch.Options.RenderStateKey;
 
-			_ = Task.Run(async () =>
-			{
-				if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
-	            {
-	                await QueueRemeasureBackgroundTask(
-	                    _storedRenderBatch,
-	                    MeasureCharacterWidthAndRowHeightElementId,
-	                    _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
-	                    CancellationToken.None);
-	            }
-	
-	            if (isFirstDisplay)
-					await QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
-			});
+			if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
+            {
+                QueueRemeasureBackgroundTask(
+                    _storedRenderBatch,
+                    MeasureCharacterWidthAndRowHeightElementId,
+                    _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
+                    CancellationToken.None);
+            }
+
+            if (isFirstDisplay)
+				QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
         }
 
         return shouldRender;
@@ -160,17 +160,17 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         if (firstRender)
         {
-            await JsRuntime.GetLuthetusTextEditorApi()
+            await TextEditorService.JsRuntimeTextEditorApi
                 .PreventDefaultOnWheelEvents(ContentElementId)
                 .ConfigureAwait(false);
 
-            await QueueRemeasureBackgroundTask(
+            QueueRemeasureBackgroundTask(
                 _storedRenderBatch,
                 MeasureCharacterWidthAndRowHeightElementId,
                 _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
                 CancellationToken.None);
 
-            await QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
+            QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
         }
 
         if (_storedRenderBatch?.ViewModel is not null && _storedRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender)
@@ -184,7 +184,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     public TextEditorModel? GetModel() => TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey);
 
-    public TextEditorViewModel? GetViewModel() => TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
+    public TextEditorViewModel? GetViewModel() => TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
         x => x.ViewModelKey == TextEditorViewModelKey);
 
     public TextEditorOptions? GetOptions() => TextEditorOptionsStateWrap.Value.Options;
@@ -198,7 +198,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             ITextEditorRenderBatch.DEFAULT_FONT_FAMILY,
             TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
             ViewModelDisplayOptions,
-            _events);
+			_componentData);
 
         if (!string.IsNullOrWhiteSpace(renderBatch.Options?.CommonOptions?.FontFamily))
         {
@@ -241,7 +241,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             var localTextEditorViewModelKey = TextEditorViewModelKey;
 
             // Don't use the method 'GetViewModel()'. The logic here needs to be transactional, the TextEditorViewModelKey must not change.
-            var nextViewModel = TextEditorViewModelsStateWrap.Value.ViewModelList.FirstOrDefault(
+            var nextViewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == localTextEditorViewModelKey);
 
             Key<TextEditorViewModel> nextViewModelKey;
@@ -256,8 +256,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
             if (viewKeyChanged)
             {
-                _linkedViewModel?.DisplayTracker.DecrementLinks(TextEditorModelStateWrap);
-                nextViewModel?.DisplayTracker.IncrementLinks(TextEditorModelStateWrap);
+                _linkedViewModel?.DisplayTracker.DecrementLinks();
+                nextViewModel?.DisplayTracker.IncrementLinks();
 
                 _linkedViewModel = nextViewModel;
 
@@ -273,7 +273,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             await CursorDisplay.FocusAsync().ConfigureAwait(false);
     }
 
-    private async Task ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs))
             return;
@@ -284,24 +284,38 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (resourceUri is null || viewModelKey is null)
 			return;
 
-		var onKeyDown = new OnKeyDown(
-            _events,
+		var onKeyDown = new OnKeyDownLateBatching(
+			_componentData,
             keyboardEventArgs,
             resourceUri,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onKeyDown).ConfigureAwait(false);
+        TextEditorService.Post(onKeyDown);
 	}
 
-    private async Task ReceiveOnContextMenuAsync()
+    private void ReceiveOnContextMenu()
     {
-        var localCursorDisplay = CursorDisplay;
+		var localViewModelKey = TextEditorViewModelKey;
 
-        if (localCursorDisplay is not null)
-            await localCursorDisplay.SetShouldDisplayMenuAsync(MenuKind.ContextMenu).ConfigureAwait(false);
+		TextEditorService.PostSimpleBatch(
+			nameof(ReceiveOnContextMenu),
+			editContext =>
+			{
+				var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
+
+				if (viewModelModifier is null)
+					return Task.CompletedTask;
+
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
+				{
+					MenuKind = MenuKind.ContextMenu
+				};
+				
+				return Task.CompletedTask;
+			});
     }
 
-    private async Task ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
+    private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
         var modelResourceUri = GetModel()?.ResourceUri;
         var viewModelKey = GetViewModel()?.ViewModelKey;
@@ -311,17 +325,16 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         var onDoubleClick = new OnDoubleClick(
             mouseEventArgs,
-            _events,
+			_componentData,
             modelResourceUri,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onDoubleClick).ConfigureAwait(false);
+        TextEditorService.Post(onDoubleClick);
     }
 
-    private async Task ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
+    private void ReceiveContentOnMouseDown(MouseEventArgs mouseEventArgs)
     {
-        _events.ThinksLeftMouseButtonIsDown = true;
-
+        _componentData.ThinksLeftMouseButtonIsDown = true;
 
         var modelResourceUri = GetModel()?.ResourceUri;
         var viewModel = GetViewModel();
@@ -336,64 +349,84 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
 		var onMouseDown = new OnMouseDown(
             mouseEventArgs,
-            _events,
+			_componentData,
             modelResourceUri,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onMouseDown).ConfigureAwait(false);
+        TextEditorService.Post(onMouseDown);
     }
 
-    /// <summary>OnMouseUp is un-necessary</summary>
-    private async Task ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
+    private void ReceiveContentOnMouseMove(MouseEventArgs mouseEventArgs)
     {
         _userMouseIsInside = true;
 
         if ((mouseEventArgs.Buttons & 1) == 0)
-            _events.ThinksLeftMouseButtonIsDown = false;
+            _componentData.ThinksLeftMouseButtonIsDown = false;
 
-        var localThinksLeftMouseButtonIsDown = _events.ThinksLeftMouseButtonIsDown;
+        var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
+
+        var modelResourceUri = GetModel()?.ResourceUri;
+        var viewModel = GetViewModel();
+        var viewModelKey = viewModel?.ViewModelKey;
 
         // MouseStoppedMovingEvent
+		if (viewModel is not null)
         {
             // Hide the tooltip, if the user moves their cursor out of the tooltips UI.
-            if (_events.TooltipViewModel is not null && _events.MouseNoLongerOverTooltipTask.IsCompleted)
+            if (viewModel.TooltipViewModel is not null && _componentData.MouseNoLongerOverTooltipTask.IsCompleted)
             {
-                var mouseNoLongerOverTooltipCancellationToken = _events.MouseNoLongerOverTooltipCancellationTokenSource.Token;
+                var mouseNoLongerOverTooltipCancellationToken = _componentData.MouseNoLongerOverTooltipCancellationTokenSource.Token;
 
-                _events.MouseNoLongerOverTooltipTask = Task.Run(async () =>
+                _componentData.MouseNoLongerOverTooltipTask = Task.Run(async () =>
                 {
-                    await Task.Delay(TextEditorEvents.OnMouseOutTooltipDelay, mouseNoLongerOverTooltipCancellationToken).ConfigureAwait(false);
+                    await Task.Delay(TextEditorComponentData.OnMouseOutTooltipDelay, mouseNoLongerOverTooltipCancellationToken).ConfigureAwait(false);
 
                     if (!mouseNoLongerOverTooltipCancellationToken.IsCancellationRequested)
                     {
-                        _events.TooltipViewModel = null;
-                        await InvokeAsync(StateHasChanged);
+						TextEditorService.PostSimpleBatch(
+							nameof(ContextMenu),
+							editContext =>
+							{
+								var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+			
+								viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
+								{
+									TooltipViewModel = null
+								};
+
+								return Task.CompletedTask;
+							});
                     }
                 });
             }
 
-            _events.MouseStoppedMovingCancellationTokenSource.Cancel();
-            _events.MouseStoppedMovingCancellationTokenSource = new();
+            _componentData.MouseStoppedMovingCancellationTokenSource.Cancel();
+            _componentData.MouseStoppedMovingCancellationTokenSource = new();
 
-            var mouseStoppedMovingCancellationToken = _events.MouseStoppedMovingCancellationTokenSource.Token;
+            var mouseStoppedMovingCancellationToken = _componentData.MouseStoppedMovingCancellationTokenSource.Token;
 
-            _events.MouseStoppedMovingTask = Task.Run(async () =>
+            _componentData.MouseStoppedMovingTask = Task.Run(async () =>
             {
-                await Task.Delay(TextEditorEvents.MouseStoppedMovingDelay, mouseStoppedMovingCancellationToken).ConfigureAwait(false);
+                await Task.Delay(TextEditorComponentData.MouseStoppedMovingDelay, mouseStoppedMovingCancellationToken).ConfigureAwait(false);
 
                 if (!mouseStoppedMovingCancellationToken.IsCancellationRequested && _userMouseIsInside)
                 {
-                    await _events.ContinueRenderingTooltipAsync().ConfigureAwait(false);
-                    await _events.HandleMouseStoppedMovingEventAsync(mouseEventArgs).ConfigureAwait(false);
+                    await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
+
+                    TextEditorService.PostSimpleBatch(
+						nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory),
+						TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory(
+							mouseEventArgs,
+							_componentData,
+							TextEditorComponentRenderers,
+					        modelResourceUri,
+					        viewModelKey.Value));
                 }
             });
         }
 
-        if (!_events.ThinksLeftMouseButtonIsDown)
+        if (!_componentData.ThinksLeftMouseButtonIsDown)
             return;
-
-        var modelResourceUri = GetModel()?.ResourceUri;
-        var viewModelKey = GetViewModel()?.ViewModelKey;
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
@@ -403,15 +436,15 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
 			var onMouseMove = new OnMouseMove(
                 mouseEventArgs,
-                _events,
+                _componentData,
                 modelResourceUri,
                 viewModelKey.Value);
 
-            await TextEditorService.Post(onMouseMove).ConfigureAwait(false);
+            TextEditorService.Post(onMouseMove);
         }
         else
         {
-            _events.ThinksLeftMouseButtonIsDown = false;
+            _componentData.ThinksLeftMouseButtonIsDown = false;
         }
     }
 
@@ -420,7 +453,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         _userMouseIsInside = false;
     }
     
-    private async Task ReceiveOnWheel(WheelEventArgs wheelEventArgs)
+    private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
         var viewModelKey = GetViewModel()?.ViewModelKey;
 
@@ -429,23 +462,21 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
 		var onWheel = new OnWheel(
             wheelEventArgs,
-            _events,
+            _componentData,
             viewModelKey.Value);
 
-        await TextEditorService.Post(onWheel).ConfigureAwait(false);
+        TextEditorService.Post(onWheel);
     }
 
-    private Task ReceiveOnTouchStartAsync(TouchEventArgs touchEventArgs)
+    private void ReceiveOnTouchStart(TouchEventArgs touchEventArgs)
     {
         _touchStartDateTime = DateTime.UtcNow;
 
         _previousTouchEventArgs = touchEventArgs;
         _thinksTouchIsOccurring = true;
-
-        return Task.CompletedTask;
     }
 
-    private async Task ReceiveOnTouchMoveAsync(TouchEventArgs touchEventArgs)
+    private void ReceiveOnTouchMove(TouchEventArgs touchEventArgs)
     {
         var localThinksTouchIsOccurring = _thinksTouchIsOccurring;
 
@@ -467,9 +498,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        await TextEditorService.PostSimpleBatch(
+        TextEditorService.PostSimpleBatch(
             nameof(QueueRemeasureBackgroundTask),
-            string.Empty,
             async editContext =>
 			{
                 await editContext.TextEditorService.ViewModelApi
@@ -481,7 +511,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     .MutateScrollVerticalPositionFactory(viewModel.ViewModelKey, diffY)
                     .Invoke(editContext)
                     .ConfigureAwait(false);
-			}).ConfigureAwait(false);
+			});
 
         _previousTouchEventArgs = touchEventArgs;
     }
@@ -498,7 +528,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         return $"height: {heightInPixelsInvariantCulture}px;";
     }
 
-    private async Task ClearTouch(TouchEventArgs touchEventArgs)
+    private void ClearTouch(TouchEventArgs touchEventArgs)
     {
         var rememberStartTouchEventArgs = _previousTouchEventArgs;
 
@@ -518,7 +548,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             if (startTouchPoint is null)
                 return;
 
-            await ReceiveContentOnMouseDown(new MouseEventArgs
+            ReceiveContentOnMouseDown(new MouseEventArgs
             {
                 Buttons = 1,
                 ClientX = startTouchPoint.ClientX,
@@ -527,7 +557,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         }
     }
 
-    private async Task QueueRemeasureBackgroundTask(
+    private void QueueRemeasureBackgroundTask(
         ITextEditorRenderBatch localRefCurrentRenderBatch,
         string localMeasureCharacterWidthAndRowHeightElementId,
         int countOfTestCharacters,
@@ -539,19 +569,19 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostSimpleBatch(
-                nameof(QueueRemeasureBackgroundTask),
-                string.Empty,
-                TextEditorService.ViewModelApi.RemeasureFactory(
-                    modelResourceUri,
-                    viewModelKey.Value,
-                    localMeasureCharacterWidthAndRowHeightElementId,
-                    countOfTestCharacters,
-                    CancellationToken.None))
-            .ConfigureAwait(false);
+        TextEditorService.PostTakeMostRecent(
+            nameof(QueueRemeasureBackgroundTask),
+			modelResourceUri,
+			viewModelKey.Value,
+            TextEditorService.ViewModelApi.RemeasureFactory(
+                modelResourceUri,
+                viewModelKey.Value,
+                localMeasureCharacterWidthAndRowHeightElementId,
+                countOfTestCharacters,
+                CancellationToken.None));
     }
 
-    private async Task QueueCalculateVirtualizationResultBackgroundTask(
+    private void QueueCalculateVirtualizationResultBackgroundTask(
 		ITextEditorRenderBatch localCurrentRenderBatch)
     {
         var modelResourceUri = GetModel()?.ResourceUri;
@@ -560,511 +590,30 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        await TextEditorService.PostSimpleBatch(
-                nameof(QueueCalculateVirtualizationResultBackgroundTask),
-                string.Empty,
-                TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                    modelResourceUri,
-                    viewModelKey.Value,
-                    CancellationToken.None))
-            .ConfigureAwait(false);
+        TextEditorService.PostTakeMostRecent(
+            nameof(QueueCalculateVirtualizationResultBackgroundTask),
+			modelResourceUri,
+			viewModelKey.Value,
+            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+                modelResourceUri,
+                viewModelKey.Value,
+                CancellationToken.None));
     }
 
     public void Dispose()
     {
-        TextEditorViewModelsStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
+        TextEditorStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
 
         lock (_linkedViewModelLock)
         {
             if (_linkedViewModel is not null)
             {
-                _linkedViewModel.DisplayTracker.DecrementLinks(TextEditorModelStateWrap);
+                _linkedViewModel.DisplayTracker.DecrementLinks();
                 _linkedViewModel = null;
             }
         }
 
-        _events.MouseStoppedMovingCancellationTokenSource.Cancel();
-    }
-
-    /// <summary>
-    /// The goal of this class is to allow external classes to access private members of the <see cref="TextEditorViewModelDisplay"/>.<br/><br/>
-    /// 
-    /// The reason for this class is that handling of UI events continues to necesitate more complexity.
-    /// At the time of making this class, a <see cref="ThrottleController"/> is being written,
-    /// to handle UI events in the order that they occurred, yet each one is individually throttled at a different timespan.<br/><br/>
-    /// 
-    /// The issue that was encountered is that, when moving the UI event code to a different class, one needed to
-    /// somehow access all the dependency injected state from that instantiated class. This led to massive constructors
-    /// where one would just be passing the '[Inject]' attribute marked properties due to them being private in the <see cref="TextEditorViewModelDisplay"/>.<br/><br/>
-    /// 
-    /// Refutations: why not just make the '[Inject]' attribute marked properties public and then pass a reference to the
-    /// <see cref="TextEditorViewModelDisplay"/> when constructing the external event classes?<br/><br/>
-    /// 
-    /// Response to refutations: Creation of this class allows for a "trust" system of sorts. The text editor is okay
-    /// with the event classes seeing these private, and dependency injected properties. Otherwise,
-    /// one just lets anyone see these if they're public.<br/><br/>
-    /// 
-    /// Remarks: this class is not tied to any <see cref="TextEditorModel"/>, nor <see cref="TextEditorViewModel"/>.
-    /// It has the same relationship to the models/viewmodels as the <see cref="TextEditorViewModelDisplay"/> does.
-    /// That is to say, a <see cref="TextEditorViewModelDisplay"/> gets constructed, then if one chooses to do so,
-    /// can swap out the parameter for 'TextEditorViewModel'. This change then gets propogated to this class.<br/><br/>
-    /// </summary>
-    public class TextEditorEvents
-    {
-        private readonly TextEditorViewModelDisplay _viewModelDisplay;
-        private readonly ThrottleAsync _throttleApplySyntaxHighlighting = new ThrottleAsync(TimeSpan.FromMilliseconds(500));
-
-        public TextEditorEvents(TextEditorViewModelDisplay viewModelDisplay, TextEditorOptions? options)
-        {
-            _viewModelDisplay = viewModelDisplay;
-			Options = options ?? TextEditorService.OptionsStateWrap.Value.Options;
-		}
-
-        /// <summary>
-        /// (2024-04-05) The code I'm writing today feels like spaghetti code / technical debt.
-        /// That being said, I'll call today's hacky code a "technical loan".
-        /// </summary>
-		public TextEditorEvents(TextEditorEvents events, TextEditorKeymapDefault textEditorKeymapDefault)
-		{
-            _viewModelDisplay = events._viewModelDisplay;
-
-            Options = events.Options with
-            {
-                Keymap = textEditorKeymapDefault
-            };
-		}
-
-		public static TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(30);
-        public static TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
-        public static TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
-        public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;
-        public Task MouseNoLongerOverTooltipTask { get; set; } = Task.CompletedTask;
-        public CancellationTokenSource MouseNoLongerOverTooltipCancellationTokenSource { get; set; } = new();
-        public CancellationTokenSource MouseStoppedMovingCancellationTokenSource { get; set; } = new();
-        public TooltipViewModel? TooltipViewModel { get; set; }
-
-        /// <summary>This accounts for one who might hold down Left Mouse Button from outside the TextEditorDisplay's content div then move their mouse over the content div while holding the Left Mouse Button down.</summary>
-        public bool ThinksLeftMouseButtonIsDown { get; set; }
-
-        public ViewModelDisplayOptions ViewModelDisplayOptions => _viewModelDisplay.ViewModelDisplayOptions;
-        public CursorDisplay? CursorDisplay => _viewModelDisplay.CursorDisplay;
-        public ITextEditorService TextEditorService => _viewModelDisplay.TextEditorService;
-        public IClipboardService ClipboardService => _viewModelDisplay.ClipboardService;
-        public IJSRuntime JsRuntime => _viewModelDisplay.JsRuntime;
-        public IDispatcher Dispatcher => _viewModelDisplay.Dispatcher;
-        public IServiceProvider ServiceProvider => _viewModelDisplay.ServiceProvider;
-        public LuthetusTextEditorConfig TextEditorConfig => _viewModelDisplay.TextEditorConfig;
-
-        public Action CursorPauseBlinkAnimationAction 
-        { 
-            get
-            {
-                var localCursorDisplay = CursorDisplay;
-
-                if (localCursorDisplay is not null)
-                    return localCursorDisplay.PauseBlinkAnimation;
-
-                return () => { };
-            }
-        }
-
-        public Func<MenuKind, bool, Task> CursorSetShouldDisplayMenuAsyncFunc 
-        { 
-            get
-            {
-                return async (a, b) =>
-                {
-                    var localCursorDisplay = CursorDisplay;
-                    if (localCursorDisplay is not null)
-                        await localCursorDisplay.SetShouldDisplayMenuAsync(a, b).ConfigureAwait(false);
-                };
-            }
-        }
-
-		public TextEditorOptions Options { get; init; }
-
-		/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
-		public TextEditorEdit HandleAfterOnKeyDownAsyncFactory(
-            ResourceUri resourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            KeyboardEventArgs keyboardEventArgs,
-            Func<MenuKind, bool, Task> setTextEditorMenuKind)
-        {
-            if (_viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory is not null)
-            {
-                return _viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory.Invoke(
-                    resourceUri,
-                    viewModelKey,
-                    keyboardEventArgs,
-                    setTextEditorMenuKind);
-            }
-
-            return async editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(resourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
-
-                // Indexing can be invoked and this method still check for syntax highlighting and such
-                if (IsAutocompleteIndexerInvoker(keyboardEventArgs))
-                {
-                    _ = Task.Run(async () =>
-                    {
-                        if (primaryCursorModifier.ColumnIndex > 0)
-                        {
-                            // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
-                            // are to be 1 character long, as well either specific whitespace or punctuation.
-                            // Therefore 1 character behind might be a word that can be indexed.
-                            var word = modelModifier.ReadPreviousWordOrDefault(
-                                primaryCursorModifier.LineIndex,
-                                primaryCursorModifier.ColumnIndex);
-
-                            if (word is not null)
-                            {
-                                await _viewModelDisplay.AutocompleteIndexer
-                                    .IndexWordAsync(word)
-                                    .ConfigureAwait(false);
-                            }
-                        }
-                    });
-                }
-
-                if (IsAutocompleteMenuInvoker(keyboardEventArgs))
-                {
-                    await setTextEditorMenuKind
-                        .Invoke(MenuKind.AutoCompleteMenu, true)
-                        .ConfigureAwait(false);
-                }
-                else if (IsSyntaxHighlightingInvoker(keyboardEventArgs))
-                {
-                    await ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
-                }
-            };
-        }
-
-        public TextEditorEdit HandleAfterOnKeyDownRangeAsyncFactory(
-            ResourceUri resourceUri,
-            Key<TextEditorViewModel> viewModelKey,
-            List<KeyboardEventArgs> keyboardEventArgsList,
-            Func<MenuKind, bool, Task> setTextEditorMenuKind)
-        {
-            if (_viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory is not null)
-            {
-                return _viewModelDisplay.ViewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory.Invoke(
-                    resourceUri,
-                    viewModelKey,
-                    keyboardEventArgsList,
-                    setTextEditorMenuKind);
-            }
-
-            return async editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(resourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
-
-                var seenIsAutocompleteIndexerInvoker = false;
-                var seenIsAutocompleteMenuInvoker = false;
-                var seenIsSyntaxHighlightingInvoker = false;
-
-                foreach (var keyboardEventArgs in keyboardEventArgsList)
-                {
-                    if (!seenIsAutocompleteIndexerInvoker && IsAutocompleteIndexerInvoker(keyboardEventArgs))
-                        seenIsAutocompleteIndexerInvoker = true;
-
-                    if (!seenIsAutocompleteMenuInvoker && IsAutocompleteMenuInvoker(keyboardEventArgs))
-                        seenIsAutocompleteMenuInvoker = true;
-                    else if (!seenIsSyntaxHighlightingInvoker && IsSyntaxHighlightingInvoker(keyboardEventArgs))
-                        seenIsSyntaxHighlightingInvoker = true;
-                }
-
-                if (seenIsAutocompleteIndexerInvoker)
-                {
-                    _ = Task.Run(async () =>
-                    {
-                        if (primaryCursorModifier.ColumnIndex > 0)
-                        {
-                            // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
-                            // are to be 1 character long, as well either specific whitespace or punctuation.
-                            // Therefore 1 character behind might be a word that can be indexed.
-                            var word = modelModifier.ReadPreviousWordOrDefault(
-                                primaryCursorModifier.LineIndex,
-                                primaryCursorModifier.ColumnIndex);
-
-                            if (word is not null)
-                            {
-                                await _viewModelDisplay.AutocompleteIndexer
-                                    .IndexWordAsync(word)
-                                    .ConfigureAwait(false);
-                            }
-                        }
-                    });
-                }
-
-                if (seenIsAutocompleteMenuInvoker)
-                {
-                    await setTextEditorMenuKind
-                        .Invoke(MenuKind.AutoCompleteMenu, true)
-                        .ConfigureAwait(false);
-                }
-
-                if (seenIsSyntaxHighlightingInvoker)
-                {
-                    await ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
-                }
-            };
-        }
-
-        public bool IsSyntaxHighlightingInvoker(KeyboardEventArgs keyboardEventArgs)
-        {
-            return keyboardEventArgs.Key == ";" ||
-                   KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
-                   keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "s" ||
-                   keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "v" ||
-                   keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "z" ||
-                   keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "y";
-        }
-
-        public bool IsAutocompleteMenuInvoker(KeyboardEventArgs keyboardEventArgs)
-        {
-            // Is {Ctrl + Space} or LetterOrDigit was hit without Ctrl being held
-            return keyboardEventArgs.CtrlKey &&
-                       keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
-                   !keyboardEventArgs.CtrlKey &&
-                       !KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) &&
-                       !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs);
-        }
-
-        /// <summary>
-        /// All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
-        /// are to be 1 character long, as well either whitespace or punctuation.
-        /// Therefore 1 character behind might be a word that can be indexed.
-        /// </summary>
-        public bool IsAutocompleteIndexerInvoker(KeyboardEventArgs keyboardEventArgs)
-        {
-            return (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
-                        KeyboardKeyFacts.IsPunctuationCharacter(keyboardEventArgs.Key.First())) &&
-                    !keyboardEventArgs.CtrlKey;
-        }
-
-        public async Task HandleMouseStoppedMovingEventAsync(MouseEventArgs mouseEventArgs)
-        {
-            var model = _viewModelDisplay.GetModel();
-            var viewModel = _viewModelDisplay.GetViewModel();
-
-            if (model is null || viewModel is null)
-                return;
-
-            // Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
-            var rowAndColumnIndex = await CalculateRowAndColumnIndex(mouseEventArgs).ConfigureAwait(false);
-
-            // TODO: (2023-05-28) This shouldn't be re-calcuated in the best case scenario. That is to say, the previous line invokes 'CalculateRowAndColumnIndex(...)' which also invokes this logic
-            var relativeCoordinatesOnClick = await JsRuntime.GetLuthetusTextEditorApi()
-                .GetRelativePosition(
-                    viewModel.BodyElementId,
-                    mouseEventArgs.ClientX,
-                    mouseEventArgs.ClientY)
-                .ConfigureAwait(false);
-
-            var cursorPositionIndex = model.GetPositionIndex(new TextEditorCursor(
-                rowAndColumnIndex.rowIndex,
-                rowAndColumnIndex.columnIndex,
-                true));
-
-            var foundMatch = false;
-
-            var symbols = model.CompilerService.GetSymbolsFor(model.ResourceUri);
-            var diagnostics = model.CompilerService.GetDiagnosticsFor(model.ResourceUri);
-
-            if (diagnostics.Length != 0)
-            {
-                foreach (var diagnostic in diagnostics)
-                {
-                    if (cursorPositionIndex >= diagnostic.TextSpan.StartingIndexInclusive &&
-                        cursorPositionIndex < diagnostic.TextSpan.EndingIndexExclusive)
-                    {
-                        // Prefer showing a diagnostic over a symbol when both exist at the mouse location.
-                        foundMatch = true;
-
-                        var parameterMap = new Dictionary<string, object?>
-                        {
-                            {
-                                nameof(ITextEditorDiagnosticRenderer.Diagnostic),
-                                diagnostic
-                            }
-                        };
-
-                        _viewModelDisplay._events.TooltipViewModel = new(
-                            _viewModelDisplay.LuthetusTextEditorComponentRenderers.DiagnosticRendererType,
-                            parameterMap,
-                            relativeCoordinatesOnClick,
-                            null,
-                            ContinueRenderingTooltipAsync);
-                    }
-                }
-            }
-
-            if (!foundMatch && symbols.Length != 0)
-            {
-                foreach (var symbol in symbols)
-                {
-                    if (cursorPositionIndex >= symbol.TextSpan.StartingIndexInclusive &&
-                        cursorPositionIndex < symbol.TextSpan.EndingIndexExclusive)
-                    {
-                        foundMatch = true;
-
-                        var parameters = new Dictionary<string, object?>
-                        {
-                            {
-                                nameof(ITextEditorSymbolRenderer.Symbol),
-                                symbol
-                            }
-                        };
-
-                        _viewModelDisplay._events.TooltipViewModel = new(
-                            _viewModelDisplay.LuthetusTextEditorComponentRenderers.SymbolRendererType,
-                            parameters,
-                            relativeCoordinatesOnClick,
-                            null,
-                            ContinueRenderingTooltipAsync);
-                    }
-                }
-            }
-
-            if (!foundMatch)
-            {
-                if (_viewModelDisplay._events.TooltipViewModel is null)
-                    return; // Avoid the re-render if nothing changed
-
-                _viewModelDisplay._events.TooltipViewModel = null;
-            }
-
-            // TODO: Measure the tooltip, and reposition if it would go offscreen.
-
-            await _viewModelDisplay.InvokeAsync(_viewModelDisplay.StateHasChanged);
-        }
-
-        public Task ContinueRenderingTooltipAsync()
-        {
-            MouseNoLongerOverTooltipCancellationTokenSource.Cancel();
-            MouseNoLongerOverTooltipCancellationTokenSource = new();
-
-            return Task.CompletedTask;
-        }
-
-        public async Task<(int rowIndex, int columnIndex)> CalculateRowAndColumnIndex(MouseEventArgs mouseEventArgs)
-        {
-            var model = _viewModelDisplay.GetModel();
-            var viewModel = _viewModelDisplay.GetViewModel();
-            var globalTextEditorOptions = TextEditorService.OptionsStateWrap.Value.Options;
-
-            if (model is null || viewModel is null)
-                return (0, 0);
-
-            var charMeasurements = viewModel.VirtualizationResult.CharAndLineMeasurements;
-
-            var relativeCoordinatesOnClick = await JsRuntime.GetLuthetusTextEditorApi()
-                .GetRelativePosition(
-                    viewModel.BodyElementId,
-                    mouseEventArgs.ClientX,
-                    mouseEventArgs.ClientY)
-                .ConfigureAwait(false);
-
-            var positionX = relativeCoordinatesOnClick.RelativeX;
-            var positionY = relativeCoordinatesOnClick.RelativeY;
-
-            // Scroll position offset
-            {
-                positionX += relativeCoordinatesOnClick.RelativeScrollLeft;
-                positionY += relativeCoordinatesOnClick.RelativeScrollTop;
-            }
-
-            var rowIndex = (int)(positionY / charMeasurements.LineHeight);
-
-            rowIndex = rowIndex > model.LineCount - 1
-                ? model.LineCount - 1
-                : rowIndex;
-
-            int columnIndexInt;
-
-            if (!globalTextEditorOptions.UseMonospaceOptimizations)
-            {
-                var guid = Guid.NewGuid();
-
-                columnIndexInt = await JsRuntime.GetLuthetusTextEditorApi()
-                    .CalculateProportionalColumnIndex(
-                        _viewModelDisplay.ProportionalFontMeasurementsContainerElementId,
-                        $"luth_te_proportional-font-measurement-parent_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
-                        $"luth_te_proportional-font-measurement-cursor_{_viewModelDisplay._textEditorHtmlElementId}_{guid}",
-                        positionX,
-                        charMeasurements.CharacterWidth,
-                        model.GetLineText(rowIndex))
-                    .ConfigureAwait(false);
-
-                if (columnIndexInt == -1)
-                {
-                    var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
-                    columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-                }
-            }
-            else
-            {
-                var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
-                columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-            }
-
-            var lengthOfRow = model.GetLineLength(rowIndex);
-
-            // Tab key column offset
-            {
-                var parameterForGetTabsCountOnSameRowBeforeCursor = columnIndexInt > lengthOfRow
-                    ? lengthOfRow
-                    : columnIndexInt;
-
-                int tabsOnSameRowBeforeCursor;
-
-                try
-                {
-                    tabsOnSameRowBeforeCursor = model.GetTabCountOnSameLineBeforeCursor(
-                        rowIndex,
-                        parameterForGetTabsCountOnSameRowBeforeCursor);
-                }
-                catch (LuthetusTextEditorException)
-                {
-                    tabsOnSameRowBeforeCursor = 0;
-                }
-
-                // 1 of the character width is already accounted for
-                var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
-
-                columnIndexInt -= extraWidthPerTabKey * tabsOnSameRowBeforeCursor;
-            }
-
-            columnIndexInt = columnIndexInt > lengthOfRow
-                ? lengthOfRow
-                : columnIndexInt;
-
-            rowIndex = Math.Max(rowIndex, 0);
-            columnIndexInt = Math.Max(columnIndexInt, 0);
-
-            return (rowIndex, columnIndexInt);
-        }
-
-        private Task ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
-        {
-            return _throttleApplySyntaxHighlighting.PushEvent(_ =>
-            {
-                return modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
-            });
-        }
+        _componentData.MouseStoppedMovingCancellationTokenSource.Cancel();
     }
 }

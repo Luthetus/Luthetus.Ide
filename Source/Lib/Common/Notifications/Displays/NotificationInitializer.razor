@@ -1,6 +1,19 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @{ var notificationState = NotificationStateWrap.Value; }
+
+@*
+	TODO: Would wrapping the for-loop in a div i.e.:
+		  
+		  <div class="luth_notification-initializer"></div>
+		  
+		  Cause the gaps between notifications to create invisible walls
+		  or some other weird behaviors?
+		  
+		  It is (2024-05-26), I can't recall if I left out an encompassing
+		  div for a reason or not, but I don't have time to look into this
+		  at the moment.
+*@
 
 @for (int i = 0; i < notificationState.DefaultList.Count; i++)
 {

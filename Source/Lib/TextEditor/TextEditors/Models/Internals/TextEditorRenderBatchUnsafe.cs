@@ -1,7 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using System.Text;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -12,7 +11,7 @@ public record TextEditorRenderBatchUnsafe(
         string FontFamily,
         int FontSizeInPixels,
         ViewModelDisplayOptions ViewModelDisplayOptions,
-        TextEditorViewModelDisplay.TextEditorEvents Events)
+		TextEditorComponentData ComponentData)
     : ITextEditorRenderBatch
 {
     private double? _gutterWidthInPixels;
@@ -52,7 +51,7 @@ public record TextEditorRenderBatchUnsafe(
         var mostDigitsInARowLineNumber = Model!.LineCount.ToString().Length;
 
         var gutterWidthInPixels = mostDigitsInARowLineNumber *
-            ViewModel!.VirtualizationResult.CharAndLineMeasurements.CharacterWidth;
+            ViewModel!.CharAndLineMeasurements.CharacterWidth;
 
         gutterWidthInPixels += TextEditorModel.GUTTER_PADDING_LEFT_IN_PIXELS + TextEditorModel.GUTTER_PADDING_RIGHT_IN_PIXELS;
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
@@ -48,8 +49,15 @@ public partial class ResizableDisplay : ComponentBase, IDisposable
     {
         if (!DragStateWrap.Value.ShouldDisplay)
         {
+			var wasTargetOfDragging = _dragEventHandler is not null;
+
             _dragEventHandler = null;
             _previousDragMouseEventArgs = null;
+
+			if (wasTargetOfDragging)
+			{
+				Dispatcher.Dispatch(new AppDimensionState.NotifyIntraAppResizeAction());
+			}
         }
         else
         {

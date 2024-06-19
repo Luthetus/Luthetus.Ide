@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
@@ -64,7 +64,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
-            string.Empty,
             textEditorService.ModelApi.InsertTextUnsafeFactory(
                 inModel.ResourceUri,
                 cursorModifierBag,
@@ -78,7 +77,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.UndoEditFactory),
-            string.Empty,
             textEditorService.ModelApi.UndoEditFactory(
                 inModel.ResourceUri));
 
@@ -109,7 +107,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.SetUsingLineEndKindFactory),
-            string.Empty,
             textEditorService.ModelApi.SetUsingLineEndKindFactory(
                 inModel.ResourceUri, rowEndingKind));
 
@@ -140,7 +137,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.SetResourceDataFactory),
-            string.Empty,
             textEditorService.ModelApi.SetResourceDataFactory(
                 inModel.ResourceUri, newResourceLastWriteTime));
 
@@ -171,7 +167,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.ReloadFactory),
-            string.Empty,
             textEditorService.ModelApi.ReloadFactory(
                 inModel.ResourceUri, newContent, DateTime.UtcNow));
 
@@ -282,7 +277,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
-            string.Empty,
             textEditorService.ModelApi.InsertTextUnsafeFactory(
                 inModel.ResourceUri,
                 cursorModifierBag,
@@ -294,7 +288,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.UndoEditFactory),
-            string.Empty,
             textEditorService.ModelApi.UndoEditFactory(
                 inModel.ResourceUri));
 
@@ -303,7 +296,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.RedoEditFactory),
-            string.Empty,
             textEditorService.ModelApi.RedoEditFactory(
                 inModel.ResourceUri));
 
@@ -334,7 +326,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
-            string.Empty,
             textEditorService.ModelApi.InsertTextUnsafeFactory(
                 inModel.ResourceUri,
                 cursorModifierBag,
@@ -373,7 +364,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory),
-            string.Empty,
             textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory(
                 inModel.ResourceUri,
                 Key<TextEditorViewModel>.Empty,
@@ -496,7 +486,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory),
-            string.Empty,
             textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
                 inModel.ResourceUri,
                 cursorModifierBag,
@@ -532,7 +521,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
-            string.Empty,
             textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
                 inModel.ResourceUri,
                 cursorModifierBag,
@@ -559,7 +547,6 @@ public class TextEditorModelApiTests
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ModelApi.AddPresentationModelFactory),
-            string.Empty,
             textEditorService.ModelApi.AddPresentationModelFactory(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel));
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
@@ -578,7 +565,7 @@ public class TextEditorModelApiTests
 
         var serviceCollection = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService))
+            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
             .AddFluxor(options => options.ScanAssemblies(
                 typeof(LuthetusCommonConfig).Assembly,
                 typeof(LuthetusTextEditorConfig).Assembly));

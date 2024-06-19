@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
@@ -25,18 +26,35 @@ public partial class TabContextMenu : ComponentBase
     {
         var menuOptionList = new List<MenuOptionRecord>();
 
-        // TODO: Convert all UI models to use async API,
-        //       as of (2024-04-04) the MenuOptionRecord is currently a synchronous onclick,
-        //       when it ought to be async
         menuOptionList.Add(new MenuOptionRecord(
             "Close All",
             MenuOptionKind.Delete,
             () => tabContextMenuEventArgs.Tab.TabGroup.CloseAllAsync()));
 
+		menuOptionList.Add(new MenuOptionRecord(
+            "Close Others",
+            MenuOptionKind.Delete,
+            () => tabContextMenuEventArgs.Tab.TabGroup.CloseOthersAsync(tabContextMenuEventArgs.Tab)));
 
 		if (!menuOptionList.Any())
             return MenuRecord.Empty;
 
         return new MenuRecord(menuOptionList.ToImmutableArray());
+    }
+
+	public static string GetContextMenuCssStyleString(TabContextMenuEventArgs? tabContextMenuEventArgs)
+    {
+		if (tabContextMenuEventArgs?.MouseEventArgs is null)
+		{
+			return "display: none;";
+		}
+
+        var left =
+            $"left: {tabContextMenuEventArgs.MouseEventArgs.ClientX.ToCssValue()}px;";
+
+        var top =
+            $"top: {tabContextMenuEventArgs.MouseEventArgs.ClientY.ToCssValue()}px;";
+
+        return $"{left} {top}";
     }
 }

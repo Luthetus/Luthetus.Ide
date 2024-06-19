@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using System.Collections.Immutable;
 
@@ -523,9 +523,25 @@ public static class ParseTokens
         OpenBraceToken consumedOpenBraceToken,
         ParserModel model)
     {
-        var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
-        ISyntaxNode? nextCodeBlockOwner = null;
+		var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
+        ICodeBlockOwner? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
+
+		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind
+			?? ScopeDirectionKind.Both;
+
+		if (parentScopeDirection == ScopeDirectionKind.Both)
+		{
+			if (model.DequeueChildScopeCounter == 0)
+			{
+				model.TokenWalker.DeferParsingOfChildScope(consumedOpenBraceToken, model);
+				return;
+			}
+
+			model.DequeueChildScopeCounter--;
+		}
+
+		var indexForInsertion = model.DequeuedIndexForChildList ?? model.CurrentCodeBlockBuilder.ChildList.Count;
 
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
@@ -547,7 +563,7 @@ public static class ParseTokens
         }
         else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
-            var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
+			var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = typeDefinitionNode;
 
             model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
@@ -607,7 +623,7 @@ public static class ParseTokens
                     codeBlockNode,
                     constructorDefinitionNode.ConstraintNode);
 
-                closureCurrentCodeBlockBuilder.ChildList.Add(constructorDefinitionNode);
+                closureCurrentCodeBlockBuilder.ChildList.Insert(indexForInsertion, constructorDefinitionNode);
             });
 
             model.SyntaxStack.Push(constructorDefinitionNode);
@@ -661,6 +677,13 @@ public static class ParseTokens
         CloseBraceToken consumedCloseBraceToken,
         ParserModel model)
     {
+		if (model.ParseChildScopeQueue.TryDequeue(out var action))
+		{
+			action.Invoke(model.TokenWalker.Index - 1);
+			model.DequeueChildScopeCounter++;
+			return;
+		}
+
         model.Binder.DisposeBoundScope(consumedCloseBraceToken.TextSpan, model);
 
         if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
@@ -881,7 +904,7 @@ public static class ParseTokens
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var closureCurrentCompilationUnitBuilder = model.CurrentCodeBlockBuilder;
-            ISyntaxNode? nextCodeBlockOwner = null;
+            ICodeBlockOwner? nextCodeBlockOwner = null;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
 
             var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();

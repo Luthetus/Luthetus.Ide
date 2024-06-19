@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Fluxor;
@@ -410,7 +410,6 @@ public partial class AdhocTest
 
         await textEditorService.PostSimpleBatch(
             nameof(ContentList_Change),
-            string.Empty,
             textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));
 
         // ContentList
@@ -789,7 +788,7 @@ public partial class AdhocTest
         var services = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
             .AddLuthetusIdeRazorLibServices(
-                new LuthetusHostingInformation(LuthetusHostingKind.UnitTesting, backgroundTaskService));
+                new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService));
 
         var serviceProvider = services.BuildServiceProvider();
         var store = serviceProvider.GetRequiredService<IStore>();

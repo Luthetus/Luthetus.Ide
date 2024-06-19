@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -46,8 +46,9 @@ public partial class PresentationLayerGroup : ComponentBase
     {
         try
         {
-            var charMeasurements = RenderBatch.ViewModel.VirtualizationResult.CharAndLineMeasurements;
-            var elementMeasurements = RenderBatch.ViewModel.VirtualizationResult.TextEditorMeasurements;
+            var charMeasurements = RenderBatch.ViewModel.CharAndLineMeasurements;
+			var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
+            var scrollbarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
 
             if (rowIndex >= RenderBatch.Model.LineEndList.Count)
                 return string.Empty;
@@ -112,10 +113,10 @@ public partial class PresentationLayerGroup : ComponentBase
 
             var widthCssStyleString = "width: ";
 
-            var fullWidthValue = elementMeasurements.ScrollWidth;
+            var fullWidthValue = scrollbarDimensions.ScrollWidth;
 
-            if (elementMeasurements.Width > elementMeasurements.ScrollWidth)
-                fullWidthValue = elementMeasurements.Width; // If content does not fill the viewable width of the Text Editor User Interface
+            if (textEditorDimensions.Width > scrollbarDimensions.ScrollWidth)
+                fullWidthValue = textEditorDimensions.Width; // If content does not fill the viewable width of the Text Editor User Interface
 
             var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
 

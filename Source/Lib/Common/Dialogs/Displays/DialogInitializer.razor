@@ -2,6 +2,19 @@
 
 @{ var dialogList = DialogStateWrap.Value.DialogList; }
 
+@*
+	TODO: Would wrapping the foreach in a div i.e.:
+		  
+		  <div class="luth_dialog-initializer"></div>
+		  
+		  Cause the gaps between dialogs to create invisible walls
+		  or some other weird behaviors?
+		  
+		  It is (2024-05-26), I can't recall if I left out an encompassing
+		  div for a reason or not, but I don't have time to look into this
+		  at the moment.
+*@
+
 @foreach (var dialog in dialogList)
 {
     <DialogDisplay @key="dialog.DynamicViewModelKey" 
