@@ -527,8 +527,10 @@ public static class ParseTokens
         ICodeBlockOwner? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
 
-		if (model.CurrentCodeBlockBuilder?.CodeBlockOwner is not null &&
-			ScopeDirectionKind.Both == model.CurrentCodeBlockBuilder.CodeBlockOwner.ScopeDirectionKind)
+		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind
+			?? ScopeDirectionKind.Both;
+
+		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
 			if (model.DequeueChildScopeCounter == 0)
 			{
@@ -537,7 +539,6 @@ public static class ParseTokens
 			}
 
 			model.DequeueChildScopeCounter--;
-			Console.WriteLine($"DequeueChildScopeCounter::{model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
 		}
 
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
@@ -676,7 +677,7 @@ public static class ParseTokens
     {
 		if (model.ParseChildScopeQueue.TryDequeue(out var action))
 		{
-			action.Invoke(model.TokenWalker.Index);
+			action.Invoke(model.TokenWalker.Index - 1);
 			model.DequeueChildScopeCounter++;
 			return;
 		}

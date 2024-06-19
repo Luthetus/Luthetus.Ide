@@ -19,7 +19,7 @@ internal static class TokenWalkerExtensionMethods
     {
 		_ = model.SyntaxStack.TryPeek(out var syntax);
 
-		var startIndexInclusive = tokenWalker.Index - 1;
+		var openTokenIndex = tokenWalker.Index - 1;
 
 		while (tokenWalker.Current.SyntaxKind != SyntaxKind.CloseBraceToken &&
 			   !tokenWalker.IsEof)
@@ -27,16 +27,12 @@ internal static class TokenWalkerExtensionMethods
 			_ = tokenWalker.Consume();
 		}
 
-		var endIndexExclusive = tokenWalker.Index + 1;
+		var closeTokenIndex = tokenWalker.Index;
 		var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
-
-		Console.WriteLine($"TokenWalker::startIndexInclusive::{startIndexInclusive}::{tokenWalker.TokenList[startIndexInclusive].SyntaxKind}");
-		Console.WriteLine($"TokenWalker::endIndexExclusive::{endIndexExclusive}::{tokenWalker.TokenList[endIndexExclusive].SyntaxKind}");
-// 		Console.WriteLine($"TokenWalker::closeBraceToken::{closeBraceToken}::tokenWalker.TokenList[closeBraceToken]");
 
         model.ParseChildScopeQueue.Enqueue(tokenIndexToRestore =>
 		{
-			tokenWalker.DeferredParsing(startIndexInclusive, endIndexExclusive, tokenIndexToRestore);
+			tokenWalker.DeferredParsing(openTokenIndex, closeTokenIndex, tokenIndexToRestore);
 			model.SyntaxStack.Push(syntax);
 		});
     }
