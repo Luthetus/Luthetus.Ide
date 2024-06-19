@@ -530,4 +530,156 @@ public class MyClassTwo
 		var typeDefinitionNodeOne = (TypeDefinitionNode)topCodeBlock.ChildList[0];
 		var typeDefinitionNodeTwo = (TypeDefinitionNode)topCodeBlock.ChildList[1];
 	}
+
+	[Fact]
+	public void Namespace_Test()
+	{
+		var resourceUri = new ResourceUri("UnitTests");
+        var sourceText =
+@"namespace MyNamespace;";
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+	}
+
+	[Fact]
+	public void Namespace_EmptyClass()
+	{
+/*
+Inside of ParseTokens.ParseOpenBraceToken(...)
+I have an if statement.
+
+And, this if statement checks if the current scope's
+scope direction is both or not.
+
+If it is both, do not enter the child scope, instead
+enqueue the child scope to be parsed once the
+closing brace of the current scope is found (but not yet handled).
+
+When I comment out the if statement, it results in the code running as
+thought the current scope's scope direction were down.
+
+If I run this unit test
+(which is a file scoped namespace which has a type definition in it),
+and I do NOT comment out the enqueue code, then this test will fail.
+
+But, if I comment out the enqueue code, thereby running this test
+as if the namespace's scope were only down, then this test passes.
+
+Inside of the CSharpParser's Parse(...) method
+I have a Console.WriteLine():
+Console.WriteLine($"{nameof(Parse)}:{token.SyntaxKind}");
+
+Not including the enqueueing code, then this console output
+is the following:
+```
+Parse:NamespaceTokenKeyword
+Parse:StatementDelimiterToken
+Parse:PublicTokenKeyword
+Parse:ClassTokenKeyword
+Parse:OpenBraceToken
+Parse:CloseBraceToken
+Parse:EndOfFileToken
+```
+
+With the enqueueing code, then this console output
+is the following:
+```
+Parse:NamespaceTokenKeyword
+Parse:StatementDelimiterToken
+Parse:PublicTokenKeyword
+Parse:ClassTokenKeyword
+Parse:OpenBraceToken
+Parse:EndOfFileToken
+```
+
+If I put these console output side by
+side, then it is the following:
+
+No enqueue                    | With enqueue
+Parse:NamespaceTokenKeyword   | Parse:NamespaceTokenKeyword
+Parse:StatementDelimiterToken | Parse:StatementDelimiterToken
+Parse:PublicTokenKeyword      | Parse:PublicTokenKeyword
+Parse:ClassTokenKeyword       | Parse:ClassTokenKeyword
+Parse:OpenBraceToken          | Parse:OpenBraceToken
+Parse:CloseBraceToken         | Parse:EndOfFileToken
+Parse:EndOfFileToken          |
+
+The summary of differences is that:
+'Parse:CloseBraceToken' was never written out.
+
+This implies to me that the TokenWalker is restoring
+an index that is 1 too large.
+
+Or, that the TokenWalker is restoring the correct index,
+and then immediately consuming it somehow.
+
+Summary of my thoughts:
+=======================
+- I wonder if I need to capture any state of the ParserModel
+      at the time that the enqueueing is performed.
+      - The idea here being that parsing of a class might
+		    be missing its preceeding StorageModifierKind
+            or the AccessModifierKind kind, if one solely
+            is tracking the open brace token.
+      - A counter point to this idea, is that the 'ParseOpenBraceToken(...)'
+            method seems to always pop the most recent syntax off the
+            ParserModel.SyntaxStack, in which this most recent syntax
+            is a TypeDefinitionNode, with null for the code block,
+            but everything else is set.
+            - I mentioned 'TypeDefinitionNode' specifically,
+                  but this holds true for 'NamespaceStatementNode' and etc...
+            - Therefore, perhaps I only need to push that singular
+                  "most recent syntax" back onto the stack when I dequeue.
+*/
+
+		var resourceUri = new ResourceUri("UnitTests");
+        var sourceText =
+@"namespace MyNamespace;
+
+public class MyClass
+{
+	
+}";
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+
+		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+	}
+
+	[Fact]
+	public void Namespace_Class()
+	{
+		var resourceUri = new ResourceUri("UnitTests");
+        var sourceText =
+@"namespace MyNamespace;
+
+public class MyClass
+{
+	public string FirstName { get; set; }
+}";
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+
+		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+
+		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Single();
+	}
 }
