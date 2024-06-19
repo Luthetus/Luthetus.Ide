@@ -51,4 +51,5 @@ public class ParserModel
     public Stack<Action<CodeBlockNode>> FinalizeCodeBlockNodeActionStack { get; set; }
 	public Queue<Action<int>> ParseChildScopeQueue { get; set; } = new();
 	public int DequeueChildScopeCounter { get; set; }
+	public int? DequeuedIndexForChildList { get; set; }
 }

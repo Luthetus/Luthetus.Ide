@@ -54,7 +54,8 @@ public class ParseBreadthFirst
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
-		Console.WriteLine(typeDefinitionNode);
+		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
+		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[1];
 	}
 
 	[Fact]

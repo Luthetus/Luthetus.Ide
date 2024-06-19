@@ -10,7 +10,7 @@ public class TokenWalker
     private readonly LuthDiagnosticBag _diagnosticBag;
 
     private int _index;
-	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)? _deferredParsingTuple;
+	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore, Action clearStateAction)? _deferredParsingTuple;
 
     public TokenWalker(ImmutableArray<ISyntaxToken> tokenList, LuthDiagnosticBag diagnosticBag)
     {
@@ -54,6 +54,7 @@ public class TokenWalker
 			{
 				var closeChildScopeToken = _tokenList[_index];
 				_index = _deferredParsingTuple.Value.tokenIndexToRestore;
+				_deferredParsingTuple.Value.clearStateAction.Invoke();
 				_deferredParsingTuple = null;
 				return closeChildScopeToken;
 			}
@@ -122,10 +123,14 @@ public class TokenWalker
 	/// be done entirely from this class, so the _index cannot be changed
 	/// externally (2024-06-18).
 	/// </summary>
-	public void DeferredParsing(int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)
+	public void DeferredParsing(
+		int openTokenIndex,
+		int closeTokenIndex,
+		int tokenIndexToRestore,
+		Action clearStateAction)
 	{
 		_index = openTokenIndex;
-		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore);
+		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore, clearStateAction);
 	}
 
     private BadToken GetBadToken() => new BadToken(new(0, 0, 0, new(string.Empty), string.Empty));

@@ -541,6 +541,8 @@ public static class ParseTokens
 			model.DequeueChildScopeCounter--;
 		}
 
+		var indexForInsertion = model.DequeuedIndexForChildList ?? model.CurrentCodeBlockBuilder.ChildList.Count;
+
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
@@ -621,7 +623,7 @@ public static class ParseTokens
                     codeBlockNode,
                     constructorDefinitionNode.ConstraintNode);
 
-                closureCurrentCodeBlockBuilder.ChildList.Add(constructorDefinitionNode);
+                closureCurrentCodeBlockBuilder.ChildList.Insert(indexForInsertion, constructorDefinitionNode);
             });
 
             model.SyntaxStack.Push(constructorDefinitionNode);
