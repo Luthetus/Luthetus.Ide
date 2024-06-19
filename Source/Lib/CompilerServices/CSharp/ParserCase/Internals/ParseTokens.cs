@@ -537,6 +537,7 @@ public static class ParseTokens
 			}
 
 			model.DequeueChildScopeCounter--;
+			Console.WriteLine($"DequeueChildScopeCounter::{model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
 		}
 
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
@@ -673,7 +674,7 @@ public static class ParseTokens
         CloseBraceToken consumedCloseBraceToken,
         ParserModel model)
     {
-		while (model.ParseChildScopeQueue.TryDequeue(out var action))
+		if (model.ParseChildScopeQueue.TryDequeue(out var action))
 		{
 			action.Invoke(model.TokenWalker.Index);
 			model.DequeueChildScopeCounter++;

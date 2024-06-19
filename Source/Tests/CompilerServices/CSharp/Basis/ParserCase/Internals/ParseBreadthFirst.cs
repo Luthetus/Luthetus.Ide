@@ -851,6 +851,26 @@ the 'TypeDefinitionNode'.
 
 So, somehow the child/parent relations are getting mixed up.
 
+Inside of 'ParseCloseBraceToken(...)' there is code to
+change the 'model.CurrentCodeBlockBuilder' to the
+'model.CurrentCodeBlockBuilder.Parent'.
+
+This makes me think that the type definition for some reason
+isn't setting the 'NamespaceStatementNode' as the 'model.CurrentCodeBlockBuilder'.
+
+Furthermore, the reason the 'TypeDefinitionNode' is a child node to the
+compilationUnit.RootCodeBlockNode, I think is because the 'TypeDefinitionNode'
+was the 'model.CurrentCodeBlockBuilder' once the main while loop finished,
+and therefore it was put on the global code block builder.
+
+If the 'TypeDefinitionNode' correctly sets the 'model.CurrentCodeBlockBuilder'
+to the 'NamespaceStatementNode' after its deferred parsing is performed,
+then the global code block builder would take its child to be
+the 'NamespaceStatementNode' instead (and correctly).
+
+As well, the 'NamespaceStatementNode' has the 'TypeDefinitionNode'
+as its child, so all would be correct.
+
 
 
 */
