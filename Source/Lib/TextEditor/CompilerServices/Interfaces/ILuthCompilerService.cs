@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
@@ -18,7 +18,7 @@ public interface ILuthCompilerService
     public void RegisterResource(ResourceUri resourceUri);
 
     /// <summary>Expected to be an <see cref="Microsoft.Extensions.Hosting.IHostedService"/> (or anything which performs background task work)</summary>
-    public Task ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList);
+    public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList);
 
     public ILuthCompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri);
 

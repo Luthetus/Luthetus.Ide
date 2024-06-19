@@ -8,8 +8,8 @@ public class BackgroundTask : IBackgroundTask
     private readonly Func<Task> _runFunc;
 
     public BackgroundTask(
-        Key<BackgroundTask> backgroundTaskKey,
-        Key<BackgroundTaskQueue> queueKey,
+        Key<IBackgroundTask> backgroundTaskKey,
+        Key<IBackgroundTaskQueue> queueKey,
         string name,
         Func<Task> runFunc)
     {
@@ -20,8 +20,8 @@ public class BackgroundTask : IBackgroundTask
         Name = name;
     }
 
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; }
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
     public Task? WorkProgress { get; private set; }
 	public TimeSpan ThrottleTimeSpan { get; } = TimeSpan.Zero;

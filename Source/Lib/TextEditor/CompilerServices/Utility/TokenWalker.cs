@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
@@ -10,6 +10,7 @@ public class TokenWalker
     private readonly LuthDiagnosticBag _diagnosticBag;
 
     private int _index;
+	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore, Action clearStateAction)? _deferredParsingTuple;
 
     public TokenWalker(ImmutableArray<ISyntaxToken> tokenList, LuthDiagnosticBag diagnosticBag)
     {
@@ -22,6 +23,7 @@ public class TokenWalker
     public ISyntaxToken Next => Peek(1);
     public ISyntaxToken Previous => Peek(-1);
     public bool IsEof => Current.SyntaxKind == SyntaxKind.EndOfFileToken;
+    public int Index => _index;
 
     /// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
     private ISyntaxToken EOF => _tokenList.Length > 0
@@ -45,6 +47,18 @@ public class TokenWalker
     {
         if (_index >= _tokenList.Length)
             return EOF; // Return the end of file token (the last token)
+
+		if (_deferredParsingTuple is not null)
+		{
+			if (_index == _deferredParsingTuple.Value.closeTokenIndex)
+			{
+				var closeChildScopeToken = _tokenList[_index];
+				_index = _deferredParsingTuple.Value.tokenIndexToRestore;
+				_deferredParsingTuple.Value.clearStateAction.Invoke();
+				_deferredParsingTuple = null;
+				return closeChildScopeToken;
+			}
+		}
 
         var consumedToken = _tokenList[_index++];
 
@@ -101,6 +115,23 @@ public class TokenWalker
 
         return fabricatedToken;
     }
+
+	/// <summary>
+	/// TODO: This method is being added to support breadth first parsing...
+	/// ...Having this be a public method is a bit hacky,
+	/// preferably deferring the parsing of a child scope would
+	/// be done entirely from this class, so the _index cannot be changed
+	/// externally (2024-06-18).
+	/// </summary>
+	public void DeferredParsing(
+		int openTokenIndex,
+		int closeTokenIndex,
+		int tokenIndexToRestore,
+		Action clearStateAction)
+	{
+		_index = openTokenIndex;
+		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore, clearStateAction);
+	}
 
     private BadToken GetBadToken() => new BadToken(new(0, 0, 0, new(string.Empty), string.Empty));
 }

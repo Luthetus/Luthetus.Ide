@@ -1,9 +1,11 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ConstructorDefinitionNode : ISyntaxNode
+public sealed record ConstructorDefinitionNode : ICodeBlockOwner
 {
     public ConstructorDefinitionNode(
         TypeClauseNode returnTypeClauseNode,
@@ -46,6 +48,8 @@ public sealed record ConstructorDefinitionNode : ISyntaxNode
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? FunctionBodyCodeBlockNode { get; }
     public ConstraintNode? ConstraintNode { get; }
+
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
     public ImmutableArray<ISyntax> ChildList { get; }
 

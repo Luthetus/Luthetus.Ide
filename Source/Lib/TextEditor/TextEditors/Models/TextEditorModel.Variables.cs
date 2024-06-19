@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -24,7 +24,7 @@ public partial class TextEditorModel
     public ImmutableList<RichCharacter> RichCharacterList { get; init; }
     public ImmutableList<TextEditorPartition> PartitionList { get; init; }
 
-    public ImmutableList<EditBlock> EditBlockList { get; init; } = ImmutableList<EditBlock>.Empty;
+    public ImmutableList<ITextEditorEdit> EditBlockList { get; init; } = ImmutableList<ITextEditorEdit>.Empty;
 
     /// <inheritdoc cref="ITextEditorModel.LineEndList"/>
 	public ImmutableList<LineEnd> LineEndList { get; init; } = ImmutableList<LineEnd>.Empty;

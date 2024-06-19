@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -17,11 +17,11 @@ public interface IAppOptionsService
     public string? FontFamilyCssStyleString { get; }
     public string FontSizeCssStyleString { get; }
 
-    public Task SetActiveThemeRecordKey(Key<ThemeRecord> themeKey, bool updateStorage = true);
-    public Task SetTheme(ThemeRecord theme, bool updateStorage = true);
-    public Task SetFontFamily(string? fontFamily, bool updateStorage = true);
-    public Task SetFontSize(int fontSizeInPixels, bool updateStorage = true);
-    public Task SetIconSize(int iconSizeInPixels, bool updateStorage = true);
+    public void SetActiveThemeRecordKey(Key<ThemeRecord> themeKey, bool updateStorage = true);
+    public void SetTheme(ThemeRecord theme, bool updateStorage = true);
+    public void SetFontFamily(string? fontFamily, bool updateStorage = true);
+    public void SetFontSize(int fontSizeInPixels, bool updateStorage = true);
+    public void SetIconSize(int iconSizeInPixels, bool updateStorage = true);
     public Task SetFromLocalStorageAsync();
-    public Task WriteToStorage();
+    public void WriteToStorage();
 }

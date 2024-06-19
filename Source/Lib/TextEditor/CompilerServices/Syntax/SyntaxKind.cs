@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 /// <summary>
 /// In order to share identical logic with C and CSharp code analysis I need to have them share the SyntaxKind enum. I don't like this because some enum members are used in one language but not the other.
@@ -188,10 +188,8 @@ public enum SyntaxKind
     VariableReferenceNode,
     VariableAssignmentExpressionNode,
     VariableExpressionNode,
-    PropertyDeclarationStatementNode,
-    PropertyReferenceNode,
-    PropertyAssignmentExpressionNode,
-    PropertyExpressionNode,
+	PropertyDefinitionNode,
+	FieldDefinitionNode,
     ConstructorDefinitionNode,
     ConstructorInvocationExpressionNode,
     ObjectInitializationParametersListingNode,

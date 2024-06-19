@@ -1,12 +1,13 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 public class CodeBlockBuilder
 {
-    public CodeBlockBuilder(CodeBlockBuilder? parent, ISyntaxNode? codeBlockOwner)
+    public CodeBlockBuilder(CodeBlockBuilder? parent, ICodeBlockOwner? codeBlockOwner)
     {
         Parent = parent;
         CodeBlockOwner = codeBlockOwner;
@@ -21,7 +22,7 @@ public class CodeBlockBuilder
     /// exist in is one which a class owns. Furthermore, I need to verify that the code-block-owner's
     /// Identifier is equal to the constructor's identifier.
     /// </summary>
-    public ISyntaxNode? CodeBlockOwner { get; }
+    public ICodeBlockOwner? CodeBlockOwner { get; }
 
     public CodeBlockNode Build()
     {

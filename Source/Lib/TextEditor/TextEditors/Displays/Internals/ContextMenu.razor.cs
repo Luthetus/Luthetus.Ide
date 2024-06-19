@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using Fluxor;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using Luthetus.Common.RazorLib.Menus.Models;
-using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Common.RazorLib.Clipboards.Models;
-using Fluxor;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -61,40 +61,53 @@ public partial class ContextMenu : ComponentBase
     private TextEditorCommandArgs ConstructCommandArgs()
     {
         var cursorSnapshotsList = new TextEditorCursor[] { RenderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
-        var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
             RenderBatch.Model.ResourceUri,
             RenderBatch.ViewModel.ViewModelKey,
-            hasSelection,
-            ClipboardService,
-            TextEditorService,
-            RenderBatch.Options,
-            RenderBatch.Events,
-            null,
-            null,
-            Dispatcher,
-            ServiceProvider,
-            TextEditorConfig);
+			RenderBatch.ComponentData,
+			TextEditorService,
+            ServiceProvider);
     }
 
-    private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
         {
-            await SetShouldDisplayMenuAsync
-                .Invoke(MenuKind.None, true)
-                .ConfigureAwait(false);
+            TextEditorService.PostSimpleBatch(
+				nameof(ContextMenu),
+				editContext =>
+				{
+					var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+
+					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					{
+						MenuKind = MenuKind.None
+					};
+
+					return Task.CompletedTask;
+				});
         }
     }
 
-    private async Task ReturnFocusToThisAsync()
+    private Task ReturnFocusToThisAsync()
     {
         try
         {
-            await SetShouldDisplayMenuAsync
-                .Invoke(MenuKind.None, true)
-                .ConfigureAwait(false);
+            TextEditorService.PostSimpleBatch(
+				nameof(ContextMenu),
+				editContext =>
+				{
+					var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+
+					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					{
+						MenuKind = MenuKind.None
+					};
+
+					return Task.CompletedTask;
+				});
+			return Task.CompletedTask;
         }
         catch (Exception e)
         {
@@ -128,9 +141,19 @@ public partial class ContextMenu : ComponentBase
         {
             try
             {
-                await SetShouldDisplayMenuAsync
-                    .Invoke(MenuKind.None, true)
-                    .ConfigureAwait(false);
+				TextEditorService.PostSimpleBatch(
+					nameof(ContextMenu),
+					editContext =>
+					{
+						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+	
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.None
+						};
+
+						return Task.CompletedTask;
+					});
 
                 await menuOptionAction.Invoke().ConfigureAwait(false);
             }

@@ -1,15 +1,15 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Htmls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -46,7 +46,6 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     private readonly ThrottleAsync _throttleShouldRevealCursor = new(TimeSpan.FromMilliseconds(333));
 
     private ElementReference? _cursorDisplayElementReference;
-    private MenuKind _menuKind;
     private int _menuShouldGetFocusRequestCount;
     private string _previousGetCursorStyleCss = string.Empty;
     private string _previousGetCaretRowStyleCss = string.Empty;
@@ -66,8 +65,6 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public string BlinkAnimationCssClass => TextEditorService.ViewModelApi.CursorShouldBlink
         ? "luth_te_blink"
         : string.Empty;
-
-    public MenuKind MenuKind => _menuKind;
 
     protected override void OnInitialized()
     {
@@ -132,13 +129,13 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             {
                 var localRenderBatch = RenderBatch;
 
-                await _throttleShouldRevealCursor.PushEvent(async _ =>
+                await _throttleShouldRevealCursor.PushEvent(_ =>
                 {
                     // TODO: Need to add 'TextEditorService.PostTakeMostRecent' and simple batch combination.
                     //
                     // I think after removing the throttle, that this is an infinite loop on WASM,
                     // i.e. holding down ArrowRight
-                    await TextEditorService.PostSimpleBatch(
+                    TextEditorService.PostSimpleBatch(
                         nameof(_throttleShouldRevealCursor),
                         editContext =>
                         {
@@ -157,6 +154,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                                     cursorTextSpan)
                                 .Invoke(editContext);
                         });
+					return Task.CompletedTask;
                 }).ConfigureAwait(false);
             }
         }
@@ -341,27 +339,9 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         }
     }
 
-    public void PauseBlinkAnimation()
-    {
-        TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
-    }
-
     private void HandleOnKeyDown()
     {
-        PauseBlinkAnimation();
-    }
-
-    public async Task SetShouldDisplayMenuAsync(MenuKind textEditorMenuKind, bool shouldFocusCursor = true)
-    {
-        // Clear the counter of requests for the Menu to take focus
-        _ = TextEditorMenuShouldTakeFocus();
-
-        _menuKind = textEditorMenuKind;
-
-        await InvokeAsync(StateHasChanged);
-
-        if (shouldFocusCursor && _menuKind == MenuKind.None)
-            await FocusAsync().ConfigureAwait(false);
+        TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
     }
 
     public async Task SetFocusToActiveMenuAsync()

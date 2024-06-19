@@ -20,7 +20,8 @@ public partial record TestExplorerState
 		{
 			_ = dispatcher; // Suppress unused parameter
 
-            return _ideBackgroundTaskApi.TestExplorer.DotNetSolutionStateWrap_StateChanged();
+            _ideBackgroundTaskApi.TestExplorer.DotNetSolutionStateWrap_StateChanged();
+			return Task.CompletedTask;
 		}
 	}
 }

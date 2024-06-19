@@ -1,18 +1,18 @@
 using Fluxor;
+using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.CompilerServices.States;
-using Luthetus.Ide.RazorLib.CompilerServices.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.CompilerServices.States;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Displays;
 
@@ -69,18 +69,18 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         base.OnInitialized();
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             if (!_hasInitialized)
             {
                 _hasInitialized = true;
-                await ReloadOnClick().ConfigureAwait(false);
+                ReloadOnClick();
             }
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        return base.OnAfterRenderAsync(firstRender);
     }
 
     private async void RerenderAfterEventWithArgs(object? sender, EventArgs e)
@@ -101,11 +101,9 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
             CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey));
     }
 
-    private async Task ReloadOnClick()
+    private void ReloadOnClick()
     {
-        await IdeBackgroundTaskApi.CompilerService
-            .SetCompilerServiceExplorerTreeView()
-            .ConfigureAwait(false);
+        IdeBackgroundTaskApi.CompilerService.SetCompilerServiceExplorerTreeView();
     }
 
     public void Dispose()

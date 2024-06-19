@@ -227,7 +227,6 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -276,8 +275,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
-            string.Empty,
-            async editContext =>
+			async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -361,7 +359,6 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -485,7 +482,6 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -570,7 +566,6 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -694,7 +689,6 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -782,7 +776,6 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -906,7 +899,6 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -991,7 +983,6 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(MoveCursorFactory_SelectText),
-            string.Empty,
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -1259,7 +1250,6 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await textEditorService.PostSimpleBatch(
             nameof(textEditorService.ViewModelApi.WithValueFactory),
-            string.Empty,
             textEditorService.ViewModelApi.WithValueFactory(
                 inViewModel.ViewModelKey,
                 inState =>

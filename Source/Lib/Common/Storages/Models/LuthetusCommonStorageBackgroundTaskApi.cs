@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Storages.Models;
@@ -16,10 +16,10 @@ public class LuthetusCommonStorageBackgroundTaskApi
         _storageService = storageService;
     }
 
-    public Task WriteToLocalStorage(string key, object value)
+    public void WriteToLocalStorage(string key, object value)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "WriteToStorage",
             async () =>

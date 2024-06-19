@@ -14,8 +14,11 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -26,10 +29,7 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
-using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
@@ -182,43 +182,42 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                                 .Invoke()
                                 .ConfigureAwait(false);
 
-                            await BackgroundTaskService.EnqueueAsync(
-                                    Key<BackgroundTask>.NewKey(),
-                                    ContinuousBackgroundTaskWorker.GetQueueKey(),
-                                    "SolutionExplorer_TreeView_MultiSelect_DeleteFiles",
-                                    async () =>
+                            BackgroundTaskService.Enqueue(
+                                Key<IBackgroundTask>.NewKey(),
+                                ContinuousBackgroundTaskWorker.GetQueueKey(),
+                                "SolutionExplorer_TreeView_MultiSelect_DeleteFiles",
+                                async () =>
+                                {
+                                    foreach (var node in commandArgs.TreeViewContainer.SelectedNodeList)
                                     {
-                                        foreach (var node in commandArgs.TreeViewContainer.SelectedNodeList)
+                                        var treeViewNamespacePath = (TreeViewNamespacePath)node;
+
+                                        if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
                                         {
-                                            var treeViewNamespacePath = (TreeViewNamespacePath)node;
+                                            await FileSystemProvider.Directory
+                                                .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value, true, CancellationToken.None)
+                                                .ConfigureAwait(false);
+                                        }
+                                        else
+                                        {
+                                            await FileSystemProvider.File
+                                                .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value)
+                                                .ConfigureAwait(false);
+                                        }
 
-                                            if (treeViewNamespacePath.Item.AbsolutePath.IsDirectory)
-                                            {
-                                                await FileSystemProvider.Directory
-                                                    .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value, true, CancellationToken.None)
-                                                    .ConfigureAwait(false);
-                                            }
-                                            else
-                                            {
-                                                await FileSystemProvider.File
-                                                    .DeleteAsync(treeViewNamespacePath.Item.AbsolutePath.Value)
-                                                    .ConfigureAwait(false);
-                                            }
+                                        if (TreeViewService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
+                                            mostRecentContainer is not null)
+                                        {
+                                            var localParent = node.Parent;
 
-                                            if (TreeViewService.TryGetTreeViewContainer(commandArgs.TreeViewContainer.Key, out var mostRecentContainer) &&
-                                                mostRecentContainer is not null)
+                                            if (localParent is not null)
                                             {
-                                                var localParent = node.Parent;
-
-                                                if (localParent is not null)
-                                                {
-                                                    await localParent.LoadChildListAsync().ConfigureAwait(false);
-                                                    TreeViewService.ReRenderNode(mostRecentContainer.Key, localParent);
-                                                }
+                                                await localParent.LoadChildListAsync().ConfigureAwait(false);
+                                                TreeViewService.ReRenderNode(mostRecentContainer.Key, localParent);
                                             }
                                         }
-                                    })
-                                .ConfigureAwait(false);
+                                    }
+                                });
                         }
                     },
                     { nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc), commandArgs.RestoreFocusToTreeView },
@@ -244,7 +243,11 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         var addExistingCSharpProject = new MenuOptionRecord(
             "Existing C# Project",
             MenuOptionKind.Other,
-            () => AddExistingProjectToSolution(treeViewSolution.Item));
+            () =>
+			{
+				AddExistingProjectToSolution(treeViewSolution.Item);
+				return Task.CompletedTask;
+			});
 
         var createOptions = new MenuOptionRecord("Add", MenuOptionKind.Create,
             SubMenu: new MenuRecord(new[]
@@ -325,11 +328,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 treeViewModel,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
                 Dispatcher,
-                async () =>
+                () =>
                 {
-                    await IdeBackgroundTaskApi.DotNetSolution
-                        .SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath)
-                        .ConfigureAwait(false);
+                    IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+					return Task.CompletedTask;
                 }),
             new MenuOptionRecord(
                 "Set as Startup Project",
@@ -344,11 +346,10 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 treeViewModel,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
                 Dispatcher,
-                async () =>
+                () =>
                 {
-                    await IdeBackgroundTaskApi.DotNetSolution
-                        .SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath)
-                        .ConfigureAwait(false);
+                    IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+					return Task.CompletedTask;
                 }),
         };
     }
@@ -471,9 +472,9 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         return Task.CompletedTask;
     }
 
-    private Task AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
+    private void AddExistingProjectToSolution(DotNetSolutionModel dotNetSolutionModel)
     {
-        return IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+        IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             "Existing C# Project to add to solution",
             async absolutePath =>
             {
@@ -489,17 +490,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     localFormattedAddExistingProjectToSolutionCommand,
                     null,
                     CancellationToken.None,
-                    async () =>
+                    () =>
                     {
-                        await IdeBackgroundTaskApi.DotNetSolution
-                            .SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath)
-                            .ConfigureAwait(false);
+                        IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
+						return Task.CompletedTask;
                     });
 
                 var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(addExistingProjectToSolutionTerminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(addExistingProjectToSolutionTerminalCommand);
             },
             absolutePath =>
             {

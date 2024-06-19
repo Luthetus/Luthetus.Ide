@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
@@ -210,7 +210,7 @@ public static partial class TextEditorCommandVimFacts
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -258,7 +258,7 @@ public static partial class TextEditorCommandVimFacts
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
 
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 

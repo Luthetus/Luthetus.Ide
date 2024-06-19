@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
@@ -25,11 +25,36 @@ public static class ParseVariables
         VariableKind variableKind,
         ParserModel model)
     {
-        var variableDeclarationNode = new VariableDeclarationNode(
-            consumedTypeClauseNode,
-            consumedIdentifierToken,
-            variableKind,
-            false);
+		IVariableDeclarationNode variableDeclarationNode;
+
+		if (variableKind == VariableKind.Local || variableKind == VariableKind.Closure)
+		{
+			variableDeclarationNode = new VariableDeclarationNode(
+	            consumedTypeClauseNode,
+	            consumedIdentifierToken,
+	            variableKind,
+	            false);
+		}
+		else if (variableKind == VariableKind.Field)
+		{
+			variableDeclarationNode = new FieldDefinitionNode(
+	            consumedTypeClauseNode,
+	            consumedIdentifierToken,
+	            variableKind,
+	            false);
+		}
+		else if (variableKind == VariableKind.Property)
+		{
+			variableDeclarationNode = new PropertyDefinitionNode(
+	            consumedTypeClauseNode,
+	            consumedIdentifierToken,
+	            variableKind,
+	            false);
+		}
+		else
+		{
+			throw new NotImplementedException($"The {nameof(VariableKind)}: {variableKind} was not recognized.");
+		}
 
         model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
@@ -78,7 +103,7 @@ public static class ParseVariables
     }
 
     public static void HandlePropertyDeclaration(
-        VariableDeclarationNode consumedVariableDeclarationNode,
+        IVariableDeclarationNode consumedVariableDeclarationNode,
         OpenBraceToken consumedOpenBraceToken,
         ParserModel model)
     {
@@ -142,7 +167,7 @@ public static class ParseVariables
     }
 
     public static void HandlePropertyExpression(
-        VariableDeclarationNode consumedVariableDeclarationNode,
+        IVariableDeclarationNode consumedVariableDeclarationNode,
         EqualsToken consumedEqualsToken,
         CloseAngleBracketToken consumedCloseAngleBracketToken,
         ParserModel model)

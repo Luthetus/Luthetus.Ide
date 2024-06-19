@@ -410,7 +410,6 @@ public partial class AdhocTest
 
         await textEditorService.PostSimpleBatch(
             nameof(ContentList_Change),
-            string.Empty,
             textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));
 
         // ContentList

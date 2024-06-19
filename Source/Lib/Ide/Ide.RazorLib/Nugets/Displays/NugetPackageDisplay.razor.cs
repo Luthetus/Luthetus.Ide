@@ -2,12 +2,12 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.Nugets.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Nugets.States;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -99,15 +99,14 @@ public partial class NugetPackageDisplay : FluxorComponent
             AddNugetPackageTerminalCommandKey,
             formattedCommand,
             parentDirectory.Value,
-            CancellationToken.None, () =>
+            CancellationToken.None,
+			() =>
             {
                 NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });
 
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        await generalTerminal
-            .EnqueueCommandAsync(addNugetPackageReferenceCommand)
-            .ConfigureAwait(false);
+        generalTerminal.EnqueueCommand(addNugetPackageReferenceCommand);
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -11,7 +12,6 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.TestExplorers.States;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
 
@@ -49,10 +49,10 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
         _dispatcher = dispatcher;
     }
 
-    public Task DotNetSolutionStateWrap_StateChanged()
+    public void DotNetSolutionStateWrap_StateChanged()
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Refresh TestExplorer",
             async () => await DotNetSolutionStateWrap_StateChangedAsync().ConfigureAwait(false));
@@ -147,9 +147,7 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
 
                 treeViewProjectTestModel.Item.TerminalCommand = dotNetTestListTestsCommand;
 
-				await executionTerminal
-                    .EnqueueCommandAsync(dotNetTestListTestsCommand)
-                    .ConfigureAwait(false);
+				executionTerminal.EnqueueCommand(dotNetTestListTestsCommand);
             };
         }
 

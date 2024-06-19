@@ -1,4 +1,5 @@
-﻿using Fluxor;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -7,7 +8,6 @@ using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
@@ -42,10 +42,10 @@ public class LuthetusIdeCompilerServiceBackgroundTaskApi
         _dispatcher = dispatcher;
     }
 
-    public Task SetCompilerServiceExplorerTreeView()
+    public void SetCompilerServiceExplorerTreeView()
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set CompilerServiceExplorer TreeView",
             async () =>

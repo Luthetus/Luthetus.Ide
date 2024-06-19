@@ -1,4 +1,5 @@
-﻿using Fluxor;
+using Fluxor;
+using System.Text.Json;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -12,7 +13,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using static Luthetus.Common.RazorLib.Contexts.States.ContextState;
-using System.Text.Json;
+
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Models;
@@ -72,47 +73,39 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));
     }
 
-    public Task SetTheme(ThemeRecord theme, bool updateStorage = true)
+    public void SetTheme(ThemeRecord theme, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(theme));
 
         if (updateStorage)
-            return WriteToStorage();
-
-        return Task.CompletedTask;
+            WriteToStorage();
     }
 
-    public Task SetShowWhitespace(bool showWhitespace, bool updateStorage = true)
+    public void SetShowWhitespace(bool showWhitespace, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new TextEditorOptionsState.SetShowWhitespaceAction(showWhitespace));
 
         if (updateStorage)
-            return WriteToStorage();
-
-        return Task.CompletedTask;
+            WriteToStorage();
     }
 
-    public Task SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true)
+    public void SetUseMonospaceOptimizations(bool useMonospaceOptimizations, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new TextEditorOptionsState.SetUseMonospaceOptimizationsAction(useMonospaceOptimizations));
 
         if (updateStorage)
-            return WriteToStorage();
-
-        return Task.CompletedTask;
+            WriteToStorage();
     }
 
-    public Task SetShowNewlines(bool showNewlines, bool updateStorage = true)
+    public void SetShowNewlines(bool showNewlines, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new TextEditorOptionsState.SetShowNewlinesAction(showNewlines));
 
         if (updateStorage)
-            return WriteToStorage();
-
-        return Task.CompletedTask;
+            WriteToStorage();
     }
 
-    public Task SetKeymap(Keymap keymap, bool updateStorage = true)
+    public void SetKeymap(Keymap keymap, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new TextEditorOptionsState.SetKeymapAction(keymap));
 
@@ -126,49 +119,39 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         }
 
         if (updateStorage)
-            return WriteToStorage();
-
-        return Task.CompletedTask;
+            WriteToStorage();
     }
 
-    public Task SetHeight(int? heightInPixels, bool updateStorage = true)
+    public void SetHeight(int? heightInPixels, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new TextEditorOptionsState.SetHeightAction(heightInPixels));
 
         if (updateStorage)
-            return WriteToStorage();
-
-        return Task.CompletedTask;
+            WriteToStorage();
     }
 
-    public Task SetFontSize(int fontSizeInPixels, bool updateStorage = true)
+    public void SetFontSize(int fontSizeInPixels, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new TextEditorOptionsState.SetFontSizeAction(fontSizeInPixels));
 
         if (updateStorage)
-            return WriteToStorage();
-
-        return Task.CompletedTask;
+            WriteToStorage();
     }
 
-    public Task SetFontFamily(string? fontFamily, bool updateStorage = true)
+    public void SetFontFamily(string? fontFamily, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new TextEditorOptionsState.SetFontFamilyAction(fontFamily));
 
         if (updateStorage)
-            return WriteToStorage();
-
-        return Task.CompletedTask;
+            WriteToStorage();
     }
 
-    public Task SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true)
+    public void SetCursorWidth(double cursorWidthInPixels, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new TextEditorOptionsState.SetCursorWidthAction(cursorWidthInPixels));
 
         if (updateStorage)
-            return WriteToStorage();
-
-        return Task.CompletedTask;
+            WriteToStorage();
     }
 
     public void SetRenderStateKey(Key<RenderState> renderStateKey)
@@ -176,9 +159,9 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         _dispatcher.Dispatch(new TextEditorOptionsState.SetRenderStateKeyAction(renderStateKey));
     }
 
-    public Task WriteToStorage()
+    public void WriteToStorage()
     {
-        return _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
+        _commonBackgroundTaskApi.Storage.WriteToLocalStorage(
             _textEditorService.StorageKey,
             new TextEditorOptionsJsonDto(_textEditorService.OptionsStateWrap.Value.Options));
     }
@@ -200,7 +183,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             var matchedTheme = _textEditorService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
                 x => x.Key == optionsJson.CommonOptionsJsonDto.ThemeKey);
 
-            await SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false).ConfigureAwait(false);
+            SetTheme(matchedTheme ?? ThemeFacts.VisualStudioDarkThemeClone, false);
         }
 
         if (optionsJson.Keymap is not null)
@@ -208,7 +191,7 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
             var matchedKeymap = TextEditorKeymapFacts.AllKeymapsList.FirstOrDefault(
                 x => x.Key == optionsJson.Keymap.Key);
 
-            await SetKeymap(matchedKeymap ?? TextEditorKeymapFacts.DefaultKeymap, false).ConfigureAwait(false);
+            SetKeymap(matchedKeymap ?? TextEditorKeymapFacts.DefaultKeymap, false);
 
             var activeKeymap = _textEditorService.OptionsStateWrap.Value.Options.Keymap;
 
@@ -221,16 +204,16 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         }
 
         if (optionsJson.CommonOptionsJsonDto?.FontSizeInPixels is not null)
-            await SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value, false).ConfigureAwait(false);
+            SetFontSize(optionsJson.CommonOptionsJsonDto.FontSizeInPixels.Value, false);
 
         if (optionsJson.CursorWidthInPixels is not null)
-            await SetCursorWidth(optionsJson.CursorWidthInPixels.Value, false).ConfigureAwait(false);
+            SetCursorWidth(optionsJson.CursorWidthInPixels.Value, false);
 
         if (optionsJson.TextEditorHeightInPixels is not null)
-            await SetHeight(optionsJson.TextEditorHeightInPixels.Value, false).ConfigureAwait(false);
+            SetHeight(optionsJson.TextEditorHeightInPixels.Value, false);
 
         if (optionsJson.ShowNewlines is not null)
-            await SetShowNewlines(optionsJson.ShowNewlines.Value, false).ConfigureAwait(false);
+            SetShowNewlines(optionsJson.ShowNewlines.Value, false);
 
         // TODO: OptionsSetUseMonospaceOptimizations will always get set to false (default for bool)
         // for a first time user. This leads to a bad user experience since the proportional
@@ -240,6 +223,6 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
         // OptionsSetUseMonospaceOptimizations(options.UseMonospaceOptimizations);
 
         if (optionsJson.ShowWhitespace is not null)
-            await SetShowWhitespace(optionsJson.ShowWhitespace.Value, false).ConfigureAwait(false);
+            SetShowWhitespace(optionsJson.ShowWhitespace.Value, false);
     }
 }

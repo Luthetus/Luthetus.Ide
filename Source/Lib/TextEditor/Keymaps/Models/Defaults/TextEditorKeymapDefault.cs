@@ -1,22 +1,21 @@
-﻿using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
-using Microsoft.AspNetCore.Components.Web;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
 public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
 {
     public TextEditorKeymapDefault()
-        : base(
-            new Key<Keymap>(Guid.Parse("4aaca759-c2c7-4e6f-9d9f-f3d17172df16")),
-            "Default")
+        : base(new Key<Keymap>(Guid.Parse("4aaca759-c2c7-4e6f-9d9f-f3d17172df16")),
+               "Default")
     {
         AddDefaultCtrlModifiedKeymap();
         AddDefaultAltModifiedKeymap();
@@ -244,7 +243,7 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
         }, TextEditorCommandDefaultFacts.ScrollPageUp);
     }
 
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command)
+	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
 	{
         return Map.TryGetValue(keymapArgument, out command);
 	}

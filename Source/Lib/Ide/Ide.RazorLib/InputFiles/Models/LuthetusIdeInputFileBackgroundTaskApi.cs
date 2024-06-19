@@ -1,4 +1,5 @@
-﻿using Fluxor;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -7,7 +8,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Htmls.Models;
-using System.Collections.Immutable;
 using static Luthetus.Ide.RazorLib.InputFiles.States.InputFileState;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
@@ -31,14 +31,14 @@ public class LuthetusIdeInputFileBackgroundTaskApi
         _dispatcher = dispatcher;
     }
 
-    public Task RequestInputFileStateForm(
+    public void RequestInputFileStateForm(
         string message,
         Func<IAbsolutePath?, Task> onAfterSubmitFunc,
         Func<IAbsolutePath?, Task<bool>> selectionIsValidFunc,
         ImmutableArray<InputFilePattern> inputFilePatterns)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Request InputFileState Form",
             async () => await HandleRequestInputFileStateFormActionAsync(

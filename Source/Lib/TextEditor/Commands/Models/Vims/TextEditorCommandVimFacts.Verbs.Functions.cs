@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
@@ -24,7 +24,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -52,16 +52,9 @@ public static partial class TextEditorCommandVimFacts
                 var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
                     modelModifier.ResourceUri,
                     viewModelModifier.ViewModel.ViewModelKey,
-                    commandArgs.HasTextSelection,
-                    commandArgs.ClipboardService,
+					commandArgs.ComponentData,
                     commandArgs.TextEditorService,
-                    commandArgs.Options,
-                    commandArgs.Events,
-                    commandArgs.HandleMouseStoppedMovingEventAsyncFunc,
-                    commandArgs.JsRuntime,
-                    commandArgs.Dispatcher,
-                    commandArgs.ServiceProvider,
-                    commandArgs.TextEditorConfig);
+                    commandArgs.ServiceProvider);
 
                 var inCursor = primaryCursorModifier.ToCursor();
 
@@ -104,7 +97,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -119,7 +112,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -141,7 +134,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 
@@ -154,7 +147,7 @@ public static partial class TextEditorCommandVimFacts
         {
             return async editContext =>
             {
-                var activeKeymap = commandArgs.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
                 if (activeKeymap is not TextEditorKeymapVim keymapVim)
                     return;
 

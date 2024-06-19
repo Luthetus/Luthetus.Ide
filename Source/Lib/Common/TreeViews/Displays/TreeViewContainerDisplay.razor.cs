@@ -192,14 +192,13 @@ public partial class TreeViewContainerDisplay : FluxorComponent
 
         if (OnContextMenuFunc is not null)
 		{
-            await BackgroundTaskService.EnqueueAsync(
-                    Key<BackgroundTask>.NewKey(),
-                    ContinuousBackgroundTaskWorker.GetQueueKey(),
-	        	    "TreeView.HandleTreeViewOnContextMenu",
-				    async () => await OnContextMenuFunc
-                        .Invoke(_treeViewContextMenuCommandArgs)
-                        .ConfigureAwait(false))
-                .ConfigureAwait(false);
+            BackgroundTaskService.Enqueue(
+                Key<IBackgroundTask>.NewKey(),
+                ContinuousBackgroundTaskWorker.GetQueueKey(),
+        	    "TreeView.HandleTreeViewOnContextMenu",
+			    async () => await OnContextMenuFunc
+                    .Invoke(_treeViewContextMenuCommandArgs)
+                    .ConfigureAwait(false));
 		}
 
         await InvokeAsync(StateHasChanged);

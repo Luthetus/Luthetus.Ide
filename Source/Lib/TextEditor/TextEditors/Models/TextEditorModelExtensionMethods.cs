@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;

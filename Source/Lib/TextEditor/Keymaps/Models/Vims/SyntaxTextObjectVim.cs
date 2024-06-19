@@ -1,14 +1,14 @@
-using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
-using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
@@ -238,12 +238,13 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                return commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneColumnLeftFactory),
                                     MoveCursorOneColumnLeftFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
+								return Task.CompletedTask;
                             })
                         {
                             TextEditorEditFactory = interfaceCommandArgs =>
@@ -270,12 +271,13 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                return commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneRowDownFactory),
                                     MoveCursorOneRowDownFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
+								return Task.CompletedTask;
                             })
                         {
                             TextEditorEditFactory = interfaceCommandArgs =>
@@ -302,12 +304,13 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                return commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneRowUpFactory),
                                     MoveCursorOneRowUpFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
+								return Task.CompletedTask;
                             })
                         {
                             TextEditorEditFactory = interfaceCommandArgs =>
@@ -334,12 +337,13 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                return commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorOneColumnRightFactory),
                                     MoveCursorOneColumnRightFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
+								return Task.CompletedTask;
                             })
                         {
                             TextEditorEditFactory = interfaceCommandArgs =>
@@ -372,12 +376,13 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                return commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorEndCurrentLineFactory),
                                     MoveCursorEndCurrentLineFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
+								return Task.CompletedTask;
                             })
                         {
                             TextEditorEditFactory = interfaceCommandArgs =>
@@ -404,12 +409,13 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                return commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostSimpleBatch(
                                     nameof(MoveCursorStartCurrentLineFactory),
                                     MoveCursorStartCurrentLineFactory(
                                         commandArgs.ModelResourceUri,
                                         commandArgs.ViewModelKey,
                                         commandArgs));
+								return Task.CompletedTask;
                             })
                         {
                             TextEditorEditFactory = interfaceCommandArgs =>

@@ -123,14 +123,13 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (localHandleTabButtonOnContextMenu is null)
 			return;
 
-        await BackgroundTaskService.EnqueueAsync(
-				Key<BackgroundTask>.NewKey(),
-				ContinuousBackgroundTaskWorker.GetQueueKey(),
-				"Tab.ManuallyPropagateOnContextMenu",
-				async () => await localHandleTabButtonOnContextMenu
-					.Invoke(new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync))
-                    .ConfigureAwait(false))
-            .ConfigureAwait(false);
+        BackgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			"Tab.ManuallyPropagateOnContextMenu",
+			async () => await localHandleTabButtonOnContextMenu
+				.Invoke(new TabContextMenuEventArgs(mouseEventArgs, tab, FocusAsync))
+                .ConfigureAwait(false));
     }
 
 	private async Task FocusAsync()

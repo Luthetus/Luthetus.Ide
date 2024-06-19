@@ -1,5 +1,6 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -8,7 +9,7 @@ public sealed record VariableReferenceNode : IExpressionNode
 {
     public VariableReferenceNode(
         IdentifierToken variableIdentifierToken,
-        VariableDeclarationNode variableDeclarationNode)
+        IVariableDeclarationNode variableDeclarationNode)
     {
         VariableIdentifierToken = variableIdentifierToken;
         VariableDeclarationNode = variableDeclarationNode;
@@ -24,7 +25,7 @@ public sealed record VariableReferenceNode : IExpressionNode
     /// <summary>
     /// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
     /// </summary>
-    public VariableDeclarationNode VariableDeclarationNode { get; }
+    public IVariableDeclarationNode VariableDeclarationNode { get; }
     public TypeClauseNode ResultTypeClauseNode => VariableDeclarationNode.TypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildList { get; }

@@ -1,11 +1,11 @@
-﻿using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -163,7 +163,17 @@ public class CSharpParser : ILuthParser
             }
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
-                break;
+			{
+				if (model.ParseChildScopeQueue.TryDequeue(out var action))
+				{
+					action.Invoke(model.TokenWalker.Index - 1);
+					model.DequeueChildScopeCounter++;
+				}
+				else
+				{
+					break;
+				}
+			}
         }
 
         if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null &&

@@ -1,4 +1,5 @@
 using System.Text;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -7,8 +8,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Microsoft.AspNetCore.Components.Web;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -17,39 +17,38 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnKeyDownLateBatching : ITextEditorTask
 {
-    private readonly TextEditorEvents _events;
-
     public OnKeyDownLateBatching(
-	        TextEditorEvents events,
+			TextEditorComponentData componentData,
 	        KeyboardEventArgs keyboardEventArgs,
 	        ResourceUri resourceUri,
 	        Key<TextEditorViewModel> viewModelKey)
-		: this(events, new List<KeyboardEventArgs>() { keyboardEventArgs }, resourceUri, viewModelKey)
+		: this(componentData, new List<KeyboardEventArgs>() { keyboardEventArgs }, resourceUri, viewModelKey)
     {
     }
 
 	public OnKeyDownLateBatching(
-        TextEditorEvents events,
+		TextEditorComponentData componentData,
         List<KeyboardEventArgs> keyboardEventArgsList,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
-        _events = events;
+		ComponentData = componentData;
 
         KeyboardEventArgsList = keyboardEventArgsList;
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
     }
 
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; private set; } = nameof(OnKeyDownLateBatching);
     public Task? WorkProgress { get; }
-    public TimeSpan ThrottleTimeSpan => TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
     public List<KeyboardEventArgs> KeyboardEventArgsList { get; }
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public IEditContext EditContext { get; set; }
+	public TextEditorComponentData ComponentData { get; set; }
 
 	/// <summary>
 	/// Global variable used during <see cref="HandleEvent"/> to
@@ -91,7 +90,7 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	            var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 	
 	            var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-	                _events, keyboardEventArgs, definiteHasSelection, _events.TextEditorService, out var command);
+	                ComponentData, keyboardEventArgs, definiteHasSelection, EditContext.TextEditorService, out var command);
 	
 	            var shouldInvokeAfterOnKeyDownAsync = false;
 	
@@ -103,16 +102,9 @@ public class OnKeyDownLateBatching : ITextEditorTask
 						var commandArgs = new TextEditorCommandArgs(
                             modelModifier.ResourceUri,
                             viewModelModifier.ViewModel.ViewModelKey,
-                            TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier),
-                            _events.ClipboardService,
-                            _events.TextEditorService,
-                            _events.Options,
-                            _events,
-                            _events.HandleMouseStoppedMovingEventAsync,
-                            _events.JsRuntime,
-                            _events.Dispatcher,
-                            _events.ServiceProvider,
-                            _events.TextEditorConfig);
+							ComponentData,
+							EditContext.TextEditorService,
+							ComponentData.ServiceProvider);
 
                         if (command is TextEditorCommand textEditorCommand &&
                             textEditorCommand.TextEditorEditFactory is not null)
@@ -133,52 +125,57 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                    break;
 	                case KeyboardEventArgsKind.Movement:
 	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
-	                        _events.CursorDisplay is not null && _events.CursorDisplay.MenuKind == MenuKind.AutoCompleteMenu)
+	                        viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
 	                    {
 							// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
 							// Reason being, these are likely to be huge optimizations (2024-05-29).
-	                        await _events.CursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
+							//
+							// TODO: Uncomment and deal with this line of code (2024-06-08).
+	                        // await _events.CursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
 	                    }
 	                    else
 	                    {
-	                        await _events.TextEditorService.ViewModelApi.MoveCursorFactory(
+	                        await EditContext.TextEditorService.ViewModelApi.MoveCursorFactory(
 	                                keyboardEventArgs,
 	                                modelModifier.ResourceUri,
 	                                viewModelModifier.ViewModel.ViewModelKey)
 	                            .Invoke(EditContext)
 	                            .ConfigureAwait(false);
 	
-							// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
-							// Reason being, these are likely to be huge optimizations (2024-05-29).
-	                        await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
-	                            .ConfigureAwait(false);
+							viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+							{
+								MenuKind = MenuKind.None
+							};
 	                    }
 	                    break;
 	                case KeyboardEventArgsKind.ContextMenu:
-						// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
-						// Reason being, these are likely to be huge optimizations (2024-05-29).
-	                    await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.ContextMenu) ?? Task.CompletedTask)
-	                        .ConfigureAwait(false);
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							MenuKind = MenuKind.ContextMenu
+						};
 	                    break;
 	                case KeyboardEventArgsKind.Text:
 	                case KeyboardEventArgsKind.Other:
 	                    shouldInvokeAfterOnKeyDownAsync = true;
 	
-	                    if (!_events.IsAutocompleteMenuInvoker(keyboardEventArgs))
+	                    if (!EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
 	                    {
 	                        if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key ||
 	                            KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
 	                            KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key ||
 	                            !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
 	                        {
-								// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
-								// Reason being, these are likely to be huge optimizations (2024-05-29).
-	                            await (_events.CursorDisplay?.SetShouldDisplayMenuAsync(MenuKind.None) ?? Task.CompletedTask)
-	                                .ConfigureAwait(false);
+								viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+								{
+									MenuKind = MenuKind.None
+								};
 	                        }
 	                    }
 	
-	                    _events.TooltipViewModel = null;
+						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						{
+							TooltipViewModel = null
+						};
 
 						if (definiteKeyboardEventArgsKind == KeyboardEventArgsKind.Text)
 						{
@@ -191,10 +188,10 @@ public class OnKeyDownLateBatching : ITextEditorTask
 								var innerKeyboardEventArgs = KeyboardEventArgsList[innerIndex];
 
 								var innerKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-									_events,
+									ComponentData,
 									innerKeyboardEventArgs,
 									definiteHasSelection,
-									_events.TextEditorService,
+									EditContext.TextEditorService,
 									out _);
 
 								if (innerKeyboardEventArgsKind == KeyboardEventArgsKind.Text)
@@ -226,10 +223,10 @@ public class OnKeyDownLateBatching : ITextEditorTask
 									var innerKeyboardEventArgs = KeyboardEventArgsList[innerIndex];
 	
 									var innerKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-										_events,
+										ComponentData,
 										innerKeyboardEventArgs,
 										definiteHasSelection,
-										_events.TextEditorService,
+										EditContext.TextEditorService,
 										out _);
 	
 									// If the user has a text selection, one cannot batch here.
@@ -270,7 +267,7 @@ public class OnKeyDownLateBatching : ITextEditorTask
 			                }
 							else
 							{
-								await _events.TextEditorService.ModelApi.HandleKeyboardEventFactory(
+								await EditContext.TextEditorService.ModelApi.HandleKeyboardEventFactory(
 				                        ResourceUri,
 				                        ViewModelKey,
 				                        keyboardEventArgs,
@@ -290,18 +287,25 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                    viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 	                }
 	
-	                var cursorDisplay = _events.CursorDisplay;
-	
-	                if (cursorDisplay is not null)
-	                {
-	                    await _events.HandleAfterOnKeyDownAsyncFactory(
+					if (ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory is not null)
+			        {
+			            await ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory.Invoke(
+				                ResourceUri,
+				                ViewModelKey,
+				                keyboardEventArgs)
+							.Invoke(EditContext)
+	                        .ConfigureAwait(false);
+			        }
+					else
+					{
+						await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsyncFactory(
 	                            modelModifier.ResourceUri,
 	                            viewModelModifier.ViewModel.ViewModelKey,
 	                            keyboardEventArgs,
-	                            cursorDisplay.SetShouldDisplayMenuAsync)
+								ComponentData)
 	                        .Invoke(EditContext)
 	                        .ConfigureAwait(false);
-	                }
+					}
 	            }
 			}
 		}

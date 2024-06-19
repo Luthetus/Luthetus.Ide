@@ -1,4 +1,4 @@
-﻿using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
