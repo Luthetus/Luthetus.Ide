@@ -815,6 +815,43 @@ is the best way. Such as a CRUD application.
 
 What was I doing again?
 
+I remember now, the optional boolean approach was written,
+but then I took a different approach. And current,
+theres a sort of mix of the two and its getting me nowhere.
+
+I'm going to remove the optional boolean then,
+and go from there.
+
+Fun fact, that singular optional boolean was causing
+the entire file to throw an exception during parsing,
+thereby I only had syntax highlighting for the
+lexer's output.
+
+The moment I removed the optional boolean, the file
+got very colorful.
+
+With the removal of the boolean, I need some other way
+to know when I'm inside of the method 'ParseOpenBraceToken(...)'
+with the goal of enqueueing or that I've been dequeued and need
+to actually parse it then and there.
+
+I added an int property named 'DequeueChildScopeCounter' to the
+'ParserModel'.
+
+If the 'ParseCloseBraceToken' dequeues, it can then increment
+this value.
+
+Then the next time one invokes 'ParseOpenBraceToken(...)',
+the method internally will see that the counter is > 0,
+and parse instead of enqueue.
+
+I made the changes, and now the RootCodeBlockNode's single child
+is no longer the 'NamespaceStatementNode', but instead
+the 'TypeDefinitionNode'.
+
+So, somehow the child/parent relations are getting mixed up.
+
+
 
 */
 		var resourceUri = new ResourceUri("UnitTests");
