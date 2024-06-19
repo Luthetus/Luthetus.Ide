@@ -548,7 +548,7 @@ public class MyClassTwo
 	}
 
 	[Fact]
-	public void Namespace_EmptyClass()
+	public void Namespace_FileScope_EmptyClass()
 	{
 /*
 Inside of ParseTokens.ParseOpenBraceToken(...)
@@ -724,6 +724,120 @@ public class MyClass
 		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
 
 		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+	}
+
+	[Fact]
+	public void Namespace_BlockScope_EmptyClass()
+	{
+/*
+This test is failing, and I'm getting the following output:
+===========================================================
+Parse:NamespaceTokenKeyword
+Parse:OpenBraceToken
+Parse:PublicTokenKeyword
+Parse:ClassTokenKeyword
+Parse:OpenBraceToken
+TokenWalker::startIndexInclusive::6::OpenBraceToken
+TokenWalker::endIndexExclusive::8::CloseBraceToken
+Parse:CloseBraceToken
+DeferredParsing
+Parse:OpenBraceToken
+TokenWalker::startIndexInclusive::6::OpenBraceToken
+TokenWalker::endIndexExclusive::8::CloseBraceToken
+Parse:EndOfFileToken
+
+I think I see the issue.
+
+When I first started working on this feature,
+I added to the 'ParseOpenBraceToken(...)' method
+the optional bool argument 'bool wasEnqueued = false'.
+
+The idea here was to re-invoke 'ParseOpenBraceToken(...)',
+but with wasEnqueued set to true, so that the child scope
+wasn't just yet again enqueued.
+
+But, at some point I had the idea that its best to
+return to the main while loop.
+
+This would allow child scopes to be parsed
+exactly the same as anything else,
+i.e.: the main while loop.
+
+For that reason I made 'ParseCloseBraceToken(...)'
+invoke the ParseChildScopeQueue's action,
+then return to the main while loop.
+Here, the "ParseChildScopeQueue's action"
+is just changing the token index,
+and telling the token walker to restore
+the index at which lies the end of the parent scope,
+once the child scope is found.
+
+Even if what I describe here were to work,
+it is written in a rather "spaghetti code" way.
+I like to get a feel for a problem that I'm trying
+to solve, by writing code to work through it step by step.
+Even if I delete all of the written code afterwards.
+I believe this is the most effective way to solve
+a problem, provided the environment is safe in which
+the experimental code is being written/ran.
+
+If I spend too long a time planning out a solution.
+If it is a problem I've never solved before,
+I'm likely to plan out a delusional solution.
+And the moment I sit down to type it out,
+I'll immediately realize the entire plan was wrong from the start.
+
+The more experience I have with a problem, the more
+I value the planning phase.
+
+And, the less experience, I focus on finding
+a safe way to experiment and build my intuition for
+the reality of the problem.
+
+It can backfire to work this way though.
+If you simply get the initial solution working,
+but don't thoroughly think out a final solution,
+then one ends up being strangled by spaghetti code
+and their project gets into an unrecoverable state
+of nonsensical code.
+
+I guess with problems I don't understand,
+I like to sort of do the oppose of plan, then do.
+I do (safely) experiments, then plan the solution after.
+I don't believe in magically understanding a problem.
+If you've never seen the problem before, you
+need to get uncomfortable and grapple with it,
+to truly understand its nature.
+
+As for problems one has solved before,
+planning nearly all of the solution ahead of time
+is the best way. Such as a CRUD application.
+
+What was I doing again?
+
+
+*/
+		var resourceUri = new ResourceUri("UnitTests");
+        var sourceText =
+@"namespace MyNamespace
+{
+	public class MyClass
+	{
+	
+	}
+}";
+
+        var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+
+		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+
+		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Single();
 	}
 
 	[Fact]
