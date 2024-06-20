@@ -10,6 +10,7 @@ public enum SyntaxKind
     CommentSingleLineToken,
     IdentifierToken,
     NumericLiteralToken,
+    CharLiteralToken,
     StringLiteralToken,
     TriviaToken,
     PreprocessorDirectiveToken,

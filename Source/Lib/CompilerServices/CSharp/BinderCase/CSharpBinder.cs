@@ -71,6 +71,7 @@ public partial class CSharpBinder : ILuthBinder
         var typeClauseNode = literalExpressionNode.LiteralSyntaxToken.SyntaxKind switch
         {
             SyntaxKind.NumericLiteralToken => CSharpFacts.Types.Int.ToTypeClause(),
+            SyntaxKind.CharLiteralToken => CSharpFacts.Types.Char.ToTypeClause(),
             SyntaxKind.StringLiteralToken => CSharpFacts.Types.String.ToTypeClause(),
             _ => throw new NotImplementedException(),
         };
