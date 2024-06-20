@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
@@ -59,32 +59,84 @@ public static class LuthLexerUtils
         syntaxTokens.Add(new NumericLiteralToken(textSpan));
     }
 
-    public static void LexStringLiteralToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+	public static void LexCharLiteralToken(
+        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens, List<TextEditorTextSpan>? escapeCharacterList = null, char delimiter = '\'', char escapeCharacter = '\\')
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
-        // Move past the initial opening character
+        // Move past the opening delimiter
         _ = stringWalker.ReadCharacter();
-
-        // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
-        var wasClosingCharacter = false;
 
         while (!stringWalker.IsEof)
         {
-            switch (stringWalker.CurrentCharacter)
-            {
-                case '"':
-                    wasClosingCharacter = true;
-                    break;
-                default:
-                    break;
-            }
+			if (stringWalker.CurrentCharacter == delimiter)
+			{
+				_ = stringWalker.ReadCharacter();
+				break;
+			}
+			else if (stringWalker.CurrentCharacter == escapeCharacter)
+			{
+				if (escapeCharacterList is not null)
+				{
+					escapeCharacterList.Add(new TextEditorTextSpan(
+			            stringWalker.PositionIndex,
+			            stringWalker.PositionIndex + 2,
+			            (byte)GenericDecorationKind.EscapeCharacter,
+			            stringWalker.ResourceUri,
+			            stringWalker.SourceText));
+				}
+
+				// Presuming the escaped text is 2 characters,
+				// then read an extra character.
+				_ = stringWalker.ReadCharacter();
+			}
 
             _ = stringWalker.ReadCharacter();
+        }
 
-            if (wasClosingCharacter)
-                break;
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.StringLiteral,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        syntaxTokens.Add(new CharLiteralToken(textSpan));
+    }
+
+    public static void LexStringLiteralToken(
+        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens, List<TextEditorTextSpan>? escapeCharacterList = null, char delimiter = '"', char escapeCharacter = '\\')
+    {
+        var entryPositionIndex = stringWalker.PositionIndex;
+
+        // Move past the opening delimiter
+        _ = stringWalker.ReadCharacter();
+
+        while (!stringWalker.IsEof)
+        {
+			if (stringWalker.CurrentCharacter == delimiter)
+			{
+				_ = stringWalker.ReadCharacter();
+				break;
+			}
+			else if (stringWalker.CurrentCharacter == escapeCharacter)
+			{
+				if (escapeCharacterList is not null)
+				{
+					escapeCharacterList.Add(new TextEditorTextSpan(
+			            stringWalker.PositionIndex,
+			            stringWalker.PositionIndex + 2,
+			            (byte)GenericDecorationKind.EscapeCharacter,
+			            stringWalker.ResourceUri,
+			            stringWalker.SourceText));
+				}
+
+				// Presuming the escaped text is 2 characters,
+				// then read an extra character.
+				_ = stringWalker.ReadCharacter();
+			}
+
+            _ = stringWalker.ReadCharacter();
         }
 
         var textSpan = new TextEditorTextSpan(

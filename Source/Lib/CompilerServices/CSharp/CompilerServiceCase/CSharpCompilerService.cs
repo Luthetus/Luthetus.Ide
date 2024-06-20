@@ -32,7 +32,14 @@ public sealed class CSharpCompilerService : LuthCompilerService
             RegisterResourceFunc = resourceUri => new CSharpResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new CSharpLexer(resource.ResourceUri, sourceText),
             GetParserFunc = (resource, lexer) => new CSharpParser((CSharpLexer)lexer),
-            GetBinderFunc = (resource, parser) => Binder
+            GetBinderFunc = (resource, parser) => Binder,
+			OnAfterLexAction = (resource, lexer) =>
+            {
+                var cSharpResource = (CSharpResource)resource;
+                var cSharpLexer = (CSharpLexer)lexer;
+
+                cSharpResource.EscapeCharacterList = cSharpLexer.EscapeCharacterList;
+            },
         };
 
         RuntimeAssembliesLoaderFactory.LoadDotNet6(CSharpBinder);

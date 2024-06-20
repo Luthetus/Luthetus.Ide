@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 
@@ -13,6 +13,7 @@ public class GenericDecorationMapper : IDecorationMapper
             GenericDecorationKind.None => string.Empty,
             GenericDecorationKind.Keyword => "luth_te_keyword",
             GenericDecorationKind.KeywordControl => "luth_te_keyword-control",
+            GenericDecorationKind.EscapeCharacter => "luth_te_string-literal-escape-character",
             GenericDecorationKind.StringLiteral => "luth_te_string-literal",
             GenericDecorationKind.Variable => "luth_te_variable",
             GenericDecorationKind.CommentSingleLine => "luth_te_comment",

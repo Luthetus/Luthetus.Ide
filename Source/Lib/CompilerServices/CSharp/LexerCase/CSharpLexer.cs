@@ -1,4 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -8,6 +9,8 @@ namespace Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 
 public class CSharpLexer : LuthLexer
 {
+	private readonly List<TextEditorTextSpan> _escapeCharacterList = new();
+
     public CSharpLexer(ResourceUri resourceUri, string sourceText)
         : base(
             resourceUri,
@@ -15,6 +18,8 @@ public class CSharpLexer : LuthLexer
             new LuthLexerKeywords(CSharpKeywords.NON_CONTEXTUAL_KEYWORDS, CSharpKeywords.CONTROL_KEYWORDS, CSharpKeywords.CONTEXTUAL_KEYWORDS))
     {
     }
+
+    public ImmutableArray<TextEditorTextSpan> EscapeCharacterList => _escapeCharacterList.ToImmutableArray();
 
     public override void Lex()
     {
@@ -91,8 +96,11 @@ public class CSharpLexer : LuthLexer
                 case '9':
                     LuthLexerUtils.LexNumericLiteralToken(_stringWalker, _syntaxTokenList);
                     break;
+				case '\'':
+                    LuthLexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
+                    break;
                 case '"':
-                    LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList);
+                    LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
                     break;
                 case '/':
                     if (_stringWalker.PeekCharacter(1) == '/')
