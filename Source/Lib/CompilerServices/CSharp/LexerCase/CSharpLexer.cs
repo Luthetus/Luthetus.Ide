@@ -96,11 +96,11 @@ public class CSharpLexer : LuthLexer
                 case '9':
                     LuthLexerUtils.LexNumericLiteralToken(_stringWalker, _syntaxTokenList);
                     break;
+				case '\'':
+                    LuthLexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
+                    break;
                 case '"':
                     LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
-                    break;
-				case '\'':
-                    LuthLexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '/':
                     if (_stringWalker.PeekCharacter(1) == '/')

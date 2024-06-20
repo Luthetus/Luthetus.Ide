@@ -60,7 +60,7 @@ public static class LuthLexerUtils
     }
 
 	public static void LexCharLiteralToken(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens, char delimiter = '\'', char escapeCharacter = '\\')
+        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens, List<TextEditorTextSpan>? escapeCharacterList = null, char delimiter = '\'', char escapeCharacter = '\\')
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -76,6 +76,16 @@ public static class LuthLexerUtils
 			}
 			else if (stringWalker.CurrentCharacter == escapeCharacter)
 			{
+				if (escapeCharacterList is not null)
+				{
+					escapeCharacterList.Add(new TextEditorTextSpan(
+			            stringWalker.PositionIndex,
+			            stringWalker.PositionIndex + 2,
+			            (byte)GenericDecorationKind.EscapeCharacter,
+			            stringWalker.ResourceUri,
+			            stringWalker.SourceText));
+				}
+
 				// Presuming the escaped text is 2 characters,
 				// then read an extra character.
 				_ = stringWalker.ReadCharacter();
