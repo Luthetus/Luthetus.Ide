@@ -68,7 +68,10 @@ public class CSharpParser : ILuthParser
                 case SyntaxKind.NumericLiteralToken:
                     ParseTokens.ParseNumericLiteralToken((NumericLiteralToken)token, model);
                     break;
-                case SyntaxKind.StringLiteralToken:
+                case SyntaxKind.CharLiteralToken:
+                    ParseTokens.ParseCharLiteralToken((CharLiteralToken)token, model);
+                    break;
+				case SyntaxKind.StringLiteralToken:
                     ParseTokens.ParseStringLiteralToken((StringLiteralToken)token, model);
                     break;
                 case SyntaxKind.PlusToken:

@@ -173,6 +173,11 @@ public static class ParseOthers
                     previousInvocationExpressionNode = numericLiteralExpressionNode;
                     SetLiteralExpressionNode(numericLiteralExpressionNode);
                     break;
+                case SyntaxKind.CharLiteralToken:
+                    var charLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Char.ToTypeClause());
+                    previousInvocationExpressionNode = charLiteralExpressionNode;
+                    SetLiteralExpressionNode(charLiteralExpressionNode);
+                    break;
                 case SyntaxKind.StringLiteralToken:
                     var stringLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.String.ToTypeClause());
                     previousInvocationExpressionNode = stringLiteralExpressionNode;

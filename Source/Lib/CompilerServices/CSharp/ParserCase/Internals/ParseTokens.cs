@@ -28,6 +28,25 @@ public static class ParseTokens
             (IExpressionNode)model.SyntaxStack.Pop());
     }
 
+	public static void ParseCharLiteralToken(
+        CharLiteralToken consumedCharLiteralToken,
+        ParserModel model)
+    {
+        // The handle expression won't see this token unless backtracked.
+        model.TokenWalker.Backtrack();
+        ParseOthers.HandleExpression(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            model);
+
+        model.CurrentCodeBlockBuilder.ChildList.Add(
+            (IExpressionNode)model.SyntaxStack.Pop());
+    }
+
     public static void ParseStringLiteralToken(
         StringLiteralToken consumedStringLiteralToken,
         ParserModel model)
