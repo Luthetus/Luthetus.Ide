@@ -287,9 +287,23 @@ window.luthetusTextEditor = {
     getTextEditorMeasurementsInPixelsById: function (elementId) {
         let elementReference = document.getElementById(elementId);
 
-        // The function "getElementMeasurementsInPixelsByElementReference"
-        // is safe to pass a null value to. Therefore no null check is being made here.
-        return this.getElementMeasurementsInPixelsByElementReference(elementReference);
+        if (!elementReference) {
+            return {
+                Width: 0,
+                Height: 0,
+				BoundingClientRectLeft: 0,
+				BoundingClientRectTop: 0,
+            };
+        }
+
+		let boundingClientRect = elementReference.getBoundingClientRect();
+
+        return {
+            Width: Math.ceil(elementReference.offsetWidth),
+            Height: Math.ceil(elementReference.offsetHeight),
+			BoundingClientRectLeft: boundingClientRect.left,
+			BoundingClientRectTop: boundingClientRect.top,
+        };
     },
     getElementMeasurementsInPixelsByElementReference: function (elementReference) {
         if (!elementReference) {
