@@ -12,7 +12,7 @@ public class ContinuousBackgroundTaskWorker : BackgroundTaskWorker
 {
     public const string QUEUE_DISPLAY_NAME = "ContinuousBackgroundTaskWorker";
 
-    private static readonly Key<BackgroundTaskQueue> _queueKey = new(Guid.Parse("78912ee9-1b3f-4bc3-ab8b-5681fbf0b131"));
+    private static readonly Key<IBackgroundTaskQueue> _queueKey = new(Guid.Parse("78912ee9-1b3f-4bc3-ab8b-5681fbf0b131"));
 
     public ContinuousBackgroundTaskWorker(
             IBackgroundTaskService backgroundTaskService,
@@ -21,5 +21,5 @@ public class ContinuousBackgroundTaskWorker : BackgroundTaskWorker
     {
     }
 
-    public static Key<BackgroundTaskQueue> GetQueueKey() => _queueKey;
+    public static Key<IBackgroundTaskQueue> GetQueueKey() => _queueKey;
 }

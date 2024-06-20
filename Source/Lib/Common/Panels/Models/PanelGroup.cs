@@ -65,4 +65,24 @@ public record PanelGroup(
 			await CloseAsync(tab).ConfigureAwait(false);
 		}
 	}
+
+	public async Task CloseOthersAsync(ITab safeTab)
+    {
+        var localTabList = TabList;
+
+		if (safeTab is not IPanelTab safePanelTab)
+			return;
+		
+		// Invoke 'OnClickAsync' to set the active tab to the "safe tab"
+		// OnClickAsync does not currently use its mouse event args argument.
+		await OnClickAsync(safeTab, null);
+
+        foreach (var tab in localTabList)
+        {
+			var shouldClose = safePanelTab.Key != tab.Key;
+
+			if (shouldClose)
+				await CloseAsync(tab).ConfigureAwait(false);
+        }
+    }
 }

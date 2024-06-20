@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -30,7 +30,6 @@ public class ViewModelDisplayOptions
         ResourceUri,
         Key<TextEditorViewModel>,
         KeyboardEventArgs,
-        Func<MenuKind, bool, Task>,
         TextEditorEdit>?
         AfterOnKeyDownAsyncFactory { get; set; }
 
@@ -46,7 +45,6 @@ public class ViewModelDisplayOptions
         ResourceUri,
         Key<TextEditorViewModel>,
         List<KeyboardEventArgs>,
-        Func<MenuKind, bool, Task>,
         TextEditorEdit>?
         AfterOnKeyDownRangeAsyncFactory { get; set; }
 

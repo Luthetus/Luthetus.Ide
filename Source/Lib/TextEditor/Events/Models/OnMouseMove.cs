@@ -1,41 +1,41 @@
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public class OnMouseMove : ITextEditorTask
 {
-    private readonly TextEditorViewModelDisplay.TextEditorEvents _events;
-
     public OnMouseMove(
         MouseEventArgs mouseEventArgs,
-        TextEditorViewModelDisplay.TextEditorEvents events,
+		TextEditorComponentData componentData,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
-        _events = events;
+		ComponentData = componentData;
 
         MouseEventArgs = mouseEventArgs;
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
     }
 
-    public Key<BackgroundTask> BackgroundTaskKey { get; } = Key<BackgroundTask>.NewKey();
-    public Key<BackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
+    public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
+    public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnMouseMove);
     public Task? WorkProgress { get; }
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
+	public TextEditorComponentData ComponentData { get; }
 
 	public IEditContext EditContext { get; set; }
 
-    public TimeSpan ThrottleTimeSpan => TextEditorViewModelDisplay.TextEditorEvents.ThrottleDelayDefault;
+    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -64,13 +64,19 @@ public class OnMouseMove : ITextEditorTask
 
 			// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
 			// Reason being, these are likely to be huge optimizations (2024-05-29).
-            var rowAndColumnIndex = await _events.CalculateRowAndColumnIndex(MouseEventArgs).ConfigureAwait(false);
+            var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
+					ResourceUri,
+					ViewModelKey,
+					MouseEventArgs,
+					ComponentData,
+					EditContext)
+				.ConfigureAwait(false);
 
             primaryCursorModifier.LineIndex = rowAndColumnIndex.rowIndex;
             primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
             primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-            _events.CursorPauseBlinkAnimationAction.Invoke();
+			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 
             primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 		}

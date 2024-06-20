@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -5,7 +6,6 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -21,40 +21,36 @@ public partial class GitControlsDisplay : ComponentBase
 
     private string _summary = string.Empty;
 
-    private async Task ExecuteGitRefreshOnClick(GitState localGitState)
+    private void ExecuteGitRefreshOnClick(GitState localGitState)
     {
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.RefreshEnqueue(localGitState.Repo)
-            .ConfigureAwait(false);
+        IdeBackgroundTaskApi.Git.RefreshEnqueue(localGitState.Repo);
     }
 
-    private async Task StageOnClick(GitState localGitState)
+    private void StageOnClick(GitState localGitState)
     {
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.AddEnqueue(localGitState.Repo)
-			.ConfigureAwait(false);
+        IdeBackgroundTaskApi.Git.AddEnqueue(localGitState.Repo);
     }
 
-    private async Task UnstageOnClick(GitState localGitState)
+    private void UnstageOnClick(GitState localGitState)
     {
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.UnstageEnqueue(localGitState.Repo)
-            .ConfigureAwait(false);
+        IdeBackgroundTaskApi.Git.UnstageEnqueue(localGitState.Repo);
     }
 
-    private async Task CommitChangesOnClick(GitState localGitState, string localSummary)
+    private void CommitChangesOnClick(GitState localGitState, string localSummary)
     {
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.CommitEnqueue(localGitState.Repo, localSummary)
-            .ConfigureAwait(false);
+        IdeBackgroundTaskApi.Git.CommitEnqueue(localGitState.Repo, localSummary);
 
         _summary = string.Empty;
     }

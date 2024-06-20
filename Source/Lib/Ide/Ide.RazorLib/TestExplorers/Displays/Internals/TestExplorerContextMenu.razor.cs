@@ -1,19 +1,19 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using System.Text;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
-using System.Text;
 using Luthetus.Ide.RazorLib.TestExplorers.States;
-using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 
@@ -109,21 +109,22 @@ public partial class TestExplorerContextMenu : ComponentBase
 		var menuOptionRecord = new MenuOptionRecord(
 			$"Run: {treeViewStringFragment.Item.Value}",
 			MenuOptionKind.Other,
-			OnClickFunc: async () =>
+			OnClickFunc: () =>
 			{
 				if (treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory is not null)
 				{
-					await BackgroundTaskService.EnqueueAsync(
-							Key<BackgroundTask>.NewKey(),
-							BlockingBackgroundTaskWorker.GetQueueKey(),
-							"RunTestByFullyQualifiedName",
-							async () => await RunTestByFullyQualifiedName(
-									treeViewStringFragment,
-									fullyQualifiedName,
-									treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value)
-								.ConfigureAwait(false))
-						.ConfigureAwait(false);
+					BackgroundTaskService.Enqueue(
+						Key<IBackgroundTask>.NewKey(),
+						BlockingBackgroundTaskWorker.GetQueueKey(),
+						"RunTestByFullyQualifiedName",
+						async () => await RunTestByFullyQualifiedName(
+								treeViewStringFragment,
+								fullyQualifiedName,
+								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value)
+							.ConfigureAwait(false));
 				}
+
+				return Task.CompletedTask;
 			});
 
 		return menuOptionRecord;
@@ -276,9 +277,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 
 		treeViewStringFragment.Item.TerminalCommand = dotNetTestByFullyQualifiedNameTerminalCommand;
 
-		await executionTerminal
-			.EnqueueCommandAsync(dotNetTestByFullyQualifiedNameTerminalCommand)
-            .ConfigureAwait(false);
+		executionTerminal.EnqueueCommand(dotNetTestByFullyQualifiedNameTerminalCommand);
 	}
 
     public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)

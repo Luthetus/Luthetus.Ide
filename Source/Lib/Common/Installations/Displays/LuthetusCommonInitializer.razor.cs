@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
@@ -19,20 +19,18 @@ public partial class LuthetusCommonInitializer : ComponentBase
     {
         if (firstRender)
         {
-            await BackgroundTaskService.EnqueueAsync(
-                Key<BackgroundTask>.NewKey(),
+            BackgroundTaskService.Enqueue(
+                Key<IBackgroundTask>.NewKey(),
                 ContinuousBackgroundTaskWorker.GetQueueKey(),
                 nameof(LuthetusCommonInitializer),
                 async () =>
                 {
-                    await AppOptionsService
-                        .SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false)
-                        .ConfigureAwait(false);
+                    AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
 
                     await AppOptionsService
                         .SetFromLocalStorageAsync()
                         .ConfigureAwait(false);
-                }).ConfigureAwait(false);
+                });
         }
 
         await base.OnAfterRenderAsync(firstRender);

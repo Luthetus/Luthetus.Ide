@@ -1,0 +1,134 @@
+@using System.Threading
+@using Fluxor
+@using Luthetus.Common.RazorLib.Installations.Models
+@using Luthetus.Common.RazorLib.BackgroundTasks.Models
+@using Luthetus.Common.RazorLib.Dialogs.Models
+@using Luthetus.Common.RazorLib.Dialogs.Displays
+@using Luthetus.Common.RazorLib.Dynamics.Models
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.Common.RazorLib.Notifications.Displays
+@using Luthetus.Common.RazorLib.Notifications.Models
+@using Luthetus.TextEditor.RazorLib
+@using Luthetus.TextEditor.RazorLib.Events.Models
+@using Luthetus.TextEditor.RazorLib.Installations.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.Lexes.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.TextEditor.RazorLib.Exceptions
+@using Luthetus.Ide.RazorLib.Installations.Models
+
+@inherits TestContext
+@code
+{
+	/// <summary>
+	/// The background task logic is eating the xunit assertion exceptions.
+	/// So, this method will fix tests which fail an assertion, erroneously being marked as having passed.
+	/// That being said, the stacktrace is a bit of a pain with this work around.
+	/// </summary>
+	protected async Task RunTextEditorBackgroundTaskTest(Func<IEditContext, Task> testFunc)
+	{
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+
+		Exception? backgroundTaskException = null;
+
+		var textEditorService = Services.GetService<ITextEditorService>();
+
+		textEditorService.PostSimpleBatch(
+			nameof(RewriteEditLogicTests),
+			async editContext =>
+			{
+				try
+				{
+					await testFunc.Invoke(editContext);
+				}
+				catch (Exception exception)
+				{
+					backgroundTaskException = exception;
+					throw;
+				}
+			});
+
+		await SharedInitializationForTests
+			.StartBackgroundTasks(this)
+			.Stop();
+
+		if (backgroundTaskException is not null)
+		{
+			throw backgroundTaskException;
+		}
+	}
+
+	protected async Task DONT_START_NOR_STOP_BTS_RunTextEditorBackgroundTaskTest(Func<IEditContext, Task> testFunc)
+	{
+		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
+		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
+
+		Exception? backgroundTaskException = null;
+
+		var textEditorService = Services.GetService<ITextEditorService>();
+
+		textEditorService.PostSimpleBatch(
+			nameof(RewriteEditLogicTests),
+			async editContext =>
+			{
+				try
+				{
+					await testFunc.Invoke(editContext);
+				}
+				catch (Exception exception)
+				{
+					backgroundTaskException = exception;
+					throw;
+				}
+			});
+
+		var continuousBackgroundTaskService = Services.GetService<ContinuousBackgroundTaskWorker>();
+		await continuousBackgroundTaskService.FlushAsync(CancellationToken.None);
+
+		if (backgroundTaskException is not null)
+		{
+			throw backgroundTaskException;
+		}
+	}
+
+	protected EditLogicTestData EditLogicTestsInitialize(string initialContent)
+	{
+		SharedInitializationForTests.Initialize(this);
+		
+		var textEditorService = Services.GetService<ITextEditorService>();
+
+		var resourceUri = new ResourceUri("/unitTesting.txt");
+		var viewModelKey = Key<TextEditorViewModel>.NewKey();
+
+		var inModel = new TextEditorModel(
+	        resourceUri,
+	        DateTime.UtcNow,
+	        "txt",
+	        initialContent,
+	        null,
+	        null,
+			4_096);
+
+		textEditorService.ModelApi.RegisterCustom(inModel);
+		textEditorService.ViewModelApi.Register(viewModelKey, inModel.ResourceUri, new Category("UnitTests"));
+
+		JSInterop.SetupVoid("luthetusTextEditor.disposeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeTextEditorCursorIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.initializeVirtualizationIntersectionObserver", _ => true);
+		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
+
+		TextEditorViewModelDisplay? refTextEditorViewModelDisplay = null;
+
+		var cut = Render(
+			@<TextEditorViewModelDisplay @ref="refTextEditorViewModelDisplay" TextEditorViewModelKey="viewModelKey"/>);
+
+		return new EditLogicTestData(
+			cut,
+			refTextEditorViewModelDisplay,
+			refTextEditorViewModelDisplay.ComponentData,
+			inModel,
+			viewModelKey,
+			textEditorService);
+	}
+}

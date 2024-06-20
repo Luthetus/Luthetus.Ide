@@ -1,7 +1,5 @@
 using Fluxor;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -10,11 +8,13 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Clipboards.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Models;
@@ -58,13 +58,17 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
                     new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
-                        async (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
-                            await PerformNewFile(
+                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
+						{
+                            PerformNewFile(
                                 fileName,
                                 exactMatchFileTemplate,
                                 relatedMatchFileTemplates,
                                 new NamespacePath(string.Empty, parentDirectory),
-                                onAfterCompletion))
+                                onAfterCompletion);
+
+							return Task.CompletedTask;
+						})
                 },
             });
     }
@@ -80,13 +84,17 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
                     new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
-                        async (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
-                            await PerformNewFile(
+                        (fileName, exactMatchFileTemplate, relatedMatchFileTemplates) =>
+						{
+                            PerformNewFile(
                                 fileName,
                                 exactMatchFileTemplate,
                                 relatedMatchFileTemplates,
                                 parentDirectory,
-                                onAfterCompletion))
+                                onAfterCompletion);
+
+							return Task.CompletedTask;
+						})
                 },
             });
     }
@@ -102,8 +110,11 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
                     new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(
-                        async (directoryName, _, _) =>
-                            await PerformNewDirectory(directoryName, parentDirectory, onAfterCompletion))
+                        (directoryName, _, _) =>
+						{
+                            PerformNewDirectory(directoryName, parentDirectory, onAfterCompletion);
+							return Task.CompletedTask;
+						})
                 },
             });
     }
@@ -118,7 +129,12 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IDeleteFileFormRendererType.IsDirectory), true },
                 {
                     nameof(IDeleteFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<IAbsolutePath, Task>(async x => await PerformDeleteFile(x, onAfterCompletion))
+                    new Func<IAbsolutePath, Task>(
+						x => 
+						{
+							PerformDeleteFile(x, onAfterCompletion);
+							return Task.CompletedTask;
+						})
                 },
             });
     }
@@ -150,19 +166,31 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     public MenuOptionRecord CopyFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Copy", MenuOptionKind.Update,
-            OnClickFunc: () => PerformCopyFile(absolutePath, onAfterCompletion));
+            OnClickFunc: () =>
+			{
+				PerformCopyFile(absolutePath, onAfterCompletion);
+				return Task.CompletedTask;
+			});
     }
 
     public MenuOptionRecord CutFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Cut", MenuOptionKind.Update,
-            OnClickFunc: () => PerformCutFile(absolutePath, onAfterCompletion));
+            OnClickFunc: () =>
+			{
+				PerformCutFile(absolutePath, onAfterCompletion);
+				return Task.CompletedTask;
+			});
     }
 
     public MenuOptionRecord PasteClipboard(IAbsolutePath directoryAbsolutePath, Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Paste", MenuOptionKind.Update,
-            OnClickFunc: () => PerformPasteFile(directoryAbsolutePath, onAfterCompletion));
+            OnClickFunc: () =>
+			{
+				PerformPasteFile(directoryAbsolutePath, onAfterCompletion);
+				return Task.CompletedTask;
+			});
     }
 
     public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
@@ -182,12 +210,18 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 },
                 {
                     nameof(IDeleteFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<IAbsolutePath, Task>(async _ => await PerformRemoveCSharpProjectReferenceFromSolution(
-                        treeViewSolution,
-                        projectNode,
-                        terminal,
-                        dispatcher,
-                        onAfterCompletion))
+                    new Func<IAbsolutePath, Task>(
+						_ =>
+						{
+							PerformRemoveCSharpProjectReferenceFromSolution(
+		                        treeViewSolution,
+		                        projectNode,
+		                        terminal,
+		                        dispatcher,
+		                        onAfterCompletion);
+
+							return Task.CompletedTask;
+						})
                 },
             });
     }
@@ -200,12 +234,18 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
-            OnClickFunc: () => PerformAddProjectToProjectReference(
-                projectReceivingReference,
-                terminal,
-                dispatcher,
-                ideBackgroundTaskApi,
-                onAfterCompletion));
+            OnClickFunc: 
+			() =>
+			{
+				PerformAddProjectToProjectReference(
+	                projectReceivingReference,
+	                terminal,
+	                dispatcher,
+	                ideBackgroundTaskApi,
+	                onAfterCompletion);
+
+				return Task.CompletedTask;
+			});
     }
 
     public MenuOptionRecord RemoveProjectToProjectReference(
@@ -215,11 +255,17 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Remove Project Reference", MenuOptionKind.Other,
-            OnClickFunc: () => PerformRemoveProjectToProjectReference(
-                treeViewCSharpProjectToProjectReference,
-                terminal,
-                dispatcher,
-                onAfterCompletion));
+            OnClickFunc: 
+				() =>
+				{
+					PerformRemoveProjectToProjectReference(
+		                treeViewCSharpProjectToProjectReference,
+		                terminal,
+		                dispatcher,
+		                onAfterCompletion);
+
+						return Task.CompletedTask;
+				});
     }
 
     public MenuOptionRecord MoveProjectToSolutionFolder(
@@ -237,14 +283,18 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                 { nameof(IFileFormRendererType.IsDirectory), false },
                 {
                     nameof(IFileFormRendererType.OnAfterSubmitFunc),
-                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>(async (nextName, _, _) =>
-                        await PerformMoveProjectToSolutionFolder(
+                    new Func<string, IFileTemplate?, ImmutableArray<IFileTemplate>, Task>((nextName, _, _) =>
+					{
+                        PerformMoveProjectToSolutionFolder(
                             treeViewSolution,
                             treeViewProjectToMove,
                             nextName,
                             terminal,
                             dispatcher,
-                            onAfterCompletion))
+                            onAfterCompletion);
+
+						return Task.CompletedTask;
+					})
                 },
             });
     }
@@ -257,23 +307,28 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Remove NuGet Package Reference", MenuOptionKind.Other,
-            OnClickFunc: () => PerformRemoveNuGetPackageReferenceFromProject(
-                modifyProjectNamespacePath,
-                treeViewCSharpProjectNugetPackageReference,
-                terminal,
-                dispatcher,
-                onAfterCompletion));
+            OnClickFunc: () =>
+			{
+				PerformRemoveNuGetPackageReferenceFromProject(
+	                modifyProjectNamespacePath,
+	                treeViewCSharpProjectNugetPackageReference,
+	                terminal,
+	                dispatcher,
+	                onAfterCompletion);
+	
+				return Task.CompletedTask;
+			});
     }
 
-    private Task PerformNewFile(
+    private void PerformNewFile(
         string fileName,
         IFileTemplate? exactMatchFileTemplate,
         ImmutableArray<IFileTemplate> relatedMatchFileTemplatesList,
         NamespacePath namespacePath,
         Func<Task> onAfterCompletion)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "New File Action",
             async () =>
@@ -315,13 +370,13 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private Task PerformNewDirectory(string directoryName, IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
+    private void PerformNewDirectory(string directoryName, IAbsolutePath parentDirectory, Func<Task> onAfterCompletion)
     {
         var directoryAbsolutePathString = parentDirectory.Value + directoryName;
         var directoryAbsolutePath = _environmentProvider.AbsolutePathFactory(directoryAbsolutePathString, true);
 
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "New Directory Action",
             async () =>
@@ -335,10 +390,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private Task PerformDeleteFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+    private void PerformDeleteFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Delete File Action",
             async () =>
@@ -360,10 +415,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private Task PerformCopyFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
+    private void PerformCopyFile(IAbsolutePath absolutePath, Func<Task> onAfterCompletion)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Copy File Action",
             async () =>
@@ -378,12 +433,12 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private Task PerformCutFile(
+    private void PerformCutFile(
         IAbsolutePath absolutePath,
         Func<Task> onAfterCompletion)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Cut File Action",
             async () =>
@@ -398,10 +453,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             });
     }
 
-    private Task PerformPasteFile(IAbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
+    private void PerformPasteFile(IAbsolutePath receivingDirectory, Func<Task> onAfterCompletion)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Paste File Action",
             async () =>
@@ -467,7 +522,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                                 if (successfullyPasted && clipboardPhrase.Command == ClipboardFacts.CutCommand)
                                 {
                                     // TODO: Rerender the parent of the deleted due to cut file
-                                    await PerformDeleteFile(clipboardAbsolutePath, onAfterCompletion).ConfigureAwait(false);
+                                    PerformDeleteFile(clipboardAbsolutePath, onAfterCompletion);
                                 }
                                 else
                                 {
@@ -527,15 +582,15 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         return _environmentProvider.AbsolutePathFactory(destinationAbsolutePathString, sourceAbsolutePath.IsDirectory);
     }
 
-    private Task PerformRemoveCSharpProjectReferenceFromSolution(
+    private void PerformRemoveCSharpProjectReferenceFromSolution(
         TreeViewSolution treeViewSolution,
         TreeViewNamespacePath projectNode,
         Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Remove C# Project Reference from Solution Action",
             async () =>
@@ -553,18 +608,18 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     CancellationToken.None,
                     async () => await onAfterCompletion.Invoke().ConfigureAwait(false));
 
-                await terminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
+                terminal.EnqueueCommand(terminalCommand);
             });
     }
 
-    public Task PerformAddProjectToProjectReference(
+    public void PerformAddProjectToProjectReference(
         TreeViewNamespacePath projectReceivingReference,
         Terminal terminal,
         IDispatcher dispatcher,
         LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
         Func<Task> onAfterCompletion)
     {
-        return ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+        ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
             async referencedProject =>
             {
@@ -586,7 +641,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
-                await terminal.EnqueueCommandAsync(terminalCommand).ConfigureAwait(false);
+                terminal.EnqueueCommand(terminalCommand);
             },
             absolutePath =>
             {
@@ -604,14 +659,14 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             }).ToImmutableArray());
     }
 
-    public Task PerformRemoveProjectToProjectReference(
+    public void PerformRemoveProjectToProjectReference(
         TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
         Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Remove Project Reference to Project",
             async () =>
@@ -631,11 +686,11 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
-                await terminal.EnqueueCommandAsync(removeProjectToProjectReferenceTerminalCommand).ConfigureAwait(false);
+                terminal.EnqueueCommand(removeProjectToProjectReferenceTerminalCommand);
             });
     }
 
-    public Task PerformMoveProjectToSolutionFolder(
+    public void PerformMoveProjectToSolutionFolder(
         TreeViewSolution treeViewSolution,
         TreeViewNamespacePath treeViewProjectToMove,
         string solutionFolderPath,
@@ -643,8 +698,8 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Move Project to Solution Folder",
             () =>
@@ -670,21 +725,25 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     treeViewProjectToMove,
                     terminal,
                     dispatcher,
-                    async () => await terminal.EnqueueCommandAsync(moveProjectToSolutionFolderTerminalCommand).ConfigureAwait(false));
+                    () =>
+					{
+						terminal.EnqueueCommand(moveProjectToSolutionFolderTerminalCommand);
+						return Task.CompletedTask;
+					});
 
                 return Task.CompletedTask;
             });
     }
 
-    public Task PerformRemoveNuGetPackageReferenceFromProject(
+    public void PerformRemoveNuGetPackageReferenceFromProject(
         NamespacePath modifyProjectNamespacePath,
         TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
         Terminal terminal,
         IDispatcher dispatcher,
         Func<Task> onAfterCompletion)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Remove NuGet Package Reference from Project",
             async () =>
@@ -704,7 +763,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                         await onAfterCompletion.Invoke().ConfigureAwait(false);
                     });
 
-                await terminal.EnqueueCommandAsync(removeNugetPackageReferenceFromProjectTerminalCommand).ConfigureAwait(false);
+                terminal.EnqueueCommand(removeNugetPackageReferenceFromProjectTerminalCommand);
             });
     }
 

@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
@@ -12,7 +12,7 @@ public partial class TextEditorModel : ITextEditorModel
 
     ImmutableList<TextEditorPartition> ITextEditorModel.PartitionList => PartitionList;
     
-    IList<EditBlock> ITextEditorModel.EditBlockList => EditBlockList;
+    IList<ITextEditorEdit> ITextEditorModel.EditBlockList => EditBlockList;
 	IList<LineEnd> ITextEditorModel.LineEndList => LineEndList;
 	IList<(LineEndKind lineEndKind, int count)> ITextEditorModel.LineEndKindCountList => LineEndKindCountList;
 	IList<TextEditorPresentationModel> ITextEditorModel.PresentationModelList => PresentationModelList;

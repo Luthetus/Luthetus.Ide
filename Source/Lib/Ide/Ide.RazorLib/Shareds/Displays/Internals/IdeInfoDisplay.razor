@@ -18,12 +18,47 @@
         <div>
             Recent Changes:
 			<div>
-                <div>
-                    <div>v <em class="luth_em">WIP_Version </em> WIP_Date</div>
+				<div>
+                    <div>v <em class="luth_em">WIP_VERSION </em> WIP_DATE</div>
 
                     <ul>
                         <li>
-                            Test draft PR
+                            WIP_DESCRIPTION
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <div>v <em class="luth_em">0.8.5.0 </em> (2024-06-19)</div>
+
+                    <ul>
+						<li>
+                            Added Lexer support for C# char type.
+                        </li>
+						<li>
+                            Added Lexer support for C# escape characters
+							(both string and char types).
+                        </li>
+                        <li>
+                            Breadth first C# parser (used to be depth first).
+							This lets the parser see same scope definitions that occur
+							below in the text, relative to where its being
+							referenced from.
+                        </li>
+						<li>
+                            Re-written undo/redo. In short, only changes are tracked
+							now. Whereas previously a copy of the entire file was
+							being stored.
+                        </li>
+						<li>
+                            Various text editor optimizations.
+							One of which is not to re-calculate the virtualization
+							result if the user's action did not cause an edit.
+							In otherwords, any movement keys for the cursor
+							won't re-calculate the virtualization result.
+                        </li>
+						<li>
+                            Enqueueing a background task is a "synchronous" method,
+							(it used to be async).
                         </li>
                     </ul>
                 </div>

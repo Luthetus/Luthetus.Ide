@@ -2,18 +2,19 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
+
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
@@ -56,28 +57,27 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     private async Task RequestInputFileForParentDirectory()
     {
-        await IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
-                "Directory for new .NET Solution",
-                async absolutePath =>
-                {
-                    if (absolutePath is null)
-                        return;
+        IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
+            "Directory for new .NET Solution",
+            async absolutePath =>
+            {
+                if (absolutePath is null)
+                    return;
 
-                    _parentDirectoryName = absolutePath.Value;
-                    await InvokeAsync(StateHasChanged);
-                },
-                absolutePath =>
-                {
-                    if (absolutePath is null || !absolutePath.IsDirectory)
-                        return Task.FromResult(false);
+                _parentDirectoryName = absolutePath.Value;
+                await InvokeAsync(StateHasChanged);
+            },
+            absolutePath =>
+            {
+                if (absolutePath is null || !absolutePath.IsDirectory)
+                    return Task.FromResult(false);
 
-                    return Task.FromResult(true);
-                },
-                new[]
-                {
-                    new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
-                }.ToImmutableArray())
-            .ConfigureAwait(false);
+                return Task.FromResult(true);
+            },
+            new[]
+            {
+                new InputFilePattern("Directory", absolutePath => absolutePath.IsDirectory)
+            }.ToImmutableArray());
     }
 
     private async Task StartNewDotNetSolutionCommandOnClick()
@@ -128,14 +128,11 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         solutionAbsolutePathString,
                         false);
 
-                    await IdeBackgroundTaskApi.DotNetSolution
-                        .SetDotNetSolution(solutionAbsolutePath)
-                        .ConfigureAwait(false);
+                    IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
                 });
 
             var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
-            await generalTerminal.EnqueueCommandAsync(newDotNetSolutionCommand).ConfigureAwait(false);
+			generalTerminal.EnqueueCommand(newDotNetSolutionCommand);
         }
     }
 
@@ -174,9 +171,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             solutionAbsolutePathString,
             false);
 
-        await IdeBackgroundTaskApi.DotNetSolution
-            .SetDotNetSolution(solutionAbsolutePath)
-            .ConfigureAwait(false);
+        IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
     }
 
     public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"

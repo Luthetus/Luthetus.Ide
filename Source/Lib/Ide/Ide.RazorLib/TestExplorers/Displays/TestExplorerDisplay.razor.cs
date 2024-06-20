@@ -1,22 +1,22 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.Options.States;
-using Luthetus.Ide.RazorLib.TestExplorers.States;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.Ide.RazorLib.TestExplorers.States;
+using Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 
@@ -120,7 +120,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 					ResourceUriFacts.TestExplorerDetailsTextEditorResourceUri,
 					new Category("terminal"));
 
-				await RegisterDetailsTextEditor(model);
+				RegisterDetailsTextEditor(model);
 				
 				await InvokeAsync(StateHasChanged);
 			}
@@ -129,9 +129,9 @@ public partial class TestExplorerDisplay : FluxorComponent
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
-	private async Task RegisterDetailsTextEditor(TextEditorModel model)
+	private void RegisterDetailsTextEditor(TextEditorModel model)
 	{
-		await TextEditorService.PostSimpleBatch(
+		TextEditorService.PostSimpleBatch(
 			nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
 			async editContext =>
 			{

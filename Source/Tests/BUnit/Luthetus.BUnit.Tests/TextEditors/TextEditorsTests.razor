@@ -11,6 +11,7 @@
 @using Luthetus.TextEditor.RazorLib.Events.Models
 @using Luthetus.TextEditor.RazorLib.Installations.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 @using Luthetus.TextEditor.RazorLib.Lexes.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 @using Luthetus.Ide.RazorLib.Installations.Models
@@ -50,12 +51,8 @@
 		var cut = Render(
 			@<TextEditorViewModelDisplay @ref="refTextEditorViewModelDisplay" TextEditorViewModelKey="viewModelKey"/>);
 
-		var events = new TextEditorViewModelDisplay.TextEditorEvents(
-			refTextEditorViewModelDisplay,
-			textEditorService.OptionsStateWrap.Value.Options);
-
 		textEditorService.Post(new OnKeyDownLateBatching(
-			events,
+			refTextEditorViewModelDisplay.ComponentData,
 			new KeyboardEventArgs { Key = "h", Code = "KeyH" },
 			inModel.ResourceUri,
 			viewModelKey));

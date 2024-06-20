@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 
 public enum GenericDecorationKind
 {
@@ -8,6 +8,7 @@ public enum GenericDecorationKind
     CommentSingleLine,
     CommentMultiLine,
     Error,
+	EscapeCharacter,
     StringLiteral,
     Variable,
     Function,

@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -28,6 +28,17 @@ public partial class CSharpFacts
             StorageModifierKind.Class,
             new IdentifierToken(new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "int")),
             typeof(int),
+            null,
+            null,
+            null,
+            null);
+
+        public static readonly TypeDefinitionNode Char = new(
+            AccessModifierKind.Public,
+            false,
+            StorageModifierKind.Class,
+            new IdentifierToken(new TextEditorTextSpan(0, "char".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "char")),
+            typeof(char),
             null,
             null,
             null,

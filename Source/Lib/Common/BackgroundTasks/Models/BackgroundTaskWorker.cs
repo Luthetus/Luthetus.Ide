@@ -1,6 +1,7 @@
-using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
@@ -10,7 +11,7 @@ public class BackgroundTaskWorker : BackgroundService
     private bool _hasActiveExecutionActive;
 
     public BackgroundTaskWorker(
-        Key<BackgroundTaskQueue> queueKey,
+        Key<IBackgroundTaskQueue> queueKey,
         IBackgroundTaskService backgroundTaskService,
         ILoggerFactory loggerFactory)
     {
@@ -19,7 +20,7 @@ public class BackgroundTaskWorker : BackgroundService
         _logger = loggerFactory.CreateLogger<BackgroundTaskWorker>();
     }
 
-    public Key<BackgroundTaskQueue> QueueKey { get; }
+    public Key<IBackgroundTaskQueue> QueueKey { get; }
     public IBackgroundTaskService BackgroundTaskService { get; }
 
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
@@ -73,6 +74,32 @@ public class BackgroundTaskWorker : BackgroundService
         _logger.LogInformation("Queued Hosted Service is stopping.");
     }
 
+	/// <summary>
+	/// This method is being created so a unit test can enqueue a background task,
+	/// and then await its completion.
+	///
+	/// At the moment there is 'StopAsync(...)' but this does not suffice as
+	/// it is intended to "permanently" stop the <see cref="IBackgroundTaskService"/>
+	///
+	/// The usage of this in the application code is not advised because its implementation
+	/// is simple, naive, and polling.
+	///
+	/// Given the proper timing of things, one could infinitely enqueue, such that everytime this method
+	/// checks if there is a count of 0 background tasks in the <see cref="IBackgroundTaskQueue"/>,
+	/// that there could be a newly enqueue'd task therefore this method won't finish.
+	/// </summary>
+	public async Task FlushAsync(CancellationToken cancellationToken)
+	{
+		var queue = BackgroundTaskService.GetQueue(QueueKey);
+
+		while (queue.ExecutingBackgroundTask is not null ||
+                _hasActiveExecutionActive ||
+                queue.Count > 0)
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
+        }
+	}
+
     public override async Task StopAsync(CancellationToken cancellationToken)
     {
         await BackgroundTaskService.StopAsync(CancellationToken.None).ConfigureAwait(false);
@@ -81,7 +108,7 @@ public class BackgroundTaskWorker : BackgroundService
         while (BackgroundTaskService.Queues.Any(x => x.ExecutingBackgroundTask is not null) ||
                 _hasActiveExecutionActive ||
                 // TODO: Here a check is done for if there are background tasks pending for a hacky-concurrency solution
-                BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTasks).Any())
+                BackgroundTaskService.Queues.SelectMany(x => x.BackgroundTaskList).Any())
         {
             await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false);
         }

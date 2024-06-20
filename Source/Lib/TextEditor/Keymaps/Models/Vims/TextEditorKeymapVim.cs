@@ -1,17 +1,17 @@
-using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
 using Microsoft.AspNetCore.Components.Web;
-using Luthetus.TextEditor.RazorLib.Commands.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
-using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Vims;
+using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
@@ -19,9 +19,8 @@ namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 {
     public TextEditorKeymapVim()
-        : base(
-            new Key<Keymap>(Guid.Parse("d2122a7a-5a88-4d31-af20-5486a36e9c0c")),
-            "Vim")
+        : base(new Key<Keymap>(Guid.Parse("d2122a7a-5a88-4d31-af20-5486a36e9c0c")),
+               "Vim")
     {
         AddVimMotionToLayer(TextEditorKeymapVimFacts.NormalLayer.Key);
         AddVimMotionToLayer(TextEditorKeymapVimFacts.VisualLayer.Key);
@@ -110,7 +109,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -118,6 +117,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             _ = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
                             return Task.CompletedTask;
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("KeyI")
@@ -136,7 +136,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -167,6 +167,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                             return Task.CompletedTask;
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("KeyV")
@@ -185,7 +186,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -219,6 +220,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             primaryCursorModifier.SelectionEndingPositionIndex = endOfRowPositionIndexExclusive;
                             return Task.CompletedTask;
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("KeyV")
@@ -238,7 +240,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -259,6 +261,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                             return Task.CompletedTask;
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("Semicolon")
@@ -278,7 +281,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         async editContext =>
                         {
@@ -300,6 +303,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 .Invoke(editContext)
                                 .ConfigureAwait(false);
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("KeyU")
@@ -318,7 +322,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         async editContext =>
                         {
@@ -340,6 +344,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 .Invoke(editContext)
                                 .ConfigureAwait(false);
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("KeyR")
@@ -359,13 +364,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
                             return TextEditorCommandVimFacts.Verbs.NewLineBelowCommand.CommandFunc
                                 .Invoke(interfaceCommandArgs);
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("KeyO")
@@ -384,13 +390,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
                             return TextEditorCommandVimFacts.Verbs.NewLineAboveCommand.CommandFunc
                                 .Invoke(interfaceCommandArgs);
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("KeyO")
@@ -410,13 +417,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
                             return TextEditorCommandDefaultFacts.ScrollLineDown.CommandFunc
                                 .Invoke(interfaceCommandArgs);
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("KeyE")
@@ -436,13 +444,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
                             return TextEditorCommandDefaultFacts.ScrollLineUp.CommandFunc
                                 .Invoke(interfaceCommandArgs);
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("KeyY")
@@ -707,7 +716,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                return commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(commandDisplayName),
                     editContext =>
                     {
@@ -715,6 +724,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                         _ = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
                         return Task.CompletedTask;
                     });
+				return Task.CompletedTask;
             });
 
         Map.Add(new KeymapArgument("Escape")
@@ -766,13 +776,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
                             return TextEditorCommandDefaultFacts.ScrollPageDown.CommandFunc
                                 .Invoke(commandArgs);
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("PageDown")
@@ -791,13 +802,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    return commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostSimpleBatch(
                         nameof(commandDisplayName),
                         editContext =>
                         {
                             return TextEditorCommandDefaultFacts.ScrollPageUp.CommandFunc
                                 .Invoke(commandArgs);
                         });
+					return Task.CompletedTask;
                 });
 
             Map.Add(new KeymapArgument("PageUp")
@@ -815,17 +827,26 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                return commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(displayName),
                     editContext =>
                     {
-                        var success = VimSentence.TryLex(this, keymapArgument, commandArgs.HasTextSelection, out var lexCommand);
+						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+			            var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+			            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+			
+			            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+			                return Task.CompletedTask;
+
+                        var success = VimSentence.TryLex(this, keymapArgument, TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier), out var lexCommand);
 
                         if (success && lexCommand is not null)
                             return lexCommand.CommandFunc.Invoke(commandArgs);
 
                         return Task.CompletedTask;
                     });
+					return Task.CompletedTask;
             });
     }
 
@@ -839,7 +860,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                return commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostSimpleBatch(
                     nameof(commandDisplayName),
                     editContext =>
                     {
@@ -892,6 +913,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                         return Task.CompletedTask;
                     });
+					return Task.CompletedTask;
             });
     }
 
@@ -940,7 +962,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
         }
     }
 
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorEvents events, out CommandNoType? command)
+	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
 	{
 		return Map.TryGetValue(keymapArgument, out command);
 	}

@@ -1,8 +1,8 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Expression;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
 using System.Collections.Immutable;
 
@@ -172,6 +172,11 @@ public static class ParseOthers
                     var numericLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Int.ToTypeClause());
                     previousInvocationExpressionNode = numericLiteralExpressionNode;
                     SetLiteralExpressionNode(numericLiteralExpressionNode);
+                    break;
+                case SyntaxKind.CharLiteralToken:
+                    var charLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Char.ToTypeClause());
+                    previousInvocationExpressionNode = charLiteralExpressionNode;
+                    SetLiteralExpressionNode(charLiteralExpressionNode);
                     break;
                 case SyntaxKind.StringLiteralToken:
                     var stringLiteralExpressionNode = new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.String.ToTypeClause());

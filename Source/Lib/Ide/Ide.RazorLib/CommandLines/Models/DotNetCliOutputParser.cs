@@ -9,6 +9,8 @@ namespace Luthetus.Ide.RazorLib.CommandLines.Models;
 
 public class DotNetCliOutputParser : IOutputParser
 {
+	public List<List<TextEditorTextSpan>> ErrorList { get; private set; }
+
 	public List<ProjectTemplate>? ProjectTemplateList { get; private set; }
 
 	public List<string>? TheFollowingTestsAreAvailableList { get; private set; }
@@ -19,7 +21,9 @@ public class DotNetCliOutputParser : IOutputParser
     public Task OnAfterCommandStarted(TerminalCommand terminalCommand)
 	{
 		// Clear data
-		if (terminalCommand.FormattedCommand.Tag == TagConstants.NewList)
+		if (terminalCommand.FormattedCommand.Tag == TagConstants.Run)
+			ErrorList = new();
+		else if (terminalCommand.FormattedCommand.Tag == TagConstants.NewList)
 		{
 			NewListModelSession = new();
 		}
@@ -220,6 +224,11 @@ public class DotNetCliOutputParser : IOutputParser
                 };
             }
         }
+
+		if (errorKeywordAndErrorCodeTextSpan.DecorationByte == (byte)TerminalDecorationKind.Error)
+		{
+			ErrorList.Add(textSpanList);
+		}
 
         return textSpanList;
 	}

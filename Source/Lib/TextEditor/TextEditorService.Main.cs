@@ -2,6 +2,12 @@ using System.Collections.Immutable;
 using Fluxor;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Themes.States;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
@@ -13,11 +19,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Edits.States;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Dialogs.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -25,6 +26,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 namespace Luthetus.TextEditor.RazorLib;
 
@@ -38,7 +40,6 @@ public partial class TextEditorService : ITextEditorService
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
     private readonly IDialogService _dialogService;
-    private readonly LuthetusTextEditorConfig _textEditorOptions;
     private readonly ITextEditorRegistryWrap _textEditorRegistryWrap;
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
@@ -53,13 +54,16 @@ public partial class TextEditorService : ITextEditorService
         IState<TextEditorOptionsState> optionsStateWrap,
         IState<TextEditorFindAllState> findAllStateWrap,
         IBackgroundTaskService backgroundTaskService,
-        LuthetusTextEditorConfig textEditorOptions,
+        LuthetusTextEditorConfig textEditorConfig,
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
         IJSRuntime jsRuntime,
         LuthetusCommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher,
-        IDialogService dialogService)
+        IDialogService dialogService,
+		IAutocompleteIndexer autocompleteIndexer,
+		IAutocompleteService autocompleteService,
+		IState<AppDimensionState> appDimensionStateWrap)
     {
         TextEditorStateWrap = textEditorStateWrap;
         GroupStateWrap = groupStateWrap;
@@ -67,9 +71,10 @@ public partial class TextEditorService : ITextEditorService
         ThemeStateWrap = themeStateWrap;
         OptionsStateWrap = optionsStateWrap;
         FindAllStateWrap = findAllStateWrap;
+		AppDimensionStateWrap = appDimensionStateWrap;
 
         _backgroundTaskService = backgroundTaskService;
-        _textEditorOptions = textEditorOptions;
+        TextEditorConfig = textEditorConfig;
         _textEditorRegistryWrap = textEditorRegistryWrap;
         _storageService = storageService;
         _jsRuntime = jsRuntime;
@@ -78,11 +83,14 @@ public partial class TextEditorService : ITextEditorService
         _dispatcher = dispatcher;
         _dialogService = dialogService;
 
+		AutocompleteIndexer = autocompleteIndexer;
+		AutocompleteService = autocompleteService;
+
         ModelApi = new TextEditorModelApi(this, _textEditorRegistryWrap.DecorationMapperRegistry, _textEditorRegistryWrap.CompilerServiceRegistry, _backgroundTaskService, _dispatcher);
         ViewModelApi = new TextEditorViewModelApi(this, _backgroundTaskService, TextEditorStateWrap, _jsRuntime, _dispatcher, _dialogService);
         GroupApi = new TextEditorGroupApi(this, _dispatcher, _dialogService, _jsRuntime);
         DiffApi = new TextEditorDiffApi(this, _dispatcher);
-        OptionsApi = new TextEditorOptionsApi(this, _textEditorOptions, _storageService, _commonBackgroundTaskApi, _dispatcher);
+        OptionsApi = new TextEditorOptionsApi(this, TextEditorConfig, _storageService, _commonBackgroundTaskApi, _dispatcher);
     }
 
     public IState<TextEditorState> TextEditorStateWrap { get; }
@@ -91,8 +99,12 @@ public partial class TextEditorService : ITextEditorService
     public IState<ThemeState> ThemeStateWrap { get; }
     public IState<TextEditorOptionsState> OptionsStateWrap { get; }
     public IState<TextEditorFindAllState> FindAllStateWrap { get; }
+	public IState<AppDimensionState> AppDimensionStateWrap { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
+	public IAutocompleteIndexer AutocompleteIndexer { get; }
+	public IAutocompleteService AutocompleteService { get; }
+	public LuthetusTextEditorConfig TextEditorConfig { get; }
 
 #if DEBUG
     public string StorageKey => "luth_te_text-editor-options-debug";
@@ -111,25 +123,25 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public Task PostSimpleBatch(
+    public void PostSimpleBatch(
         string name,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        return Post(new SimpleBatchTextEditorTask(
+        Post(new SimpleBatchTextEditorTask(
             name,
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public Task PostTakeMostRecent(
+    public void PostTakeMostRecent(
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        return Post(new TakeMostRecentTextEditorTask(
+        Post(new TakeMostRecentTextEditorTask(
             name,
 			resourceUri,
             viewModelKey,
@@ -137,20 +149,13 @@ public partial class TextEditorService : ITextEditorService
             throttleTimeSpan));
     }
 
-    public async Task Post(ITextEditorTask task)
+    public void Post(ITextEditorTask task)
     {
-        try
-        {
-			task.EditContext = new TextEditorEditContext(
-                this,
-                AuthenticatedActionKey);
+        task.EditContext = new TextEditorEditContext(
+            this,
+            AuthenticatedActionKey);
 
-            await _backgroundTaskService.EnqueueAsync(task).ConfigureAwait(false);
-        }
-        catch (LuthetusTextEditorException e)
-        {
-            Console.WriteLine(e.ToString());
-        }
+        _backgroundTaskService.Enqueue(task);
     }
 
 	public async Task FinalizePost(IEditContext editContext)
@@ -170,7 +175,10 @@ public partial class TextEditorService : ITextEditorService
             foreach (var viewModel in viewModelBag)
             {
                 // Invoking 'GetViewModelModifier' marks the view model to be updated.
-                editContext.GetViewModelModifier(viewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+
+				if (!viewModelModifier.ShouldReloadVirtualizationResult)
+					viewModelModifier.ShouldReloadVirtualizationResult = modelModifier.ShouldReloadVirtualizationResult;
             }
 
             if (modelModifier.WasDirty != modelModifier.IsDirty)
@@ -214,12 +222,15 @@ public partial class TextEditorService : ITextEditorService
 		            .ConfigureAwait(false);
             }
 
-            // TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
-            await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                    viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
-
+			if (viewModelModifier.ShouldReloadVirtualizationResult)
+			{
+				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
+	            await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
+	                    viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
+	                .Invoke(editContext)
+	                .ConfigureAwait(false);
+			}
+            
 			_dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(
                 editContext.AuthenticatedActionKey,
                 editContext,

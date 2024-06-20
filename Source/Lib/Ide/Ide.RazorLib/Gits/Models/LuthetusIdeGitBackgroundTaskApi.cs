@@ -3,13 +3,13 @@ using System.Text;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
 
@@ -46,10 +46,10 @@ public class LuthetusIdeGitBackgroundTaskApi
 
     public Key<TerminalCommand> GitTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
 
-    public async Task StatusEnqueue()
+    public void StatusEnqueue()
     {
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git status -u",
             async () =>
@@ -75,24 +75,22 @@ public class LuthetusIdeGitBackgroundTaskApi
                     OutputParser: _gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
 
-    public async Task RefreshEnqueue(GitRepo repoAtTimeOfRequest)
+    public void RefreshEnqueue(GitRepo repoAtTimeOfRequest)
     {
-		await StatusEnqueue();
-        await BranchGetAllEnqueue(repoAtTimeOfRequest);
-        await GetActiveBranchNameEnqueue(repoAtTimeOfRequest);
-        await GetOriginNameEnqueue(repoAtTimeOfRequest);
+		StatusEnqueue();
+        BranchGetAllEnqueue(repoAtTimeOfRequest);
+        GetActiveBranchNameEnqueue(repoAtTimeOfRequest);
+        GetOriginNameEnqueue(repoAtTimeOfRequest);
     }
 
-    public async Task GetActiveBranchNameEnqueue(GitRepo repoAtTimeOfRequest)
+    public void GetActiveBranchNameEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git get active branch name",
             async () =>
@@ -118,16 +116,14 @@ public class LuthetusIdeGitBackgroundTaskApi
                     OutputParser: _gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
 
-    public async Task GetOriginNameEnqueue(GitRepo repoAtTimeOfRequest)
+    public void GetOriginNameEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git get origin name",
             async () =>
@@ -153,16 +149,14 @@ public class LuthetusIdeGitBackgroundTaskApi
                     OutputParser: _gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
 
-    public async Task AddEnqueue(GitRepo repoAtTimeOfRequest)
+    public void AddEnqueue(GitRepo repoAtTimeOfRequest)
     {
-		await _backgroundTaskService.EnqueueAsync(
-			Key<BackgroundTask>.NewKey(),
+		_backgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git add",
             async () =>
@@ -206,19 +200,21 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitTerminalCommandKey,
 		            formattedCommand,
 		            localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: StatusEnqueue);
+                    ContinueWith: () =>
+					{
+						StatusEnqueue();
+						return Task.CompletedTask;
+					});
 		
 		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-		        await generalTerminal
-		            .EnqueueCommandAsync(terminalCommand)
-		            .ConfigureAwait(false);
+		        generalTerminal.EnqueueCommand(terminalCommand);
 			});
     }
 	
-	public async Task UnstageEnqueue(GitRepo repoAtTimeOfRequest)
+	public void UnstageEnqueue(GitRepo repoAtTimeOfRequest)
     {
-		await _backgroundTaskService.EnqueueAsync(
-			Key<BackgroundTask>.NewKey(),
+		_backgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git unstage",
             async () =>
@@ -262,19 +258,21 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitTerminalCommandKey,
 		            formattedCommand,
 		            localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: StatusEnqueue);
+                    ContinueWith: () =>
+					{
+						StatusEnqueue();
+						return Task.CompletedTask;
+					});
 		
 		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-		        await generalTerminal
-		            .EnqueueCommandAsync(terminalCommand)
-		            .ConfigureAwait(false);
+		        generalTerminal.EnqueueCommand(terminalCommand);
 			});
     }
 	
-	public async Task CommitEnqueue(GitRepo repoAtTimeOfRequest, string commitSummary)
+	public void CommitEnqueue(GitRepo repoAtTimeOfRequest, string commitSummary)
     {
-		await _backgroundTaskService.EnqueueAsync(
-			Key<BackgroundTask>.NewKey(),
+		_backgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git commit",
             async () =>
@@ -297,9 +295,9 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: async () =>
+                    ContinueWith: () =>
 					{
-						await StatusEnqueue();
+						StatusEnqueue();
 
 						NotificationHelper.DispatchInformative(
 							"Git: committed",
@@ -307,22 +305,22 @@ public class LuthetusIdeGitBackgroundTaskApi
 							_commonComponentRenderers,
 							_dispatcher,
 							TimeSpan.FromSeconds(5));
+
+						return Task.CompletedTask;
                     });
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(gitCommitCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(gitCommitCommand);
             });
     }
 
-    public async Task BranchNewEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
+    public void BranchNewEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
     {
         if (string.IsNullOrWhiteSpace(branchName))
             NotificationHelper.DispatchError(nameof(BranchNewEnqueue), "branchName was null or whitespace", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(6));
 
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git new branch",
             async () =>
@@ -345,19 +343,21 @@ public class LuthetusIdeGitBackgroundTaskApi
                     GitTerminalCommandKey,
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
+                    ContinueWith: () =>
+					{
+						RefreshEnqueue(repoAtTimeOfRequest);
+						return Task.CompletedTask;
+					});
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
 
-    public async Task BranchGetAllEnqueue(GitRepo repoAtTimeOfRequest)
+    public void BranchGetAllEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git branch -a",
             async () =>
@@ -384,16 +384,14 @@ public class LuthetusIdeGitBackgroundTaskApi
                     OutputParser: _gitCliOutputParser);
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
     
-    public async Task BranchSetEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
+    public void BranchSetEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
     {
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             $"git checkout {branchName}",
             async () =>
@@ -418,19 +416,21 @@ public class LuthetusIdeGitBackgroundTaskApi
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: _gitCliOutputParser,
-                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
+                    ContinueWith: () =>
+					{
+						RefreshEnqueue(repoAtTimeOfRequest);
+						return Task.CompletedTask;
+					});
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
     
-    public async Task PushToOriginWithTrackingEnqueue(GitRepo repoAtTimeOfRequest)
+    public void PushToOriginWithTrackingEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git push -u origin {branchName will go here}",
             async () =>
@@ -457,19 +457,21 @@ public class LuthetusIdeGitBackgroundTaskApi
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: _gitCliOutputParser,
-                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
+                    ContinueWith: () =>
+					{
+						RefreshEnqueue(repoAtTimeOfRequest);
+						return Task.CompletedTask;
+					});
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
 
-    public async Task PullEnqueue(GitRepo repoAtTimeOfRequest)
+    public void PullEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git pull",
             async () =>
@@ -494,19 +496,21 @@ public class LuthetusIdeGitBackgroundTaskApi
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: _gitCliOutputParser,
-                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
+                    ContinueWith: () =>
+					{
+						RefreshEnqueue(repoAtTimeOfRequest);
+						return Task.CompletedTask;
+					});
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
     
-    public async Task FetchEnqueue(GitRepo repoAtTimeOfRequest)
+    public void FetchEnqueue(GitRepo repoAtTimeOfRequest)
     {
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git fetch",
             async () =>
@@ -531,22 +535,24 @@ public class LuthetusIdeGitBackgroundTaskApi
                     formattedCommand,
                     localGitState.Repo.AbsolutePath.Value,
                     OutputParser: _gitCliOutputParser,
-                    ContinueWith: () => RefreshEnqueue(repoAtTimeOfRequest));
+                    ContinueWith: () =>
+					{
+						RefreshEnqueue(repoAtTimeOfRequest);
+						return Task.CompletedTask;
+					});
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
     
-    public async Task LogFileEnqueue(
+    public void LogFileEnqueue(
         GitRepo repoAtTimeOfRequest,
         string relativePathToFile,
         Func<GitCliOutputParser, Task> callback)
     {
-        await _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git log file",
             async () =>
@@ -576,9 +582,7 @@ public class LuthetusIdeGitBackgroundTaskApi
                     });
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                await generalTerminal
-                    .EnqueueCommandAsync(terminalCommand)
-                    .ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(terminalCommand);
             });
     }
 }

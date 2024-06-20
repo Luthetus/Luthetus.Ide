@@ -13,7 +13,7 @@ public class TextEditorRenderBatchValidated : ITextEditorRenderBatch
         FontFamily = textEditorRenderBatchUnsafe.FontFamily;
         FontSizeInPixels = textEditorRenderBatchUnsafe.FontSizeInPixels;
         ViewModelDisplayOptions = textEditorRenderBatchUnsafe.ViewModelDisplayOptions;
-        Events = textEditorRenderBatchUnsafe.Events;
+		ComponentData = textEditorRenderBatchUnsafe.ComponentData;
         FontFamilyCssStyle = textEditorRenderBatchUnsafe.FontFamilyCssStyle;
         FontSizeInPixelsCssStyle = textEditorRenderBatchUnsafe.FontSizeInPixelsCssStyle;
         HeightCssStyle = textEditorRenderBatchUnsafe.HeightCssStyle;
@@ -27,7 +27,7 @@ public class TextEditorRenderBatchValidated : ITextEditorRenderBatch
 	public string FontFamily { get; }
 	public int FontSizeInPixels { get; }
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
-	public TextEditorViewModelDisplay.TextEditorEvents Events { get; }
+	public TextEditorComponentData ComponentData { get; }
 	public string FontFamilyCssStyle { get; }
 	public string FontSizeInPixelsCssStyle { get; }
 	public string HeightCssStyle { get; }

@@ -42,15 +42,15 @@
         <div @onclick="FocusTextEditorAsync"
              @onkeydown="ReceiveOnKeyDown"
              @onkeydown:preventDefault="true"
-             @oncontextmenu="ReceiveOnContextMenuAsync"
+             @oncontextmenu="ReceiveOnContextMenu"
              @oncontextmenu:preventDefault="true"
              @onmousedown="ReceiveContentOnMouseDown"
              @onmousemove="ReceiveContentOnMouseMove"
              @onmouseout="ReceiveContentOnMouseOut"
              @ondblclick="ReceiveOnDoubleClick"
              @onwheel="ReceiveOnWheel"
-             @ontouchstart="ReceiveOnTouchStartAsync"
-             @ontouchmove="ReceiveOnTouchMoveAsync"
+             @ontouchstart="ReceiveOnTouchStart"
+             @ontouchmove="ReceiveOnTouchMove"
              @ontouchend="ClearTouch"
              @ontouchcancel="ClearTouch"
              @ontouchleave="ClearTouch"
@@ -65,7 +65,7 @@
             @if (renderBatchValidated is not null)
             {
                 <CascadingValue Value="renderBatchValidated">
-                    <CascadingValue Value="_events.TooltipViewModel">
+                    <CascadingValue Value="renderBatchValidated.ViewModel.TooltipViewModel">
                         @if (ViewModelDisplayOptions.IncludeGutterComponent)
                         {
                             <GutterSection />

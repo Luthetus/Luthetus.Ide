@@ -10,4 +10,9 @@ public class TextEditorViewModelModifier
     public TextEditorViewModel ViewModel { get; set; }
     public bool WasModified { get; internal set; }
     public bool ScrollWasModified { get; internal set; }
+
+	/// <summary>
+	/// This property decides whether or not to re-calculate the virtualization result that gets displayed on the UI.
+	/// </summary>
+    public bool ShouldReloadVirtualizationResult { get; set; }
 }

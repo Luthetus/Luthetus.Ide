@@ -1,16 +1,16 @@
+using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.Menus.Models;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Fluxor;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
@@ -205,16 +205,18 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         return cutFileOptionRecord.OnClickFunc.Invoke();
     }
 
-    private async Task InvokeOpenInEditorAsync(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
+    private Task InvokeOpenInEditorAsync(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
         var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return;
+            return Task.CompletedTask;
 
-        await _ideBackgroundTaskApi.Editor
-            .OpenInEditor(treeViewAbsolutePath.Item, shouldSetFocusToEditor)
-            .ConfigureAwait(false);
+        _ideBackgroundTaskApi.Editor.OpenInEditor(
+			treeViewAbsolutePath.Item,
+			shouldSetFocusToEditor);
+
+		return Task.CompletedTask;
     }
 
     private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)

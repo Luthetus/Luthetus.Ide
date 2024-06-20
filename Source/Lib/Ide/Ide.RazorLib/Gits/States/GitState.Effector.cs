@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
@@ -5,7 +6,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.States;
 
@@ -134,7 +134,7 @@ public partial record GitState
             _ = dispatcher;
 
             if (setRepoAction.Repo is not null)
-                return _ideBackgroundTaskApi.Git.RefreshEnqueue(setRepoAction.Repo);
+                _ideBackgroundTaskApi.Git.RefreshEnqueue(setRepoAction.Repo);
 
             return Task.CompletedTask;
         }

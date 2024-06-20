@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
@@ -9,7 +10,6 @@ using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 
@@ -34,37 +34,36 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     {
 		if (firstRender)
 		{
-            await BackgroundTaskService.EnqueueAsync(
-                    Key<BackgroundTask>.NewKey(),
-                    ContinuousBackgroundTaskWorker.GetQueueKey(),
-                    nameof(LuthetusCommonInitializer),
-                    async () =>
+            BackgroundTaskService.Enqueue(
+                Key<IBackgroundTask>.NewKey(),
+                ContinuousBackgroundTaskWorker.GetQueueKey(),
+                nameof(LuthetusCommonInitializer),
+                async () =>
+                {
+                    if (TextEditorConfig.CustomThemeRecordList is not null)
                     {
-                        if (TextEditorConfig.CustomThemeRecordList is not null)
+                        foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                         {
-                            foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
-                            {
-                                Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
-                            }
+                            Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
                         }
+                    }
 
-                        var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
-                            x => x.Key == TextEditorConfig.InitialThemeKey);
+                    var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+                        x => x.Key == TextEditorConfig.InitialThemeKey);
 
-                        if (initialThemeRecord is not null)
-                            Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
+                    if (initialThemeRecord is not null)
+                        Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
 
-                        foreach (var searchEngine in TextEditorConfig.SearchEngineList)
-                        {
-                            Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
-                        }
+                    foreach (var searchEngine in TextEditorConfig.SearchEngineList)
+                    {
+                        Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
+                    }
 
-                        Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(
-                            new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap)));
+                    Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(
+                        new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap)));
 
-                        await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
-                    })
-                .ConfigureAwait(false);
+                    await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
+                });
 		}
 	
 		await base.OnAfterRenderAsync(firstRender);

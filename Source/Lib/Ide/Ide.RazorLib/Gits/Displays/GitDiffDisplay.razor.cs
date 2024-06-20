@@ -1,19 +1,19 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.Gits.Models;
-using Luthetus.Ide.RazorLib.Gits.States;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.AspNetCore.Components;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.Gits.Models;
+using Luthetus.Ide.RazorLib.Gits.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -47,28 +47,27 @@ public partial class GitDiffDisplay : ComponentBase
     private Key<TextEditorViewModel> _outViewModelKey = Key<TextEditorViewModel>.NewKey();
     private string? _logFileContent;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await ShowOriginalFromGitOnClick(
+            ShowOriginalFromGitOnClick(
                 GitStateWrap.Value,
                 GitFile);
         }
 
-        await base.OnAfterRenderAsync(firstRender);
+        return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task ShowOriginalFromGitOnClick(GitState localGitState, GitFile localGitFile)
+    private void ShowOriginalFromGitOnClick(GitState localGitState, GitFile localGitFile)
     {
         if (localGitState.Repo is null)
             return;
 
-        await IdeBackgroundTaskApi.Git.LogFileEnqueue(
-                localGitState.Repo,
-                localGitFile.RelativePathString,
-                gitCliOutputParser => CreateEditorFromLog(gitCliOutputParser, localGitFile))
-            .ConfigureAwait(false);
+        IdeBackgroundTaskApi.Git.LogFileEnqueue(
+            localGitState.Repo,
+            localGitFile.RelativePathString,
+            gitCliOutputParser => CreateEditorFromLog(gitCliOutputParser, localGitFile));
     }
 
     private async Task CreateEditorFromLog(GitCliOutputParser gitCliOutputParser, GitFile localGitFile)

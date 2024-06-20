@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+using System.Runtime.InteropServices;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -6,6 +8,11 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
@@ -18,13 +25,6 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.FindAlls.States;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
-using System.Runtime.InteropServices;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models;
@@ -81,14 +81,14 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         _terminalStateWrap = terminalStateWrap;
     }
 
-    public Task Website_AddExistingProjectToSolution(
+    public void Website_AddExistingProjectToSolution(
         Key<DotNetSolutionModel> dotNetSolutionModelKey,
         string projectTemplateShortName,
         string cSharpProjectName,
         IAbsolutePath cSharpProjectAbsolutePath)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Add Existing-Project To Solution",
             async () => await Website_AddExistingProjectToSolutionAsync(
@@ -146,7 +146,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
         if (solutionTextEditorModel is not null)
         {
-            await _textEditorService.PostSimpleBatch(
+            _textEditorService.PostSimpleBatch(
                 nameof(Website_AddExistingProjectToSolutionAsync),
                 _textEditorService.ModelApi.ReloadFactory(
                     solutionTextEditorModel.ResourceUri,
@@ -194,10 +194,10 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         });
     }
 
-    public Task SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
+    public void SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set .NET Solution",
             async () => await SetDotNetSolutionAsync(inSolutionAbsolutePath).ConfigureAwait(false));
@@ -303,7 +303,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
         var dotNetSolutionCompilerService = _interfaceCompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
 
-        await dotNetSolutionCompilerService.ResourceWasModified(
+        dotNetSolutionCompilerService.ResourceWasModified(
             new ResourceUri(solutionAbsolutePath.Value),
             ImmutableArray<TextEditorTextSpan>.Empty);
 
@@ -331,7 +331,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
                     parentDirectory.Value,
                     CancellationToken.None);
 
-                await generalTerminal.EnqueueCommandAsync(changeDirectoryCommand).ConfigureAwait(false);
+                generalTerminal.EnqueueCommand(changeDirectoryCommand);
             }
 
             // Set 'executionTerminal' working directory
@@ -344,17 +344,17 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
                     parentDirectory.Value,
                     CancellationToken.None);
 
-                await executionTerminal.EnqueueCommandAsync(changeDirectoryCommand).ConfigureAwait(false);
+                executionTerminal.EnqueueCommand(changeDirectoryCommand);
             }
         }
 
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
     }
 
-    public Task SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+    public void SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
     {
-        return _backgroundTaskService.EnqueueAsync(
-            Key<BackgroundTask>.NewKey(),
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Set .NET Solution TreeView",
             async () => await SetDotNetSolutionTreeViewAsync(dotNetSolutionModelKey).ConfigureAwait(false));

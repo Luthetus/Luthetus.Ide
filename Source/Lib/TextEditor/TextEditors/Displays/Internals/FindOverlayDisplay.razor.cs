@@ -1,16 +1,16 @@
-using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -44,9 +44,9 @@ public partial class FindOverlayDisplay : ComponentBase
 
             _ = Task.Run(async () =>
             {
-                await _throttleInputValueChange.PushEvent(async _ =>
+                await _throttleInputValueChange.PushEvent(_ =>
                 {
-                    await TextEditorService.PostSimpleBatch(
+                    TextEditorService.PostSimpleBatch(
                         nameof(FindOverlayDisplay),
                         async editContext =>
                         {
@@ -93,6 +93,7 @@ public partial class FindOverlayDisplay : ComponentBase
                             _activeIndexMatchedTextSpan = null;
                             _decorationByteChangedTargetTextSpan = null;
                         });
+					return Task.CompletedTask;
                 }).ConfigureAwait(false);
             });
         }
@@ -124,7 +125,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 .FocusHtmlElementById(RenderBatch.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
-            await TextEditorService.PostTakeMostRecent(
+            TextEditorService.PostTakeMostRecent(
                 nameof(FindOverlayDisplay),
 				RenderBatch.ViewModel.ResourceUri,
                 RenderBatch.ViewModel.ViewModelKey,
@@ -234,9 +235,9 @@ public partial class FindOverlayDisplay : ComponentBase
         await HandleActiveIndexMatchedTextSpanChanged();
     }
 
-    private async Task HandleActiveIndexMatchedTextSpanChanged()
+    private Task HandleActiveIndexMatchedTextSpanChanged()
     {
-        await TextEditorService.PostSimpleBatch(
+        TextEditorService.PostSimpleBatch(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
             async editContext =>
             {
@@ -294,5 +295,6 @@ public partial class FindOverlayDisplay : ComponentBase
 	                .Invoke(editContext)
                     .ConfigureAwait(false);
             });
+		return Task.CompletedTask;
     }
 }

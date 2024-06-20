@@ -1,8 +1,8 @@
+using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -16,7 +16,7 @@ public partial class Footer : ComponentBase
 
     private int _previousPositionNumber;
 
-    private async Task SelectRowEndingKindOnChange(ChangeEventArgs changeEventArgs)
+    private void SelectRowEndingKindOnChange(ChangeEventArgs changeEventArgs)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
@@ -28,14 +28,13 @@ public partial class Footer : ComponentBase
 
         if (Enum.TryParse<LineEndKind>(rowEndingKindString, out var rowEndingKind))
         {
-            await TextEditorService.PostTakeMostRecent(
-                    nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
+            TextEditorService.PostTakeMostRecent(
+                nameof(TextEditorService.ModelApi.SetUsingLineEndKindFactory),
+                viewModel.ResourceUri,
+				viewModel.ViewModelKey,
+                TextEditorService.ModelApi.SetUsingLineEndKindFactory(
                     viewModel.ResourceUri,
-					viewModel.ViewModelKey,
-                    TextEditorService.ModelApi.SetUsingLineEndKindFactory(
-                        viewModel.ResourceUri,
-                        rowEndingKind))
-                .ConfigureAwait(false);
+                    rowEndingKind));
         }
     }
 

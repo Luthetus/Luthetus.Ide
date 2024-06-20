@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Components;
 using System.Text;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
-using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -97,22 +97,22 @@ public partial class RowSection : ComponentBase
         }
     }
 
-    private async Task VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
+    private Task VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
-        await TextEditorService.PostTakeMostRecent(
-                nameof(VirtualizationDisplayItemsProviderFunc),
+        TextEditorService.PostTakeMostRecent(
+            nameof(VirtualizationDisplayItemsProviderFunc),
+            model.ResourceUri,
+            viewModel.ViewModelKey,
+            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
                 model.ResourceUri,
                 viewModel.ViewModelKey,
-                TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                    model.ResourceUri,
-                    viewModel.ViewModelKey,
-                    virtualizationRequest.CancellationToken))
-            .ConfigureAwait(false);
+                virtualizationRequest.CancellationToken));
+		return Task.CompletedTask;
     }
 }

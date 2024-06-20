@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -5,7 +6,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
@@ -108,9 +108,9 @@ public class LuthCompilerService : ILuthCompilerService
         }
     }
 
-    public virtual Task ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList)
+    public virtual void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList)
     {
-        return QueueParseRequest(resourceUri);
+        QueueParseRequest(resourceUri);
     }
 
     public virtual void CursorWasModified(ResourceUri resourceUri, TextEditorCursor cursor)
@@ -158,9 +158,9 @@ public class LuthCompilerService : ILuthCompilerService
         ResourceDisposed?.Invoke();
     }
 
-    protected virtual Task QueueParseRequest(ResourceUri resourceUri)
+    protected virtual void QueueParseRequest(ResourceUri resourceUri)
     {
-        return _textEditorService.PostSimpleBatch(
+        _textEditorService.PostSimpleBatch(
             nameof(QueueParseRequest),
             async editContext =>
             {
