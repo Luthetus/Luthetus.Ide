@@ -35,7 +35,7 @@ using Luthetus.Ide.RazorLib.CSharpProjects.Models;
 using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
 
-namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
+namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals;
 
 public partial class SolutionExplorerContextMenu : ComponentBase
 {

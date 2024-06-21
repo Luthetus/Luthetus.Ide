@@ -1,7 +1,32 @@
-<h3>SolutionVisualizationDisplay</h3>
+@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Models;
+@using Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals
 
-<hr/>
+<h3>SolutionVisualizationDisplay</h3>
 
 _dotNetSolutionCompilerService.CompilerServiceResources.Length: @_dotNetSolutionCompilerService.CompilerServiceResources.Length
 _cSharpProjectCompilerService.CompilerServiceResources.Length: @_cSharpProjectCompilerService.CompilerServiceResources.Length
 _cSharpCompilerService.CompilerServiceResources.Length: @_cSharpCompilerService.CompilerServiceResources.Length
+
+<hr/>
+
+<div @oncontextmenu="HandleOnContextMenu"
+	 @oncontextmenu:preventDefault="true">
+
+	<svg width="@_solutionVisualizationModel.SvgWidth"
+	     height="@_solutionVisualizationModel.SvgHeight"
+		 viewBox="@_solutionVisualizationModel.ViewBoxMinX @_solutionVisualizationModel.ViewBoxMinY @_solutionVisualizationModel.ViewBoxWidth @_solutionVisualizationModel.ViewBoxHeight"
+		 xmlns="http://www.w3.org/2000/svg">
+	
+	  <circle cx="25" cy="25" r="25" fill="var(--luth_icon-solution-font-color)" />
+	</svg>
+
+	<DropdownDisplay DropdownKey="SolutionVisualizationContextMenu.ContextMenuEventDropdownKey"
+	                 DropdownPositionKind="DropdownPositionKind.Unset"
+	                 CssStyleString="@SolutionVisualizationContextMenu.GetContextMenuCssStyleString(_mostRecentMouseEventArgs, Dialog)">
+
+		<SolutionVisualizationContextMenu MouseEventArgs="_mostRecentMouseEventArgs"
+										  SolutionVisualizationModel="_solutionVisualizationModel" />
+	</DropdownDisplay>
+</div>
+
