@@ -64,6 +64,7 @@ public partial class IdeHeader : ComponentBase
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
@@ -266,6 +267,28 @@ public partial class IdeHeader : ComponentBase
                 });
 
             menuOptionsList.Add(menuOptionBackgroundTasks);
+        }
+
+		// Menu Option Solution Visualization
+        {
+            var menuOptionSolutionVisualization = new MenuOptionRecord(
+				"Solution Visualization",
+                MenuOptionKind.Delete,
+                () => 
+                {
+					var dialogRecord = new DialogViewModel(
+			            _solutionVisualizationDialogKey,
+			            "Solution Visualization",
+			            typeof(SolutionVisualizationDisplay),
+			            null,
+			            null,
+						true);
+			
+			        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+			        return Task.CompletedTask;
+                });
+
+            menuOptionsList.Add(menuOptionSolutionVisualization);
         }
 
         _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
