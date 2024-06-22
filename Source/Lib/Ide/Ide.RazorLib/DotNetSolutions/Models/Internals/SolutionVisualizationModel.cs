@@ -87,7 +87,7 @@ public class SolutionVisualizationModel
 		int columnIndex,
 		int renderCycleIndex)
 	{
-		centerX = (localSolutionVisualizationModel.Dimensions.ViewBoxWidth) - (radius / 2);
+		centerX = (int)((localSolutionVisualizationModel.Dimensions.SvgWidth / localSolutionVisualizationModel.Dimensions.ScaleX / 2) - (radius / 2));
 
 		localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
 
