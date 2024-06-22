@@ -17,6 +17,7 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
 using Luthetus.Ide.RazorLib.TestExplorers.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals;
 
@@ -44,6 +45,27 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
     private async Task<MenuRecord> GetMenuRecord(MouseEventArgs mouseEventArgs)
     {
         var menuRecordsList = new List<MenuOptionRecord>();
+
+		var localSolutionVisualizationModel = SolutionVisualizationModel;
+
+		// TODO: Have to convert to relative coordinates
+		foreach (var drawing in localSolutionVisualizationModel.SolutionVisualizationDrawingList)
+		{
+			var lowerX = drawing.CenterX - drawing.Radius;
+			var upperX = drawing.CenterX + drawing.Radius;
+
+			if (lowerX <= mouseEventArgs.ClientX &&
+				upperX >= mouseEventArgs.ClientX)
+			{
+				var lowerY = drawing.CenterY - drawing.Radius;
+				var upperY = drawing.CenterY + drawing.Radius;
+
+				if (lowerY <= mouseEventArgs.ClientY &&
+					upperY >= mouseEventArgs.ClientY)
+				{
+				}
+			}
+		}
 
 		menuRecordsList.Add(new MenuOptionRecord(
 		    "Settings",

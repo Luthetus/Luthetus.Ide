@@ -4,21 +4,44 @@
 
 <h3>SolutionVisualizationDisplay</h3>
 
+@{ var localSolutionVisualizationModel = _solutionVisualizationModel; }
+
 _dotNetSolutionCompilerService.CompilerServiceResources.Length: @_dotNetSolutionCompilerService.CompilerServiceResources.Length
 _cSharpProjectCompilerService.CompilerServiceResources.Length: @_cSharpProjectCompilerService.CompilerServiceResources.Length
 _cSharpCompilerService.CompilerServiceResources.Length: @_cSharpCompilerService.CompilerServiceResources.Length
+localSolutionVisualizationModel.SolutionVisualizationDrawingList.Count: @localSolutionVisualizationModel.SolutionVisualizationDrawingList.Count
 
 <hr/>
 
 <div @oncontextmenu="HandleOnContextMenu"
-	 @oncontextmenu:preventDefault="true">
+	 @oncontextmenu:preventDefault="true"
+	 style="background-color: var(--luth_primary-background-color); color: var(--luth_primary-foreground-color);"
+	 id="EncompassingDivHtmlElementId">
 
-	<svg width="@_solutionVisualizationModel.SvgWidth"
-	     height="@_solutionVisualizationModel.SvgHeight"
-		 viewBox="@_solutionVisualizationModel.ViewBoxMinX @_solutionVisualizationModel.ViewBoxMinY @_solutionVisualizationModel.ViewBoxWidth @_solutionVisualizationModel.ViewBoxHeight"
+	<svg id="SvgHtmlElementId"
+		 width="@_solutionVisualizationModel.Dimensions.SvgWidth"
+	     height="@_solutionVisualizationModel.Dimensions.SvgHeight"
+		 viewBox="@_solutionVisualizationModel.Dimensions.ViewBoxMinX @_solutionVisualizationModel.Dimensions.ViewBoxMinY @_solutionVisualizationModel.Dimensions.ViewBoxWidth @_solutionVisualizationModel.Dimensions.ViewBoxHeight"
 		 xmlns="http://www.w3.org/2000/svg">
-	
-	  <circle cx="25" cy="25" r="25" fill="var(--luth_icon-solution-font-color)" />
+
+		@for (int badRenderCycleIndex = 0; badRenderCycleIndex < localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Count; badRenderCycleIndex++)
+		{
+			var renderCycleIndex = badRenderCycleIndex;
+			var renderCycleList = localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex];
+
+			for (int badSequenceIndex = 0; badSequenceIndex < renderCycleList.Count; badSequenceIndex++)
+			{
+				var sequenceIndex = badSequenceIndex;
+				var solutionVisualizationDrawing = renderCycleList[sequenceIndex];
+				solutionVisualizationDrawing.RenderCycleSequence = sequenceIndex;
+
+				<circle cx="@solutionVisualizationDrawing.CenterX"
+						cy="@solutionVisualizationDrawing.CenterY"
+						r="@solutionVisualizationDrawing.Radius"
+						fill="@solutionVisualizationDrawing.Fill" />
+			}
+		}
+		
 	</svg>
 
 	<DropdownDisplay DropdownKey="SolutionVisualizationContextMenu.ContextMenuEventDropdownKey"

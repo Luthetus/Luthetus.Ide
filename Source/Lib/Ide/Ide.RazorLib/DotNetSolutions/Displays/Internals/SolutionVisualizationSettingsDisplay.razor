@@ -1,20 +1,26 @@
-<div>
-	<div>
-		SvgWidth<input type="number" @bind="SolutionVisualizationModel.SvgWidth"/>
-	</div>
-	<div>
-		SvgHeight<input type="number" @bind="SolutionVisualizationModel.SvgHeight"/>
-	</div>
-	<div>
-		ViewBoxMinX<input type="number" @bind="SolutionVisualizationModel.ViewBoxMinX"/>
-	</div>
-	<div>
-		ViewBoxMinY<input type="number" @bind="SolutionVisualizationModel.ViewBoxMinY"/>
-	</div>
-	<div>
-		ViewBoxWidth<input type="number" @bind="SolutionVisualizationModel.ViewBoxWidth"/>
-	</div>
-	<div>
-		ViewBoxHeight<input type="number" @bind="SolutionVisualizationModel.ViewBoxHeight"/>
-	</div>
-</div>
+<table>
+	<tr>
+		<td>SvgWidth</td>
+		<td><input type="number" @bind="SolutionVisualizationModel.Dimensions.SvgWidth"/></td>
+	</tr>
+	<tr>
+		<td>SvgHeight</td>
+		<td><input type="number" @bind="SolutionVisualizationModel.Dimensions.SvgHeight"/></td>
+	</tr>
+	<tr>
+		<td>ViewBoxMinX</td>
+		<td><input type="number" @bind="SolutionVisualizationModel.Dimensions.ViewBoxMinX"/></td>
+	</tr>
+	<tr>
+		<td>ViewBoxMinY</td>
+		<td><input type="number" @bind="SolutionVisualizationModel.Dimensions.ViewBoxMinY"/></td>
+	</tr>
+	<tr>
+		<td>ViewBoxWidth</td>
+		<td><input type="number" @bind="SolutionVisualizationModel.Dimensions.ViewBoxWidth"/></td>
+	</tr>
+	<tr>
+		<td>ViewBoxHeight</td>
+		<td><input type="number" @bind="SolutionVisualizationModel.Dimensions.ViewBoxHeight"/></td>
+	</tr>
+</table>
