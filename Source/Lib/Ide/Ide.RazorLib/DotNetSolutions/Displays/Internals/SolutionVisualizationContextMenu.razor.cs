@@ -12,6 +12,10 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -24,6 +28,11 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals;
 
 public partial class SolutionVisualizationContextMenu : ComponentBase
 {
+	[Inject]
+	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    [Inject]
+	private IServiceProvider ServiceProvider { get; set; } = null!;
+
 	[Parameter, EditorRequired]
     public MouseEventArgs MouseEventArgs { get; set; } = null!;
 	[Parameter, EditorRequired]
@@ -75,12 +84,17 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 
 						if (drawing.Item is ILuthCompilerServiceResource compilerServiceResource)
 						{
-							name = compilerServiceResource.ResourceUri.Value;
+							menuRecordsList.Add(new MenuOptionRecord(
+							    $"Open in editor: {compilerServiceResource.ResourceUri.Value}",
+							    MenuOptionKind.Other,
+								OnClickFunc: () => OpenFileInEditor(compilerServiceResource.ResourceUri.Value)));
 						}
-
-						menuRecordsList.Add(new MenuOptionRecord(
-						    $"Open in editor: {name}",
-						    MenuOptionKind.Other));
+						else
+						{
+							menuRecordsList.Add(new MenuOptionRecord(
+							    $"Open in editor: {name}",
+							    MenuOptionKind.Other));
+						}
 					}
 				}
 			}
@@ -102,6 +116,40 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
             return MenuRecord.Empty;
 
         return new MenuRecord(menuRecordsList.ToImmutableArray());
+    }
+
+	private async Task OpenFileInEditor(string filePath)
+	{
+        var resourceUri = new ResourceUri(filePath);
+
+        if (TextEditorConfig.RegisterModelFunc is null)
+            return;
+
+        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+                resourceUri,
+                ServiceProvider))
+            .ConfigureAwait(false);
+
+        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
+        {
+            var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+                    Key<TextEditorViewModel>.NewKey(),
+                    resourceUri,
+                    new Category("main"),
+                    false,
+                    ServiceProvider))
+                .ConfigureAwait(false);
+
+            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+                TextEditorConfig.TryShowViewModelFunc is not null)
+            {
+                await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+                        viewModelKey,
+                        Key<TextEditorGroup>.Empty,
+                        ServiceProvider))
+                    .ConfigureAwait(false);
+            }
+        }
     }
 
     public static string GetContextMenuCssStyleString(
