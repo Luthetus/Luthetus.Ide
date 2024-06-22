@@ -15,6 +15,7 @@ using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -23,7 +24,9 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	[Inject]
 	private ICompilerServiceRegistry InterfaceCompilerServiceRegistry { get; set; } = null!;
 	[Inject]
-	private IState<AppDimensionState> AppDimensionState { get; set; } = null!;
+	private IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
+	[Inject]
+	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -51,9 +54,10 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 
 	protected override void OnInitialized()
 	{
-		_solutionVisualizationModel = new(OnCompilerServiceChanged);
+		_solutionVisualizationModel = new(null, OnCompilerServiceChanged);
 
-		AppDimensionState.StateChanged += OnAppDimensionStateChanged;
+		AppDimensionStateWrap.StateChanged += OnAppDimensionStateWrapChanged;
+		DotNetSolutionStateWrap.StateChanged += OnDotNetSolutionStateWrapChanged;
 
 		SubscribeTo_DotNetSolutionCompilerService();
 		SubscribeTo_CSharpProjectCompilerService();
@@ -66,14 +70,15 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	{
 		if (firstRender)
 		{
-			OnAppDimensionStateChanged(null, EventArgs.Empty);
+			OnAppDimensionStateWrapChanged(null, EventArgs.Empty);
+			OnDotNetSolutionStateWrapChanged(null, EventArgs.Empty);
 			OnCompilerServiceChanged();
 		}
 
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
-	private async void OnAppDimensionStateChanged(object sender, EventArgs e)
+	private async void OnAppDimensionStateWrapChanged(object sender, EventArgs e)
 	{
 		_solutionVisualizationModel.Dimensions.DivBoundingClientRect = await CommonJavaScriptInteropApi
 			.MeasureElementById(DivHtmlElementId)
@@ -82,80 +87,27 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		_solutionVisualizationModel.Dimensions.SvgBoundingClientRect = await CommonJavaScriptInteropApi
 			.MeasureElementById(SvgHtmlElementId)
 			.ConfigureAwait(false);
+
+		OnCompilerServiceChanged();
+	}
+
+	private async void OnDotNetSolutionStateWrapChanged(object sender, EventArgs e)
+	{
+		_solutionVisualizationModel = new(DotNetSolutionStateWrap.Value.DotNetSolutionModel?.AbsolutePath, OnCompilerServiceChanged);
+		OnAppDimensionStateWrapChanged(sender, e);
 	}
 
 	private void OnCompilerServiceChanged()
 	{
 		_stateChangedThrottle.Run(_ =>
 		{
-			MakeDrawing();
+			_solutionVisualizationModel = _solutionVisualizationModel.MakeDrawing(
+				_dotNetSolutionCompilerService,
+				_cSharpProjectCompilerService,
+				_cSharpCompilerService);
+
 			return InvokeAsync(StateHasChanged);
 		});
-
-		void MakeDrawing()
-		{
-			var localSolutionVisualizationModel = _solutionVisualizationModel.ShallowClone();
-			localSolutionVisualizationModel.SolutionVisualizationDrawingList.Clear();
-			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Clear();
-
-			var dotNetSolutionResourceList = _dotNetSolutionCompilerService.CompilerServiceResources;
-			var cSharpProjectResourceList = _cSharpProjectCompilerService.CompilerServiceResources;
-			var cSharpResourceList = _cSharpCompilerService.CompilerServiceResources;
-
-			var radius = 12;
-			var centerX = 12;
-			var centerY = 12;
-			var rowIndex = 0;
-			var columnIndex = 0;
-
-			var renderCycleIndex = 0;
-			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
-
-			foreach (var dotNetSolutionResource in dotNetSolutionResourceList)
-			{
-				var dotNetSolutionDrawing = new SolutionVisualizationDrawing<DotNetSolutionResource>
-				{
-					Item = (DotNetSolutionResource)dotNetSolutionResource,
-					SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Solution,
-					CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
-					CenterY = ((1 + rowIndex) * centerY) + (rowIndex * radius) + (rowIndex * localSolutionVisualizationModel.Dimensions.VerticalPadding),
-					Radius = radius,
-					Fill = "var(--luth_icon-solution-font-color)",
-					RenderCycle = renderCycleIndex,
-				};
-
-				columnIndex++;
-
-				localSolutionVisualizationModel.SolutionVisualizationDrawingList.Add(dotNetSolutionDrawing);
-				localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(dotNetSolutionDrawing);
-			}
-
-			renderCycleIndex++;
-			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
-			rowIndex++;
-			columnIndex = 0;
-
-			foreach (var cSharpProjectResource in cSharpProjectResourceList)
-			{
-				var cSharpProjectDrawing = new SolutionVisualizationDrawing<CSharpProjectResource>
-				{
-					Item = (CSharpProjectResource)cSharpProjectResource,
-					SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Project,
-					CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
-					CenterY = ((1 + rowIndex) * centerY) + (rowIndex * radius) + (rowIndex * localSolutionVisualizationModel.Dimensions.VerticalPadding),
-					Radius = radius,
-					Fill = "var(--luth_icon-project-font-color)",
-					RenderCycle = renderCycleIndex,
-				};
-
-				columnIndex++;
-
-				localSolutionVisualizationModel.SolutionVisualizationDrawingList.Add(cSharpProjectDrawing);
-				localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(cSharpProjectDrawing);
-			}
-
-			_solutionVisualizationModel = localSolutionVisualizationModel;
-		}
 	}
 
 	private async Task HandleOnContextMenu(MouseEventArgs mouseEventArgs)
@@ -228,6 +180,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		DisposeFrom_CSharpProjectCompilerService();
 		DisposeFrom_CSharpCompilerService();
 
-		AppDimensionState.StateChanged -= OnAppDimensionStateChanged;
+		AppDimensionStateWrap.StateChanged -= OnAppDimensionStateWrapChanged;
+		DotNetSolutionStateWrap.StateChanged -= OnDotNetSolutionStateWrapChanged;
 	}
 }
