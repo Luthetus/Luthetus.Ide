@@ -102,9 +102,9 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 			var cSharpProjectResourceList = _cSharpProjectCompilerService.CompilerServiceResources;
 			var cSharpResourceList = _cSharpCompilerService.CompilerServiceResources;
 
-			var radius = 25;
-			var centerX = 25;
-			var centerY = 25;
+			var radius = 12;
+			var centerX = 12;
+			var centerY = 12;
 			var rowIndex = 0;
 			var columnIndex = 0;
 
@@ -118,7 +118,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 					Item = (DotNetSolutionResource)dotNetSolutionResource,
 					SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Solution,
 					CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
-					CenterY = (1 + rowIndex) * centerY,
+					CenterY = ((1 + rowIndex) * centerY) + (rowIndex * radius) + (rowIndex * localSolutionVisualizationModel.Dimensions.VerticalPadding),
 					Radius = radius,
 					Fill = "var(--luth_icon-solution-font-color)",
 					RenderCycle = renderCycleIndex,
@@ -142,7 +142,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 					Item = (CSharpProjectResource)cSharpProjectResource,
 					SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Project,
 					CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
-					CenterY = (1 + rowIndex) * centerY,
+					CenterY = ((1 + rowIndex) * centerY) + (rowIndex * radius) + (rowIndex * localSolutionVisualizationModel.Dimensions.VerticalPadding),
 					Radius = radius,
 					Fill = "var(--luth_icon-project-font-color)",
 					RenderCycle = renderCycleIndex,
