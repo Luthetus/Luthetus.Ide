@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -56,46 +57,29 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 			var relativeY = mouseEventArgs.ClientY - localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.TopInPixels;
 			relativeY /= localSolutionVisualizationModel.Dimensions.ScaleY;
 
-			menuRecordsList.Add(new MenuOptionRecord(
-			    $"relativeX:{relativeX}; relativeY:{relativeY};",
-			    MenuOptionKind.Other));
-
-			menuRecordsList.Add(new MenuOptionRecord(
-			    $"ScaleX:{localSolutionVisualizationModel.Dimensions.ScaleX}; ScaleY:{localSolutionVisualizationModel.Dimensions.ScaleY};",
-			    MenuOptionKind.Other));
-
-			menuRecordsList.Add(new MenuOptionRecord(
-			    $"mouseEventArgs.ClientX:{mouseEventArgs.ClientX}; mouseEventArgs.ClientY:{mouseEventArgs.ClientY};",
-			    MenuOptionKind.Other));
-
-			menuRecordsList.Add(new MenuOptionRecord(
-			    $"LeftInPixels:{localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.LeftInPixels}; TopInPixels:{localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.TopInPixels};",
-			    MenuOptionKind.Other));
-	
 			foreach (var drawing in localSolutionVisualizationModel.SolutionVisualizationDrawingList)
 			{
 				var lowerX = drawing.CenterX - drawing.Radius;
 				var upperX = drawing.CenterX + drawing.Radius;
-
-				menuRecordsList.Add(new MenuOptionRecord(
-				    $"lowerX:{lowerX}; upperX:{upperX};",
-				    MenuOptionKind.Other));
 	
 				if (lowerX <= relativeX &&
 					upperX >= relativeX)
 				{
 					var lowerY = drawing.CenterY - drawing.Radius;
 					var upperY = drawing.CenterY + drawing.Radius;
-
-					menuRecordsList.Add(new MenuOptionRecord(
-					    $"lowerY:{lowerY}; upperY:{upperY};",
-					    MenuOptionKind.Other));
 	
 					if (lowerY <= relativeY &&
 						upperY >= relativeY)
 					{
+						var name = "not determined";
+
+						if (drawing.Item is ILuthCompilerServiceResource compilerServiceResource)
+						{
+							name = compilerServiceResource.ResourceUri.Value;
+						}
+
 						menuRecordsList.Add(new MenuOptionRecord(
-						    "Found something!",
+						    $"Open in editor: {name}",
 						    MenuOptionKind.Other));
 					}
 				}
