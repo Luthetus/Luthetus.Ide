@@ -80,4 +80,7 @@ public class SolutionVisualizationDimensions
 
 	public MeasuredHtmlElementDimensions DivBoundingClientRect { get; set; }
 	public MeasuredHtmlElementDimensions SvgBoundingClientRect { get; set; }
+
+	public double ScaleX => (double)SvgWidth / (double)ViewBoxWidth;
+	public double ScaleY => (double)SvgHeight / (double)ViewBoxHeight;
 }

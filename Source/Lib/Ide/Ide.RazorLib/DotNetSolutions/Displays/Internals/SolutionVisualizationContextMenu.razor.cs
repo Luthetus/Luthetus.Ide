@@ -51,10 +51,17 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 		if (localSolutionVisualizationModel.Dimensions.DivBoundingClientRect is not null)
 		{
 			var relativeX = mouseEventArgs.ClientX - localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.LeftInPixels;
+			relativeX /= localSolutionVisualizationModel.Dimensions.ScaleX;
+
 			var relativeY = mouseEventArgs.ClientY - localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.TopInPixels;
+			relativeY /= localSolutionVisualizationModel.Dimensions.ScaleY;
 
 			menuRecordsList.Add(new MenuOptionRecord(
 			    $"relativeX:{relativeX}; relativeY:{relativeY};",
+			    MenuOptionKind.Other));
+
+			menuRecordsList.Add(new MenuOptionRecord(
+			    $"ScaleX:{localSolutionVisualizationModel.Dimensions.ScaleX}; ScaleY:{localSolutionVisualizationModel.Dimensions.ScaleY};",
 			    MenuOptionKind.Other));
 
 			menuRecordsList.Add(new MenuOptionRecord(
