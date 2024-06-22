@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
@@ -23,6 +26,8 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	private IState<AppDimensionState> AppDimensionState { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
+	[Inject]
+	private IJSRuntime JsRuntime { get; set; } = null!;
 
 	[CascadingParameter]
 	public IDialog Dialog { get; set; }
@@ -35,35 +40,46 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	private CSharpCompilerService _cSharpCompilerService;
 	private LuthetusCommonJavaScriptInteropApi? _commonJavaScriptInteropApi;
     private MouseEventArgs? _mostRecentMouseEventArgs;
+	private string _divHtmlElementId;
+	private string _svgHtmlElementId;
 
 	public Guid IdSalt { get; } = Guid.NewGuid();
 
-	public string DivHtmlElementId => _encompassingDivHtmlElementId ??= $"luth_ide_solution-visualization-div_{IdSalt}";
-	public string SvgHtmlElementId => _encompassingDivHtmlElementId ??= $"luth_ide_solution-visualization-svg_{IdSalt}";
+	public string DivHtmlElementId => _divHtmlElementId ??= $"luth_ide_solution-visualization-div_{IdSalt}";
+	public string SvgHtmlElementId => _svgHtmlElementId ??= $"luth_ide_solution-visualization-svg_{IdSalt}";
 	private LuthetusCommonJavaScriptInteropApi CommonJavaScriptInteropApi => _commonJavaScriptInteropApi ??= JsRuntime.GetLuthetusCommonApi();
 
 	protected override void OnInitialized()
 	{
+		_solutionVisualizationModel = new(OnCompilerServiceChanged);
+
 		AppDimensionState.StateChanged += OnAppDimensionStateChanged;
 
 		SubscribeTo_DotNetSolutionCompilerService();
 		SubscribeTo_CSharpProjectCompilerService();
 		SubscribeTo_CSharpCompilerService();
 
-		_solutionVisualizationModel = new(OnCompilerServiceChanged);
-
-		OnCompilerServiceChanged();
-
 		base.OnInitialized();
 	}
 
-	private async void OnAppDimensionStateChanged()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		var divBoundingClientRect = await CommonJavaScriptInteropApi
+		if (firstRender)
+		{
+			OnAppDimensionStateChanged(null, EventArgs.Empty);
+			OnCompilerServiceChanged();
+		}
+
+		await base.OnAfterRenderAsync(firstRender);
+	}
+
+	private async void OnAppDimensionStateChanged(object sender, EventArgs e)
+	{
+		_solutionVisualizationModel.Dimensions.DivBoundingClientRect = await CommonJavaScriptInteropApi
 			.MeasureElementById(DivHtmlElementId)
 			.ConfigureAwait(false);
 
-		var svgBoundingClientRect = await CommonJavaScriptInteropApi
+		_solutionVisualizationModel.Dimensions.SvgBoundingClientRect = await CommonJavaScriptInteropApi
 			.MeasureElementById(SvgHtmlElementId)
 			.ConfigureAwait(false);
 	}

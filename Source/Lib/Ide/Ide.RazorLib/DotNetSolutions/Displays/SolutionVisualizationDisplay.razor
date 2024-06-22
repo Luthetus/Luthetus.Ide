@@ -16,9 +16,9 @@ localSolutionVisualizationModel.SolutionVisualizationDrawingList.Count: @localSo
 <div @oncontextmenu="HandleOnContextMenu"
 	 @oncontextmenu:preventDefault="true"
 	 style="background-color: var(--luth_primary-background-color); color: var(--luth_primary-foreground-color);"
-	 id="EncompassingDivHtmlElementId">
+	 id="@DivHtmlElementId">
 
-	<svg id="SvgHtmlElementId"
+	<svg id="@SvgHtmlElementId"
 		 width="@_solutionVisualizationModel.Dimensions.SvgWidth"
 	     height="@_solutionVisualizationModel.Dimensions.SvgHeight"
 		 viewBox="@_solutionVisualizationModel.Dimensions.ViewBoxMinX @_solutionVisualizationModel.Dimensions.ViewBoxMinY @_solutionVisualizationModel.Dimensions.ViewBoxWidth @_solutionVisualizationModel.Dimensions.ViewBoxHeight"

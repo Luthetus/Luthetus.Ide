@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 
 public class SolutionVisualizationDimensions
@@ -75,4 +77,7 @@ public class SolutionVisualizationDimensions
 			_onStateChangedAction.Invoke();
 		}
 	}
+
+	public MeasuredHtmlElementDimensions DivBoundingClientRect { get; set; }
+	public MeasuredHtmlElementDimensions SvgBoundingClientRect { get; set; }
 }

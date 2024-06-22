@@ -48,21 +48,49 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 
 		var localSolutionVisualizationModel = SolutionVisualizationModel;
 
-		// TODO: Have to convert to relative coordinates
-		foreach (var drawing in localSolutionVisualizationModel.SolutionVisualizationDrawingList)
+		if (localSolutionVisualizationModel.Dimensions.DivBoundingClientRect is not null)
 		{
-			var lowerX = drawing.CenterX - drawing.Radius;
-			var upperX = drawing.CenterX + drawing.Radius;
+			var relativeX = mouseEventArgs.ClientX - localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.LeftInPixels;
+			var relativeY = mouseEventArgs.ClientY - localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.TopInPixels;
 
-			if (lowerX <= mouseEventArgs.ClientX &&
-				upperX >= mouseEventArgs.ClientX)
+			menuRecordsList.Add(new MenuOptionRecord(
+			    $"relativeX:{relativeX}; relativeY:{relativeY};",
+			    MenuOptionKind.Other));
+
+			menuRecordsList.Add(new MenuOptionRecord(
+			    $"mouseEventArgs.ClientX:{mouseEventArgs.ClientX}; mouseEventArgs.ClientY:{mouseEventArgs.ClientY};",
+			    MenuOptionKind.Other));
+
+			menuRecordsList.Add(new MenuOptionRecord(
+			    $"LeftInPixels:{localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.LeftInPixels}; TopInPixels:{localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.TopInPixels};",
+			    MenuOptionKind.Other));
+	
+			foreach (var drawing in localSolutionVisualizationModel.SolutionVisualizationDrawingList)
 			{
-				var lowerY = drawing.CenterY - drawing.Radius;
-				var upperY = drawing.CenterY + drawing.Radius;
+				var lowerX = drawing.CenterX - drawing.Radius;
+				var upperX = drawing.CenterX + drawing.Radius;
 
-				if (lowerY <= mouseEventArgs.ClientY &&
-					upperY >= mouseEventArgs.ClientY)
+				menuRecordsList.Add(new MenuOptionRecord(
+				    $"lowerX:{lowerX}; upperX:{upperX};",
+				    MenuOptionKind.Other));
+	
+				if (lowerX <= relativeX &&
+					upperX >= relativeX)
 				{
+					var lowerY = drawing.CenterY - drawing.Radius;
+					var upperY = drawing.CenterY + drawing.Radius;
+
+					menuRecordsList.Add(new MenuOptionRecord(
+					    $"lowerY:{lowerY}; upperY:{upperY};",
+					    MenuOptionKind.Other));
+	
+					if (lowerY <= relativeY &&
+						upperY >= relativeY)
+					{
+						menuRecordsList.Add(new MenuOptionRecord(
+						    "Found something!",
+						    MenuOptionKind.Other));
+					}
 				}
 			}
 		}
