@@ -102,6 +102,12 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 			var cSharpProjectResourceList = _cSharpProjectCompilerService.CompilerServiceResources;
 			var cSharpResourceList = _cSharpCompilerService.CompilerServiceResources;
 
+			var radius = 25;
+			var centerX = 25;
+			var centerY = 25;
+			var rowIndex = 0;
+			var columnIndex = 0;
+
 			var renderCycleIndex = 0;
 			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
 
@@ -111,12 +117,14 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 				{
 					Item = (DotNetSolutionResource)dotNetSolutionResource,
 					SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Solution,
-					CenterX = 25,
-					CenterY = 25,
-					Radius = 25,
+					CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
+					CenterY = (1 + rowIndex) * centerY,
+					Radius = radius,
 					Fill = "var(--luth_icon-solution-font-color)",
 					RenderCycle = renderCycleIndex,
 				};
+
+				columnIndex++;
 
 				localSolutionVisualizationModel.SolutionVisualizationDrawingList.Add(dotNetSolutionDrawing);
 				localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(dotNetSolutionDrawing);
@@ -124,7 +132,8 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 
 			renderCycleIndex++;
 			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
-			var cSharpProjectIndex = 0;
+			rowIndex++;
+			columnIndex = 0;
 
 			foreach (var cSharpProjectResource in cSharpProjectResourceList)
 			{
@@ -132,12 +141,14 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 				{
 					Item = (CSharpProjectResource)cSharpProjectResource,
 					SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Project,
-					CenterX = (++cSharpProjectIndex) * 25,
-					CenterY = 50,
-					Radius = 25,
+					CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
+					CenterY = (1 + rowIndex) * centerY,
+					Radius = radius,
 					Fill = "var(--luth_icon-project-font-color)",
 					RenderCycle = renderCycleIndex,
 				};
+
+				columnIndex++;
 
 				localSolutionVisualizationModel.SolutionVisualizationDrawingList.Add(cSharpProjectDrawing);
 				localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(cSharpProjectDrawing);

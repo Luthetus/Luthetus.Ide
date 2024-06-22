@@ -17,6 +17,7 @@ public class SolutionVisualizationDimensions
 	private int _viewBoxMinY = 0;
 	private int _viewBoxWidth = 100;
 	private int _viewBoxHeight = 100;
+	private int _horizontalPadding = 5;
 
 	public int SvgWidth
 	{
@@ -74,6 +75,16 @@ public class SolutionVisualizationDimensions
 		set
 		{
 			_viewBoxHeight = value;
+			_onStateChangedAction.Invoke();
+		}
+	}
+	
+	public int HorizontalPadding
+	{
+		get => _horizontalPadding;
+		set
+		{
+			_horizontalPadding = value;
 			_onStateChangedAction.Invoke();
 		}
 	}

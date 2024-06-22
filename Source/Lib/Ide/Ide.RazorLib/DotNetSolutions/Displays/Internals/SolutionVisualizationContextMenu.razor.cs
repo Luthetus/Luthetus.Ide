@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -32,6 +33,8 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
+    [Inject]
+	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
 	[Parameter, EditorRequired]
     public MouseEventArgs MouseEventArgs { get; set; } = null!;
@@ -84,8 +87,10 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 
 						if (drawing.Item is ILuthCompilerServiceResource compilerServiceResource)
 						{
+							var absolutePath = EnvironmentProvider.AbsolutePathFactory(compilerServiceResource.ResourceUri.Value, false);
+
 							menuRecordsList.Add(new MenuOptionRecord(
-							    $"Open in editor: {compilerServiceResource.ResourceUri.Value}",
+							    $"Open in editor: {absolutePath.NameWithExtension}",
 							    MenuOptionKind.Other,
 								OnClickFunc: () => OpenFileInEditor(compilerServiceResource.ResourceUri.Value)));
 						}
