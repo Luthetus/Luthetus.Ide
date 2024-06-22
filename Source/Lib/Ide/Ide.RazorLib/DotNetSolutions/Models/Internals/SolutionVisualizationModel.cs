@@ -87,6 +87,8 @@ public class SolutionVisualizationModel
 		int columnIndex,
 		int renderCycleIndex)
 	{
+		centerX = (localSolutionVisualizationModel.Dimensions.ViewBoxWidth) - (radius / 2);
+
 		localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
 
 		var dotNetSolutionDrawing = new SolutionVisualizationDrawing<DotNetSolutionResource>

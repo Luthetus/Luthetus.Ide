@@ -22,9 +22,10 @@ public class SolutionVisualizationDimensions
 
 	public int SvgWidth
 	{
-		get => _svgWidth;
+		get => (int)(DivBoundingClientRect?.WidthInPixels ?? 0);
 		set
 		{
+			throw new NotImplementedException();
 			_svgWidth = value;
 			_onStateChangedAction.Invoke();
 		}
