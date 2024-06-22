@@ -70,6 +70,10 @@ public class SolutionVisualizationModel
 		renderCycleIndex++;
 		rowIndex++;
 
+		DrawClasses(cSharpResourceList, localSolutionVisualizationModel, radius, centerX, centerY, rowIndex, columnIndex, renderCycleIndex);
+		renderCycleIndex++;
+		rowIndex++;
+
 		return localSolutionVisualizationModel;
 	}
 
@@ -131,6 +135,38 @@ public class SolutionVisualizationModel
 
 			localSolutionVisualizationModel.SolutionVisualizationDrawingList.Add(cSharpProjectDrawing);
 			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(cSharpProjectDrawing);
+		}
+	}
+
+	private void DrawClasses(
+		ImmutableArray<ILuthCompilerServiceResource> cSharpResourceList,
+		SolutionVisualizationModel localSolutionVisualizationModel,
+		int radius,
+		int centerX,
+		int centerY,
+		int rowIndex,
+		int columnIndex,
+		int renderCycleIndex)
+	{
+		localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
+
+		foreach (var cSharpResource in cSharpResourceList)
+		{
+			var cSharpDrawing = new SolutionVisualizationDrawing<CSharpResource>
+			{
+				Item = (CSharpResource)cSharpResource,
+				SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Class,
+				CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
+				CenterY = ((1 + rowIndex) * centerY) + (rowIndex * radius) + (rowIndex * localSolutionVisualizationModel.Dimensions.VerticalPadding),
+				Radius = radius,
+				Fill = "var(--luth_icon-c-sharp-class-font-color)",
+				RenderCycle = renderCycleIndex,
+			};
+
+			columnIndex++;
+
+			localSolutionVisualizationModel.SolutionVisualizationDrawingList.Add(cSharpDrawing);
+			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(cSharpDrawing);
 		}
 	}
 }
