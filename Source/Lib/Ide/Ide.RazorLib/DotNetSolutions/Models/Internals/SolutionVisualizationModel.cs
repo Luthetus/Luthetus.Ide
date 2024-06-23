@@ -246,7 +246,7 @@ public class SolutionVisualizationModel
 				SolutionVisualizationItemKind = SolutionVisualizationItemKind.Connection,
 				StartPoint = (solutionDrawingCircle.CenterX, solutionDrawingCircle.CenterY),
 				EndPoint = (cSharpProjectDrawingCircle.CenterX, cSharpProjectDrawingCircle.CenterY),
-				Fill = "var(--luth_icon-c-sharp-class-font-color)",
+				Stroke = "var(--luth_primary-foreground-color)",
 				RenderCycle = renderCycleIndex,
 			};
 

@@ -4,5 +4,5 @@ public interface ISolutionVisualizationDrawingLine : ISolutionVisualizationDrawi
 {
 	public (int x, int y) StartPoint { get; set; }
 	public (int x, int y) EndPoint { get; set; }
-	public string Fill { get; set; }
+	public string Stroke { get; set; }
 }

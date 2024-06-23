@@ -24,7 +24,7 @@ public class SolutionVisualizationDrawingLine<TItem> : ISolutionVisualizationDra
 	public SolutionVisualizationItemKind SolutionVisualizationItemKind { get; set; }
 	public (int x, int y) StartPoint { get; set; }
 	public (int x, int y) EndPoint { get; set; }
-	public string Fill { get; set; }
+	public string Stroke { get; set; }
 	public int RenderCycle { get; set; }
 	public int RenderCycleSequence { get; set; }
 
