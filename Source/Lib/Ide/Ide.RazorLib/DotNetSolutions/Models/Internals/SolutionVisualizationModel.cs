@@ -87,7 +87,7 @@ public class SolutionVisualizationModel
 		int columnIndex,
 		int renderCycleIndex)
 	{
-		centerX = (int)((localSolutionVisualizationModel.Dimensions.SvgWidth / localSolutionVisualizationModel.Dimensions.ScaleX / 2) - (radius / 2));
+		centerX = (int)((localSolutionVisualizationModel.Dimensions.SvgWidth / 2) - (radius / 2));
 
 		localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
 
@@ -118,15 +118,40 @@ public class SolutionVisualizationModel
 		int columnIndex,
 		int renderCycleIndex)
 	{
+		var solutionCenterX = (int)((localSolutionVisualizationModel.Dimensions.SvgWidth / 2) - (radius / 2));
+		var leftNodeCounter = 0;
+		var rightNodeCounter = 0;
+
 		localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
 
-		foreach (var cSharpProjectResource in cSharpProjectResourceList)
+		for (int i = 0; i < cSharpProjectResourceList.Length; i++)
 		{
+			var cSharpProjectResource = cSharpProjectResourceList[i];
+		
+			if (i % 2 == 0)
+			{
+				leftNodeCounter++;
+				var solutionRadius = radius;
+				var myRadius = (leftNodeCounter * radius);
+				var previousCirclesRadius = (leftNodeCounter - 1) * radius;
+				var cumulativeHorizontalPadding =  (leftNodeCounter - 1) * localSolutionVisualizationModel.Dimensions.HorizontalPadding;
+				centerX = solutionCenterX - solutionRadius - myRadius - previousCirclesRadius - cumulativeHorizontalPadding;
+			}
+			else
+			{
+				rightNodeCounter++;
+				var solutionRadius = radius;
+				var myRadius = (rightNodeCounter * radius);
+				var previousCirclesRadius = (rightNodeCounter - 1) * radius;
+				var cumulativeHorizontalPadding =  (rightNodeCounter - 1) * localSolutionVisualizationModel.Dimensions.HorizontalPadding;
+				centerX = solutionCenterX + solutionRadius + myRadius + previousCirclesRadius + cumulativeHorizontalPadding;
+			}
+
 			var cSharpProjectDrawing = new SolutionVisualizationDrawing<CSharpProjectResource>
 			{
 				Item = (CSharpProjectResource)cSharpProjectResource,
 				SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Project,
-				CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
+				CenterX = centerX,
 				CenterY = ((1 + rowIndex) * centerY) + (rowIndex * radius) + (rowIndex * localSolutionVisualizationModel.Dimensions.VerticalPadding),
 				Radius = radius,
 				Fill = "var(--luth_icon-project-font-color)",

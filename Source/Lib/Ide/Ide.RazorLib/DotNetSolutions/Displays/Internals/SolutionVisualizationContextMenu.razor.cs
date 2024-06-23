@@ -64,43 +64,67 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 		if (localSolutionVisualizationModel.Dimensions.DivBoundingClientRect is not null)
 		{
 			var relativeX = mouseEventArgs.ClientX - localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.LeftInPixels;
-			relativeX /= localSolutionVisualizationModel.Dimensions.ScaleX;
+			var viewBoxX = relativeX / localSolutionVisualizationModel.Dimensions.ScaleX;
 
 			var relativeY = mouseEventArgs.ClientY - localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.TopInPixels;
-			relativeY /= localSolutionVisualizationModel.Dimensions.ScaleY;
+			var viewBoxY = relativeY / localSolutionVisualizationModel.Dimensions.ScaleY;
+
+			menuRecordsList.Add(new MenuOptionRecord(
+			    $"(sx{localSolutionVisualizationModel.Dimensions.ScaleX}, sy{localSolutionVisualizationModel.Dimensions.ScaleY})",
+			    MenuOptionKind.Other));
+
+			menuRecordsList.Add(new MenuOptionRecord(
+			    $"(rx{relativeX:N0}, ry{relativeY:N0})",
+			    MenuOptionKind.Other));
+
+			menuRecordsList.Add(new MenuOptionRecord(
+			    $"(vx{viewBoxX:N0}, vy{viewBoxY:N0})",
+			    MenuOptionKind.Other));
 
 			foreach (var drawing in localSolutionVisualizationModel.SolutionVisualizationDrawingList)
 			{
+				var targetMenuRecordsList = new List<MenuOptionRecord>();
+
 				var lowerX = drawing.CenterX - drawing.Radius;
 				var upperX = drawing.CenterX + drawing.Radius;
-	
-				if (lowerX <= relativeX &&
-					upperX >= relativeX)
+
+				var lowerY = drawing.CenterY - drawing.Radius;
+				var upperY = drawing.CenterY + drawing.Radius;
+
+				targetMenuRecordsList.Add(new MenuOptionRecord(
+				    $"(lowx{lowerX:N0}, lowy{lowerY:N0})",
+				    MenuOptionKind.Other));
+
+				targetMenuRecordsList.Add(new MenuOptionRecord(
+				    $"(upx{upperX:N0}, upy{upperY:N0})",
+				    MenuOptionKind.Other));
+
+				var targetDisplayName = drawing.Item.GetType().Name;
+
+				if (lowerX <= relativeX && upperX >= relativeX)
 				{
-					var lowerY = drawing.CenterY - drawing.Radius;
-					var upperY = drawing.CenterY + drawing.Radius;
-	
-					if (lowerY <= relativeY &&
-						upperY >= relativeY)
+					if (lowerY <= relativeY && upperY >= relativeY)
 					{
-						var name = "not determined";
+						targetMenuRecordsList.Add(new MenuOptionRecord(
+						    $"cx{drawing.CenterX} cy{drawing.CenterY} r{drawing.Radius} f{drawing.Fill} rc{drawing.RenderCycle} rcs{drawing.RenderCycleSequence}",
+							MenuOptionKind.Other));
 
 						if (drawing.Item is ILuthCompilerServiceResource compilerServiceResource)
 						{
 							var absolutePath = EnvironmentProvider.AbsolutePathFactory(compilerServiceResource.ResourceUri.Value, false);
+							targetDisplayName = absolutePath.NameWithExtension;
 
-							menuRecordsList.Add(new MenuOptionRecord(
-							    $"Open in editor: {absolutePath.NameWithExtension}",
+							targetMenuRecordsList.Add(new MenuOptionRecord(
+							    "Open in editor",
 							    MenuOptionKind.Other,
 								OnClickFunc: () => OpenFileInEditor(compilerServiceResource.ResourceUri.Value)));
 						}
-						else
-						{
-							menuRecordsList.Add(new MenuOptionRecord(
-							    $"Open in editor: {name}",
-							    MenuOptionKind.Other));
-						}
 					}
+
+					menuRecordsList.Add(new MenuOptionRecord(
+					    targetDisplayName,
+					    MenuOptionKind.Other,
+						SubMenu: new MenuRecord(targetMenuRecordsList.ToImmutableArray())));
 				}
 			}
 		}

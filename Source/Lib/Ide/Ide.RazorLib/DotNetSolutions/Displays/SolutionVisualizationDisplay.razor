@@ -18,11 +18,14 @@ localSolutionVisualizationModel.SolutionVisualizationDrawingList.Count: @localSo
 	 style="color: var(--luth_primary-foreground-color);"
 	 id="@DivHtmlElementId">
 
+@*
+viewBox="@_solutionVisualizationModel.Dimensions.ViewBoxMinX @_solutionVisualizationModel.Dimensions.ViewBoxMinY @_solutionVisualizationModel.Dimensions.ViewBoxWidth @_solutionVisualizationModel.Dimensions.ViewBoxHeight"
+*@
+
 	<svg id="@SvgHtmlElementId"
 		 style="background-color: var(--luth_primary-background-color);"
 		 width="@_solutionVisualizationModel.Dimensions.SvgWidth"
-	     height="@_solutionVisualizationModel.Dimensions.SvgHeight"
-		 viewBox="@_solutionVisualizationModel.Dimensions.ViewBoxMinX @_solutionVisualizationModel.Dimensions.ViewBoxMinY @_solutionVisualizationModel.Dimensions.ViewBoxWidth @_solutionVisualizationModel.Dimensions.ViewBoxHeight"
+	     height="@_solutionVisualizationModel.Dimensions.SvgHeight"		 
 		 xmlns="http://www.w3.org/2000/svg">
 
 		@for (int badRenderCycleIndex = 0; badRenderCycleIndex < localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Count; badRenderCycleIndex++)
