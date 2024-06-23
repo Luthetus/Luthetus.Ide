@@ -10,6 +10,11 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 
 public class SolutionVisualizationModel
 {
+	public const int RENDER_CYCLE_LIST_CONNECTIONS_INDEX = 0;
+	public const int RENDER_CYCLE_LIST_SOLUTION_INDEX = 1;
+	public const int RENDER_CYCLE_LIST_PROJECTS_INDEX = 2;
+	public const int RENDER_CYCLE_LIST_CLASSES_INDEX = 3;
+
 	private readonly Action _onStateChangedAction;
 
 	public SolutionVisualizationModel(IAbsolutePath? solutionAbsolutePath, Action onStateChangedAction)
@@ -23,6 +28,7 @@ public class SolutionVisualizationModel
 	public SolutionVisualizationDimensions Dimensions { get; set; }
 	public List<ISolutionVisualizationDrawing> SolutionVisualizationDrawingList { get; set; } = new();
 	public List<List<ISolutionVisualizationDrawing>> SolutionVisualizationDrawingRenderCycleList { get; set; } = new();
+	public Dictionary<string, ISolutionVisualizationDrawing> ParentMap { get; set; } = new();
 
 	public SolutionVisualizationModel ShallowClone()
 	{
@@ -31,6 +37,7 @@ public class SolutionVisualizationModel
 			Dimensions = Dimensions,
 			SolutionVisualizationDrawingList = new(SolutionVisualizationDrawingList),
 			SolutionVisualizationDrawingRenderCycleList = new(SolutionVisualizationDrawingRenderCycleList),
+			ParentMap = new(ParentMap),
 		};
 	}
 
@@ -42,6 +49,9 @@ public class SolutionVisualizationModel
 		var localSolutionVisualizationModel = ShallowClone();
 		localSolutionVisualizationModel.SolutionVisualizationDrawingList.Clear();
 		localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Clear();
+		
+		// Do not clear the 'ParentMap', it will stop the connections from project to class.
+		// localSolutionVisualizationModel.ParentMap.Clear();
 
 		if (SolutionAbsolutePath is null)
 			return localSolutionVisualizationModel;
@@ -232,20 +242,21 @@ public class SolutionVisualizationModel
 		SolutionVisualizationModel localSolutionVisualizationModel,
 		int renderCycleIndex)
 	{
-		var solutionDrawing = localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[1].Single();
-		var cSharpProjectDrawingList = localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[2];
+		var solutionDrawing = localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[RENDER_CYCLE_LIST_SOLUTION_INDEX].Single();
+		var projectDrawingList = localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[RENDER_CYCLE_LIST_PROJECTS_INDEX];
 
-		foreach (var cSharpProjectDrawing in cSharpProjectDrawingList)
+		// From solution to project connections
+		foreach (var projectDrawing in projectDrawingList)
 		{
 			var solutionDrawingCircle = (ISolutionVisualizationDrawingCircle)solutionDrawing;
-			var cSharpProjectDrawingCircle = (ISolutionVisualizationDrawingCircle)cSharpProjectDrawing;
+			var projectDrawingCircle = (ISolutionVisualizationDrawingCircle)projectDrawing;
 
 			var connectionDrawing = new SolutionVisualizationDrawingLine<SolutionVisualizationConnection>
 			{
-				Item = new SolutionVisualizationConnection(solutionDrawing, cSharpProjectDrawing),
+				Item = new SolutionVisualizationConnection(solutionDrawing, projectDrawing),
 				SolutionVisualizationItemKind = SolutionVisualizationItemKind.Connection,
 				StartPoint = (solutionDrawingCircle.CenterX, solutionDrawingCircle.CenterY),
-				EndPoint = (cSharpProjectDrawingCircle.CenterX, cSharpProjectDrawingCircle.CenterY),
+				EndPoint = (projectDrawingCircle.CenterX, projectDrawingCircle.CenterY),
 				Stroke = "var(--luth_primary-foreground-color)",
 				RenderCycle = renderCycleIndex,
 			};
@@ -253,5 +264,34 @@ public class SolutionVisualizationModel
 			localSolutionVisualizationModel.SolutionVisualizationDrawingList.Insert(0, connectionDrawing);
 			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(connectionDrawing);
 		}
+
+		var classDrawingList = localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[RENDER_CYCLE_LIST_CLASSES_INDEX];
+
+		// From project to class connections
+		foreach (var classDrawing in classDrawingList)
+		{
+			var cSharpResource = (CSharpResource)classDrawing.Item;
+
+			Console.WriteLine($"localSolutionVisualizationModel.ParentMap::{localSolutionVisualizationModel.ParentMap.Count}");
+
+			if (!localSolutionVisualizationModel.ParentMap.TryGetValue(cSharpResource.ResourceUri.Value, out var projectDrawing))
+				continue;
+
+			var projectDrawingCircle = (ISolutionVisualizationDrawingCircle)projectDrawing;
+			var classDrawingCircle = (ISolutionVisualizationDrawingCircle)classDrawing;
+
+			var connectionDrawing = new SolutionVisualizationDrawingLine<SolutionVisualizationConnection>
+			{
+				Item = new SolutionVisualizationConnection(projectDrawing, classDrawingCircle),
+				SolutionVisualizationItemKind = SolutionVisualizationItemKind.Connection,
+				StartPoint = (projectDrawingCircle.CenterX, projectDrawingCircle.CenterY),
+				EndPoint = (classDrawingCircle.CenterX, classDrawingCircle.CenterY),
+				Stroke = "var(--luth_primary-foreground-color)",
+				RenderCycle = renderCycleIndex,
+			};
+
+			localSolutionVisualizationModel.SolutionVisualizationDrawingList.Insert(0, connectionDrawing);
+			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(connectionDrawing);
+		}		
 	}
 }

@@ -32,6 +32,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 	object ISolutionVisualizationDrawing.Item => Item;
 
 	public MenuOptionRecord GetMenuOptionRecord(
+		SolutionVisualizationModel localSolutionVisualizationModel,
 		IEnvironmentProvider environmentProvider,
 		LuthetusTextEditorConfig textEditorConfig,
 		IServiceProvider serviceProvider)
@@ -70,6 +71,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 				    MenuOptionKind.Other,
 					OnClickFunc: () => LoadClasses(
 						(CSharpProjectResource)compilerServiceResource,
+						localSolutionVisualizationModel,
 						textEditorConfig,
 						serviceProvider)));			
 			}
@@ -144,6 +146,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 
 	private async Task LoadClasses(
 		CSharpProjectResource cSharpProjectResource,
+		SolutionVisualizationModel localSolutionVisualizationModel,
 		LuthetusTextEditorConfig textEditorConfig,
 		IServiceProvider serviceProvider)
 	{
@@ -172,7 +175,13 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 	        $"{projectAbsolutePath.NameWithExtension} discovery {discoveredFileList.Count} C# files",
 	        commonComponentRenderers,
 	        dispatcher,
-	        TimeSpan.FromSeconds(60));
+	        TimeSpan.FromSeconds(6));
+
+		foreach (var file in discoveredFileList)
+		{
+			if (!localSolutionVisualizationModel.ParentMap.TryAdd(file, this))
+				localSolutionVisualizationModel.ParentMap[file] = this;
+		}
 
 		foreach (var file in discoveredFileList)
 		{

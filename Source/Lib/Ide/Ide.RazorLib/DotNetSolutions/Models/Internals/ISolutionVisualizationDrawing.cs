@@ -24,6 +24,7 @@ public interface ISolutionVisualizationDrawing
 	public int RenderCycleSequence { get; set; }
 
 	public MenuOptionRecord GetMenuOptionRecord(
+		SolutionVisualizationModel localSolutionVisualizationModel,
 		IEnvironmentProvider environmentProvider,
 		LuthetusTextEditorConfig textEditorConfig,
 		IServiceProvider serviceProvider);

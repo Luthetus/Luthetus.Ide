@@ -31,6 +31,7 @@ public class SolutionVisualizationDrawingLine<TItem> : ISolutionVisualizationDra
 	object ISolutionVisualizationDrawing.Item => Item;
 
 	public MenuOptionRecord GetMenuOptionRecord(
+		SolutionVisualizationModel localSolutionVisualizationModel,
 		IEnvironmentProvider environmentProvider,
 		LuthetusTextEditorConfig textEditorConfig,
 		IServiceProvider serviceProvider)

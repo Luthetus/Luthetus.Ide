@@ -69,21 +69,6 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 			var relativeY = mouseEventArgs.ClientY - localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.TopInPixels;
 			var viewBoxY = relativeY / localSolutionVisualizationModel.Dimensions.ScaleY;
 
-			//// Debugging
-			//{
-			//	menuRecordsList.Add(new MenuOptionRecord(
-			//	    $"(sx{localSolutionVisualizationModel.Dimensions.ScaleX}, sy{localSolutionVisualizationModel.Dimensions.ScaleY})",
-			//	    MenuOptionKind.Other));
-	        //
-			//	menuRecordsList.Add(new MenuOptionRecord(
-			//	    $"(rx{relativeX:N0}, ry{relativeY:N0})",
-			//	    MenuOptionKind.Other));
-	        //
-			//	menuRecordsList.Add(new MenuOptionRecord(
-			//	    $"(vx{viewBoxX:N0}, vy{viewBoxY:N0})",
-			//	    MenuOptionKind.Other));
-			//}
-
 			foreach (var drawing in localSolutionVisualizationModel.SolutionVisualizationDrawingList)
 			{
 				if (drawing is ISolutionVisualizationDrawingCircle solutionVisualizationDrawingCircle)
@@ -94,31 +79,14 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 					var lowerY = solutionVisualizationDrawingCircle.CenterY - solutionVisualizationDrawingCircle.Radius;
 					var upperY = solutionVisualizationDrawingCircle.CenterY + solutionVisualizationDrawingCircle.Radius;
 	
-					//// Debugging
-					//{
-					//	targetMenuRecordsList.Add(new MenuOptionRecord(
-					//	    $"(lowx{lowerX:N0}, lowy{lowerY:N0})",
-					//	    MenuOptionKind.Other));
-		            //
-					//	targetMenuRecordsList.Add(new MenuOptionRecord(
-					//	    $"(upx{upperX:N0}, upy{upperY:N0})",
-					//	    MenuOptionKind.Other));
-					//}
-	
 					var targetDisplayName = solutionVisualizationDrawingCircle.Item.GetType().Name;
 	
 					if (lowerX <= relativeX && upperX >= relativeX)
 					{
 						if (lowerY <= relativeY && upperY >= relativeY)
 						{
-							//// Debugging
-							//{
-							//	targetMenuRecordsList.Add(new MenuOptionRecord(
-							//	    $"cx{drawing.CenterX} cy{drawing.CenterY} r{drawing.Radius} f{drawing.Fill} rc{drawing.RenderCycle} rcs{drawing.RenderCycleSequence}",
-							//		MenuOptionKind.Other));
-							//}
-	
 							menuRecordsList.Add(solutionVisualizationDrawingCircle.GetMenuOptionRecord(
+								localSolutionVisualizationModel,
 								EnvironmentProvider,
 								TextEditorConfig,
 								ServiceProvider));
@@ -127,9 +95,9 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 				}
 				else if (drawing is ISolutionVisualizationDrawingLine solutionVisualizationDrawingLine)
 				{
-					menuRecordsList.Add(new MenuOptionRecord(
-						"TODO: ISolutionVisualizationDrawingLine",
-						MenuOptionKind.Other));
+					//menuRecordsList.Add(new MenuOptionRecord(
+					//	"TODO: ISolutionVisualizationDrawingLine",
+					//	MenuOptionKind.Other));
 				}
 			}
 		}
@@ -151,6 +119,33 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 
         return new MenuRecord(menuRecordsList.ToImmutableArray());
     }
+
+//// Debugging
+//{
+//	menuRecordsList.Add(new MenuOptionRecord(
+//	    $"(sx{localSolutionVisualizationModel.Dimensions.ScaleX}, sy{localSolutionVisualizationModel.Dimensions.ScaleY})",
+//	    MenuOptionKind.Other));
+//
+//	menuRecordsList.Add(new MenuOptionRecord(
+//	    $"(rx{relativeX:N0}, ry{relativeY:N0})",
+//	    MenuOptionKind.Other));
+//
+//	menuRecordsList.Add(new MenuOptionRecord(
+//	    $"(vx{viewBoxX:N0}, vy{viewBoxY:N0})",
+//	    MenuOptionKind.Other));
+//
+//	targetMenuRecordsList.Add(new MenuOptionRecord(
+//	    $"(lowx{lowerX:N0}, lowy{lowerY:N0})",
+//	    MenuOptionKind.Other));
+//
+//	targetMenuRecordsList.Add(new MenuOptionRecord(
+//	    $"(upx{upperX:N0}, upy{upperY:N0})",
+//	    MenuOptionKind.Other));
+//
+//	targetMenuRecordsList.Add(new MenuOptionRecord(
+//	    $"cx{drawing.CenterX} cy{drawing.CenterY} r{drawing.Radius} f{drawing.Fill} rc{drawing.RenderCycle} rcs{drawing.RenderCycleSequence}",
+//		MenuOptionKind.Other));
+//}
 
     public static string GetContextMenuCssStyleString(
 		MouseEventArgs mouseEventArgs,
