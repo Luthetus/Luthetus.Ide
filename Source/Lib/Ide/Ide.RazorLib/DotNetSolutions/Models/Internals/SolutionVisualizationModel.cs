@@ -62,6 +62,35 @@ public class SolutionVisualizationModel
 		var columnIndex = 0;
 		var renderCycleIndex = 0;
 
+		// Regarding drawing the connections between the solution node, and its child project nodes.
+		//
+		// We need to draw the connections, before the nodes themselves, as to permit the connections be drawn
+		// from the center of each node, rather than calculating the arc on the edge of the circle.
+		//
+		// i.e.: if the connections are drawn first, the node will perfectly cover the connection, curvature and all,
+		//       even though the connection is simply a line from one point to another.
+		//
+		// That being said, we don't know the position of the nodes until their respective 'Draw...(...)' methods are invoked.
+		// But, these draw methods don't actually render anything on the UI. It is just populating a list,
+		// in which from index 0 to the end of that list, things will be rendered in that order.
+		//
+		// So, if at the end we insert the connections at index 0 of the "to be rendered list", it should work out.
+		// An issue however, there are properties on the 'ISolutionVisualizationDrawing.cs' relating to the order that things were rendered.
+		//
+		// If we do not set these properties correctly, the C# code won't be able to properly determine what UI element was
+		// clicked, (when two UI elements overlap, the most recently rendered element receives the click event).
+		//
+		// Therefore, an awkard incrementation of 'renderCycleIndex' is being done here. This leaves renderCycleIndex of index 0
+		// free for use at a later time. renderCycleIndex of index 0 is saying, "this was part of the UI element group that was first rendered".
+		//
+		// Thus, if one clicks a node, the "covered connection" that extends through the perimiter of a node, to its center point.
+		// This element won't get the click event.
+		{
+			// Reserve renderCycleIndex of 0 for the connections drawn between nodes.
+			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
+			renderCycleIndex++;
+		}
+
 		DrawSolution(dotNetSolutionResource, localSolutionVisualizationModel, radius, centerX, centerY, rowIndex, columnIndex, renderCycleIndex);
 		renderCycleIndex++;
 		rowIndex++;
@@ -73,6 +102,8 @@ public class SolutionVisualizationModel
 		DrawClasses(cSharpResourceList, localSolutionVisualizationModel, radius, centerX, centerY, rowIndex, columnIndex, renderCycleIndex);
 		renderCycleIndex++;
 		rowIndex++;
+
+		DrawConnections(localSolutionVisualizationModel, renderCycleIndex: 0);
 
 		return localSolutionVisualizationModel;
 	}
@@ -91,10 +122,10 @@ public class SolutionVisualizationModel
 
 		localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
 
-		var dotNetSolutionDrawing = new SolutionVisualizationDrawing<DotNetSolutionResource>
+		var dotNetSolutionDrawing = new SolutionVisualizationDrawingCircle<DotNetSolutionResource>
 		{
 			Item = (DotNetSolutionResource)dotNetSolutionResource,
-			SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Solution,
+			SolutionVisualizationItemKind = SolutionVisualizationItemKind.Solution,
 			CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
 			CenterY = ((1 + rowIndex) * centerY) + (rowIndex * radius) + (rowIndex * localSolutionVisualizationModel.Dimensions.VerticalPadding),
 			Radius = radius,
@@ -147,10 +178,10 @@ public class SolutionVisualizationModel
 				centerX = solutionCenterX + solutionRadius + myRadius + previousCirclesRadius + cumulativeHorizontalPadding;
 			}
 
-			var cSharpProjectDrawing = new SolutionVisualizationDrawing<CSharpProjectResource>
+			var cSharpProjectDrawing = new SolutionVisualizationDrawingCircle<CSharpProjectResource>
 			{
 				Item = (CSharpProjectResource)cSharpProjectResource,
-				SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Project,
+				SolutionVisualizationItemKind = SolutionVisualizationItemKind.Project,
 				CenterX = centerX,
 				CenterY = ((1 + rowIndex) * centerY) + (rowIndex * radius) + (rowIndex * localSolutionVisualizationModel.Dimensions.VerticalPadding),
 				Radius = radius,
@@ -179,10 +210,10 @@ public class SolutionVisualizationModel
 
 		foreach (var cSharpResource in cSharpResourceList)
 		{
-			var cSharpDrawing = new SolutionVisualizationDrawing<CSharpResource>
+			var cSharpDrawing = new SolutionVisualizationDrawingCircle<CSharpResource>
 			{
 				Item = (CSharpResource)cSharpResource,
-				SolutionVisualizationDrawingKind = SolutionVisualizationDrawingKind.Class,
+				SolutionVisualizationItemKind = SolutionVisualizationItemKind.Class,
 				CenterX = ((1 + columnIndex) * centerX) + (columnIndex * radius) + (columnIndex * localSolutionVisualizationModel.Dimensions.HorizontalPadding),
 				CenterY = ((1 + rowIndex) * centerY) + (rowIndex * radius) + (rowIndex * localSolutionVisualizationModel.Dimensions.VerticalPadding),
 				Radius = radius,
@@ -194,6 +225,33 @@ public class SolutionVisualizationModel
 
 			localSolutionVisualizationModel.SolutionVisualizationDrawingList.Add(cSharpDrawing);
 			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(cSharpDrawing);
+		}
+	}
+
+	private void DrawConnections(
+		SolutionVisualizationModel localSolutionVisualizationModel,
+		int renderCycleIndex)
+	{
+		var solutionDrawing = localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[1].Single();
+		var cSharpProjectDrawingList = localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[2];
+
+		foreach (var cSharpProjectDrawing in cSharpProjectDrawingList)
+		{
+			var solutionDrawingCircle = (ISolutionVisualizationDrawingCircle)solutionDrawing;
+			var cSharpProjectDrawingCircle = (ISolutionVisualizationDrawingCircle)cSharpProjectDrawing;
+
+			var connectionDrawing = new SolutionVisualizationDrawingLine<SolutionVisualizationConnection>
+			{
+				Item = new SolutionVisualizationConnection(solutionDrawing, cSharpProjectDrawing),
+				SolutionVisualizationItemKind = SolutionVisualizationItemKind.Connection,
+				StartPoint = (solutionDrawingCircle.CenterX, solutionDrawingCircle.CenterY),
+				EndPoint = (cSharpProjectDrawingCircle.CenterX, cSharpProjectDrawingCircle.CenterY),
+				Fill = "var(--luth_icon-c-sharp-class-font-color)",
+				RenderCycle = renderCycleIndex,
+			};
+
+			localSolutionVisualizationModel.SolutionVisualizationDrawingList.Insert(0, connectionDrawing);
+			localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex].Add(connectionDrawing);
 		}
 	}
 }

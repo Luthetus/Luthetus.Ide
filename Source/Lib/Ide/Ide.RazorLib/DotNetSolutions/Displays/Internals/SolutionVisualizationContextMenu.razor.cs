@@ -86,41 +86,50 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 
 			foreach (var drawing in localSolutionVisualizationModel.SolutionVisualizationDrawingList)
 			{
-				var lowerX = drawing.CenterX - drawing.Radius;
-				var upperX = drawing.CenterX + drawing.Radius;
-
-				var lowerY = drawing.CenterY - drawing.Radius;
-				var upperY = drawing.CenterY + drawing.Radius;
-
-				//// Debugging
-				//{
-				//	targetMenuRecordsList.Add(new MenuOptionRecord(
-				//	    $"(lowx{lowerX:N0}, lowy{lowerY:N0})",
-				//	    MenuOptionKind.Other));
-	            //
-				//	targetMenuRecordsList.Add(new MenuOptionRecord(
-				//	    $"(upx{upperX:N0}, upy{upperY:N0})",
-				//	    MenuOptionKind.Other));
-				//}
-
-				var targetDisplayName = drawing.Item.GetType().Name;
-
-				if (lowerX <= relativeX && upperX >= relativeX)
+				if (drawing is ISolutionVisualizationDrawingCircle solutionVisualizationDrawingCircle)
 				{
-					if (lowerY <= relativeY && upperY >= relativeY)
+					var lowerX = solutionVisualizationDrawingCircle.CenterX - solutionVisualizationDrawingCircle.Radius;
+					var upperX = solutionVisualizationDrawingCircle.CenterX + solutionVisualizationDrawingCircle.Radius;
+	
+					var lowerY = solutionVisualizationDrawingCircle.CenterY - solutionVisualizationDrawingCircle.Radius;
+					var upperY = solutionVisualizationDrawingCircle.CenterY + solutionVisualizationDrawingCircle.Radius;
+	
+					//// Debugging
+					//{
+					//	targetMenuRecordsList.Add(new MenuOptionRecord(
+					//	    $"(lowx{lowerX:N0}, lowy{lowerY:N0})",
+					//	    MenuOptionKind.Other));
+		            //
+					//	targetMenuRecordsList.Add(new MenuOptionRecord(
+					//	    $"(upx{upperX:N0}, upy{upperY:N0})",
+					//	    MenuOptionKind.Other));
+					//}
+	
+					var targetDisplayName = solutionVisualizationDrawingCircle.Item.GetType().Name;
+	
+					if (lowerX <= relativeX && upperX >= relativeX)
 					{
-						//// Debugging
-						//{
-						//	targetMenuRecordsList.Add(new MenuOptionRecord(
-						//	    $"cx{drawing.CenterX} cy{drawing.CenterY} r{drawing.Radius} f{drawing.Fill} rc{drawing.RenderCycle} rcs{drawing.RenderCycleSequence}",
-						//		MenuOptionKind.Other));
-						//}
-
-						menuRecordsList.Add(drawing.GetMenuOptionRecord(
-							EnvironmentProvider,
-							TextEditorConfig,
-							ServiceProvider));
+						if (lowerY <= relativeY && upperY >= relativeY)
+						{
+							//// Debugging
+							//{
+							//	targetMenuRecordsList.Add(new MenuOptionRecord(
+							//	    $"cx{drawing.CenterX} cy{drawing.CenterY} r{drawing.Radius} f{drawing.Fill} rc{drawing.RenderCycle} rcs{drawing.RenderCycleSequence}",
+							//		MenuOptionKind.Other));
+							//}
+	
+							menuRecordsList.Add(solutionVisualizationDrawingCircle.GetMenuOptionRecord(
+								EnvironmentProvider,
+								TextEditorConfig,
+								ServiceProvider));
+						}
 					}
+				}
+				else if (drawing is ISolutionVisualizationDrawingLine solutionVisualizationDrawingLine)
+				{
+					menuRecordsList.Add(new MenuOptionRecord(
+						"TODO: ISolutionVisualizationDrawingLine",
+						MenuOptionKind.Other));
 				}
 			}
 		}

@@ -17,10 +17,11 @@ using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 
-public class SolutionVisualizationDrawing<TItem> : ISolutionVisualizationDrawing
+public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationDrawingCircle
 {
 	public TItem Item { get; set; }
-	public SolutionVisualizationDrawingKind SolutionVisualizationDrawingKind { get; set; }
+	public SolutionVisualizationDrawingKind SolutionVisualizationDrawingKind => SolutionVisualizationDrawingKind.Circle;
+	public SolutionVisualizationItemKind SolutionVisualizationItemKind { get; set; }
 	public int CenterX { get; set; }
 	public int CenterY { get; set; }
 	public int Radius { get; set; }
@@ -52,7 +53,7 @@ public class SolutionVisualizationDrawing<TItem> : ISolutionVisualizationDrawing
 					textEditorConfig,
 					serviceProvider)));
 
-			if (SolutionVisualizationDrawingKind == SolutionVisualizationDrawingKind.Solution)
+			if (SolutionVisualizationItemKind == SolutionVisualizationItemKind.Solution)
 			{
 				menuOptionRecordList.Add(new MenuOptionRecord(
 				    "Load Projects",
@@ -62,7 +63,7 @@ public class SolutionVisualizationDrawing<TItem> : ISolutionVisualizationDrawing
 						textEditorConfig,
 						serviceProvider)));			
 			}
-			else if (SolutionVisualizationDrawingKind == SolutionVisualizationDrawingKind.Project)
+			else if (SolutionVisualizationItemKind == SolutionVisualizationItemKind.Project)
 			{
 				menuOptionRecordList.Add(new MenuOptionRecord(
 				    "Load Classes",

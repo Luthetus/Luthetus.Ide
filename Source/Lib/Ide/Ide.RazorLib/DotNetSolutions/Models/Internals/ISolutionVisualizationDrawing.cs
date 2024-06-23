@@ -7,11 +7,8 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 public interface ISolutionVisualizationDrawing
 {
 	public object Item { get; }
-	public SolutionVisualizationDrawingKind SolutionVisualizationDrawingKind { get; set; }
-	public int CenterX { get; set; }
-	public int CenterY { get; set; }
-	public int Radius { get; set; }
-	public string Fill { get; set; }
+	public SolutionVisualizationDrawingKind SolutionVisualizationDrawingKind { get; }
+	public SolutionVisualizationItemKind SolutionVisualizationItemKind { get; set; }
 	
 	/// <summary>
 	/// Macro-filter for the order that things render.

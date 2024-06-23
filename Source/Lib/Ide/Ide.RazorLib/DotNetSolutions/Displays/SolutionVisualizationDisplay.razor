@@ -1,5 +1,6 @@
 @using Luthetus.Common.RazorLib.Dropdowns.Displays
 @using Luthetus.Common.RazorLib.Dropdowns.Models;
+@using Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals
 @using Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals
 
 <h3>SolutionVisualizationDisplay</h3>
@@ -39,10 +40,21 @@ viewBox="@_solutionVisualizationModel.Dimensions.ViewBoxMinX @_solutionVisualiza
 				var solutionVisualizationDrawing = renderCycleList[sequenceIndex];
 				solutionVisualizationDrawing.RenderCycleSequence = sequenceIndex;
 
-				<circle cx="@solutionVisualizationDrawing.CenterX"
-						cy="@solutionVisualizationDrawing.CenterY"
-						r="@solutionVisualizationDrawing.Radius"
-						fill="@solutionVisualizationDrawing.Fill" />
+				if (solutionVisualizationDrawing is ISolutionVisualizationDrawingCircle solutionVisualizationDrawingCircle)
+				{
+					<circle cx="@solutionVisualizationDrawingCircle.CenterX"
+							cy="@solutionVisualizationDrawingCircle.CenterY"
+							r="@solutionVisualizationDrawingCircle.Radius"
+							fill="@solutionVisualizationDrawingCircle.Fill" />
+				}
+				else if (solutionVisualizationDrawing is ISolutionVisualizationDrawingLine solutionVisualizationDrawingLine)
+				{
+					 <line x1="@solutionVisualizationDrawingLine.StartPoint.x"
+						   y1="@solutionVisualizationDrawingLine.StartPoint.y"
+						   x2="@solutionVisualizationDrawingLine.EndPoint.x"
+						   y2="@solutionVisualizationDrawingLine.EndPoint.y"
+						   stroke="red" />
+				}
 			}
 		}
 		
