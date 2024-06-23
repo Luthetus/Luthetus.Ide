@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -7,6 +9,8 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 
@@ -44,13 +48,17 @@ public class SolutionVisualizationDrawing<TItem> : ISolutionVisualizationDrawing
 					compilerServiceResource.ResourceUri.Value,
 					textEditorConfig,
 					serviceProvider)));
-		}
 
-		if (SolutionVisualizationDrawingKind == SolutionVisualizationDrawingKind.Solution)
-		{
-			menuOptionRecordList.Add(new MenuOptionRecord(
-			    "THIS IS A SOLUTION",
-			    MenuOptionKind.Other));			
+			if (SolutionVisualizationDrawingKind == SolutionVisualizationDrawingKind.Solution)
+			{
+				menuOptionRecordList.Add(new MenuOptionRecord(
+				    "Load Projects",
+				    MenuOptionKind.Other,
+					OnClickFunc: () => LoadProjects(
+						(DotNetSolutionResource)compilerServiceResource,
+						textEditorConfig,
+						serviceProvider)));			
+			}
 		}
 
 		return new MenuOptionRecord(
@@ -95,4 +103,51 @@ public class SolutionVisualizationDrawing<TItem> : ISolutionVisualizationDrawing
             }
         }
     }
+
+	private async Task LoadProjects(
+		DotNetSolutionResource dotNetSolutionResource,
+		LuthetusTextEditorConfig textEditorConfig,
+		IServiceProvider serviceProvider)
+	{
+        if (textEditorConfig.RegisterModelFunc is null)
+            return;
+
+		var dotNetSolutionStateWrap = serviceProvider.GetRequiredService<IState<DotNetSolutionState>>();
+
+		var dotNetSolutionModel = dotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(x =>
+    		x.AbsolutePath.Value == dotNetSolutionResource.ResourceUri.Value);
+
+		foreach (var project in dotNetSolutionModel.DotNetProjectList)
+		{
+			var resourceUri = new ResourceUri(project.AbsolutePath.Value);
+
+	        await textEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+	                resourceUri,
+	                serviceProvider))
+	            .ConfigureAwait(false);
+		}
+		
+		/*
+		if (textEditorConfig.TryRegisterViewModelFunc is not null)
+        {
+            var viewModelKey = await textEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+                    Key<TextEditorViewModel>.NewKey(),
+                    dotNetSolutionResource.ResourceUri,
+                    new Category("main"),
+                    false,
+                    serviceProvider))
+                .ConfigureAwait(false);
+
+            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+                textEditorConfig.TryShowViewModelFunc is not null)
+            {
+                await textEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+                        viewModelKey,
+                        Key<TextEditorGroup>.Empty,
+                        serviceProvider))
+                    .ConfigureAwait(false);
+            }
+        }
+		*/
+	}
 }
