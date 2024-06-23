@@ -69,35 +69,39 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 			var relativeY = mouseEventArgs.ClientY - localSolutionVisualizationModel.Dimensions.DivBoundingClientRect.TopInPixels;
 			var viewBoxY = relativeY / localSolutionVisualizationModel.Dimensions.ScaleY;
 
-			menuRecordsList.Add(new MenuOptionRecord(
-			    $"(sx{localSolutionVisualizationModel.Dimensions.ScaleX}, sy{localSolutionVisualizationModel.Dimensions.ScaleY})",
-			    MenuOptionKind.Other));
-
-			menuRecordsList.Add(new MenuOptionRecord(
-			    $"(rx{relativeX:N0}, ry{relativeY:N0})",
-			    MenuOptionKind.Other));
-
-			menuRecordsList.Add(new MenuOptionRecord(
-			    $"(vx{viewBoxX:N0}, vy{viewBoxY:N0})",
-			    MenuOptionKind.Other));
+			//// Debugging
+			//{
+			//	menuRecordsList.Add(new MenuOptionRecord(
+			//	    $"(sx{localSolutionVisualizationModel.Dimensions.ScaleX}, sy{localSolutionVisualizationModel.Dimensions.ScaleY})",
+			//	    MenuOptionKind.Other));
+	        //
+			//	menuRecordsList.Add(new MenuOptionRecord(
+			//	    $"(rx{relativeX:N0}, ry{relativeY:N0})",
+			//	    MenuOptionKind.Other));
+	        //
+			//	menuRecordsList.Add(new MenuOptionRecord(
+			//	    $"(vx{viewBoxX:N0}, vy{viewBoxY:N0})",
+			//	    MenuOptionKind.Other));
+			//}
 
 			foreach (var drawing in localSolutionVisualizationModel.SolutionVisualizationDrawingList)
 			{
-				var targetMenuRecordsList = new List<MenuOptionRecord>();
-
 				var lowerX = drawing.CenterX - drawing.Radius;
 				var upperX = drawing.CenterX + drawing.Radius;
 
 				var lowerY = drawing.CenterY - drawing.Radius;
 				var upperY = drawing.CenterY + drawing.Radius;
 
-				targetMenuRecordsList.Add(new MenuOptionRecord(
-				    $"(lowx{lowerX:N0}, lowy{lowerY:N0})",
-				    MenuOptionKind.Other));
-
-				targetMenuRecordsList.Add(new MenuOptionRecord(
-				    $"(upx{upperX:N0}, upy{upperY:N0})",
-				    MenuOptionKind.Other));
+				//// Debugging
+				//{
+				//	targetMenuRecordsList.Add(new MenuOptionRecord(
+				//	    $"(lowx{lowerX:N0}, lowy{lowerY:N0})",
+				//	    MenuOptionKind.Other));
+	            //
+				//	targetMenuRecordsList.Add(new MenuOptionRecord(
+				//	    $"(upx{upperX:N0}, upy{upperY:N0})",
+				//	    MenuOptionKind.Other));
+				//}
 
 				var targetDisplayName = drawing.Item.GetType().Name;
 
@@ -105,26 +109,18 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 				{
 					if (lowerY <= relativeY && upperY >= relativeY)
 					{
-						targetMenuRecordsList.Add(new MenuOptionRecord(
-						    $"cx{drawing.CenterX} cy{drawing.CenterY} r{drawing.Radius} f{drawing.Fill} rc{drawing.RenderCycle} rcs{drawing.RenderCycleSequence}",
-							MenuOptionKind.Other));
+						//// Debugging
+						//{
+						//	targetMenuRecordsList.Add(new MenuOptionRecord(
+						//	    $"cx{drawing.CenterX} cy{drawing.CenterY} r{drawing.Radius} f{drawing.Fill} rc{drawing.RenderCycle} rcs{drawing.RenderCycleSequence}",
+						//		MenuOptionKind.Other));
+						//}
 
-						if (drawing.Item is ILuthCompilerServiceResource compilerServiceResource)
-						{
-							var absolutePath = EnvironmentProvider.AbsolutePathFactory(compilerServiceResource.ResourceUri.Value, false);
-							targetDisplayName = absolutePath.NameWithExtension;
-
-							targetMenuRecordsList.Add(new MenuOptionRecord(
-							    "Open in editor",
-							    MenuOptionKind.Other,
-								OnClickFunc: () => OpenFileInEditor(compilerServiceResource.ResourceUri.Value)));
-						}
+						menuRecordsList.Add(drawing.GetMenuOptionRecord(
+							EnvironmentProvider,
+							TextEditorConfig,
+							ServiceProvider));
 					}
-
-					menuRecordsList.Add(new MenuOptionRecord(
-					    targetDisplayName,
-					    MenuOptionKind.Other,
-						SubMenu: new MenuRecord(targetMenuRecordsList.ToImmutableArray())));
 				}
 			}
 		}
@@ -145,40 +141,6 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
             return MenuRecord.Empty;
 
         return new MenuRecord(menuRecordsList.ToImmutableArray());
-    }
-
-	private async Task OpenFileInEditor(string filePath)
-	{
-        var resourceUri = new ResourceUri(filePath);
-
-        if (TextEditorConfig.RegisterModelFunc is null)
-            return;
-
-        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-                resourceUri,
-                ServiceProvider))
-            .ConfigureAwait(false);
-
-        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
-        {
-            var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-                    Key<TextEditorViewModel>.NewKey(),
-                    resourceUri,
-                    new Category("main"),
-                    false,
-                    ServiceProvider))
-                .ConfigureAwait(false);
-
-            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-                TextEditorConfig.TryShowViewModelFunc is not null)
-            {
-                await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-                        viewModelKey,
-                        Key<TextEditorGroup>.Empty,
-                        ServiceProvider))
-                    .ConfigureAwait(false);
-            }
-        }
     }
 
     public static string GetContextMenuCssStyleString(

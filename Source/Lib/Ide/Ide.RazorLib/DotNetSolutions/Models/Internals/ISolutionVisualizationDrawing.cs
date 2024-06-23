@@ -1,3 +1,7 @@
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 
 public interface ISolutionVisualizationDrawing
@@ -21,4 +25,9 @@ public interface ISolutionVisualizationDrawing
 	/// would have been the first in a given render cycle to have rendered.
 	/// </summary>
 	public int RenderCycleSequence { get; set; }
+
+	public MenuOptionRecord GetMenuOptionRecord(
+		IEnvironmentProvider environmentProvider,
+		LuthetusTextEditorConfig textEditorConfig,
+		IServiceProvider serviceProvider);
 }
