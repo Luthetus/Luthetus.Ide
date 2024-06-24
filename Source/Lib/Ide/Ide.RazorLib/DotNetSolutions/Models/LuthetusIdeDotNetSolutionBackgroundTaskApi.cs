@@ -15,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
@@ -48,6 +49,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
     private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly IServiceProvider _serviceProvider;
 
     public LuthetusIdeDotNetSolutionBackgroundTaskApi(
         LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
@@ -64,7 +66,8 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         IFileSystemProvider fileSystemProvider,
         ITextEditorService textEditorService,
         ICompilerServiceRegistry interfaceCompilerServiceRegistry,
-        IState<TerminalState> terminalStateWrap)
+        IState<TerminalState> terminalStateWrap,
+		IServiceProvider serviceProvider)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
@@ -81,6 +84,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         _textEditorService = textEditorService;
         _interfaceCompilerServiceRegistry = interfaceCompilerServiceRegistry;
         _terminalStateWrap = terminalStateWrap;
+		_serviceProvider = serviceProvider;
     }
 
     public void Website_AddExistingProjectToSolution(
@@ -432,6 +436,19 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
 		_ = Task.Run(async () =>
 		{
+			if (_textEditorService.TextEditorConfig.RegisterModelFunc is null)
+	            return;
+	
+			foreach (var project in dotNetSolutionModel.DotNetProjectList)
+			{
+				var resourceUri = new ResourceUri(project.AbsolutePath.Value);
+	
+		        await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+		                resourceUri,
+		                _serviceProvider))
+		            .ConfigureAwait(false);
+			}
+
 			var waitCounter = 0;
 			var maxWaits = 10;
 
