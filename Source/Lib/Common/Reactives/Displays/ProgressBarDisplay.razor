@@ -12,14 +12,19 @@
 		var localDecimalPercentProgress = Math.Ceiling(ProgressBarModel.DecimalPercentProgress * 100);
 		var percentageComplete = $"{localDecimalPercentProgress}%";
 	}
-
-	<div class="luth_progress-bar-fill">
+    
+	<div class="luth_progress-bar-fill"
+         style="position: relative; height: 2em;">
 
 		<div class="luth_progress-bar-fill-slider"
-			 style="background-color: red; width: @(percentageComplete);">
-		</div>		
+			 style="background-color: red; width: @(percentageComplete); height: 100%;">
+		</div>
 
-		@percentageComplete
+		<div class="luth_progress-bar-fill-text"
+			 style="position: absolute; left: calc(50% - @(percentageComplete.Length)ch); top: 0;">
+			@percentageComplete
+		</div>
+		
 	</div>
 
 	ProgressBarModel.IsDisposed: @ProgressBarModel.IsDisposed
