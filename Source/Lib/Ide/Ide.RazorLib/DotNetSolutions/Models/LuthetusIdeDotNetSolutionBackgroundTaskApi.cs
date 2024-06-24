@@ -449,6 +449,11 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 		            .ConfigureAwait(false);
 			}
 
+			foreach (var project in dotNetSolutionModel.DotNetProjectList)
+			{
+				await LoadClasses(project);
+			}
+
 			var waitCounter = 0;
 			var maxWaits = 10;
 
@@ -464,5 +469,55 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
 			progressBarModel.Dispose();
 		});
+	}
+
+	private async Task LoadClasses(IDotNetProject dotNetProject)
+	{
+		var parentDirectory = dotNetProject.AbsolutePath.ParentDirectory;
+		if (parentDirectory is null)
+	        return;
+
+		var startingAbsolutePathForSearch = parentDirectory.Value;
+
+		var discoveredFileList = new List<string>();
+
+		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList).ConfigureAwait(false);
+
+		foreach (var file in discoveredFileList)
+		{
+			var resourceUri = new ResourceUri(file);
+
+	        await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+	                resourceUri,
+	                _serviceProvider))
+	            .ConfigureAwait(false);
+		}
+
+        async Task DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList)
+        {
+            var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+                    directoryPathParent,
+                    CancellationToken.None)
+                .ConfigureAwait(false);
+
+            var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
+                    directoryPathParent,
+                    CancellationToken.None)
+                .ConfigureAwait(false);
+
+            foreach (var filePathChild in filePathChildList)
+            {
+                if (filePathChild.EndsWith(".cs"))
+                    discoveredFileList.Add(filePathChild);
+            }
+
+            foreach (var directoryPathChild in directoryPathChildList)
+            {
+                if (directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
+                    continue;
+
+                await DiscoverFilesRecursively(directoryPathChild, discoveredFileList).ConfigureAwait(false);
+            }
+        }
 	}
 }
