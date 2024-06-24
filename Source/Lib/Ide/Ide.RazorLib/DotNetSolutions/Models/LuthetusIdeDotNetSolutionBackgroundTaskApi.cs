@@ -8,6 +8,8 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
@@ -348,6 +350,8 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
             }
         }
 
+		await ParseSolutionAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
+
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
     }
 
@@ -406,4 +410,42 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
             dotNetSolutionModel.Key,
             dotNetSolutionModel));
     }
+
+	private async Task ParseSolutionAsync(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+	{
+		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+
+        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
+            x => x.Key == dotNetSolutionModelKey);
+
+        if (dotNetSolutionModel is null)
+            return;
+
+		var progressBarModel = new ProgressBarModel(0, "parsing...");
+
+		NotificationHelper.DispatchProgress(
+	        nameof(ParseSolutionAsync),
+	        progressBarModel,
+	        _commonComponentRenderers,
+	        _dispatcher,
+	        TimeSpan.MaxValue);
+
+		_ = Task.Run(async () =>
+		{
+			var waitCounter = 0;
+			var maxWaits = 10;
+
+			while (waitCounter < maxWaits)
+			{
+				await Task.Delay(500);
+				waitCounter++;
+				progressBarModel.SetProgress((double)waitCounter / (double)maxWaits);
+			}
+
+			if (waitCounter == maxWaits)
+				progressBarModel.SetProgress(1, "finished parsing");
+
+			progressBarModel.Dispose();
+		});
+	}
 }
