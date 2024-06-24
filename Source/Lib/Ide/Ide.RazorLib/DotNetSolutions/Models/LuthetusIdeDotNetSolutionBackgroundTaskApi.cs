@@ -428,7 +428,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 	        progressBarModel,
 	        _commonComponentRenderers,
 	        _dispatcher,
-	        TimeSpan.MaxValue);
+	        TimeSpan.FromMilliseconds(-1));
 
 		_ = Task.Run(async () =>
 		{
