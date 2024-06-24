@@ -5,7 +5,7 @@
 		//
 		// String formatting and css can break if the wrong culture is used,
 		// (i.e.: any locations that use a period in place of a comma to deliminate
-		//       1,000 and up.) 
+		//       1,000 and up.)
 		//
 		// If one uses the correct culture it would be fine, but I'm just not going
 		// to deal with it here, at the least for now.
@@ -17,11 +17,11 @@
          style="position: relative; height: 2em;">
 
 		<div class="luth_progress-bar-fill-slider"
-			 style="background-color: red; width: @(percentageComplete); height: 100%;">
+			 style="background-color: var(--luth_active-with-focus-background-color); width: @(percentageComplete); height: 100%;">
 		</div>
 
 		<div class="luth_progress-bar-fill-text"
-			 style="position: absolute; left: calc(50% - @(percentageComplete.Length)ch); top: 0;">
+			 style="position: absolute; left: calc(50% - @(percentageComplete.Length)ch); top: calc(0.2em + 1px);">
 			@percentageComplete
 		</div>
 		
