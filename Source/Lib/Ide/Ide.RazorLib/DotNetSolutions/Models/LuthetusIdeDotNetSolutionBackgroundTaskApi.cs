@@ -462,11 +462,15 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 					var projectsProcessedCount = 0;
 					foreach (var project in dotNetSolutionModel.DotNetProjectList)
 					{
-						await LoadClasses(project);
 						projectsProcessedCount++;
 						var additionalProgress = (1 - previousStageProgress) * ((double)projectsProcessedCount / dotNetProjectListLength);
 						var currentProgress = Math.Min(1.0, previousStageProgress + additionalProgress);
-						progressBarModel.SetProgress(currentProgress, $"Parsing {project.AbsolutePath.NameWithExtension} source code...");
+						progressBarModel.SetProgress(currentProgress, $"{projectsProcessedCount}/{dotNetProjectListLength}: {project.AbsolutePath.NameWithExtension}");
+
+						if (!(await _fileSystemProvider.File.ExistsAsync(project.AbsolutePath.Value)))
+							continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
+
+						await LoadClasses(project, progressBarModel);
 					}
 				}
 	
@@ -484,7 +488,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 		});
 	}
 
-	private async Task LoadClasses(IDotNetProject dotNetProject)
+	private async Task LoadClasses(IDotNetProject dotNetProject, ProgressBarModel progressBarModel)
 	{
 		var parentDirectory = dotNetProject.AbsolutePath.ParentDirectory;
 		if (parentDirectory is null)
@@ -494,7 +498,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
 		var discoveredFileList = new List<string>();
 
-		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList).ConfigureAwait(false);
+		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
 
 		foreach (var file in discoveredFileList)
 		{
@@ -506,7 +510,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 	            .ConfigureAwait(false);
 		}
 
-        async Task DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList)
+        async Task DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList, bool isFirstInvocation)
         {
             var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
                     directoryPathParent,
@@ -524,12 +528,20 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
                     discoveredFileList.Add(filePathChild);
             }
 
+			//var progressMessage = progressBarModel.Message ?? string.Empty;
+
             foreach (var directoryPathChild in directoryPathChildList)
             {
                 if (directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
                     continue;
 
-                await DiscoverFilesRecursively(directoryPathChild, discoveredFileList).ConfigureAwait(false);
+				//if (isFirstInvocation)
+				//{
+				//	var currentProgress = progressBarModel.GetProgress();
+				//	progressBarModel.SetProgress(currentProgress, $"{directoryPathChild} " + progressMessage);
+				//}
+
+                await DiscoverFilesRecursively(directoryPathChild, discoveredFileList, isFirstInvocation: false).ConfigureAwait(false);
             }
         }
 	}
