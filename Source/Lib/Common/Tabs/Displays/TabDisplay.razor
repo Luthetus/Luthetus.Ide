@@ -3,6 +3,7 @@
 <button class="luth_polymorphic-tab luth_button luth_unselectable @IsActiveCssClass @localTabViewModel.TabGroup.GetDynamicCss(localTabViewModel) @GetIsBeingDraggedCssClassString() @CssClassString"
 		style="@GetDraggableCssStyleString() @CssStyleString"
 		id="@HtmlId"
+        title="@localTabViewModel.TitleVerbose"
 		@ref="_tabButtonElementReference"
 		@onclick="e => localTabViewModel.TabGroup.OnClickAsync(localTabViewModel, e)"
 		@onmousedown:stopPropagation="true"
