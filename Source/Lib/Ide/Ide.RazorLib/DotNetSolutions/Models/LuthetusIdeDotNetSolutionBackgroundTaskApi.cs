@@ -436,38 +436,51 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
 		_ = Task.Run(async () =>
 		{
-			if (_textEditorService.TextEditorConfig.RegisterModelFunc is null)
-	            return;
+			try
+			{
+				if (_textEditorService.TextEditorConfig.RegisterModelFunc is null)
+		            return;
+		
+				progressBarModel.SetProgress(.05, "Parsing projects...");
+				foreach (var project in dotNetSolutionModel.DotNetProjectList)
+				{
+					var resourceUri = new ResourceUri(project.AbsolutePath.Value);
+		
+					if (!(await _fileSystemProvider.File.ExistsAsync(resourceUri.Value)))
+						continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
+
+			        await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+			                resourceUri,
+			                _serviceProvider))
+			            .ConfigureAwait(false);
+				}
+
+				var previousStageProgress = .25;
+				progressBarModel.SetProgress(previousStageProgress, "Parsing source code...");
+				{
+					var dotNetProjectListLength = dotNetSolutionModel.DotNetProjectList.Length;
+					var projectsProcessedCount = 0;
+					foreach (var project in dotNetSolutionModel.DotNetProjectList)
+					{
+						await LoadClasses(project);
+						projectsProcessedCount++;
+						var additionalProgress = (1 - previousStageProgress) * ((double)projectsProcessedCount / dotNetProjectListLength);
+						var currentProgress = Math.Min(1.0, previousStageProgress + additionalProgress);
+						progressBarModel.SetProgress(currentProgress, $"Parsing {project.AbsolutePath.NameWithExtension} source code...");
+					}
+				}
 	
-			foreach (var project in dotNetSolutionModel.DotNetProjectList)
-			{
-				var resourceUri = new ResourceUri(project.AbsolutePath.Value);
-	
-		        await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-		                resourceUri,
-		                _serviceProvider))
-		            .ConfigureAwait(false);
-			}
-
-			foreach (var project in dotNetSolutionModel.DotNetProjectList)
-			{
-				await LoadClasses(project);
-			}
-
-			var waitCounter = 0;
-			var maxWaits = 10;
-
-			while (waitCounter < maxWaits)
-			{
-				await Task.Delay(500);
-				waitCounter++;
-				progressBarModel.SetProgress((double)waitCounter / (double)maxWaits);
-			}
-
-			if (waitCounter == maxWaits)
 				progressBarModel.SetProgress(1, "finished parsing");
-
-			progressBarModel.Dispose();
+			}
+			catch (Exception e)
+			{
+				var currentProgress = progressBarModel.GetProgress();
+				progressBarModel.SetProgress(currentProgress, e.ToString());
+			}
+			finally
+			{
+				progressBarModel.Dispose();
+			}
 		});
 	}
 
