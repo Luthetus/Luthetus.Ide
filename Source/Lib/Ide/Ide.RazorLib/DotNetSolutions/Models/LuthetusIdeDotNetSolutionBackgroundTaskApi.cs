@@ -428,7 +428,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 		var progressBarModel = new ProgressBarModel(0, "parsing...");
 
 		NotificationHelper.DispatchProgress(
-	        nameof(ParseSolutionAsync),
+	        $"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
 	        progressBarModel,
 	        _commonComponentRenderers,
 	        _dispatcher,
@@ -474,7 +474,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 					}
 				}
 	
-				progressBarModel.SetProgress(1, "finished parsing");
+				progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}");
 			}
 			catch (Exception e)
 			{

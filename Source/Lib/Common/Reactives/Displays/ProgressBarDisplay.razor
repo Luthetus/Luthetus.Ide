@@ -24,10 +24,7 @@
 			 style="position: absolute; left: calc(50% - @(percentageComplete.Length)ch); top: calc(0.2em + 1px);">
 			@percentageComplete
 		</div>
-		
 	</div>
-
-	ProgressBarModel.IsDisposed: @ProgressBarModel.IsDisposed
 
 	@if (!string.IsNullOrWhiteSpace(ProgressBarModel.Message))
 	{
