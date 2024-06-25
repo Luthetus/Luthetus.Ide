@@ -1,7 +1,9 @@
+using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -224,6 +226,48 @@ public static class TextEditorCommandDefaultFacts
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
                 commandArgs);
+        }
+    };
+
+    public static readonly TextEditorCommand RefreshSyntaxHighlighting = new(
+        "Refresh Syntax Highlighting", "defaults_refresh_syntax_highlighting", false, false, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            commandArgs.TextEditorService.PostTakeMostRecent(
+                nameof(RefreshSyntaxHighlighting),
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                async editContext =>
+				{
+					var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+
+					if (modelModifier is null)
+						return;
+
+					modelModifier.CompilerService.ResourceWasModified(
+						modelModifier.ResourceUri,
+						ImmutableArray<TextEditorTextSpan>.Empty);
+				});
+			return Task.CompletedTask;
+        })
+    {
+        TextEditorEditFactory = interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            return async editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+
+				if (modelModifier is null)
+					return;
+
+				modelModifier.CompilerService.ResourceWasModified(
+					modelModifier.ResourceUri,
+					ImmutableArray<TextEditorTextSpan>.Empty);
+			};
         }
     };
 
