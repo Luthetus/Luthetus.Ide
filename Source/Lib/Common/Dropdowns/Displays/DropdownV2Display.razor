@@ -1,0 +1,14 @@
+@using Luthetus.Common.RazorLib.Dimensions.Models
+
+@{ var localDropdown = Dropdown; }
+
+<div class="luth_dropdown luth_dropdown-display"
+     style="@GetStyleCssString(localDropdown)"
+	 @onclick:stopPropagation="true">
+	
+	<CascadingValue Value="localDropdown">
+        <DynamicComponent @key="localDropdown.Key"
+                          Type="localDropdown.ComponentType"
+                          Parameters="localDropdown.ComponentParameterMap" />
+    </CascadingValue>
+</div>

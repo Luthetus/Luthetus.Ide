@@ -1,0 +1,8 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{ var dropdownState = DropdownStateWrap.Value; }
+
+@foreach (var dropdown in dropdownState.DropdownList)
+{
+	<DropdownV2Display Dropdown="dropdown"/>
+}

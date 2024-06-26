@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.States;
 
@@ -38,6 +38,33 @@ public partial record DropdownState
             return inState with
             {
                 ActiveKeyList = inState.ActiveKeyList.Clear()
+            };
+        }
+
+        [ReducerMethod]
+        public static DropdownState ReduceRegisterAction(
+            DropdownState inState,
+			RegisterAction registerAction)
+        {
+            return inState with
+            {
+                DropdownList = inState.DropdownList.Add(registerAction.Dropdown)
+            };
+        }
+
+		[ReducerMethod]
+        public static DropdownState ReduceDisposeAction(
+            DropdownState inState,
+			DisposeAction disposeAction)
+        {
+			var indexExistingDropdown = inState.DropdownList.FindIndex(x => x.Key == disposeAction.Key);
+
+			if (indexExistingDropdown == -1)
+				return inState;
+
+            return inState with
+            {
+                DropdownList = inState.DropdownList.RemoveAt(indexExistingDropdown)
             };
         }
     }
