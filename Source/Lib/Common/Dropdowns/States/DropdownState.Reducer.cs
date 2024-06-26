@@ -1,4 +1,6 @@
+using System.Collections.Immutable;
 using Fluxor;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.States;
 
@@ -65,6 +67,17 @@ public partial record DropdownState
             return inState with
             {
                 DropdownList = inState.DropdownList.RemoveAt(indexExistingDropdown)
+            };
+        }
+
+		[ReducerMethod]
+        public static DropdownState ReduceClearAction(
+            DropdownState inState,
+			ClearAction clearAction)
+        {
+            return inState with
+            {
+                DropdownList = ImmutableList<DropdownRecord>.Empty
             };
         }
     }

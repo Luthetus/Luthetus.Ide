@@ -1,8 +1,16 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays
 
 @{ var dropdownState = DropdownStateWrap.Value; }
 
+@if (dropdownState.DropdownList.Count > 0)
+{
+	<OutOfBoundsClickDisplay ZIndex="15"
+	                         OnClickCallback="ClearActiveKeyList" />
+}
+
 @foreach (var dropdown in dropdownState.DropdownList)
 {
-	<DropdownV2Display Dropdown="dropdown"/>
+	<DropdownV2Display @key="dropdown.Key"
+					   Dropdown="dropdown"/>
 }
