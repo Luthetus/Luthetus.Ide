@@ -24,6 +24,8 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;
 
+	private readonly object _hasPendingEventLock = new();
+
 	private LuthetusCommonJavaScriptInteropApi _jsRuntimeCommonApi;
 
 	private Guid _htmlElementIdSalt = Guid.NewGuid();
@@ -32,6 +34,16 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 	private MeasuredHtmlElementDimensions _globalHtmlElementDimensions;
 	private bool _isOffScreenHorizontally;
 	private bool _isOffScreenVertically;
+	private int _renderCount = 1;
+
+	/// <summary>
+	/// After repositioning the dropdown, its possible that the dropdown
+	/// is offscreen, as it was just too big to fit.
+	///
+	/// So, only re-position a dropdown after someone fired the event,
+	/// and ignore any 'infinite loop' scenarios.
+	/// </summary>
+	private bool _hasPendingEvent;
 
 	protected override void OnInitialized()
 	{
@@ -47,15 +59,21 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
+		_renderCount++;
 		if (firstRender)
 		{
 			// Force the initial invocation (as opposed to waiting for the event)
 			await RemeasureAndRerender();
 		}
-		else
+		else if (_hasPendingEvent)
 		{
 			if (_isOffScreenHorizontally || _isOffScreenVertically)
 			{
+				lock (_hasPendingEventLock)
+				{
+					_hasPendingEvent = false;
+				}
+
 				var inDropdown = Dropdown;
 
 				var outWidth = inDropdown.Width;
@@ -99,6 +117,11 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 
 	private async Task RemeasureAndRerender()
 	{
+		lock (_hasPendingEventLock)
+		{
+			_hasPendingEvent = true;
+		}
+
 		_htmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(_htmlElementId);
 		_globalHtmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(ContextFacts.GlobalContext.ContextElementId);
 		await InvokeAsync(StateHasChanged);
