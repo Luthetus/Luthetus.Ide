@@ -25,16 +25,16 @@
 	<div>ZIndex: @(localGlobalHtmlElementDimensions?.ZIndex ?? 0)</div>
 
 	@{
-		var isOffScreenHorizontally = 
+		_isOffScreenHorizontally = 
 			(localHtmlElementDimensions?.WidthInPixels ?? 0) + (localHtmlElementDimensions?.LeftInPixels ?? 0)
 			> (localGlobalHtmlElementDimensions?.WidthInPixels ?? 0);
 
-		var isOffScreenVertically = 
+		_isOffScreenVertically = 
 			(localHtmlElementDimensions?.HeightInPixels ?? 0) + (localHtmlElementDimensions?.TopInPixels ?? 0)
 			> (localGlobalHtmlElementDimensions?.HeightInPixels ?? 0);
 
-		<div>isOffScreenHorizontally: @isOffScreenHorizontally</div>
-		<div>isOffScreenVertically: @isOffScreenVertically</div>
+		<div>_isOffScreenHorizontally: @_isOffScreenHorizontally</div>
+		<div>_isOffScreenVertically: @_isOffScreenVertically</div>
 	}
 
 	<div>Width: @(localAppDimensionState?.Width ?? 0)</div>

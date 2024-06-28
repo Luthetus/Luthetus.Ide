@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
@@ -17,6 +18,8 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 	public IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
 	public IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
+	[Inject]
+	public IDispatcher Dispatcher { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;
@@ -27,6 +30,8 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 	private string _htmlElementId => $"luth_dropdown_{_htmlElementIdSalt}";
 	private MeasuredHtmlElementDimensions _htmlElementDimensions;
 	private MeasuredHtmlElementDimensions _globalHtmlElementDimensions;
+	private bool _isOffScreenHorizontally;
+	private bool _isOffScreenVertically;
 
 	protected override void OnInitialized()
 	{
@@ -46,6 +51,42 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 		{
 			// Force the initial invocation (as opposed to waiting for the event)
 			await RemeasureAndRerender();
+		}
+		else
+		{
+			if (_isOffScreenHorizontally || _isOffScreenVertically)
+			{
+				var inDropdown = Dropdown;
+
+				var outWidth = inDropdown.Width;
+				var outHeight = inDropdown.Height;
+				var outLeft = inDropdown.Left;
+				var outTop = inDropdown.Top;
+
+				if (_isOffScreenHorizontally) // These 'if'(s) are not mutually exclusive
+				{
+					outLeft = Math.Max(
+						0,
+						(_globalHtmlElementDimensions?.WidthInPixels ?? 0) - (_htmlElementDimensions?.WidthInPixels ?? 0));
+				}
+
+				if (_isOffScreenVertically) // These 'if'(s) are not mutually exclusive
+				{
+					outTop = Math.Max(
+						0,
+						(_globalHtmlElementDimensions?.HeightInPixels ?? 0) - (_htmlElementDimensions?.HeightInPixels ?? 0));
+				}
+
+				var outDropdown = inDropdown with
+				{
+					Width = outWidth,
+					Height = outHeight,
+					Left = outLeft,
+					Top = outTop
+				};
+
+				Dispatcher.Dispatch(new DropdownState.FitOnScreenAction(outDropdown));
+			}
 		}
 
 		await base.OnAfterRenderAsync(firstRender);

@@ -80,5 +80,32 @@ public partial record DropdownState
                 DropdownList = ImmutableList<DropdownRecord>.Empty
             };
         }
+
+		[ReducerMethod]
+        public static DropdownState ReduceFitOnScreenAction(
+            DropdownState inState,
+			FitOnScreenAction fitOnScreenAction)
+        {
+			var indexExistingDropdown = inState.DropdownList.FindIndex(
+				x => x.Key == fitOnScreenAction.Dropdown.Key);
+
+			if (indexExistingDropdown == -1)
+				return inState;
+
+			var inDropdown = inState.DropdownList[indexExistingDropdown];
+
+			var outDropdown = inDropdown with
+			{
+				Width = fitOnScreenAction.Dropdown.Width,
+				Height = fitOnScreenAction.Dropdown.Height,
+				Left = fitOnScreenAction.Dropdown.Left,
+				Top = fitOnScreenAction.Dropdown.Top
+			};
+
+            return inState with
+            {
+                DropdownList = inState.DropdownList.SetItem(indexExistingDropdown, outDropdown)
+            };
+        }
     }
 }

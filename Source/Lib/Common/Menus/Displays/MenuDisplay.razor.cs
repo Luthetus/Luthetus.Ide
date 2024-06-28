@@ -53,10 +53,13 @@ public partial class MenuDisplay : ComponentBase
 
 	protected override void OnParametersSet()
 	{
-		if (!Object.ReferenceEquals(_previousMenuRecord, MenuRecord))
+		var localDropdown = Dropdown;
+
+		if (localDropdown is not null &&
+			!Object.ReferenceEquals(_previousMenuRecord, MenuRecord))
 		{
 			_previousMenuRecord = MenuRecord;
-			Dropdown.OnHtmlElementDimensionsChanged();
+			localDropdown.OnHtmlElementDimensionsChanged();
 		}
 	}
 
