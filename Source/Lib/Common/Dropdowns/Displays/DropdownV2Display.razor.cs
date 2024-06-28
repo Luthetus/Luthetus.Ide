@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.Contexts.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
@@ -25,6 +26,7 @@ public partial class DropdownV2Display : ComponentBase
 	private Guid _htmlElementIdSalt = Guid.NewGuid();
 	private string _htmlElementId => $"luth_dropdown_{_htmlElementIdSalt}";
 	private MeasuredHtmlElementDimensions _htmlElementDimensions;
+	private MeasuredHtmlElementDimensions _globalHtmlElementDimensions;
 
 	protected override void OnInitialized()
 	{
@@ -36,6 +38,7 @@ public partial class DropdownV2Display : ComponentBase
 		if (firstRender)
 		{
 			_htmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(_htmlElementId);
+			_globalHtmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(ContextFacts.GlobalContext.ContextElementId);
 			await InvokeAsync(StateHasChanged);
 		}
 

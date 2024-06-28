@@ -3,6 +3,7 @@
 @{
 	var localDropdown = Dropdown;
 	var localHtmlElementDimensions = _htmlElementDimensions;
+	var localGlobalHtmlElementDimensions = _globalHtmlElementDimensions;
 	var localAppDimensionState = AppDimensionStateWrap.Value;
 }
 
@@ -18,6 +19,15 @@
 		<div>LeftInPixels: @localHtmlElementDimensions.LeftInPixels</div>
 		<div>TopInPixels: @localHtmlElementDimensions.TopInPixels</div>
 		<div>ZIndex: @localHtmlElementDimensions.ZIndex</div>
+	}
+
+	@if (localGlobalHtmlElementDimensions is not null)
+	{
+		<div>WidthInPixels: @localGlobalHtmlElementDimensions.WidthInPixels</div>
+		<div>HeightInPixels: @localGlobalHtmlElementDimensions.HeightInPixels</div>
+		<div>LeftInPixels: @localGlobalHtmlElementDimensions.LeftInPixels</div>
+		<div>TopInPixels: @localGlobalHtmlElementDimensions.TopInPixels</div>
+		<div>ZIndex: @localGlobalHtmlElementDimensions.ZIndex</div>
 	}
 
 	@if (localAppDimensionState is not null)
