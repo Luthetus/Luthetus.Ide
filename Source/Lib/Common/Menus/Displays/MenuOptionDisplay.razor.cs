@@ -2,8 +2,8 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Dropdowns.States;
-using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
@@ -15,6 +15,9 @@ public partial class MenuOptionDisplay : ComponentBase
     private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+
+	[CascadingParameter]
+	public DropdownRecord? Dropdown { get; set; }
 
     [Parameter, EditorRequired]
     public MenuOptionRecord MenuOptionRecord { get; set; } = null!;
@@ -92,6 +95,10 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             MenuOptionRecord.OnClickFunc.Invoke();
             Dispatcher.Dispatch(new DropdownState.ClearActivesAction());
+
+			var localDropdown = Dropdown;
+			if (localDropdown is not null)
+            	Dispatcher.Dispatch(new DropdownState.DisposeAction(localDropdown.Key));
         }
 
         if (MenuOptionRecord.SubMenu is not null)
@@ -156,6 +163,10 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             onAfterWidgetHidden.Invoke();
             Dispatcher.Dispatch(new DropdownState.ClearActivesAction());
+
+			var localDropdown = Dropdown;
+			if (localDropdown is not null)
+            	Dispatcher.Dispatch(new DropdownState.DisposeAction(localDropdown.Key));
         }
     }
 }
