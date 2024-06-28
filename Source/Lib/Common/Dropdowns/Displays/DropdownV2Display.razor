@@ -1,10 +1,32 @@
 @using Luthetus.Common.RazorLib.Dimensions.Models
 
-@{ var localDropdown = Dropdown; }
+@{
+	var localDropdown = Dropdown;
+	var localHtmlElementDimensions = _htmlElementDimensions;
+	var localAppDimensionState = AppDimensionStateWrap.Value;
+}
 
-<div class="luth_dropdown luth_dropdown-display"
+<div class="luth_dropdown"
      style="@GetStyleCssString(localDropdown)"
+	 id="@_htmlElementId"
 	 @onclick:stopPropagation="true">
+
+	@if (localHtmlElementDimensions is not null)
+	{
+		<div>WidthInPixels: @localHtmlElementDimensions.WidthInPixels</div>
+		<div>HeightInPixels: @localHtmlElementDimensions.HeightInPixels</div>
+		<div>LeftInPixels: @localHtmlElementDimensions.LeftInPixels</div>
+		<div>TopInPixels: @localHtmlElementDimensions.TopInPixels</div>
+		<div>ZIndex: @localHtmlElementDimensions.ZIndex</div>
+	}
+
+	@if (localAppDimensionState is not null)
+	{
+		<div>Width: @localAppDimensionState.Width</div>
+		<div>Height: @localAppDimensionState.Height</div>
+		<div>Left: @localAppDimensionState.Left</div>
+		<div>Top: @localAppDimensionState.Top</div>
+	}
 	
 	<CascadingValue Value="localDropdown">
         <DynamicComponent @key="localDropdown.Key"
