@@ -78,13 +78,22 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
+	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+
     private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs)
     {
+		if (_previousGetMenuRecordInvocation.treeViewCommandArgs == commandArgs)
+			return _previousGetMenuRecordInvocation.menuRecord;
+
         if (commandArgs.TreeViewContainer.SelectedNodeList.Count > 1)
             return GetMenuRecordManySelections(commandArgs);
 
         if (commandArgs.TreeViewContainer.ActiveNode is null)
-            return MenuRecord.Empty;
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
 
         var menuOptionList = new List<MenuOptionRecord>();
         var treeViewModel = commandArgs.TreeViewContainer.ActiveNode;
@@ -134,9 +143,18 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         }
 
         if (!menuOptionList.Any())
-            return MenuRecord.Empty;
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
 
-        return new MenuRecord(menuOptionList.ToImmutableArray());
+		// Default case
+		{
+			var menuRecord = new MenuRecord(menuOptionList.ToImmutableArray());
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
     }
 
     private MenuRecord GetMenuRecordManySelections(TreeViewCommandArgs commandArgs)
@@ -226,9 +244,18 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         }
 
         if (!menuOptionList.Any())
-            return MenuRecord.Empty;
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
 
-        return new MenuRecord(menuOptionList.ToImmutableArray());
+		// Default case
+		{
+			var menuRecord = new MenuRecord(menuOptionList.ToImmutableArray());
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
     }
 
     private MenuOptionRecord[] GetDotNetSolutionMenuOptions(TreeViewSolution treeViewSolution)
