@@ -12,31 +12,35 @@
 	 id="@_htmlElementId"
 	 @onclick:stopPropagation="true">
 
-	@if (localHtmlElementDimensions is not null)
-	{
-		<div>WidthInPixels: @localHtmlElementDimensions.WidthInPixels</div>
-		<div>HeightInPixels: @localHtmlElementDimensions.HeightInPixels</div>
-		<div>LeftInPixels: @localHtmlElementDimensions.LeftInPixels</div>
-		<div>TopInPixels: @localHtmlElementDimensions.TopInPixels</div>
-		<div>ZIndex: @localHtmlElementDimensions.ZIndex</div>
+	<div>WidthInPixels: @(localHtmlElementDimensions?.WidthInPixels ?? 0)</div>
+	<div>HeightInPixels: @(localHtmlElementDimensions?.HeightInPixels ?? 0)</div>
+	<div>LeftInPixels: @(localHtmlElementDimensions?.LeftInPixels ?? 0)</div>
+	<div>TopInPixels: @(localHtmlElementDimensions?.TopInPixels ?? 0)</div>
+	<div>ZIndex: @(localHtmlElementDimensions?.ZIndex ?? 0)</div>
+
+	<div>WidthInPixels: @(localGlobalHtmlElementDimensions?.WidthInPixels ?? 0)</div>
+	<div>HeightInPixels: @(localGlobalHtmlElementDimensions?.HeightInPixels ?? 0)</div>
+	<div>LeftInPixels: @(localGlobalHtmlElementDimensions?.LeftInPixels ?? 0)</div>
+	<div>TopInPixels: @(localGlobalHtmlElementDimensions?.TopInPixels ?? 0)</div>
+	<div>ZIndex: @(localGlobalHtmlElementDimensions?.ZIndex ?? 0)</div>
+
+	@{
+		var isOffScreenHorizontally = 
+			(localHtmlElementDimensions?.WidthInPixels ?? 0) + (localHtmlElementDimensions?.LeftInPixels ?? 0)
+			> (localGlobalHtmlElementDimensions?.WidthInPixels ?? 0);
+
+		var isOffScreenVertically = 
+			(localHtmlElementDimensions?.HeightInPixels ?? 0) + (localHtmlElementDimensions?.TopInPixels ?? 0)
+			> (localGlobalHtmlElementDimensions?.HeightInPixels ?? 0);
+
+		<div>isOffScreenHorizontally: @isOffScreenHorizontally</div>
+		<div>isOffScreenVertically: @isOffScreenVertically</div>
 	}
 
-	@if (localGlobalHtmlElementDimensions is not null)
-	{
-		<div>WidthInPixels: @localGlobalHtmlElementDimensions.WidthInPixels</div>
-		<div>HeightInPixels: @localGlobalHtmlElementDimensions.HeightInPixels</div>
-		<div>LeftInPixels: @localGlobalHtmlElementDimensions.LeftInPixels</div>
-		<div>TopInPixels: @localGlobalHtmlElementDimensions.TopInPixels</div>
-		<div>ZIndex: @localGlobalHtmlElementDimensions.ZIndex</div>
-	}
-
-	@if (localAppDimensionState is not null)
-	{
-		<div>Width: @localAppDimensionState.Width</div>
-		<div>Height: @localAppDimensionState.Height</div>
-		<div>Left: @localAppDimensionState.Left</div>
-		<div>Top: @localAppDimensionState.Top</div>
-	}
+	<div>Width: @(localAppDimensionState?.Width ?? 0)</div>
+	<div>Height: @(localAppDimensionState?.Height ?? 0)</div>
+	<div>Left: @(localAppDimensionState?.Left ?? 0)</div>
+	<div>Top: @(localAppDimensionState?.Top ?? 0)</div>
 	
 	<CascadingValue Value="localDropdown">
         <DynamicComponent @key="localDropdown.Key"

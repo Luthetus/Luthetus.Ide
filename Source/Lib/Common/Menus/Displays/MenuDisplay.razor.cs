@@ -16,8 +16,13 @@ public partial class MenuDisplay : ComponentBase
 
     [CascadingParameter(Name = "ReturnFocusToParentFuncAsync")]
     public Func<Task>? ReturnFocusToParentFuncAsync { get; set; }
+	/// <summary>
+	/// TODO: Delete the parameter/property 'DropdownKey'. In place of this is the newer parameter/property 'Dropdown'.
+	/// </summary>
     [CascadingParameter]
     public Key<DropdownRecord> DropdownKey { get; set; } = Key<DropdownRecord>.Empty;
+	[CascadingParameter]
+    public DropdownRecord? Dropdown { get; set; }
 
     [Parameter, EditorRequired]
     public MenuRecord MenuRecord { get; set; } = null!;
@@ -37,6 +42,23 @@ public partial class MenuDisplay : ComponentBase
     /// First time the MenuDisplay opens the _activeMenuOptionRecordIndex == -1
     /// </summary>
     private int _activeMenuOptionRecordIndex = -1;
+
+	/// <summary>
+	/// The <see cref="MenuRecord"/>, which is provided to this component, is most often asynchronously calculated.
+	///
+	/// i.e.: The initial <see cref="MenuRecord"/> parameter is <see cref="MenuRecord.Empty"/>,
+	///       then the actual is passed in afterwards when the async task completes.
+	/// </summary>
+	private MenuRecord? _previousMenuRecord;
+
+	protected override void OnParametersSet()
+	{
+		if (!Object.ReferenceEquals(_previousMenuRecord, MenuRecord))
+		{
+			_previousMenuRecord = MenuRecord;
+			Dropdown.OnHtmlElementDimensionsChanged();
+		}
+	}
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

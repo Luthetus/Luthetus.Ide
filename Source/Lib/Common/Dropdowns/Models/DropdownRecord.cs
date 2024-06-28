@@ -32,4 +32,20 @@ public record DropdownRecord
 	public double Top { get; init; }
 	public Type ComponentType { get; init; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; init; }
+
+	/// <summary>
+	/// Invoke this event via the method: <see cref="OnHtmlElementDimensionsChanged"/>.
+	/// Use this event when the JavaScript code that measures if a dropdown is on-screen should be re-ran.
+	/// </summary>
+	public event Action? HtmlElementDimensionsChanged;
+
+	/// <summary>
+	/// This method will invoke the event: <see cref="HtmlElementDimensionsChanged"/>.
+	/// Invoke this method to cause the execution of the
+	/// JavaScript code that measures if a dropdown is on-screen.
+	/// </summary>
+	public void OnHtmlElementDimensionsChanged()
+	{
+		HtmlElementDimensionsChanged?.Invoke();
+	}
 }

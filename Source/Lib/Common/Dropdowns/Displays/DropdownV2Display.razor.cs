@@ -11,7 +11,7 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
-public partial class DropdownV2Display : ComponentBase
+public partial class DropdownV2Display : ComponentBase, IDisposable
 {
 	[Inject]
 	public IJSRuntime JsRuntime { get; set; } = null!;
@@ -31,18 +31,36 @@ public partial class DropdownV2Display : ComponentBase
 	protected override void OnInitialized()
 	{
 		_jsRuntimeCommonApi = JsRuntime.GetLuthetusCommonApi();
+
+		// TODO: Does this line work in relating to the <see cref="Dropdown"/> parameter...
+		//       ...having been changed?
+		//	   |
+		//       The presumption is that it will work because of the '@key' attribute
+		//       which is being used when rendering the component. But this needs proven.
+		Dropdown.HtmlElementDimensionsChanged += OnHtmlElementDimensionsChanged;
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
-			_htmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(_htmlElementId);
-			_globalHtmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(ContextFacts.GlobalContext.ContextElementId);
-			await InvokeAsync(StateHasChanged);
+			// Force the initial invocation (as opposed to waiting for the event)
+			await RemeasureAndRerender();
 		}
 
 		await base.OnAfterRenderAsync(firstRender);
+	}
+
+	private async void OnHtmlElementDimensionsChanged()
+	{
+		await RemeasureAndRerender();
+	}
+
+	private async Task RemeasureAndRerender()
+	{
+		_htmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(_htmlElementId);
+		_globalHtmlElementDimensions = await _jsRuntimeCommonApi.MeasureElementById(ContextFacts.GlobalContext.ContextElementId);
+		await InvokeAsync(StateHasChanged);
 	}
 
 	public string GetStyleCssString(DropdownRecord localDropdown)
@@ -59,5 +77,10 @@ public partial class DropdownV2Display : ComponentBase
 		styleBuilder.Append($"top: {Dropdown.Top.ToCssValue()}px; ");
 
 		return styleBuilder.ToString();
+	}
+
+	public void Dispose()
+	{
+		Dropdown.HtmlElementDimensionsChanged -= OnHtmlElementDimensionsChanged;
 	}
 }
