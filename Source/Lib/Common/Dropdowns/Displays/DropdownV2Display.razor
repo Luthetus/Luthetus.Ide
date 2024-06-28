@@ -8,12 +8,13 @@
 }
 
 <div class="luth_dropdown"
-     style="@GetStyleCssString(localDropdown)"
+     style="white-space: nowrap; @GetStyleCssString(localDropdown)"
 	 id="@_htmlElementId"
 	 @onclick:stopPropagation="true">
 
 	<div>_renderCount: @_renderCount</div>
 
+@*
 	<div>WidthInPixels: @(localHtmlElementDimensions?.WidthInPixels ?? 0)</div>
 	<div>HeightInPixels: @(localHtmlElementDimensions?.HeightInPixels ?? 0)</div>
 	<div>LeftInPixels: @(localHtmlElementDimensions?.LeftInPixels ?? 0)</div>
@@ -25,6 +26,7 @@
 	<div>LeftInPixels: @(localGlobalHtmlElementDimensions?.LeftInPixels ?? 0)</div>
 	<div>TopInPixels: @(localGlobalHtmlElementDimensions?.TopInPixels ?? 0)</div>
 	<div>ZIndex: @(localGlobalHtmlElementDimensions?.ZIndex ?? 0)</div>
+*@
 
 	@{
 		_isOffScreenHorizontally = 
@@ -35,14 +37,18 @@
 			(localHtmlElementDimensions?.HeightInPixels ?? 0) + (localHtmlElementDimensions?.TopInPixels ?? 0)
 			> (localGlobalHtmlElementDimensions?.HeightInPixels ?? 0);
 
+/*
 		<div>_isOffScreenHorizontally: @_isOffScreenHorizontally</div>
 		<div>_isOffScreenVertically: @_isOffScreenVertically</div>
+*/
 	}
 
+@*
 	<div>Width: @(localAppDimensionState?.Width ?? 0)</div>
 	<div>Height: @(localAppDimensionState?.Height ?? 0)</div>
 	<div>Left: @(localAppDimensionState?.Left ?? 0)</div>
 	<div>Top: @(localAppDimensionState?.Top ?? 0)</div>
+*@
 	
 	<CascadingValue Value="localDropdown">
         <DynamicComponent @key="localDropdown.Key"

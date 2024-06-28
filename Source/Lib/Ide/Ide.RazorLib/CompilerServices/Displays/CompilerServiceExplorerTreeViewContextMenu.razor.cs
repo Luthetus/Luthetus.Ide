@@ -1,9 +1,10 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Displays;
 
@@ -14,9 +15,24 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
+	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
-        return MenuRecord.Empty;
+		if (_previousGetMenuRecordInvocation.treeViewCommandArgs == treeViewCommandArgs)
+			return _previousGetMenuRecordInvocation.menuRecord;
+
+		var menuOptionList = new List<MenuOptionRecord>();
+
+		menuOptionList.Add(new(
+			"Rewrite ddropdown",
+			MenuOptionKind.Other));
+
+		var menuRecord = new MenuRecord(menuOptionList.ToImmutableArray());
+
+		_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+
+        return menuRecord;;
     }
 
     public static string GetContextMenuCssStyleString(TreeViewCommandArgs? treeViewCommandArgs)

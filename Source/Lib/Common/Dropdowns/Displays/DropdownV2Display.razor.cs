@@ -83,16 +83,24 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 
 				if (_isOffScreenHorizontally) // These 'if'(s) are not mutually exclusive
 				{
+					var horizontalPadding = 5;
+
 					outLeft = Math.Max(
 						0,
-						(_globalHtmlElementDimensions?.WidthInPixels ?? 0) - (_htmlElementDimensions?.WidthInPixels ?? 0));
+						(_globalHtmlElementDimensions?.WidthInPixels ?? 0) -
+							(_htmlElementDimensions?.WidthInPixels ?? 0) -
+							horizontalPadding);
 				}
 
 				if (_isOffScreenVertically) // These 'if'(s) are not mutually exclusive
 				{
+					var verticalPadding = 5;
+
 					outTop = Math.Max(
 						0,
-						(_globalHtmlElementDimensions?.HeightInPixels ?? 0) - (_htmlElementDimensions?.HeightInPixels ?? 0));
+						(_globalHtmlElementDimensions?.HeightInPixels ?? 0) -
+							(_htmlElementDimensions?.HeightInPixels ?? 0) -
+							verticalPadding);
 				}
 
 				var outDropdown = inDropdown with
@@ -131,11 +139,11 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 	{
 		var styleBuilder = new StringBuilder();
 
-		if (Dropdown.Width is not null)
-			styleBuilder.Append($"width: {Dropdown.Width.Value.ToCssValue()}px; ");
+		//if (Dropdown.Width is not null)
+		//	styleBuilder.Append($"width: {Dropdown.Width.Value.ToCssValue()}px; ");
 
-		if (Dropdown.Height is not null)
-			styleBuilder.Append($"height: {Dropdown.Height.Value.ToCssValue()}px; ");
+		//if (Dropdown.Height is not null)
+		//	styleBuilder.Append($"height: {Dropdown.Height.Value.ToCssValue()}px; ");
 
 		styleBuilder.Append($"left: {Dropdown.Left.ToCssValue()}px; ");
 		styleBuilder.Append($"top: {Dropdown.Top.ToCssValue()}px; ");

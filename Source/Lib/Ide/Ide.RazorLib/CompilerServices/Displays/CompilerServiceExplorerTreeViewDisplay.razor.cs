@@ -97,12 +97,12 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey,
 			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
 			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
-			typeof(MenuDisplay),
+			typeof(CompilerServiceExplorerTreeViewContextMenu),
 			new Dictionary<string, object?>
 			{
 				{
-					nameof(MenuDisplay.MenuRecord),
-					MenuRecord.Empty
+					nameof(CompilerServiceExplorerTreeViewContextMenu.TreeViewCommandArgs),
+					treeViewCommandArgs
 				}
 			});
 
