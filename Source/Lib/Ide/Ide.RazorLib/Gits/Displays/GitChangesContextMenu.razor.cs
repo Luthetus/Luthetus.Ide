@@ -29,6 +29,8 @@ public partial class GitChangesContextMenu : ComponentBase
 
 	private MenuRecord? _menuRecord = null;
 
+	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+
     protected override async Task OnInitializedAsync()
     {
         // Usage of 'OnInitializedAsync' lifecycle method ensure the context menu is only rendered once.
@@ -41,20 +43,36 @@ public partial class GitChangesContextMenu : ComponentBase
 
     private async Task<MenuRecord> GetMenuRecord(TreeViewCommandArgs commandArgs, bool isRecursiveCall = false)
     {
+		if (!isRecursiveCall && _previousGetMenuRecordInvocation.treeViewCommandArgs == commandArgs)
+			return _previousGetMenuRecordInvocation.menuRecord;
+
 		if (!isRecursiveCall && commandArgs.TreeViewContainer.SelectedNodeList.Count > 1)
 		{
 			return await GetMultiSelectionMenuRecord(commandArgs).ConfigureAwait(false);
 		}
 
         if (commandArgs.NodeThatReceivedMouseEvent is null)
-            return MenuRecord.Empty;
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
 
         var menuRecordsList = new List<MenuOptionRecord>();
 
         if (!menuRecordsList.Any())
-            return MenuRecord.Empty;
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
 
-        return new MenuRecord(menuRecordsList.ToImmutableArray());
+		// Default case
+		{
+			var menuRecord = new MenuRecord(menuRecordsList.ToImmutableArray());
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
     }
 
 	private Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
@@ -64,11 +82,19 @@ public partial class GitChangesContextMenu : ComponentBase
 		bool runAllOnClicksWithinSelectionHasEffect = false;
 
 		if (!menuOptionRecordList.Any())
-            return Task.FromResult(MenuRecord.Empty);
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return Task.FromResult(menuRecord);
+		}
 
-		return Task.FromResult(new MenuRecord(menuOptionRecordList.ToImmutableArray()));
+		// Default case
+		{
+			var menuRecord = new MenuRecord(menuOptionRecordList.ToImmutableArray());
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return Task.FromResult(menuRecord);
+		}
 	}
-
 
     public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)
     {
