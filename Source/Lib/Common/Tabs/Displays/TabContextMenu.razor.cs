@@ -22,8 +22,13 @@ public partial class TabContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
+	private (TabContextMenuEventArgs tabContextMenuEventArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+
     private MenuRecord GetMenuRecord(TabContextMenuEventArgs tabContextMenuEventArgs)
     {
+		if (_previousGetMenuRecordInvocation.tabContextMenuEventArgs == tabContextMenuEventArgs)
+			return _previousGetMenuRecordInvocation.menuRecord;
+
         var menuOptionList = new List<MenuOptionRecord>();
 
         menuOptionList.Add(new MenuOptionRecord(
@@ -37,9 +42,18 @@ public partial class TabContextMenu : ComponentBase
             () => tabContextMenuEventArgs.Tab.TabGroup.CloseOthersAsync(tabContextMenuEventArgs.Tab)));
 
 		if (!menuOptionList.Any())
-            return MenuRecord.Empty;
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
+			return menuRecord;
+		}
 
-        return new MenuRecord(menuOptionList.ToImmutableArray());
+		// Default case
+		{
+			var menuRecord = new MenuRecord(menuOptionList.ToImmutableArray());
+			_previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
+			return menuRecord;
+		}
     }
 
 	public static string GetContextMenuCssStyleString(TabContextMenuEventArgs? tabContextMenuEventArgs)

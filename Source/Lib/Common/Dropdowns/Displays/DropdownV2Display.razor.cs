@@ -59,7 +59,10 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		_renderCount++;
+#if DEBUG
+		AssertInfiniteRenderLoop();
+#endif
+		
 		if (firstRender)
 		{
 			// Force the initial invocation (as opposed to waiting for the event)
@@ -150,6 +153,30 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 
 		return styleBuilder.ToString();
 	}
+
+#if DEBUG
+	/// <summary>
+	/// This method is here because its incredibly simple to cause an infinite loop
+	/// when making use of this component.
+	///
+	/// That is to say, if one renders a <see cref="Menus.Displays.MenuDisplay"/>,
+	/// and does not re-use the same instance of the <see cref="Menus.Displays.MenuDisplay.MenuRecord"/> parameter,
+	/// then in the blazor lifecycle method 'OnParametersSet()', the code
+	/// '!Object.ReferenceEquals(_previousMenuRecord, MenuRecord)' will re-render the
+	/// dropdown over and over infinitely.
+	///
+	/// The check for a different MenuRecord is being done because if the menu displayed changes,
+	/// then one would need to re-measure the dropdown to determine if it still fit on-screen.
+	/// 
+	/// TODO: Change the interactions between this component, and <see cref="Menus.Displays.MenuDisplay.MenuRecord"/>...
+	///       ...such that it isn't easy to accidentally create an infinite render loop.
+	/// </summary>
+	private void AssertInfiniteRenderLoop()
+	{
+		if (_renderCount++ % 1_000 == 0)
+			Console.WriteLine($"The {nameof(DropdownV2Display)} is rendering suspiciously many times. _renderCount: {_renderCount}");
+	}
+#endif
 
 	public void Dispose()
 	{

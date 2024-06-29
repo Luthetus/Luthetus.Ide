@@ -48,6 +48,12 @@ public partial record DropdownState
             DropdownState inState,
 			RegisterAction registerAction)
         {
+			var indexExistingDropdown = inState.DropdownList.FindIndex(
+				x => x.Key == registerAction.Dropdown.Key);
+
+			if (indexExistingDropdown != -1)
+				return inState;
+
             return inState with
             {
                 DropdownList = inState.DropdownList.Add(registerAction.Dropdown)
@@ -59,7 +65,8 @@ public partial record DropdownState
             DropdownState inState,
 			DisposeAction disposeAction)
         {
-			var indexExistingDropdown = inState.DropdownList.FindIndex(x => x.Key == disposeAction.Key);
+			var indexExistingDropdown = inState.DropdownList.FindIndex(
+				x => x.Key == disposeAction.Key);
 
 			if (indexExistingDropdown == -1)
 				return inState;

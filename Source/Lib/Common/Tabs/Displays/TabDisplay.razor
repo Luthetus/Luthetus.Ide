@@ -5,6 +5,7 @@
 		id="@HtmlId"
         title="@localTabViewModel.TitleVerbose"
 		@ref="_tabButtonElementReference"
+		@onclick:stopPropagation="true"
 		@onclick="e => localTabViewModel.TabGroup.OnClickAsync(localTabViewModel, e)"
 		@onmousedown:stopPropagation="true"
 		@onmousedown:preventDefault="true"

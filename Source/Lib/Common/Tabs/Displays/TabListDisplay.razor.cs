@@ -1,5 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Microsoft.AspNetCore.Components;
@@ -24,17 +25,22 @@ public partial class TabListDisplay : ComponentBase
 	{
 		await InvokeAsync(StateHasChanged);
 	}
-	
-	private async Task HandleTabButtonOnContextMenu(TabContextMenuEventArgs tabContextMenuEventArgs)
-	{
-        _mostRecentTabContextMenuEventArgs = tabContextMenuEventArgs;
-		
-        // The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
-        // The ChildContent renders nothing, unless the provider of the child content
-        // re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-        await InvokeAsync(StateHasChanged);
 
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
-            TabContextMenu.ContextMenuEventDropdownKey));
-	}
+	private async Task HandleTabButtonOnContextMenu(TabContextMenuEventArgs tabContextMenuEventArgs)
+    {
+		var dropdownRecord = new DropdownRecord(
+			TabContextMenu.ContextMenuEventDropdownKey,
+			tabContextMenuEventArgs.MouseEventArgs.ClientX,
+			tabContextMenuEventArgs.MouseEventArgs.ClientY,
+			typeof(TabContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(TabContextMenu.TabContextMenuEventArgs),
+					tabContextMenuEventArgs
+				}
+			});
+
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+    }
 }
