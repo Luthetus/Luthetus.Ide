@@ -39,6 +39,7 @@ public partial class TestExplorerContextMenu : ComponentBase
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
     public static readonly Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey = Key<TerminalCommand>.NewKey();
 
+	// TODO: If one changes from 'OnInitializedAsync' an infinite loop is very likely to occur (2024-06-29)
 	private MenuRecord? _menuRecord = null;
 
     protected override async Task OnInitializedAsync()
