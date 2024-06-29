@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -14,6 +15,7 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -68,18 +70,22 @@ public partial class IdeHeader : ComponentBase
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private string _buttonFileId = "luth_ide_header-button-file";
     private ElementReference? _buttonFileElementReference;
 
 	private Key<DropdownRecord> _dropdownKeyTools = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuTools = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private string _buttonToolsId = "luth_ide_header-button-tools";
     private ElementReference? _buttonToolsElementReference;
 
 	private Key<DropdownRecord> _dropdownKeyView = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private string _buttonViewId = "luth_ide_header-button-view";
     private ElementReference? _buttonViewElementReference;
 
 	private Key<DropdownRecord> _dropdownKeyRun = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuRun = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private string _buttonRunId = "luth_ide_header-button-run";
     private ElementReference? _buttonRunElementReference;
 
     protected override Task OnInitializedAsync()
@@ -529,4 +535,28 @@ public partial class IdeHeader : ComponentBase
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
         return Task.CompletedTask;
     }
+
+	private async Task RenderDropdownOnClick(string id, Key<DropdownRecord> key, MenuRecord menu)
+	{
+		var jsRuntimeCommonApi = JsRuntime.GetLuthetusCommonApi();
+
+		var buttonDimensions = await jsRuntimeCommonApi
+			.MeasureElementById(id)
+			.ConfigureAwait(false);
+
+		var dropdownRecord = new DropdownRecord(
+			key,
+			buttonDimensions.LeftInPixels,
+			buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
+			typeof(MenuDisplay),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(MenuDisplay.MenuRecord),
+					menu
+				}
+			});
+
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+	}
 }

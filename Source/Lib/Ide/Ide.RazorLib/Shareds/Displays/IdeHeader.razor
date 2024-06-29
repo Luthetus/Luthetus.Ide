@@ -18,63 +18,35 @@
         <SettingsDialogEntryPoint/>
 
         <button @ref="_buttonFileElementReference"
-                @onclick="() => { AddActiveDropdownKey(_dropdownKeyFile); return Task.CompletedTask; }"
+                @onclick="async () => await RenderDropdownOnClick(_buttonFileId, _dropdownKeyFile, _menuFile)"
+			    id="@_buttonFileId"
                 class="luth_button"
                 style="position: relative; margin-left: 15px;">
             File
-            
-            <DropdownDisplay DropdownKey="_dropdownKeyFile"
-                             DropdownPositionKind="DropdownPositionKind.Vertical">
-    
-                <CascadingValue Value="RestoreFocusToButtonDisplayComponentFileAsync" Name="ReturnFocusToParentFuncAsync">
-                    <MenuDisplay MenuRecord="_menuFile"/>
-                </CascadingValue>
-            </DropdownDisplay>
         </button>
 
 		<button @ref="_buttonToolsElementReference"
-                @onclick="() => { AddActiveDropdownKey(_dropdownKeyTools); return Task.CompletedTask; }"
+                @onclick="async () => await RenderDropdownOnClick(_buttonToolsId, _dropdownKeyTools, _menuTools)"
+			    id="@_buttonToolsId"
                 class="luth_button"
                 style="position: relative; margin-left: 15px;">
             Tools
-            
-            <DropdownDisplay DropdownKey="_dropdownKeyTools"
-                             DropdownPositionKind="DropdownPositionKind.Vertical">
-    
-                <CascadingValue Value="RestoreFocusToButtonDisplayComponentToolsAsync" Name="ReturnFocusToParentFuncAsync">
-                    <MenuDisplay MenuRecord="_menuTools"/>
-                </CascadingValue>
-            </DropdownDisplay>
         </button>
 
 		<button @ref="_buttonViewElementReference"
-                @onclick="() => { InitializeMenuView(); AddActiveDropdownKey(_dropdownKeyView); return Task.CompletedTask; }"
+                @onclick="async () => await RenderDropdownOnClick(_buttonViewId, _dropdownKeyView, _menuView)"
+			    id="@_buttonViewId"
                 class="luth_button"
                 style="position: relative; margin-left: 15px;">
-            View
-            
-            <DropdownDisplay DropdownKey="_dropdownKeyView"
-                             DropdownPositionKind="DropdownPositionKind.Vertical">
-    
-                <CascadingValue Value="RestoreFocusToButtonDisplayComponentViewAsync" Name="ReturnFocusToParentFuncAsync">
-                    <MenuDisplay MenuRecord="_menuView"/>
-                </CascadingValue>
-            </DropdownDisplay>
-        </button>
+			View
+         </button>
 
 		<button @ref="_buttonRunElementReference"
-                @onclick="() => { InitializeMenuRun(); AddActiveDropdownKey(_dropdownKeyRun); return Task.CompletedTask; }"
-                class="luth_button"
+                @onclick="async () => { InitializeMenuRun(); await RenderDropdownOnClick(_buttonRunId, _dropdownKeyRun, _menuRun); }"
+			    id="@_buttonRunId"
+				class="luth_button"
                 style="position: relative; margin-left: 15px;">
             Run
-            
-            <DropdownDisplay DropdownKey="_dropdownKeyRun"
-                             DropdownPositionKind="DropdownPositionKind.Vertical">
-    
-                <CascadingValue Value="RestoreFocusToButtonDisplayComponentRunAsync" Name="ReturnFocusToParentFuncAsync">
-                    <MenuDisplay MenuRecord="_menuRun"/>
-                </CascadingValue>
-            </DropdownDisplay>
         </button>
 
         <button class="luth_button"
