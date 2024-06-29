@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
@@ -112,15 +113,24 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 
 	private async Task HandleOnContextMenu(MouseEventArgs mouseEventArgs)
     {
-        _mostRecentMouseEventArgs = mouseEventArgs;
+		var dropdownRecord = new DropdownRecord(
+			SolutionVisualizationContextMenu.ContextMenuEventDropdownKey,
+			mouseEventArgs.ClientX,
+			mouseEventArgs.ClientY,
+			typeof(SolutionVisualizationContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(SolutionVisualizationContextMenu.MouseEventArgs),
+					mouseEventArgs
+				},
+				{
+					nameof(SolutionVisualizationContextMenu.SolutionVisualizationModel),
+					_solutionVisualizationModel
+				}
+			});
 
-		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
-		// The ChildContent renders nothing, unless the provider of the child content
-		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-		await InvokeAsync(StateHasChanged);
-
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
-            SolutionVisualizationContextMenu.ContextMenuEventDropdownKey));
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
 
 	private void SubscribeTo_DotNetSolutionCompilerService()
