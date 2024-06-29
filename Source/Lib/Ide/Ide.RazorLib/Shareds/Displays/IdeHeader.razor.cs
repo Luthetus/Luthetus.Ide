@@ -275,26 +275,26 @@ public partial class IdeHeader : ComponentBase
 		//       Therefore, it is being commented out. Because given a large enough
 		//       solution, clicking this by accident is a bit annoying.
 		//
-        {
-            var menuOptionSolutionVisualization = new MenuOptionRecord(
-				"Solution Visualization",
-                MenuOptionKind.Delete,
-                () => 
-                {
-					var dialogRecord = new DialogViewModel(
-			            _solutionVisualizationDialogKey,
-			            "Solution Visualization",
-			            typeof(SolutionVisualizationDisplay),
-			            null,
-			            null,
-						true);
-			
-			        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-			        return Task.CompletedTask;
-                });
-        
-            menuOptionsList.Add(menuOptionSolutionVisualization);
-        }
+        //{
+        //    var menuOptionSolutionVisualization = new MenuOptionRecord(
+		//		"Solution Visualization",
+        //        MenuOptionKind.Delete,
+        //        () => 
+        //        {
+		//			var dialogRecord = new DialogViewModel(
+		//	            _solutionVisualizationDialogKey,
+		//	            "Solution Visualization",
+		//	            typeof(SolutionVisualizationDisplay),
+		//	            null,
+		//	            null,
+		//				true);
+		//	
+		//	        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+		//	        return Task.CompletedTask;
+        //        });
+        //
+        //    menuOptionsList.Add(menuOptionSolutionVisualization);
+        //}
 
         _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
     }

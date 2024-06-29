@@ -1,15 +1,16 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.FolderExplorers.Models;
-using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.FolderExplorers.States;
+using Luthetus.Ide.RazorLib.FolderExplorers.Models;
+using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Displays;
@@ -68,15 +69,20 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
+		var dropdownRecord = new DropdownRecord(
+			FolderExplorerContextMenu.ContextMenuEventDropdownKey,
+			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+			typeof(FolderExplorerContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(FolderExplorerContextMenu.TreeViewCommandArgs),
+					treeViewCommandArgs
+				}
+			});
 
-		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
-		// The ChildContent renders nothing, unless the provider of the child content
-		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-		await InvokeAsync(StateHasChanged);
-
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
-            FolderExplorerContextMenu.ContextMenuEventDropdownKey));
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
 
     public void Dispose()

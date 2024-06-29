@@ -37,10 +37,19 @@ public partial class FolderExplorerContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
+	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
+		if (_previousGetMenuRecordInvocation.treeViewCommandArgs == treeViewCommandArgs)
+			return _previousGetMenuRecordInvocation.menuRecord;
+
         if (treeViewCommandArgs.NodeThatReceivedMouseEvent is null)
-            return MenuRecord.Empty;
+        {
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+			return menuRecord;
+		}
 
         var menuRecordsList = new List<MenuOptionRecord>();
 
@@ -50,7 +59,11 @@ public partial class FolderExplorerContextMenu : ComponentBase
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
 
         if (treeViewModel is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return MenuRecord.Empty;
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+			return menuRecord;
+		}
 
         if (treeViewAbsolutePath.Item.IsDirectory)
         {
@@ -64,7 +77,12 @@ public partial class FolderExplorerContextMenu : ComponentBase
                 .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
 
-        return new MenuRecord(menuRecordsList.ToImmutableArray());
+		// Default case
+		{
+			var menuRecord = new MenuRecord(menuRecordsList.ToImmutableArray());
+			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+			return menuRecord;
+		}
     }
 
     private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsolutePath treeViewModel)
