@@ -12,7 +12,7 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
-public partial class DropdownV2Display : ComponentBase, IDisposable
+public partial class DropdownDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	public IJSRuntime JsRuntime { get; set; } = null!;
@@ -174,7 +174,7 @@ public partial class DropdownV2Display : ComponentBase, IDisposable
 	private void AssertInfiniteRenderLoop()
 	{
 		if (_renderCount++ % 1_000 == 0)
-			Console.WriteLine($"The {nameof(DropdownV2Display)} is rendering suspiciously many times. _renderCount: {_renderCount}");
+			Console.WriteLine($"The {nameof(DropdownDisplay)} is rendering suspiciously many times. _renderCount: {_renderCount}");
 	}
 #endif
 
