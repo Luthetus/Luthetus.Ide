@@ -14,19 +14,13 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
     [Parameter, EditorRequired]
     public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
-    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)
-    {
-        if (commandArgs?.ContextMenuFixedPosition is null)
-            return "display: none;";
-
-        var left = $"left: {commandArgs.ContextMenuFixedPosition.LeftPositionInPixels}px;";
-        var top = $"top: {commandArgs.ContextMenuFixedPosition.TopPositionInPixels}px;";
-
-        return $"{left} {top} position: fixed;";
-    }
+	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
+		if (_previousGetMenuRecordInvocation.treeViewCommandArgs == treeViewCommandArgs)
+			return _previousGetMenuRecordInvocation.menuRecord;
+
         var menuOptionRecordList = new List<MenuOptionRecord>();
 
         menuOptionRecordList.Add(
@@ -59,11 +53,16 @@ public partial class WatchWindowContextMenuDisplay : ComponentBase
                             Console.WriteLine(e);
                             throw;
                         }
-                    }, CancellationToken.None);
+                   }, CancellationToken.None);
 
                     return Task.CompletedTask;
                 }));
 
-        return new MenuRecord(menuOptionRecordList.ToImmutableArray());
+		// Default case
+		{
+			var menuRecord = new MenuRecord(menuOptionRecordList.ToImmutableArray());
+			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+			return menuRecord;
+		}
     }
 }

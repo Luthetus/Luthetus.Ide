@@ -9,20 +9,6 @@ public partial record DropdownState
     public class Reducer
     {
         [ReducerMethod]
-        public static DropdownState ReduceAddActiveAction(
-            DropdownState inState,
-            AddActiveAction addActiveAction)
-        {
-            if (inState.ActiveKeyList.Any(x => x == addActiveAction.Key))
-                return inState;
-
-            return inState with
-            {
-                ActiveKeyList = inState.ActiveKeyList.Add(addActiveAction.Key)
-            };
-        }
-
-        [ReducerMethod]
         public static DropdownState ReduceRemoveActiveAction(
             DropdownState inState,
             RemoveActiveAction removeActiveAction)

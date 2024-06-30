@@ -155,8 +155,9 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
-                if (MenuOptionRecord.SubMenu is not null)
-                    Dispatcher.Dispatch(new DropdownState.AddActiveAction(_subMenuDropdownKey));
+				var localSubMenu = MenuOptionRecord.SubMenu;
+                if (localSubMenu is not null)
+                    RenderDropdownOnClick(localSubMenu);
                 break;
         }
 
