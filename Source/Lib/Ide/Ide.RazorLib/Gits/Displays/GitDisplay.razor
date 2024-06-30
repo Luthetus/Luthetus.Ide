@@ -1,4 +1,4 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models
@@ -21,17 +21,10 @@
 
             <button @ref="_menuButtonElementReference"
                     @onclick="() => { ShowMenuDropdown(_menuDropdownKey); return Task.CompletedTask; }"
+					id="@_dropdownMenuHtmlElementId"
                     class="luth_button luth_ide_git-justify-end"
                     style="position: relative; margin-top: 10px; padding: 8px; justify-content: center; align-items: center;">
                 <IconSettingsGear />
-
-                <DropdownDisplay DropdownKey="_menuDropdownKey"
-                                 DropdownPositionKind="DropdownPositionKind.Vertical">
-
-                    <CascadingValue Value="RestoreFocusToMenuButton" Name="ReturnFocusToParentFuncAsync">
-                        <MenuDisplay MenuRecord="_menu" />
-                    </CascadingValue>
-                </DropdownDisplay>
             </button>
 
             <div style="margin-top: 10px;">

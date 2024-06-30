@@ -414,11 +414,6 @@ public partial class IdeHeader : ComponentBase
         generalTerminal.EnqueueCommand(terminalCommand);
 	}
 
-    private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
-    {
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
-    }
-
     /// <summary>
     /// TODO: Make this method abstracted into a component that takes care of the UI to show the dropdown and to restore focus when menu closed
     /// </summary>
