@@ -19,19 +19,11 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
 
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
-		if (_previousGetMenuRecordInvocation.treeViewCommandArgs == treeViewCommandArgs)
-			return _previousGetMenuRecordInvocation.menuRecord;
-
-		var menuOptionList = new List<MenuOptionRecord>();
-
-		menuOptionList.Add(new(
-			"Rewrite ddropdown",
-			MenuOptionKind.Other));
-
-		var menuRecord = new MenuRecord(menuOptionList.ToImmutableArray());
-
-		_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
-
-        return menuRecord;;
+		// Default case
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
+			return menuRecord;
+		}
     }
 }
