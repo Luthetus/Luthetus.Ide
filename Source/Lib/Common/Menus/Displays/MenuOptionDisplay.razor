@@ -25,15 +25,6 @@
     @if (MenuOptionRecord.SubMenu is not null)
     {
         <IconChevronRight/>
-
-        <DropdownDisplay DropdownKey="_subMenuDropdownKey"
-                         DropdownPositionKind="DropdownPositionKind.Horizontal"
-                         ShouldDisplayOutOfBoundsClickDisplay="false">
-
-            <div class="luth_dropdown-display-default-background">
-                <MenuDisplay MenuRecord="MenuOptionRecord.SubMenu"/>
-            </div>
-        </DropdownDisplay>
     }
 
     @if (DisplayWidget)
