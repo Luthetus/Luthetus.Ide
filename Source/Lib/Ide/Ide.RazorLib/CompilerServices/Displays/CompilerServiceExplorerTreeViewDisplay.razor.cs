@@ -44,7 +44,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
     private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 

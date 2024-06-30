@@ -32,7 +32,6 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;
 
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private GitTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
     private GitTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 

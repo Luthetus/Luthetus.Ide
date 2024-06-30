@@ -25,7 +25,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	[Parameter, EditorRequired]
     public ElementDimensions ElementDimensions { get; set; } = null!;
 
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
 	private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
     private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 

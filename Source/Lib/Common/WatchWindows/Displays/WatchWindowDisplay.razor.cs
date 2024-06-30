@@ -35,7 +35,6 @@ public partial class WatchWindowDisplay : FluxorComponent
     public static Key<TreeViewContainer> TreeViewContainerKey { get; } = Key<TreeViewContainer>.NewKey();
     public static Key<DropdownRecord> WatchWindowContextMenuDropdownKey { get; } = Key<DropdownRecord>.NewKey();
 
-    private TreeViewCommandArgs? _mostRecentTreeViewContextMenuCommandArgs;
     private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
     private bool _disposed;

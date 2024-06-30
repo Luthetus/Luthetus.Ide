@@ -43,7 +43,6 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	private CSharpProjectCompilerService _cSharpProjectCompilerService;
 	private CSharpCompilerService _cSharpCompilerService;
 	private LuthetusCommonJavaScriptInteropApi? _commonJavaScriptInteropApi;
-    private MouseEventArgs? _mostRecentMouseEventArgs;
 	private string _divHtmlElementId;
 	private string _svgHtmlElementId;
 

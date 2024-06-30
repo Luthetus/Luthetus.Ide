@@ -19,8 +19,6 @@ public partial class TabListDisplay : ComponentBase
 	[Parameter]
 	public string CssClassString { get; set; } = string.Empty;
 
-    private TabContextMenuEventArgs? _mostRecentTabContextMenuEventArgs;
-
     public async Task NotifyStateChangedAsync()
 	{
 		await InvokeAsync(StateHasChanged);

@@ -42,7 +42,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
     private bool _disposed;
