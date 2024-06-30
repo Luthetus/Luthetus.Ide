@@ -55,20 +55,4 @@ public partial class TabContextMenu : ComponentBase
 			return menuRecord;
 		}
     }
-
-	public static string GetContextMenuCssStyleString(TabContextMenuEventArgs? tabContextMenuEventArgs)
-    {
-		if (tabContextMenuEventArgs?.MouseEventArgs is null)
-		{
-			return "display: none;";
-		}
-
-        var left =
-            $"left: {tabContextMenuEventArgs.MouseEventArgs.ClientX.ToCssValue()}px;";
-
-        var top =
-            $"top: {tabContextMenuEventArgs.MouseEventArgs.ClientY.ToCssValue()}px;";
-
-        return $"{left} {top}";
-    }
 }

@@ -95,18 +95,4 @@ public partial class GitChangesContextMenu : ComponentBase
 			return Task.FromResult(menuRecord);
 		}
 	}
-
-    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)
-    {
-        if (commandArgs?.ContextMenuFixedPosition is null)
-            return "display: none;";
-
-        var left =
-            $"left: {commandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
-
-        var top =
-            $"top: {commandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
-
-        return $"{left} {top}";
-    }
 }

@@ -34,18 +34,4 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
 
         return menuRecord;;
     }
-
-    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? treeViewCommandArgs)
-    {
-        if (treeViewCommandArgs?.ContextMenuFixedPosition is null)
-            return "display: none;";
-
-        var left =
-            $"left: {treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
-
-        var top =
-            $"top: {treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
-
-        return $"{left} {top}";
-    }
 }

@@ -599,18 +599,4 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			false,
 			false);
     }
-
-    public static string GetContextMenuCssStyleString(TreeViewCommandArgs? commandArgs)
-    {
-        if (commandArgs?.ContextMenuFixedPosition is null)
-            return "display: none;";
-
-        var left =
-            $"left: {commandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;";
-
-        var top =
-            $"top: {commandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
-
-        return $"{left} {top}";
-    }
 }
