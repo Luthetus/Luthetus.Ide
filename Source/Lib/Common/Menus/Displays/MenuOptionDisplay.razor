@@ -2,6 +2,7 @@
 @using Luthetus.Common.RazorLib.Dropdowns.Models;
 
 <div class="luth_menu-option-display luth_unselectable @IsActiveCssClass @HasWidgetActiveCssClass"
+	 id="@_menuOptionHtmlElementId"
      tabindex="-1"
      @ref="_topmostElementReference"
      @onclick="HandleOnClick"

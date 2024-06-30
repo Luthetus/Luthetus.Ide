@@ -1,11 +1,14 @@
 using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Menus.Displays;
 
@@ -15,6 +18,8 @@ public partial class MenuOptionDisplay : ComponentBase
     private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+	[Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
 	[CascadingParameter]
 	public DropdownRecord? Dropdown { get; set; }
@@ -29,7 +34,11 @@ public partial class MenuOptionDisplay : ComponentBase
     [Parameter]
     public RenderFragment<MenuOptionRecord>? IconRenderFragment { get; set; }
 
+	private string _menuOptionHtmlElementId => $"luth_menu-option-display_{_htmlElementIdSalt}";
+
     private readonly Key<DropdownRecord> _subMenuDropdownKey = Key<DropdownRecord>.NewKey();
+    private readonly Guid _htmlElementIdSalt = Guid.NewGuid();
+
     private ElementReference? _topmostElementReference;
     private bool _shouldDisplayWidget;
 
@@ -101,12 +110,13 @@ public partial class MenuOptionDisplay : ComponentBase
             	Dispatcher.Dispatch(new DropdownState.DisposeAction(localDropdown.Key));
         }
 
-        if (MenuOptionRecord.SubMenu is not null)
+		var localSubMenu = MenuOptionRecord.SubMenu;
+        if (localSubMenu is not null)
         {
             if (HasSubmenuActive)
-                Dispatcher.Dispatch(new DropdownState.RemoveActiveAction(_subMenuDropdownKey));
+                Dispatcher.Dispatch(new DropdownState.DisposeAction(_subMenuDropdownKey));
             else
-                Dispatcher.Dispatch(new DropdownState.AddActiveAction(_subMenuDropdownKey));
+				RenderDropdownOnClick(localSubMenu);
         }
 
         if (MenuOptionRecord.WidgetRendererType is not null)
@@ -114,6 +124,30 @@ public partial class MenuOptionDisplay : ComponentBase
             _shouldDisplayWidget = !_shouldDisplayWidget;
         }
     }
+
+	private async Task RenderDropdownOnClick(MenuRecord localSubMenu)
+	{
+		var jsRuntimeCommonApi = JsRuntime.GetLuthetusCommonApi();
+
+		var buttonDimensions = await jsRuntimeCommonApi
+			.MeasureElementById(_menuOptionHtmlElementId)
+			.ConfigureAwait(false);
+
+		var dropdownRecord = new DropdownRecord(
+			_subMenuDropdownKey,
+			buttonDimensions.LeftInPixels + buttonDimensions.WidthInPixels,
+			buttonDimensions.TopInPixels,
+			typeof(MenuDisplay),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(MenuDisplay.MenuRecord),
+					localSubMenu
+				}
+			});
+
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+	}
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
