@@ -24,6 +24,7 @@ public class ProgressBarModel : IDisposable
 
 	public double DecimalPercentProgress { get; private set; }
 	public string? Message { get; private set; }
+	public string? SecondaryMessage { get; private set; }
 	public bool IsDisposed { get; private set; }
 
 	/// <summary>
@@ -39,15 +40,24 @@ public class ProgressBarModel : IDisposable
 	/// </summary>
 	public event Action<bool>? ProgressChanged;
 
-	public void SetProgress(double decimalPercentProgress, string? message = null)
+	/// <summary>
+	/// If a parameter is null, then their corresponding property will not be changed.
+	/// </summary>
+	public void SetProgress(double? decimalPercentProgress, string? message = null, string? secondaryMessage = null)
 	{
 		if (IsDisposed)
 			throw new LuthetusCommonException($"The {nameof(ProgressBarModel)} has {nameof(IsDisposed)} set to true, therefore cannot be set anymore.");
 
 		lock (_progressLock)
 		{
-			DecimalPercentProgress = decimalPercentProgress;
-			Message = message;
+			if (decimalPercentProgress is not null)
+				DecimalPercentProgress = decimalPercentProgress.Value;
+
+			if (message is not null)
+				Message = message;
+
+			if (secondaryMessage is not null)
+				SecondaryMessage = secondaryMessage;
 		}
 
 		ProgressChanged?.Invoke(false);

@@ -462,19 +462,15 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 					var projectsProcessedCount = 0;
 					foreach (var project in dotNetSolutionModel.DotNetProjectList)
 					{
-						projectsProcessedCount++;
 						var additionalProgress = (1 - previousStageProgress) * ((double)projectsProcessedCount / dotNetProjectListLength);
 						var currentProgress = Math.Min(1.0, previousStageProgress + additionalProgress);
 						progressBarModel.SetProgress(currentProgress, $"{projectsProcessedCount}/{dotNetProjectListLength}: {project.AbsolutePath.NameWithExtension}");
-
-						if (!(await _fileSystemProvider.File.ExistsAsync(project.AbsolutePath.Value)))
-							continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
-
 						await LoadClasses(project, progressBarModel);
+						projectsProcessedCount++;
 					}
 				}
 	
-				progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}");
+				progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
 			}
 			catch (Exception e)
 			{
@@ -490,6 +486,9 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
 	private async Task LoadClasses(IDotNetProject dotNetProject, ProgressBarModel progressBarModel)
 	{
+		if (!(await _fileSystemProvider.File.ExistsAsync(dotNetProject.AbsolutePath.Value)))
+			return; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
+
 		var parentDirectory = dotNetProject.AbsolutePath.ParentDirectory;
 		if (parentDirectory is null)
 	        return;
@@ -500,8 +499,13 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
 		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
 
+		// TODO: Do not increment until enqueued task is finished.
+		var fileCount = 0;
 		foreach (var file in discoveredFileList)
 		{
+			var fileAbsolutePath = _environmentProvider.AbsolutePathFactory(file, false);
+			progressBarModel.SetProgress(null, null, fileAbsolutePath.NameWithExtension);
+
 			var resourceUri = new ResourceUri(file);
 
 	        await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
@@ -532,7 +536,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
             foreach (var directoryPathChild in directoryPathChildList)
             {
-                if (directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
+                if (directoryPathChild.Contains(".vs") || directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
                     continue;
 
 				//if (isFirstInvocation)
