@@ -84,25 +84,25 @@
         @{
             var referencedLuthetusAssembliesList = ideAssembly
                 .GetReferencedAssemblies()
-                .Where(x => x.Name is not null && x.Name.StartsWith("Luthetus"));
+                .Where(x =>
+					x.Name is not null &&
+					(x.Name.StartsWith("Luthetus") ||
+						x.Name.StartsWith("Fluxor") ||
+						x.Name.StartsWith("Photino")))
+				.OrderByDescending(x => x.Name.StartsWith("Luthetus"))
+				.ToList();
+
+			referencedLuthetusAssembliesList.AddRange(entryAssembly
+                .GetReferencedAssemblies()
+                .Where(x =>
+					x.Name is not null &&
+					x.Name.StartsWith("Photino")));
         }
 
         @foreach (var referencedLuthetusAssembly in referencedLuthetusAssembliesList)
         {
             if (referencedLuthetusAssembly.Name is null)
                 continue;
-
-            var repoName = referencedLuthetusAssembly.Name.Replace(".RazorLib", string.Empty);
-            var hrefForReferencedLuthetusAssembly = $"https://github.com/Luthetus/{repoName}";
-
-            if (referencedLuthetusAssembly.Name.Contains("Luthetus.CompilerServices"))
-            {
-                var compilerServiceRepoBaseHref = "https://github.com/Luthetus/Luthetus.CompilerServices/tree/main/Source/";
-
-                var languageName = referencedLuthetusAssembly.Name.Split('.').Last();
-
-                hrefForReferencedLuthetusAssembly = compilerServiceRepoBaseHref + languageName + "/Source/";
-            }
 
             <div>
                 v
