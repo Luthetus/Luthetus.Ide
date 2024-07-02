@@ -502,7 +502,6 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
 
 		foreach (var file in discoveredFileList)
 		{
-			Console.WriteLine(file);
 			var resourceUri = new ResourceUri(file);
 
 	        await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
