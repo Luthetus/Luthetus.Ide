@@ -1,12 +1,19 @@
 @using System.Reflection;
+
 <div class="luth_ide_info">
 
     @{ var ideAssembly = typeof(IdeInfoDisplay).Assembly; }
 
-    <div class="luth_ide_info-main">
+	<div class="luth_ide_info-main">
         <div>
             Version: @ideAssembly.GetName().Version
         </div>
+		<div>
+			GetIsDebug(): @GetIsDebug()
+		</div>
+		<div>
+			IsDebug(): @IsDebug(ideAssembly)
+		</div>
         <div>
             Source Code:
             <a target="_blank"
@@ -15,242 +22,11 @@
                Luthetus.Ide
             </a>
         </div>
-        <div>
-            Recent Changes:
-			<div>
-				<div>
-                    <div>v <em class="luth_em">0.8.6.0 </em> WIP_DATE</div>
-                    <ul>
-                        <li>
-                            If a context menu is rendered off-screen, then it is repositioned.
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <div>v <em class="luth_em">0.8.5.0 </em> (2024-06-19)</div>
-                    <ul>
-						<li>
-                            Added Lexer support for C# char type.
-                        </li>
-						<li>
-                            Added Lexer support for C# escape characters
-							(both string and char types).
-                        </li>
-                        <li>
-                            Breadth first C# parser (used to be depth first).
-							This lets the parser see same scope definitions that occur
-							below in the text, relative to where its being
-							referenced from.
-                        </li>
-						<li>
-                            Re-written undo/redo. In short, only changes are tracked
-							now. Whereas previously a copy of the entire file was
-							being stored.
-                        </li>
-						<li>
-                            Various text editor optimizations.
-							One of which is not to re-calculate the virtualization
-							result if the user's action did not cause an edit.
-							In otherwords, any movement keys for the cursor
-							won't re-calculate the virtualization result.
-                        </li>
-						<li>
-                            Enqueueing a background task is a "synchronous" method,
-							(it used to be async).
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <div>v <em class="luth_em">0.8.4.0 </em> (2024-05-12)</div>
-                    <ul>
-                        <li>
-                            Optimization: scrolling can be done to a C# model with IEditContext. This is a massive optimization,
-                            instead of every change to the text editor scrollbar invoking JavaScript interop to set
-                            the scrollbar, the IEditContext will gather many events that ask to modify the scrollbar,
-                            and batch them into a single JavaScript interop call to set the scrollbar.
-                        </li>
-                        <li>
-                            Change: Re-write <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/Reactives/Models/ThrottleAsync.cs"
-                                                target="_blank">
-                                ThrottleAsync.cs
-                            </a>
-                        </li>
-                        <li>
-                            Change: A lot of synchronous UI code was re-written to be async. The goal is that all UI code should be async
-                            from top to bottom (generally speaking).
-                        </li>
-                        <li>
-                            Fix: MostCharactersOnASingleLineTuple
-                        </li>
-                        <li>
-                            Fix: .NET Solution text editor syntax highlighting (right click the .NET Solution in the treeview
-                            and pick the menu option to open it in the text editor)
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <div>v <em class="luth_em">0.8.3.0 </em> (2024-05-05)</div>
-                    <ul>
-                        <li>
-                            Fix Linux solution explorer paths. (issue was relating to '\' vs '/' directory separator).
-                        </li>
-                        <li>
-                            Fix Linux copy and paste.
-                        </li>
-                        <li>
-                            Fix get local storage.
-                        </li>
-                        <li>
-                            Fix unit test output. (still isn't perfect)
-                        </li>
-                        <li>
-                            Fix insertion of text when text-editor-cursor has a selection
-                        </li>
-                        <li>
-                            Fix text editor mouse wheel scrolling
-                        </li>
-                        <li>
-                            Fix text editor bring cursor into view.
-                        </li>
-                        <li>
-                            Batch terminal output. (this is a massive performance improvement,
-                            instead of writing line by line, if many lines of output need to be written,
-                            they all are written in one operation.)
-                        </li>
-                        <li>
-                            Parse the output of the terminal on a 'by-command-basis'.
-                            One can run 'dotnet run' with a .net cli output parser,
-                            then run 'git status' with a git cli output parser, as an example.
-                        </li>
-                        <li>
-                            Git integration progress. For example, a button that runs "git status",
-                            parses the terminal output, and creates a tree view of all the changed files.
-                            The git integration is still in progress though. (more usage of the '.git'
-                            folder instead of just parsing the terminal so much is likely a path to take).
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <div>v <em class="luth_em">0.8.2.0 </em> (2024-04-27)</div>
-                    <ul>
-                        <li>
-                            Integrated Terminal.
-                        </li>
-                        <li>
-                            Moving github publish action to this repo itself.
-                            (old website is located in the repo:
-                            <a href="https://github.com/Luthetus/Luthetus.Website" target="_blank">
-                                Luthetus/Luthetus.Website
-                            </a>)
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <div>v <em class="luth_em">0.8.1.0</em> (2024-03-17)</div>
-                    <ul>
-                        <li>
-                            <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/TextEditors/Models/TextEditorDynamicViewModelAdapter.cs"
-                               target="_blank">
-                                TextEditorDynamicViewModelAdapter.cs
-                            </a>
-                            &nbsp;
-                            Drag a text editor tab to dock it on a panel, or out into a dialog, and vice versa.
-                        </li>
-                        <li>
-                            <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Dynamics/Models/IDynamicViewModel.cs"
-                               target="_blank">
-                                IDynamicViewModel.cs
-                            </a>
-                            &nbsp;
-                            Interface to implement drag, drop, or dock for a UI element.
-                        </li>
-                    </ul>
-                </div>
-                <div>
-                    <div>v <em class="luth_em">0.8.0.0</em> (2024-03-11)</div>
-                    <ul>
-                        <li>
-							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/TextEditors/Models/TextEditorModels/TextEditorModelModifier.Partition.cs"
-                               target="_blank">
-                                TextEditorModelModifier.Partition.cs
-                            </a>
-                            Text Editor content is partitioned in 4096 character chunks.
-                        </li>
-						<li>
-							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/Edits/Displays/DirtyResourceUriInteractiveIconDisplay.razor.cs"
-                               target="_blank">
-                                DirtyResourceUriInteractiveIconDisplay.razor.cs
-                            </a>
-                            Text Editor models which are unsaved now appear in bottom right.
-                        </li>
-						<li>
-							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Tabs/Displays/TabDisplay.razor.cs"
-                               target="_blank">
-                                PolymorphicTabDisplay.razor.cs (2024-03-15: renamed to TabDisplay.razor.cs and moved)
-                            </a>
-                            PolymorphicUi has been started. One can see it in action by
-							dragging a text editor tab off of the editor, and then letting go.
-							This will turn that tab into a dialog.
-                        </li>
-						<li>
-							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Reactives/Models/ThrottleController.cs"
-                               target="_blank">
-                                ThrottleController.cs
-                            </a>
-                            ThrottleController has been started. All UI events are
-							passed through the same throttle. Furthermore, each UI event
-							can specify its own throttle delay, while maintaining
-							the execution by order in which the UI events occurred.
-                        </li>
-						<li>
-							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/TextEditors/Models/Internals/UiEvent/ThrottleEventOnKeyDown.cs"
-                               target="_blank">
-                                ThrottleEventOnKeyDown.cs
-                            </a>
-                            Text Editor event batching. By way of the previously mentioned
-							ThrottleController, consecutive UI events which are
-							batchable with one another. Will merge into a batch event.
-							For example, if 20 onkeydown events are waiting in the
-							throttle controller, then 1 onkeydownBatch event will occur
-							which contains all 20 onkeydown events.
-                        </li>
-						<li>
-							<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Ide/Source/Lib/Luthetus.Ide.RazorLib/DotNetSolutions/Displays/SolutionExplorerContextMenu.razor.cs"
-                               target="_blank">
-                                SolutionExplorerContextMenu.razor.cs
-                            </a>
-                            Solution Explorer multi-select context menu options.
-							If one selects many files/directories, then the 'delete'
-							context menu option will be available. This option will
-							delete all the selected files/directories.
-                        </li>
-						<li>
-                            WASM Performance issues: with this update it seems
-							I introduced a UI thread blockage. Holding down
-							any key while typing in the text editor will freeze
-							the UI as a result (more or less) until one lets go.
-							I wanted to fix this issue before updating the website,
-							but there are so many vital changes in this update,
-							that I want to make them known.
-                        </li>
-						<li>
-                            Native IDE Performance issues: I find any file with more than
-							10,000 characters in it is a bit laggy. I'm still
-							able to myself, use the IDE to develop the IDE, but large
-							files aren't too great of an experience at the moment.
-							I wrote partitioning for text editor content in chunks of
-							4,096 characters. But, still there are many more optimizations
-							I have planned for large files optimization.
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <hr/>
+	<hr/>
 
-    <div class="luth_ide_info-references">
+	<div class="luth_ide_info-references">
         <div>
             References
         </div>
@@ -284,8 +60,252 @@
                     @(referencedLuthetusAssembly.Version)
                 </em>
                 ::
+				@{ var isDebug = IsDebug(Assembly.Load(referencedLuthetusAssembly)); }
+				@if (isDebug)
+				{
+					@: Debug
+				}
+				else
+				{
+					@: Release
+				}
+				::
                 @referencedLuthetusAssembly.Name
             </div>
         }
+    </div>
+
+	<hr/>
+
+	<div>
+        Recent Changes:
+		<div>
+			<div>
+                <div>v <em class="luth_em">0.8.6.0 </em> WIP_DATE</div>
+                <ul>
+                    <li>
+                        If a context menu is rendered off-screen, then it is repositioned.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.8.5.0 </em> (2024-06-19)</div>
+                <ul>
+					<li>
+                        Added Lexer support for C# char type.
+                    </li>
+					<li>
+                        Added Lexer support for C# escape characters
+						(both string and char types).
+                    </li>
+                    <li>
+                        Breadth first C# parser (used to be depth first).
+						This lets the parser see same scope definitions that occur
+						below in the text, relative to where its being
+						referenced from.
+                    </li>
+					<li>
+                        Re-written undo/redo. In short, only changes are tracked
+						now. Whereas previously a copy of the entire file was
+						being stored.
+                    </li>
+					<li>
+                        Various text editor optimizations.
+						One of which is not to re-calculate the virtualization
+						result if the user's action did not cause an edit.
+						In otherwords, any movement keys for the cursor
+						won't re-calculate the virtualization result.
+                    </li>
+					<li>
+                        Enqueueing a background task is a "synchronous" method,
+						(it used to be async).
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.8.4.0 </em> (2024-05-12)</div>
+                <ul>
+                    <li>
+                        Optimization: scrolling can be done to a C# model with IEditContext. This is a massive optimization,
+                        instead of every change to the text editor scrollbar invoking JavaScript interop to set
+                        the scrollbar, the IEditContext will gather many events that ask to modify the scrollbar,
+                        and batch them into a single JavaScript interop call to set the scrollbar.
+                    </li>
+                    <li>
+                        Change: Re-write <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/Reactives/Models/ThrottleAsync.cs"
+                                            target="_blank">
+                            ThrottleAsync.cs
+                        </a>
+                    </li>
+                    <li>
+                        Change: A lot of synchronous UI code was re-written to be async. The goal is that all UI code should be async
+                        from top to bottom (generally speaking).
+                    </li>
+                    <li>
+                        Fix: MostCharactersOnASingleLineTuple
+                    </li>
+                    <li>
+                        Fix: .NET Solution text editor syntax highlighting (right click the .NET Solution in the treeview
+                        and pick the menu option to open it in the text editor)
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.8.3.0 </em> (2024-05-05)</div>
+                <ul>
+                    <li>
+                        Fix Linux solution explorer paths. (issue was relating to '\' vs '/' directory separator).
+                    </li>
+                    <li>
+                        Fix Linux copy and paste.
+                    </li>
+                    <li>
+                        Fix get local storage.
+                    </li>
+                    <li>
+                        Fix unit test output. (still isn't perfect)
+                    </li>
+                    <li>
+                        Fix insertion of text when text-editor-cursor has a selection
+                    </li>
+                    <li>
+                        Fix text editor mouse wheel scrolling
+                    </li>
+                    <li>
+                        Fix text editor bring cursor into view.
+                    </li>
+                    <li>
+                        Batch terminal output. (this is a massive performance improvement,
+                        instead of writing line by line, if many lines of output need to be written,
+                        they all are written in one operation.)
+                    </li>
+                    <li>
+                        Parse the output of the terminal on a 'by-command-basis'.
+                        One can run 'dotnet run' with a .net cli output parser,
+                        then run 'git status' with a git cli output parser, as an example.
+                    </li>
+                    <li>
+                        Git integration progress. For example, a button that runs "git status",
+                        parses the terminal output, and creates a tree view of all the changed files.
+                        The git integration is still in progress though. (more usage of the '.git'
+                        folder instead of just parsing the terminal so much is likely a path to take).
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.8.2.0 </em> (2024-04-27)</div>
+                <ul>
+                    <li>
+                        Integrated Terminal.
+                    </li>
+                    <li>
+                        Moving github publish action to this repo itself.
+                        (old website is located in the repo:
+                        <a href="https://github.com/Luthetus/Luthetus.Website" target="_blank">
+                            Luthetus/Luthetus.Website
+                        </a>)
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.8.1.0</em> (2024-03-17)</div>
+                <ul>
+                    <li>
+                        <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/TextEditors/Models/TextEditorDynamicViewModelAdapter.cs"
+                           target="_blank">
+                            TextEditorDynamicViewModelAdapter.cs
+                        </a>
+                        &nbsp;
+                        Drag a text editor tab to dock it on a panel, or out into a dialog, and vice versa.
+                    </li>
+                    <li>
+                        <a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Dynamics/Models/IDynamicViewModel.cs"
+                           target="_blank">
+                            IDynamicViewModel.cs
+                        </a>
+                        &nbsp;
+                        Interface to implement drag, drop, or dock for a UI element.
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <div>v <em class="luth_em">0.8.0.0</em> (2024-03-11)</div>
+                <ul>
+                    <li>
+						<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/TextEditors/Models/TextEditorModels/TextEditorModelModifier.Partition.cs"
+                           target="_blank">
+                            TextEditorModelModifier.Partition.cs
+                        </a>
+                        Text Editor content is partitioned in 4096 character chunks.
+                    </li>
+					<li>
+						<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/Edits/Displays/DirtyResourceUriInteractiveIconDisplay.razor.cs"
+                           target="_blank">
+                            DirtyResourceUriInteractiveIconDisplay.razor.cs
+                        </a>
+                        Text Editor models which are unsaved now appear in bottom right.
+                    </li>
+					<li>
+						<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Tabs/Displays/TabDisplay.razor.cs"
+                           target="_blank">
+                            PolymorphicTabDisplay.razor.cs (2024-03-15: renamed to TabDisplay.razor.cs and moved)
+                        </a>
+                        PolymorphicUi has been started. One can see it in action by
+						dragging a text editor tab off of the editor, and then letting go.
+						This will turn that tab into a dialog.
+                    </li>
+					<li>
+						<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Common/Source/Lib/Luthetus.Common.RazorLib/Reactives/Models/ThrottleController.cs"
+                           target="_blank">
+                            ThrottleController.cs
+                        </a>
+                        ThrottleController has been started. All UI events are
+						passed through the same throttle. Furthermore, each UI event
+						can specify its own throttle delay, while maintaining
+						the execution by order in which the UI events occurred.
+                    </li>
+					<li>
+						<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.TextEditor/Source/Lib/Luthetus.TextEditor.RazorLib/TextEditors/Models/Internals/UiEvent/ThrottleEventOnKeyDown.cs"
+                           target="_blank">
+                            ThrottleEventOnKeyDown.cs
+                        </a>
+                        Text Editor event batching. By way of the previously mentioned
+						ThrottleController, consecutive UI events which are
+						batchable with one another. Will merge into a batch event.
+						For example, if 20 onkeydown events are waiting in the
+						throttle controller, then 1 onkeydownBatch event will occur
+						which contains all 20 onkeydown events.
+                    </li>
+					<li>
+						<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Luthetus.Ide/Source/Lib/Luthetus.Ide.RazorLib/DotNetSolutions/Displays/SolutionExplorerContextMenu.razor.cs"
+                           target="_blank">
+                            SolutionExplorerContextMenu.razor.cs
+                        </a>
+                        Solution Explorer multi-select context menu options.
+						If one selects many files/directories, then the 'delete'
+						context menu option will be available. This option will
+						delete all the selected files/directories.
+                    </li>
+					<li>
+                        WASM Performance issues: with this update it seems
+						I introduced a UI thread blockage. Holding down
+						any key while typing in the text editor will freeze
+						the UI as a result (more or less) until one lets go.
+						I wanted to fix this issue before updating the website,
+						but there are so many vital changes in this update,
+						that I want to make them known.
+                    </li>
+					<li>
+                        Native IDE Performance issues: I find any file with more than
+						10,000 characters in it is a bit laggy. I'm still
+						able to myself, use the IDE to develop the IDE, but large
+						files aren't too great of an experience at the moment.
+						I wrote partitioning for text editor content in chunks of
+						4,096 characters. But, still there are many more optimizations
+						I have planned for large files optimization.
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
