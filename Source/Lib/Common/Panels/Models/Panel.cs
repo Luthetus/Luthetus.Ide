@@ -55,6 +55,7 @@ public record Panel : IPanelTab, IDialog, IDrag
     }
 
     public string Title { get; }
+	public string TitleVerbose => Title;
 	public Key<Panel> Key { get; }
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }

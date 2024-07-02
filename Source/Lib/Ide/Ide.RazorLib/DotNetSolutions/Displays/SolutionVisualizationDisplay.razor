@@ -1,0 +1,63 @@
+@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Models;
+@using Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals
+@using Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals
+
+<h3>SolutionVisualizationDisplay</h3>
+
+@{ var localSolutionVisualizationModel = _solutionVisualizationModel; }
+
+_dotNetSolutionCompilerService.CompilerServiceResources.Length: @_dotNetSolutionCompilerService.CompilerServiceResources.Length
+_cSharpProjectCompilerService.CompilerServiceResources.Length: @_cSharpProjectCompilerService.CompilerServiceResources.Length
+_cSharpCompilerService.CompilerServiceResources.Length: @_cSharpCompilerService.CompilerServiceResources.Length
+localSolutionVisualizationModel.SolutionVisualizationDrawingList.Count: @localSolutionVisualizationModel.SolutionVisualizationDrawingList.Count
+
+<hr/>
+
+<div @oncontextmenu="HandleOnContextMenu"
+	 @oncontextmenu:preventDefault="true"
+	 style="color: var(--luth_primary-foreground-color);"
+	 id="@DivHtmlElementId">
+
+@*
+viewBox="@_solutionVisualizationModel.Dimensions.ViewBoxMinX @_solutionVisualizationModel.Dimensions.ViewBoxMinY @_solutionVisualizationModel.Dimensions.ViewBoxWidth @_solutionVisualizationModel.Dimensions.ViewBoxHeight"
+*@
+
+	<svg id="@SvgHtmlElementId"
+		 style="background-color: var(--luth_primary-background-color);"
+		 width="@_solutionVisualizationModel.Dimensions.SvgWidth"
+	     height="@_solutionVisualizationModel.Dimensions.SvgHeight"		 
+		 xmlns="http://www.w3.org/2000/svg">
+
+		@for (int badRenderCycleIndex = 0; badRenderCycleIndex < localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Count; badRenderCycleIndex++)
+		{
+			var renderCycleIndex = badRenderCycleIndex;
+			var renderCycleList = localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList[renderCycleIndex];
+
+			for (int badSequenceIndex = 0; badSequenceIndex < renderCycleList.Count; badSequenceIndex++)
+			{
+				var sequenceIndex = badSequenceIndex;
+				var solutionVisualizationDrawing = renderCycleList[sequenceIndex];
+				solutionVisualizationDrawing.RenderCycleSequence = sequenceIndex;
+
+				if (solutionVisualizationDrawing is ISolutionVisualizationDrawingCircle solutionVisualizationDrawingCircle)
+				{
+					<circle cx="@solutionVisualizationDrawingCircle.CenterX"
+							cy="@solutionVisualizationDrawingCircle.CenterY"
+							r="@solutionVisualizationDrawingCircle.Radius"
+							fill="@solutionVisualizationDrawingCircle.Fill" />
+				}
+				else if (solutionVisualizationDrawing is ISolutionVisualizationDrawingLine solutionVisualizationDrawingLine)
+				{
+					 <line x1="@solutionVisualizationDrawingLine.StartPoint.x"
+						   y1="@solutionVisualizationDrawingLine.StartPoint.y"
+						   x2="@solutionVisualizationDrawingLine.EndPoint.x"
+						   y2="@solutionVisualizationDrawingLine.EndPoint.y"
+						   stroke="@solutionVisualizationDrawingLine.Stroke" />
+				}
+			}
+		}
+		
+	</svg>
+</div>
+

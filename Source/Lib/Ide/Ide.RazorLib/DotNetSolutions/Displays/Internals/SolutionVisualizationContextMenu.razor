@@ -1,0 +1,12 @@
+@using Luthetus.Common.RazorLib.Menus.Displays
+
+@{ var localMenuRecord = _menuRecord; }
+
+@if (localMenuRecord is null)
+{
+    // TODO: Should something be displayed while the MenuRecord is loading?
+}
+else
+{
+	<MenuDisplay MenuRecord="localMenuRecord" />
+}

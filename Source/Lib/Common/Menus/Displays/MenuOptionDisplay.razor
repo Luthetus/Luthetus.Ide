@@ -2,6 +2,7 @@
 @using Luthetus.Common.RazorLib.Dropdowns.Models;
 
 <div class="luth_menu-option-display luth_unselectable @IsActiveCssClass @HasWidgetActiveCssClass"
+	 id="@_menuOptionHtmlElementId"
      tabindex="-1"
      @ref="_topmostElementReference"
      @onclick="HandleOnClick"
@@ -24,15 +25,6 @@
     @if (MenuOptionRecord.SubMenu is not null)
     {
         <IconChevronRight/>
-
-        <DropdownDisplay DropdownKey="_subMenuDropdownKey"
-                         DropdownPositionKind="DropdownPositionKind.Horizontal"
-                         ShouldDisplayOutOfBoundsClickDisplay="false">
-
-            <div class="luth_dropdown-display-default-background">
-                <MenuDisplay MenuRecord="MenuOptionRecord.SubMenu"/>
-            </div>
-        </DropdownDisplay>
     }
 
     @if (DisplayWidget)

@@ -1,4 +1,4 @@
-﻿@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Displays
 @using Luthetus.Common.RazorLib.Dropdowns.Models
 @using Luthetus.Common.RazorLib.TreeViews.Displays
 @using Luthetus.Common.RazorLib.TreeViews.Models
@@ -21,11 +21,4 @@
             </CascadingValue>
         </CascadingValue>
     </CascadingValue>
-	
-	<DropdownDisplay DropdownKey="GitChangesContextMenu.ContextMenuEventDropdownKey"
-                     DropdownPositionKind="DropdownPositionKind.Unset"
-                     CssStyleString="@GitChangesContextMenu.GetContextMenuCssStyleString(_mostRecentTreeViewCommandArgs)">
-
-        <GitChangesContextMenu TreeViewCommandArgs="_mostRecentTreeViewCommandArgs" />
-    </DropdownDisplay>
 </div>

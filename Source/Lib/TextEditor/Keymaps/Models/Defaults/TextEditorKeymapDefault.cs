@@ -168,6 +168,12 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ShowFindOverlay);
+        
+        Map.Add(new KeymapArgument("KeyR")
+        {
+            CtrlKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.RefreshSyntaxHighlighting);
     }
 
     private void AddDefaultAltModifiedKeymap()

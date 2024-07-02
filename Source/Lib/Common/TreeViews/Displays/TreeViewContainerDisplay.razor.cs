@@ -50,8 +50,6 @@ public partial class TreeViewContainerDisplay : FluxorComponent
     private TreeViewCommandArgs? _treeViewContextMenuCommandArgs;
     private ElementReference? _treeViewStateDisplayElementReference;
 
-    private string ContextMenuCssStyleString => GetContextMenuCssStyleString();
-
     protected override void OnInitialized()
     {
         TreeViewStateSelection

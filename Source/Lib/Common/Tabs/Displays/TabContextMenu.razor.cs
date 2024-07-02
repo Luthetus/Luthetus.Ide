@@ -22,8 +22,13 @@ public partial class TabContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
+	private (TabContextMenuEventArgs tabContextMenuEventArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+
     private MenuRecord GetMenuRecord(TabContextMenuEventArgs tabContextMenuEventArgs)
     {
+		if (_previousGetMenuRecordInvocation.tabContextMenuEventArgs == tabContextMenuEventArgs)
+			return _previousGetMenuRecordInvocation.menuRecord;
+
         var menuOptionList = new List<MenuOptionRecord>();
 
         menuOptionList.Add(new MenuOptionRecord(
@@ -37,24 +42,17 @@ public partial class TabContextMenu : ComponentBase
             () => tabContextMenuEventArgs.Tab.TabGroup.CloseOthersAsync(tabContextMenuEventArgs.Tab)));
 
 		if (!menuOptionList.Any())
-            return MenuRecord.Empty;
-
-        return new MenuRecord(menuOptionList.ToImmutableArray());
-    }
-
-	public static string GetContextMenuCssStyleString(TabContextMenuEventArgs? tabContextMenuEventArgs)
-    {
-		if (tabContextMenuEventArgs?.MouseEventArgs is null)
 		{
-			return "display: none;";
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
+			return menuRecord;
 		}
 
-        var left =
-            $"left: {tabContextMenuEventArgs.MouseEventArgs.ClientX.ToCssValue()}px;";
-
-        var top =
-            $"top: {tabContextMenuEventArgs.MouseEventArgs.ClientY.ToCssValue()}px;";
-
-        return $"{left} {top}";
+		// Default case
+		{
+			var menuRecord = new MenuRecord(menuOptionList.ToImmutableArray());
+			_previousGetMenuRecordInvocation = (tabContextMenuEventArgs, menuRecord);
+			return menuRecord;
+		}
     }
 }

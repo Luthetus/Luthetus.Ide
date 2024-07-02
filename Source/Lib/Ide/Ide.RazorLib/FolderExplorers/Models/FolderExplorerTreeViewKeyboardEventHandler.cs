@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
+using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
@@ -144,8 +144,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 treeViewAbsolutePath.Item,
                 async () =>
                 {
-                    var localParentOfCutFile = SolutionExplorerContextMenu.ParentOfCutFile;
-                    SolutionExplorerContextMenu.ParentOfCutFile = null;
+                    var localParentOfCutFile = FolderExplorerContextMenu.ParentOfCutFile;
+                    FolderExplorerContextMenu.ParentOfCutFile = null;
 
                     if (localParentOfCutFile is not null)
                         await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
@@ -165,8 +165,8 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
                 parentDirectoryAbsolutePath,
                 async () =>
                 {
-                    var localParentOfCutFile = SolutionExplorerContextMenu.ParentOfCutFile;
-                    SolutionExplorerContextMenu.ParentOfCutFile = null;
+                    var localParentOfCutFile = FolderExplorerContextMenu.ParentOfCutFile;
+                    FolderExplorerContextMenu.ParentOfCutFile = null;
 
                     if (localParentOfCutFile is not null)
                         await ReloadTreeViewModel(localParentOfCutFile).ConfigureAwait(false);
@@ -194,7 +194,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
             treeViewAbsolutePath.Item,
             () =>
             {
-                SolutionExplorerContextMenu.ParentOfCutFile = parent;
+                FolderExplorerContextMenu.ParentOfCutFile = parent;
                 NotificationHelper.DispatchInformative("Cut Action", $"Cut: {treeViewAbsolutePath.Item.NameWithExtension}", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(7));
                 return Task.CompletedTask;
             });

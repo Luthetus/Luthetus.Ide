@@ -110,7 +110,8 @@ public class LuthetusIdeBackgroundTaskApi
             _fileSystemProvider,
             _textEditorService,
             _interfaceCompilerServiceRegistry,
-            _terminalStateWrap);
+            _terminalStateWrap,
+			serviceProvider);
 
         Editor = new LuthetusIdeEditorBackgroundTaskApi(
             this,

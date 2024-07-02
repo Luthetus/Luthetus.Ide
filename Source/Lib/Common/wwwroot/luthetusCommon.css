@@ -1,4 +1,4 @@
-﻿.luth_te_button:hover {
+.luth_te_button:hover {
     background-color: var(--luth_button-hover-background-color);
     box-shadow: 0 0 2px var(--luth_primary-overlay-box-shadow-color);
 }
@@ -445,7 +445,7 @@ ul.luth_indent-child-content {
     --luth_icon-start-without-debugging-font-color: #37b38b;
     --luth_icon-start-with-debugging-font-color: #37b38b;
     --luth_toggled-on-background-color: #c4eaff;
-    --luth_toggled-on-hover-background-color: #67e4ff;
+    --luth_toggled-on-hover-background-color: rgb(255, 0, 255);
     --luth_danger-general-use-color: #ff8484;
     --luth_button-foreground-color: rgb(240, 240, 240);
     --luth_button-background-color: #0b30c7;

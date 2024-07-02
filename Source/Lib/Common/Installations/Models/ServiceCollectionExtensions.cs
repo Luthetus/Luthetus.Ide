@@ -112,5 +112,6 @@ public static class ServiceCollectionExtensions
     private static readonly LuthetusCommonComponentRenderers _commonRendererTypes = new(
         typeof(CommonErrorNotificationDisplay),
         typeof(CommonInformativeNotificationDisplay),
+        typeof(CommonProgressNotificationDisplay),
         _commonTreeViews);
 }

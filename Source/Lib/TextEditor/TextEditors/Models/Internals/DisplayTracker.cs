@@ -33,9 +33,6 @@ public class DisplayTracker : IDisposable
         _viewModelKey = viewModelKey;
     }
 
-	// TODO: Delete '_countPostScrollAndRemeasureInvocations'
-	private int _countPostScrollAndRemeasureInvocations;
-
     /// <summary>
     /// <see cref="Links"/> refers to a Blazor TextEditorViewModelDisplay having had its OnParametersSet invoked
     /// and the ViewModelKey that was passed as a parameter matches this encompasing ViewModel's key. In this situation

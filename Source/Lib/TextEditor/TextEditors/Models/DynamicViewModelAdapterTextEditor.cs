@@ -72,6 +72,10 @@ public class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTab, IDia
 
     public string Title => GetTitle();
 
+	public string TitleVerbose =>
+		TextEditorService.ViewModelApi.GetModelOrDefault(ViewModelKey).ResourceUri.Value
+			?? Title;
+
     public Type ComponentType { get; }
 
     public Dictionary<string, object?>? ComponentParameterMap { get; }

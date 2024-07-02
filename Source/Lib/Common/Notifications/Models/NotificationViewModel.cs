@@ -29,6 +29,7 @@ public class NotificationViewModel : INotification
     public bool DeleteNotificationAfterOverlayIsDismissed { get; init; }
 	public string? CssClassString { get; init; }
 	public string Title { get; init; }
+	public string TitleVerbose => Title;
     public Type ComponentType { get; init; }
     public Dictionary<string, object?>? ComponentParameterMap { get; init; }
     public string? CssClass { get; set; }

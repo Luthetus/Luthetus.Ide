@@ -5,7 +5,7 @@
     @if (!TreeViewNoType.IsHidden)
     {
         <div id="@TreeViewService.GetNodeElementId(TreeViewNoType)"
-        class="luth_tree-view-title @IsSelectedCssClass @IsActiveCssClass"
+             class="luth_tree-view-title @IsSelectedCssClass @IsActiveCssClass"
              style="padding-left: @(OffsetInPixels.ToCssValue())px;"
              tabindex="-1"
              @onclick:stopPropagation="true"

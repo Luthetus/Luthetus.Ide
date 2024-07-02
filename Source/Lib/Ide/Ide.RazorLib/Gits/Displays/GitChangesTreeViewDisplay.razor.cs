@@ -1,12 +1,13 @@
 using Fluxor;
+using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -31,7 +32,6 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;
 
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private GitTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
     private GitTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
@@ -57,14 +57,20 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
+		var dropdownRecord = new DropdownRecord(
+			GitChangesContextMenu.ContextMenuEventDropdownKey,
+			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+			typeof(GitChangesContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(GitChangesContextMenu.TreeViewCommandArgs),
+					treeViewCommandArgs
+				}
+			},
+			restoreFocusOnClose: null);
 
-        // The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
-        // The ChildContent renders nothing, unless the provider of the child content
-        // re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-        await InvokeAsync(StateHasChanged);
-
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
-            GitChangesContextMenu.ContextMenuEventDropdownKey));
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
 }

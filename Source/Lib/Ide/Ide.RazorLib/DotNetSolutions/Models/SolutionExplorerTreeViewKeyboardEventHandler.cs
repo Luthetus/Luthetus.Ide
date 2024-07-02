@@ -11,6 +11,7 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals;
 using Luthetus.Ide.RazorLib.Menus.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models;
