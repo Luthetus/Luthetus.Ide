@@ -7,7 +7,4 @@ namespace Luthetus.Common.RazorLib.Dropdowns.Models;
 public interface IDropdownService
 {
     public IState<DropdownState> DropdownStateWrap { get; }
-
-    public void RemoveActiveDropdownKey(Key<DropdownRecord> dropdownKey);
-    public void ClearActiveDropdownKeysAction();
 }

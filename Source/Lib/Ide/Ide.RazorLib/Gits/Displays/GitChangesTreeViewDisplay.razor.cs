@@ -68,7 +68,8 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
 					nameof(GitChangesContextMenu.TreeViewCommandArgs),
 					treeViewCommandArgs
 				}
-			});
+			},
+			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

@@ -101,7 +101,8 @@ public partial class InputFileSidebar : ComponentBase
 					nameof(InputFileContextMenu.TreeViewCommandArgs),
 					treeViewCommandArgs
 				}
-			});
+			},
+			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

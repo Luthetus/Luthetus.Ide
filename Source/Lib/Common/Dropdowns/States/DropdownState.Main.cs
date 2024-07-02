@@ -6,12 +6,9 @@ using Luthetus.Common.RazorLib.Keys.Models;
 namespace Luthetus.Common.RazorLib.Dropdowns.States;
 
 [FeatureState]
-public partial record DropdownState(
-	ImmutableList<Key<DropdownRecord>> ActiveKeyList,
-	ImmutableList<DropdownRecord> DropdownList)
+public partial record DropdownState(ImmutableList<DropdownRecord> DropdownList)
 {
-    public DropdownState()
-		: this(ImmutableList<Key<DropdownRecord>>.Empty, ImmutableList<DropdownRecord>.Empty)
+    public DropdownState() : this(ImmutableList<DropdownRecord>.Empty)
     {
 		
     }

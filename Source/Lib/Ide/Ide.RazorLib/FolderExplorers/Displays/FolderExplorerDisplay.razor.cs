@@ -79,7 +79,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 					nameof(FolderExplorerContextMenu.TreeViewCommandArgs),
 					treeViewCommandArgs
 				}
-			});
+			},
+			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

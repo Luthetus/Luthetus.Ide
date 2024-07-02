@@ -88,7 +88,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 					nameof(SolutionExplorerContextMenu.TreeViewCommandArgs),
 					treeViewCommandArgs
 				}
-			});
+			},
+			null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

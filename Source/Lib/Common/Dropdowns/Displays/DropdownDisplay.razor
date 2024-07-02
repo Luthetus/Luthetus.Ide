@@ -13,9 +13,11 @@
 	 @onclick:stopPropagation="true"
 	 @oncontextmenu:preventDefault="true">
 
+@*
 <environment include="Development">
 	<div>_renderCount: @_renderCount</div>
 </environment>
+*@
 
 	@{
 		_isOffScreenHorizontally = 
@@ -28,8 +30,10 @@
 	}
 	
 	<CascadingValue Value="localDropdown">
-        <DynamicComponent @key="localDropdown.Key"
-                          Type="localDropdown.ComponentType"
-                          Parameters="localDropdown.ComponentParameterMap" />
+		<CascadingValue Name="ReturnFocusToParentFuncAsync" Value="localDropdown.RestoreFocusOnClose">
+	        <DynamicComponent @key="localDropdown.Key"
+	                          Type="localDropdown.ComponentType"
+	                          Parameters="localDropdown.ComponentParameterMap" />
+	    </CascadingValue>
     </CascadingValue>
 </div>

@@ -16,13 +16,15 @@ public record DropdownRecord
 		double leftInitial,
 		double topInitial,
 		Type componentType,
-		Dictionary<string, object?>? componentParameterMap)
+		Dictionary<string, object?>? componentParameterMap,
+		Func<Task>? restoreFocusOnClose)
 	{
 		Key = key;
 		Left = leftInitial;
 		Top = topInitial;
 		ComponentType = componentType;
 		ComponentParameterMap = componentParameterMap;
+		RestoreFocusOnClose = restoreFocusOnClose;
 	}
 
 	public Key<DropdownRecord> Key { get; init; }
@@ -32,6 +34,7 @@ public record DropdownRecord
 	public double Top { get; init; }
 	public Type ComponentType { get; init; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; init; }
+	public Func<Task>? RestoreFocusOnClose { get; init; }
 
 	/// <summary>
 	/// Invoke this event via the method: <see cref="OnHtmlElementDimensionsChanged"/>.

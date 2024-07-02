@@ -66,7 +66,8 @@ public partial class GitDisplay : FluxorComponent
 					nameof(MenuDisplay.MenuRecord),
 					menu
 				}
-			});
+			},
+			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

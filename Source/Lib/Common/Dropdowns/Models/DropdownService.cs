@@ -17,15 +17,4 @@ public class DropdownService : IDropdownService
     }
 
     public IState<DropdownState> DropdownStateWrap { get; }
-
-    public void RemoveActiveDropdownKey(Key<DropdownRecord> dropdownKey)
-    {
-        _dispatcher.Dispatch(new DropdownState.RemoveActiveAction(
-            dropdownKey));
-    }
-
-    public void ClearActiveDropdownKeysAction()
-    {
-        _dispatcher.Dispatch(new DropdownState.ClearActivesAction());
-    }
 }

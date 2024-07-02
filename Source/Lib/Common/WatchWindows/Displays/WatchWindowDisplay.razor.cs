@@ -81,7 +81,8 @@ public partial class WatchWindowDisplay : FluxorComponent
 					nameof(WatchWindowContextMenuDisplay.TreeViewCommandArgs),
 					treeViewCommandArgs
 				}
-			});
+			},
+			treeViewCommandArgs.RestoreFocusToTreeView);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

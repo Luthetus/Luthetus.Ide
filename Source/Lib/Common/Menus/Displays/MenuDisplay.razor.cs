@@ -16,11 +16,6 @@ public partial class MenuDisplay : ComponentBase
 
     [CascadingParameter(Name = "ReturnFocusToParentFuncAsync")]
     public Func<Task>? ReturnFocusToParentFuncAsync { get; set; }
-	/// <summary>
-	/// TODO: Delete the parameter/property 'DropdownKey'. In place of this is the newer parameter/property 'Dropdown'.
-	/// </summary>
-    [CascadingParameter]
-    public Key<DropdownRecord> DropdownKey { get; set; } = Key<DropdownRecord>.Empty;
 	[CascadingParameter]
     public DropdownRecord? Dropdown { get; set; }
 
@@ -109,19 +104,19 @@ public partial class MenuDisplay : ComponentBase
         {
             try
             {
-                if (_menuDisplayElementReference is not null)
+				var localMenuDisplayElementReference = _menuDisplayElementReference;
+                if (localMenuDisplayElementReference is not null)
                 {
-                    await _menuDisplayElementReference.Value
+                    await localMenuDisplayElementReference.Value
                         .FocusAsync()
                         .ConfigureAwait(false);
                 }
             }
             catch (Exception)
             {
-                // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-                //             This bug is seemingly happening randomly. I have a suspicion
-                //             that there are race-condition exceptions occurring with "FocusAsync"
-                //             on an ElementReference.
+				// TODO: Capture specifically the exception that is fired when the JsRuntime...
+				//       ...tries to set focus to an HTML element, but that HTML element
+				//       was not found.
             }
 
             await InvokeAsync(StateHasChanged);
@@ -140,11 +135,10 @@ public partial class MenuDisplay : ComponentBase
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
-                if (DropdownKey != Key<DropdownRecord>.Empty && ReturnFocusToParentFuncAsync is not null)
-                {
-                    Dispatcher.Dispatch(new DropdownState.RemoveActiveAction(DropdownKey));
+                Dispatcher.Dispatch(new DropdownState.DisposeAction(Dropdown.Key));
+
+                if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
-                }
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
@@ -167,8 +161,7 @@ public partial class MenuDisplay : ComponentBase
                 _activeMenuOptionRecordIndex = MenuRecord.MenuOptionList.Length - 1;
                 break;
             case KeyboardKeyFacts.MetaKeys.ESCAPE:
-                if (DropdownKey != Key<DropdownRecord>.Empty)
-                    Dispatcher.Dispatch(new DropdownState.RemoveActiveAction(DropdownKey));
+                Dispatcher.Dispatch(new DropdownState.DisposeAction(Dropdown.Key));
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);

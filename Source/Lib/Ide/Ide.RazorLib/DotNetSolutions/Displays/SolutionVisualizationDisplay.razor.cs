@@ -127,7 +127,8 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 					nameof(SolutionVisualizationContextMenu.SolutionVisualizationModel),
 					_solutionVisualizationModel
 				}
-			});
+			},
+			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

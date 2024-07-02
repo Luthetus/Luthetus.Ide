@@ -44,8 +44,8 @@ public partial class MenuOptionDisplay : ComponentBase
 
     private bool IsActive => Index == ActiveMenuOptionRecordIndex;
 
-    private bool HasSubmenuActive => DropdownStateWrap.Value.ActiveKeyList.Any(
-        x => x.Guid == _subMenuDropdownKey.Guid);
+    private bool HasSubmenuActive => DropdownStateWrap.Value.DropdownList.Any(
+        x => x.Key == _subMenuDropdownKey);
 
     private string IsActiveCssClass => IsActive ? "luth_active" : string.Empty;
 
@@ -78,21 +78,9 @@ public partial class MenuOptionDisplay : ComponentBase
         // }
 
         // Set focus to active menu option
-        if (IsActive && !localHasSubmenuActive && !DisplayWidget && _topmostElementReference.HasValue)
+        if (IsActive && !localHasSubmenuActive && !DisplayWidget)
         {
-            try
-            {
-                await _topmostElementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-                // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-                //             This bug is seemingly happening randomly. I have a suspicion
-                //             that there are race-condition exceptions occurring with "FocusAsync"
-                //             on an ElementReference.
-            }
+            FocusElementReference();
         }
 
         await base.OnParametersSetAsync();
@@ -103,7 +91,7 @@ public partial class MenuOptionDisplay : ComponentBase
         if (MenuOptionRecord.OnClickFunc is not null)
         {
             MenuOptionRecord.OnClickFunc.Invoke();
-            Dispatcher.Dispatch(new DropdownState.ClearActivesAction());
+            Dispatcher.Dispatch(new DropdownState.ClearAction());
 
 			var localDropdown = Dropdown;
 			if (localDropdown is not null)
@@ -144,7 +132,8 @@ public partial class MenuOptionDisplay : ComponentBase
 					nameof(MenuDisplay.MenuRecord),
 					localSubMenu
 				}
-			});
+			},
+			FocusElementReference);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 	}
@@ -170,6 +159,26 @@ public partial class MenuOptionDisplay : ComponentBase
         }
     }
 
+	private async Task FocusElementReference()
+	{
+		var localTopmostElementReference = _topmostElementReference;
+	    try
+        {
+            if (localTopmostElementReference.HasValue)
+            {
+                await localTopmostElementReference.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
+            }
+        }
+        catch (Exception)
+        {
+            // TODO: Capture specifically the exception that is fired when the JsRuntime...
+			//       ...tries to set focus to an HTML element, but that HTML element
+			//       was not found.
+        }
+	}
+
     private async Task HideWidgetAsync(Action? onAfterWidgetHidden)
     {
         _shouldDisplayWidget = false;
@@ -177,27 +186,12 @@ public partial class MenuOptionDisplay : ComponentBase
 
         if (onAfterWidgetHidden is null) // Only hide the widget
         {
-            try
-            {
-                if (_topmostElementReference.HasValue)
-                {
-                    await _topmostElementReference.Value
-                        .FocusAsync()
-                        .ConfigureAwait(false);
-                }
-            }
-            catch (Exception)
-            {
-                // 2023-04-18: The app has had a bug where it "freezes" and must be restarted.
-                //             This bug is seemingly happening randomly. I have a suspicion
-                //             that there are race-condition exceptions occurring with "FocusAsync"
-                //             on an ElementReference.
-            }
+			await FocusElementReference();
         }
         else // Hide the widget AND dispose the menu
         {
             onAfterWidgetHidden.Invoke();
-            Dispatcher.Dispatch(new DropdownState.ClearActivesAction());
+            Dispatcher.Dispatch(new DropdownState.ClearAction());
 
 			var localDropdown = Dropdown;
 			if (localDropdown is not null)

@@ -414,81 +414,25 @@ public partial class IdeHeader : ComponentBase
         generalTerminal.EnqueueCommand(terminalCommand);
 	}
 
-    /// <summary>
-    /// TODO: Make this method abstracted into a component that takes care of the UI to show the dropdown and to restore focus when menu closed
-    /// </summary>
-    private async Task RestoreFocusToButtonDisplayComponentFileAsync()
+	private async Task RestoreFocusToElementReference(ElementReference? elementReference)
     {
         try
         {
-            if (_buttonFileElementReference is not null)
+            if (elementReference is not null)
             {
-                await _buttonFileElementReference.Value
+                await elementReference.Value
                     .FocusAsync()
                     .ConfigureAwait(false);
             }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+			// TODO: Capture specifically the exception that is fired when the JsRuntime...
+			//       ...tries to set focus to an HTML element, but that HTML element
+			//       was not found.
         }
     }
 
-	private async Task RestoreFocusToButtonDisplayComponentToolsAsync()
-    {
-        try
-        {
-            if (_buttonToolsElementReference is not null)
-            {
-                await _buttonToolsElementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-	private async Task RestoreFocusToButtonDisplayComponentViewAsync()
-    {
-        try
-        {
-            if (_buttonViewElementReference is not null)
-            {
-                await _buttonViewElementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-	private async Task RestoreFocusToButtonDisplayComponentRunAsync()
-    {
-        try
-        {
-            if (_buttonRunElementReference is not null)
-            {
-                await _buttonRunElementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-    
     private Task OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogViewModel(
@@ -531,7 +475,11 @@ public partial class IdeHeader : ComponentBase
         return Task.CompletedTask;
     }
 
-	private async Task RenderDropdownOnClick(string id, Key<DropdownRecord> key, MenuRecord menu)
+	private async Task RenderDropdownOnClick(
+		string id,
+		ElementReference? elementReference,
+		Key<DropdownRecord> key,
+		MenuRecord menu)
 	{
 		var jsRuntimeCommonApi = JsRuntime.GetLuthetusCommonApi();
 
@@ -550,7 +498,8 @@ public partial class IdeHeader : ComponentBase
 					nameof(MenuDisplay.MenuRecord),
 					menu
 				}
-			});
+			},
+			() => RestoreFocusToElementReference(elementReference));
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 	}

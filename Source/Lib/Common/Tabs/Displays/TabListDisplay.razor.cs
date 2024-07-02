@@ -37,7 +37,8 @@ public partial class TabListDisplay : ComponentBase
 					nameof(TabContextMenu.TabContextMenuEventArgs),
 					tabContextMenuEventArgs
 				}
-			});
+			},
+			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

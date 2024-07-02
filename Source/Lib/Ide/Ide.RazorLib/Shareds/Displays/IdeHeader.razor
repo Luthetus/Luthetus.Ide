@@ -18,7 +18,7 @@
         <SettingsDialogEntryPoint/>
 
         <button @ref="_buttonFileElementReference"
-                @onclick="async () => await RenderDropdownOnClick(_buttonFileId, _dropdownKeyFile, _menuFile)"
+                @onclick="async () => await RenderDropdownOnClick(_buttonFileId, _buttonFileElementReference, _dropdownKeyFile, _menuFile)"
 			    id="@_buttonFileId"
                 class="luth_button"
                 style="position: relative; margin-left: 15px;">
@@ -26,7 +26,7 @@
         </button>
 
 		<button @ref="_buttonToolsElementReference"
-                @onclick="async () => await RenderDropdownOnClick(_buttonToolsId, _dropdownKeyTools, _menuTools)"
+                @onclick="async () => await RenderDropdownOnClick(_buttonToolsId, _buttonToolsElementReference, _dropdownKeyTools, _menuTools)"
 			    id="@_buttonToolsId"
                 class="luth_button"
                 style="position: relative; margin-left: 15px;">
@@ -34,7 +34,7 @@
         </button>
 
 		<button @ref="_buttonViewElementReference"
-                @onclick="async () => await RenderDropdownOnClick(_buttonViewId, _dropdownKeyView, _menuView)"
+                @onclick="async () => await RenderDropdownOnClick(_buttonViewId, _buttonViewElementReference, _dropdownKeyView, _menuView)"
 			    id="@_buttonViewId"
                 class="luth_button"
                 style="position: relative; margin-left: 15px;">
@@ -42,7 +42,7 @@
          </button>
 
 		<button @ref="_buttonRunElementReference"
-                @onclick="async () => { InitializeMenuRun(); await RenderDropdownOnClick(_buttonRunId, _dropdownKeyRun, _menuRun); }"
+                @onclick="async () => { InitializeMenuRun(); await RenderDropdownOnClick(_buttonRunId, _buttonRunElementReference, _dropdownKeyRun, _menuRun); }"
 			    id="@_buttonRunId"
 				class="luth_button"
                 style="position: relative; margin-left: 15px;">

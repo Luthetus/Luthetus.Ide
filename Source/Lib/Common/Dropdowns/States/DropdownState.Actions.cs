@@ -9,6 +9,4 @@ public partial record DropdownState
 	public record DisposeAction(Key<DropdownRecord> Key);
 	public record ClearAction;
 	public record FitOnScreenAction(DropdownRecord Dropdown);
-    public record RemoveActiveAction(Key<DropdownRecord> Key);
-    public record ClearActivesAction;
 }

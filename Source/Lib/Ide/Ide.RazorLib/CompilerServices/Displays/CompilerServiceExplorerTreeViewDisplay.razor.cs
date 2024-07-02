@@ -103,7 +103,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 					nameof(CompilerServiceExplorerTreeViewContextMenu.TreeViewCommandArgs),
 					treeViewCommandArgs
 				}
-			});
+			},
+			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

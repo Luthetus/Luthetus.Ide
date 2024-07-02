@@ -57,7 +57,8 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 					nameof(TestExplorerContextMenu.TreeViewCommandArgs),
 					treeViewCommandArgs
 				}
-			});
+			},
+			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
