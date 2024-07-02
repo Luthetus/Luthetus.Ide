@@ -2,27 +2,77 @@
 
 <div class="luth_ide_info">
 
-    @{ var ideAssembly = typeof(IdeInfoDisplay).Assembly; }
+	<div>
+        Source Code:
+        <a target="_blank"
+           href="https://github.com/Luthetus/Luthetus.Ide">
+            
+           Luthetus.Ide
+        </a>
+    </div>
 
-	<div class="luth_ide_info-main">
-        <div>
-            Version: @ideAssembly.GetName().Version
-        </div>
+	<hr/>
+
+	<div>
+        Entry Assembly:
+		@{ var entryAssembly = System.Reflection.Assembly.GetEntryAssembly(); }
 		<div>
-			GetIsDebug(): @GetIsDebug()
-		</div>
-		<div>
-			IsDebug(): @IsDebug(ideAssembly)
-		</div>
-        <div>
-            Source Code:
-            <a target="_blank"
-               href="https://github.com/Luthetus/Luthetus.Ide">
-                
-               Luthetus.Ide
-            </a>
+			@{ var entryAssemblyName = entryAssembly.GetName(); }
+            v
+            <em class="luth_em" title="Version">
+                @(entryAssemblyName.Version)
+            </em>
+            ::
+			@if (AssemblyCustomAttributeIsDebug(entryAssembly))
+			{
+				@: Debug
+			}
+			else
+			{
+				@: Release
+			}
+			::
+            @entryAssemblyName.Name
         </div>
     </div>
+
+	<div class="luth_ide_info-main">
+        Library:
+    	@{ var ideAssembly = typeof(IdeInfoDisplay).Assembly; }
+        <div>
+			@{ var ideAssemblyName = ideAssembly.GetName(); }
+            v
+            <em class="luth_em" title="Version">
+                @(ideAssemblyName.Version)
+            </em>
+            ::
+			@if (AssemblyCustomAttributeIsDebug(ideAssembly))
+			{
+				@: Debug
+			}
+			else
+			{
+				@: Release
+			}
+			::
+            @ideAssemblyName.Name
+        </div>
+    </div>
+
+	<hr/>
+
+	<div>
+		<table>
+			<tr>
+				<td>IsDebug_MethodConditionalAttribute_Test:</td>
+				<td>@MethodConditionalAttributeIsDebug()</td>
+			</tr>
+			<tr>
+				<td>IsDebug_Preprocessor_Test:</td>
+				<td>@PreprocessorIsDebug()</td>
+			</tr>
+		</table>
+	</div>
 
 	<hr/>
 
@@ -60,8 +110,7 @@
                     @(referencedLuthetusAssembly.Version)
                 </em>
                 ::
-				@{ var isDebug = IsDebug(Assembly.Load(referencedLuthetusAssembly)); }
-				@if (isDebug)
+				@if (AssemblyCustomAttributeIsDebug(Assembly.Load(referencedLuthetusAssembly)))
 				{
 					@: Debug
 				}

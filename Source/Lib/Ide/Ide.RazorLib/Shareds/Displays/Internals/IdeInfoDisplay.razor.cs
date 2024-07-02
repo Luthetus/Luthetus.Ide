@@ -148,7 +148,7 @@ public partial class IdeInfoDisplay : ComponentBase
 	    isDebug = true;
 	}
 	 
-	public bool GetIsDebug()
+	public bool MethodConditionalAttributeIsDebug()
 	{ 
 	    bool isDebug = false;
 	    IsDebugCheck(ref isDebug);
@@ -158,7 +158,7 @@ public partial class IdeInfoDisplay : ComponentBase
 #endregion
 
 #region
-	static bool IsDebug(Assembly assembly)
+	static bool AssemblyCustomAttributeIsDebug(Assembly assembly)
 	{
 	    var debugAttr = assembly.GetCustomAttribute<DebuggableAttribute>();
 	
@@ -168,6 +168,17 @@ public partial class IdeInfoDisplay : ComponentBase
 	    }
 	
 	    return (debugAttr.DebuggingFlags & DebuggableAttribute.DebuggingModes.Default) != 0;
+	}
+#endregion
+
+#region
+	public static bool PreprocessorIsDebug()
+	{
+#if DEBUG
+		return true;
+#else
+		return false;
+#endif
 	}
 #endregion
 }
