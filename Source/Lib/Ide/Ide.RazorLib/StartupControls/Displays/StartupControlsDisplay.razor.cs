@@ -132,7 +132,12 @@ public partial class StartupControlsDisplay : FluxorComponent
 		    
 		menuOptionList.Add(new MenuOptionRecord(
 			"Stop Execution",
-		    MenuOptionKind.Other));
+		    MenuOptionKind.Other,
+		    OnClickFunc: async () =>
+		    {
+		    	var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+		    	executionTerminal.KillProcess();
+		    }));
 
 		var dropdownRecord = new DropdownRecord(
 			_startButtonDropdownKey,
