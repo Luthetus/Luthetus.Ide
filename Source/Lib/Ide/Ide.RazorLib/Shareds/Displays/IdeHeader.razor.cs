@@ -213,7 +213,8 @@ public partial class IdeHeader : ComponentBase
                         typeof(CodeSearchDisplay),
                         null,
                         null,
-						true);
+						true,
+						null);
 
                     Dispatcher.Dispatch(new DialogState.RegisterAction(CommandFactory.CodeSearchDialog));
                     return Task.CompletedTask;
@@ -266,7 +267,8 @@ public partial class IdeHeader : ComponentBase
 			            typeof(BackgroundTaskDialogDisplay),
 			            null,
 			            null,
-						true);
+						true,
+						null);
 			
 			        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 			        return Task.CompletedTask;
@@ -441,7 +443,8 @@ public partial class IdeHeader : ComponentBase
             typeof(DotNetSolutionFormDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
         return Task.CompletedTask;
@@ -455,7 +458,8 @@ public partial class IdeHeader : ComponentBase
             typeof(IdeInfoDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 		return Task.CompletedTask;
@@ -469,7 +473,8 @@ public partial class IdeHeader : ComponentBase
             typeof(PermissionsDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
         return Task.CompletedTask;

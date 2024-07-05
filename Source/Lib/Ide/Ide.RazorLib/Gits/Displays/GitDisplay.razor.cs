@@ -1,8 +1,8 @@
 using Fluxor;
+using System.Collections.Immutable;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -166,7 +166,8 @@ public partial class GitDisplay : FluxorComponent
             typeof(GitAddRepoDisplay),
             null,
             null,
-            true);
+            true,
+            null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
     }

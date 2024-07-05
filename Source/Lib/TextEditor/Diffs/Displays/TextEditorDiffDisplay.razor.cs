@@ -1,13 +1,13 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
@@ -43,6 +43,8 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     /// <summary>TabIndex is used for the html attribute named: 'tabindex'</summary>
     [Parameter]
     public int TabIndex { get; set; } = -1;
+    
+    private const string _buttonId = "luth_te_text-editor-diff-button_id";
 
     private DialogViewModel _detailsDialogRecord = new DialogViewModel(
         Key<IDynamicViewModel>.NewKey(),
@@ -50,7 +52,8 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
         typeof(DiffDetailsDisplay),
         null,
         null,
-        true);
+        true,
+    	_buttonId);
 
     private CancellationTokenSource _calculateDiffCancellationTokenSource = new();
     private TextEditorDiffResult? _mostRecentDiffResult;

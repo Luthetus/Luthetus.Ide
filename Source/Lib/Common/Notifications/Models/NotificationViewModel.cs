@@ -37,4 +37,5 @@ public class NotificationViewModel : INotification
 	public ElementDimensions ElementDimensions { get; set; } = new();
 	public string? NotificationCssClass { get; set; }
 	public string? NotificationCssStyle { get; set; }
+	public string? SetFocusOnCloseElementId { get; set; }
 }

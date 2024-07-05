@@ -71,6 +71,7 @@ public record Panel : IPanelTab, IDialog, IDrag
     public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
 	public bool DialogIsResizable { get; set; } = true;
+	public string? SetFocusOnCloseElementId { get; set; }
     public string DialogFocusPointHtmlElementId { get; init; }
 	public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
 

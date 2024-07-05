@@ -102,7 +102,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             typeof(DotNetSolutionFormDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(
             dialogRecord));

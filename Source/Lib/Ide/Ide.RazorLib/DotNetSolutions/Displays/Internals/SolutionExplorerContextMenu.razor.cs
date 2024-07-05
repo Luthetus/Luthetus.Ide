@@ -493,7 +493,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                 },
             },
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
         return Task.CompletedTask;

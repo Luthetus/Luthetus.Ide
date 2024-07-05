@@ -19,6 +19,8 @@ public partial class NotificationsInteractiveIconDisplay : FluxorComponent
     public string CssClassString { get; set; } = string.Empty;
     [Parameter]
     public string CssStyleString { get; set; } = string.Empty;
+    
+    private const string _buttonElementId = "luth_web_notifications-interactive-icon_id";
 
     private readonly DialogViewModel NotificationsViewDisplayDialogRecord = new(
         Key<IDynamicViewModel>.NewKey(),
@@ -26,7 +28,8 @@ public partial class NotificationsInteractiveIconDisplay : FluxorComponent
         typeof(NotificationsViewDisplay),
         null,
         null,
-		true);
+		true,
+		_buttonElementId);
 
     private void ShowNotificationsViewDisplayOnClick()
     {

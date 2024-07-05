@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Contexts.Models;
@@ -8,7 +9,6 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Ide.RazorLib.Gits.States;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -36,7 +36,8 @@ public partial class GitInteractiveIconDisplay : FluxorComponent
             typeof(GitAddRepoDisplay),
             null,
             null,
-            true);
+            true,
+            null);
 
             Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
         }
