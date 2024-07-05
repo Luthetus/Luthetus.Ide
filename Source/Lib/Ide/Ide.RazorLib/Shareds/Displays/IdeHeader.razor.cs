@@ -87,6 +87,11 @@ public partial class IdeHeader : ComponentBase
     private MenuRecord _menuRun = new(ImmutableArray<MenuOptionRecord>.Empty);
     private string _buttonRunId = "luth_ide_header-button-run";
     private ElementReference? _buttonRunElementReference;
+    
+    private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
+    
+    private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
+    	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
 
     protected override Task OnInitializedAsync()
     {
@@ -486,9 +491,7 @@ public partial class IdeHeader : ComponentBase
 		Key<DropdownRecord> key,
 		MenuRecord menu)
 	{
-		var jsRuntimeCommonApi = JsRuntime.GetLuthetusCommonApi();
-
-		var buttonDimensions = await jsRuntimeCommonApi
+		var buttonDimensions = await JsRuntimeCommonApi
 			.MeasureElementById(id)
 			.ConfigureAwait(false);
 

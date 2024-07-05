@@ -22,8 +22,10 @@
        &nbsp;
    </div>
    <div class="luth_ide_startup-controls-display-entry">
-        <button @onclick="() => StartProgramWithoutDebuggingOnClick(isExecuting)"
+        <button @ref="_startButtonElementReference"
+        	    @onclick="() => StartProgramWithoutDebuggingOnClick(isExecuting)"
                 class="luth_button"
+                id="@_startButtonElementId"
                 disabled=@(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath is null)
                 title="Start without debugging">
             

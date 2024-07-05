@@ -236,7 +236,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 			"Output",
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
-			Key<ContextRecord>.Empty,
+			ContextFacts.OutputContext.ContextKey,
             typeof(OutputPanelDisplay),
             null,
             Dispatcher,

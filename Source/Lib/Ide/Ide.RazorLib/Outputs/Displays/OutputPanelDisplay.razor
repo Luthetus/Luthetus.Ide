@@ -1,6 +1,11 @@
 @using Luthetus.Ide.RazorLib.Outputs.Displays.Internals
+@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models
 
-<div class="luth_output-panel-display">
+<ContextBoundary ContextRecord="ContextFacts.OutputContext"
+                 ClassCssString="luth_output-panel-display"
+                 StyleCssString="height: 100%; width: 100%; overflow: auto;">
+
 	<div class="luth_ide_section-title">
         Output
     </div>
@@ -8,4 +13,4 @@
 	<div class="luth_ide_section-body">
 		<OutputDisplay/>
 	</div>
-</div>
+</ContextBoundary>

@@ -13,16 +13,16 @@
 		ReRender
 	</button>
 
-	<table>
-		<thead>
-			<th>?</th>
-		</thead>
-		<tbody>
-			@foreach (var textSpanList in localErrorList)
-			{
-				var outputString = string.Join(" ", textSpanList.Select(x => x.GetText()));
-				<td class="luth_tree-view-exception">@outputString</td>
-			}
-		</tbody>
-	</table>
+	<ol>
+		@foreach (var textSpanList in localErrorList)
+		{
+			var outputString = string.Join(" ", textSpanList.Select(x => x.GetText()));
+			
+			<li class="luth_tree-view-exception"
+				style="margin: calc(1.6em + 4px) 0;">
+				
+				@outputString
+			</li>
+		}
+	</ol>
 </div>
