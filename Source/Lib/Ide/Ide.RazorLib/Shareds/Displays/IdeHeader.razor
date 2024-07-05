@@ -34,7 +34,7 @@
         </button>
 
 		<button @ref="_buttonViewElementReference"
-                @onclick="async () => await RenderDropdownOnClick(_buttonViewId, _buttonViewElementReference, _dropdownKeyView, _menuView)"
+                @onclick="async () => { InitializeMenuView(); await RenderDropdownOnClick(_buttonViewId, _buttonViewElementReference, _dropdownKeyView, _menuView); }"
 			    id="@_buttonViewId"
                 class="luth_button"
                 style="position: relative; margin-left: 15px;">
