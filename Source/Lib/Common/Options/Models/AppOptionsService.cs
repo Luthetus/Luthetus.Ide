@@ -1,5 +1,6 @@
 using Fluxor;
 using System.Text.Json;
+using System.Text;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
@@ -58,7 +59,6 @@ public class AppOptionsService : IAppOptionsService
         }
     }
 
-
     public string FontSizeCssStyleString
     {
         get
@@ -67,6 +67,29 @@ public class AppOptionsService : IAppOptionsService
             var fontSizeInPixelsCssValue = fontSizeInPixels.ToCssValue();
 
             return $"font-size: {fontSizeInPixelsCssValue}px;";
+        }
+    }
+
+    public string ColorSchemeCssStyleString
+    {
+        get
+        {
+	        var activeTheme = ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+		        x => x.Key == AppOptionsStateWrap.Value.Options.ThemeKey)
+		        	?? ThemeFacts.VisualStudioDarkThemeClone;
+		        
+		    var cssStyleStringBuilder = new StringBuilder("color-scheme: ");
+		    
+		    if (activeTheme.ThemeColorKind == ThemeColorKind.Dark)
+		    	cssStyleStringBuilder.Append("dark");
+			else if (activeTheme.ThemeColorKind == ThemeColorKind.Light)
+		    	cssStyleStringBuilder.Append("light");
+			else
+		    	cssStyleStringBuilder.Append("dark");
+		    
+		    cssStyleStringBuilder.Append(';');
+
+            return cssStyleStringBuilder.ToString();
         }
     }
 

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Dimensions.Models;
+namespace Luthetus.Common.RazorLib.Dimensions.Models;
 
 /// <summary>
 /// This file relates to HTML markup. Specifically, when one interpolates

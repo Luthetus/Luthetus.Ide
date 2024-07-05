@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -11,11 +12,12 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 
@@ -40,7 +42,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
     private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
     private bool _disposed;
@@ -76,15 +77,21 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
+		var dropdownRecord = new DropdownRecord(
+			SolutionExplorerContextMenu.ContextMenuEventDropdownKey,
+			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+			typeof(SolutionExplorerContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(SolutionExplorerContextMenu.TreeViewCommandArgs),
+					treeViewCommandArgs
+				}
+			},
+			null);
 
-		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
-		// The ChildContent renders nothing, unless the provider of the child content
-		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-		await InvokeAsync(StateHasChanged);
-
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
-            SolutionExplorerContextMenu.ContextMenuEventDropdownKey));
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
 
     private void OpenNewDotNetSolutionDialog()
@@ -95,7 +102,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
             typeof(DotNetSolutionFormDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(
             dialogRecord));

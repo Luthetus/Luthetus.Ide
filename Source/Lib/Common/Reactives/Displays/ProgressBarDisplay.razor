@@ -1,0 +1,40 @@
+<div class="luth_progress-bar">
+	@{
+		var localProgressBarModel = ProgressBarModel;
+
+		// Don't bother with string formatting the double, just cast it to an int,
+		// and manually add the '%'.
+		//
+		// String formatting and css can break if the wrong culture is used,
+		// (i.e.: any locations that use a period in place of a comma to deliminate
+		//       1,000 and up.)
+		//
+		// If one uses the correct culture it would be fine, but I'm just not going
+		// to deal with it here, at the least for now.
+		var localDecimalPercentProgress = Math.Ceiling(localProgressBarModel.DecimalPercentProgress * 100);
+		var percentageComplete = $"{localDecimalPercentProgress}%";
+	}
+    
+	<div class="luth_progress-bar-fill"
+         style="position: relative; height: 2em;">
+
+		<div class="luth_progress-bar-fill-slider"
+			 style="background-color: var(--luth_active-with-focus-background-color); width: @(percentageComplete); height: 100%;">
+		</div>
+
+		<div class="luth_progress-bar-fill-text"
+			 style="position: absolute; left: calc(50% - @(percentageComplete.Length)ch); top: calc(0.2em + 1px);">
+			@percentageComplete
+		</div>
+	</div>
+
+	@if (!string.IsNullOrWhiteSpace(localProgressBarModel.Message))
+	{
+		<div class="luth_progress-bar-message">@localProgressBarModel.Message</div>
+	}
+
+	@if (!string.IsNullOrWhiteSpace(localProgressBarModel.SecondaryMessage))
+	{
+		<div class="luth_progress-bar-message-secondary">@localProgressBarModel.SecondaryMessage</div>
+	}
+</div>

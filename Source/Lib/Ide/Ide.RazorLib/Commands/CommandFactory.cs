@@ -10,12 +10,12 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Contexts.Displays;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
-using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
 
@@ -266,6 +266,8 @@ public class CommandFactory : ICommandFactory
 
 		// Add command to bring up a CodeSearch dialog. Example: { Ctrl + , }
 		{
+		    // TODO: determine the actively focused element at time of invocation,
+            //       then restore focus to that element when this dialog is closed.
 			var openCodeSearchDialogCommand = new CommonCommand(
 	            "Open: Code Search", "open-code-search", false,
 	            commandArgs => 
@@ -276,7 +278,8 @@ public class CommandFactory : ICommandFactory
                         typeof(CodeSearchDisplay),
                         null,
                         null,
-						true);
+						true,
+						null);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(CodeSearchDialog));
                     return Task.CompletedTask;
@@ -289,6 +292,8 @@ public class CommandFactory : ICommandFactory
 
 		// Add command to bring up a Context Switch dialog. Example: { Ctrl + Tab }
 		{
+			// TODO: determine the actively focused element at time of invocation,
+            //       then restore focus to that element when this dialog is closed.
 			var openContextSwitchDialogCommand = new CommonCommand(
 	            "Open: Context Switch", "open-context-switch", false,
 	            commandArgs => 
@@ -299,7 +304,8 @@ public class CommandFactory : ICommandFactory
                         typeof(ContextSwitchDisplay),
                         null,
                         null,
-						true);
+						true,
+						null);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(_contextSwitchDialog));
                     return Task.CompletedTask;

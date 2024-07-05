@@ -1,4 +1,4 @@
-﻿@using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.Common.RazorLib.Keys.Models;
 @using Luthetus.Common.RazorLib.TreeViews.Models;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
@@ -40,7 +40,7 @@
      _treeViewContextMenuCommandArgs is not null)
 {
     <div class="luth_context-menu luth_set-selectable"
-         style="@ContextMenuCssStyleString"
+         style="@GetContextMenuCssStyleString()"
          @oncontextmenu:stopPropagation="true"
          @onmousedown:stopPropagation="true"
          @onclick:stopPropagation="true"

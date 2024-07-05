@@ -8,11 +8,14 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
@@ -46,6 +49,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
     private readonly IState<TerminalState> _terminalStateWrap;
+    private readonly IServiceProvider _serviceProvider;
 
     public LuthetusIdeDotNetSolutionBackgroundTaskApi(
         LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
@@ -62,7 +66,8 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         IFileSystemProvider fileSystemProvider,
         ITextEditorService textEditorService,
         ICompilerServiceRegistry interfaceCompilerServiceRegistry,
-        IState<TerminalState> terminalStateWrap)
+        IState<TerminalState> terminalStateWrap,
+		IServiceProvider serviceProvider)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
@@ -79,6 +84,7 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
         _textEditorService = textEditorService;
         _interfaceCompilerServiceRegistry = interfaceCompilerServiceRegistry;
         _terminalStateWrap = terminalStateWrap;
+		_serviceProvider = serviceProvider;
     }
 
     public void Website_AddExistingProjectToSolution(
@@ -348,8 +354,218 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
             }
         }
 
+		await ParseSolutionAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
+
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
     }
+
+	private async Task ParseSolutionAsync(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+	{
+		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+
+        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionsList.FirstOrDefault(
+            x => x.Key == dotNetSolutionModelKey);
+
+        if (dotNetSolutionModel is null)
+            return;
+
+		var progressBarModel = new ProgressBarModel(0, "parsing...");
+
+		NotificationHelper.DispatchProgress(
+	        $"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
+	        progressBarModel,
+	        _commonComponentRenderers,
+	        _dispatcher,
+	        TimeSpan.FromMilliseconds(-1));
+
+		_ = Task.Run(async () =>
+		{
+			try
+			{
+				if (_textEditorService.TextEditorConfig.RegisterModelFunc is null)
+		            return;
+		
+				progressBarModel.SetProgress(0.05, "Discovering projects...");
+				foreach (var project in dotNetSolutionModel.DotNetProjectList)
+				{
+					var resourceUri = new ResourceUri(project.AbsolutePath.Value);
+		
+					if (!(await _fileSystemProvider.File.ExistsAsync(resourceUri.Value)))
+						continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
+
+			        await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+			                resourceUri,
+			                _serviceProvider))
+			            .ConfigureAwait(false);
+				}
+
+				var previousStageProgress = 0.05;
+				var dotNetProjectListLength = dotNetSolutionModel.DotNetProjectList.Length;
+				var projectsParsedCount = 0;
+				foreach (var project in dotNetSolutionModel.DotNetProjectList)
+				{
+					// foreach project in solution
+					// 	foreach C# file in project
+					// 		EnqueueBackgroundTask(async () =>
+					// 		{
+					// 			ParseCSharpFile();
+					// 			UpdateProgressBar();
+					// 		});
+					//
+					// Treat every project as an equal weighting with relation to remaining percent to complete
+					// on the progress bar.
+					//
+					// If the project were to be parsed, how much would it move the percent progress completed by?
+					//
+					// Then, in order to see progress while each C# file in the project gets parsed,
+					// multiply the percent progress this project can provide by the proportion
+					// of the project's C# files which have been parsed.
+					var maximumProgressAvailableToProject = (1 - previousStageProgress) * ((double)1.0 / (double)dotNetProjectListLength);
+					var currentProgress = Math.Min(1.0, previousStageProgress + (maximumProgressAvailableToProject * projectsParsedCount));
+
+					progressBarModel.SetProgress(
+						currentProgress,
+						$"{projectsParsedCount + 1}/{dotNetProjectListLength}: {project.AbsolutePath.NameWithExtension}");
+
+					await DiscoverClassesInProject(project, progressBarModel, currentProgress, maximumProgressAvailableToProject);
+					projectsParsedCount++;
+				}
+	
+				progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+			}
+			catch (Exception e)
+			{
+				var currentProgress = progressBarModel.GetProgress();
+				progressBarModel.SetProgress(currentProgress, e.ToString());
+			}
+			finally
+			{
+				progressBarModel.Dispose();
+			}
+		});
+	}
+
+	private async Task DiscoverClassesInProject(
+		IDotNetProject dotNetProject,
+		ProgressBarModel progressBarModel,
+		double currentProgress,
+		double maximumProgressAvailableToProject)
+	{
+		if (!(await _fileSystemProvider.File.ExistsAsync(dotNetProject.AbsolutePath.Value)))
+			return; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
+
+		var parentDirectory = dotNetProject.AbsolutePath.ParentDirectory;
+		if (parentDirectory is null)
+	        return;
+
+		var startingAbsolutePathForSearch = parentDirectory.Value;
+		var discoveredFileList = new List<string>();
+
+		progressBarModel.SetProgress(null, null, "discovering files");
+		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
+
+		await ParseClassesInProject(
+			dotNetProject,
+			progressBarModel,
+			currentProgress,
+			maximumProgressAvailableToProject,
+			discoveredFileList);
+
+        async Task DiscoverFilesRecursively(string directoryPathParent, List<string> discoveredFileList, bool isFirstInvocation)
+        {
+            var directoryPathChildList = await _fileSystemProvider.Directory.GetDirectoriesAsync(
+                    directoryPathParent,
+                    CancellationToken.None)
+                .ConfigureAwait(false);
+
+            var filePathChildList = await _fileSystemProvider.Directory.GetFilesAsync(
+                    directoryPathParent,
+                    CancellationToken.None)
+                .ConfigureAwait(false);
+
+            foreach (var filePathChild in filePathChildList)
+            {
+                if (filePathChild.EndsWith(".cs"))
+                    discoveredFileList.Add(filePathChild);
+            }
+
+			//var progressMessage = progressBarModel.Message ?? string.Empty;
+
+            foreach (var directoryPathChild in directoryPathChildList)
+            {
+                if (directoryPathChild.Contains(".vs") || directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
+                    continue;
+
+				//if (isFirstInvocation)
+				//{
+				//	var currentProgress = progressBarModel.GetProgress();
+				//	progressBarModel.SetProgress(currentProgress, $"{directoryPathChild} " + progressMessage);
+				//}
+
+                await DiscoverFilesRecursively(directoryPathChild, discoveredFileList, isFirstInvocation: false).ConfigureAwait(false);
+            }
+        }
+	}
+
+	private async Task ParseClassesInProject(
+		IDotNetProject dotNetProject,
+		ProgressBarModel progressBarModel,
+		double currentProgress,
+		double maximumProgressAvailableToProject,
+		List<string> discoveredFileList)
+	{
+		// TODO: Do not increment until enqueued task is finished.
+		var fileParsedCount = 0;
+		foreach (var file in discoveredFileList)
+		{
+			var fileAbsolutePath = _environmentProvider.AbsolutePathFactory(file, false);
+
+			var progress = currentProgress + (maximumProgressAvailableToProject * ((double)fileParsedCount / (double)discoveredFileList.Count));
+
+			progressBarModel.SetProgress(
+				progress,
+				null,
+				$"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}");
+
+			var resourceUri = new ResourceUri(file);
+
+			await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+	                resourceUri,
+	                _serviceProvider))
+	            .ConfigureAwait(false);
+
+			var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
+
+			if (model is null)
+			{
+				Console.WriteLine($"Model with {nameof(resourceUri)}: '{resourceUri}' was null");
+				continue;
+			}
+
+			var consecutiveMissCounter = 0;
+
+			while (true)
+			{
+				var compilerService = model.CompilerService;
+				if (compilerService is null)
+					break;
+
+				if (compilerService.GetCompilerServiceResourceFor(resourceUri) is not null)
+				{
+					fileParsedCount++;
+					consecutiveMissCounter = 0;
+					break;
+				}
+				else
+				{
+					consecutiveMissCounter++;
+					if (consecutiveMissCounter > 50)
+						Console.WriteLine($"CompilerService did not contain {nameof(resourceUri)}: '{resourceUri}'");
+					await Task.Delay(20 * (consecutiveMissCounter));
+				}
+			}
+		}
+	}
 
     public void SetDotNetSolutionTreeView(Key<DotNetSolutionModel> dotNetSolutionModelKey)
     {

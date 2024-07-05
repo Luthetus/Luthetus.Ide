@@ -37,10 +37,19 @@ public partial class InputFileContextMenu : ComponentBase
     /// </summary>
     public static TreeViewNoType? ParentOfCutFile;
 
+	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
+
     private MenuRecord GetMenuRecord(TreeViewCommandArgs commandArgs)
     {
+		if (_previousGetMenuRecordInvocation.treeViewCommandArgs == commandArgs)
+			return _previousGetMenuRecordInvocation.menuRecord;
+
         if (commandArgs.NodeThatReceivedMouseEvent is null)
-            return MenuRecord.Empty;
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
 
         var menuRecordsList = new List<MenuOptionRecord>();
 
@@ -50,7 +59,11 @@ public partial class InputFileContextMenu : ComponentBase
         var parentTreeViewAbsolutePath = parentTreeViewModel as TreeViewAbsolutePath;
 
         if (treeViewModel is not TreeViewAbsolutePath treeViewAbsolutePath)
-            return MenuRecord.Empty;
+		{
+			var menuRecord = MenuRecord.Empty;
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
 
         if (treeViewAbsolutePath.Item.IsDirectory)
         {
@@ -64,7 +77,12 @@ public partial class InputFileContextMenu : ComponentBase
                 .Union(GetDebugMenuOptions(treeViewAbsolutePath)));
         }
 
-        return new MenuRecord(menuRecordsList.ToImmutableArray());
+		// Default case
+		{
+			var menuRecord = new MenuRecord(menuRecordsList.ToImmutableArray());
+			_previousGetMenuRecordInvocation = (commandArgs, menuRecord);
+			return menuRecord;
+		}
     }
 
     private MenuOptionRecord[] GetDirectoryMenuOptions(TreeViewAbsolutePath treeViewModel)
@@ -154,77 +172,5 @@ public partial class InputFileContextMenu : ComponentBase
 			InputFileSidebar.TreeViewContainerKey,
 			false,
 			false);
-    }
-
-    public static string GetContextMenuCssStyleString(
-        TreeViewCommandArgs? commandArgs,
-        IDialog dialogRecord)
-    {
-        if (commandArgs?.ContextMenuFixedPosition is null)
-            return "display: none;";
-
-        if (dialogRecord.DialogIsMaximized)
-        {
-            return
-                $"left: {commandArgs.ContextMenuFixedPosition.LeftPositionInPixels.ToCssValue()}px;" +
-                " " +
-                $"top: {commandArgs.ContextMenuFixedPosition.TopPositionInPixels.ToCssValue()}px;";
-        }
-            
-        var dialogLeftDimensionAttribute = dialogRecord
-            .DialogElementDimensions
-            .DimensionAttributeList
-            .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Left);
-
-        var contextMenuLeftDimensionAttribute = new DimensionAttribute
-        {
-            DimensionAttributeKind = DimensionAttributeKind.Left
-        };
-
-        contextMenuLeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-        {
-            DimensionUnitKind = DimensionUnitKind.Pixels,
-            Value = commandArgs.ContextMenuFixedPosition.LeftPositionInPixels
-        });
-
-        foreach (var dimensionUnit in dialogLeftDimensionAttribute.DimensionUnitList)
-        {
-            contextMenuLeftDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Purpose = dimensionUnit.Purpose,
-                Value = dimensionUnit.Value,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-                DimensionUnitKind = dimensionUnit.DimensionUnitKind
-            });
-        }
-
-        var dialogTopDimensionAttribute = dialogRecord
-            .DialogElementDimensions
-            .DimensionAttributeList
-            .First(x => x.DimensionAttributeKind == DimensionAttributeKind.Top);
-
-        var contextMenuTopDimensionAttribute = new DimensionAttribute
-        {
-            DimensionAttributeKind = DimensionAttributeKind.Top
-        };
-
-        contextMenuTopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-        {
-            DimensionUnitKind = DimensionUnitKind.Pixels,
-            Value = commandArgs.ContextMenuFixedPosition.TopPositionInPixels
-        });
-
-        foreach (var dimensionUnit in dialogTopDimensionAttribute.DimensionUnitList)
-        {
-            contextMenuTopDimensionAttribute.DimensionUnitList.Add(new DimensionUnit
-            {
-                Purpose = dimensionUnit.Purpose,
-                Value = dimensionUnit.Value,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract,
-                DimensionUnitKind = dimensionUnit.DimensionUnitKind
-            });
-        }
-
-        return $"{contextMenuLeftDimensionAttribute.StyleString} {contextMenuTopDimensionAttribute.StyleString}";
     }
 }

@@ -5,7 +5,11 @@ namespace Luthetus.Common.RazorLib.Dialogs.States;
 
 public partial record DialogState
 {
-    public record RegisterAction(IDialog Dialog);
+    public record RegisterAction(IDialog Dialog)
+    {
+    	public bool WasAlreadyRegistered { get; set; }
+    };
+    
     public record DisposeAction(Key<IDynamicViewModel> DynamicViewModelKey);
     public record SetIsMaximizedAction(Key<IDynamicViewModel> DynamicViewModelKey, bool IsMaximized);
     public record SetActiveDialogKeyAction(Key<IDynamicViewModel> DynamicViewModelKey);

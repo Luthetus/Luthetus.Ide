@@ -96,9 +96,33 @@ public partial class TextEditorModelModifier
                 var valueToInsert = keyboardEventArgs.Key.First().ToString();
 
                 if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+				{
                     valueToInsert = LineEndKindPreference.AsCharacters();
+					
+					// GOAL: Match indentation on newline keystroke (2024-07-04)
+					var line = this.GetLineInformation(cursor.LineIndex);
+
+					var cursorPositionIndex = line.StartPositionIndexInclusive + cursor.ColumnIndex;
+					var indentationPositionIndex = line.StartPositionIndexInclusive;
+
+					var indentationBuilder = new StringBuilder();
+
+					while (indentationPositionIndex < cursorPositionIndex)
+					{
+						var possibleIndentationChar = RichCharacterList[indentationPositionIndex++].Value;
+
+						if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+							indentationBuilder.Append(possibleIndentationChar);
+						else
+							break;
+					}
+
+					valueToInsert += indentationBuilder.ToString();
+				}
                 else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
+				{
                     valueToInsert = "\t";
+				}
 
                 Insert(
                     valueToInsert,

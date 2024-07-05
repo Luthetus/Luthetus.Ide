@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -47,7 +47,8 @@ public class GitTreeViewMouseEventHandler : TreeViewMouseEventHandler
                 }
             },
             null,
-            true);
+            true,
+            null);
 
         // Set a large width for this dialog since it requires two editors to render side by side.
         {

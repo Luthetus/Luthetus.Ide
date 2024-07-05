@@ -1,4 +1,4 @@
-# Luthetus.Ide (Not yet released)
+# Luthetus.Ide (Soon to release v1)
 - A free and open source IDE being written with .NET: C#, Blazor UI, and a Photino host.
 
 - Runs on Linux, Windows, and Mac
@@ -7,6 +7,9 @@
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
+
+## Installation:
+[INSTALLATION.md](./INSTALLATION.md)
 
 ## Donations:
 [![Donate with PayPal](https://raw.githubusercontent.com/Luthetus/paypal-donate-button_Fork/master/paypal-donate-button.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RCG8QN3KL623Y)

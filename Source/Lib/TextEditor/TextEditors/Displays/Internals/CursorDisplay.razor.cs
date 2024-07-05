@@ -137,22 +137,30 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     // i.e. holding down ArrowRight
                     TextEditorService.PostSimpleBatch(
                         nameof(_throttleShouldRevealCursor),
-                        editContext =>
+                        async editContext =>
                         {
-                            var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
-
-                            var cursorTextSpan = new TextEditorTextSpan(
-                                cursorPositionIndex,
-                                cursorPositionIndex + 1,
-                                0,
-                                localRenderBatch.Model.ResourceUri,
-                                localRenderBatch.Model.GetAllText());
-
-                            return TextEditorService.ViewModelApi.ScrollIntoViewFactory(
-                                    localRenderBatch.Model.ResourceUri,
-                                    localRenderBatch.ViewModel.ViewModelKey,
-                                    cursorTextSpan)
-                                .Invoke(editContext);
+							try
+							{
+	                            var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
+	
+	                            var cursorTextSpan = new TextEditorTextSpan(
+	                                cursorPositionIndex,
+	                                cursorPositionIndex + 1,
+	                                0,
+	                                localRenderBatch.Model.ResourceUri,
+	                                localRenderBatch.Model.GetAllText());
+	
+	                            await TextEditorService.ViewModelApi.ScrollIntoViewFactory(
+	                                    localRenderBatch.Model.ResourceUri,
+	                                    localRenderBatch.ViewModel.ViewModelKey,
+	                                    cursorTextSpan)
+	                                .Invoke(editContext)
+									.ConfigureAwait(false);
+							 }
+							 catch (LuthetusTextEditorException)
+							 {
+							     // Eat this specific exception
+							 }
                         });
 					return Task.CompletedTask;
                 }).ConfigureAwait(false);

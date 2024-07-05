@@ -1,4 +1,4 @@
-﻿@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 
 <div class="luth_te_text-editor-diff @TextEditorService.ThemeCssClassString @CssClassString"
      style="@CssStyleString">
@@ -10,6 +10,7 @@
 
     <div class="luth_te_text-editor-diff-title">
         <button class="luth_button"
+        		id="@_buttonId"
                 style="display: inline;"
                 title="Show a visualization of the calculation"
                 @onclick="ShowCalculationOnClick">

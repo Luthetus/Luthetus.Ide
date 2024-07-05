@@ -3,7 +3,8 @@
 @using System.Collections.Immutable;
 
 <div class="luth_te_text-editor-header @TextEditorService.ThemeCssClassString">
-    <div class="luth_te_text-editor-header-listing">
+    <div class="luth_te_text-editor-header-listing"
+         style="overflow-y: hidden;">
         @{
             var model = TextEditorService.TextEditorStateWrap.Value;
 
