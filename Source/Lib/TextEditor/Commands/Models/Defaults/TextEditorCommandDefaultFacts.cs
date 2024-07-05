@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
@@ -720,6 +721,27 @@ public static class TextEditorCommandDefaultFacts
 
                     if (viewModelModifier is null)
                         return;
+
+					// If the user has an active text selection,
+					// then populate the find overlay with their selection.
+					{
+						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+			            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+			
+			            if (modelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+			                return;
+			
+			            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+
+						if (selectedText is not null)
+						{
+							viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+	                        {
+	                            FindOverlayValue = selectedText,
+	                        };
+						}
+					}
 
                     if (viewModelModifier.ViewModel.ShowFindOverlay)
                     {
