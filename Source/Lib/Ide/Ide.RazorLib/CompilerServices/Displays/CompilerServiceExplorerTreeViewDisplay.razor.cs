@@ -2,6 +2,9 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
+using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
@@ -41,7 +44,6 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
     [Inject]
     private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
     private CompilerServiceExplorerTreeViewKeyboardEventHandler _compilerServiceExplorerTreeViewKeymap = null!;
     private CompilerServiceExplorerTreeViewMouseEventHandler _compilerServiceExplorerTreeViewMouseEventHandler = null!;
 
@@ -90,15 +92,21 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
+		var dropdownRecord = new DropdownRecord(
+			CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey,
+			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+			typeof(CompilerServiceExplorerTreeViewContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(CompilerServiceExplorerTreeViewContextMenu.TreeViewCommandArgs),
+					treeViewCommandArgs
+				}
+			},
+			restoreFocusOnClose: null);
 
-		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
-		// The ChildContent renders nothing, unless the provider of the child content
-		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-		await InvokeAsync(StateHasChanged);
-
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(
-            CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey));
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
 
     private void ReloadOnClick()

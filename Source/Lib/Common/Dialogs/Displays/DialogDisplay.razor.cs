@@ -1,5 +1,6 @@
-using Fluxor;
+using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
+using Fluxor;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Htmls.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -7,7 +8,6 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.Dialogs.States;
-using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
@@ -99,9 +99,14 @@ public partial class DialogDisplay : ComponentBase, IDisposable
             !Dialog.DialogIsMaximized);
     }
 
-    private void DispatchDisposeDialogRecordAction()
+    private async Task DispatchDisposeDialogRecordAction()
     {
         DialogService.DisposeDialogRecord(Dialog.DynamicViewModelKey);
+        
+        await JsRuntime.GetLuthetusCommonApi()
+	        .FocusHtmlElementById(Dialog.SetFocusOnCloseElementId
+	        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
+	        .ConfigureAwait(false);
     }
 
     private string GetCssClassForDialogStateIsActiveSelection(bool isActive)

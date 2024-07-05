@@ -1,10 +1,12 @@
 using System.Collections.Immutable;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -21,11 +23,11 @@ public partial class WatchWindowDisplay : FluxorComponent
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private IDropdownService DropdownService { get; set; } = null!;
-    [Inject]
     private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public WatchWindowObject WatchWindowObject { get; set; } = null!;
@@ -33,7 +35,6 @@ public partial class WatchWindowDisplay : FluxorComponent
     public static Key<TreeViewContainer> TreeViewContainerKey { get; } = Key<TreeViewContainer>.NewKey();
     public static Key<DropdownRecord> WatchWindowContextMenuDropdownKey { get; } = Key<DropdownRecord>.NewKey();
 
-    private TreeViewCommandArgs? _mostRecentTreeViewContextMenuCommandArgs;
     private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
     private bool _disposed;
@@ -67,16 +68,23 @@ public partial class WatchWindowDisplay : FluxorComponent
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs commandArgs)
+    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-        _mostRecentTreeViewContextMenuCommandArgs = commandArgs;
+		var dropdownRecord = new DropdownRecord(
+			WatchWindowContextMenuDropdownKey,
+			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+			typeof(WatchWindowContextMenuDisplay),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(WatchWindowContextMenuDisplay.TreeViewCommandArgs),
+					treeViewCommandArgs
+				}
+			},
+			treeViewCommandArgs.RestoreFocusToTreeView);
 
-		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
-		// The ChildContent renders nothing, unless the provider of the child content
-		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-		await InvokeAsync(StateHasChanged);
-
-        DropdownService.AddActiveDropdownKey(WatchWindowContextMenuDropdownKey);
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
 
     protected override void Dispose(bool disposing)

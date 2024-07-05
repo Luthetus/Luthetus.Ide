@@ -49,26 +49,32 @@ public class TextEditorOptionsApi : ITextEditorOptionsApi
 
     public void ShowSettingsDialog(bool? isResizableOverride = null, string? cssClassString = null)
     {
+        // TODO: determine the actively focused element at time of invocation,
+        //       then restore focus to that element when this dialog is closed.
         var settingsDialog = new DialogViewModel(
             Key<IDynamicViewModel>.NewKey(),
             "Text Editor Settings",
             _textEditorConfig.SettingsDialogConfig.ComponentRendererType,
             null,
             cssClassString,
-            isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable);
+            isResizableOverride ?? _textEditorConfig.SettingsDialogConfig.ComponentIsResizable,
+            null);
 
         _dispatcher.Dispatch(new DialogState.RegisterAction(settingsDialog));
     }
 
     public void ShowFindAllDialog(bool? isResizableOverride = null, string? cssClassString = null)
     {
+        // TODO: determine the actively focused element at time of invocation,
+        //       then restore focus to that element when this dialog is closed.
         _findAllDialog ??= new DialogViewModel(
             Key<IDynamicViewModel>.NewKey(),
             "Find All",
             _textEditorConfig.FindAllDialogConfig.ComponentRendererType,
             null,
             cssClassString,
-            isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable);
+            isResizableOverride ?? _textEditorConfig.FindAllDialogConfig.ComponentIsResizable,
+            null);
 
         _dispatcher.Dispatch(new DialogState.RegisterAction(_findAllDialog));
     }

@@ -12,7 +12,10 @@ public partial record DialogState
             RegisterAction registerAction)
         {
             if (inState.DialogList.Any(x => x.DynamicViewModelKey == registerAction.Dialog.DynamicViewModelKey))
-                return inState;
+            {
+            	registerAction.WasAlreadyRegistered = true;
+            	return inState;
+            }
 
             var outDialogList = inState.DialogList.Add(registerAction.Dialog);
 

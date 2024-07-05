@@ -57,10 +57,38 @@ public sealed class SimpleBatchTextEditorTask : ITextEditorTask
 
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
+		// TODO: This 'SimpleBatchTextEditorTask' is causing a great deal of bugs...
+		//       ...because if one of the batched tasks fails, then the others are not executed,
+		//       and yet some of the not executed tasks were 1 opportunity tasks that will
+		//       never be asked to run again. Just get rid of this class entirely?
+		//       Because even if I used a try catch inside the foreach loop,
+		//       should I even do that? The EditContext would've been partially modified,
+		//       by the inner edit that threw an exception, and thus be in a corrupt state.
+		//       What I'm really looking for with this class, is to avoid the UI re-rendering
+		//       between all the edits unnecessarily.
+		//
+		//       The actually desired behavior for this class would be achieved by
+		//       telling the ITextEditorService to invoke an enumerable of text editor edits,
+		//       prior to re-rendering.
+		//
+		//       This being in place of the current ITextEditorService code which is
+		//       re-rendering after every text editor edit.
+		//
+		// 	  But the takeaway here is that this type has "less" influence on the enumerable.
+		//       Maybe it stores the enumerable, but at the end of the day its the ITextEditorService
+		//       that will do the iteration.
+		//
+		//       And yet, if an inner edit throws an exception, how does the ITextEditorService
+		//       restore the EditContext to what it was prior to invoking the edit that
+		//       threw an exception.
+		//
+		//       Perhaps more effort should be put into making the IBackgroundTask
+		//       in and of itself more optimized, rather than trying to batch arbitrary
+		//       tasks together?
 		try
 		{
 			foreach (var edit in _textEditorEditList)
-	        {
+	        {				
 	            await edit
 	                .Invoke(EditContext)
 	                .ConfigureAwait(false);

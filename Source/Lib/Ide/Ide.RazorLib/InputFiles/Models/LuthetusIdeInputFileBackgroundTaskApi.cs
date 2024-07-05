@@ -67,7 +67,8 @@ public class LuthetusIdeInputFileBackgroundTaskApi
             _ideComponentRenderers.InputFileRendererType,
             null,
             HtmlFacts.Classes.DIALOG_PADDING_0,
-            true);
+            true,
+            null);
 
         _dispatcher.Dispatch(new DialogState.RegisterAction(inputFileDialog));
 

@@ -1,7 +1,8 @@
 using Fluxor;
+using System.Collections.Immutable;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -10,6 +11,8 @@ using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
@@ -33,18 +36,43 @@ public partial class GitDisplay : FluxorComponent
     private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+	[Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
-    private Key<DropdownRecord> _menuDropdownKey = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menu = new(ImmutableArray<MenuOptionRecord>.Empty);
+	private const string _dropdownMenuHtmlElementId = "luth_ide_git-display-dropdown-menu";
+
+    private readonly Key<DropdownRecord> _menuDropdownKey = Key<DropdownRecord>.NewKey();
+
     private ElementReference? _menuButtonElementReference;
 
-    protected override void OnInitialized()
+	private async Task ShowMenuDropdown(Key<DropdownRecord> dropdownKey)
     {
-        ConstructMenu();
-        base.OnInitialized();
+        var menu = ConstructMenu();
+		
+		var jsRuntimeCommonApi = JsRuntime.GetLuthetusCommonApi();
+
+		var buttonDimensions = await jsRuntimeCommonApi
+			.MeasureElementById(_dropdownMenuHtmlElementId)
+			.ConfigureAwait(false);
+
+		var dropdownRecord = new DropdownRecord(
+			_menuDropdownKey,
+			buttonDimensions.LeftInPixels,
+			buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
+			typeof(MenuDisplay),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(MenuDisplay.MenuRecord),
+					menu
+				}
+			},
+			restoreFocusOnClose: null);
+
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
 
-    private void ConstructMenu()
+    private MenuRecord ConstructMenu()
     {
         var localGitState = GitStateWrap.Value;
 
@@ -109,13 +137,7 @@ public partial class GitDisplay : FluxorComponent
             menuOptionsList.Add(menuOptionNew);
         }
 
-        _menu = new MenuRecord(menuOptionsList.ToImmutableArray());
-    }
-
-    private void ShowMenuDropdown(Key<DropdownRecord> dropdownKey)
-    {
-        ConstructMenu();
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
+        return new MenuRecord(menuOptionsList.ToImmutableArray());
     }
 
     private async Task RestoreFocusToMenuButton()
@@ -144,7 +166,8 @@ public partial class GitDisplay : FluxorComponent
             typeof(GitAddRepoDisplay),
             null,
             null,
-            true);
+            true,
+            null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
     }

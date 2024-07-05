@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Models;
 
@@ -52,6 +53,30 @@ public static class NotificationHelper
             IErrorNotificationRendererType.CSS_CLASS_STRING);
 
         dispatcher.Dispatch(new NotificationState.RegisterAction(notificationError));
+    }
+
+    public static void DispatchProgress(
+        string title,
+        ProgressBarModel progressBarModel,
+        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        IDispatcher dispatcher,
+        TimeSpan? notificationOverlayLifespan)
+    {
+        var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
+            title,
+            luthetusCommonComponentRenderers.ProgressNotificationRendererType,
+            new Dictionary<string, object?>
+            {
+                {
+					nameof(IProgressNotificationRendererType.ProgressBarModel),
+					progressBarModel
+				},
+            },
+            notificationOverlayLifespan,
+            true,
+            null);
+
+        dispatcher.Dispatch(new NotificationState.RegisterAction(notificationProgress));
     }
 
     /// <summary>

@@ -1,3 +1,6 @@
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -11,9 +14,6 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -67,10 +67,15 @@ public class DynamicViewModelAdapterTextEditor : ITabTextEditor, IPanelTab, IDia
     public Key<Panel> Key { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
     public Key<IDynamicViewModel> DynamicViewModelKey { get; } = Key<IDynamicViewModel>.NewKey();
+	public string? SetFocusOnCloseElementId { get; set; }
 
     public ITabGroup? TabGroup { get; set; }
 
     public string Title => GetTitle();
+
+	public string TitleVerbose =>
+		TextEditorService.ViewModelApi.GetModelOrDefault(ViewModelKey).ResourceUri.Value
+			?? Title;
 
     public Type ComponentType { get; }
 

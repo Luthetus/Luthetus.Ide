@@ -63,7 +63,8 @@ public partial class GitControlsDisplay : ComponentBase
             typeof(GitOriginDisplay),
             null,
             null,
-            true);
+            true,
+            null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogViewModel));
     }

@@ -1,17 +1,18 @@
-using Fluxor;
-using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.InputFiles.States;
+using Microsoft.AspNetCore.Components;
+using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
-using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
@@ -48,8 +49,6 @@ public partial class InputFileSidebar : ComponentBase
     public Action<IAbsolutePath?> SetSelectedAbsolutePath { get; set; } = null!;
 
     public static readonly Key<TreeViewContainer> TreeViewContainerKey = Key<TreeViewContainer>.NewKey();
-
-    private TreeViewCommandArgs? _mostRecentTreeViewCommandArgs;
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -91,13 +90,20 @@ public partial class InputFileSidebar : ComponentBase
 
     private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
-        _mostRecentTreeViewCommandArgs = treeViewCommandArgs;
+		var dropdownRecord = new DropdownRecord(
+			InputFileContextMenu.ContextMenuKey,
+			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+			typeof(InputFileContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(InputFileContextMenu.TreeViewCommandArgs),
+					treeViewCommandArgs
+				}
+			},
+			restoreFocusOnClose: null);
 
-		// The order of 'StateHasChanged(...)' and 'AddActiveDropdownKey(...)' is important.
-		// The ChildContent renders nothing, unless the provider of the child content
-		// re-renders now that there is a given '_mostRecentTreeViewContextMenuCommandArgs'
-		await InvokeAsync(StateHasChanged);
-
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(InputFileContextMenu.ContextMenuKey));
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
 }

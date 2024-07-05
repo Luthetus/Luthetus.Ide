@@ -1,6 +1,7 @@
 using System.Text;
 using Fluxor;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Htmls.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
@@ -9,6 +10,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
@@ -18,6 +20,8 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public INotification Notification  { get; set; } = null!;
@@ -75,7 +79,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
                                 _notificationOverlayCancellationTokenSource.Token)
                             .ConfigureAwait(false);
 
-                        HandleShouldNoLongerRender();
+                        await HandleShouldNoLongerRender(wasCausedByUiEvent: false);
                     }
                     catch (Exception e)
                     {
@@ -129,12 +133,20 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
         return styleBuilder.ToString();
     }
 
-    private void HandleShouldNoLongerRender()
+    private async Task HandleShouldNoLongerRender(bool wasCausedByUiEvent)
     {
         if (Notification.DeleteNotificationAfterOverlayIsDismissed)
             DeleteNotification();
         else
             MarkNotificationAsRead();
+            
+        if (wasCausedByUiEvent)
+        {
+        	await JsRuntime.GetLuthetusCommonApi()
+		        .FocusHtmlElementById(Notification.SetFocusOnCloseElementId
+		        	 ?? IDynamicViewModel.DefaultSetFocusOnCloseElementId)
+		        .ConfigureAwait(false);
+		}
     }
 
     private void DeleteNotification()
@@ -147,7 +159,7 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new NotificationState.MakeReadAction(Notification.DynamicViewModelKey));
     }
 
-    private void ChangeNotificationToDialog()
+    private Task ChangeNotificationToDialog()
     {
         var dialogRecord = new DialogViewModel(
 			Notification.DynamicViewModelKey,
@@ -155,11 +167,12 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
             Notification.ComponentType,
             Notification.ComponentParameterMap,
             Notification.NotificationCssClass,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 
-        HandleShouldNoLongerRender();
+        return HandleShouldNoLongerRender(wasCausedByUiEvent: false);
     }
 
     public void Dispose()

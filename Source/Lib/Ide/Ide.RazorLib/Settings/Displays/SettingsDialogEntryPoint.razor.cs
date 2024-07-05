@@ -18,7 +18,8 @@ public partial class SettingsDialogEntryPoint : ComponentBase
         typeof(SettingsDisplay),
         null,
         null,
-		true);
+		true,
+		null);
 
     public void DispatchRegisterDialogRecordAction() =>
         Dispatcher.Dispatch(new DialogState.RegisterAction(_dialogRecord));
