@@ -20,6 +20,8 @@ public partial class StartupControlsDisplay : FluxorComponent
 
     private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
+    
+    private TerminalCommand? _executingTerminalCommand;
 
     private TerminalCommand? GetStartProgramTerminalCommand()
     {
@@ -44,13 +46,20 @@ public partial class StartupControlsDisplay : FluxorComponent
             OutputParser: DotNetCliOutputParser);
     }
 
-    private void StartProgramWithoutDebuggingOnClick()
+    private void StartProgramWithoutDebuggingOnClick(bool isExecuting)
     {
-        var startProgramTerminalCommand = GetStartProgramTerminalCommand();
-        if (startProgramTerminalCommand is null)
-            return;
-
-        var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-        executionTerminal.EnqueueCommand(startProgramTerminalCommand);
+    	if (isExecuting)
+    	{
+		}
+        else
+        {
+	        var startProgramTerminalCommand = GetStartProgramTerminalCommand();
+	        if (startProgramTerminalCommand is null)
+	            return;
+	
+			_executingTerminalCommand = startProgramTerminalCommand;
+	        var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+	        executionTerminal.EnqueueCommand(startProgramTerminalCommand);
+        }
     }
 }

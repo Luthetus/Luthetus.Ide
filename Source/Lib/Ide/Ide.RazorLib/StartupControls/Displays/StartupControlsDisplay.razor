@@ -1,5 +1,19 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
+@{ 
+	var localExecutingTerminalCommand = _executingTerminalCommand;
+	bool isExecuting;
+	
+	if (localExecutingTerminalCommand is null)
+	{
+		isExecuting = false;
+	}
+	else
+	{
+		isExecuting = !localExecutingTerminalCommand.IsCompleted;
+	}
+}
+
 <div class="luth_ide_startup-controls-display">
    <div class="luth_ide_startup-controls-display-entry">
        StartupProject:
@@ -8,11 +22,19 @@
        &nbsp;
    </div>
    <div class="luth_ide_startup-controls-display-entry">
-        <button @onclick="StartProgramWithoutDebuggingOnClick"
+        <button @onclick="() => StartProgramWithoutDebuggingOnClick(isExecuting)"
                 class="luth_button"
                 disabled=@(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath is null)
                 title="Start without debugging">
-            <IconStartWithoutDebugging />
+            
+            @if (isExecuting)
+            {
+				<IconStopCircle/>
+            }
+            else
+            {
+				<IconStartWithoutDebugging/>
+            }
         </button>
    </div>
 </div>
