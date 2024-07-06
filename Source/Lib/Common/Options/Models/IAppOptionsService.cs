@@ -16,6 +16,7 @@ public interface IAppOptionsService
     public string ThemeCssClassString { get; }
     public string? FontFamilyCssStyleString { get; }
     public string FontSizeCssStyleString { get; }
+    public string ColorSchemeCssStyleString { get; }
 
     public void SetActiveThemeRecordKey(Key<ThemeRecord> themeKey, bool updateStorage = true);
     public void SetTheme(ThemeRecord theme, bool updateStorage = true);

@@ -3,6 +3,7 @@ using Microsoft.JSInterop;
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -14,6 +15,7 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -64,22 +66,32 @@ public partial class IdeHeader : ComponentBase
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
+	private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
 
     private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private string _buttonFileId = "luth_ide_header-button-file";
     private ElementReference? _buttonFileElementReference;
 
 	private Key<DropdownRecord> _dropdownKeyTools = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuTools = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private string _buttonToolsId = "luth_ide_header-button-tools";
     private ElementReference? _buttonToolsElementReference;
 
 	private Key<DropdownRecord> _dropdownKeyView = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private string _buttonViewId = "luth_ide_header-button-view";
     private ElementReference? _buttonViewElementReference;
 
 	private Key<DropdownRecord> _dropdownKeyRun = Key<DropdownRecord>.NewKey();
     private MenuRecord _menuRun = new(ImmutableArray<MenuOptionRecord>.Empty);
+    private string _buttonRunId = "luth_ide_header-button-run";
     private ElementReference? _buttonRunElementReference;
+    
+    private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
+    
+    private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
+    	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
 
     protected override Task OnInitializedAsync()
     {
@@ -206,7 +218,8 @@ public partial class IdeHeader : ComponentBase
                         typeof(CodeSearchDisplay),
                         null,
                         null,
-						true);
+						true,
+						null);
 
                     Dispatcher.Dispatch(new DialogState.RegisterAction(CommandFactory.CodeSearchDialog));
                     return Task.CompletedTask;
@@ -259,7 +272,8 @@ public partial class IdeHeader : ComponentBase
 			            typeof(BackgroundTaskDialogDisplay),
 			            null,
 			            null,
-						true);
+						true,
+						null);
 			
 			        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 			        return Task.CompletedTask;
@@ -267,6 +281,33 @@ public partial class IdeHeader : ComponentBase
 
             menuOptionsList.Add(menuOptionBackgroundTasks);
         }
+
+		//// Menu Option Solution Visualization
+		//
+		// NOTE: This UI element isn't useful yet, and its very unoptimized.
+		//       Therefore, it is being commented out. Because given a large enough
+		//       solution, clicking this by accident is a bit annoying.
+		//
+        //{
+        //    var menuOptionSolutionVisualization = new MenuOptionRecord(
+		//		"Solution Visualization",
+        //        MenuOptionKind.Delete,
+        //        () => 
+        //        {
+		//			var dialogRecord = new DialogViewModel(
+		//	            _solutionVisualizationDialogKey,
+		//	            "Solution Visualization",
+		//	            typeof(SolutionVisualizationDisplay),
+		//	            null,
+		//	            null,
+		//				true);
+		//	
+		//	        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+		//	        return Task.CompletedTask;
+        //        });
+        //
+        //    menuOptionsList.Add(menuOptionSolutionVisualization);
+        //}
 
         _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
     }
@@ -380,86 +421,25 @@ public partial class IdeHeader : ComponentBase
         generalTerminal.EnqueueCommand(terminalCommand);
 	}
 
-    private void AddActiveDropdownKey(Key<DropdownRecord> dropdownKey)
-    {
-        Dispatcher.Dispatch(new DropdownState.AddActiveAction(dropdownKey));
-    }
-
-    /// <summary>
-    /// TODO: Make this method abstracted into a component that takes care of the UI to show the dropdown and to restore focus when menu closed
-    /// </summary>
-    private async Task RestoreFocusToButtonDisplayComponentFileAsync()
+	private async Task RestoreFocusToElementReference(ElementReference? elementReference)
     {
         try
         {
-            if (_buttonFileElementReference is not null)
+            if (elementReference is not null)
             {
-                await _buttonFileElementReference.Value
+                await elementReference.Value
                     .FocusAsync()
                     .ConfigureAwait(false);
             }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+			// TODO: Capture specifically the exception that is fired when the JsRuntime...
+			//       ...tries to set focus to an HTML element, but that HTML element
+			//       was not found.
         }
     }
 
-	private async Task RestoreFocusToButtonDisplayComponentToolsAsync()
-    {
-        try
-        {
-            if (_buttonToolsElementReference is not null)
-            {
-                await _buttonToolsElementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-	private async Task RestoreFocusToButtonDisplayComponentViewAsync()
-    {
-        try
-        {
-            if (_buttonViewElementReference is not null)
-            {
-                await _buttonViewElementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-
-	private async Task RestoreFocusToButtonDisplayComponentRunAsync()
-    {
-        try
-        {
-            if (_buttonRunElementReference is not null)
-            {
-                await _buttonRunElementReference.Value
-                    .FocusAsync()
-                    .ConfigureAwait(false);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-            throw;
-        }
-    }
-    
     private Task OpenNewDotNetSolutionDialog()
     {
         var dialogRecord = new DialogViewModel(
@@ -468,7 +448,8 @@ public partial class IdeHeader : ComponentBase
             typeof(DotNetSolutionFormDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
         return Task.CompletedTask;
@@ -482,7 +463,8 @@ public partial class IdeHeader : ComponentBase
             typeof(IdeInfoDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 		return Task.CompletedTask;
@@ -496,9 +478,37 @@ public partial class IdeHeader : ComponentBase
             typeof(PermissionsDisplay),
             null,
             null,
-			true);
+			true,
+			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
         return Task.CompletedTask;
     }
+
+	private async Task RenderDropdownOnClick(
+		string id,
+		ElementReference? elementReference,
+		Key<DropdownRecord> key,
+		MenuRecord menu)
+	{
+		var buttonDimensions = await JsRuntimeCommonApi
+			.MeasureElementById(id)
+			.ConfigureAwait(false);
+
+		var dropdownRecord = new DropdownRecord(
+			key,
+			buttonDimensions.LeftInPixels,
+			buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
+			typeof(MenuDisplay),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(MenuDisplay.MenuRecord),
+					menu
+				}
+			},
+			() => RestoreFocusToElementReference(elementReference));
+
+        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+	}
 }

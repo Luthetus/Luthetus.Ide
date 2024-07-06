@@ -1,13 +1,13 @@
+using System.Collections.Immutable;
+using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components.Web;
+using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Panels.States;
-using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
-using Fluxor;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Displays;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -55,6 +55,7 @@ public record Panel : IPanelTab, IDialog, IDrag
     }
 
     public string Title { get; }
+	public string TitleVerbose => Title;
 	public Key<Panel> Key { get; }
 	public Key<IDynamicViewModel> DynamicViewModelKey { get; }
     public Key<ContextRecord> ContextRecordKey { get; }
@@ -70,6 +71,7 @@ public record Panel : IPanelTab, IDialog, IDrag
     public bool DialogIsMinimized { get; set; }
     public bool DialogIsMaximized { get; set; }
 	public bool DialogIsResizable { get; set; } = true;
+	public string? SetFocusOnCloseElementId { get; set; }
     public string DialogFocusPointHtmlElementId { get; init; }
 	public ElementDimensions DialogElementDimensions { get; set; } = DialogHelper.ConstructDefaultElementDimensions();
 

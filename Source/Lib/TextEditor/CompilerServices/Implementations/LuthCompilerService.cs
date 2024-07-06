@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
@@ -160,7 +161,7 @@ public class LuthCompilerService : ILuthCompilerService
 
     protected virtual void QueueParseRequest(ResourceUri resourceUri)
     {
-        _textEditorService.PostSimpleBatch(
+		_textEditorService.Post(new ReadOnlyTextEditorTask(
             nameof(QueueParseRequest),
             async editContext =>
             {
@@ -258,6 +259,7 @@ public class LuthCompilerService : ILuthCompilerService
 
 					OnResourceParsed();
 				}
-            });
+            },
+			null));
     }
 }

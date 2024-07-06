@@ -1,7 +1,10 @@
+using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -224,6 +227,48 @@ public static class TextEditorCommandDefaultFacts
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
                 commandArgs);
+        }
+    };
+
+    public static readonly TextEditorCommand RefreshSyntaxHighlighting = new(
+        "Refresh Syntax Highlighting", "defaults_refresh_syntax_highlighting", false, false, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            commandArgs.TextEditorService.PostTakeMostRecent(
+                nameof(RefreshSyntaxHighlighting),
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                async editContext =>
+				{
+					var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+
+					if (modelModifier is null)
+						return;
+
+					modelModifier.CompilerService.ResourceWasModified(
+						modelModifier.ResourceUri,
+						ImmutableArray<TextEditorTextSpan>.Empty);
+				});
+			return Task.CompletedTask;
+        })
+    {
+        TextEditorEditFactory = interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            return async editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+
+				if (modelModifier is null)
+					return;
+
+				modelModifier.CompilerService.ResourceWasModified(
+					modelModifier.ResourceUri,
+					ImmutableArray<TextEditorTextSpan>.Empty);
+			};
         }
     };
 
@@ -676,6 +721,27 @@ public static class TextEditorCommandDefaultFacts
 
                     if (viewModelModifier is null)
                         return;
+
+					// If the user has an active text selection,
+					// then populate the find overlay with their selection.
+					{
+						var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+			            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+			
+			            if (modelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+			                return;
+			
+			            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+
+						if (selectedText is not null)
+						{
+							viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+	                        {
+	                            FindOverlayValue = selectedText,
+	                        };
+						}
+					}
 
                     if (viewModelModifier.ViewModel.ShowFindOverlay)
                     {

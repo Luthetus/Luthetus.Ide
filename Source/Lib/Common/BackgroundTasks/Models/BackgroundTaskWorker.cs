@@ -61,6 +61,7 @@ public class BackgroundTaskWorker : BackgroundService
                         : "Error occurred executing {0}."; // {0} => WorkItemName
 
                     _logger.LogError(ex, message, backgroundTask.Name);
+					Console.WriteLine($"ERROR on {backgroundTask.Name}: {ex.ToString()}");
                 }
                 finally
                 {

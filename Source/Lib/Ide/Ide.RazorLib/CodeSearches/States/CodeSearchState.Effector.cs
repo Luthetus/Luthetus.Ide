@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
@@ -87,7 +87,7 @@ public partial record CodeSearchState
                         if (searchEffect.CancellationToken.IsCancellationRequested)
                             return;
 
-                        if (directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
+                        if (directoryPathChild.Contains(".vs") || directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
                             continue;
 
                         await RecursiveHandleSearchEffect(directoryPathChild).ConfigureAwait(false);

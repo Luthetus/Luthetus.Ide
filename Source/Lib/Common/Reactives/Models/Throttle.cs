@@ -14,7 +14,7 @@ public class Throttle
 
     public TimeSpan ThrottleTimeSpan { get; }
 	
-	public void FireAndForget(Func<CancellationToken, Task> workItem)
+	public void Run(Func<CancellationToken, Task> workItem)
     {
 		lock (_lockWorkItems)
 		{

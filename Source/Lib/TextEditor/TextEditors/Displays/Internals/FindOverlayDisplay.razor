@@ -8,7 +8,8 @@
          @onclick:stopPropagation="true"
          @oncontextmenu:stopPropagation="true"
          @onkeydown="HandleOnKeyDownAsync"
-         @onkeydown:stopPropagation="true">
+         @onkeydown:stopPropagation="true"
+		 @onfocusin="HandleOnFocusIn">
 
         <div class="luth_te_find-overlay-top-row">
             <input @bind="InputValue"

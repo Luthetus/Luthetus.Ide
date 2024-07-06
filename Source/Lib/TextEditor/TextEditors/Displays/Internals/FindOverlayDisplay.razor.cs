@@ -117,6 +117,16 @@ public partial class FindOverlayDisplay : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
+	private void HandleOnFocusIn()
+	{
+		// In the case where the find over value was changed, by an outside event,
+		// just refresh the InputValue to be sure its up to date.
+		//
+		// Example: user has a selection when using the keybind to open the find overlay,
+		// 		 then the find overlay would be populated with their text selection.
+		InputValue = RenderBatch.ViewModel.FindOverlayValue;
+	}
+
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)

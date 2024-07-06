@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.ComponentRenderers.Models;
+namespace Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 public interface IErrorNotificationRendererType
 {

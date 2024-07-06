@@ -1,21 +1,39 @@
-@using Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays
+@using Luthetus.Common.RazorLib.Dimensions.Models
 
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
-@if (ShouldDisplay)
-{
-    if (ShouldDisplayOutOfBoundsClickDisplay)
-    {
-        <OutOfBoundsClickDisplay ZIndex="15"
-                                 OnClickCallback="ClearActiveKeyList" />    
-    }
-    
-    <div class="luth_dropdown-display"
-         @onclick:stopPropagation="true"
-         style="@DropdownPositionKindStyleCss @CssStyleString">
-
-        <CascadingValue Value="DropdownKey">
-            @ChildContent
-        </CascadingValue>
-    </div>
+@{
+	var localDropdown = Dropdown;
+	var localHtmlElementDimensions = _htmlElementDimensions;
+	var localGlobalHtmlElementDimensions = _globalHtmlElementDimensions;
+	var localAppDimensionState = AppDimensionStateWrap.Value;
 }
+
+<div class="luth_dropdown"
+     style="white-space: nowrap; @GetStyleCssString(localDropdown)"
+	 id="@_htmlElementId"
+	 @onclick:stopPropagation="true"
+	 @oncontextmenu:preventDefault="true">
+
+@*
+<environment include="Development">
+	<div>_renderCount: @_renderCount</div>
+</environment>
+*@
+
+	@{
+		_isOffScreenHorizontally = 
+			(localHtmlElementDimensions?.WidthInPixels ?? 0) + (localHtmlElementDimensions?.LeftInPixels ?? 0)
+			> (localGlobalHtmlElementDimensions?.WidthInPixels ?? 0);
+
+		_isOffScreenVertically = 
+			(localHtmlElementDimensions?.HeightInPixels ?? 0) + (localHtmlElementDimensions?.TopInPixels ?? 0)
+			> (localGlobalHtmlElementDimensions?.HeightInPixels ?? 0);
+	}
+	
+	<CascadingValue Value="localDropdown">
+		<CascadingValue Name="ReturnFocusToParentFuncAsync" Value="localDropdown.RestoreFocusOnClose">
+	        <DynamicComponent @key="localDropdown.Key"
+	                          Type="localDropdown.ComponentType"
+	                          Parameters="localDropdown.ComponentParameterMap" />
+	    </CascadingValue>
+    </CascadingValue>
+</div>
