@@ -49,10 +49,6 @@ input[type="checkbox"]{
     overflow: auto;
 }
 
-.luth_ide_editor-display {
-    height: 100%;
-}
-
 .luth_ide_header {
     display: flex;
 }
@@ -295,10 +291,6 @@ button.luth_ide_input-file-address-hierarchy-entry {
 
 .luth_te_text-editor-input-cursor-size .luth_te_text-editor {
     min-height: initial;
-}
-
-.luth_ide_panel {
-    display: flex;
 }
 
 .luth_ide_panel-tabs {

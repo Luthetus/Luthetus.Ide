@@ -101,9 +101,9 @@
 	cursor: pointer;
 }
 /* _content/Luthetus.Common/Dropdowns/Displays/DropdownDisplay.razor.rz.scp.css */
-.luth_dropdown-display[b-vgeu01loue] {
-    z-index: var(--luth_dropdown-display-z-index);
-    position: absolute;
+.luth_dropdown[b-vgeu01loue] {
+	position: fixed;
+	z-index: var(--luth_dropdown-display-z-index);
     color: var(--luth_tertiary-foreground-color);
     background-color: var(--luth_tertiary-background-color);
     box-shadow: 0 0 var(--luth_dropdown-display-default-background-box-shadow-blur-radius) var(--luth_primary-box-shadow-color);
@@ -264,6 +264,11 @@
     position: fixed;
     left: 0;
     top: 0;
+}
+/* _content/Luthetus.Common/Panels/Displays/PanelGroupDisplay.razor.rz.scp.css */
+.luth_ide_panel[b-zp15x8bbk7] {
+	overflow: hidden;
+    display: flex;
 }
 /* _content/Luthetus.Common/Reflectives/Displays/ReflectiveConstructor.razor.rz.scp.css */
 .luth_reflective-constructor[b-gcn31l7m78] {
