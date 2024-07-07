@@ -111,7 +111,84 @@ doremi".ReplaceLineEndings("\n");
 	[Fact]
 	public void AltPlusDown_THEN_MoveLineDown()
 	{
-		throw new NotImplementedException();
+		var initialContent = @"abc
+123
+doremi".ReplaceLineEndings("\n");
+
+		var model = new TextEditorModel(
+            new ResourceUri("/unitTesting.cs"),
+            DateTime.UtcNow,
+            ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            initialContent,
+            null,
+            null);
+            
+		Assert.Equal(initialContent, model.GetAllText());
+            
+        var modelModifier = new TextEditorModelModifier(model);
+        KeybindUnderTest();
+
+        var expectedtext = @"123
+abc
+doremi".ReplaceLineEndings("\n");
+
+        var actualText = modelModifier.GetAllText();
+        
+        Assert.Equal(expectedtext, actualText);
+		
+		// Going to write the keybind here then move this code when done
+		void KeybindUnderTest()
+		{
+			var cursor = new TextEditorCursor(
+				lineIndex: 0,
+				columnIndex: 0,
+				isPrimaryCursor: true);
+				
+			var nextLineIndex = cursor.LineIndex + 1;
+			var nextLineInformation = modelModifier.GetLineInformation(nextLineIndex);
+
+			// Insert
+			{
+				var cursorModifier = new TextEditorCursorModifier(cursor);
+				cursorModifier.LineIndex = nextLineIndex + 1;
+				cursorModifier.ColumnIndex = 0;
+				
+				var currentLineContent = modelModifier.GetLineTextRange(cursor.LineIndex, 1);
+	
+				var cursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { cursorModifier });
+	
+				modelModifier.Insert(
+					value: currentLineContent,
+					cursorModifierBag: cursorModifierBag,
+					useLineEndKindPreference: false);
+			}
+
+			// Delete
+			{
+				var cursorModifier = new TextEditorCursorModifier(cursor);
+				
+				cursorModifier.LineIndex = cursor.LineIndex;
+				cursorModifier.ColumnIndex = 0;
+				
+				var currentLineInformation = modelModifier.GetLineInformation(cursorModifier.LineIndex);
+				var columnCount = currentLineInformation.EndPositionIndexExclusive -
+					currentLineInformation.StartPositionIndexInclusive;
+	
+				var cursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { cursorModifier });
+	
+				modelModifier.Delete(
+			        cursorModifierBag,
+			        columnCount,
+			        false,
+			        TextEditorModelModifier.DeleteKind.Delete);
+			}
+			
+			Console.WriteLine(modelModifier.GetAllText());
+		}
 	}
 
 	/// <summary>
