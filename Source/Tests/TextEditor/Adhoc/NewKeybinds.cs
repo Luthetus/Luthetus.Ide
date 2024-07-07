@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -198,7 +199,71 @@ doremi".ReplaceLineEndings("\n");
 	[Fact]
 	public void CtrlPlusAltPlusArrowLeftOrArrowRight_THEN_MoveCamelCase()
 	{
-		throw new NotImplementedException();
+		var initialContent = @"AppleBananaCucumber";
+
+		var model = new TextEditorModel(
+            new ResourceUri("/unitTesting.cs"),
+            DateTime.UtcNow,
+            ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            initialContent,
+            null,
+            null);
+            
+		Assert.Equal(initialContent, model.GetAllText());
+            
+        var modelModifier = new TextEditorModelModifier(model);
+        
+        var cursor = new TextEditorCursor(
+			lineIndex: 0,
+			columnIndex: 0,
+			isPrimaryCursor: true);
+
+        Assert.Equal(0, cursor.LineIndex);
+        Assert.Equal(0, cursor.ColumnIndex);
+        Assert.Equal(0, cursor.PreferredColumnIndex);
+        
+        KeybindUnderTest();
+        
+        Assert.Equal(0, cursor.LineIndex);
+        Assert.Equal(5, cursor.ColumnIndex);
+        Assert.Equal(5, cursor.PreferredColumnIndex);
+
+		throw new NotImplementedException("TODO: Handle edge cases");
+		
+		// Going to write the keybind here then move this code when done
+		void KeybindUnderTest()
+		{
+			var positionIndex = modelModifier.GetPositionIndex(cursor);
+			var rememberStartPositionIndex = positionIndex;
+			
+			var startCharacterKind = CharacterKindHelper.CharToCharacterKind(
+				model.RichCharacterList[positionIndex].Value);
+				
+			if (startCharacterKind != CharacterKind.LetterOrDigit)
+			{
+				throw new NotImplementedException("Invoke GetColumnIndexOfCharacterWithDifferingKind instead");
+			}
+				
+			while (++positionIndex < modelModifier.RichCharacterList.Count)
+			{
+				var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
+				
+				var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(
+					currentRichCharacter.Value);
+				
+				if (currentCharacterKind != CharacterKind.LetterOrDigit)
+					break;
+				if (Char.IsUpper(currentRichCharacter.Value))
+					break;
+			}
+			
+			var columnDisplacement = positionIndex - rememberStartPositionIndex;
+			
+			var cursorModifier = new TextEditorCursorModifier(cursor);
+			cursorModifier.SetColumnIndexAndPreferred(cursor.ColumnIndex + columnDisplacement);
+
+			cursor = cursorModifier.ToCursor();
+		}
 	}
 
 	/// <summary>
@@ -214,11 +279,91 @@ doremi".ReplaceLineEndings("\n");
 	/// 		[] otherwise stay where you are.
 	/// 	[] If at start of line then home takes to end of indentation.
 	/// 		[] Do the "stop early" logic
+	/// 	[] If within starting indentation then go to the end of the starting indentation.
+	/// 		[] Do the "stop early" logic
 	/// </summary>
 	[Fact]
 	public void Home_THEN_MoreFunctionality()
 	{
-		throw new NotImplementedException();
+		var initialContent = @"	AppleBananaCucumber";
+
+		var model = new TextEditorModel(
+            new ResourceUri("/unitTesting.cs"),
+            DateTime.UtcNow,
+            ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            initialContent,
+            null,
+            null);
+            
+		Assert.Equal(initialContent, model.GetAllText());
+            
+        var modelModifier = new TextEditorModelModifier(model);
+        
+        var lineInformation = modelModifier.GetLineInformation(0);
+        var cursor = new TextEditorCursor(
+        	lineIndex: 0,
+        	columnIndex: lineInformation.LastValidColumnIndex,
+        	isPrimaryCursor: true);
+        	
+        Assert.Equal(0, cursor.LineIndex);
+        Assert.Equal(lineInformation.LastValidColumnIndex, cursor.ColumnIndex);
+        Assert.Equal(lineInformation.LastValidColumnIndex, cursor.PreferredColumnIndex);
+        
+        KeybindUnderTest();
+
+        Assert.Equal(0, cursor.LineIndex);
+        Assert.Equal(1, cursor.ColumnIndex);
+        Assert.Equal(1, cursor.PreferredColumnIndex);
+        
+		throw new NotImplementedException("TODO: Handle edge cases");
+		
+		// Going to write the keybind here then move this code when done
+		void KeybindUnderTest()
+		{
+			var cursorModifier = new TextEditorCursorModifier(cursor);
+			var originalPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+			
+			cursorModifier.ColumnIndex = 0;
+			
+			var lineInformation = modelModifier.GetLineInformation(cursorModifier.LineIndex);
+			var indentationPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+			
+			var cursorWithinIndentation = false;
+
+			while (indentationPositionIndex < lineInformation.LastValidColumnIndex)
+			{
+				var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+
+				if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+				{
+					if (indentationPositionIndex == originalPositionIndex)
+					{
+						cursorWithinIndentation = true;
+						break;
+					}
+				}
+				else
+				{
+					// Eager incrementation is making this too large by 1
+					indentationPositionIndex--;
+					break;
+				}
+			}
+			
+			if (originalPositionIndex == 0)
+			{
+				var exclusiveEndIndentationPositionIndex = indentationPositionIndex;
+				cursorModifier.SetColumnIndexAndPreferred(exclusiveEndIndentationPositionIndex);
+			}
+			else if (!cursorWithinIndentation)
+			{
+				var exclusiveEndIndentationPositionIndex = indentationPositionIndex;
+				cursorModifier.SetColumnIndexAndPreferred(exclusiveEndIndentationPositionIndex);
+			}
+			// else: Stay at column 0
+			
+			cursor = cursorModifier.ToCursor();
+		}
 	}
 
 	/// <summary>

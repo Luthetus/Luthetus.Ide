@@ -1,3 +1,6 @@
+using System.Collections.Immutable;
+using System.Text;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -13,9 +16,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
-using System.Text;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
