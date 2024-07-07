@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
@@ -6,6 +7,7 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -530,8 +532,34 @@ public class TextEditorCommandDefaultFunctions
 
             primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
             primaryCursorModifier.ColumnIndex = lengthOfRow;
+            
+            // NOTE: keep the value to insert as '\n' because this will be changed to the user's
+            //       preferred line ending upon insertion.
+            var valueToInsert = "\n";
+            
+            // GOAL: Match indentation on newline keystroke (2024-07-07)
+            {
+				var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 
-            modelModifier.Insert("\n", cursorModifierBag, cancellationToken: CancellationToken.None);
+				var cursorPositionIndex = line.StartPositionIndexInclusive + primaryCursorModifier.ColumnIndex;
+				var indentationPositionIndex = line.StartPositionIndexInclusive;
+
+				var indentationBuilder = new StringBuilder();
+
+				while (indentationPositionIndex < cursorPositionIndex)
+				{
+					var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+
+					if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+						indentationBuilder.Append(possibleIndentationChar);
+					else
+						break;
+				}
+
+				valueToInsert += indentationBuilder.ToString();
+            }
+
+            modelModifier.Insert(valueToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
             return Task.CompletedTask;
         };
     }
@@ -550,16 +578,47 @@ public class TextEditorCommandDefaultFunctions
                 return Task.CompletedTask;
 
             primaryCursorModifier.SelectionAnchorPositionIndex = null;
+            
+            var originalColumnIndex = primaryCursorModifier.ColumnIndex;
 
             primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
             primaryCursorModifier.ColumnIndex = 0;
+            
+            // NOTE: keep the value to insert as '\n' because this will be changed to the user's
+            //       preferred line ending upon insertion.
+            var valueToInsert = "\n";
+            
+            var indentationLength = 0;
+            
+            // GOAL: Match indentation on newline keystroke (2024-07-07)
+            {
+				var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 
-            modelModifier.Insert("\n", cursorModifierBag, cancellationToken: CancellationToken.None);
+				var cursorPositionIndex = line.StartPositionIndexInclusive + originalColumnIndex;
+				var indentationPositionIndex = line.StartPositionIndexInclusive;
+
+				var indentationBuilder = new StringBuilder();
+
+				while (indentationPositionIndex < cursorPositionIndex)
+				{
+					var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+
+					if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+						indentationBuilder.Append(possibleIndentationChar);
+					else
+						break;
+				}
+
+				valueToInsert = indentationBuilder.ToString() + valueToInsert;
+				indentationLength = indentationBuilder.Length;
+            }
+
+            modelModifier.Insert(valueToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
 
             if (primaryCursorModifier.LineIndex > 1)
             {
                 primaryCursorModifier.LineIndex--;
-                primaryCursorModifier.ColumnIndex = 0;
+                primaryCursorModifier.ColumnIndex = indentationLength;
             }
 
             return Task.CompletedTask;

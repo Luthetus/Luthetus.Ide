@@ -375,7 +375,7 @@ doremi".ReplaceLineEndings("\n");
 	[Fact]
 	public void CtrlPlusEnter_THEN_SupportMatchIndentation()
 	{
-		throw new NotImplementedException();
+		throw new NotImplementedException("Made the changes directly, it seems to work but needs testing");
 	}
 
 	/// <summary>
@@ -387,7 +387,7 @@ doremi".ReplaceLineEndings("\n");
 	[Fact]
 	public void ShiftPlusEnter_THEN_SupportMatchIndentation()
 	{
-		throw new NotImplementedException();
+		throw new NotImplementedException("Made the changes directly, it seems to work but needs testing");
 	}
 
 	/// <summary>
