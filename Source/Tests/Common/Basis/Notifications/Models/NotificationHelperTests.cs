@@ -1,6 +1,6 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Notifications.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
@@ -46,6 +46,7 @@ public class NotificationHelperTests
         var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
+            typeof(CommonProgressNotificationDisplay),
             luthetusCommonTreeViews);
 
         Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
@@ -93,6 +94,7 @@ public class NotificationHelperTests
         var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
+            typeof(CommonProgressNotificationDisplay),
             luthetusCommonTreeViews);
 
         Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);

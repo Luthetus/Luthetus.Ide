@@ -1,16 +1,16 @@
-﻿using Luthetus.Common.RazorLib.TreeViews.States;
+using System.Collections.Immutable;
+using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
+using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
-using System.Collections.Immutable;
 using Luthetus.Common.Tests.Basis.TreeViews.Models.Internals;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using static Luthetus.Common.RazorLib.TreeViews.States.TreeViewState;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
+using static Luthetus.Common.RazorLib.TreeViews.States.TreeViewState;
 
 namespace Luthetus.Common.Tests.Basis.TreeViews.States;
 
@@ -966,6 +966,7 @@ public class TreeViewStateActionsTests
         commonComponentRenderers = new LuthetusCommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
+            typeof(CommonProgressNotificationDisplay),
             commonTreeViews);
 
         websiteServerState = new WebsiteServerState();

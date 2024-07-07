@@ -1,10 +1,10 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
 namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
@@ -112,6 +112,7 @@ public record TreeViewContainerTests
         commonComponentRenderers = new LuthetusCommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
+            typeof(CommonProgressNotificationDisplay),
             commonTreeViews);
     }
 }

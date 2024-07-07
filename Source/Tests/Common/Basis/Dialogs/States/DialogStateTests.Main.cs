@@ -1,9 +1,9 @@
-﻿using Luthetus.Common.RazorLib.Dialogs.Models;
+using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
-using System.Collections.Immutable;
 
 namespace Luthetus.Common.Tests.Basis.Dialogs.States;
 
@@ -33,7 +33,8 @@ public class DialogStateMainTests
                 }
             },
             null,
-            true);
+            true,
+            "luth_element-id");
 
         var outDialogList = dialogState.DialogList.Add(sampleDialogRecord);
 

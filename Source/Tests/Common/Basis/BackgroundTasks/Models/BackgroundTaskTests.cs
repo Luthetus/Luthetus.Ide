@@ -18,8 +18,8 @@ public class BackgroundTaskTests
     [Fact]
     public void Constructor()
     {
-        var taskKey = Key<BackgroundTask>.NewKey();
-        var taskQueueKey = Key<BackgroundTaskQueue>.NewKey();
+        var taskKey = Key<IBackgroundTask>.NewKey();
+        var taskQueueKey = Key<IBackgroundTaskQueue>.NewKey();
         var name = "Write \"Hello World!\" to the console";
 
         var backgroundTask = new BackgroundTask(
@@ -48,7 +48,7 @@ public class BackgroundTaskTests
         var number = 0;
         Assert.Equal(0, number);
 
-        var backgroundTaskKey = Key<BackgroundTask>.NewKey();
+        var backgroundTaskKey = Key<IBackgroundTask>.NewKey();
 
         var backgroundTask = new BackgroundTask(
             backgroundTaskKey,

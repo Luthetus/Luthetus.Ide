@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
@@ -33,10 +33,12 @@ public class LuthetusCommonComponentRenderersTests
         var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
+            typeof(CommonProgressNotificationDisplay),
             luthetusCommonTreeViews);
 
         Assert.NotNull(luthetusCommonComponentRenderers.LuthetusCommonTreeViews);
         Assert.NotNull(luthetusCommonComponentRenderers.ErrorNotificationRendererType);
+        Assert.NotNull(luthetusCommonComponentRenderers.ProgressNotificationRendererType);
         Assert.NotNull(luthetusCommonComponentRenderers.InformativeNotificationRendererType);
     }
 }
