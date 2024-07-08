@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -463,15 +464,47 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         {
                             if (keyboardEventArgs.CtrlKey)
                             {
-                                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                                    cursorModifier.LineIndex,
-                                    cursorModifier.ColumnIndex,
-                                    true);
-
-                                if (columnIndexOfCharacterWithDifferingKind == -1)
-                                    cursorModifier.SetColumnIndexAndPreferred(0);
-                                else
-                                    cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+                            	if (keyboardEventArgs.AltKey)
+                            	{
+									var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
+									var rememberStartPositionIndex = positionIndex;
+									
+									var startCharacterKind = CharacterKindHelper.CharToCharacterKind(
+										modelModifier.RichCharacterList[positionIndex].Value);
+										
+									if (startCharacterKind != CharacterKind.LetterOrDigit)
+									{
+										throw new NotImplementedException("Invoke GetColumnIndexOfCharacterWithDifferingKind instead");
+									}
+										
+									while (++positionIndex < modelModifier.RichCharacterList.Count)
+									{
+										var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
+										
+										var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(
+											currentRichCharacter.Value);
+										
+										if (currentCharacterKind != CharacterKind.LetterOrDigit)
+											break;
+										if (Char.IsUpper(currentRichCharacter.Value))
+											break;
+									}
+									
+									var columnDisplacement = positionIndex - rememberStartPositionIndex;
+									cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
+                            	}
+                            	else
+                            	{
+	                                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+	                                    cursorModifier.LineIndex,
+	                                    cursorModifier.ColumnIndex,
+	                                    true);
+	
+	                                if (columnIndexOfCharacterWithDifferingKind == -1)
+	                                    cursorModifier.SetColumnIndexAndPreferred(0);
+	                                else
+	                                    cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+                                }
                             }
                             else
                             {
@@ -545,17 +578,49 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         {
                             if (keyboardEventArgs.CtrlKey)
                             {
-                                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                                    cursorModifier.LineIndex,
-                                    cursorModifier.ColumnIndex,
-                                    false);
-
-                                if (columnIndexOfCharacterWithDifferingKind == -1)
-                                    cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
-                                else
-                                {
-                                    cursorModifier.SetColumnIndexAndPreferred(
-                                        columnIndexOfCharacterWithDifferingKind);
+                            	if (keyboardEventArgs.AltKey)
+                            	{                            	
+									var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
+									var rememberStartPositionIndex = positionIndex;
+									
+									var startCharacterKind = CharacterKindHelper.CharToCharacterKind(
+										modelModifier.RichCharacterList[positionIndex].Value);
+										
+									if (startCharacterKind != CharacterKind.LetterOrDigit)
+									{
+										throw new NotImplementedException("Invoke GetColumnIndexOfCharacterWithDifferingKind instead");
+									}
+										
+									while (++positionIndex < modelModifier.RichCharacterList.Count)
+									{
+										var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
+										
+										var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(
+											currentRichCharacter.Value);
+										
+										if (currentCharacterKind != CharacterKind.LetterOrDigit)
+											break;
+										if (Char.IsUpper(currentRichCharacter.Value))
+											break;
+									}
+									
+									var columnDisplacement = positionIndex - rememberStartPositionIndex;
+									cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
+                            	}
+                            	else
+                            	{
+	                                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+	                                    cursorModifier.LineIndex,
+	                                    cursorModifier.ColumnIndex,
+	                                    false);
+	
+	                                if (columnIndexOfCharacterWithDifferingKind == -1)
+	                                    cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
+	                                else
+	                                {
+	                                    cursorModifier.SetColumnIndexAndPreferred(
+	                                        columnIndexOfCharacterWithDifferingKind);
+	                                }
                                 }
                             }
                             else

@@ -400,7 +400,91 @@ doremi".ReplaceLineEndings("\n");
 	[Fact]
 	public void NoSelectionPlusShiftPlusTabPlusCursorAtIndentation_THEN_IndentLess()
 	{
+		var initialContent = @"	AppleBananaCucumber";
+
+		var model = new TextEditorModel(
+            new ResourceUri("/unitTesting.cs"),
+            DateTime.UtcNow,
+            ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            initialContent,
+            null,
+            null);
+            
+		Assert.Equal(initialContent, model.GetAllText());
+            
+        var modelModifier = new TextEditorModelModifier(model);
+        
+        var cursor = new TextEditorCursor(
+        	lineIndex: 0,
+        	columnIndex: 0,
+        	isPrimaryCursor: true);
+        	
+        Assert.Equal(0, cursor.LineIndex);
+        Assert.Equal(0, cursor.ColumnIndex);
+        Assert.Equal(0, cursor.PreferredColumnIndex);
+        
+        var initialContentLength = initialContent.Length;
+        
+        KeybindUnderTest();
+
+        Assert.Equal(0, cursor.LineIndex);
+        Assert.Equal(0, cursor.ColumnIndex);
+        Assert.Equal(0, cursor.PreferredColumnIndex);
+        
+        var endContentLength = modelModifier.GetAllText().Length;
+        
+        // One tab key was removed, therefore assert a length smaller by 1
+        Assert.Equal(initialContentLength - 1, endContentLength);
+        
 		throw new NotImplementedException();
+		
+		// Going to write the keybind here then move this code when done
+		void KeybindUnderTest()
+		{
+			var cursorModifier = new TextEditorCursorModifier(cursor);
+			var originalPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+			
+			cursorModifier.ColumnIndex = 0;
+			
+			var lineInformation = modelModifier.GetLineInformation(cursorModifier.LineIndex);
+			var indentationPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+			
+			var cursorWithinIndentation = false;
+
+			while (indentationPositionIndex < lineInformation.LastValidColumnIndex)
+			{
+				var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+				
+				if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+				{
+					if (indentationPositionIndex == originalPositionIndex)
+					{
+						cursorWithinIndentation = true;
+						break;
+					}
+				}
+				else
+				{
+					// Eager incrementation is making this too large by 1
+					indentationPositionIndex--;
+					break;
+				}
+			}
+			
+			if (originalPositionIndex == 0)
+			{
+				var exclusiveEndIndentationPositionIndex = indentationPositionIndex;
+				cursorModifier.SetColumnIndexAndPreferred(exclusiveEndIndentationPositionIndex);
+			}
+			else if (!cursorWithinIndentation)
+			{
+				var exclusiveEndIndentationPositionIndex = indentationPositionIndex;
+				cursorModifier.SetColumnIndexAndPreferred(exclusiveEndIndentationPositionIndex);
+			}
+			// else: Stay at column 0
+			
+			cursor = cursorModifier.ToCursor();
+		}
 	}
 
 	/// <summary>

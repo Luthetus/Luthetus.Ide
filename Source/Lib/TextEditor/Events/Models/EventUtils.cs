@@ -62,12 +62,24 @@ public static class EventUtils
             return true;
         }
 
-        if (keyboardEventArgs.CtrlKey && keyboardEventArgs.AltKey)
-        {
-            // TODO: This if is a hack to fix the keybind: { Ctrl + Alt + S } causing...
-            // ...an 's' to be written out when using Vim keymap.
-            return true;
-        }
+		// TODO: See following code block (its commented out).
+		//       The commented out hack was not a good idea,
+		//       This comment is here as a reminder not to repeat
+		//       this bad solution.
+		//       |
+		//       i.e.: this is not yet fixed, but don't fix it the way thats commented out below.
+		//             Once this is fixed, then delete this comment.
+		//       |
+		//       The issue was { Ctrl + Alt + (ArrowRight || ArrowLeft) }
+		//       to perform "camel case movement of the cursor".
+		// {
+	        //if (keyboardEventArgs.CtrlKey && keyboardEventArgs.AltKey)
+	        //{
+	        //    // TODO: This if is a hack to fix the keybind: { Ctrl + Alt + S } causing...
+	        //    // ...an 's' to be written out when using Vim keymap.
+	        //    return true;
+	        //}
+        // }
 
         return false;
     }
