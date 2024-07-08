@@ -28,7 +28,7 @@ public partial class CommandBarDisplay : FluxorComponent
                 if (_commandBarDisplayElementReference is not null)
                 {
                     await _commandBarDisplayElementReference.Value
-                        .FocusAsync()
+                        .FocusAsync(preventScroll: true)
                         .ConfigureAwait(false);
                 }
             }

@@ -42,7 +42,7 @@ public partial class ContextMenu : ComponentBase
                 try
                 {
                     await _textEditorContextMenuElementReference.Value
-                        .FocusAsync()
+                        .FocusAsync(preventScroll: true)
                         .ConfigureAwait(false);
                 }
                 catch (Exception)

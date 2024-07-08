@@ -334,7 +334,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             if (_cursorDisplayElementReference is not null)
             {
                 await _cursorDisplayElementReference.Value
-                    .FocusAsync()
+                    .FocusAsync(preventScroll: true)
                     .ConfigureAwait(false);
             }
         }
