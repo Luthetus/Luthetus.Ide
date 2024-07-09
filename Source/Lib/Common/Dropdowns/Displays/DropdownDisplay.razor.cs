@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Contexts.Displays;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
@@ -23,6 +24,10 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Func<DropdownRecord, Task> OnFocusInFunc { get; set; }
+    [Parameter, EditorRequired]
+    public Func<DropdownRecord, Task> OnFocusOutFunc { get; set; }
 
 	private readonly object _hasPendingEventLock = new();
 
@@ -153,6 +158,16 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 
 		return styleBuilder.ToString();
 	}
+	
+	private Task HandleOnFocusIn()
+    {
+       return OnFocusInFunc.Invoke(Dropdown);
+    }
+    
+	private Task HandleOnFocusOut()
+    {
+    	return OnFocusOutFunc.Invoke(Dropdown);
+    }
 
 #if DEBUG
 	/// <summary>
