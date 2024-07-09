@@ -1,6 +1,21 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using Luthetus.Common.RazorLib.Contexts.Models
+@using Luthetus.Common.RazorLib.Contexts.Displays
 
 @{ var dialogList = DialogStateWrap.Value.DialogList; }
+
+<ContextBoundary @ref="_dialogContextBoundary"
+				 ContextRecord="ContextFacts.DialogContext"
+                 ClassCssString="luth_dialog-initializer">
+</ContextBoundary>
+
+@foreach (var dialog in dialogList)
+{
+    <DialogDisplay @key="dialog.DynamicViewModelKey" 
+                   Dialog="dialog"
+                   OnFocusInFunc="HandleOnFocusIn"
+                   OnFocusOutFunc="HandleOnFocusOut"/>
+}
 
 @*
 	TODO: Would wrapping the foreach in a div i.e.:
@@ -14,9 +29,3 @@
 		  div for a reason or not, but I don't have time to look into this
 		  at the moment.
 *@
-
-@foreach (var dialog in dialogList)
-{
-    <DialogDisplay @key="dialog.DynamicViewModelKey" 
-                   Dialog="dialog" />
-}

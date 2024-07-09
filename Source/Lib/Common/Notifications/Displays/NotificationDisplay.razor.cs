@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Contexts.Displays;
 
 namespace Luthetus.Common.RazorLib.Notifications.Displays;
 
@@ -27,6 +28,10 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     public INotification Notification  { get; set; } = null!;
     [Parameter, EditorRequired]
     public int Index { get; set; }
+    [Parameter, EditorRequired]
+    public Func<INotification, Task> OnFocusInFunc { get; set; }
+    [Parameter, EditorRequired]
+    public Func<INotification, Task> OnFocusOutFunc { get; set; }
 
     private const int WIDTH_IN_PIXELS = 350;
     private const int HEIGHT_IN_PIXELS = 125;
@@ -173,6 +178,16 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
 
         return HandleShouldNoLongerRender(wasCausedByUiEvent: false);
+    }
+    
+    private Task HandleOnFocusIn()
+    {
+    	return OnFocusInFunc.Invoke(Notification);
+    }
+	
+	private Task HandleOnFocusOut()
+    {
+    	return OnFocusOutFunc.Invoke(Notification);
     }
 
     public void Dispose()

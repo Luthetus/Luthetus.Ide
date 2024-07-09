@@ -52,14 +52,15 @@ public partial class ContextBoundary : ComponentBase
             Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyList.ToImmutableArray())));
     }
 
-    public void HandleOnFocusIn()
-    {    
+    public void HandleOnFocusIn(bool shouldShowOutline)
+    {
     	// TODO: There is a worry that the onfocusin could be redundantly setting the already
     	//       existing 'FocusedContextHeirarchy' again, enough to where an optimization
     	//       that checks to see if it already is the 'FocusedContextHeirarchy' would be of
     	//       notable benefit.
     	//
-    	if (ContextStateWrap.Value.FocusedContextHeirarchy.NearestAncestorKey != ContextRecord.ContextKey)
+    	if (ContextStateWrap.Value.FocusedContextHeirarchy.NearestAncestorKey != ContextRecord.ContextKey &&
+    	    shouldShowOutline)
     	{
     	    Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
     	    	ContextRecord.ContextElementId,
@@ -72,7 +73,7 @@ public partial class ContextBoundary : ComponentBase
         DispatchSetActiveContextStatesAction(new());
     }
     
-    private void HandleOnFocusOut()
+    public void HandleOnFocusOut()
     {
     	Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
 	    	null,
