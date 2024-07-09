@@ -1,0 +1,5 @@
+.luth_outline {
+	position: fixed;
+	z-index: 1;
+	background-color: var(--luth_toggled-on-hover-background-color);
+}

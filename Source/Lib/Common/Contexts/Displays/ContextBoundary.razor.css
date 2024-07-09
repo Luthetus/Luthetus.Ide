@@ -1,5 +1,15 @@
+/* 
+The component 'OutlineInitializer.razor' is in development as a replacement
+to the '.luth_ide_context-boundary:focus' css in this file.
+
+TODO: Decide if 'OutlineInitializer.razor' is an improvement,
+      and if so delete this css block or file entirely if its empty.
+*/
+/*
 .luth_ide_context-boundary:focus {
     box-shadow: 0 0 8px var(--luth_primary-overlay-box-shadow-color) inset;
     outline: 5px solid var(--luth_toggled-on-hover-background-color);
     outline-offset: -5px;
 }
+*/
+
