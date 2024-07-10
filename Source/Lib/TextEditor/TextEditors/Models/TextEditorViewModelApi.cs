@@ -464,46 +464,58 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         {
                             if (keyboardEventArgs.CtrlKey)
                             {
-                            	if (keyboardEventArgs.AltKey)
-                            	{
-									var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
-									var rememberStartPositionIndex = positionIndex;
-									
-									var startCharacterKind = CharacterKindHelper.CharToCharacterKind(
-										modelModifier.RichCharacterList[positionIndex].Value);
+                            	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+                                    cursorModifier.LineIndex,
+                                    cursorModifier.ColumnIndex,
+                                    true);
+
+                                if (columnIndexOfCharacterWithDifferingKind == -1) // Move to start of line
+                                {
+                                    cursorModifier.SetColumnIndexAndPreferred(0);
+                                }
+                                else
+                                {
+                                	if (!keyboardEventArgs.AltKey) // Move by character kind
+                                	{
+                                		cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+                                	}
+                                    else // Move by camel case
+                                    {
+                                    	var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
+										var rememberStartPositionIndex = positionIndex;
 										
-									if (startCharacterKind != CharacterKind.LetterOrDigit)
-									{
-										throw new NotImplementedException("Invoke GetColumnIndexOfCharacterWithDifferingKind instead");
-									}
+										var minPositionIndex = columnIndexOfCharacterWithDifferingKind;
+										var infiniteLoopPrediction = false;
 										
-									while (++positionIndex < modelModifier.RichCharacterList.Count)
-									{
-										var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
+										if (minPositionIndex > positionIndex)
+											infiniteLoopPrediction = true;
 										
-										var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(
-											currentRichCharacter.Value);
+										bool useCamelCaseResult = false;
 										
-										if (currentCharacterKind != CharacterKind.LetterOrDigit)
-											break;
-										if (Char.IsUpper(currentRichCharacter.Value))
-											break;
-									}
-									
-									var columnDisplacement = positionIndex - rememberStartPositionIndex;
-									cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
-                            	}
-                            	else
-                            	{
-	                                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-	                                    cursorModifier.LineIndex,
-	                                    cursorModifier.ColumnIndex,
-	                                    true);
-	
-	                                if (columnIndexOfCharacterWithDifferingKind == -1)
-	                                    cursorModifier.SetColumnIndexAndPreferred(0);
-	                                else
-	                                    cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+										if (!infiniteLoopPrediction)
+										{
+											while (--positionIndex > minPositionIndex)
+											{
+												var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
+												
+												if (Char.IsUpper(currentRichCharacter.Value) || currentRichCharacter.Value == '_')
+												{
+													useCamelCaseResult = true;
+													break;
+												}
+											}
+										}
+										
+										if (useCamelCaseResult)
+										{
+											var columnDisplacement = positionIndex - rememberStartPositionIndex;
+											cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
+										}
+										else
+										{
+											cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+										}
+                                    }
                                 }
                             }
                             else
@@ -578,49 +590,61 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         {
                             if (keyboardEventArgs.CtrlKey)
                             {
-                            	if (keyboardEventArgs.AltKey)
-                            	{                            	
-									var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
-									var rememberStartPositionIndex = positionIndex;
-									
-									var startCharacterKind = CharacterKindHelper.CharToCharacterKind(
-										modelModifier.RichCharacterList[positionIndex].Value);
+                            	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+                                    cursorModifier.LineIndex,
+                                    cursorModifier.ColumnIndex,
+                                    false);
+
+                                if (columnIndexOfCharacterWithDifferingKind == -1) // Move to end of line
+                                {
+                                    cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
+                                }
+                                else
+                                {
+                                	if (!keyboardEventArgs.AltKey) // Move by character kind
+                                	{
+                                		cursorModifier.SetColumnIndexAndPreferred(
+                                        	columnIndexOfCharacterWithDifferingKind);
+                                	}
+                                    else // Move by camel case
+                                    {
+                                    	var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
+										var rememberStartPositionIndex = positionIndex;
 										
-									if (startCharacterKind != CharacterKind.LetterOrDigit)
-									{
-										throw new NotImplementedException("Invoke GetColumnIndexOfCharacterWithDifferingKind instead");
-									}
+										var maxPositionIndex = columnIndexOfCharacterWithDifferingKind;
 										
-									while (++positionIndex < modelModifier.RichCharacterList.Count)
-									{
-										var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
+										var infiniteLoopPrediction = false;
 										
-										var currentCharacterKind = CharacterKindHelper.CharToCharacterKind(
-											currentRichCharacter.Value);
+										if (maxPositionIndex < positionIndex)
+											infiniteLoopPrediction = true;
 										
-										if (currentCharacterKind != CharacterKind.LetterOrDigit)
-											break;
-										if (Char.IsUpper(currentRichCharacter.Value))
-											break;
-									}
-									
-									var columnDisplacement = positionIndex - rememberStartPositionIndex;
-									cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
-                            	}
-                            	else
-                            	{
-	                                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-	                                    cursorModifier.LineIndex,
-	                                    cursorModifier.ColumnIndex,
-	                                    false);
-	
-	                                if (columnIndexOfCharacterWithDifferingKind == -1)
-	                                    cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
-	                                else
-	                                {
-	                                    cursorModifier.SetColumnIndexAndPreferred(
-	                                        columnIndexOfCharacterWithDifferingKind);
-	                                }
+										bool useCamelCaseResult = false;
+										
+										if (!infiniteLoopPrediction)
+										{
+											while (++positionIndex < maxPositionIndex)
+											{
+												var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
+												
+												if (Char.IsUpper(currentRichCharacter.Value) || currentRichCharacter.Value == '_')
+												{
+													useCamelCaseResult = true;
+													break;
+												}
+											}
+										}
+										
+										if (useCamelCaseResult)
+										{
+											var columnDisplacement = positionIndex - rememberStartPositionIndex;
+											cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
+										}
+										else
+										{
+											cursorModifier.SetColumnIndexAndPreferred(
+                                        		columnIndexOfCharacterWithDifferingKind);
+										}
+                                    }
                                 }
                             }
                             else
