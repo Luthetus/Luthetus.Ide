@@ -19,18 +19,13 @@ public partial class DialogInitializer : FluxorComponent
     	var localDialogContextBoundary = _dialogContextBoundary;
     	
     	if (localDialogContextBoundary is not null)
-	    	localDialogContextBoundary.HandleOnFocusIn(shouldShowOutline: false);
+	    	localDialogContextBoundary.HandleOnFocusIn();
     
     	return Task.CompletedTask;
     }
     
     private Task HandleOnFocusOut(IDialog dialog)
     {
-    	var localDialogContextBoundary = _dialogContextBoundary;
-    	
-    	if (localDialogContextBoundary is not null)
-	    	localDialogContextBoundary.HandleOnFocusOut();
-    
     	return Task.CompletedTask;
     }
 }

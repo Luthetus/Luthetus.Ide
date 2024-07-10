@@ -37,18 +37,13 @@ public partial class DropdownInitializer : FluxorComponent
     	var localDropdownContextBoundary = _dropdownContextBoundary;
     	
     	if (localDropdownContextBoundary is not null)
-	    	localDropdownContextBoundary.HandleOnFocusIn(shouldShowOutline: false);
+	    	localDropdownContextBoundary.HandleOnFocusIn();
     
     	return Task.CompletedTask;
     }
     
     private Task HandleOnFocusOut(DropdownRecord dropdown)
     {
-    	var localDropdownContextBoundary = _dropdownContextBoundary;
-    	
-    	if (localDropdownContextBoundary is not null)
-	    	localDropdownContextBoundary.HandleOnFocusOut();
-    
     	return Task.CompletedTask;
     }
 }

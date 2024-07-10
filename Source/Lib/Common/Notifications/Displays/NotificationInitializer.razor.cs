@@ -22,19 +22,14 @@ public partial class NotificationInitializer : FluxorComponent
     	var localNotificationContextBoundary = _notificationContextBoundary;
     	
     	if (localNotificationContextBoundary is not null)
-	    	localNotificationContextBoundary.HandleOnFocusIn(shouldShowOutline: false);
+	    	localNotificationContextBoundary.HandleOnFocusIn();
 	    	
 	    return Task.CompletedTask;
     }
     
     private Task HandleOnFocusOut(INotification notification)
     {
-    	var localNotificationContextBoundary = _notificationContextBoundary;
-    	
-    	if (localNotificationContextBoundary is not null)
-	    	localNotificationContextBoundary.HandleOnFocusOut();
-	    	
-		return Task.CompletedTask;
+    	return Task.CompletedTask;
     }
 
     protected override void Dispose(bool disposing)

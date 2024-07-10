@@ -2,11 +2,10 @@
      class="luth_ide_context-boundary @ClassCssString"
      style="@StyleCssString"
      tabindex="@TabIndex"
-     @onfocusin="() => HandleOnFocusIn(shouldShowOutline: true)"
+     @onfocus="HandleOnFocus"
+     @onblur="HandleOnBlur"
+     @onfocusin="HandleOnFocusIn"
      @onfocusin:stopPropagation="true"
-     @onfocusout="HandleOnFocusOut"
-     @onfocusout:stopPropagation="true"
-     @onclick="HandleOnClick"
      @onkeydown="HandleOnKeyDownAsync"
      @onkeydown:stopPropagation="true">
 	

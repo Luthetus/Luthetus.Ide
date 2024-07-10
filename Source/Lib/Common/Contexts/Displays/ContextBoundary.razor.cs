@@ -39,8 +39,6 @@ public partial class ContextBoundary : ComponentBase
     public string StyleCssString { get; set; } = null!;
     [Parameter]
     public int TabIndex { get; set; } = -1;
-    
-    private int _shouldRemoveOutlineCount;
 
     public void DispatchSetActiveContextStatesAction(List<Key<ContextRecord>> contextRecordKeyList)
     {
@@ -51,52 +49,31 @@ public partial class ContextBoundary : ComponentBase
         else
             Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyList.ToImmutableArray())));
     }
-
-    public void HandleOnFocusIn(bool shouldShowOutline)
+    
+    /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
+    public void HandleOnFocus()
     {
-    	// TODO: There is a worry that the onfocusin could be redundantly setting the already
-    	//       existing 'FocusedContextHeirarchy' again, enough to where an optimization
-    	//       that checks to see if it already is the 'FocusedContextHeirarchy' would be of
-    	//       notable benefit.
-    	//
-    	if (ContextStateWrap.Value.FocusedContextHeirarchy.NearestAncestorKey != ContextRecord.ContextKey &&
-    	    shouldShowOutline)
-    	{
-    	    Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
-    	    	ContextRecord.ContextElementId,
-    	    	null,
-    	    	true));
-    	    	
-    	    _shouldRemoveOutlineCount = 1;
-    	}
-    	
-        DispatchSetActiveContextStatesAction(new());
+    	Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
+	    	ContextRecord.ContextElementId,
+	    	null,
+	    	true));
     }
     
-    public void HandleOnFocusOut()
+    public void HandleOnBlur()
     {
     	Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
 	    	null,
 	    	null,
 	    	false));
     }
-    
-    private void HandleOnClick()
-    {
-    	if (OutlineStateWrap.Value.ElementId == ContextRecord.ContextElementId &&
-    		_shouldRemoveOutlineCount == 0)
-    	{
-    		Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
-		    	null,
-		    	null,
-		    	false));
-    	}
-    	else if (_shouldRemoveOutlineCount == 1)
-    	{
-    		_shouldRemoveOutlineCount--;
-    	}
-    }
 
+    /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
+    public void HandleOnFocusIn()
+    {
+    	if (ContextStateWrap.Value.FocusedContextHeirarchy.NearestAncestorKey != ContextRecord.ContextKey)
+    		DispatchSetActiveContextStatesAction(new());
+    }
+    
     public async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == "Shift" ||
