@@ -566,7 +566,7 @@ public static class TextEditorCommandDefaultFacts
     };
 
     public static readonly TextEditorCommand NewLineAbove = new(
-        "NewLineBelow", "defaults_new-line-below", false, false, TextEditKind.None, null,
+        "NewLineAbove", "defaults_new-line-above", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
@@ -585,6 +585,58 @@ public static class TextEditorCommandDefaultFacts
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
             return TextEditorCommandDefaultFunctions.NewLineAboveFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs);
+        }
+    };
+    
+    public static readonly TextEditorCommand MoveLineDown = new(
+        "MoveLineDown", "defaults_move-line-down", false, false, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            commandArgs.TextEditorService.PostSimpleBatch(
+                nameof(MoveLineUp),
+                TextEditorCommandDefaultFunctions.MoveLineDownFactory(
+                    commandArgs.ModelResourceUri,
+                    commandArgs.ViewModelKey,
+                    commandArgs));
+			return Task.CompletedTask;
+        })
+    {
+        TextEditorEditFactory = interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            return TextEditorCommandDefaultFunctions.MoveLineDownFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs);
+        }
+    };
+    
+    public static readonly TextEditorCommand MoveLineUp = new(
+        "MoveLineUp", "defaults_move-line-up", false, false, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            commandArgs.TextEditorService.PostSimpleBatch(
+                nameof(MoveLineUp),
+                TextEditorCommandDefaultFunctions.MoveLineUpFactory(
+                    commandArgs.ModelResourceUri,
+                    commandArgs.ViewModelKey,
+                    commandArgs));
+			return Task.CompletedTask;
+        })
+    {
+        TextEditorEditFactory = interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            return TextEditorCommandDefaultFunctions.MoveLineUpFactory(
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
                 commandArgs);

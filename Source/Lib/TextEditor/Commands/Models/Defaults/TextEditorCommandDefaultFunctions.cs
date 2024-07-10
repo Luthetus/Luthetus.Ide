@@ -624,6 +624,133 @@ public class TextEditorCommandDefaultFunctions
             return Task.CompletedTask;
         };
     }
+    
+    public static TextEditorEdit MoveLineDownFactory(
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    {
+        return (IEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+                
+           var lineIndexOriginal = primaryCursorModifier.LineIndex;
+           var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
+
+			var nextLineIndex = lineIndexOriginal + 1;
+			var nextLineInformation = modelModifier.GetLineInformation(nextLineIndex);
+
+			// Insert
+			{
+				var currentLineContent = modelModifier.GetLineTextRange(lineIndexOriginal, 1);
+			
+				primaryCursorModifier.LineIndex = nextLineIndex + 1;
+				primaryCursorModifier.ColumnIndex = 0;
+				
+				var innerCursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { primaryCursorModifier });
+	
+				modelModifier.Insert(
+					value: currentLineContent,
+					cursorModifierBag: innerCursorModifierBag,
+					useLineEndKindPreference: false);
+			}
+
+			// Delete
+			{
+				primaryCursorModifier.LineIndex = lineIndexOriginal;
+				primaryCursorModifier.ColumnIndex = 0;
+				
+				var currentLineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+				var columnCount = currentLineInformation.EndPositionIndexExclusive -
+					currentLineInformation.StartPositionIndexInclusive;
+	
+				var innerCursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { primaryCursorModifier });
+	
+				modelModifier.Delete(
+			        innerCursorModifierBag,
+			        columnCount,
+			        false,
+			        TextEditorModelModifier.DeleteKind.Delete);
+			}
+			
+			primaryCursorModifier.LineIndex = lineIndexOriginal + 1;
+			primaryCursorModifier.ColumnIndex = 0;
+
+            return Task.CompletedTask;
+        };
+    }
+    
+    public static TextEditorEdit MoveLineUpFactory(
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    {
+        return (IEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+			var lineIndexOriginal = primaryCursorModifier.LineIndex;
+			var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
+				
+			var previousLineIndex = lineIndexOriginal - 1;
+			var previousLineInformation = modelModifier.GetLineInformation(previousLineIndex);
+
+			// Insert
+			{
+				var currentLineContent = modelModifier.GetLineTextRange(lineIndexOriginal, 1);
+			
+				primaryCursorModifier.LineIndex = previousLineIndex;
+				primaryCursorModifier.ColumnIndex = 0;
+	
+				var innerCursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { primaryCursorModifier });
+	
+				modelModifier.Insert(
+					value: currentLineContent,
+					cursorModifierBag: innerCursorModifierBag,
+					useLineEndKindPreference: false);
+			}
+
+			// Delete
+			{
+				// Add 1 because a line was inserted
+				primaryCursorModifier.LineIndex = lineIndexOriginal + 1;
+				primaryCursorModifier.ColumnIndex = 0;
+				
+				var currentLineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+				var columnCount = currentLineInformation.EndPositionIndexExclusive -
+					currentLineInformation.StartPositionIndexInclusive;
+	
+				var innerCursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { primaryCursorModifier });
+	
+				modelModifier.Delete(
+			        innerCursorModifierBag,
+			        columnCount,
+			        false,
+			        TextEditorModelModifier.DeleteKind.Delete);
+			}
+			
+			primaryCursorModifier.LineIndex = lineIndexOriginal - 1;
+			primaryCursorModifier.ColumnIndex = 0;
+			
+            return Task.CompletedTask;
+        };
+    }
 
     public static TextEditorEdit GoToMatchingCharacterFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
