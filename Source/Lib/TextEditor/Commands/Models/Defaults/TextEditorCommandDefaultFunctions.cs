@@ -1,12 +1,20 @@
 using System.Text;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -881,17 +889,53 @@ public class TextEditorCommandDefaultFunctions
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
             
-            /*    
-            var aaa = await commandArgs.ServiceProvider.GetRequiredService<IClipboardService>().SetClipboard(selectedText).ConfigureAwait(false);
-                
-            await viewModelModifier.ViewModel.FocusFactory().Invoke(editContext).ConfigureAwait(false);
-			
-			var buttonDimensions = await JsRuntimeCommonApi
+            var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
+            var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
+			       
+			var buttonDimensions = await jsRuntimeCommonApi
 				.MeasureElementById("luth_ide_header-button-file")
 				.ConfigureAwait(false);
-	
+
+            var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
+            
+			var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelResourceUri.Value, false);
+			var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory.Value, true);
+		
+			var fileSystemProvider = commandArgs.ServiceProvider.GetRequiredService<IFileSystemProvider>();
+			
+			var siblingFileStringList = Array.Empty<string>();
+			
+			try
+			{
+				siblingFileStringList = await fileSystemProvider.Directory
+					.GetFilesAsync(parentDirectoryAbsolutePath.Value)
+					.ConfigureAwait(false);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+			
+			var menuOptionList = new List<MenuOptionRecord>();
+			
+			foreach (var file in siblingFileStringList)
+			{
+				var siblingAbsolutePath = environmentProvider.AbsolutePathFactory(file, false);
+				
+				menuOptionList.Add(new MenuOptionRecord(
+					siblingAbsolutePath.NameWithExtension,
+					MenuOptionKind.Other));
+			}
+			
+			MenuRecord menu;
+			
+			if (menuOptionList.Count == 0)
+				menu = MenuRecord.Empty;
+			else
+				menu = new MenuRecord(menuOptionList.ToImmutableArray());
+			
 			var dropdownRecord = new DropdownRecord(
-				key,
+				Key<DropdownRecord>.NewKey(),
 				buttonDimensions.LeftInPixels,
 				buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
 				typeof(MenuDisplay),
@@ -899,13 +943,16 @@ public class TextEditorCommandDefaultFunctions
 				{
 					{
 						nameof(MenuDisplay.MenuRecord),
-						MenuRecord.Empty
+						menu
 					}
 				},
-				() => Task.CompletedTask);
+				// TODO: this callback when the dropdown closes is suspect.
+				//       The editContext is supposed to live the lifespan of the
+				//       Post. But what if the Post finishes before the dropdown is closed?
+				() => viewModelModifier.ViewModel.FocusFactory().Invoke(editContext));
 	
-	        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-	        */
+			var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();
+	        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
         };
     }
     
