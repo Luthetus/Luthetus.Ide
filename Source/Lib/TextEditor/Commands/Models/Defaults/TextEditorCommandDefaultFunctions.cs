@@ -892,7 +892,7 @@ public class TextEditorCommandDefaultFunctions
             var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
             var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
 			       
-			var buttonDimensions = await jsRuntimeCommonApi
+			var cursorDimensions = await jsRuntimeCommonApi
 				.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
 				.ConfigureAwait(false);
 
@@ -970,8 +970,8 @@ public class TextEditorCommandDefaultFunctions
 			
 			var dropdownRecord = new DropdownRecord(
 				Key<DropdownRecord>.NewKey(),
-				buttonDimensions.LeftInPixels,
-				buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
+				cursorDimensions.LeftInPixels,
+				cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
 				typeof(MenuDisplay),
 				new Dictionary<string, object?>
 				{

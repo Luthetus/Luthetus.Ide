@@ -1,7 +1,9 @@
-using Fluxor;
+using System.Collections.Immutable;
 using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
@@ -9,6 +11,10 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -24,6 +30,7 @@ namespace Luthetus.Ide.RazorLib.Commands;
 public class CommandFactory : ICommandFactory
 {
     private readonly IState<PanelState> _panelStateWrap;
+    private readonly IState<ContextState> _contextStateWrap;
     private readonly ITextEditorService _textEditorService;
     private readonly ITreeViewService _treeViewService;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -35,6 +42,7 @@ public class CommandFactory : ICommandFactory
 		ITreeViewService treeViewService,
 		IEnvironmentProvider environmentProvider,
         IState<PanelState> panelStateWrap,
+        IState<ContextState> contextStateWrap,
         IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
     {
@@ -42,6 +50,7 @@ public class CommandFactory : ICommandFactory
 		_treeViewService = treeViewService;
 		_environmentProvider = environmentProvider;
         _panelStateWrap = panelStateWrap;
+        _contextStateWrap = contextStateWrap;
         _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
     }
@@ -296,8 +305,48 @@ public class CommandFactory : ICommandFactory
             //       then restore focus to that element when this dialog is closed.
 			var openContextSwitchDialogCommand = new CommonCommand(
 	            "Open: Context Switch", "open-context-switch", false,
-	            commandArgs => 
+	            async commandArgs =>
 				{
+					var jsRuntimeCommonApi = _jsRuntime.GetLuthetusCommonApi();
+					
+					var elementDimensions = await jsRuntimeCommonApi
+						.MeasureElementById("luth_ide_header-button-file")
+						.ConfigureAwait(false);
+						
+					var contextState = _contextStateWrap.Value;
+					
+					var menuOptionList = new List<MenuOptionRecord>();
+					
+					foreach (var context in contextState.AllContextsList)
+			        {
+			        	menuOptionList.Add(new MenuOptionRecord(
+			        		context.DisplayNameFriendly,
+			        		MenuOptionKind.Other));
+			        }
+					
+					MenuRecord menu;
+					
+					if (menuOptionList.Count == 0)
+						menu = MenuRecord.Empty;
+					else
+						menu = new MenuRecord(menuOptionList.ToImmutableArray());
+						
+					var dropdownRecord = new DropdownRecord(
+						Key<DropdownRecord>.NewKey(),
+						elementDimensions.LeftInPixels,
+						elementDimensions.TopInPixels + elementDimensions.HeightInPixels,
+						typeof(MenuDisplay),
+						new Dictionary<string, object?>
+						{
+							{
+								nameof(MenuDisplay.MenuRecord),
+								menu
+							}
+						},
+						() => Task.CompletedTask);
+			
+			        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+				
                     _contextSwitchDialog ??= new DialogViewModel(
                         Key<IDynamicViewModel>.NewKey(),
 						"Context Switch",
@@ -308,11 +357,14 @@ public class CommandFactory : ICommandFactory
 						null);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(_contextSwitchDialog));
-                    return Task.CompletedTask;
 				});
 
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument("Backslash", false, true, true, Key<KeymapLayer>.Empty),
+					new KeymapArgument("Tab", false, true, false, Key<KeymapLayer>.Empty),
+					openContextSwitchDialogCommand);
+					
+			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+					new KeymapArgument("Slash", false, true, true, Key<KeymapLayer>.Empty),
 					openContextSwitchDialogCommand);
 		}
     }
