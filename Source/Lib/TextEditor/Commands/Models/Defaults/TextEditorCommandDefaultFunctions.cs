@@ -871,7 +871,7 @@ public class TextEditorCommandDefaultFunctions
     public static TextEditorEdit RelatedFilesQuickPickFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
-        return (IEditContext editContext) =>
+        return async (IEditContext editContext) =>
         {
             var modelModifier = editContext.GetModelModifier(modelResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -879,9 +879,33 @@ public class TextEditorCommandDefaultFunctions
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
-
-            return Task.CompletedTask;
+                return;
+            
+            /*    
+            var aaa = await commandArgs.ServiceProvider.GetRequiredService<IClipboardService>().SetClipboard(selectedText).ConfigureAwait(false);
+                
+            await viewModelModifier.ViewModel.FocusFactory().Invoke(editContext).ConfigureAwait(false);
+			
+			var buttonDimensions = await JsRuntimeCommonApi
+				.MeasureElementById("luth_ide_header-button-file")
+				.ConfigureAwait(false);
+	
+			var dropdownRecord = new DropdownRecord(
+				key,
+				buttonDimensions.LeftInPixels,
+				buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
+				typeof(MenuDisplay),
+				new Dictionary<string, object?>
+				{
+					{
+						nameof(MenuDisplay.MenuRecord),
+						MenuRecord.Empty
+					}
+				},
+				() => Task.CompletedTask);
+	
+	        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+	        */
         };
     }
     

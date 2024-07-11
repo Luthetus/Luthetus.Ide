@@ -364,7 +364,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         return async editContext =>
         {
             await _jsRuntime.GetLuthetusCommonApi()
-                .FocusHtmlElementById(primaryCursorContentId)
+                .FocusHtmlElementById(primaryCursorContentId, preventScroll: true)
                 .ConfigureAwait(false);
         };
     }

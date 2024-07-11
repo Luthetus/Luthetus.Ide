@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Microsoft.JSInterop;
 
 namespace Luthetus.Common.RazorLib.JsRuntimes.Models;
@@ -12,11 +12,12 @@ public class LuthetusCommonJavaScriptInteropApi
         _jsRuntime = jsRuntime;
     }
 
-    public ValueTask FocusHtmlElementById(string elementId)
+    public ValueTask FocusHtmlElementById(string elementId, bool preventScroll = false)
     {
         return _jsRuntime.InvokeVoidAsync(
             "luthetusCommon.focusHtmlElementById",
-            elementId);
+            elementId,
+            preventScroll);
     }
 
     public ValueTask<bool> TryFocusHtmlElementById(string elementId)
