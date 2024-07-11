@@ -6,8 +6,6 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 
-@_renderCount
-
 @{
     var renderBatch = _storedRenderBatch;
     
@@ -41,9 +39,6 @@
                 <Header HeaderButtonKinds="ViewModelDisplayOptions.HeaderButtonKinds" />
             </CascadingValue>
         }
-
-@* @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)" *@
-@* @onkeydown="ReceiveOnKeyDown" *@
 
         <div @onclick="FocusTextEditorAsync"
              @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"

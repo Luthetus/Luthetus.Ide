@@ -80,7 +80,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private TextEditorRenderBatchUnsafe? _previousRenderBatch;
     private TextEditorViewModel? _linkedViewModel;
 	private Task _shouldRenderSkipTask = Task.CompletedTask;
-	private int _renderCount;
 
 	// TODO: Delete '_countQueueCalculateVirtualizationResultBackgroundTaskInvocations'
 	private int _countQueueCalculateVirtualizationResultBackgroundTaskInvocations;
@@ -159,8 +158,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-    	_renderCount++;
-    
         if (firstRender)
         {
             await TextEditorService.JsRuntimeTextEditorApi
