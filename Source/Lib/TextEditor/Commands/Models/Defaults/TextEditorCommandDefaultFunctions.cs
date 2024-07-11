@@ -893,7 +893,7 @@ public class TextEditorCommandDefaultFunctions
             var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
 			       
 			var buttonDimensions = await jsRuntimeCommonApi
-				.MeasureElementById("luth_ide_header-button-file")
+				.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
 				.ConfigureAwait(false);
 
             var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
