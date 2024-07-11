@@ -670,6 +670,34 @@ public static class TextEditorCommandDefaultFacts
         }
     };
 
+    public static readonly TextEditorCommand RelatedFilesQuickPick = new(
+        "RelatedFilesQuickPick", "defaults_related-files-quick-pick", false, true, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            commandArgs.TextEditorService.PostTakeMostRecent(
+                nameof(RelatedFilesQuickPick),
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                TextEditorCommandDefaultFunctions.RelatedFilesQuickPickFactory(
+                    commandArgs.ModelResourceUri,
+                    commandArgs.ViewModelKey,
+                    commandArgs));
+			return Task.CompletedTask;
+        })
+    {
+        TextEditorEditFactory = interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            return TextEditorCommandDefaultFunctions.RelatedFilesQuickPickFactory(
+                commandArgs.ModelResourceUri,
+                commandArgs.ViewModelKey,
+                commandArgs);
+        }
+    };
+    
     public static readonly TextEditorCommand GoToDefinition = new(
         "GoToDefinition", "defaults_go-to-definition", false, true, TextEditKind.None, null,
         interfaceCommandArgs =>

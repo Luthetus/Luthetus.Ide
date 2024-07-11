@@ -237,6 +237,11 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
 
     private void AddDefaultMiscKeymap()
     {
+    	Map.Add(new KeymapArgument("F7")
+        {
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.RelatedFilesQuickPick);
+    
         Map.Add(new KeymapArgument("F12")
         {
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key

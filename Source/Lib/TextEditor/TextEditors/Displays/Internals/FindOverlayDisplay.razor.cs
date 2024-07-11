@@ -117,7 +117,7 @@ public partial class FindOverlayDisplay : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
-	private void HandleOnFocusIn()
+	private void HandleOnFocus()
 	{
 		// In the case where the find over value was changed, by an outside event,
 		// just refresh the InputValue to be sure its up to date.

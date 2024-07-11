@@ -868,6 +868,23 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
+    public static TextEditorEdit RelatedFilesQuickPickFactory(
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    {
+        return (IEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+            return Task.CompletedTask;
+        };
+    }
+    
     public static TextEditorEdit GoToDefinitionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
