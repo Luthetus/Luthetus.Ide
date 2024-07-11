@@ -16,6 +16,9 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -99,6 +102,8 @@ public partial class IdeHeader : ComponentBase
 		InitializeMenuTools();
 		InitializeMenuView();
 		InitializeMenuRun();
+		
+		AddAltKeymap();
 
         return base.OnInitializedAsync();
     }
@@ -510,5 +515,39 @@ public partial class IdeHeader : ComponentBase
 			() => RestoreFocusToElementReference(elementReference));
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+	}
+
+	/// <summary>
+	/// Add option to allow a user to disable the alt keymap to access to the header button dropdowns.
+	/// </summary>
+	private void AddAltKeymap()
+	{
+		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+		        new KeymapArgument("KeyF", false, false, true, Key<KeymapLayer>.Empty),
+		        new CommonCommand("Open File Dropdown", "open-file-dropdown", false,
+		        	commandArgs => RenderDropdownOnClick(_buttonFileId, _buttonFileElementReference, _dropdownKeyFile, _menuFile)));
+		        
+		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+		        new KeymapArgument("KeyT", false, false, true, Key<KeymapLayer>.Empty),
+		        new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false,
+		        	commandArgs => RenderDropdownOnClick(_buttonToolsId, _buttonToolsElementReference, _dropdownKeyTools, _menuTools)));
+		        	
+		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+		        new KeymapArgument("KeyV", false, false, true, Key<KeymapLayer>.Empty),
+		        new CommonCommand("Open View Dropdown", "open-view-dropdown", false,
+		        	commandArgs => 
+		        	{
+		        		InitializeMenuView();
+		        		return RenderDropdownOnClick(_buttonViewId, _buttonViewElementReference, _dropdownKeyView, _menuView);
+		        	}));
+		
+		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+		        new KeymapArgument("KeyR", false, false, true, Key<KeymapLayer>.Empty),
+		        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false,
+		        	commandArgs =>
+		        	{
+		        		InitializeMenuRun();
+		        		return RenderDropdownOnClick(_buttonRunId, _buttonRunElementReference, _dropdownKeyRun, _menuRun);
+		        	}));
 	}
 }
