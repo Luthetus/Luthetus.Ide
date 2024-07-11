@@ -924,7 +924,41 @@ public class TextEditorCommandDefaultFunctions
 				
 				menuOptionList.Add(new MenuOptionRecord(
 					siblingAbsolutePath.NameWithExtension,
-					MenuOptionKind.Other));
+					MenuOptionKind.Other,
+					OnClickFunc: async () =>
+					{
+						var resourceUri = new ResourceUri(file);
+						var textEditorConfig = commandArgs.TextEditorService.TextEditorConfig;
+
+				        if (textEditorConfig.RegisterModelFunc is null)
+				            return;
+				
+				        await textEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+				                resourceUri,
+				                commandArgs.ServiceProvider))
+				            .ConfigureAwait(false);
+				
+				        if (textEditorConfig.TryRegisterViewModelFunc is not null)
+				        {
+				            var viewModelKey = await textEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+				                    Key<TextEditorViewModel>.NewKey(),
+				                    resourceUri,
+				                    new Category("main"),
+				                    false,
+				                    commandArgs.ServiceProvider))
+				                .ConfigureAwait(false);
+				
+				            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+				                textEditorConfig.TryShowViewModelFunc is not null)
+				            {
+				                await textEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+				                        viewModelKey,
+				                        Key<TextEditorGroup>.Empty,
+				                        commandArgs.ServiceProvider))
+				                    .ConfigureAwait(false);
+				            }
+				        }
+					}));
 			}
 			
 			MenuRecord menu;
@@ -949,7 +983,28 @@ public class TextEditorCommandDefaultFunctions
 				// TODO: this callback when the dropdown closes is suspect.
 				//       The editContext is supposed to live the lifespan of the
 				//       Post. But what if the Post finishes before the dropdown is closed?
-				() => viewModelModifier.ViewModel.FocusFactory().Invoke(editContext));
+				() => 
+				{
+					// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
+					//       ...I'm too tired at the moment, need to make this sensible.
+					//	   The key is in the IDE project yet its circular reference if I do so, gotta
+					//       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
+					//       |
+					//       I ran this and it didn't work. Its for the best that it doesn't.
+					//	   maybe when I wake up tomorrow I'll realize what im doing here.
+					var mainEditorGroup = commandArgs.TextEditorService.GroupStateWrap.Value.GroupList.SingleOrDefault();
+					
+					if (mainEditorGroup is not null &&
+						mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
+					{
+						var activeViewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+
+						if (activeViewModel is not null)
+							return activeViewModel.FocusFactory().Invoke(editContext);
+					}
+					
+					return viewModelModifier.ViewModel.FocusFactory().Invoke(editContext);
+				});
 	
 			var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();
 	        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
