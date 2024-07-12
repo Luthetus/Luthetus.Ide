@@ -1,5 +1,5 @@
 # Luthetus.Ide (In Development)
-![Example GIF](./Images/Ide/Gifs/ide0.3.0.gif)
+![Example GIF](./Images/Ide/Gifs/ide_readme.gif)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
