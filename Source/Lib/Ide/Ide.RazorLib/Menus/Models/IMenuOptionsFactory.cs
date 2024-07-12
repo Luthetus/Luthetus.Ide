@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
@@ -39,7 +39,7 @@ public interface IMenuOptionsFactory
         TreeViewNamespacePath projectReceivingReference,
         Terminal terminal,
         IDispatcher dispatcher,
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         Func<Task> onAfterCompletion);
 
     public MenuOptionRecord RemoveProjectToProjectReference(

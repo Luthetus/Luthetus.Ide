@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 
@@ -6,16 +6,16 @@ namespace Luthetus.Common.RazorLib.WatchWindows.Models;
 
 public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
 {
-    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
 
     public TreeViewReflection(
             WatchWindowObject watchWindowObject,
             bool isExpandable,
             bool isExpanded,
-            ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
+            ICommonComponentRenderers commonComponentRenderers)
         : base(watchWindowObject, isExpandable, isExpanded)
     {
-        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        _commonComponentRenderers = commonComponentRenderers;
     }
 
     public override bool Equals(object? obj)
@@ -34,7 +34,7 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            _luthetusCommonComponentRenderers.LuthetusCommonTreeViews.TreeViewReflectionRenderer,
+            _commonComponentRenderers.CommonTreeViews.TreeViewReflectionRenderer,
             new Dictionary<string, object?>
             {
                 {
@@ -56,13 +56,13 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
                 Item,
                 true,
                 false,
-                _luthetusCommonComponentRenderers));
+                _commonComponentRenderers));
 
             ChildList.Add(new TreeViewProperties(
                 Item,
                 true,
                 false,
-                _luthetusCommonComponentRenderers));
+                _commonComponentRenderers));
 
             if (Item.Item is IEnumerable)
             {
@@ -70,7 +70,7 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
                     Item,
                     true,
                     false,
-                    _luthetusCommonComponentRenderers));
+                    _commonComponentRenderers));
             }
 
             if (Item.ItemType.IsInterface && Item.Item is not null)
@@ -85,7 +85,7 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
                     interfaceImplementation,
                     true,
                     false,
-                    _luthetusCommonComponentRenderers));
+                    _commonComponentRenderers));
             }
         }
         catch (Exception e)
@@ -96,7 +96,7 @@ public class TreeViewReflection : TreeViewWithType<WatchWindowObject>
                 e,
                 false,
                 false,
-                _luthetusCommonComponentRenderers));
+                _commonComponentRenderers));
         }
 
         LinkChildren(previousChildren, ChildList);

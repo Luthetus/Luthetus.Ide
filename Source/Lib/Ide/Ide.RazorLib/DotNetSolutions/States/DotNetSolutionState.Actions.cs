@@ -6,8 +6,13 @@ namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 public partial record DotNetSolutionState
 {
-    public record RegisterAction(DotNetSolutionModel DotNetSolutionModel, LuthetusIdeDotNetSolutionBackgroundTaskApi DotNetSolutionApi);
-    public record DisposeAction(Key<DotNetSolutionModel> DotNetSolutionModelKey, LuthetusIdeDotNetSolutionBackgroundTaskApi DotNetSolutionApi);
+    public record RegisterAction(
+    	DotNetSolutionModel DotNetSolutionModel,
+    	DotNetSolutionIdeApi DotNetSolutionApi);
+    	
+    public record DisposeAction(
+	    Key<DotNetSolutionModel> DotNetSolutionModelKey,
+	    DotNetSolutionIdeApi DotNetSolutionApi);
     
 	public record StateHasChanged;
 }

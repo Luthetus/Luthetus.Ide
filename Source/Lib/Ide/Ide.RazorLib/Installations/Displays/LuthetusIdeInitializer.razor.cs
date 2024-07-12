@@ -1,6 +1,6 @@
-using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Themes.States;
@@ -42,7 +42,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ICommandFactory CommandFactory { get; set; } = null!;
     [Inject]
@@ -90,7 +90,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
                             Dispatcher,
                             BackgroundTaskService,
                             TextEditorService,
-                            LuthetusCommonComponentRenderers,
+                            CommonComponentRenderers,
                             CompilerServiceRegistry,
 							terminalKey);
 

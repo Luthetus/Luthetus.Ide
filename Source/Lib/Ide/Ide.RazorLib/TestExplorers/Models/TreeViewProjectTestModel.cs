@@ -11,7 +11,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 {
     public TreeViewProjectTestModel(
             ProjectTestModel projectTestModel,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             bool isExpandable,
             bool isExpanded)
         : base(projectTestModel, isExpandable, isExpanded)
@@ -19,7 +19,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
         CommonComponentRenderers = commonComponentRenderers;
     }
 
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+    public ICommonComponentRenderers CommonComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {

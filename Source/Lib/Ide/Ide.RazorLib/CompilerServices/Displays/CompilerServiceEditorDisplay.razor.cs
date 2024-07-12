@@ -1,10 +1,7 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.Ide.RazorLib.CompilerServices.Models;
-using Luthetus.Ide.RazorLib.CompilerServices.States;
-using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -12,7 +9,10 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Microsoft.AspNetCore.Components;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
+using Luthetus.Ide.RazorLib.CompilerServices.States;
+using Luthetus.Ide.RazorLib.Editors.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Displays;
 
@@ -68,7 +68,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
             var localTextEditorState = TextEditorStateWrap.Value;
 
             var editorTextEditorGroup = localTextEditorGroupState.GroupList.FirstOrDefault(
-                x => x.GroupKey ==  LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
+                x => x.GroupKey ==  EditorIdeApi.EditorTextEditorGroupKey);
 
             var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
 

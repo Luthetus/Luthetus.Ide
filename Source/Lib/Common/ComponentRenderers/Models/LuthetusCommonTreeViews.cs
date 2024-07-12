@@ -1,8 +1,8 @@
-﻿namespace Luthetus.Common.RazorLib.ComponentRenderers.Models;
+namespace Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
-public class LuthetusCommonTreeViews
+public class CommonTreeViews
 {
-    public LuthetusCommonTreeViews(
+    public CommonTreeViews(
         Type treeViewExceptionRendererType,
         Type treeViewMissingRendererFallbackType,
         Type treeViewTextRenderer,

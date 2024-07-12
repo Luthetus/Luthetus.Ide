@@ -17,10 +17,10 @@ public class WebsiteDotNetCliHelper
         CSharpProjectFormViewModelImmutable immutableView,
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         IDispatcher dispatcher,
 		IDialog dialogRecord,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
+        ICommonComponentRenderers commonComponentRenderers)
     {
         var directoryContainingProject = environmentProvider
             .JoinPaths(immutableView.ParentDirectoryNameValue, immutableView.CSharpProjectNameValue) +
@@ -57,6 +57,6 @@ public class WebsiteDotNetCliHelper
 
         // Close Dialog
         dispatcher.Dispatch(new DialogState.DisposeAction(dialogRecord.DynamicViewModelKey));
-        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", luthetusCommonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
+        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", commonComponentRenderers, dispatcher, TimeSpan.FromSeconds(7));
     }
 }

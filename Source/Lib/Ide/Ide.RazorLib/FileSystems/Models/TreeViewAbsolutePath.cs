@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -12,8 +12,8 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
 {
     public TreeViewAbsolutePath(
             IAbsolutePath absolutePath,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             bool isExpandable,
@@ -26,8 +26,8 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+    public IIdeComponentRenderers IdeComponentRenderers { get; }
+    public ICommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -44,7 +44,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsolutePathRendererType,
+            IdeComponentRenderers.IdeTreeViews.TreeViewAbsolutePathRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(ITreeViewAbsolutePathRendererType.TreeViewAbsolutePath), this },

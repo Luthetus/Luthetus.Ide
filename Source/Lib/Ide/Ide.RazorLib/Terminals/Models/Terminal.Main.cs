@@ -1,8 +1,8 @@
+using System.Collections.Immutable;
+using System.Reactive.Linq;
 using CliWrap;
 using CliWrap.EventStream;
 using Fluxor;
-using System.Collections.Immutable;
-using System.Reactive.Linq;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -18,7 +18,7 @@ public partial class Terminal
 {
     private readonly IDispatcher _dispatcher;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
 
@@ -32,7 +32,7 @@ public partial class Terminal
         IDispatcher dispatcher,
         IBackgroundTaskService backgroundTaskService,
         ITextEditorService textEditorService,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         ICompilerServiceRegistry compilerServiceRegistry,
 		Key<Terminal> terminalKey)
 	{
@@ -60,7 +60,7 @@ public partial class Terminal
         IDispatcher dispatcher,
         IBackgroundTaskService backgroundTaskService,
         ITextEditorService textEditorService,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         ICompilerServiceRegistry compilerServiceRegistry)
     {
         _dispatcher = dispatcher;

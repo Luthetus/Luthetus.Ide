@@ -8,10 +8,10 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 
     public CompilerServiceExplorerTreeViewMouseEventHandler(
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         ITreeViewService treeViewService,
 		IBackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)

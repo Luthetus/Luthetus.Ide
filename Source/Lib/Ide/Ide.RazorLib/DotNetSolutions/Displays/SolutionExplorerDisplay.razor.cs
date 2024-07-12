@@ -32,11 +32,11 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
@@ -56,7 +56,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         _solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
             IdeBackgroundTaskApi,
             MenuOptionsFactory,
-            LuthetusCommonComponentRenderers,
+            CommonComponentRenderers,
             TreeViewService,
 			BackgroundTaskService,
             EnvironmentProvider,

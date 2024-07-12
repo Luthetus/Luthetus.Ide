@@ -22,14 +22,14 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Editors.Models;
 
-public class LuthetusIdeEditorBackgroundTaskApi
+public class EditorIdeApi
 {
     public static readonly Key<TextEditorGroup> EditorTextEditorGroupKey = Key<TextEditorGroup>.NewKey();
     
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ITextEditorService _textEditorService;
-    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
+    private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;
@@ -37,11 +37,11 @@ public class LuthetusIdeEditorBackgroundTaskApi
     private readonly IDispatcher _dispatcher;
     private readonly IServiceProvider _serviceProvider;
 
-    public LuthetusIdeEditorBackgroundTaskApi(
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+    public EditorIdeApi(
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService,
         ITextEditorService textEditorService,
-        ILuthetusIdeComponentRenderers ideComponentRenderers,
+        IIdeComponentRenderers ideComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         IDecorationMapperRegistry decorationMapperRegistry,

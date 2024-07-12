@@ -30,11 +30,11 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog DialogRecord { get; set; } = null!;
@@ -165,7 +165,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
         // Close Dialog
         Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
-        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", LuthetusCommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
+        NotificationHelper.DispatchInformative("Website .sln template was used", "No terminal available", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 
         var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
             solutionAbsolutePathString,

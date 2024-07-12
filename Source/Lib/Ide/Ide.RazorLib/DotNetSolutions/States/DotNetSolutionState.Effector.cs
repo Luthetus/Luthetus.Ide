@@ -1,5 +1,5 @@
 using Fluxor;
-using static Luthetus.Ide.RazorLib.DotNetSolutions.Models.LuthetusIdeDotNetSolutionBackgroundTaskApi;
+using static Luthetus.Ide.RazorLib.DotNetSolutions.Models.DotNetSolutionIdeApi;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;
 

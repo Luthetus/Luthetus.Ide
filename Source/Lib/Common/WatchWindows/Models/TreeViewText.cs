@@ -1,20 +1,20 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 
 namespace Luthetus.Common.RazorLib.WatchWindows.Models;
 
 public class TreeViewText : TreeViewWithType<string>
 {
-    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
 
     public TreeViewText(
             string text,
             bool isExpandable,
             bool isExpanded,
-            ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
+            ICommonComponentRenderers commonComponentRenderers)
         : base(text, isExpandable, isExpanded)
     {
-        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        _commonComponentRenderers = commonComponentRenderers;
     }
 
     public override bool Equals(object? obj)
@@ -33,7 +33,7 @@ public class TreeViewText : TreeViewWithType<string>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            _luthetusCommonComponentRenderers.LuthetusCommonTreeViews.TreeViewTextRenderer,
+            _commonComponentRenderers.CommonTreeViews.TreeViewTextRenderer,
             new Dictionary<string, object?>
             {
                 {

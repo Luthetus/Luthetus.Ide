@@ -26,11 +26,11 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
@@ -55,7 +55,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
         _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
             IdeBackgroundTaskApi,
             MenuOptionsFactory,
-            LuthetusCommonComponentRenderers,
+            CommonComponentRenderers,
             TreeViewService,
 			BackgroundTaskService,
             EnvironmentProvider,

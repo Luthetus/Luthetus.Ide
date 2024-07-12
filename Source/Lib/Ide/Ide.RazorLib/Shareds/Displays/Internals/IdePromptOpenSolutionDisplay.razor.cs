@@ -7,7 +7,7 @@ namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 public partial class IdePromptOpenSolutionDisplay : ComponentBase
 {
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public IAbsolutePath AbsolutePath { get; set; } = null!;

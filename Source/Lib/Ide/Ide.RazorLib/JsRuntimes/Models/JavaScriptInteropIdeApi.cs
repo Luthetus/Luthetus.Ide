@@ -1,12 +1,12 @@
-﻿using Microsoft.JSInterop;
+using Microsoft.JSInterop;
 
 namespace Luthetus.Ide.RazorLib.JsRuntimes.Models;
 
-public class LuthetusIdeJavaScriptInteropApi
+public class JavaScriptInteropIdeApi
 {
     private readonly IJSRuntime _jsRuntime;
 
-    public LuthetusIdeJavaScriptInteropApi(IJSRuntime jsRuntime)
+    public JavaScriptInteropIdeApi(IJSRuntime jsRuntime)
     {
         _jsRuntime = jsRuntime;
     }

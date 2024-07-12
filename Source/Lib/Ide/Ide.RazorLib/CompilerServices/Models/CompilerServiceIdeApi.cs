@@ -11,24 +11,24 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
-public class LuthetusIdeCompilerServiceBackgroundTaskApi
+public class CompilerServiceIdeApi
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
     private readonly CompilerServiceRegistry _compilerServiceRegistry;
-    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly IIdeComponentRenderers _ideComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IDispatcher _dispatcher;
 
-    public LuthetusIdeCompilerServiceBackgroundTaskApi(
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+    public CompilerServiceIdeApi(
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService,
         IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
         CompilerServiceRegistry compilerServiceRegistry,
-        ILuthetusIdeComponentRenderers ideComponentRenderers,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        IIdeComponentRenderers ideComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         IDispatcher dispatcher)
     {

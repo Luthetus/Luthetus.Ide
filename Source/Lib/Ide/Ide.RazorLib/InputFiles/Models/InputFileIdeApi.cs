@@ -12,16 +12,16 @@ using static Luthetus.Ide.RazorLib.InputFiles.States.InputFileState;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Models;
 
-public class LuthetusIdeInputFileBackgroundTaskApi
+public class InputFileIdeApi
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
 
-    public LuthetusIdeInputFileBackgroundTaskApi(
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
-        ILuthetusIdeComponentRenderers ideComponentRenderers,
+    public InputFileIdeApi(
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
+        IIdeComponentRenderers ideComponentRenderers,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {

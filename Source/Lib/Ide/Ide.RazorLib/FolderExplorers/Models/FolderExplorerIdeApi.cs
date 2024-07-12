@@ -13,23 +13,23 @@ using Luthetus.Ide.RazorLib.InputFiles.Models;
 
 namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
-public class LuthetusIdeFolderExplorerBackgroundTaskApi
+public class FolderExplorerIdeApi
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly IIdeComponentRenderers _ideComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
 
-    public LuthetusIdeFolderExplorerBackgroundTaskApi(
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+    public FolderExplorerIdeApi(
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
-        ILuthetusIdeComponentRenderers ideComponentRenderers,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        IIdeComponentRenderers ideComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)

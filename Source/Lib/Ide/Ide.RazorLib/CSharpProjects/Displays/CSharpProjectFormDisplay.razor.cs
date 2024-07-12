@@ -36,15 +36,15 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private LuthetusIdeConfig IdeConfig { get; set; } = null!;
+    private IdeConfig IdeConfig { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 

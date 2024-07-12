@@ -13,25 +13,25 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
 
-public class LuthetusIdeGitBackgroundTaskApi
+public class GitIdeApi
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IState<GitState> _gitStateWrap;
 	private readonly GitCliOutputParser _gitCliOutputParser;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IDispatcher _dispatcher;
 
-    public LuthetusIdeGitBackgroundTaskApi(
-		LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+    public GitIdeApi(
+		IdeBackgroundTaskApi ideBackgroundTaskApi,
         IState<TerminalState> terminalStateWrap,
         IState<GitState> gitStateWrap,
 		GitCliOutputParser gitCliOutputParser,
 		IEnvironmentProvider environmentProvider,
 		IBackgroundTaskService backgroundTaskService,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher)
     {
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;

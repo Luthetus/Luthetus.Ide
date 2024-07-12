@@ -9,10 +9,10 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 
     public CompilerServiceExplorerTreeViewKeyboardEventHandler(
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         ITreeViewService treeViewService,
 		IBackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)

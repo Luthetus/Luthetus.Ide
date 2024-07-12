@@ -15,10 +15,10 @@ using Luthetus.Ide.RazorLib.TestExplorers.States;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
 
-public class LuthetusIdeTestExplorerBackgroundTaskApi
+public class TestExplorerIdeApi
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly ITextEditorService _textEditorService;
     private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
@@ -27,9 +27,9 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
 
-    public LuthetusIdeTestExplorerBackgroundTaskApi(
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+    public TestExplorerIdeApi(
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
+        ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
@@ -49,16 +49,16 @@ public class LuthetusIdeTestExplorerBackgroundTaskApi
         _dispatcher = dispatcher;
     }
 
-    public void DotNetSolutionStateWrap_StateChanged()
+    public void ConstructTreeView()
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Refresh TestExplorer",
-            async () => await DotNetSolutionStateWrap_StateChangedAsync().ConfigureAwait(false));
+            ConstructTreeViewAsync);
     }
 
-    private Task DotNetSolutionStateWrap_StateChangedAsync()
+    private Task ConstructTreeViewAsync()
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;

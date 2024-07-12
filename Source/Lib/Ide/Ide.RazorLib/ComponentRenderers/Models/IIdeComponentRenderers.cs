@@ -1,6 +1,6 @@
-﻿namespace Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+namespace Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
-public interface ILuthetusIdeComponentRenderers
+public interface IIdeComponentRenderers
 {
     public Type BooleanPromptOrCancelRendererType { get; }
     public Type FileFormRendererType { get; }
@@ -9,5 +9,5 @@ public interface ILuthetusIdeComponentRenderers
     public Type GitDisplayRendererType { get; }
     public Type RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type InputFileRendererType { get; }
-    public LuthetusIdeTreeViews LuthetusIdeTreeViews { get; }
+    public IdeTreeViews IdeTreeViews { get; }
 }

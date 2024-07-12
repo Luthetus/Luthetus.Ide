@@ -34,9 +34,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLuthetusIdeRazorLibServices(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        Func<LuthetusIdeConfig, LuthetusIdeConfig>? configure = null)
+        Func<IdeConfig, IdeConfig>? configure = null)
     {
-        var ideConfig = new LuthetusIdeConfig();
+        var ideConfig = new IdeConfig();
 
         if (configure is not null)
             ideConfig = configure.Invoke(ideConfig);
@@ -68,7 +68,7 @@ public static class ServiceCollectionExtensions
                         RemoveDriveFromResourceUri(registerModelArgs.ResourceUri, registerModelArgs.ServiceProvider),
                         registerModelArgs.ServiceProvider);
 
-                    var ideBackgroundTaskApi = registerModelArgs.ServiceProvider.GetRequiredService<LuthetusIdeBackgroundTaskApi>();
+                    var ideBackgroundTaskApi = registerModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
                     await ideBackgroundTaskApi.Editor.RegisterModelFunc(registerModelArgs).ConfigureAwait(false);
                 },
                 TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
@@ -80,12 +80,12 @@ public static class ServiceCollectionExtensions
                         tryRegisterViewModelArgs.ShouldSetFocusToEditor,
                         tryRegisterViewModelArgs.ServiceProvider);
 
-                    var ideBackgroundTaskApi = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<LuthetusIdeBackgroundTaskApi>();
+                    var ideBackgroundTaskApi = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
                     return await ideBackgroundTaskApi.Editor.TryRegisterViewModelFunc(tryRegisterViewModelArgs).ConfigureAwait(false);
                 },
                 TryShowViewModelFunc = async (tryShowViewModelArgs) =>
                 {
-                    var ideBackgroundTaskApi = tryShowViewModelArgs.ServiceProvider.GetRequiredService<LuthetusIdeBackgroundTaskApi>();
+                    var ideBackgroundTaskApi = tryShowViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
                     return await ideBackgroundTaskApi.Editor.TryShowViewModelFunc(tryShowViewModelArgs).ConfigureAwait(false);
                 },
             });
@@ -93,8 +93,8 @@ public static class ServiceCollectionExtensions
 
         services
             .AddSingleton(ideConfig)
-            .AddSingleton<ILuthetusIdeComponentRenderers>(_ideComponentRenderers)
-            .AddScoped<LuthetusIdeBackgroundTaskApi>()
+            .AddSingleton<IIdeComponentRenderers>(_ideComponentRenderers)
+            .AddScoped<IdeBackgroundTaskApi>()
             .AddScoped<ICommandFactory, CommandFactory>()
             .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
@@ -107,7 +107,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static readonly LuthetusIdeTreeViews _ideTreeViews = new(
+    private static readonly IdeTreeViews _ideTreeViews = new(
         typeof(TreeViewNamespacePathDisplay),
         typeof(TreeViewAbsolutePathDisplay),
         typeof(TreeViewGitFileDisplay),
@@ -119,7 +119,7 @@ public static class ServiceCollectionExtensions
         typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
         typeof(TreeViewSolutionFolderDisplay));
 
-    private static readonly LuthetusIdeComponentRenderers _ideComponentRenderers = new(
+    private static readonly IdeComponentRenderers _ideComponentRenderers = new(
         typeof(BooleanPromptOrCancelDisplay),
         typeof(FileFormDisplay),
         typeof(DeleteFileFormDisplay),

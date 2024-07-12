@@ -1,7 +1,7 @@
-using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Ide.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
@@ -29,7 +29,7 @@ public partial class IdeDevelopmentDisplay : ComponentBase
                 return _compilerServicesTypeList ??= typeof(LuthetusCommonConfig).Assembly.GetTypes()
                     .Where(x => x.IsSubclassOf(typeof(ComponentBase))).OrderBy(x => x.Name).ToList();
             case ProjectKind.Ide:
-                return _ideTypeList ??= typeof(LuthetusIdeConfig).Assembly.GetTypes()
+                return _ideTypeList ??= typeof(IdeConfig).Assembly.GetTypes()
                     .Where(x => x.IsSubclassOf(typeof(ComponentBase))).OrderBy(x => x.Name).ToList();
             default:
                 return new List<Type>();

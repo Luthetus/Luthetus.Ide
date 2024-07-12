@@ -1,8 +1,8 @@
-﻿namespace Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+namespace Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
-public class LuthetusIdeTreeViews
+public class IdeTreeViews
 {
-    public LuthetusIdeTreeViews(
+    public IdeTreeViews(
         Type treeViewNamespacePathRendererType,
         Type treeViewAbsolutePathRendererType,
         Type treeViewGitFileRendererType,

@@ -1,10 +1,10 @@
-﻿using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
+using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjects.Models;
 
@@ -12,7 +12,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 {
     public TreeViewCSharpProjectNugetPackageReferences(
             CSharpProjectNugetPackageReferences cSharpProjectNugetPackageReferences,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             bool isExpandable,
@@ -24,7 +24,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+    public IIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -41,7 +41,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectNugetPackageReferencesRendererType,
+            IdeComponentRenderers.IdeTreeViews.TreeViewCSharpProjectNugetPackageReferencesRendererType,
             null);
     }
 

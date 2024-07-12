@@ -1,8 +1,8 @@
-﻿namespace Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+namespace Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
-public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
+public class IdeComponentRenderers : IIdeComponentRenderers
 {
-    public LuthetusIdeComponentRenderers(
+    public IdeComponentRenderers(
         Type booleanPromptOrCancelRendererType,
         Type fileFormRendererType,
         Type deleteFileFormRendererType,
@@ -10,7 +10,7 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         Type gitDisplayRendererType,
         Type removeCSharpProjectFromSolutionRendererType,
         Type inputFileRendererType,
-        LuthetusIdeTreeViews luthetusIdeTreeViews)
+        IdeTreeViews ideTreeViews)
     {
         BooleanPromptOrCancelRendererType = booleanPromptOrCancelRendererType;
         FileFormRendererType = fileFormRendererType;
@@ -19,7 +19,7 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
         GitDisplayRendererType = gitDisplayRendererType;
         RemoveCSharpProjectFromSolutionRendererType = removeCSharpProjectFromSolutionRendererType;
         InputFileRendererType = inputFileRendererType;
-        LuthetusIdeTreeViews = luthetusIdeTreeViews;
+        IdeTreeViews = ideTreeViews;
     }
 
     public Type BooleanPromptOrCancelRendererType { get; }
@@ -29,5 +29,5 @@ public class LuthetusIdeComponentRenderers : ILuthetusIdeComponentRenderers
     public Type GitDisplayRendererType { get; }
     public Type RemoveCSharpProjectFromSolutionRendererType { get; }
     public Type InputFileRendererType { get; }
-    public LuthetusIdeTreeViews LuthetusIdeTreeViews { get; }
+    public IdeTreeViews IdeTreeViews { get; }
 }

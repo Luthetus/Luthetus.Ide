@@ -155,7 +155,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 
 		var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
 		var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
-		var commonComponentRenderers = serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>();
+		var commonComponentRenderers = serviceProvider.GetRequiredService<ICommonComponentRenderers>();
 		var dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
 		var projectAbsolutePath = environmentProvider.AbsolutePathFactory(cSharpProjectResource.ResourceUri.Value, false);

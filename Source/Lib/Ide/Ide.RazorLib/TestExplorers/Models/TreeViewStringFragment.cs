@@ -10,7 +10,7 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 {
     public TreeViewStringFragment(
             StringFragment stringFragment,
-			ILuthetusCommonComponentRenderers commonComponentRenderers,
+			ICommonComponentRenderers commonComponentRenderers,
             bool isExpandable,
             bool isExpanded)
         : base(stringFragment, isExpandable, isExpanded)
@@ -18,7 +18,7 @@ public class TreeViewStringFragment : TreeViewWithType<StringFragment>
 		CommonComponentRenderers = commonComponentRenderers;
     }
 
-	public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+	public ICommonComponentRenderers CommonComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {

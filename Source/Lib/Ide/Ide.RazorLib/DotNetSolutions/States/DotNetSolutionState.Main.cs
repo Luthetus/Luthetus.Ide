@@ -25,7 +25,7 @@ public partial record DotNetSolutionState(
     public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsList.FirstOrDefault(x =>
         x.Key == DotNetSolutionModelKey);
 
-    public static void ShowInputFile(LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi)
+    public static void ShowInputFile(IdeBackgroundTaskApi ideBackgroundTaskApi)
     {
         ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             "Solution Explorer",

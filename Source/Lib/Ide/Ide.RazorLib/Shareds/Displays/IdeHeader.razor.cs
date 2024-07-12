@@ -49,7 +49,7 @@ public partial class IdeHeader : ComponentBase
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
@@ -240,7 +240,7 @@ public partial class IdeHeader : ComponentBase
                 MenuOptionKind.Delete,
                 () =>
 				{
-					var group = TextEditorService.GroupApi.GetOrDefault(LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
+					var group = TextEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
 
                     if (group is null)
                         return Task.CompletedTask;

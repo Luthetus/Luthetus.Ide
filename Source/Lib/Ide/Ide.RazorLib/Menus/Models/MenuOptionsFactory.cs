@@ -24,16 +24,16 @@ namespace Luthetus.Ide.RazorLib.Menus.Models;
 
 public class MenuOptionsFactory : IMenuOptionsFactory
 {
-    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly IIdeComponentRenderers _ideComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IClipboardService _clipboardService;
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public MenuOptionsFactory(
-        ILuthetusIdeComponentRenderers ideComponentRenderers,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        IIdeComponentRenderers ideComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
         IClipboardService clipboardService,
@@ -230,7 +230,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         TreeViewNamespacePath projectReceivingReference,
         Terminal terminal,
         IDispatcher dispatcher,
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Add Project Reference", MenuOptionKind.Other,
@@ -616,7 +616,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         TreeViewNamespacePath projectReceivingReference,
         Terminal terminal,
         IDispatcher dispatcher,
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         Func<Task> onAfterCompletion)
     {
         ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(

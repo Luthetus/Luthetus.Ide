@@ -8,18 +8,18 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
-public class LuthetusIdeFileSystemBackgroundTaskApi
+public class FileSystemIdeApi
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IFileSystemProvider _fileSystemProvider;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IDispatcher _dispatcher;
 
-    public LuthetusIdeFileSystemBackgroundTaskApi(
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+    public FileSystemIdeApi(
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         IFileSystemProvider fileSystemProvider,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IBackgroundTaskService backgroundTaskService,
         IDispatcher dispatcher)
     {

@@ -1,21 +1,21 @@
 namespace Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
-public class LuthetusCommonComponentRenderers : ILuthetusCommonComponentRenderers
+public class CommonComponentRenderers : ICommonComponentRenderers
 {
-    public LuthetusCommonComponentRenderers(
+    public CommonComponentRenderers(
         Type errorNotificationRendererType,
         Type informativeNotificationRendererType,
 		Type progressNotificationRendererType,
-        LuthetusCommonTreeViews luthetusCommonTreeViews)
+        CommonTreeViews commonTreeViews)
     {
         ErrorNotificationRendererType = errorNotificationRendererType;
         InformativeNotificationRendererType = informativeNotificationRendererType;
 		ProgressNotificationRendererType = progressNotificationRendererType;
-        LuthetusCommonTreeViews = luthetusCommonTreeViews;
+        CommonTreeViews = commonTreeViews;
     }
 
     public Type ErrorNotificationRendererType { get; }
     public Type InformativeNotificationRendererType { get; }
     public Type ProgressNotificationRendererType { get; }
-    public LuthetusCommonTreeViews LuthetusCommonTreeViews { get; }
+    public CommonTreeViews CommonTreeViews { get; }
 }

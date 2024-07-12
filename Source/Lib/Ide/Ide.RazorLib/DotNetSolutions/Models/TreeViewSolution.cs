@@ -1,10 +1,10 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 
@@ -12,8 +12,8 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 {
     public TreeViewSolution(
             DotNetSolutionModel dotNetSolutionModel,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             bool isExpandable,
@@ -26,8 +26,8 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+    public IIdeComponentRenderers IdeComponentRenderers { get; }
+    public ICommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -45,7 +45,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewNamespacePathRendererType,
+            IdeComponentRenderers.IdeTreeViews.TreeViewNamespacePathRendererType,
             new Dictionary<string, object?>
             {
                 {

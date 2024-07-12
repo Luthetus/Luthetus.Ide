@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
@@ -10,7 +10,7 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
 {
     public TreeViewCSharpProjectToProjectReference(
             CSharpProjectToProjectReference cSharpProjectToProjectReference,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             bool isExpandable,
@@ -22,7 +22,7 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+    public IIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -46,7 +46,7 @@ public class TreeViewCSharpProjectToProjectReference : TreeViewWithType<CSharpPr
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCSharpProjectToProjectReferenceRendererType,
+            IdeComponentRenderers.IdeTreeViews.TreeViewCSharpProjectToProjectReferenceRendererType,
             new Dictionary<string, object?>
             {
                 {

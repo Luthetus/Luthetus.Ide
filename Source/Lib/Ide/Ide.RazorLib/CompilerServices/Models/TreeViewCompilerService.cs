@@ -1,9 +1,9 @@
-﻿using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
@@ -11,8 +11,8 @@ public class TreeViewCompilerService : TreeViewWithType<ILuthCompilerService>
 {
     public TreeViewCompilerService(
             ILuthCompilerService compilerService,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             bool isExpandable,
             bool isExpanded)
         : base(compilerService, isExpandable, isExpanded)
@@ -21,8 +21,8 @@ public class TreeViewCompilerService : TreeViewWithType<ILuthCompilerService>
         CommonComponentRenderers = commonComponentRenderers;
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+    public IIdeComponentRenderers IdeComponentRenderers { get; }
+    public ICommonComponentRenderers CommonComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {
@@ -37,7 +37,7 @@ public class TreeViewCompilerService : TreeViewWithType<ILuthCompilerService>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewCompilerServiceRendererType,
+            IdeComponentRenderers.IdeTreeViews.TreeViewCompilerServiceRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(ITreeViewCompilerServiceRendererType.TreeViewCompilerService), this },

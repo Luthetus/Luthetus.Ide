@@ -1,4 +1,5 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
@@ -8,9 +9,9 @@ public partial record TestExplorerState
 {
 	public class Effector
 	{
-		private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+		private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 
-		public Effector(LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi)
+		public Effector(IdeBackgroundTaskApi ideBackgroundTaskApi)
 		{
             _ideBackgroundTaskApi = ideBackgroundTaskApi;
 		}
@@ -20,8 +21,20 @@ public partial record TestExplorerState
 		{
 			_ = dispatcher; // Suppress unused parameter
 
-            _ideBackgroundTaskApi.TestExplorer.DotNetSolutionStateWrap_StateChanged();
+            _ideBackgroundTaskApi.TestExplorer.ConstructTreeView();
 			return Task.CompletedTask;
 		}
+		
+		/*
+		TODO: This
+		[EffectMethod(typeof(TestExplorerState.ShouldInitializeEffect))]
+		public Task HandleShouldDiscoverTestsEffect(IDispatcher dispatcher)
+		{
+			_ = dispatcher; // Suppress unused parameter
+
+            _ideBackgroundTaskApi.TestExplorer.DiscoverTests();
+			return Task.CompletedTask;
+		}
+		*/
 	}
 }

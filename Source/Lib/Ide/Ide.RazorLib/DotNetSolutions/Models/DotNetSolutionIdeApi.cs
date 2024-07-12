@@ -32,15 +32,15 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 
-public class LuthetusIdeDotNetSolutionBackgroundTaskApi
+public class DotNetSolutionIdeApi
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
     private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
     private readonly CompilerServiceRegistry _compilerServiceRegistry;
-    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly IIdeComponentRenderers _ideComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IDispatcher _dispatcher;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -51,14 +51,14 @@ public class LuthetusIdeDotNetSolutionBackgroundTaskApi
     private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IServiceProvider _serviceProvider;
 
-    public LuthetusIdeDotNetSolutionBackgroundTaskApi(
-        LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+    public DotNetSolutionIdeApi(
+        IdeBackgroundTaskApi ideBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService,
         IStorageService storageService,
         IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
         CompilerServiceRegistry compilerServiceRegistry,
-        ILuthetusIdeComponentRenderers ideComponentRenderers,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        IIdeComponentRenderers ideComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
         IDispatcher dispatcher,
         IEnvironmentProvider environmentProvider,
