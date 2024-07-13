@@ -10,9 +10,12 @@ https://luthetus.github.io/Luthetus.Ide/
 - Runs on Linux, Windows, and Mac
 - Written with the .NET environment: C#, [Blazor UI Framework](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor), and a [lightweight Photino webview](https://github.com/tryphotino/photino.Blazor).
 
-***Luthetus.Ide*** is an IDE, that works with any programming language. By customizing it, one can have it be as simple as a plain text editor, or as complex as an IDE.
+***Luthetus.Ide*** is an IDE, but it differentiates itself by being the ultimate PDE, or personal development environment.
 
-These days, its common to have many different IDE(s) downloaded. Perhaps you have a separate IDE downloaded for: C#, JavaScript, Rust.
+I hear the term "PDE" a lot in relation to Vim, I'm not sure of its origins, I think it was a contributor of [Neovim](https://github.com/neovim/neovim) named [
+TJ DeVries](https://www.youtube.com/@teej_dv) (but don't quote me on this).
+
+If one programs with a variety of programming languages, its possible they've ended up with multiple different "IDE"(s) downloaded. Where each "IDE" corresponds to a different environment.
 
 ***Luthetus.Ide*** works by way of the interface, "[ICompilerService](/Source/Lib/TextEditor/CompilerServices/Interfaces/ICompilerService.cs)".
 
@@ -28,7 +31,7 @@ Furthermore, many IDE(s) that exist run on a single operating system. ***Luthetu
 
 This is not a matter of undercutting the market, nor is it a matter of me attempting to justify a badly coded product.
 
-An IDE is a ubiquitous tool for programming. Ubiquitous software tooling should not be proprietary software that traps the individual into an ecosystem.
+I believe there needs to exist an IDE that is not proprietary software, and not exclusive to any specific programming environment. 
 
 ## Installation:
 [INSTALLATION.md](./INSTALLATION.md)
