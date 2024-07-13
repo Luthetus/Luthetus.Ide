@@ -254,6 +254,7 @@ public partial class TestExplorerScheduler
     	_dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
         {
             TotalTestCount = totalTestCount,
+            NotRanTestCount = totalTestCount,
             SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
         }));
         

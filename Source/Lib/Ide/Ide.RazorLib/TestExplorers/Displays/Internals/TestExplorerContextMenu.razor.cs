@@ -272,6 +272,54 @@ public partial class TestExplorerContextMenu : ComponentBase
 			OutputParser: DotNetCliOutputParser,
 			ContinueWith: () => 
 			{
+				BackgroundTaskService.Enqueue(
+					Key<IBackgroundTask>.NewKey(),
+					ContinuousBackgroundTaskWorker.GetQueueKey(),
+					"CheckTestOutcome",
+					() => 
+					{
+						var output = treeViewStringFragment.Item.TerminalCommand?.TextSpan?.GetText() ?? null;
+						
+						if (output is not null && output.Contains("Duration:"))
+						{
+							if (output.Contains("Passed!"))
+							{
+								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+						        {
+						            PassedTestCount = inState.PassedTestCount + 1,
+						            NotRanTestCount = inState.NotRanTestCount - 1,
+						        }));
+							}
+							else
+							{
+								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+						        {
+						            FailedTestCount = inState.FailedTestCount + 1,
+						            NotRanTestCount = inState.NotRanTestCount - 1,
+						        }));
+							}
+						}
+						else
+						{
+							if (output is null)
+							{
+								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+						        {
+						            NotRanTestCount = inState.NotRanTestCount + 1,
+						        }));
+							}
+							else
+							{
+								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+						        {
+						            NotRanTestCount = inState.NotRanTestCount - 1,
+						        }));
+							}
+						}
+						
+						return Task.CompletedTask;
+					});
+			
 				TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
 				return Task.CompletedTask;
 			});
