@@ -223,15 +223,26 @@ public class TestExplorerIdeApi
     		{
     			var completionPercentPerProject = 1.0 / (double)localTestExplorerState.ProjectTestModelList.Count;
 	    		var projectsHandled = 0;
-	    	
-	    		foreach (var projectTestModel in localTestExplorerState.ProjectTestModelList)
-		    	{
-		    		await Task.Delay(1_000);
-		    		progressBarModel.SetProgress(
-		    			projectsHandled * completionPercentPerProject,
-		    			$"{projectsHandled + 1}/{localTestExplorerState.ProjectTestModelList.Count}: {projectTestModel.AbsolutePath.NameWithExtension}");
-		    		projectsHandled++;
-		    	}
+	    		
+	    		if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+		        {
+		        	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
+		        		return;
+		        		
+		            foreach (var treeViewProject in treeViewAdhoc.ChildList)
+		            {
+		            	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
+		            		return;
+		            
+		            	await treeViewProject.LoadChildListAsync();
+		            	
+		            	await Task.Delay(1_000);
+			    		progressBarModel.SetProgress(
+			    			projectsHandled * completionPercentPerProject,
+			    			$"{projectsHandled + 1}/{localTestExplorerState.ProjectTestModelList.Count}: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}");
+			    		projectsHandled++;
+		            }
+		        }
 		    	
 		    	progressBarModel.SetProgress(1, $"Finished discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
     		}
@@ -244,9 +255,6 @@ public class TestExplorerIdeApi
 			{
 				progressBarModel.Dispose();
 			}
-	    		
-    		
-    		return Task.CompletedTask;
     	});
     	
     	return Task.CompletedTask;
