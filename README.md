@@ -4,6 +4,9 @@
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
 
+## Installation:
+[INSTALLATION.md](./INSTALLATION.md)
+
 ## Introduction:
 
 - A free and open source IDE
@@ -31,10 +34,7 @@ Furthermore, many IDE(s) that exist run on a single operating system. ***Luthetu
 
 This is not a matter of undercutting the market, nor is it a matter of me attempting to justify a badly coded product.
 
-I believe there needs to exist an IDE that is not proprietary software, and not exclusive to any specific programming environment. 
-
-## Installation:
-[INSTALLATION.md](./INSTALLATION.md)
+I believe there needs to exist an IDE that is not proprietary software, and not exclusive to any specific programming environment.
 
 ## Donations:
 
