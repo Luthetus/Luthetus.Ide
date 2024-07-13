@@ -10,18 +10,18 @@ namespace Luthetus.Ide.RazorLib.TestExplorers.States;
 public partial record TestExplorerState(
 	string? SolutionFilePath,
 	int TotalTestCount,
-	int NotRanTestCount,
-	int PassedTestCount,
-	int FailedTestCount)
+	ImmutableHashSet<string> NotRanTestHashSet,
+	ImmutableHashSet<string> PassedTestHashSet,
+	ImmutableHashSet<string> FailedTestHashSet)
 {
     public static readonly Key<TreeViewContainer> TreeViewTestExplorerKey = Key<TreeViewContainer>.NewKey();
 
     public TestExplorerState() : this(
     	SolutionFilePath: null,
     	TotalTestCount: 0,
-    	NotRanTestCount: 0,
-    	PassedTestCount: 0,
-    	FailedTestCount: 0)
+    	NotRanTestHashSet: ImmutableHashSet<string>.Empty,
+    	PassedTestHashSet: ImmutableHashSet<string>.Empty,
+    	FailedTestHashSet: ImmutableHashSet<string>.Empty)
     {
     }
 	

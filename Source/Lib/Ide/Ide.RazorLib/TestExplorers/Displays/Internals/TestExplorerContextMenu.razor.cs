@@ -286,33 +286,18 @@ public partial class TestExplorerContextMenu : ComponentBase
 							{
 								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
 						        {
-						            PassedTestCount = inState.PassedTestCount + 1,
-						            NotRanTestCount = inState.NotRanTestCount - 1,
+						            PassedTestHashSet = inState.PassedTestHashSet.Add(fullyQualifiedName),
+						            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
+						            FailedTestHashSet = inState.FailedTestHashSet.Remove(fullyQualifiedName),
 						        }));
 							}
 							else
 							{
 								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
 						        {
-						            FailedTestCount = inState.FailedTestCount + 1,
-						            NotRanTestCount = inState.NotRanTestCount - 1,
-						        }));
-							}
-						}
-						else
-						{
-							if (output is null)
-							{
-								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
-						        {
-						            NotRanTestCount = inState.NotRanTestCount + 1,
-						        }));
-							}
-							else
-							{
-								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
-						        {
-						            NotRanTestCount = inState.NotRanTestCount - 1,
+						            FailedTestHashSet = inState.FailedTestHashSet.Add(fullyQualifiedName),
+						            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
+						            PassedTestHashSet = inState.PassedTestHashSet.Remove(fullyQualifiedName),
 						        }));
 							}
 						}

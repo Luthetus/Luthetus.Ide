@@ -46,9 +46,9 @@
 				<div class="luth_ide_test-explorer-top"
 				     style="height: 1.8em;">
 					Total: @(renderBatchValidated.TestExplorerState.TotalTestCount);
-					NotRan: @(renderBatchValidated.TestExplorerState.NotRanTestCount);
-					Passed: @(renderBatchValidated.TestExplorerState.PassedTestCount);
-					Failed: @(renderBatchValidated.TestExplorerState.FailedTestCount);
+					NotRan: @(renderBatchValidated.TestExplorerState.NotRanTestHashSet.Count);
+					Passed: @(renderBatchValidated.TestExplorerState.PassedTestHashSet.Count);
+					Failed: @(renderBatchValidated.TestExplorerState.FailedTestHashSet.Count);
 					Sln: @(renderBatchValidated.TestExplorerState.SolutionFilePath ?? "null");
 				</div>
 

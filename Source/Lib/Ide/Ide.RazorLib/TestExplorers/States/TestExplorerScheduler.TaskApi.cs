@@ -236,6 +236,7 @@ public partial class TestExplorerScheduler
             return Task.CompletedTask;
     
     	var totalTestCount = 0;
+    	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
     
     	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
         {
@@ -248,13 +249,21 @@ public partial class TestExplorerScheduler
             		return Task.CompletedTask;
             
             	totalTestCount += treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0;
+            	
+            	if (treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput is not null)
+            	{
+            		foreach (var output in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+	            	{
+	            		notRanTestHashSet = notRanTestHashSet.Add(output);
+	            	}
+            	}
             }
         }
     
     	_dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
         {
             TotalTestCount = totalTestCount,
-            NotRanTestCount = totalTestCount,
+            NotRanTestHashSet = notRanTestHashSet,
             SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
         }));
         
