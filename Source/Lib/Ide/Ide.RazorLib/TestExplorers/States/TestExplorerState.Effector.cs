@@ -21,7 +21,7 @@ public partial record TestExplorerState
 		{
 			_ = dispatcher; // Suppress unused parameter
 
-            _ideBackgroundTaskApi.TestExplorer.ConstructTreeView();
+            _ideBackgroundTaskApi.TestExplorer.Enqueue_ConstructTreeView();
 			return Task.CompletedTask;
 		}
 		
@@ -30,7 +30,7 @@ public partial record TestExplorerState
 		{
 			_ = dispatcher; // Suppress unused parameter
 
-            _ideBackgroundTaskApi.TestExplorer.DiscoverTests();
+            _ideBackgroundTaskApi.TestExplorer.Enqueue_DiscoverTests();
 			return Task.CompletedTask;
 		}
 	}

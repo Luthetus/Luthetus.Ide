@@ -17,53 +17,9 @@ using Luthetus.Ide.RazorLib.TestExplorers.States;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
 
-public class TestExplorerIdeApi
+public partial class TestExplorerScheduler
 {
-    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-    private readonly ICommonComponentRenderers _commonComponentRenderers;
-    private readonly ITreeViewService _treeViewService;
-    private readonly ITextEditorService _textEditorService;
-    private readonly IBackgroundTaskService _backgroundTaskService;
-	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-    private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-	private readonly IState<TerminalState> _terminalStateWrap;
-	private readonly IState<TestExplorerState> _testExplorerStateWrap;
-    private readonly IDispatcher _dispatcher;
-
-    public TestExplorerIdeApi(
-        IdeBackgroundTaskApi ideBackgroundTaskApi,
-        ICommonComponentRenderers commonComponentRenderers,
-        ITreeViewService treeViewService,
-        ITextEditorService textEditorService,
-        IBackgroundTaskService backgroundTaskService,
-        DotNetCliOutputParser dotNetCliOutputParser,
-        IState<DotNetSolutionState> dotNetSolutionStateWrap,
-        IState<TerminalState> terminalStateWrap,
-        IState<TestExplorerState> testExplorerStateWrap,
-        IDispatcher dispatcher)
-    {
-        _ideBackgroundTaskApi = ideBackgroundTaskApi;
-        _commonComponentRenderers = commonComponentRenderers;
-        _treeViewService = treeViewService;
-		_textEditorService = textEditorService;
-		_backgroundTaskService = backgroundTaskService;
-		_dotNetCliOutputParser = dotNetCliOutputParser;
-        _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-		_terminalStateWrap = terminalStateWrap;
-		_testExplorerStateWrap = testExplorerStateWrap;
-        _dispatcher = dispatcher;
-    }
-
-    public void ConstructTreeView()
-    {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "Refresh TestExplorer",
-            ConstructTreeViewAsync);
-    }
-
-    private Task ConstructTreeViewAsync()
+    public Task Task_ConstructTreeView()
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
@@ -189,16 +145,7 @@ public class TestExplorerIdeApi
         return Task.CompletedTask;
     }
     
-    public void DiscoverTests()
-    {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "DiscoverTests",
-            DiscoverTestsAsync);
-    }
-    
-    private Task DiscoverTestsAsync()
+    public Task Task_DiscoverTests()
     {
     	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
