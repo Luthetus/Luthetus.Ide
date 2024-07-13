@@ -4,7 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Common.RazorLib.TreeViews.Models;	
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
@@ -60,7 +60,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 
         NotificationHelper.DispatchInformative(
 	        nameof(TestExplorerTreeViewKeyboardEventHandler),
-	        nameof(InvokeOpenInEditor),
+	        treeViewStringFragment.Item.Value,
 	        _commonComponentRenderers,
 	        _dispatcher,
 	        TimeSpan.FromSeconds(5));

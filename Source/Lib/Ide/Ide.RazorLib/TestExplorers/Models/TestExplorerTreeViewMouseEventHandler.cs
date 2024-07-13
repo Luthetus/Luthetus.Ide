@@ -31,11 +31,34 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
         base.OnDoubleClickAsync(commandArgs);
 
         if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewStringFragment treeViewStringFragment)
+        {
+        	NotificationHelper.DispatchInformative(
+		        nameof(TestExplorerTreeViewMouseEventHandler),
+		        $"Could not open in editor because node is not type: {nameof(TreeViewStringFragment)}",
+		        _commonComponentRenderers,
+		        _dispatcher,
+		        TimeSpan.FromSeconds(5));
+	        
+        	return Task.CompletedTask;
+        }
+            
+        if (treeViewStringFragment.Parent is not TreeViewStringFragment parentTreeViewStringFragment)
+        {
+            NotificationHelper.DispatchInformative(
+		        nameof(TestExplorerTreeViewMouseEventHandler),
+		        $"Could not open in editor because node's parent does not seem to include a class name",
+		        _commonComponentRenderers,
+		        _dispatcher,
+		        TimeSpan.FromSeconds(5));
+            
             return Task.CompletedTask;
+        }
+        
+        var className = parentTreeViewStringFragment.Item.Value.Split('.').Last();
 
         NotificationHelper.DispatchInformative(
 	        nameof(TestExplorerTreeViewMouseEventHandler),
-	        nameof(OnDoubleClickAsync),
+	        className + ".cs",
 	        _commonComponentRenderers,
 	        _dispatcher,
 	        TimeSpan.FromSeconds(5));
