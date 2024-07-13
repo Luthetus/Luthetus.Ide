@@ -26,13 +26,13 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
     private readonly IDispatcher _dispatcher;
 
     public SolutionExplorerTreeViewKeyboardEventHandler(
-        IdeBackgroundTaskApi ideBackgroundTaskApi,
-        IMenuOptionsFactory menuOptionsFactory,
-        ICommonComponentRenderers commonComponentRenderers,
-        ITreeViewService treeViewService,
-		IBackgroundTaskService backgroundTaskService,
-        IEnvironmentProvider environmentProvider,
-        IDispatcher dispatcher)
+	        IdeBackgroundTaskApi ideBackgroundTaskApi,
+	        IMenuOptionsFactory menuOptionsFactory,
+	        ICommonComponentRenderers commonComponentRenderers,
+	        ITreeViewService treeViewService,
+			IBackgroundTaskService backgroundTaskService,
+	        IEnvironmentProvider environmentProvider,
+	        IDispatcher dispatcher)
         : base(treeViewService, backgroundTaskService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;

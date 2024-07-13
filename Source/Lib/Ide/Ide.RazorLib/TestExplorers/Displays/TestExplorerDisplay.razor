@@ -44,12 +44,12 @@
 			<CascadingValue Value="renderBatchValidated">
 
 				<div class="luth_ide_test-explorer-top"
-				     style="height: 1.8em;">
+				     style="height: 1.8em;"
+				     title="Sln: @(renderBatchValidated.TestExplorerState.SolutionFilePath ?? "null");">
 					Total: @(renderBatchValidated.TestExplorerState.TotalTestCount);
-					NotRan: @(renderBatchValidated.TestExplorerState.NotRanTestHashSet.Count);
-					Passed: @(renderBatchValidated.TestExplorerState.PassedTestHashSet.Count);
-					Failed: @(renderBatchValidated.TestExplorerState.FailedTestHashSet.Count);
-					Sln: @(renderBatchValidated.TestExplorerState.SolutionFilePath ?? "null");
+					<span class="luth_tree-view-warning">NotRan: @(renderBatchValidated.TestExplorerState.NotRanTestHashSet.Count);</span>
+					<em class="luth_em">Passed: @(renderBatchValidated.TestExplorerState.PassedTestHashSet.Count);</em>
+					<span class="luth_tree-view-exception">Failed: @(renderBatchValidated.TestExplorerState.FailedTestHashSet.Count);</span>
 				</div>
 
 				<div class="luth_ide_test-explorer-bottom"
