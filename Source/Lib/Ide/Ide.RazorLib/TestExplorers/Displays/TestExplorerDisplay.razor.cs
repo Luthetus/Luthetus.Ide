@@ -93,7 +93,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 	        });
 		}
 		
-		Dispatcher.Dispatch(new TestExplorerState.ShouldInitializeEffect());
+		Dispatcher.Dispatch(new TestExplorerState.UserInterfaceWasInitializedEffect());
 
         base.OnInitialized();
     }

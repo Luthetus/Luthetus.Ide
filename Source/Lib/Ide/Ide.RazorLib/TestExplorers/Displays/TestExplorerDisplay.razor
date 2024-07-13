@@ -45,7 +45,10 @@
 
 				<div class="luth_ide_test-explorer-top"
 				     style="height: 1.8em;">
-					Total: @(renderBatchValidated.TestExplorerState.TotalTestCount); Passed: 0; Failed: 0;
+					Total: @(renderBatchValidated.TestExplorerState.TotalTestCount);
+					Passed: 0;
+					Failed: 0;
+					Sln: @(renderBatchValidated.TestExplorerState.SolutionFilePath ?? "null");
 				</div>
 
 				<div class="luth_ide_test-explorer-bottom"

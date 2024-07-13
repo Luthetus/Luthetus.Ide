@@ -229,6 +229,12 @@ public partial class TestExplorerScheduler
     
     public Task Task_SumEachProjectTestCount()
     {
+    	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+
+        if (dotNetSolutionModel is null)
+            return Task.CompletedTask;
+    
     	var totalTestCount = 0;
     
     	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
@@ -247,7 +253,8 @@ public partial class TestExplorerScheduler
     
     	_dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
         {
-            TotalTestCount = totalTestCount
+            TotalTestCount = totalTestCount,
+            SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
         }));
         
         return Task.CompletedTask;

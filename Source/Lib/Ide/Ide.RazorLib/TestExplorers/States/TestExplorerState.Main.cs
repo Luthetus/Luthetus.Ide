@@ -7,11 +7,11 @@ using Luthetus.Ide.RazorLib.TestExplorers.Models;
 namespace Luthetus.Ide.RazorLib.TestExplorers.States;
 
 [FeatureState]
-public partial record TestExplorerState(int TotalTestCount)
+public partial record TestExplorerState(string? SolutionFilePath, int TotalTestCount)
 {
     public static readonly Key<TreeViewContainer> TreeViewTestExplorerKey = Key<TreeViewContainer>.NewKey();
 
-    public TestExplorerState() : this(0)
+    public TestExplorerState() : this(null, 0)
     {
     }
 	
