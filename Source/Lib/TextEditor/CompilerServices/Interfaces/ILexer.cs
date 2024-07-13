@@ -1,16 +1,16 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
-public interface ILuthLexer
+public interface ILexer
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticList { get; }
     public ImmutableArray<ISyntaxToken> SyntaxTokenList { get; }
     public ResourceUri ResourceUri { get; }
     public string SourceText { get; }
-    public LuthLexerKeywords LexerKeywords { get; }
+    public LexerKeywords LexerKeywords { get; }
 
     public void Lex();
 }

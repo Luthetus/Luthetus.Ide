@@ -1,13 +1,13 @@
-﻿using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
-using Luthetus.CompilerServices.Lang.Css.Css.SyntaxEnums;
-using Luthetus.CompilerServices.Lang.Css.Css.Facts;
-using Luthetus.CompilerServices.Lang.Css.Css.SyntaxObjects;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
+using Luthetus.CompilerServices.Lang.Css.Css.SyntaxEnums;
+using Luthetus.CompilerServices.Lang.Css.Css.Facts;
+using Luthetus.CompilerServices.Lang.Css.Css.SyntaxObjects;
 
 namespace Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;
 
@@ -19,7 +19,7 @@ public class CssSyntaxTree
     {
         // Items to return wrapped in a CssSyntaxUnit
         var cssDocumentChildren = new List<ICssSyntax>();
-        var textEditorCssDiagnosticBag = new LuthDiagnosticBag();
+        var textEditorCssDiagnosticBag = new DiagnosticBag();
 
         // Step through the string 'character by character'
         var stringWalker = new StringWalker(resourceUri, sourceText);
@@ -64,7 +64,7 @@ public class CssSyntaxTree
     private static void ConsumeComment(
         StringWalker stringWalker,
         List<ICssSyntax> cssDocumentChildren,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         var commentStartingPositionIndex = stringWalker.PositionIndex;
 
@@ -106,7 +106,7 @@ public class CssSyntaxTree
     private static void ConsumeStyleBlock(
         StringWalker stringWalker,
         List<ICssSyntax> cssDocumentChildren,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         var expectedStyleBlockChild = CssSyntaxKind.PropertyName;
 
@@ -248,7 +248,7 @@ public class CssSyntaxTree
     private static void ConsumeIdentifier(
         StringWalker stringWalker,
         List<ICssSyntax> cssDocumentChildren,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 

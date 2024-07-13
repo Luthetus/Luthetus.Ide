@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -8,12 +8,12 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public class TerminalLexer : LuthLexer
+public class TerminalLexer : Lexer
 {
     private readonly TerminalResource _terminalResource;
 
     public TerminalLexer(TerminalResource terminalResource, string sourceText)
-        : base(terminalResource.ResourceUri, sourceText, LuthLexerKeywords.Empty)
+        : base(terminalResource.ResourceUri, sourceText, LexerKeywords.Empty)
     {
         _terminalResource = terminalResource;
     }
@@ -47,7 +47,7 @@ public class TerminalLexer : LuthLexer
         //     '/programs/git/' init        // '/programs/git/' would be a string deliminated with single quotes.
         if (_stringWalker.CurrentCharacter == '"')
         {
-            LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList);
+            LexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList);
         }
         else if (_stringWalker.CurrentCharacter == '\'')
         {
@@ -88,7 +88,7 @@ public class TerminalLexer : LuthLexer
             switch (_stringWalker.CurrentCharacter)
             {
                 //case '"':
-                //    LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList);
+                //    LexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList);
                 //    _syntaxTokenList[^1] = new IdentifierToken(lastEntry.TextSpan with
                 //    {
                 //        DecorationByte = (byte)TerminalDecorationKind.StringLiteral

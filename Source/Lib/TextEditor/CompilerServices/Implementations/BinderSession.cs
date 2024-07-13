@@ -1,19 +1,19 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 /// <summary>
-/// <inheritdoc cref="ILuthBinderSession"/>
+/// <inheritdoc cref="IBinderSession"/>
 /// </summary>
-public class LuthBinderSession : ILuthBinderSession
+public class BinderSession : IBinderSession
 {
-    public LuthBinderSession(
+    public BinderSession(
         ResourceUri resourceUri,
         IBoundScope globalScope,
         NamespaceStatementNode topLevelNamespaceStatementNode,
-        ILuthBinder binder)
+        IBinder binder)
     {
         Binder = binder;
 
@@ -24,7 +24,7 @@ public class LuthBinderSession : ILuthBinderSession
 
     }
 
-    public ILuthBinder Binder { get; }
+    public IBinder Binder { get; }
 
     public IBoundScope CurrentScope { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }

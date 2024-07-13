@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
@@ -7,13 +7,13 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;
 
-public class TextEditorCssLexer : LuthLexer
+public class TextEditorCssLexer : Lexer
 {
     public TextEditorCssLexer(ResourceUri resourceUri, string sourceText)
         : base(
             resourceUri,
             sourceText,
-            LuthLexerKeywords.Empty)
+            LexerKeywords.Empty)
     {
     }
 

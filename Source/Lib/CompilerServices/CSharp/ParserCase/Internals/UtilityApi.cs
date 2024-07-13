@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
@@ -63,7 +63,7 @@ public static class UtilityApi
     /// <see cref="SyntaxKind.VarTokenContextualKeyword"/> AND check if
     /// any 'var' identified definitions are in scope.
     /// </summary>
-    public static bool IsVarContextualKeyword(ParserModel parserModel, SyntaxKind syntaxKind)
+    public static bool IsVarContextualKeyword(CSharpParserModel parserModel, SyntaxKind syntaxKind)
     {
         if (syntaxKind != SyntaxKind.VarTokenContextualKeyword)
             return false;

@@ -1,9 +1,9 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.EvaluatorCase;
 
@@ -11,7 +11,7 @@ public class CSharpEvaluator
 {
     private readonly CompilationUnit _compilationUnit;
     private readonly string _sourceText;
-    private readonly LuthDiagnosticBag _diagnosticBag = new();
+    private readonly DiagnosticBag _diagnosticBag = new();
 
     public CSharpEvaluator(
         CompilationUnit compilationUnit,

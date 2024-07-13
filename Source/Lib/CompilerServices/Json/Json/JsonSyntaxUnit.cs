@@ -1,5 +1,5 @@
-﻿using Luthetus.CompilerServices.Lang.Json.Json.SyntaxObjects;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.CompilerServices.Lang.Json.Json.SyntaxObjects;
 
 namespace Luthetus.CompilerServices.Lang.Json.Json;
 
@@ -7,12 +7,12 @@ public class JsonSyntaxUnit
 {
     public JsonSyntaxUnit(
         JsonDocumentSyntax jsonDocumentSyntax,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         JsonDocumentSyntax = jsonDocumentSyntax;
         DiagnosticBag = diagnosticBag;
     }
 
     public JsonDocumentSyntax JsonDocumentSyntax { get; }
-    public LuthDiagnosticBag DiagnosticBag { get; }
+    public DiagnosticBag DiagnosticBag { get; }
 }

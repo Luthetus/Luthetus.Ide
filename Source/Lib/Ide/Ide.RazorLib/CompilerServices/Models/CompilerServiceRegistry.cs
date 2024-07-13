@@ -1,5 +1,10 @@
-﻿using Fluxor;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.Lang.C;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
@@ -13,19 +18,14 @@ using Luthetus.CompilerServices.Lang.TypeScript;
 using Luthetus.CompilerServices.Lang.Xml;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 public class CompilerServiceRegistry : ICompilerServiceRegistry
 {
-    private readonly Dictionary<string, ILuthCompilerService> _map = new();
+    private readonly Dictionary<string, ICompilerService> _map = new();
 
-    public ImmutableDictionary<string, ILuthCompilerService> Map => _map.ToImmutableDictionary();
+    public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
 
     public CompilerServiceRegistry(
         ITextEditorService textEditorService,
@@ -44,7 +44,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         XmlCompilerService = new XmlCompilerService(textEditorService);
         CCompilerService = new CCompilerService(textEditorService);
         TerminalCompilerService = new TerminalCompilerService(textEditorService, terminalStateWrap);
-        DefaultCompilerService = new LuthCompilerService(textEditorService);
+        DefaultCompilerService = new CompilerService(textEditorService);
 
         _map.Add(ExtensionNoPeriodFacts.HTML, XmlCompilerService);
         _map.Add(ExtensionNoPeriodFacts.XML, XmlCompilerService);
@@ -78,9 +78,9 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public XmlCompilerService XmlCompilerService { get; }
     public CCompilerService CCompilerService { get; }
     public TerminalCompilerService TerminalCompilerService { get; }
-    public LuthCompilerService DefaultCompilerService { get; }
+    public CompilerService DefaultCompilerService { get; }
 
-    public ILuthCompilerService GetCompilerService(string extensionNoPeriod)
+    public ICompilerService GetCompilerService(string extensionNoPeriod)
     {
         if (_map.TryGetValue(extensionNoPeriod, out var compilerService))
             return compilerService;

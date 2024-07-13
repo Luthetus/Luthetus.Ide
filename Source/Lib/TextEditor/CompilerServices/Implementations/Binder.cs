@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class LuthBinder : ILuthBinder
+public class Binder : IBinder
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
     public ImmutableArray<ITextEditorSymbol> SymbolsList { get; } = ImmutableArray<ITextEditorSymbol>.Empty;
@@ -27,9 +27,9 @@ public class LuthBinder : ILuthBinder
         return null;
     }
 
-    public ILuthBinderSession ConstructBinderSession(ResourceUri resourceUri)
+    public IBinderSession ConstructBinderSession(ResourceUri resourceUri)
     {
-        return new LuthBinderSession(resourceUri, null, null, this);
+        return new BinderSession(resourceUri, null, null, this);
     }
 
     public void ClearStateByResourceUri(ResourceUri resourceUri)

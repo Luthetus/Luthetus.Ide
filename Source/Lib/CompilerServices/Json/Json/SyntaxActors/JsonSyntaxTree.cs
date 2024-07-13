@@ -1,11 +1,11 @@
-﻿using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.Json.Json.SyntaxObjects;
-using Luthetus.CompilerServices.Lang.Json.Json.Facts;
-using Luthetus.CompilerServices.Lang.Json.Json.Decoration;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.CompilerServices.Lang.Json.Json.SyntaxObjects;
+using Luthetus.CompilerServices.Lang.Json.Json.Facts;
+using Luthetus.CompilerServices.Lang.Json.Json.Decoration;
 
 namespace Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
 
@@ -17,7 +17,7 @@ public class JsonSyntaxTree
     {
         // Items to return wrapped in a JsonSyntaxUnit
         var jsonDocumentChildren = new List<IJsonSyntax>();
-        var textEditorJsonDiagnosticBag = new LuthDiagnosticBag();
+        var textEditorJsonDiagnosticBag = new DiagnosticBag();
 
         // Step through the string 'character by character'
         var stringWalker = new StringWalker(resourceUri, content);
@@ -71,7 +71,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonObjectSyntax ConsumeObject(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -200,7 +200,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonPropertyKeySyntax ConsumePropertyKey(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         // +1 to not include the quote that begins the key's text
         var startingPositionIndex = stringWalker.PositionIndex + 1;
@@ -247,7 +247,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonPropertyValueSyntax ConsumePropertyValue(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         int startingPositionIndex = stringWalker.PositionIndex;
 
@@ -313,7 +313,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonArraySyntax ConsumeArray(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         // +1 to not include the bracket that begins this values's text
         var startingPositionIndex = stringWalker.PositionIndex + 1;
@@ -368,7 +368,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static JsonStringSyntax ConsumeString(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         // +1 to not include the quote that begins this values's text
         var startingPositionIndex = stringWalker.PositionIndex + 1;
@@ -405,7 +405,7 @@ public class JsonSyntaxTree
     /// </summary>
     private static IJsonSyntax ConsumeAmbiguousValue(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 

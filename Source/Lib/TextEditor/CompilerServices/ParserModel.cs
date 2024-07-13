@@ -1,18 +1,18 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class LuthParserModel : ILuthParserModel
+public class ParserModel : IParserModel
 {
-    public LuthParserModel(
-        ILuthBinder binder,
-        ILuthBinderSession binderSession,
+    public ParserModel(
+        IBinder binder,
+        IBinderSession binderSession,
         TokenWalker tokenWalker,
         Stack<ISyntax> syntaxStack,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder,
         Action<CodeBlockNode>? finalizeNamespaceFileScopeCodeBlockNodeAction,
@@ -29,11 +29,11 @@ public class LuthParserModel : ILuthParserModel
         FinalizeCodeBlockNodeActionStack = finalizeCodeBlockNodeActionStack;
     }
 
-    public ILuthBinder Binder { get; }
-    public ILuthBinderSession BinderSession { get; }
+    public IBinder Binder { get; }
+    public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
-    public LuthDiagnosticBag DiagnosticBag { get; }
+    public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
     /// <summary>

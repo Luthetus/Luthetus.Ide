@@ -1,14 +1,14 @@
+using System.Collections.Immutable;
+using System.Text;
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.Gits.States;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
-using System.Text;
+using Luthetus.Ide.RazorLib.Gits.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
 
@@ -237,7 +237,7 @@ public class GitCliOutputParser : IOutputParser
 
                 // Read the unsigned-integer
                 var syntaxTokenList = new List<ISyntaxToken>();
-                LuthLexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
+                LexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
                 var numberTextSpan = syntaxTokenList.Single().TextSpan;
                 var numberString = numberTextSpan.GetText();
 
@@ -280,7 +280,7 @@ public class GitCliOutputParser : IOutputParser
 
                 // Read the unsigned-integer
                 var syntaxTokenList = new List<ISyntaxToken>();
-                LuthLexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
+                LexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
                 var numberTextSpan = syntaxTokenList.Single().TextSpan;
                 var numberString = numberTextSpan.GetText();
 

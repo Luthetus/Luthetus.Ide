@@ -7,10 +7,10 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.CompilerServices.Models;
 
-public class TreeViewCompilerService : TreeViewWithType<ILuthCompilerService>
+public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
 {
     public TreeViewCompilerService(
-            ILuthCompilerService compilerService,
+            ICompilerService compilerService,
             IIdeComponentRenderers ideComponentRenderers,
             ICommonComponentRenderers commonComponentRenderers,
             bool isExpandable,

@@ -1,15 +1,15 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 
@@ -56,9 +56,9 @@ public static class RuntimeAssembliesLoaderFactory
         {
             var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
             var currentCodeBlockBuilder = globalCodeBlockBuilder;
-            var diagnosticBag = new LuthDiagnosticBag();
+            var diagnosticBag = new DiagnosticBag();
 
-            var model = new ParserModel(
+            var model = new CSharpParserModel(
                 cSharpBinder,
                 (CSharpBinderSession)cSharpBinder.ConstructBinderSession(new ResourceUri("aaa")),
                 new TokenWalker(ImmutableArray<ISyntaxToken>.Empty, new()),

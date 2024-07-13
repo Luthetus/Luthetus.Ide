@@ -10,7 +10,7 @@ public static class ParseVariables
 {
     public static void HandleVariableReference(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         var variableReferenceNode = model.Binder.ConstructAndBindVariableReferenceNode(
             consumedIdentifierToken,
@@ -23,7 +23,7 @@ public static class ParseVariables
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
         VariableKind variableKind,
-        ParserModel model)
+        CSharpParserModel model)
     {
 		IVariableDeclarationNode variableDeclarationNode;
 
@@ -105,7 +105,7 @@ public static class ParseVariables
     public static void HandlePropertyDeclaration(
         IVariableDeclarationNode consumedVariableDeclarationNode,
         OpenBraceToken consumedOpenBraceToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         while (!model.TokenWalker.IsEof)
         {
@@ -170,7 +170,7 @@ public static class ParseVariables
         IVariableDeclarationNode consumedVariableDeclarationNode,
         EqualsToken consumedEqualsToken,
         CloseAngleBracketToken consumedCloseAngleBracketToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         ParseOthers.HandleExpression(
             null,
@@ -187,7 +187,7 @@ public static class ParseVariables
     public static void HandleVariableAssignment(
         IdentifierToken consumedIdentifierToken,
         EqualsToken consumedEqualsToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.NewTokenKeyword)
         {

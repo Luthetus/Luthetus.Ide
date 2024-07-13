@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections.Immutable;
@@ -7,23 +7,23 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
-public class LuthParser : ILuthParser
+public class Parser : IParser
 {
-    public LuthParser(ILuthLexer lexer)
+    public Parser(ILexer lexer)
     {
         Lexer = lexer;
-        Binder = new LuthBinder();
+        Binder = new Binder();
         BinderSession = Binder.ConstructBinderSession(lexer.ResourceUri);
     }
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; private set; } = ImmutableArray<TextEditorDiagnostic>.Empty;
-    public ILuthBinder Binder { get; private set; }
-    public ILuthBinderSession BinderSession { get; private set; }
-    public ILuthLexer Lexer { get; }
+    public IBinder Binder { get; private set; }
+    public IBinderSession BinderSession { get; private set; }
+    public ILexer Lexer { get; }
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
     public CompilationUnit Parse(
-        ILuthBinder previousBinder,
+        IBinder previousBinder,
         ResourceUri resourceUri)
     {
         Binder = previousBinder;
@@ -36,9 +36,9 @@ public class LuthParser : ILuthParser
     {
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
-        var diagnosticBag = new LuthDiagnosticBag();
+        var diagnosticBag = new DiagnosticBag();
 
-        var model = new LuthParserModel(
+        var model = new ParserModel(
             Binder,
             BinderSession,
             new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),

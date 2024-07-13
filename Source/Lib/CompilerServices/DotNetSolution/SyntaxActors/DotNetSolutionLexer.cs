@@ -1,21 +1,21 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
 using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
 
 namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 
-public class DotNetSolutionLexer : LuthLexer
+public class DotNetSolutionLexer : Lexer
 {
     public DotNetSolutionLexer(
             ResourceUri resourceUri, string sourceText)
         : base(
             resourceUri,
             sourceText,
-            LuthLexerKeywords.Empty)
+            LexerKeywords.Empty)
     {
     }
 

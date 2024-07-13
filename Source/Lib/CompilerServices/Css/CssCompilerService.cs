@@ -1,10 +1,10 @@
-﻿using Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;
 
 namespace Luthetus.CompilerServices.Lang.Css;
 
-public sealed class CssCompilerService : LuthCompilerService
+public sealed class CssCompilerService : CompilerService
 {
     public CssCompilerService(ITextEditorService textEditorService)
         : base(textEditorService)
@@ -13,7 +13,7 @@ public sealed class CssCompilerService : LuthCompilerService
         {
             RegisterResourceFunc = resourceUri => new CssResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new TextEditorCssLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new LuthParser(lexer),
+            GetParserFunc = (resource, lexer) => new Parser(lexer),
             GetBinderFunc = (resource, parser) => Binder
         };
     }

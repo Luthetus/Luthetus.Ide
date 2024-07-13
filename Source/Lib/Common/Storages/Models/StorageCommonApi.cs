@@ -3,12 +3,12 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Storages.Models;
 
-public class LuthetusCommonStorageBackgroundTaskApi
+public class StorageCommonApi
 {
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
 
-    public LuthetusCommonStorageBackgroundTaskApi(
+    public StorageCommonApi(
         IBackgroundTaskService backgroundTaskService,
         IStorageService storageService)
     {

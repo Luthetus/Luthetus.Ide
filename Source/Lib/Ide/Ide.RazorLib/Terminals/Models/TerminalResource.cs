@@ -1,14 +1,14 @@
-﻿using Fluxor;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public class TerminalResource : LuthCompilerServiceResource
+public class TerminalResource : CompilerServiceResource
 {
     private readonly IState<TerminalState> _terminalStateWrap;
 

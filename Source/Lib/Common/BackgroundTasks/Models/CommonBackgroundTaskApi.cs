@@ -1,23 +1,23 @@
-﻿using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
 
 namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
-public class LuthetusCommonBackgroundTaskApi
+public class CommonBackgroundTaskApi
 {
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
 
-    public LuthetusCommonBackgroundTaskApi(
+    public CommonBackgroundTaskApi(
         IBackgroundTaskService backgroundTaskService,
         IStorageService storageService)
     {
         _backgroundTaskService = backgroundTaskService;
         _storageService = storageService;
 
-        Storage = new LuthetusCommonStorageBackgroundTaskApi(
+        Storage = new StorageCommonApi(
             _backgroundTaskService,
             _storageService);
     }
 
-    public LuthetusCommonStorageBackgroundTaskApi Storage { get; }
+    public StorageCommonApi Storage { get; }
 }

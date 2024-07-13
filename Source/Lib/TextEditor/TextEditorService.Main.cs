@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -44,7 +44,7 @@ public partial class TextEditorService : ITextEditorService
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
     private readonly IJSRuntime _jsRuntime;
-    private readonly LuthetusCommonBackgroundTaskApi _commonBackgroundTaskApi;
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorService(
         IState<TextEditorState> textEditorStateWrap,
@@ -58,7 +58,7 @@ public partial class TextEditorService : ITextEditorService
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
         IJSRuntime jsRuntime,
-        LuthetusCommonBackgroundTaskApi commonBackgroundTaskApi,
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher,
         IDialogService dialogService,
 		IAutocompleteIndexer autocompleteIndexer,

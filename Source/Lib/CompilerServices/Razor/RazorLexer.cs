@@ -1,17 +1,17 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.Razor.Razor.Facts;
 using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.Razor;
 
-public class RazorLexer : LuthLexer
+public class RazorLexer : Lexer
 {
     private readonly RazorCompilerService _razorCompilerService;
     private readonly CSharpCompilerService _cSharpCompilerService;
@@ -26,7 +26,7 @@ public class RazorLexer : LuthLexer
         : base(
             resourceUri,
             sourceText,
-            LuthLexerKeywords.Empty)
+            LexerKeywords.Empty)
     {
         _environmentProvider = environmentProvider;
         _razorCompilerService = razorCompilerService;

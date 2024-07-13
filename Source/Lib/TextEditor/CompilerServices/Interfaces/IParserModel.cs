@@ -1,16 +1,16 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
-public interface ILuthParserModel
+public interface IParserModel
 {
-    public ILuthBinder Binder { get; }
-    public ILuthBinderSession BinderSession { get; }
+    public IBinder Binder { get; }
+    public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
-    public LuthDiagnosticBag DiagnosticBag { get; }
+    public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
     /// <summary>

@@ -8,7 +8,7 @@ using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
 
 namespace Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 
-public class RazorResource : LuthCompilerServiceResource
+public class RazorResource : CompilerServiceResource
 {
     private readonly ITextEditorService _textEditorService;
 

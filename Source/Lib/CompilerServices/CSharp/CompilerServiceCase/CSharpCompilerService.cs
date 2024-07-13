@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
@@ -15,7 +15,7 @@ using Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
-public sealed class CSharpCompilerService : LuthCompilerService
+public sealed class CSharpCompilerService : CompilerService
 {
     /// <summary>
     /// TODO: The CSharpBinder should be private, but for now I'm making it public to be usable in the CompilerServiceExplorer Blazor component.

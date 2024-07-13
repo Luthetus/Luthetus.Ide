@@ -1,10 +1,10 @@
-﻿using Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
 
 namespace Luthetus.CompilerServices.Lang.Json;
 
-public sealed class JsonCompilerService : LuthCompilerService
+public sealed class JsonCompilerService : CompilerService
 {
     public JsonCompilerService(ITextEditorService textEditorService)
         : base(textEditorService)
@@ -13,7 +13,7 @@ public sealed class JsonCompilerService : LuthCompilerService
         {
             RegisterResourceFunc = resourceUri => new JsonResource(resourceUri, this),
             GetLexerFunc = (resource, sourceText) => new TextEditorJsonLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new LuthParser(lexer),
+            GetParserFunc = (resource, lexer) => new Parser(lexer),
             GetBinderFunc = (resource, parser) => Binder
         };
     }

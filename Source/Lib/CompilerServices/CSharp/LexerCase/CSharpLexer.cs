@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 
-public class CSharpLexer : LuthLexer
+public class CSharpLexer : Lexer
 {
 	private readonly List<TextEditorTextSpan> _escapeCharacterList = new();
 
@@ -15,7 +15,7 @@ public class CSharpLexer : LuthLexer
         : base(
             resourceUri,
             sourceText,
-            new LuthLexerKeywords(CSharpKeywords.NON_CONTEXTUAL_KEYWORDS, CSharpKeywords.CONTROL_KEYWORDS, CSharpKeywords.CONTEXTUAL_KEYWORDS))
+            new LexerKeywords(CSharpKeywords.NON_CONTEXTUAL_KEYWORDS, CSharpKeywords.CONTROL_KEYWORDS, CSharpKeywords.CONTEXTUAL_KEYWORDS))
     {
     }
 
@@ -83,7 +83,7 @@ public class CSharpLexer : LuthLexer
                 case 'Z':
                 /* Underscore */
                 case '_':
-                    LuthLexerUtils.LexIdentifierOrKeywordOrKeywordContextual(_stringWalker, _syntaxTokenList, LexerKeywords);
+                    LexerUtils.LexIdentifierOrKeywordOrKeywordContextual(_stringWalker, _syntaxTokenList, LexerKeywords);
                     break;
                 case '1':
                 case '2':
@@ -94,98 +94,98 @@ public class CSharpLexer : LuthLexer
                 case '7':
                 case '8':
                 case '9':
-                    LuthLexerUtils.LexNumericLiteralToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexNumericLiteralToken(_stringWalker, _syntaxTokenList);
                     break;
 				case '\'':
-                    LuthLexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
+                    LexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
                     break;
                 case '"':
-                    LuthLexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
+                    LexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
                     break;
                 case '/':
                     if (_stringWalker.PeekCharacter(1) == '/')
-                        LuthLexerUtils.LexCommentSingleLineToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexCommentSingleLineToken(_stringWalker, _syntaxTokenList);
                     else if (_stringWalker.PeekCharacter(1) == '*')
-                        LuthLexerUtils.LexCommentMultiLineToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexCommentMultiLineToken(_stringWalker, _syntaxTokenList);
                     else
-                        LuthLexerUtils.LexDivisionToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexDivisionToken(_stringWalker, _syntaxTokenList);
 
                     break;
                 case '+':
                     if (_stringWalker.PeekCharacter(1) == '+')
-                        LuthLexerUtils.LexPlusPlusToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexPlusPlusToken(_stringWalker, _syntaxTokenList);
                     else
-                        LuthLexerUtils.LexPlusToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexPlusToken(_stringWalker, _syntaxTokenList);
 
                     break;
                 case '-':
                     if (_stringWalker.PeekCharacter(1) == '-')
-                        LuthLexerUtils.LexMinusMinusToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexMinusMinusToken(_stringWalker, _syntaxTokenList);
                     else
-                        LuthLexerUtils.LexMinusToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexMinusToken(_stringWalker, _syntaxTokenList);
 
                     break;
                 case '=':
                     if (_stringWalker.PeekCharacter(1) == '=')
-                        LuthLexerUtils.LexEqualsEqualsToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexEqualsEqualsToken(_stringWalker, _syntaxTokenList);
                     else
-                        LuthLexerUtils.LexEqualsToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexEqualsToken(_stringWalker, _syntaxTokenList);
 
                     break;
                 case '?':
                     if (_stringWalker.PeekCharacter(1) == '?')
-                        LuthLexerUtils.LexQuestionMarkQuestionMarkToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexQuestionMarkQuestionMarkToken(_stringWalker, _syntaxTokenList);
                     else
-                        LuthLexerUtils.LexQuestionMarkToken(_stringWalker, _syntaxTokenList);
+                        LexerUtils.LexQuestionMarkToken(_stringWalker, _syntaxTokenList);
 
                     break;
                 case '*':
-                    LuthLexerUtils.LexStarToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexStarToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '!':
-                    LuthLexerUtils.LexBangToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexBangToken(_stringWalker, _syntaxTokenList);
                     break;
                 case ';':
-                    LuthLexerUtils.LexStatementDelimiterToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexStatementDelimiterToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '(':
-                    LuthLexerUtils.LexOpenParenthesisToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexOpenParenthesisToken(_stringWalker, _syntaxTokenList);
                     break;
                 case ')':
-                    LuthLexerUtils.LexCloseParenthesisToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexCloseParenthesisToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '{':
-                    LuthLexerUtils.LexOpenBraceToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexOpenBraceToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '}':
-                    LuthLexerUtils.LexCloseBraceToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexCloseBraceToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '<':
-                    LuthLexerUtils.LexOpenAngleBracketToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexOpenAngleBracketToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '>':
-                    LuthLexerUtils.LexCloseAngleBracketToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexCloseAngleBracketToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '[':
-                    LuthLexerUtils.LexOpenSquareBracketToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexOpenSquareBracketToken(_stringWalker, _syntaxTokenList);
                     break;
                 case ']':
-                    LuthLexerUtils.LexCloseSquareBracketToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexCloseSquareBracketToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '$':
-                    LuthLexerUtils.LexDollarSignToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexDollarSignToken(_stringWalker, _syntaxTokenList);
                     break;
                 case ':':
-                    LuthLexerUtils.LexColonToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexColonToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '.':
-                    LuthLexerUtils.LexMemberAccessToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexMemberAccessToken(_stringWalker, _syntaxTokenList);
                     break;
                 case ',':
-                    LuthLexerUtils.LexCommaToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexCommaToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '#':
-                    LuthLexerUtils.LexPreprocessorDirectiveToken(_stringWalker, _syntaxTokenList);
+                    LexerUtils.LexPreprocessorDirectiveToken(_stringWalker, _syntaxTokenList);
                     break;
                 default:
                     _ = _stringWalker.ReadCharacter();

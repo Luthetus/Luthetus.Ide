@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -7,13 +7,13 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
 
-public class TextEditorJsonLexer : LuthLexer
+public class TextEditorJsonLexer : Lexer
 {
     public TextEditorJsonLexer(ResourceUri resourceUri, string sourceText)
         : base(
             resourceUri,
             sourceText,
-            LuthLexerKeywords.Empty)
+            LexerKeywords.Empty)
     {
     }
 

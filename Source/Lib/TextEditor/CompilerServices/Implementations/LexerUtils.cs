@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 ///       afterwards needs to replace the last entry of 'syntaxTokens'
 ///       with something of a different class, or syntax kind.
 /// </summary>
-public static class LuthLexerUtils
+public static class LexerUtils
 {
     public static void LexNumericLiteralToken(
         StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
@@ -229,7 +229,7 @@ public static class LuthLexerUtils
     }
 
     public static void LexIdentifierOrKeywordOrKeywordContextual(
-        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens, LuthLexerKeywords lexerKeywords)
+        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens, LexerKeywords lexerKeywords)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 

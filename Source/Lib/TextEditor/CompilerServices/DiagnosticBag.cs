@@ -1,10 +1,10 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Enums;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using System.Collections;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class LuthDiagnosticBag : IEnumerable<TextEditorDiagnostic>
+public class DiagnosticBag : IEnumerable<TextEditorDiagnostic>
 {
     private readonly List<TextEditorDiagnostic> _diagnosticsBag = new();
 

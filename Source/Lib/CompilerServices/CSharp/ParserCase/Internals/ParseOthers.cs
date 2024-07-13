@@ -1,10 +1,10 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.CompilerServices.Lang.CSharp.Facts;
-using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
@@ -13,7 +13,7 @@ public static class ParseOthers
     public static void HandleNamespaceReference(
         IdentifierToken consumedIdentifierToken,
         NamespaceGroupNode resolvedNamespaceGroupNode,
-        ParserModel model)
+        CSharpParserModel model)
     {
         model.Binder.BindNamespaceReference(consumedIdentifierToken, model);
 
@@ -57,7 +57,7 @@ public static class ParseOthers
         }
     }
 
-    public static void HandleNamespaceIdentifier(ParserModel model)
+    public static void HandleNamespaceIdentifier(CSharpParserModel model)
     {
         var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
 
@@ -101,7 +101,7 @@ public static class ParseOthers
         ISyntaxToken? operatorToken,
         IExpressionNode? rightExpressionNode,
         ExpressionDelimiter[]? extraExpressionDeliminaters,
-        ParserModel model)
+        CSharpParserModel model)
     {
         while (!model.TokenWalker.IsEof)
         {

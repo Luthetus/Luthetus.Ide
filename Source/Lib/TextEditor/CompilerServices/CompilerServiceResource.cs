@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -6,18 +6,18 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class LuthCompilerServiceResource : ILuthCompilerServiceResource
+public class CompilerServiceResource : ICompilerServiceResource
 {
-    public LuthCompilerServiceResource(
+    public CompilerServiceResource(
         ResourceUri resourceUri,
-        ILuthCompilerService compilerService)
+        ICompilerService compilerService)
     {
         ResourceUri = resourceUri;
         CompilerService = compilerService;
     }
 
     public virtual ResourceUri ResourceUri { get; }
-    public virtual ILuthCompilerService CompilerService { get; }
+    public virtual ICompilerService CompilerService { get; }
     public virtual CompilationUnit? CompilationUnit { get; set; }
     public virtual ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
 

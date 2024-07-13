@@ -1,7 +1,7 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
@@ -12,7 +12,7 @@ public class ParseFunctions
     public static void HandleFunctionInvocation(
         IdentifierToken consumedIdentifierToken,
         GenericParametersListingNode? genericParametersListingNode,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
 
@@ -37,7 +37,7 @@ public class ParseFunctions
         IdentifierToken consumedIdentifierToken,
         TypeClauseNode consumedTypeClauseNode,
         GenericArgumentsListingNode? consumedGenericArgumentsListingNode,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
@@ -86,7 +86,7 @@ public class ParseFunctions
 
     public static void HandleConstructorDefinition(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleFunctionArguments(
             (OpenParenthesisToken)model.TokenWalker.Consume(),
@@ -133,7 +133,7 @@ public class ParseFunctions
         }
     }
 
-    public static void HandleConstructorInvocation(ParserModel model)
+    public static void HandleConstructorInvocation(CSharpParserModel model)
     {
         var newKeywordToken = model.TokenWalker.Consume();
 
@@ -173,7 +173,7 @@ public class ParseFunctions
         model.SyntaxStack.Push(constructorInvocationExpressionNode);
     }
 
-    public static void HandleObjectInitialization(OpenBraceToken consumedOpenBraceToken, ParserModel model)
+    public static void HandleObjectInitialization(OpenBraceToken consumedOpenBraceToken, CSharpParserModel model)
     {
         if (SyntaxKind.CloseBraceToken == model.TokenWalker.Peek(0).SyntaxKind)
         {
@@ -268,7 +268,7 @@ public class ParseFunctions
     public static void HandleFunctionReferences(
         IdentifierToken consumedIdentifierToken,
         ImmutableArray<FunctionDefinitionNode> functionDefinitionNodes,
-        ParserModel model)
+        CSharpParserModel model)
     {
         var concatenatedGetTextResults = string.Join(
             '\n',
@@ -325,7 +325,7 @@ public class ParseFunctions
     /// <summary>Use this method for function invocation, whereas <see cref="HandleFunctionArguments"/> should be used for function definition.</summary>
     public static void HandleFunctionParameters(
         OpenParenthesisToken consumedOpenParenthesisToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (SyntaxKind.CloseParenthesisToken == model.TokenWalker.Current.SyntaxKind)
         {
@@ -431,7 +431,7 @@ public class ParseFunctions
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
     public static void HandleFunctionArguments(
         OpenParenthesisToken consumedOpenParenthesisToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (SyntaxKind.CloseParenthesisToken == model.TokenWalker.Peek(0).SyntaxKind)
         {

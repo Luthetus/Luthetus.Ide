@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
@@ -7,7 +8,6 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -71,7 +71,7 @@ public interface ITextEditorModel
 	/// </summary>
 	public string FileExtension { get; }
     public IDecorationMapper DecorationMapper { get; }
-    public ILuthCompilerService CompilerService { get; }
+    public ICompilerService CompilerService { get; }
     public SaveFileHelper TextEditorSaveFileHelper { get; }
     public int EditBlockIndex { get; }
     public bool IsDirty { get; }

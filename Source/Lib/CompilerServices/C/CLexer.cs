@@ -1,7 +1,6 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.CompilerServices.Lang.C.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
@@ -9,17 +8,17 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Lang.C.Facts;
 
 namespace Luthetus.CompilerServices.Lang.C;
 
-public class CLexer : LuthLexer
+public class CLexer : Lexer
 {
-    public CLexer(
-            ResourceUri resourceUri, string sourceText)
+    public CLexer(ResourceUri resourceUri, string sourceText)
         : base(
             resourceUri,
             sourceText,
-            new LuthLexerKeywords(CLanguageFacts.Keywords.ALL_LIST, CLanguageFacts.Keywords.CONTROL_KEYWORDS, ImmutableArray<string>.Empty))
+            new LexerKeywords(CLanguageFacts.Keywords.ALL_LIST, CLanguageFacts.Keywords.CONTROL_KEYWORDS, ImmutableArray<string>.Empty))
     {
         _cSyntaxTree = new GenericSyntaxTree(CLanguageDefinition);
     }

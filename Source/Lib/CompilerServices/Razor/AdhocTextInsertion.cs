@@ -1,5 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using System.Text;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.Lang.Razor;
 

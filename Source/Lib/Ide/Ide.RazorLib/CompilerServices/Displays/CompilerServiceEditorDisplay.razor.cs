@@ -167,7 +167,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
         public TextEditorGroup? EditorTextEditorGroup { get; set; }
         public Key<TextEditorViewModel> ActiveViewModelKey { get; set; }
         public TextEditorViewModel? ViewModel { get; set; }
-        public ILuthCompilerServiceResource? InterfaceCompilerServiceResource { get; set; }
+        public ICompilerServiceResource? InterfaceCompilerServiceResource { get; set; }
         public CSharpResource? CSharpResource { get; set; }
         public TextEditorModel? TextEditorModel { get; set; }
         public int? PrimaryCursorPositionIndex { get; set; }

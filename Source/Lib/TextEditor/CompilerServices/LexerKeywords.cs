@@ -1,15 +1,15 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
-public class LuthLexerKeywords
+public class LexerKeywords
 {
-    public static readonly LuthLexerKeywords Empty = new LuthLexerKeywords(
+    public static readonly LexerKeywords Empty = new LexerKeywords(
         ImmutableArray<string>.Empty,
         ImmutableArray<string>.Empty,
         ImmutableArray<string>.Empty);
 
-    public LuthLexerKeywords(
+    public LexerKeywords(
         ImmutableArray<string> nonContextualKeywords,
         ImmutableArray<string> controlKeywords,
         ImmutableArray<string> contextualKeywords)

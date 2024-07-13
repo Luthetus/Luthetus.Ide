@@ -5,14 +5,14 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
-public interface ILuthCompilerService
+public interface ICompilerService
 {
     public event Action? ResourceRegistered;
     public event Action? ResourceParsed;
     public event Action? ResourceDisposed;
 
-    public ImmutableArray<ILuthCompilerServiceResource> CompilerServiceResources { get; }
-    public ILuthBinder? Binder { get; }
+    public ImmutableArray<ICompilerServiceResource> CompilerServiceResources { get; }
+    public IBinder? Binder { get; }
 
     /// <summary>Expected to be concurrency safe with <see cref="DisposeResource"/></summary>
     public void RegisterResource(ResourceUri resourceUri);
@@ -20,7 +20,7 @@ public interface ILuthCompilerService
     /// <summary>Expected to be an <see cref="Microsoft.Extensions.Hosting.IHostedService"/> (or anything which performs background task work)</summary>
     public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList);
 
-    public ILuthCompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri);
+    public ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri);
 
     /// <summary>
     /// (2024-01-28)

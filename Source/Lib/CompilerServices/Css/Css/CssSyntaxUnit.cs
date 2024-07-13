@@ -1,5 +1,5 @@
-﻿using Luthetus.CompilerServices.Lang.Css.Css.SyntaxObjects;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.CompilerServices.Lang.Css.Css.SyntaxObjects;
 
 namespace Luthetus.CompilerServices.Lang.Css.Css;
 
@@ -7,12 +7,16 @@ public class CssSyntaxUnit
 {
     public CssSyntaxUnit(
         CssDocumentSyntax cssDocumentSyntax,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         CssDocumentSyntax = cssDocumentSyntax;
         this.diagnosticBag = diagnosticBag;
     }
 
     public CssDocumentSyntax CssDocumentSyntax { get; }
-    public LuthDiagnosticBag diagnosticBag { get; }
+    /// <summary>
+    /// TODO: Why is this named "diagnosticBag" and in the constructor "this.diagnosticBag is used"...
+    ///       ...(am seeing this on 2024-07-12, I presume about a year after it was written).
+    /// </summary> 
+    public DiagnosticBag diagnosticBag { get; }
 }

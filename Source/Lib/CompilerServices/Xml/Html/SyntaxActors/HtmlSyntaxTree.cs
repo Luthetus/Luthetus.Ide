@@ -1,5 +1,10 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Text;
+using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
 using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
 using Luthetus.CompilerServices.Lang.Xml.Html.ExtensionMethods;
@@ -7,11 +12,6 @@ using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxEnums;
 using Luthetus.CompilerServices.Lang.Xml.Html.Facts;
 using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects.Builders;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
 namespace Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 
@@ -35,7 +35,7 @@ public static class HtmlSyntaxTree
                     "document")),
         };
 
-        var textEditorHtmlDiagnosticBag = new LuthDiagnosticBag();
+        var textEditorHtmlDiagnosticBag = new DiagnosticBag();
 
         rootTagSyntaxBuilder.Children = HtmlSyntaxTreeStateMachine
             .ParseTagChildContent(
@@ -55,7 +55,7 @@ public static class HtmlSyntaxTree
         /// <summary>Invocation of this method requires the stringWalker to have <see cref="StringWalker.PeekCharacter" /> of 0 be equal to <see cref="HtmlFacts.OPEN_TAG_BEGINNING" /></summary>
         public static IHtmlSyntaxNode ParseTag(
             StringWalker stringWalker,
-            LuthDiagnosticBag diagnosticBag,
+            DiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             if (stringWalker.PeekForSubstring(
@@ -201,7 +201,7 @@ public static class HtmlSyntaxTree
         /// <summary>Invocation of this method requires the stringWalker to have <see cref="StringWalker.PeekCharacter" /> of 0 be equal to the first character that is part of the tag's name</summary>
         public static TagNameNode ParseTagName(
             StringWalker stringWalker,
-            LuthDiagnosticBag diagnosticBag,
+            DiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
@@ -267,7 +267,7 @@ public static class HtmlSyntaxTree
 
         public static List<IHtmlSyntax> ParseTagChildContent(
             StringWalker stringWalker,
-            LuthDiagnosticBag diagnosticBag,
+            DiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var startingPositionIndex = stringWalker.PositionIndex;
@@ -345,7 +345,7 @@ public static class HtmlSyntaxTree
 
         public static List<IHtmlSyntaxNode> ParseInjectedLanguageCodeBlock(
             StringWalker stringWalker,
-            LuthDiagnosticBag diagnosticBag,
+            DiagnosticBag diagnosticBag,
             InjectedLanguageDefinition injectedLanguageDefinition)
         {
             var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -375,7 +375,7 @@ public static class HtmlSyntaxTree
 
         public static AttributeNode ParseAttribute(
             StringWalker stringWalker,
-            LuthDiagnosticBag diagnosticBag,
+            DiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             var attributeNameSyntax = ParseAttributeName(
@@ -397,7 +397,7 @@ public static class HtmlSyntaxTree
         /// <summary>currentCharacterIn:<br/> -Any character that can start an attribute name<br/> currentCharacterOut:<br/> -<see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>
         public static AttributeNameNode ParseAttributeName(
             StringWalker stringWalker,
-            LuthDiagnosticBag diagnosticBag,
+            DiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             // When ParseAttributeName is invoked the PositionIndex is always 1 character too far
@@ -448,7 +448,7 @@ public static class HtmlSyntaxTree
         /// <summary>Returns placeholder match attribute value if fails to read an attribute value<br/> <br/> currentCharacterIn:<br/> -<see cref="WhitespaceFacts.ALL_LIST"/> (whitespace)<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/><br/> currentCharacterOut:<br/> -<see cref="HtmlFacts.ATTRIBUTE_VALUE_ENDING"/><br/> -<see cref="HtmlFacts.OPEN_TAG_ENDING_OPTIONS"/></summary>
         private static bool TryReadAttributeValue(
             StringWalker stringWalker,
-            LuthDiagnosticBag diagnosticBag,
+            DiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition,
             out AttributeValueNode attributeValueSyntax)
         {
@@ -490,7 +490,7 @@ public static class HtmlSyntaxTree
         /// <summary> currentCharacterIn:<br/> -<see cref="HtmlFacts.SEPARATOR_FOR_ATTRIBUTE_NAME_AND_ATTRIBUTE_VALUE"/><br/> currentCharacterOut:<br/> -<see cref="HtmlFacts.ATTRIBUTE_VALUE_ENDING"/></summary>
         public static AttributeValueNode ParseAttributeValue(
             StringWalker stringWalker,
-            LuthDiagnosticBag diagnosticBag,
+            DiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             // Suppress these unused parameters because all 'Parse...()' methods should take them for consistency.
@@ -574,7 +574,7 @@ public static class HtmlSyntaxTree
 
         public static CommentNode ParseComment(
             StringWalker stringWalker,
-            LuthDiagnosticBag diagnosticBag,
+            DiagnosticBag diagnosticBag,
             InjectedLanguageDefinition? injectedLanguageDefinition)
         {
             // Suppress these unused parameters because all 'Parse...()' methods should take them for consistency.

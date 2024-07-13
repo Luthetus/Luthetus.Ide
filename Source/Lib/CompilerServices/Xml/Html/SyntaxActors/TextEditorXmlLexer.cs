@@ -1,18 +1,18 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
 
-public class TextEditorXmlLexer : LuthLexer
+public class TextEditorXmlLexer : Lexer
 {
     public TextEditorXmlLexer(
             ResourceUri resourceUri, string sourceText)
         : base(
             resourceUri,
             sourceText,
-            LuthLexerKeywords.Empty)
+            LexerKeywords.Empty)
     {
     }
 

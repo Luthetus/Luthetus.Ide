@@ -1,9 +1,9 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
@@ -11,126 +11,126 @@ public class ParseDefaultKeywords
 {
     public static void HandleAsTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleBaseTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleBoolTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleBreakTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleByteTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleCaseTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleCatchTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleCharTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleCheckedTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleConstTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleContinueTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleDecimalTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleDefaultTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleDelegateTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleDoTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleDoubleTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleElseTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleEnumTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleStorageModifierTokenKeyword(
             consumedKeywordToken,
@@ -143,210 +143,210 @@ public class ParseDefaultKeywords
 
     public static void HandleEventTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleExplicitTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleExternTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleFalseTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleFinallyTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleFixedTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleFloatTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleForTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleForeachTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleGotoTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleImplicitTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleInTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleIntTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleIsTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleLockTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleLongTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleNullTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleObjectTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleOperatorTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleOutTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleParamsTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleProtectedTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         model.SyntaxStack.Push(consumedKeywordToken);
     }
 
     public static void HandleReadonlyTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleRefTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleSbyteTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleShortTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleSizeofTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleStackallocTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleStringTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleStructTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleStorageModifierTokenKeyword(
             consumedKeywordToken,
@@ -355,112 +355,112 @@ public class ParseDefaultKeywords
 
     public static void HandleSwitchTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleThisTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleThrowTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleTrueTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleTryTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleTypeofTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleUintTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleUlongTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleUncheckedTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleUnsafeTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleUshortTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleVoidTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleTypeIdentifierKeyword(consumedKeywordToken, model);
     }
 
     public static void HandleVolatileTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleWhileTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleUnrecognizedTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleDefault(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
 
         if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(consumedKeywordToken.SyntaxKind))
@@ -478,7 +478,7 @@ public class ParseDefaultKeywords
 
     public static void HandleTypeIdentifierKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
 
         if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(consumedKeywordToken.SyntaxKind))
@@ -500,7 +500,7 @@ public class ParseDefaultKeywords
 
     public static void HandleNewTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         var typeClauseToken = model.TokenWalker.MatchTypeClauseNode(model);
 
@@ -607,63 +607,63 @@ public class ParseDefaultKeywords
 
     public static void HandlePublicTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         model.SyntaxStack.Push(consumedKeywordToken);
     }
 
     public static void HandleInternalTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         model.SyntaxStack.Push(consumedKeywordToken);
     }
 
     public static void HandlePrivateTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         model.SyntaxStack.Push(consumedKeywordToken);
     }
 
     public static void HandleStaticTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleOverrideTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleVirtualTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleAbstractTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleSealedTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // TODO: Implement this method
     }
 
     public static void HandleIfTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         var openParenthesisToken = model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
@@ -694,7 +694,7 @@ public class ParseDefaultKeywords
 
     public static void HandleUsingTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         ParseOthers.HandleNamespaceIdentifier(model);
 
@@ -718,7 +718,7 @@ public class ParseDefaultKeywords
 
     public static void HandleInterfaceTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         ParseDefaultKeywords.HandleStorageModifierTokenKeyword(
             consumedKeywordToken,
@@ -741,7 +741,7 @@ public class ParseDefaultKeywords
 	/// </summary>
     public static void HandleStorageModifierTokenKeyword(
         ISyntaxToken consumedStorageModifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
 		// Given: public class MyClass<T> { }
 		// Then: MyClass
@@ -849,7 +849,7 @@ public class ParseDefaultKeywords
 
     public static void HandleClassTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         HandleStorageModifierTokenKeyword(
             consumedKeywordToken,
@@ -858,7 +858,7 @@ public class ParseDefaultKeywords
 
     public static void HandleNamespaceTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         ParseOthers.HandleNamespaceIdentifier(model);
 
@@ -886,7 +886,7 @@ public class ParseDefaultKeywords
 
     public static void HandleReturnTokenKeyword(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         ParseOthers.HandleExpression(
             null,

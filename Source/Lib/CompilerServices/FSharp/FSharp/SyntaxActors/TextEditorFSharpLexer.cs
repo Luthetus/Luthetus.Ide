@@ -1,7 +1,6 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.CompilerServices.Lang.FSharp.FSharp.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
@@ -9,10 +8,11 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Lang.FSharp.FSharp.Facts;
 
 namespace Luthetus.CompilerServices.Lang.FSharp.FSharp.SyntaxActors;
 
-public class TextEditorFSharpLexer : LuthLexer
+public class TextEditorFSharpLexer : Lexer
 {
     public static readonly GenericPreprocessorDefinition FSharpPreprocessorDefinition = new(
         "#",
@@ -42,7 +42,7 @@ public class TextEditorFSharpLexer : LuthLexer
         : base(
             resourceUri,
             sourceText,
-            new LuthLexerKeywords(FSharpKeywords.ALL, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
+            new LexerKeywords(FSharpKeywords.ALL, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
     {
         _fSharpSyntaxTree = new GenericSyntaxTree(FSharpLanguageDefinition);
     }

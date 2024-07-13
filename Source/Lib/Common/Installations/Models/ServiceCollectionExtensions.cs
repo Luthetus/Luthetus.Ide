@@ -53,7 +53,7 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ICommonComponentRenderers>(_ => _commonRendererTypes)
             .AddCommonFactories(hostingInformation, commonConfig)
-            .AddScoped<LuthetusCommonBackgroundTaskApi>();
+            .AddScoped<CommonBackgroundTaskApi>();
 
         return services;
     }

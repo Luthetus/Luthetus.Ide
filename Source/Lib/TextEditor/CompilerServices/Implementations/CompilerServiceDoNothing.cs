@@ -2,9 +2,9 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
-public class LuthCompilerServiceDoNothing : LuthCompilerService
+public class CompilerServiceDoNothing : CompilerService
 {
-    public LuthCompilerServiceDoNothing() : base(null)
+    public CompilerServiceDoNothing() : base(null)
     {
     }
 

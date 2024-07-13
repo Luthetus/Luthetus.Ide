@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -9,9 +9,9 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 /// some data should only last for the length of a particular resource being parsed.
 /// Opposed to the lifetime of the <see cref="CSharpBinder"/> instance.
 /// </summary>
-public interface ILuthBinderSession
+public interface IBinderSession
 {
-    public ILuthBinder Binder { get; }
+    public IBinder Binder { get; }
     public IBoundScope CurrentScope { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }

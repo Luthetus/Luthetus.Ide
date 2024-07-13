@@ -7,12 +7,12 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 public class TokenWalker
 {
     private readonly ImmutableArray<ISyntaxToken> _tokenList;
-    private readonly LuthDiagnosticBag _diagnosticBag;
+    private readonly DiagnosticBag _diagnosticBag;
 
     private int _index;
 	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore, Action clearStateAction)? _deferredParsingTuple;
 
-    public TokenWalker(ImmutableArray<ISyntaxToken> tokenList, LuthDiagnosticBag diagnosticBag)
+    public TokenWalker(ImmutableArray<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
     {
         _tokenList = tokenList;
         _diagnosticBag = diagnosticBag;

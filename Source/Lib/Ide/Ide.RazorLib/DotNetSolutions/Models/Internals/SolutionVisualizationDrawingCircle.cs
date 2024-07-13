@@ -41,7 +41,7 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 		
 		var targetDisplayName = "unknown";
 
-		if (Item is ILuthCompilerServiceResource compilerServiceResource)
+		if (Item is ICompilerServiceResource compilerServiceResource)
 		{
 			var absolutePath = environmentProvider.AbsolutePathFactory(compilerServiceResource.ResourceUri.Value, false);
 			targetDisplayName = absolutePath.NameWithExtension;

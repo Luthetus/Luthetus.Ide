@@ -1,3 +1,6 @@
+using System.Collections.Immutable;
+using System.Text;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -13,9 +16,6 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
-using System.Text;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -59,7 +59,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public DateTime ResourceLastWriteTime => _resourceLastWriteTime ?? _textEditorModel.ResourceLastWriteTime;
     public string FileExtension => _fileExtension ?? _textEditorModel.FileExtension;
     public IDecorationMapper DecorationMapper => _decorationMapper ?? _textEditorModel.DecorationMapper;
-    public ILuthCompilerService CompilerService => _compilerService ?? _textEditorModel.CompilerService;
+    public ICompilerService CompilerService => _compilerService ?? _textEditorModel.CompilerService;
     public SaveFileHelper TextEditorSaveFileHelper => _textEditorSaveFileHelper ?? _textEditorModel.TextEditorSaveFileHelper;
     public int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
     public bool IsDirty => _isDirty;
@@ -113,7 +113,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private DateTime? _resourceLastWriteTime;
     private string? _fileExtension;
     private IDecorationMapper? _decorationMapper;
-    private ILuthCompilerService? _compilerService;
+    private ICompilerService? _compilerService;
     private SaveFileHelper? _textEditorSaveFileHelper;
     private int? _editBlockIndex;
     private bool _isDirty;

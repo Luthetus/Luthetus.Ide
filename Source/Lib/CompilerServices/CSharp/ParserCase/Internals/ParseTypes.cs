@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 
@@ -9,7 +9,7 @@ public static class ParseTypes
 {
     public static void HandleStaticClassIdentifier(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // The identifier token was already consumed, so a Backtrack() is needed.
         model.TokenWalker.Backtrack();
@@ -18,7 +18,7 @@ public static class ParseTypes
 
     public static void HandleUndefinedTypeOrNamespaceReference(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         var identifierReferenceNode = new AmbiguousIdentifierNode(consumedIdentifierToken);
 
@@ -34,7 +34,7 @@ public static class ParseTypes
     public static void HandleTypeReference(
         IdentifierToken consumedIdentifierToken,
         TypeDefinitionNode consumedTypeDefinitionNode,
-        ParserModel model)
+        CSharpParserModel model)
     {
         model.Binder.BindTypeIdentifier(consumedIdentifierToken, model);
 
@@ -62,7 +62,7 @@ public static class ParseTypes
     /// </summary>
     public static void HandleGenericParameters(
         OpenAngleBracketToken consumedOpenAngleBracketToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (SyntaxKind.CloseAngleBracketToken == model.TokenWalker.Current.SyntaxKind)
         {
@@ -114,7 +114,7 @@ public static class ParseTypes
     /// </summary>
     public static void HandleGenericArguments(
         OpenAngleBracketToken consumedOpenAngleBracketToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (SyntaxKind.CloseAngleBracketToken == model.TokenWalker.Current.SyntaxKind)
         {
@@ -163,7 +163,7 @@ public static class ParseTypes
 
     public static void HandleAttribute(
         OpenSquareBracketToken consumedOpenSquareBracketToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // Suppress unused variable warning
         _ = consumedOpenSquareBracketToken;
@@ -199,7 +199,7 @@ public static class ParseTypes
         }
     }
 
-    public static TypeClauseNode MatchTypeClause(ParserModel model)
+    public static TypeClauseNode MatchTypeClause(CSharpParserModel model)
     {
         ISyntaxToken syntaxToken;
 
@@ -274,7 +274,7 @@ public static class ParseTypes
     /// <summary>TODO: Correctly parse object initialization. For now, just skip over it when parsing.</summary>
     public static void HandleObjectInitialization(
         OpenBraceToken consumedOpenBraceToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         ISyntaxToken shouldBeCloseBraceToken = new BadToken(consumedOpenBraceToken.TextSpan);
 
@@ -300,7 +300,7 @@ public static class ParseTypes
     public static void HandlePrimaryConstructorDefinition(
         TypeDefinitionNode typeDefinitionNode,
         OpenParenthesisToken consumedOpenParenthesisToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         ParseFunctions.HandleFunctionArguments(consumedOpenParenthesisToken, model);
         var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();

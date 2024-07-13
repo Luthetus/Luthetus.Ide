@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
@@ -10,7 +10,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 /// some data should only last for the length of a particular resource being parsed.
 /// Opposed to the lifetime of the <see cref="CSharpBinder"/> instance.
 /// </summary>
-public class CSharpBinderSession : ILuthBinderSession
+public class CSharpBinderSession : IBinderSession
 {
     public CSharpBinderSession(
         ResourceUri resourceUri,
@@ -34,6 +34,6 @@ public class CSharpBinderSession : ILuthBinderSession
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
     public ResourceUri? CurrentResourceUri { get; set; }
 
-    ILuthBinder ILuthBinderSession.Binder => Binder;
-    IBoundScope ILuthBinderSession.CurrentScope { get => CurrentScope; set => CurrentScope = (CSharpBoundScope)value; }
+    IBinder IBinderSession.Binder => Binder;
+    IBoundScope IBinderSession.CurrentScope { get => CurrentScope; set => CurrentScope = (CSharpBoundScope)value; }
 }

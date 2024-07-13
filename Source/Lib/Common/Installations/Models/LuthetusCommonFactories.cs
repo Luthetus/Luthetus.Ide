@@ -1,6 +1,6 @@
-﻿using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -58,7 +58,7 @@ public record LuthetusCommonFactories
             serviceProvider.GetRequiredService<IState<ThemeState>>(),
             serviceProvider.GetRequiredService<IDispatcher>(),
             serviceProvider.GetRequiredService<IStorageService>(),
-            serviceProvider.GetRequiredService<LuthetusCommonBackgroundTaskApi>(),
+            serviceProvider.GetRequiredService<CommonBackgroundTaskApi>(),
             serviceProvider.GetRequiredService<IBackgroundTaskService>());
 
     public Func<IServiceProvider, IThemeService> ThemeServiceFactory { get; init; } =

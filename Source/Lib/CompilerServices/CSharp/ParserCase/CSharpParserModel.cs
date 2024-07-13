@@ -1,20 +1,20 @@
-using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
-public class ParserModel
+public class CSharpParserModel
 {
-    public ParserModel(
+    public CSharpParserModel(
         CSharpBinder binder,
         CSharpBinderSession binderSession,
         TokenWalker tokenWalker,
         Stack<ISyntax> syntaxStack,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder,
         Action<CodeBlockNode>? finalizeNamespaceFileScopeCodeBlockNodeAction,
@@ -35,7 +35,7 @@ public class ParserModel
     public CSharpBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
-    public LuthDiagnosticBag DiagnosticBag { get; }
+    public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
     /// <summary>

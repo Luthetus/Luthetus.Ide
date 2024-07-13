@@ -1,11 +1,11 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
 
-public sealed class RazorCompilerService : LuthCompilerService
+public sealed class RazorCompilerService : CompilerService
 {
     private readonly CSharpCompilerService _cSharpCompilerService;
     private readonly IEnvironmentProvider _environmentProvider;

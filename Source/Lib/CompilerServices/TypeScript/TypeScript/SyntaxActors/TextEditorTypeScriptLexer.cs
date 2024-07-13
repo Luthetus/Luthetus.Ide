@@ -1,7 +1,6 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.CompilerServices.Lang.TypeScript.TypeScript.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
@@ -9,10 +8,11 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Lang.TypeScript.TypeScript.Facts;
 
 namespace Luthetus.CompilerServices.Lang.TypeScript.TypeScript.SyntaxActors;
 
-public class TextEditorTypeScriptLexer : LuthLexer
+public class TextEditorTypeScriptLexer : Lexer
 {
     public static readonly GenericPreprocessorDefinition TypeScriptPreprocessorDefinition = new(
         "#",
@@ -41,7 +41,7 @@ public class TextEditorTypeScriptLexer : LuthLexer
         : base(
             resourceUri,
             sourceText,
-            new LuthLexerKeywords(TypeScriptKeywords.ALL, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
+            new LexerKeywords(TypeScriptKeywords.ALL, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
     {
         _typeScriptSyntaxTree = new GenericSyntaxTree(TypeScriptLanguageDefinition);
     }

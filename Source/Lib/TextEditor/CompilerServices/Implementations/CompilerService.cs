@@ -10,16 +10,16 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
-public class LuthCompilerService : ILuthCompilerService
+public class CompilerService : ICompilerService
 {
-    protected readonly Dictionary<ResourceUri, ILuthCompilerServiceResource> _resourceMap = new();
+    protected readonly Dictionary<ResourceUri, ICompilerServiceResource> _resourceMap = new();
     protected readonly object _resourceMapLock = new();
     protected readonly ITextEditorService _textEditorService;
 
-    protected LuthCompilerServiceOptions _compilerServiceOptions = new();
+    protected CompilerServiceOptions _compilerServiceOptions = new();
 
     /// <param name="getLexerFunc">Takes as arguments the resource uri and the source text.</param>
-    public LuthCompilerService(ITextEditorService textEditorService)
+    public CompilerService(ITextEditorService textEditorService)
     {
         _textEditorService = textEditorService;
     }
@@ -37,9 +37,9 @@ public class LuthCompilerService : ILuthCompilerService
     /// </summary>
     public event Action? ResourceDisposed;
 
-    public virtual ILuthBinder Binder { get; protected set; } = new LuthBinder();
+    public virtual IBinder Binder { get; protected set; } = new Binder();
 
-    public virtual ImmutableArray<ILuthCompilerServiceResource> CompilerServiceResources =>
+    public virtual ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
         _resourceMap.Values.ToImmutableArray();
 
     public virtual void RegisterResource(ResourceUri resourceUri)
@@ -51,7 +51,7 @@ public class LuthCompilerService : ILuthCompilerService
 
             var resource = _compilerServiceOptions.RegisterResourceFunc is not null
                 ? _compilerServiceOptions.RegisterResourceFunc.Invoke(resourceUri)
-                : new LuthCompilerServiceResource(resourceUri, this);
+                : new CompilerServiceResource(resourceUri, this);
 
             _resourceMap.Add(resourceUri, resource);
         }
@@ -60,7 +60,7 @@ public class LuthCompilerService : ILuthCompilerService
         ResourceRegistered?.Invoke();
     }
 
-    public virtual ILuthCompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
+    public virtual ICompilerServiceResource? GetCompilerServiceResourceFor(ResourceUri resourceUri)
     {
         var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
@@ -186,7 +186,7 @@ public class LuthCompilerService : ILuthCompilerService
 				if (_compilerServiceOptions.GetLexerFunc is null)
 					return;
 
-				ILuthLexer lexer;
+				ILexer lexer;
 				lock (_resourceMapLock)
 				{
 					if (!_resourceMap.ContainsKey(resourceUri))
@@ -214,7 +214,7 @@ public class LuthCompilerService : ILuthCompilerService
 					if (_compilerServiceOptions.GetParserFunc is null || Binder is null)
 						return;
 
-					ILuthParser parser;
+					IParser parser;
 					lock (_resourceMapLock)
 					{
 						if (!_resourceMap.ContainsKey(resourceUri))

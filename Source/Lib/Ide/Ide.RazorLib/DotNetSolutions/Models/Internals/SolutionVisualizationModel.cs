@@ -119,7 +119,7 @@ public class SolutionVisualizationModel
 	}
 
 	private void DrawSolution(
-		ILuthCompilerServiceResource dotNetSolutionResource,
+		ICompilerServiceResource dotNetSolutionResource,
 		SolutionVisualizationModel localSolutionVisualizationModel,
 		int radius,
 		int centerX,
@@ -150,7 +150,7 @@ public class SolutionVisualizationModel
 	}
 
 	private void DrawProjects(
-		ImmutableArray<ILuthCompilerServiceResource> cSharpProjectResourceList,
+		ImmutableArray<ICompilerServiceResource> cSharpProjectResourceList,
 		SolutionVisualizationModel localSolutionVisualizationModel,
 		int radius,
 		int centerX,
@@ -207,7 +207,7 @@ public class SolutionVisualizationModel
 	}
 
 	private void DrawClasses(
-		ImmutableArray<ILuthCompilerServiceResource> cSharpResourceList,
+		ImmutableArray<ICompilerServiceResource> cSharpResourceList,
 		SolutionVisualizationModel localSolutionVisualizationModel,
 		int radius,
 		int centerX,
