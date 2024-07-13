@@ -25,8 +25,6 @@ public partial record TestExplorerState
 			return Task.CompletedTask;
 		}
 		
-		/*
-		TODO: This
 		[EffectMethod(typeof(TestExplorerState.ShouldInitializeEffect))]
 		public Task HandleShouldDiscoverTestsEffect(IDispatcher dispatcher)
 		{
@@ -35,6 +33,5 @@ public partial record TestExplorerState
             _ideBackgroundTaskApi.TestExplorer.DiscoverTests();
 			return Task.CompletedTask;
 		}
-		*/
 	}
 }

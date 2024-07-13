@@ -38,6 +38,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
+	[Inject]
+	private IDispatcher Dispatcher { get; set; } = null!;
 
 	private readonly ElementDimensions _treeViewElementDimensions = new();
 	private readonly ElementDimensions _detailsElementDimensions = new();
@@ -90,6 +92,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 	            }
 	        });
 		}
+		
+		Dispatcher.Dispatch(new TestExplorerState.ShouldInitializeEffect());
 
         base.OnInitialized();
     }

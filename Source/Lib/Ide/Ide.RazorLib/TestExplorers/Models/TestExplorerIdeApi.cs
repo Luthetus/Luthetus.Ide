@@ -4,6 +4,8 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
@@ -21,10 +23,11 @@ public class TestExplorerIdeApi
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly ITextEditorService _textEditorService;
-    private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
-	private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
+    private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
+	private readonly IState<TerminalState> _terminalStateWrap;
+	private readonly IState<TestExplorerState> _testExplorerStateWrap;
     private readonly IDispatcher _dispatcher;
 
     public TestExplorerIdeApi(
@@ -33,19 +36,21 @@ public class TestExplorerIdeApi
         ITreeViewService treeViewService,
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
+        DotNetCliOutputParser dotNetCliOutputParser,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
-		DotNetCliOutputParser dotNetCliOutputParser,
         IState<TerminalState> terminalStateWrap,
+        IState<TestExplorerState> testExplorerStateWrap,
         IDispatcher dispatcher)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
 		_textEditorService = textEditorService;
-        _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
+		_backgroundTaskService = backgroundTaskService;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
+        _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
 		_terminalStateWrap = terminalStateWrap;
-        _backgroundTaskService = backgroundTaskService;
+		_testExplorerStateWrap = testExplorerStateWrap;
         _dispatcher = dispatcher;
     }
 
@@ -182,5 +187,68 @@ public class TestExplorerIdeApi
         }));
 
         return Task.CompletedTask;
+    }
+    
+    public void DiscoverTests()
+    {
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "DiscoverTests",
+            DiscoverTestsAsync);
+    }
+    
+    private Task DiscoverTestsAsync()
+    {
+    	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+
+        if (dotNetSolutionModel is null)
+            return Task.CompletedTask;
+    	
+    	var localTestExplorerState = _testExplorerStateWrap.Value;
+    
+    	var progressBarModel = new ProgressBarModel(0, $"Discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}");
+
+		NotificationHelper.DispatchProgress(
+	        "DiscoverTestsAsync",
+	        progressBarModel,
+	        _commonComponentRenderers,
+	        _dispatcher,
+	        TimeSpan.FromMilliseconds(-1));
+
+		_ = Task.Run(async () =>
+    	{
+    		try
+    		{
+    			var completionPercentPerProject = 1.0 / (double)localTestExplorerState.ProjectTestModelList.Count;
+	    		var projectsHandled = 0;
+	    	
+	    		foreach (var projectTestModel in localTestExplorerState.ProjectTestModelList)
+		    	{
+		    		await Task.Delay(1_000);
+		    		progressBarModel.SetProgress(
+		    			projectsHandled * completionPercentPerProject,
+		    			$"{projectsHandled + 1}/{localTestExplorerState.ProjectTestModelList.Count}: {projectTestModel.AbsolutePath.NameWithExtension}");
+		    		projectsHandled++;
+		    	}
+		    	
+		    	progressBarModel.SetProgress(1, $"Finished discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+    		}
+    		catch (Exception e)
+			{
+				var currentProgress = progressBarModel.GetProgress();
+				progressBarModel.SetProgress(currentProgress, e.ToString());
+			}
+			finally
+			{
+				progressBarModel.Dispose();
+			}
+	    		
+    		
+    		return Task.CompletedTask;
+    	});
+    	
+    	return Task.CompletedTask;
     }
 }

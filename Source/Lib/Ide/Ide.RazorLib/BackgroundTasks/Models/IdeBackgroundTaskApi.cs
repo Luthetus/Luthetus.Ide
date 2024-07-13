@@ -21,6 +21,7 @@ using Luthetus.Ide.RazorLib.TestExplorers.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.TestExplorers.States;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
@@ -44,6 +45,7 @@ public class IdeBackgroundTaskApi
     private readonly IState<GitState> _gitStateWrap;
 	private readonly GitCliOutputParser _gitCliOutputParser;
 	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
+	private readonly IState<TestExplorerState> _testExplorerStateWrap;
 
     public IdeBackgroundTaskApi(
         IBackgroundTaskService backgroundTaskService,
@@ -64,6 +66,7 @@ public class IdeBackgroundTaskApi
         IState<GitState> gitStateWrap,
         GitCliOutputParser gitCliOutputParser,
         IDecorationMapperRegistry decorationMapperRegistry,
+        IState<TestExplorerState> testExplorerStateWrap,
         IServiceProvider serviceProvider)
     {
         _backgroundTaskService = backgroundTaskService;
@@ -84,6 +87,7 @@ public class IdeBackgroundTaskApi
         _gitStateWrap = gitStateWrap;
 		_gitCliOutputParser = gitCliOutputParser;
 		_decorationMapperRegistry = decorationMapperRegistry;
+		_testExplorerStateWrap = testExplorerStateWrap;
 
         CompilerService = new CompilerServiceIdeApi(
             this,
@@ -154,9 +158,10 @@ public class IdeBackgroundTaskApi
             _treeViewService,
 			_textEditorService,
             _backgroundTaskService,
-            _dotNetSolutionStateWrap,
 			_dotNetCliOutputParser,
+            _dotNetSolutionStateWrap,
 			_terminalStateWrap,
+			_testExplorerStateWrap,
             _dispatcher);
 
 		Git = new GitIdeApi(
