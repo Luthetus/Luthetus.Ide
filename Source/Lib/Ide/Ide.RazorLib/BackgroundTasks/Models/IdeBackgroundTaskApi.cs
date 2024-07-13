@@ -152,7 +152,7 @@ public class IdeBackgroundTaskApi
             _backgroundTaskService,
             _dispatcher);
 
-        TestExplorer = new TestExplorerIdeApi(
+        TestExplorer = new TestExplorerScheduler(
             this,
             _commonComponentRenderers,
             _treeViewService,
@@ -181,6 +181,6 @@ public class IdeBackgroundTaskApi
     public FileSystemIdeApi FileSystem { get; }
     public FolderExplorerIdeApi FolderExplorer { get; }
     public InputFileIdeApi InputFile { get; }
-    public TestExplorerIdeApi TestExplorer { get; }
+    public TestExplorerScheduler TestExplorer { get; }
     public GitIdeApi Git { get; }
 }

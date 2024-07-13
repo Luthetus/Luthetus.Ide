@@ -189,6 +189,26 @@ public partial class TestExplorerScheduler
 			    			$"{projectsHandled + 1}/{localTestExplorerState.ProjectTestModelList.Count}: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}");
 			    		projectsHandled++;
 		            }
+		            
+		            // The previous foreach loop is hackily causing the 'discover' terminal command to be enqueued
+		            // to the 'executionTerminal'.
+		            //
+		            // The issue is, we need to know when the terminal command finishes.
+		            // There are ways to do this, but we are using the an awkward piece of state
+		            // that we shouldn't be touching (the treeview).
+		            //
+		            // If we enqueue a new terminal command, which does nothing in terminal, but has a continue with func
+		            // we can time the code to run once all the tests have been discovered.
+		            //
+		            // TODO: This solution is incredibly hacky and nonsensical. It needs to be reworked.
+		            
+		            var terminalCommand = new TerminalCommand(
+					    Key<TerminalCommand>.NewKey(),
+					    new FormattedCommand(string.Empty, Array.Empty<string>()),
+					    ContinueWith: Task_SumEachProjectTestCount);
+		            
+		            var executionTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+		            executionTerminal.EnqueueCommand(terminalCommand);
 		        }
 		    	
 		    	progressBarModel.SetProgress(1, $"Finished discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
@@ -205,5 +225,31 @@ public partial class TestExplorerScheduler
     	});
     	
     	return Task.CompletedTask;
+    }
+    
+    public Task Task_SumEachProjectTestCount()
+    {
+    	var totalTestCount = 0;
+    
+    	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+        {
+        	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
+        		return Task.CompletedTask;
+        		
+            foreach (var treeViewProject in treeViewAdhoc.ChildList)
+            {
+            	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
+            		return Task.CompletedTask;
+            
+            	totalTestCount += treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0;
+            }
+        }
+    
+    	_dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+        {
+            TotalTestCount = totalTestCount
+        }));
+        
+        return Task.CompletedTask;
     }
 }

@@ -31,7 +31,7 @@ public partial class TestExplorerScheduler : IStateScheduler
 	private readonly IState<TestExplorerState> _testExplorerStateWrap;
     private readonly IDispatcher _dispatcher;
 
-    public TestExplorerIdeApi(
+    public TestExplorerScheduler(
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         ICommonComponentRenderers commonComponentRenderers,
         ITreeViewService treeViewService,
