@@ -237,6 +237,16 @@ public partial class TestExplorerScheduler
     
     	var totalTestCount = 0;
     	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
+    	
+    	var containsTestsTreeViewGroup = new TreeViewGroup(
+	    	"Found",
+            true,
+            true);
+            
+        var noTestsTreeViewGroup = new TreeViewGroup(
+	    	"Empty",
+            true,
+            true);
     
     	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
         {
@@ -250,6 +260,11 @@ public partial class TestExplorerScheduler
             
             	totalTestCount += treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0;
             	
+            	if ((treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0) > 0)
+            		containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            	else
+            		noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            	
             	if (treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput is not null)
             	{
             		foreach (var output in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
@@ -258,6 +273,17 @@ public partial class TestExplorerScheduler
 	            	}
             	}
             }
+            
+            containsTestsTreeViewGroup.LinkChildren(new(), containsTestsTreeViewGroup.ChildList);
+            noTestsTreeViewGroup.LinkChildren(new(), noTestsTreeViewGroup.ChildList);
+            
+            var nextTreeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc(
+            	containsTestsTreeViewGroup,
+            	noTestsTreeViewGroup);
+            	
+            nextTreeViewAdhoc.LinkChildren(new(), nextTreeViewAdhoc.ChildList);
+            
+            _treeViewService.SetRoot(TestExplorerState.TreeViewTestExplorerKey, nextTreeViewAdhoc);
         }
     
     	_dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
