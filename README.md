@@ -12,8 +12,8 @@ https://luthetus.github.io/Luthetus.Ide/
 
 ***Luthetus.Ide*** is an IDE, but it differentiates itself by being the ultimate PDE, or personal development environment.
 
-I hear the term "PDE" a lot in relation to Vim, I'm not sure of its origins, I think it was a contributor of [Neovim](https://github.com/neovim/neovim) named [
-TJ DeVries](https://www.youtube.com/@teej_dv) (but don't quote me on this).
+I'm not sure of the origins for the term "PDE", but I first heard it from a contributor of [Neovim](https://github.com/neovim/neovim) named [
+TJ DeVries](https://www.youtube.com/@teej_dv).
 
 If one programs with a variety of programming languages, its possible they've ended up with multiple different "IDE"(s) downloaded. Where each "IDE" corresponds to a different environment.
 
