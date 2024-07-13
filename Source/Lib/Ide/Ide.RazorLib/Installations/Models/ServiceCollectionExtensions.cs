@@ -34,9 +34,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLuthetusIdeRazorLibServices(
         this IServiceCollection services,
         LuthetusHostingInformation hostingInformation,
-        Func<IdeConfig, IdeConfig>? configure = null)
+        Func<LuthetusIdeConfig, LuthetusIdeConfig>? configure = null)
     {
-        var ideConfig = new IdeConfig();
+        var ideConfig = new LuthetusIdeConfig();
 
         if (configure is not null)
             ideConfig = configure.Invoke(ideConfig);

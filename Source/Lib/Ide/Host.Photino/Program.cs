@@ -31,7 +31,7 @@ class Program
         appBuilder.Services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
-            typeof(IdeConfig).Assembly));
+            typeof(LuthetusIdeConfig).Assembly));
 
         appBuilder.RootComponents.Add<App>("app");
 

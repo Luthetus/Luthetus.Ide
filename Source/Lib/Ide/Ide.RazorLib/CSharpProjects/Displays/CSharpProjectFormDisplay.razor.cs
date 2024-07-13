@@ -38,7 +38,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     [Inject]
     private ICommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private IdeConfig IdeConfig { get; set; } = null!;
+    private LuthetusIdeConfig IdeConfig { get; set; } = null!;
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]

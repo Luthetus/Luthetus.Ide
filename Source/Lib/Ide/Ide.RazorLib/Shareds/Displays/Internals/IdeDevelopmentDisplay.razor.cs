@@ -29,7 +29,7 @@ public partial class IdeDevelopmentDisplay : ComponentBase
                 return _compilerServicesTypeList ??= typeof(LuthetusCommonConfig).Assembly.GetTypes()
                     .Where(x => x.IsSubclassOf(typeof(ComponentBase))).OrderBy(x => x.Name).ToList();
             case ProjectKind.Ide:
-                return _ideTypeList ??= typeof(IdeConfig).Assembly.GetTypes()
+                return _ideTypeList ??= typeof(LuthetusIdeConfig).Assembly.GetTypes()
                     .Where(x => x.IsSubclassOf(typeof(ComponentBase))).OrderBy(x => x.Name).ToList();
             default:
                 return new List<Type>();

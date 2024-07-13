@@ -1,6 +1,6 @@
 using Microsoft.JSInterop;
 
-namespace Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
+namespace Luthetus.Ide.RazorLib.JsRuntimes.Models;
 
 /// <remarks>
 /// This class is an exception to the naming convention, "don't use the word 'Luthetus' in class names".
@@ -9,10 +9,10 @@ namespace Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 /// 	than some specific type (example: DialogDisplay.razor).
 ///     So, adding 'Luthetus' in the class name for redundancy seems meaningful here.
 /// </remarks>
-public static class LuthetusTextEditorJsRuntimeExtensionMethods
+public static class LuthetusIdeJsRuntimeExtensionMethods
 {
-    public static LuthetusTextEditorJavaScriptInteropApi GetLuthetusTextEditorApi(this IJSRuntime jsRuntime)
+    public static LuthetusIdeJavaScriptInteropApi GetLuthetusIdeApi(this IJSRuntime jsRuntime)
     {
-        return new LuthetusTextEditorJavaScriptInteropApi(jsRuntime);
+        return new LuthetusIdeJavaScriptInteropApi(jsRuntime);
     }
 }
