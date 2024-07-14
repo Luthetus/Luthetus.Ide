@@ -7,6 +7,9 @@ using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
 
 namespace Luthetus.Ide.RazorLib.TestExplorers.Displays.Internals;
@@ -21,6 +24,12 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+	[Inject]
+    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
+	[Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
+    private IServiceProvider ServiceProvider { get; set; } = null!;
 	
 	[CascadingParameter]
     public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -45,6 +54,9 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
         _treeViewMouseEventHandler = new TestExplorerTreeViewMouseEventHandler(
             CommonComponentRenderers,
 	        Dispatcher,
+	        CompilerServiceRegistry,
+			TextEditorService,
+			ServiceProvider,
             TreeViewService,
 			BackgroundTaskService);
 
