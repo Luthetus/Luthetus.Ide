@@ -82,10 +82,20 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 	        _dispatcher,
 	        TimeSpan.FromSeconds(5));
 	        
+	    var methodName = treeViewStringFragment.Item.Value.Trim();
+	        
+	    NotificationHelper.DispatchInformative(
+	        nameof(TestExplorerTreeViewMouseEventHandler),
+	        methodName + "()",
+	        _commonComponentRenderers,
+	        _dispatcher,
+	        TimeSpan.FromSeconds(5));
+	        
 	    _textEditorService.Post(new ReadOnlyTextEditorTask(
             nameof(TestExplorerTreeViewMouseEventHandler),
             TestExplorerHelper.ShowTestInEditorFactory(
             	className,
+            	methodName,
 				_commonComponentRenderers,
 		        _dispatcher,
 		        _compilerServiceRegistry,

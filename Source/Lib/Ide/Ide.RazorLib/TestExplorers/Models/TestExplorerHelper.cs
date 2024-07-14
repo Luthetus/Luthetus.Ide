@@ -28,6 +28,7 @@ public static class TestExplorerHelper
     /// </summary>
     public static TextEditorEdit ShowTestInEditorFactory(
 		string className,
+		string methodName,
 		ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher,
         ICompilerServiceRegistry compilerServiceRegistry,
@@ -70,8 +71,50 @@ public static class TestExplorerHelper
             
                 return Task.CompletedTask;
 			}
-
-            var definitionTextSpan = typeDefinitionNodeList.First().Value.TypeIdentifierToken.TextSpan;
+			
+			var typeDefinitionNode = typeDefinitionNodeList.First().Value;
+			
+			var definitionTextSpan = typeDefinitionNode.TypeIdentifierToken.TextSpan;
+			
+			var functionDefinitionNodeList = typeDefinitionNode.GetFunctionDefinitionNodes();
+			
+			if (functionDefinitionNodeList.Length != 0)
+			{
+				var methodMatchList = functionDefinitionNodeList
+					.Where(x => x.FunctionIdentifierToken.TextSpan.GetText() == methodName)
+					.ToList();
+					
+				if (methodMatchList.Count != 0)
+				{
+					var functionDefinitionNode = methodMatchList.First();
+					definitionTextSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+					
+					NotificationHelper.DispatchInformative(
+				        nameof(TestExplorerTreeViewMouseEventHandler),
+				        $"The method: {methodName}, was found",
+				        commonComponentRenderers,
+				        dispatcher,
+				        TimeSpan.FromSeconds(5));
+				}
+				else
+				{
+					NotificationHelper.DispatchInformative(
+				        nameof(TestExplorerTreeViewMouseEventHandler),
+				        $"Could not find the method because methodMatchList.Count == 0",
+				        commonComponentRenderers,
+				        dispatcher,
+				        TimeSpan.FromSeconds(5));
+				}
+			}
+			else
+			{
+				NotificationHelper.DispatchInformative(
+			        nameof(TestExplorerTreeViewMouseEventHandler),
+			        $"Could not find the method because functionDefinitionNodeList.Length == 0",
+			        commonComponentRenderers,
+			        dispatcher,
+			        TimeSpan.FromSeconds(5));
+			}
 
             if (definitionTextSpan is null)
             {
