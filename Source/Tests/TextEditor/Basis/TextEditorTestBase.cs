@@ -1,3 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
@@ -8,10 +12,6 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Logging;
-using Microsoft.JSInterop;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis;
@@ -72,7 +72,7 @@ public class TextEditorTestBase
         string fileExtension,
         string content,
         IDecorationMapper? decorationMapper,
-        ILuthCompilerService? compilerService,
+        ICompilerService? compilerService,
         // partitionSize is an optional parameter to the TextEditorModel's constructor,
         // but provide a value so that if the default value changes, it doesn't break this test.
         int partitionSize)
@@ -88,7 +88,7 @@ public class TextEditorTestBase
                     string.Empty
                 );
             var expectedDecorationMapper = (IDecorationMapper?)null;
-            var expectedCompilerService = (ILuthCompilerService?)null;
+            var expectedCompilerService = (ICompilerService?)null;
             // partitionSize is an optional parameter to the TextEditorModel's constructor,
             // but provide a value so that if the default value changes, it doesn't break this test.
             var expectedPartitionSize = 4096;
@@ -203,7 +203,7 @@ public class TextEditorTestBase
         string fileExtension,
         string content,
         IDecorationMapper? decorationMapper,
-        ILuthCompilerService? compilerService,
+        ICompilerService? compilerService,
         // partitionSize is an optional parameter to the TextEditorModel's constructor,
         // but provide a value so that if the default value changes, it doesn't break this test.
         int partitionSize)
@@ -227,7 +227,7 @@ public class TextEditorTestBase
                     " "      // Space
                 );
             var expectedDecorationMapper = (IDecorationMapper?)null;
-            var expectedCompilerService = (ILuthCompilerService?)null;
+            var expectedCompilerService = (ICompilerService?)null;
             // partitionSize is an optional parameter to the TextEditorModel's constructor,
             // but provide a value so that if the default value changes, it doesn't break this test.
             var expectedPartitionSize = 4096;

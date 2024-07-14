@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.WatchWindows.Models;
+using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Common.Tests.Basis.WatchWindows.Models;
@@ -142,7 +142,7 @@ public class TreeViewPropertiesTests
         var treeViewRenderer = treeViewProperties.GetTreeViewRenderer();
 
         Assert.Equal(
-            commonComponentRenderers.LuthetusCommonTreeViews.TreeViewPropertiesRenderer,
+            commonComponentRenderers.CommonTreeViews.TreeViewPropertiesRenderer,
             treeViewRenderer.DynamicComponentType);
 
         Assert.NotNull(treeViewRenderer.DynamicComponentParameters);

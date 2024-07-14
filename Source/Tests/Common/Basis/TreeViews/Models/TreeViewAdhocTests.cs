@@ -217,7 +217,7 @@ public class TreeViewAdhocTests
     [Fact]
     public void ConstructTreeViewAdhocB()
     {
-        var commonTreeViews = new LuthetusCommonTreeViews(
+        var commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -228,7 +228,7 @@ public class TreeViewAdhocTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        var commonComponentRenderers = new LuthetusCommonComponentRenderers(
+        var commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
             typeof(CommonProgressNotificationDisplay),

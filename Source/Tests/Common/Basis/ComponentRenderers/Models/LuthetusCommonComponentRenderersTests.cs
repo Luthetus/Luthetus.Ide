@@ -19,7 +19,7 @@ public class LuthetusCommonComponentRenderersTests
     [Fact]
     public void Constructor()
     {
-        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+        var commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -30,15 +30,15 @@ public class LuthetusCommonComponentRenderersTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
+        var commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
             typeof(CommonProgressNotificationDisplay),
-            luthetusCommonTreeViews);
+            commonTreeViews);
 
-        Assert.NotNull(luthetusCommonComponentRenderers.LuthetusCommonTreeViews);
-        Assert.NotNull(luthetusCommonComponentRenderers.ErrorNotificationRendererType);
-        Assert.NotNull(luthetusCommonComponentRenderers.ProgressNotificationRendererType);
-        Assert.NotNull(luthetusCommonComponentRenderers.InformativeNotificationRendererType);
+        Assert.NotNull(commonComponentRenderers.CommonTreeViews);
+        Assert.NotNull(commonComponentRenderers.ErrorNotificationRendererType);
+        Assert.NotNull(commonComponentRenderers.ProgressNotificationRendererType);
+        Assert.NotNull(commonComponentRenderers.InformativeNotificationRendererType);
     }
 }

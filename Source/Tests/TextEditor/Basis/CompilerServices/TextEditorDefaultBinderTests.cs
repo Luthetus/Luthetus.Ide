@@ -1,5 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
@@ -20,7 +20,7 @@ public class TextEditorDefaultBinderTests
     [Fact]
 	public void DiagnosticsList()
 	{
-        var defaultBinder = new LuthBinder();
+        var defaultBinder = new Binder();
 
         Assert.Equal(ImmutableArray<TextEditorDiagnostic>.Empty, defaultBinder.DiagnosticsList);
         Assert.Equal(ImmutableArray<ITextEditorSymbol>.Empty, defaultBinder.SymbolsList);

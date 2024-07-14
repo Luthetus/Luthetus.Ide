@@ -40,7 +40,7 @@ public class FileSystemsTestsHelper
         out InMemoryFileSystemProvider inMemoryFileSystemProvider,
         out ServiceProvider serviceProvider)
     {
-        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+        var commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -51,19 +51,19 @@ public class FileSystemsTestsHelper
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
+        var commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
             typeof(CommonProgressNotificationDisplay),
-            luthetusCommonTreeViews);
+            commonTreeViews);
 
         var services = new ServiceCollection()
             .AddFluxor(options => options.ScanAssemblies(typeof(IEnvironmentProvider).Assembly))
-            .AddScoped<ILuthetusCommonComponentRenderers>(_ => luthetusCommonComponentRenderers)
+            .AddScoped<ICommonComponentRenderers>(_ => commonComponentRenderers)
             .AddScoped<IEnvironmentProvider, InMemoryEnvironmentProvider>()
             .AddScoped<IFileSystemProvider>(serviceProvider => new InMemoryFileSystemProvider(
                 serviceProvider.GetRequiredService<IEnvironmentProvider>(),
-                serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>(),
+                serviceProvider.GetRequiredService<ICommonComponentRenderers>(),
                 serviceProvider.GetRequiredService<IDispatcher>()));
 
         serviceProvider = services.BuildServiceProvider();

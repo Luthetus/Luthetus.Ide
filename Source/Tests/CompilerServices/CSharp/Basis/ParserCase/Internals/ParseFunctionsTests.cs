@@ -1,10 +1,10 @@
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Internals;
 
@@ -149,7 +149,7 @@ public class ParseFunctionsTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedFunction(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -201,7 +201,7 @@ public class ParseFunctionsTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedFunction(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);

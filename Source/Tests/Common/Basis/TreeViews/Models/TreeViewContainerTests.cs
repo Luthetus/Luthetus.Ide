@@ -95,10 +95,10 @@ public record TreeViewContainerTests
     }
 
     private void InitializeTreeViewContainerTests(
-        out LuthetusCommonTreeViews commonTreeViews,
-        out LuthetusCommonComponentRenderers commonComponentRenderers)
+        out CommonTreeViews commonTreeViews,
+        out CommonComponentRenderers commonComponentRenderers)
     {
-        commonTreeViews = new LuthetusCommonTreeViews(
+        commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -109,7 +109,7 @@ public record TreeViewContainerTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        commonComponentRenderers = new LuthetusCommonComponentRenderers(
+        commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
             typeof(CommonProgressNotificationDisplay),

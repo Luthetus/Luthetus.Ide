@@ -913,8 +913,8 @@ public class TreeViewStateActionsTests
 
     private void InitializeTreeViewStateActionsTests(
         out IDispatcher dispatcher,
-        out LuthetusCommonTreeViews commonTreeViews,
-        out LuthetusCommonComponentRenderers commonComponentRenderers,
+        out CommonTreeViews commonTreeViews,
+        out CommonComponentRenderers commonComponentRenderers,
         out IState<TreeViewState> treeViewStateWrap,
         out ITreeViewService treeViewService,
         out IBackgroundTaskService backgroundTaskService,
@@ -952,7 +952,7 @@ public class TreeViewStateActionsTests
         backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
         dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
-        commonTreeViews = new LuthetusCommonTreeViews(
+        commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -963,7 +963,7 @@ public class TreeViewStateActionsTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        commonComponentRenderers = new LuthetusCommonComponentRenderers(
+        commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
             typeof(CommonProgressNotificationDisplay),

@@ -1,9 +1,9 @@
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Internals;
 
@@ -79,7 +79,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedTypeOrNamespace(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -114,7 +114,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty));
             idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
@@ -148,7 +148,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty));
             idOfExpectedDiagnostic = fakeDiagnosticBag.Single().Id;
@@ -229,7 +229,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedVariable(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -267,7 +267,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedVariable(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -305,7 +305,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedVariable(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -343,7 +343,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.TheNameDoesNotExistInTheCurrentContext(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -494,7 +494,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedTypeOrNamespace(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -559,7 +559,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedTypeOrNamespace(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -627,7 +627,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedTypeOrNamespace(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -715,7 +715,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedTypeOrNamespace(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);
@@ -806,7 +806,7 @@ public class ParseVariablesTests
         Guid idOfExpectedDiagnostic;
         {
             // TODO: Reporting the diagnostic to get the Id like this is silly.
-            var fakeDiagnosticBag = new LuthDiagnosticBag();
+            var fakeDiagnosticBag = new DiagnosticBag();
             fakeDiagnosticBag.ReportUndefinedTypeOrNamespace(
                 TextEditorTextSpan.FabricateTextSpan(string.Empty),
                 string.Empty);

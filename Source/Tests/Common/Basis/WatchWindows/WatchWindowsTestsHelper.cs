@@ -11,7 +11,7 @@ public class WatchWindowsTestsHelper
         out PersonTest johnDoe,
         out PersonTest janeDoe,
         out PersonTest bobSmith,
-        out LuthetusCommonComponentRenderers commonComponentRenderers)
+        out CommonComponentRenderers commonComponentRenderers)
     {
         johnDoe = new PersonTest("John", "Doe", new());
         janeDoe = new PersonTest("Jane", "Doe", new());
@@ -23,7 +23,7 @@ public class WatchWindowsTestsHelper
         johnDoe.Relatives.Add(bobSmith);
         bobSmith.Relatives.Add(johnDoe);
 
-        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+        var commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -34,10 +34,10 @@ public class WatchWindowsTestsHelper
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        commonComponentRenderers = new LuthetusCommonComponentRenderers(
+        commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
             typeof(CommonProgressNotificationDisplay),
-            luthetusCommonTreeViews);
+            commonTreeViews);
     }
 }
