@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 
 namespace Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays;
 

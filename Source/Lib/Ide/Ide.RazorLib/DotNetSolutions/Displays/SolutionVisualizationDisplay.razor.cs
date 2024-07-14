@@ -13,7 +13,6 @@ using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;

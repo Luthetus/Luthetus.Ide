@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-
-namespace Luthetus.Ide.Tests.Basis.ComponentRenderers.Models;
+﻿namespace Luthetus.Ide.Tests.Basis.ComponentRenderers.Models;
 
 /// <summary>
 /// <see cref="LuthetusIdeTreeViews"/>
