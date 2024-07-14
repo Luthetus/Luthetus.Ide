@@ -88,7 +88,7 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			CompilerServiceExplorerTreeViewContextMenu.ContextMenuEventDropdownKey,
@@ -105,7 +105,8 @@ public partial class CompilerServiceExplorerTreeViewDisplay : ComponentBase, IDi
 			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-    }
+		return Task.CompletedTask;
+	}
 
     private void ReloadOnClick()
     {

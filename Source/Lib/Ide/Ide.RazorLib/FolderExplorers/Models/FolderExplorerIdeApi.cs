@@ -62,7 +62,7 @@ public class FolderExplorerIdeApi
             async () => await SetFolderExplorerTreeViewAsync(folderAbsolutePath).ConfigureAwait(false));
     }
 
-    public async Task ShowInputFile()
+    public void ShowInputFile()
     {
         _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             "Folder Explorer",

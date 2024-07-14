@@ -354,12 +354,12 @@ public class DotNetSolutionIdeApi
             }
         }
 
-		await ParseSolutionAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
+		await ParseSolution(dotNetSolutionModel.Key).ConfigureAwait(false);
 
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
     }
 
-	private async Task ParseSolutionAsync(Key<DotNetSolutionModel> dotNetSolutionModelKey)
+	private Task ParseSolution(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
 		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 
@@ -367,7 +367,7 @@ public class DotNetSolutionIdeApi
             x => x.Key == dotNetSolutionModelKey);
 
         if (dotNetSolutionModel is null)
-            return;
+            return Task.CompletedTask;
 
 		var progressBarModel = new ProgressBarModel(0, "parsing...");
 
@@ -443,6 +443,8 @@ public class DotNetSolutionIdeApi
 				progressBarModel.Dispose();
 			}
 		});
+
+        return Task.CompletedTask;
 	}
 
 	private async Task DiscoverClassesInProject(

@@ -24,7 +24,7 @@ public partial class TabListDisplay : ComponentBase
 		await InvokeAsync(StateHasChanged);
 	}
 
-	private async Task HandleTabButtonOnContextMenu(TabContextMenuEventArgs tabContextMenuEventArgs)
+	private void HandleTabButtonOnContextMenu(TabContextMenuEventArgs tabContextMenuEventArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			TabContextMenu.ContextMenuEventDropdownKey,

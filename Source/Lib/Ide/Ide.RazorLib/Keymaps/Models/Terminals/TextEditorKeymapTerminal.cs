@@ -75,7 +75,7 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
 		command = new TextEditorCommand(
 			commandDisplayName, "terminal_intercept-default-keymap", false, true, TextEditKind.None, null,
-			async interfaceCommandArgs =>
+			interfaceCommandArgs =>
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -268,6 +268,8 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                             terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                         }
 					});
+
+				return Task.CompletedTask;
 			});
 
 		return true;

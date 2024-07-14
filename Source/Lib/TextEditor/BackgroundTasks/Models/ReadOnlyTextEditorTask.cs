@@ -120,7 +120,7 @@ public sealed class ReadOnlyTextEditorTask : ITextEditorTask
 		                .Invoke(EditContext)
 		                .ConfigureAwait(false);
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					// Console.WriteLine($"{nameof(ReadOnlyTextEditorTask)}: {e.ToString()}");
 					// TODO: Eating the exception is odd

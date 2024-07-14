@@ -13,15 +13,14 @@ public partial class CompilerServiceExplorerTreeViewContextMenu : ComponentBase
 
     public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
-	private (TreeViewCommandArgs treeViewCommandArgs, MenuRecord menuRecord) _previousGetMenuRecordInvocation;
-
     private MenuRecord GetMenuRecord(TreeViewCommandArgs treeViewCommandArgs)
     {
+        // Suppress unused variable
+        _ = treeViewCommandArgs;
+
 		// Default case
 		{
-			var menuRecord = MenuRecord.Empty;
-			_previousGetMenuRecordInvocation = (treeViewCommandArgs, menuRecord);
-			return menuRecord;
+			return MenuRecord.Empty;
 		}
     }
 }

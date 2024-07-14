@@ -33,13 +33,13 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
         base.OnParametersSet();
     }
 
-    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
-            await CompleteForm().ConfigureAwait(false);
+            CompleteForm();
     }
 
-    private async Task CompleteForm()
+    private void CompleteForm()
     {
         var localTextSpanTuple = _textSpanTuple;
         var localInputValue = InputValue;

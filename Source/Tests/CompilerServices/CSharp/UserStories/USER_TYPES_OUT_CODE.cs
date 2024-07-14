@@ -28,7 +28,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 public class USER_TYPES_OUT_CODE
 {
     [Fact]
-    public async Task ClassDefinition()
+    public void ClassDefinition()
     {
         Initialize_USER_TYPES_OUT_CODE(
             string.Empty,
@@ -76,7 +76,7 @@ public class USER_TYPES_OUT_CODE
     }
     
     [Fact]
-    public async Task ConstructorUsage()
+    public void ConstructorUsage()
     {
         Initialize_USER_TYPES_OUT_CODE(
             string.Empty,
@@ -123,7 +123,7 @@ public class USER_TYPES_OUT_CODE
     }
     
     [Fact]
-    public async Task BLAZOR_WASM_TEMPLATE_PROGRAM_CS()
+    public void BLAZOR_WASM_TEMPLATE_PROGRAM_CS()
     {
         Initialize_USER_TYPES_OUT_CODE(
             string.Empty,

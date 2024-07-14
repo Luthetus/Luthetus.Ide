@@ -79,17 +79,17 @@ public partial class MenuOptionDisplay : ComponentBase
         // Set focus to active menu option
         if (IsActive && !localHasSubmenuActive && !DisplayWidget)
         {
-            FocusElementReference();
+            await FocusElementReference();
         }
 
         await base.OnParametersSetAsync();
     }
 
-    private void HandleOnClick()
+    private async Task HandleOnClick()
     {
         if (MenuOptionRecord.OnClickFunc is not null)
         {
-            MenuOptionRecord.OnClickFunc.Invoke();
+            await MenuOptionRecord.OnClickFunc.Invoke();
             Dispatcher.Dispatch(new DropdownState.ClearAction());
 
 			var localDropdown = Dropdown;
@@ -103,7 +103,7 @@ public partial class MenuOptionDisplay : ComponentBase
             if (HasSubmenuActive)
                 Dispatcher.Dispatch(new DropdownState.DisposeAction(_subMenuDropdownKey));
             else
-				RenderDropdownOnClick(localSubMenu);
+				await RenderDropdownOnClick(localSubMenu);
         }
 
         if (MenuOptionRecord.WidgetRendererType is not null)
@@ -137,7 +137,7 @@ public partial class MenuOptionDisplay : ComponentBase
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 	}
 
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         switch (keyboardEventArgs.Key)
         {
@@ -145,7 +145,7 @@ public partial class MenuOptionDisplay : ComponentBase
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
 				var localSubMenu = MenuOptionRecord.SubMenu;
                 if (localSubMenu is not null)
-                    RenderDropdownOnClick(localSubMenu);
+                    return RenderDropdownOnClick(localSubMenu);
                 break;
         }
 
@@ -153,9 +153,10 @@ public partial class MenuOptionDisplay : ComponentBase
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
             case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                HandleOnClick();
-                break;
+				return HandleOnClick();
         }
+
+        return Task.CompletedTask;
     }
 
 	private async Task FocusElementReference()

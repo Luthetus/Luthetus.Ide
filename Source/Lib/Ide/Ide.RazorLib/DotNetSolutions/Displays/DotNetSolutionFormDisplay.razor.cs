@@ -55,7 +55,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
     private FormattedCommand FormattedCommand => DotNetCliCommandFormatter.FormatDotnetNewSln(_solutionName);
 
-    private async Task RequestInputFileForParentDirectory()
+    private void RequestInputFileForParentDirectory()
     {
         IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             "Directory for new .NET Solution",
@@ -106,7 +106,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                 localFormattedCommand,
                 _parentDirectoryName,
                 NewDotNetSolutionCancellationTokenSource.Token,
-                async () =>
+                () =>
                 {
                     // Close Dialog
                     Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
@@ -129,6 +129,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         false);
 
                     IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
+                    return Task.CompletedTask;
                 });
 
             var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];

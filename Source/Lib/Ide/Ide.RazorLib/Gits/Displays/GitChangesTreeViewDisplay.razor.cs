@@ -55,7 +55,7 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
         base.OnInitialized();
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			GitChangesContextMenu.ContextMenuEventDropdownKey,
@@ -72,5 +72,6 @@ public partial class GitChangesTreeViewDisplay : ComponentBase
 			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-    }
+		return Task.CompletedTask;
+	}
 }

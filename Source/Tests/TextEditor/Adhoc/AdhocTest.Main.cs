@@ -392,7 +392,7 @@ public partial class AdhocTest
     ///         -IReadOnlyList&lt;byte&gt; DecorationByteList
     /// </summary>
     [Fact]
-    public async Task ContentList_Change()
+    public void ContentList_Change()
     {
         InitializeTextEditorServicesTestsHelper(
             out var initialContent,

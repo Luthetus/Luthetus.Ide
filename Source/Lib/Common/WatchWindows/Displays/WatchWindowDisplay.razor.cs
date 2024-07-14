@@ -68,7 +68,7 @@ public partial class WatchWindowDisplay : FluxorComponent
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			WatchWindowContextMenuDropdownKey,
@@ -85,6 +85,7 @@ public partial class WatchWindowDisplay : FluxorComponent
 			treeViewCommandArgs.RestoreFocusToTreeView);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        return Task.CompletedTask;
     }
 
     protected override void Dispose(bool disposing)

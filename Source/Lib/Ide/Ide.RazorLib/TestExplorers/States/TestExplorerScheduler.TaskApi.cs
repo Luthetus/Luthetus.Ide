@@ -46,7 +46,7 @@ public partial class TestExplorerScheduler
             if (string.IsNullOrWhiteSpace(treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery))
                 return Task.CompletedTask;
 
-            treeViewProjectTestModel.Item.EnqueueDiscoverTestsFunc = async callback =>
+            treeViewProjectTestModel.Item.EnqueueDiscoverTestsFunc = callback =>
             {
                 var executionTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
 
@@ -102,6 +102,8 @@ public partial class TestExplorerScheduler
                 treeViewProjectTestModel.Item.TerminalCommand = dotNetTestListTestsCommand;
 
 				executionTerminal.EnqueueCommand(dotNetTestListTestsCommand);
+
+                return Task.CompletedTask;
             };
         }
 

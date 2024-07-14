@@ -70,7 +70,7 @@ public partial class NugetPackageDisplay : FluxorComponent
             x => x.ProjectIdGuid == nuGetPackageManagerState.SelectedProjectToModify.ProjectIdGuid);
     }
 
-    private async Task AddNugetPackageReferenceOnClick(
+    private void AddNugetPackageReferenceOnClick(
         DotNetSolutionState dotNetSolutionState,
         NuGetPackageManagerState nuGetPackageManagerState)
     {

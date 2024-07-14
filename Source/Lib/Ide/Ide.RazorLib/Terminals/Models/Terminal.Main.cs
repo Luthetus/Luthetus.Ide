@@ -26,7 +26,7 @@ public partial class Terminal
 	/// This factory method exists because the terminal has async methods
 	/// it invokes immediately after being constructed.
 	/// </summary>
-	public static async Task<Terminal> Factory(
+	public static Task<Terminal> Factory(
         string displayName,
         string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
@@ -47,9 +47,9 @@ public partial class Terminal
 				Key = terminalKey
 			};
 
-		await terminal.CreateTextEditor();
-		await terminal.SetWorkingDirectoryAbsolutePathString(workingDirectoryAbsolutePathString);
-		return terminal;
+		terminal.CreateTextEditor();
+		terminal.SetWorkingDirectoryAbsolutePathString(workingDirectoryAbsolutePathString);
+		return Task.FromResult(terminal);
 	}
 
     /// <summary>
@@ -89,13 +89,13 @@ public partial class Terminal
 
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
 
-	public async Task SetWorkingDirectoryAbsolutePathString(string? value)
+	public void SetWorkingDirectoryAbsolutePathString(string? value)
 	{
 		_previousWorkingDirectoryAbsolutePathString = _workingDirectoryAbsolutePathString;
         _workingDirectoryAbsolutePathString = value;
 
         if (_previousWorkingDirectoryAbsolutePathString != _workingDirectoryAbsolutePathString)
-            await WriteWorkingDirectory(true);
+            WriteWorkingDirectory(true);
 	}
 
     public void EnqueueCommand(TerminalCommand terminalCommand)
@@ -109,26 +109,26 @@ public partial class Terminal
 
     private async Task HandleCommand(TerminalCommand terminalCommand)
     {
-		await MoveCursorToEnd();
+		MoveCursorToEnd();
 
 		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-			await SetWorkingDirectoryAbsolutePathString(terminalCommand.ChangeWorkingDirectoryTo);
+			SetWorkingDirectoryAbsolutePathString(terminalCommand.ChangeWorkingDirectoryTo);
 
 		if (terminalCommand.FormattedCommand.TargetFileName == "cd")
 		{
 			// TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
 			if (terminalCommand.FormattedCommand.HACK_ArgumentsString is not null)
-				await SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.HACK_ArgumentsString);
+				SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.HACK_ArgumentsString);
 			else if (terminalCommand.FormattedCommand.ArgumentsList.Any())
-				await SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0));
+				SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0));
 
 			return;
 		}
 
 		if (terminalCommand.FormattedCommand.TargetFileName == "clear")
 		{
-			await ClearTerminal();
-			await WriteWorkingDirectory();
+			ClearTerminal();
+			WriteWorkingDirectory();
 			return;
 		}
 
@@ -211,13 +211,12 @@ public partial class Terminal
 								output);
 						}
 
-						await TerminalOnOutput(
-								outputOffset,
-								output,
-								outputTextSpanList,
-								terminalCommand,
-								terminalCommandBoundary)
-							.ConfigureAwait(false);
+						TerminalOnOutput(
+							outputOffset,
+							output,
+							outputTextSpanList,
+							terminalCommand,
+							terminalCommandBoundary);
 
 						outputOffset += output.Length;
 					}
@@ -234,7 +233,7 @@ public partial class Terminal
 			terminalCommand.IsCompleted = true;
 			await terminalCommand.InvokeStateChangedCallbackFunc();
 			HasExecutingProcess = false;
-			await WriteWorkingDirectory().ConfigureAwait(false);
+			WriteWorkingDirectory();
 			DispatchNewStateKey();
 
 			// It is important to invoke 'OnAfterCommandFinished' prior to 'terminalCommand.ContinueWith'

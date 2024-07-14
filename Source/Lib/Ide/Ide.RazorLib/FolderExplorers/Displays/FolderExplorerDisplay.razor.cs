@@ -66,7 +66,7 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
     private async void OnStateChanged(object? sender, EventArgs e) => await InvokeAsync(StateHasChanged);
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			FolderExplorerContextMenu.ContextMenuEventDropdownKey,
@@ -83,7 +83,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-    }
+		return Task.CompletedTask;
+	}
 
     public void Dispose()
     {

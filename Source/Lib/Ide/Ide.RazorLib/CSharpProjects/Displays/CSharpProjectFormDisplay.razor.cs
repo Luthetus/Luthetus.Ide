@@ -215,23 +215,25 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                 immutableView.FormattedNewCSharpProjectCommand,
                 immutableView.ParentDirectoryNameValue,
                 immutableView.NewCSharpProjectCancellationTokenSource.Token,
-                async () =>
+                () =>
                 {
                     var addExistingProjectToSolutionCommand = new TerminalCommand(
                         immutableView.NewCSharpProjectTerminalCommandKey,
                         immutableView.FormattedAddExistingProjectToSolutionCommand,
                         immutableView.ParentDirectoryNameValue,
                         immutableView.NewCSharpProjectCancellationTokenSource.Token,
-                        async () =>
+                        () =>
                         {
                             Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
                             IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
                                 immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
-                        });
+							return Task.CompletedTask;
+						});
 
                     generalTerminal.EnqueueCommand(addExistingProjectToSolutionCommand);
-                });
+					return Task.CompletedTask;
+				});
 
             generalTerminal.EnqueueCommand(newCSharpProjectCommand);
         }

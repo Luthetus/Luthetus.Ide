@@ -28,7 +28,6 @@ public partial class FindAllDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
 	private CancellationTokenSource _doSearchCancellationTokenSource = new();
-    private bool _isSearching;
     private bool _disposed;
 
 	public SearchEngineFileSystem SearchEngineFileSystem => (SearchEngineFileSystem)
@@ -156,7 +155,6 @@ public partial class FindAllDisplay : FluxorComponent
     {
         try
         {
-            _isSearching = true;
             await InvokeAsync(StateHasChanged);
 
             _doSearchCancellationTokenSource.Cancel();
@@ -170,7 +168,6 @@ public partial class FindAllDisplay : FluxorComponent
         }
         finally
         {
-            _isSearching = false;
             await InvokeAsync(StateHasChanged);
         }
     }

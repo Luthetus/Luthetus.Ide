@@ -117,11 +117,15 @@ public partial class TestExplorerContextMenu : ComponentBase
 						Key<IBackgroundTask>.NewKey(),
 						BlockingBackgroundTaskWorker.GetQueueKey(),
 						"RunTestByFullyQualifiedName",
-						async () => await RunTestByFullyQualifiedName(
+						() =>
+						{
+							RunTestByFullyQualifiedName(
 								treeViewStringFragment,
 								fullyQualifiedName,
-								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value)
-							.ConfigureAwait(false));
+								treeViewProjectTestModel.Item.AbsolutePath.ParentDirectory.Value);
+
+							return Task.CompletedTask;
+						});
 				}
 
 				return Task.CompletedTask;
@@ -249,7 +253,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		return new MenuRecord(menuOptionRecordList.ToImmutableArray());
 	}
 
-	private async Task RunTestByFullyQualifiedName(
+	private void RunTestByFullyQualifiedName(
 		TreeViewStringFragment treeViewStringFragment,
 		string fullyQualifiedName,
 		string? directoryNameForTestDiscovery)

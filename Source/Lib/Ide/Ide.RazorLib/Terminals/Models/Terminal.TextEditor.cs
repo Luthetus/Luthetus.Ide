@@ -23,7 +23,7 @@ public partial class Terminal
 	public ResourceUri ResourceUri { get; init; }
 	public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
 
-    private async Task CreateTextEditor()
+    private void CreateTextEditor()
     {
         var line1 = "Integrated-Terminal";
         var line2 = "Try: cmd /c \"dir\"";
@@ -132,7 +132,7 @@ public partial class Terminal
             });
     }
 
-    public async Task WriteWorkingDirectory(bool prependNewLine = false)
+    public void WriteWorkingDirectory(bool prependNewLine = false)
     {
         _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
@@ -179,7 +179,7 @@ public partial class Terminal
             });
     }
     
-    public async Task MoveCursorToEnd()
+    public void MoveCursorToEnd()
     {
         _textEditorService.PostSimpleBatch(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
@@ -207,7 +207,7 @@ public partial class Terminal
             });
     }
 
-    public async Task ClearTerminal()
+    public void ClearTerminal()
     {
         _textEditorService.PostSimpleBatch(
             nameof(ClearTerminal),
@@ -245,7 +245,7 @@ public partial class Terminal
             });
     }
     
-    private Task TerminalOnOutput(
+    private void TerminalOnOutput(
 		int outputOffset,
 		string output,
 		List<TextEditorTextSpan> outputTextSpanList,
@@ -261,6 +261,5 @@ public partial class Terminal
 			terminalCommand,
 			terminalCommandBoundary,
 		    TextEditorViewModelKey));
-		return Task.CompletedTask;
 	}
 }

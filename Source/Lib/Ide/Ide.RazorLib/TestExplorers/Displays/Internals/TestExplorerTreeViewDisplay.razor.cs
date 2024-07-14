@@ -65,7 +65,7 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
         base.OnInitialized();
     }
 
-	private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			TestExplorerContextMenu.ContextMenuEventDropdownKey,
@@ -82,5 +82,6 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-    }
+		return Task.CompletedTask;
+	}
 }

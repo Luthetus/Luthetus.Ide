@@ -36,7 +36,7 @@ public partial class AutocompleteMenu : ComponentBase
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
 		{

@@ -48,9 +48,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     private CancellationTokenSource _cursorShouldBlinkCancellationTokenSource = new();
     private TimeSpan _blinkingCursorTaskDelay = TimeSpan.FromMilliseconds(1000);
 
-	// TODO: Delete '_countCalculateVirtualizationResultFactoryInvocations'
-	private int _countCalculateVirtualizationResultFactoryInvocations;
-
     public bool CursorShouldBlink { get; private set; } = true;
     public event Action? CursorShouldBlinkChanged;
 
@@ -781,10 +778,10 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         Key<TextEditorViewModel> viewModelKey,
         CancellationToken cancellationToken)
     {
-        return async editContext =>
+        return editContext =>
         {
             if (cancellationToken.IsCancellationRequested)
-                return;
+                return Task.CompletedTask;
 
             var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -792,9 +789,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
+				return Task.CompletedTask;
 
-            try
+			try
             {
 				var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
 
@@ -1054,6 +1051,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				Console.WriteLine(exception);
 #endif
             }
+
+            return Task.CompletedTask;
         };
 
 // Goal: Optimize 'CalculateVirtualizationResultFactory(...)' method (2024-06-10).

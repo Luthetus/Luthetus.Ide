@@ -240,16 +240,18 @@ public static class TextEditorCommandDefaultFacts
                 nameof(RefreshSyntaxHighlighting),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
-                async editContext =>
+                editContext =>
 				{
 					var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
 
 					if (modelModifier is null)
-						return;
+						return Task.CompletedTask;
 
 					modelModifier.CompilerService.ResourceWasModified(
 						modelModifier.ResourceUri,
 						ImmutableArray<TextEditorTextSpan>.Empty);
+
+					return Task.CompletedTask;
 				});
 			return Task.CompletedTask;
         })
@@ -258,16 +260,18 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            return async editContext =>
+            return editContext =>
 			{
 				var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
 
 				if (modelModifier is null)
-					return;
+					return Task.CompletedTask;
 
 				modelModifier.CompilerService.ResourceWasModified(
 					modelModifier.ResourceUri,
 					ImmutableArray<TextEditorTextSpan>.Empty);
+				
+                return Task.CompletedTask;
 			};
         }
     };

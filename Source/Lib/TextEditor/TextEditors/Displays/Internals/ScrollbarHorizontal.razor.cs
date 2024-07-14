@@ -30,7 +30,6 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
     private bool _thinksLeftMouseButtonIsDown;
     private MouseEventArgs? _mouseDownEventArgs;
 	private double _clientYThresholdToResetScrollLeftPosition;
-    private MouseEventArgs? _previousDragMouseEventArgs;
 	private double _scrollLeftOnMouseDown;
 
     private string ScrollbarElementId => $"luth_te_{_scrollbarGuid}";

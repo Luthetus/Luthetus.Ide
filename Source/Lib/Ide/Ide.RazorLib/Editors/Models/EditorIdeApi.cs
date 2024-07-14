@@ -168,19 +168,19 @@ public class EditorIdeApi
             .ConfigureAwait(false);
     }
 
-    public async Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
+    public Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
     {
         var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
 
         if (model is null)
-            return Key<TextEditorViewModel>.Empty;
+            return Task.FromResult(Key<TextEditorViewModel>.Empty);
 
         var viewModel = _textEditorService.ModelApi
             .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
             .FirstOrDefault(x => x.Category == registerViewModelArgs.Category);
 
         if (viewModel is not null)
-            return viewModel.ViewModelKey;
+            return Task.FromResult(viewModel.ViewModelKey);
 
         var viewModelKey = Key<TextEditorViewModel>.NewKey();
 
@@ -215,7 +215,7 @@ public class EditorIdeApi
                     };
                 }));
 
-        return viewModelKey;
+        return Task.FromResult(viewModelKey);
 
         void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
         {
@@ -226,7 +226,7 @@ public class EditorIdeApi
             _ideBackgroundTaskApi.FileSystem.SaveFile(
                 absolutePath,
                 innerContent,
-                async writtenDateTime =>
+                writtenDateTime =>
                 {
                     if (writtenDateTime is not null)
                     {
@@ -236,6 +236,8 @@ public class EditorIdeApi
                                 innerTextEditor.ResourceUri,
                                 writtenDateTime.Value));
                     }
+
+                    return Task.CompletedTask;
                 },
                 cancellationToken);
         }
@@ -342,7 +344,7 @@ public class EditorIdeApi
                         },
                         {
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterAcceptFunc),
-                            new Func<Task>(async () =>
+                            new Func<Task>(() =>
                             {
                                 _backgroundTaskService.Enqueue(
                                         Key<IBackgroundTask>.NewKey(),
@@ -375,7 +377,8 @@ public class EditorIdeApi
                                                         .ConfigureAwait(false);
                                                 });
                                         });
-                            })
+								return Task.CompletedTask;
+							})
                         },
                         {
                             nameof(IBooleanPromptOrCancelRendererType.OnAfterDeclineFunc),

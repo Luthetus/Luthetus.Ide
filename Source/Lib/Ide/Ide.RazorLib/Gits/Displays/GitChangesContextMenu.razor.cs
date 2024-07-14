@@ -77,8 +77,6 @@ public partial class GitChangesContextMenu : ComponentBase
 	private Task<MenuRecord> GetMultiSelectionMenuRecord(TreeViewCommandArgs commandArgs)
 	{
 		var menuOptionRecordList = new List<MenuOptionRecord>();
-		Func<Task> runAllOnClicksWithinSelection = () => Task.CompletedTask;
-		bool runAllOnClicksWithinSelectionHasEffect = false;
 
 		if (!menuOptionRecordList.Any())
 		{

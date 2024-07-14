@@ -114,8 +114,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
     private bool _isDirty;
     private (int rowIndex, int rowLength)? _mostCharactersOnASingleLineTuple;
     private Key<RenderState>? _renderStateKey = Key<RenderState>.NewKey();
-    private Keymap? _textEditorKeymap;
-    private TextEditorOptions? _textEditorOptions;
     private string? _allText;
 
     /// <summary>

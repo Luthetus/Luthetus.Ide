@@ -111,10 +111,10 @@ public partial class TabDisplay : ComponentBase, IDisposable
 		if (mouseEventArgs.Button == 1)
             await CloseTabOnClickAsync().ConfigureAwait(false);
 		else if (mouseEventArgs.Button == 2)
-			await ManuallyPropagateOnContextMenu(mouseEventArgs, Tab).ConfigureAwait(false);
+			ManuallyPropagateOnContextMenu(mouseEventArgs, Tab);
 	}
 
-    private async Task ManuallyPropagateOnContextMenu(
+    private void ManuallyPropagateOnContextMenu(
         MouseEventArgs mouseEventArgs,
         ITab tab)
     {

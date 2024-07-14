@@ -437,7 +437,7 @@ public partial class IdeHeader : ComponentBase
                     .ConfigureAwait(false);
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
 			// TODO: Capture specifically the exception that is fired when the JsRuntime...
 			//       ...tries to set focus to an HTML element, but that HTML element

@@ -52,12 +52,12 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git status -u",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null)
-                    return;
+					return Task.CompletedTask;
 
                 var gitStatusDashUCommand = $"{GitCliFacts.STATUS_COMMAND} -u";
                 var formattedCommand = new FormattedCommand(
@@ -76,6 +76,7 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
+                return Task.CompletedTask;
             });
     }
 
@@ -93,14 +94,14 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git get active branch name",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return;
+					return Task.CompletedTask;
 
-                var terminalCommandArgs = $"branch --show-current";
+				var terminalCommandArgs = $"branch --show-current";
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { terminalCommandArgs })
@@ -117,7 +118,8 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
 
     public void GetOriginNameEnqueue(GitRepo repoAtTimeOfRequest)
@@ -126,14 +128,14 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git get origin name",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return;
+					return Task.CompletedTask;
 
-                var terminalCommandArgs = $"config --get remote.origin.url";
+				var terminalCommandArgs = $"config --get remote.origin.url";
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { terminalCommandArgs })
@@ -150,7 +152,8 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
 
     public void AddEnqueue(GitRepo repoAtTimeOfRequest)
@@ -159,14 +162,14 @@ public class GitIdeApi
 			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git add",
-            async () =>
+            () =>
 			{
 				var localGitState = _gitStateWrap.Value;
 
 		        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-		            return;
-		
-		        var filesBuilder =  new StringBuilder();
+					return Task.CompletedTask;
+
+				var filesBuilder =  new StringBuilder();
 		
 		        foreach (var gitFile in localGitState.SelectedFileList)
 		        {
@@ -208,6 +211,7 @@ public class GitIdeApi
 		
 		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 		        generalTerminal.EnqueueCommand(terminalCommand);
+				return Task.CompletedTask;
 			});
     }
 	
@@ -217,14 +221,14 @@ public class GitIdeApi
 			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git unstage",
-            async () =>
+            () =>
 			{
 				var localGitState = _gitStateWrap.Value;
 
 		        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-		            return;
-		
-		        var filesBuilder =  new StringBuilder();
+					return Task.CompletedTask;
+
+				var filesBuilder =  new StringBuilder();
 		
 		        foreach (var gitFile in localGitState.SelectedFileList)
 		        {
@@ -266,6 +270,7 @@ public class GitIdeApi
 		
 		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 		        generalTerminal.EnqueueCommand(terminalCommand);
+				return Task.CompletedTask;
 			});
     }
 	
@@ -275,14 +280,14 @@ public class GitIdeApi
 			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git commit",
-            async () =>
+            () =>
 			{
 				var localGitState = _gitStateWrap.Value;
 
 		        if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-		            return;
+					return Task.CompletedTask;
 
-                var argumentsString = $"commit -m \"{commitSummary}\"";
+				var argumentsString = $"commit -m \"{commitSummary}\"";
 
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
@@ -311,7 +316,8 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(gitCommitCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
 
     public void BranchNewEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
@@ -323,14 +329,14 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git new branch",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return;
+					return Task.CompletedTask;
 
-                var argumentsString = "checkout -b " + branchName;
+				var argumentsString = "checkout -b " + branchName;
 
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
@@ -351,7 +357,8 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
 
     public void BranchGetAllEnqueue(GitRepo repoAtTimeOfRequest)
@@ -360,14 +367,14 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git branch -a",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return;
+					return Task.CompletedTask;
 
-                var argumentsString = "branch -a";
+				var argumentsString = "branch -a";
 
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
@@ -385,7 +392,8 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
     
     public void BranchSetEnqueue(GitRepo repoAtTimeOfRequest, string branchName)
@@ -394,12 +402,12 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             $"git checkout {branchName}",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return;
+                    return Task.CompletedTask;
 
                 var argumentsString = $"checkout {branchName}";
 
@@ -424,7 +432,8 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
     
     public void PushToOriginWithTrackingEnqueue(GitRepo repoAtTimeOfRequest)
@@ -433,16 +442,16 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git push -u origin {branchName will go here}",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return;
+					return Task.CompletedTask;
 
-                // This command will push to origin, and then set the upstream variable
-                // (unsure if this is the correct description)
-                var argumentsString = $"push -u origin {localGitState.Branch}";
+				// This command will push to origin, and then set the upstream variable
+				// (unsure if this is the correct description)
+				var argumentsString = $"push -u origin {localGitState.Branch}";
 
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
@@ -465,7 +474,8 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
 
     public void PullEnqueue(GitRepo repoAtTimeOfRequest)
@@ -474,14 +484,14 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git pull",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return;
+					return Task.CompletedTask;
 
-                var argumentsString = $"pull";
+				var argumentsString = $"pull";
 
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
@@ -504,7 +514,8 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
     
     public void FetchEnqueue(GitRepo repoAtTimeOfRequest)
@@ -513,14 +524,14 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git fetch",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return;
+					return Task.CompletedTask;
 
-                var argumentsString = $"fetch";
+				var argumentsString = $"fetch";
 
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
@@ -543,7 +554,8 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
     
     public void LogFileEnqueue(
@@ -555,14 +567,14 @@ public class GitIdeApi
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "git log file",
-            async () =>
+            () =>
             {
                 var localGitState = _gitStateWrap.Value;
 
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
-                    return;
+					return Task.CompletedTask;
 
-                var terminalCommandArgs = $"log -p {relativePathToFile}";
+				var terminalCommandArgs = $"log -p {relativePathToFile}";
                 var formattedCommand = new FormattedCommand(
                     GitCliFacts.TARGET_FILE_NAME,
                     new string[] { terminalCommandArgs })
@@ -583,6 +595,7 @@ public class GitIdeApi
 
                 var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(terminalCommand);
-            });
+				return Task.CompletedTask;
+			});
     }
 }

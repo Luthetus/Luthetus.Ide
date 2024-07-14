@@ -16,7 +16,7 @@ public class ThrottleEventQueueAsyncTests
     /// <see cref="ThrottleEventQueueAsync.ThrottleEventList"/>
     /// </summary>
     [Fact]
-    public async Task Dead_Code_Question_Mark()
+    public void Dead_Code_Question_Mark()
     {
         throw new NotImplementedException("TODO: is this class just dead code? (2024-07-07).");
     }

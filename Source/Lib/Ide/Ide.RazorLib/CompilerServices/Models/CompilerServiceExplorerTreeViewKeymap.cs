@@ -30,10 +30,12 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         switch (commandArgs.KeyboardEventArgs.Code)
         {
             case KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE:
-                return InvokeOpenInEditor(commandArgs, true);
-            case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
-                return InvokeOpenInEditor(commandArgs, false);
-        }
+                InvokeOpenInEditor(commandArgs, true);
+				return Task.CompletedTask;
+			case KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE:
+                InvokeOpenInEditor(commandArgs, false);
+				return Task.CompletedTask;
+		}
 
         if (commandArgs.KeyboardEventArgs.CtrlKey)
         {
@@ -77,7 +79,7 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
         return;
     }
 
-    private async Task InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
+    private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
     {
         var activeNode = commandArgs.TreeViewContainer.ActiveNode;
 

@@ -45,7 +45,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.UndoEditFactory(ResourceUri)"/>
     /// </summary>
     [Fact]
-    public async Task UndoEdit()
+    public void UndoEdit()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -90,7 +90,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.SetUsingLineEndKindFactory(ResourceUri, LineEndKind)"/>
     /// </summary>
     [Fact]
-    public async Task SetUsingRowEndingKind()
+    public void SetUsingRowEndingKind()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -120,7 +120,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.SetResourceDataFactory(ResourceUri, DateTime)"/>
     /// </summary>
     [Fact]
-    public async Task SetResourceData()
+    public void SetResourceData()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -150,7 +150,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.ReloadFactory(ResourceUri, string, DateTime)"/>
     /// </summary>
     [Fact]
-    public async Task Reload()
+    public void Reload()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -258,7 +258,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.RedoEditFactory(ResourceUri)"/>
     /// </summary>
     [Fact]
-    public async Task RedoEditEnqueue()
+    public void RedoEditEnqueue()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -307,7 +307,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.InsertTextFactory(ResourceUri, Key{TextEditorViewModel}, string, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public async Task InsertTextEnqueue()
+    public void InsertTextEnqueue()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -340,7 +340,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.HandleKeyboardEventFactory(ResourceUri, Key{TextEditorViewModel}, KeyboardEventArgs, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public async Task HandleKeyboardEventEnqueue()
+    public void HandleKeyboardEventEnqueue()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -466,7 +466,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.DeleteTextByRangeFactory(ResourceUri, Key{TextEditorViewModel}, int, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public async Task DeleteTextByRangeEnqueue()
+    public void DeleteTextByRangeEnqueue()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -500,7 +500,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.DeleteTextByMotionFactory(ResourceUri, Key{TextEditorViewModel}, MotionKind, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public async Task DeleteTextByMotionEnqueue_Backspace()
+    public void DeleteTextByMotionEnqueue_Backspace()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -535,7 +535,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.AddPresentationModelFactory(ResourceUri, TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
-    public async Task RegisterPresentationModel()
+    public void RegisterPresentationModel()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,

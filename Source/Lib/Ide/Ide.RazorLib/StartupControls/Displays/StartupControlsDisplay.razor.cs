@@ -71,11 +71,11 @@ public partial class StartupControlsDisplay : FluxorComponent
             OutputParser: DotNetCliOutputParser);
     }
 
-    private void StartProgramWithoutDebuggingOnClick(bool isExecuting)
+    private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
     {
     	if (isExecuting)
     	{
-    		RenderDropdownOnClick();
+    		await RenderDropdownOnClick();
 		}
         else
         {
@@ -132,10 +132,11 @@ public partial class StartupControlsDisplay : FluxorComponent
 		menuOptionList.Add(new MenuOptionRecord(
 			"Stop Execution",
 		    MenuOptionKind.Other,
-		    OnClickFunc: async () =>
+		    OnClickFunc: () =>
 		    {
 		    	var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
 		    	executionTerminal.KillProcess();
+                return Task.CompletedTask;
 		    }));
 
 		var dropdownRecord = new DropdownRecord(
@@ -173,7 +174,7 @@ public partial class StartupControlsDisplay : FluxorComponent
                     .ConfigureAwait(false);
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
 			// TODO: Capture specifically the exception that is fired when the JsRuntime...
 			//       ...tries to set focus to an HTML element, but that HTML element

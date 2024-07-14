@@ -38,7 +38,7 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
         await base.OnInitializedAsync();
     }
 
-    private async Task<MenuRecord> GetMenuRecord(MouseEventArgs mouseEventArgs)
+    private Task<MenuRecord> GetMenuRecord(MouseEventArgs mouseEventArgs)
     {
         var menuRecordsList = new List<MenuOptionRecord>();
 
@@ -98,9 +98,9 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 			}));
 
         if (!menuRecordsList.Any())
-            return MenuRecord.Empty;
+            return Task.FromResult(MenuRecord.Empty);
 
-        return new MenuRecord(menuRecordsList.ToImmutableArray());
+        return Task.FromResult(new MenuRecord(menuRecordsList.ToImmutableArray()));
     }
 
 //// Debugging

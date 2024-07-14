@@ -593,7 +593,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Remove C# Project Reference from Solution Action",
-            async () =>
+            () =>
             {
                 var workingDirectory = treeViewSolution.Item.NamespacePath.AbsolutePath.ParentDirectory!;
 
@@ -609,6 +609,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     async () => await onAfterCompletion.Invoke().ConfigureAwait(false));
 
                 terminal.EnqueueCommand(terminalCommand);
+                return Task.CompletedTask;
             });
     }
 
@@ -621,10 +622,10 @@ public class MenuOptionsFactory : IMenuOptionsFactory
     {
         ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             $"Add Project reference to {projectReceivingReference.Item.AbsolutePath.NameWithExtension}",
-            async referencedProject =>
+            referencedProject =>
             {
                 if (referencedProject is null)
-                    return;
+                    return Task.CompletedTask;
 
                 var formattedCommand = DotNetCliCommandFormatter.FormatAddProjectToProjectReference(
                     projectReceivingReference.Item.AbsolutePath.Value,
@@ -642,6 +643,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     });
 
                 terminal.EnqueueCommand(terminalCommand);
+                return Task.CompletedTask;
             },
             absolutePath =>
             {
@@ -669,7 +671,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Remove Project Reference to Project",
-            async () =>
+            () =>
             {
                 var formattedCommand = DotNetCliCommandFormatter.FormatRemoveProjectToProjectReference(
                     treeViewCSharpProjectToProjectReference.Item.ModifyProjectNamespacePath.AbsolutePath.Value,
@@ -687,6 +689,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     });
 
                 terminal.EnqueueCommand(removeProjectToProjectReferenceTerminalCommand);
+                return Task.CompletedTask;
             });
     }
 
@@ -746,7 +749,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
             Key<IBackgroundTask>.NewKey(),
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Remove NuGet Package Reference from Project",
-            async () =>
+            () =>
             {
                 var formattedCommand = DotNetCliCommandFormatter.FormatRemoveNugetPackageReferenceFromProject(
                     modifyProjectNamespacePath.AbsolutePath.Value,
@@ -764,6 +767,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
                     });
 
                 terminal.EnqueueCommand(removeNugetPackageReferenceFromProjectTerminalCommand);
+                return Task.CompletedTask;
             });
     }
 

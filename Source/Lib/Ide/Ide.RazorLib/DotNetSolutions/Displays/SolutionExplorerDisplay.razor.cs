@@ -75,7 +75,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			SolutionExplorerContextMenu.ContextMenuEventDropdownKey,
@@ -92,7 +92,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 			null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-    }
+		return Task.CompletedTask;
+	}
 
     private void OpenNewDotNetSolutionDialog()
     {

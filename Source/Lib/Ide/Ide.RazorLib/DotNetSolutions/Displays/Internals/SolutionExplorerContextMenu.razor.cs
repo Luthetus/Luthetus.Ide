@@ -503,12 +503,12 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         IdeBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             "Existing C# Project to add to solution",
-            async absolutePath =>
+            absolutePath =>
             {
                 if (absolutePath is null)
-                    return;
+					return Task.CompletedTask;
 
-                var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
+				var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
                         dotNetSolutionModel.NamespacePath.AbsolutePath.Value,
                         absolutePath.Value);
 
@@ -525,7 +525,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
                 var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
                 generalTerminal.EnqueueCommand(addExistingProjectToSolutionTerminalCommand);
-            },
+				return Task.CompletedTask;
+			},
             absolutePath =>
             {
                 if (absolutePath is null || absolutePath.IsDirectory)

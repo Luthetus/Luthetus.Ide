@@ -90,7 +90,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		OnCompilerServiceChanged();
 	}
 
-	private async void OnDotNetSolutionStateWrapChanged(object sender, EventArgs e)
+	private void OnDotNetSolutionStateWrapChanged(object sender, EventArgs e)
 	{
 		_solutionVisualizationModel = new(DotNetSolutionStateWrap.Value.DotNetSolutionModel?.AbsolutePath, OnCompilerServiceChanged);
 		OnAppDimensionStateWrapChanged(sender, e);
@@ -109,7 +109,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 		});
 	}
 
-	private async Task HandleOnContextMenu(MouseEventArgs mouseEventArgs)
+	private void HandleOnContextMenu(MouseEventArgs mouseEventArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			SolutionVisualizationContextMenu.ContextMenuEventDropdownKey,
