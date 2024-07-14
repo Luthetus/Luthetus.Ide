@@ -28,11 +28,11 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public int Index { get; set; }
     [Parameter, EditorRequired]
-    public Func<INotification, Task> OnFocusInFunc { get; set; }
-    [Parameter, EditorRequired]
-    public Func<INotification, Task> OnFocusOutFunc { get; set; }
+    public Func<INotification, Task> OnFocusInFunc { get; set; } = null!;
+	[Parameter, EditorRequired]
+    public Func<INotification, Task> OnFocusOutFunc { get; set; } = null!;
 
-    private const int WIDTH_IN_PIXELS = 350;
+	private const int WIDTH_IN_PIXELS = 350;
     private const int HEIGHT_IN_PIXELS = 125;
     private const int RIGHT_OFFSET_IN_PIXELS = 15;
     private const int BOTTOM_OFFSET_IN_PIXELS = 15;

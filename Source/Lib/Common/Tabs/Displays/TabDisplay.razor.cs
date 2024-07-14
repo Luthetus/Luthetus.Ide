@@ -31,11 +31,11 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	public ITab Tab { get; set; } = null!;
 
 	[Parameter]
-	public string CssClassString { get; set; }
+	public string? CssClassString { get; set; }
 	[Parameter]
 	public bool ShouldDisplayCloseButton { get; set; } = true;
 	[Parameter]
-	public string CssStyleString { get; set; }
+	public string? CssStyleString { get; set; }
 	[Parameter]
 	public bool IsBeingDragged { get; set; }
 

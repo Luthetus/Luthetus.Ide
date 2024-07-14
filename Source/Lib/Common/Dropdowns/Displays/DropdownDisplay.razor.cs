@@ -24,9 +24,9 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;
     [Parameter, EditorRequired]
-    public Func<DropdownRecord, Task> OnFocusInFunc { get; set; }
-    [Parameter, EditorRequired]
-    public Func<DropdownRecord, Task> OnFocusOutFunc { get; set; }
+    public Func<DropdownRecord, Task> OnFocusInFunc { get; set; } = null!;
+	[Parameter, EditorRequired]
+    public Func<DropdownRecord, Task> OnFocusOutFunc { get; set; } = null!;
 
 	private readonly object _hasPendingEventLock = new();
 
