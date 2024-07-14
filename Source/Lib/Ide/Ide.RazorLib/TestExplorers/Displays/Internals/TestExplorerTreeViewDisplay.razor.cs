@@ -48,6 +48,9 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
         _treeViewKeyboardEventHandler = new TestExplorerTreeViewKeyboardEventHandler(
             CommonComponentRenderers,
 	        Dispatcher,
+	        CompilerServiceRegistry,
+	        TextEditorService,
+	        ServiceProvider,
             TreeViewService,
 			BackgroundTaskService);
 

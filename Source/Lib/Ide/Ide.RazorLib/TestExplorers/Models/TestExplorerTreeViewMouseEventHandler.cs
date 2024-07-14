@@ -12,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
+using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
 using Luthetus.Ide.RazorLib.TestExplorers.Models;
@@ -83,170 +84,15 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 	        
 	    _textEditorService.Post(new ReadOnlyTextEditorTask(
             nameof(TestExplorerTreeViewMouseEventHandler),
-            ShowTestInEditorFactory(className),
+            TestExplorerHelper.ShowTestInEditorFactory(
+            	className,
+				_commonComponentRenderers,
+		        _dispatcher,
+		        _compilerServiceRegistry,
+		        _textEditorService,
+		        _serviceProvider),
             null));
 
 		return Task.CompletedTask;
-    }
-    
-    /// <summary>
-    /// TODO: D.R.Y.: This method is copy and pasted, then altered a bit, from
-    /// <see cref="Luthetus.TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.GoToDefinitionFactory"/>.
-    /// </summary>
-    private TextEditorEdit ShowTestInEditorFactory(string className)
-    {
-    	return (IEditContext editContext) =>
-        {
-			var wordTextSpan = TextEditorTextSpan.FabricateTextSpan(className);
-			
-			if (_compilerServiceRegistry is not CompilerServiceRegistry)
-			{
-				NotificationHelper.DispatchInformative(
-			        nameof(TestExplorerTreeViewMouseEventHandler),
-			        $"Could not open in editor because _compilerServiceRegistry was not the type: 'CompilerServiceRegistry'; it was '{_compilerServiceRegistry.GetType().Name}'",
-			        _commonComponentRenderers,
-			        _dispatcher,
-			        TimeSpan.FromSeconds(5));
-			
-				return Task.CompletedTask;
-			}
-			
-			var cSharpCompilerService = ((CompilerServiceRegistry)_compilerServiceRegistry).CSharpCompilerService;
-			
-            var definitionTextSpan = cSharpCompilerService.Binder.GetDefinition(wordTextSpan);
-
-            if (definitionTextSpan is null)
-            {
-            	NotificationHelper.DispatchInformative(
-			        nameof(TestExplorerTreeViewMouseEventHandler),
-			        $"Could not open in editor because definitionTextSpan was null",
-			        _commonComponentRenderers,
-			        _dispatcher,
-			        TimeSpan.FromSeconds(5));
-            
-                return Task.CompletedTask;
-            }
-
-            var definitionModel = _textEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
-
-            if (definitionModel is null)
-            {
-                if (_textEditorService.TextEditorConfig.RegisterModelFunc is not null)
-                {
-                    _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(
-                        new RegisterModelArgs(definitionTextSpan.ResourceUri, _serviceProvider));
-
-                    var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
-
-                    if (definitionModel is null)
-                    {
-                    	NotificationHelper.DispatchInformative(
-					        nameof(TestExplorerTreeViewMouseEventHandler),
-					        $"Could not open in editor because definitionModel was null",
-					        _commonComponentRenderers,
-					        _dispatcher,
-					        TimeSpan.FromSeconds(5));
-                    
-                        return Task.CompletedTask;
-                    }
-                }
-                else
-                {
-                	NotificationHelper.DispatchInformative(
-				        nameof(TestExplorerTreeViewMouseEventHandler),
-				        $"Could not open in editor because _textEditorService.TextEditorConfig.RegisterModelFunc was null",
-				        _commonComponentRenderers,
-				        _dispatcher,
-				        TimeSpan.FromSeconds(5));
-                
-                    return Task.CompletedTask;
-                }
-            }
-
-            var definitionViewModels = _textEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
-
-            if (!definitionViewModels.Any())
-            {
-                if (_textEditorService.TextEditorConfig.TryRegisterViewModelFunc is not null)
-                {
-                    _textEditorService.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-                        Key<TextEditorViewModel>.NewKey(),
-                        definitionTextSpan.ResourceUri,
-                        new Category("main"),
-                        true,
-                        _serviceProvider));
-
-                    definitionViewModels = _textEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
-
-                    if (!definitionViewModels.Any())
-                    {
-                    	NotificationHelper.DispatchInformative(
-					        nameof(TestExplorerTreeViewMouseEventHandler),
-					        $"Could not open in editor because !definitionViewModels.Any()",
-					        _commonComponentRenderers,
-					        _dispatcher,
-					        TimeSpan.FromSeconds(5));
-					        
-                        return Task.CompletedTask;
-                    }
-                }
-                else
-                {
-                	NotificationHelper.DispatchInformative(
-				        nameof(TestExplorerTreeViewMouseEventHandler),
-				        $"Could not open in editor because _textEditorService.TextEditorConfig.TryRegisterViewModelFunc was null",
-				        _commonComponentRenderers,
-				        _dispatcher,
-				        TimeSpan.FromSeconds(5));
-                
-                    return Task.CompletedTask;
-                }
-            }
-
-            var definitionViewModelKey = definitionViewModels.First().ViewModelKey;
-            
-            var definitionViewModelModifier = editContext.GetViewModelModifier(definitionViewModelKey);
-            var definitionCursorModifierBag = editContext.GetCursorModifierBag(definitionViewModelModifier?.ViewModel);
-            var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
-
-            if (definitionViewModelModifier is null || definitionCursorModifierBag is null || definitionPrimaryCursorModifier is null)
-            {
-            	NotificationHelper.DispatchInformative(
-			        nameof(TestExplorerTreeViewMouseEventHandler),
-			        $"Could not open in editor because definitionViewModelModifier was null || definitionCursorModifierBag was null || definitionPrimaryCursorModifier was null",
-			        _commonComponentRenderers,
-			        _dispatcher,
-			        TimeSpan.FromSeconds(5));
-				        
-                return Task.CompletedTask;
-            }
-
-            var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
-            var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
-
-            definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
-            definitionPrimaryCursorModifier.LineIndex = rowData.Index;
-            definitionPrimaryCursorModifier.ColumnIndex = columnIndex;
-            definitionPrimaryCursorModifier.PreferredColumnIndex = columnIndex;
-
-            if (_textEditorService.TextEditorConfig.TryShowViewModelFunc is not null)
-            {
-                _textEditorService.TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-                    definitionViewModelKey,
-                    Key<TextEditorGroup>.Empty,
-                    _serviceProvider));
-            }
-            else
-            {
-            	NotificationHelper.DispatchInformative(
-			        nameof(TestExplorerTreeViewMouseEventHandler),
-			        $"Could not open in editor because _textEditorService.TextEditorConfig.TryShowViewModelFunc was null",
-			        _commonComponentRenderers,
-			        _dispatcher,
-			        TimeSpan.FromSeconds(5));
-            }
-
-            return Task.CompletedTask;
-        };
     }
 }

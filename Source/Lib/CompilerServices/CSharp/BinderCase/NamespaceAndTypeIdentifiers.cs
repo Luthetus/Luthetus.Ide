@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
 
 public record NamespaceAndTypeIdentifiers(string NamespaceIdentifier, string TypeIdentifier)
 {
