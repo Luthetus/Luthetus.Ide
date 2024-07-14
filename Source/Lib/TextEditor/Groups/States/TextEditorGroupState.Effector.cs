@@ -50,7 +50,7 @@ public partial class TextEditorGroupState
 			Key<TextEditorGroup> groupKey,
         	Key<TextEditorViewModel> viewModelKey)
 		{
-			_textEditorService.PostTakeMostRecent(
+			_textEditorService.PostRedundant(
 				nameof(PostScroll),
 				new ResourceUri(string.Empty),
 				viewModelKey,

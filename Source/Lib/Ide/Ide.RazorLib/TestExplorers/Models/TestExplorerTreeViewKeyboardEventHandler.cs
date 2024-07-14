@@ -100,7 +100,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 	        _dispatcher,
 	        TimeSpan.FromSeconds(5));
 
-        _textEditorService.Post(new ReadOnlyTextEditorTask(
+        _textEditorService.PostDistinct(
             nameof(TestExplorerTreeViewKeyboardEventHandler),
             TestExplorerHelper.ShowTestInEditorFactory(
             	className,
@@ -110,7 +110,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 		        _compilerServiceRegistry,
 		        _textEditorService,
 		        _serviceProvider),
-            null));
+            null);
 
         return Task.CompletedTask;
     }

@@ -7,17 +7,28 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 /// <summary>
-/// This class allows for easy creation of a <see cref="ITextEditorTask"/>, that comes with "redundancy" checking in the queue.
-/// That is, if when enqueueing an instance of this type, the last item in the queue
-/// is an instance of this type, has the same <see cref="Name"/>, <see cref="ResourceUri"/>, and <see cref="ViewModelKey"/>,
-/// then this instance will overwrite the last item in the queue, because the logic has no value if ran many times one after another,
-/// therefore, just take the most recent event.
+/// Given two contiguous background tasks. If both of the tasks are of this type,
+/// then compare their <see cref="Name"/>, <see cref="ResourceUri"/>,
+/// and <see cref="ViewModelKey"/> against eachother.
+///
+/// If all the identifying properties are equal, then the "upstream"/"first to occurrance"
+/// task will be REMOVED from the background task queue, and NEVER be invoked.
+///
+/// In its place will be the "downstream"/"more recent occurrance" task.
+///
+/// The reason for this behavior, is that it would be redundant to calculate
+/// the upstream event, because the next event is of the same kind, and on the same
+/// data, and will entirely overwrite the upstream event's result.
 /// </summary>
-public sealed class TakeMostRecentTextEditorTask : ITextEditorTask
+/// <remarks>
+/// For further control over the batching, one needs to implement <see cref="ITextEditorTask"/>
+/// and implement the method: <see cref="IBackgroundTask.BatchOrDefault"/>.
+/// </remarks>
+public sealed class RedundantTextEditorTask : ITextEditorTask
 {
     private readonly TextEditorEdit _textEditorEdit;
 
-    public TakeMostRecentTextEditorTask(
+    public RedundantTextEditorTask(
         string name,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
@@ -44,7 +55,7 @@ public sealed class TakeMostRecentTextEditorTask : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is not TakeMostRecentTextEditorTask oldRedundantTextEditorTask)
+        if (oldEvent is not RedundantTextEditorTask oldRedundantTextEditorTask)
         {
             // Keep both events
             return null;
@@ -69,10 +80,14 @@ public sealed class TakeMostRecentTextEditorTask : ITextEditorTask
             await _textEditorEdit
                 .Invoke(EditContext)
                 .ConfigureAwait(false);
+                
+            await EditContext.TextEditorService
+            	.FinalizePost(EditContext)
+            	.ConfigureAwait(false);
 		}
-		finally
+		catch (Exception e)
 		{
-			await EditContext.TextEditorService.FinalizePost(EditContext);
+			Console.WriteLine(e);
 		}
     }
 }

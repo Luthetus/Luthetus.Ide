@@ -196,7 +196,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
             TextEditorService.ModelApi.RegisterCustom(textEditorModel);
 
-            TextEditorService.PostSimpleBatch(
+            TextEditorService.PostDistinct(
                 nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
                 async editContext =>
                 {

@@ -20,7 +20,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(Copy),
 				commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -48,7 +48,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(Cut),
                 TextEditorCommandDefaultFunctions.CutFactory(
                     commandArgs.ModelResourceUri,
@@ -74,7 +74,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(PasteCommand),
                 TextEditorCommandDefaultFunctions.PasteFactory(
                     commandArgs.ModelResourceUri,
@@ -100,7 +100,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(Save),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -128,7 +128,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(SelectAll),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -156,7 +156,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(Undo),
                 TextEditorCommandDefaultFunctions.UndoFactory(
                     commandArgs.ModelResourceUri,
@@ -182,7 +182,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(Redo),
                 TextEditorCommandDefaultFunctions.RedoFactory(
                     commandArgs.ModelResourceUri,
@@ -208,7 +208,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(Remeasure),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -236,7 +236,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(RefreshSyntaxHighlighting),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -282,7 +282,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(ScrollLineDown),
                 TextEditorCommandDefaultFunctions.ScrollLineDownFactory(
                     commandArgs.ModelResourceUri,
@@ -308,7 +308,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(ScrollLineUp),
                 TextEditorCommandDefaultFunctions.ScrollLineUpFactory(
                     commandArgs.ModelResourceUri,
@@ -334,7 +334,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(ScrollPageDown),
                 TextEditorCommandDefaultFunctions.ScrollPageDownFactory(
                     commandArgs.ModelResourceUri,
@@ -360,7 +360,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(ScrollPageUp),
                 TextEditorCommandDefaultFunctions.ScrollPageUpFactory(
                     commandArgs.ModelResourceUri,
@@ -386,7 +386,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(CursorMovePageBottom),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -414,7 +414,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(CursorMovePageTop),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -442,7 +442,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(Duplicate),
                 TextEditorCommandDefaultFunctions.DuplicateFactory(
                     commandArgs.ModelResourceUri,
@@ -468,7 +468,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(IndentMore),
                 TextEditorCommandDefaultFunctions.IndentMoreFactory(
                     commandArgs.ModelResourceUri,
@@ -494,7 +494,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(IndentLess),
                 TextEditorCommandDefaultFunctions.IndentLessFactory(
                     commandArgs.ModelResourceUri,
@@ -520,7 +520,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(ClearTextSelection),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -548,7 +548,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(NewLineBelow),
                 TextEditorCommandDefaultFunctions.NewLineBelowFactory(
                     commandArgs.ModelResourceUri,
@@ -574,7 +574,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(NewLineAbove),
                 TextEditorCommandDefaultFunctions.NewLineAboveFactory(
                     commandArgs.ModelResourceUri,
@@ -600,7 +600,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(MoveLineUp),
                 TextEditorCommandDefaultFunctions.MoveLineDownFactory(
                     commandArgs.ModelResourceUri,
@@ -626,7 +626,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(MoveLineUp),
                 TextEditorCommandDefaultFunctions.MoveLineUpFactory(
                     commandArgs.ModelResourceUri,
@@ -653,7 +653,7 @@ public static class TextEditorCommandDefaultFacts
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
             commandArgs.ShouldSelectText = shouldSelectText;
 
-            commandArgs.TextEditorService.PostSimpleBatch(
+            commandArgs.TextEditorService.PostDistinct(
                 nameof(GoToMatchingCharacterFactory),
                 TextEditorCommandDefaultFunctions.GoToMatchingCharacterFactory(
                     commandArgs.ModelResourceUri,
@@ -679,7 +679,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(RelatedFilesQuickPick),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -707,7 +707,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(GoToDefinition),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -735,7 +735,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(ShowFindAllDialog),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -767,7 +767,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(ShowTooltipByCursorPosition),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
@@ -795,7 +795,7 @@ public static class TextEditorCommandDefaultFacts
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            commandArgs.TextEditorService.PostTakeMostRecent(
+            commandArgs.TextEditorService.PostRedundant(
                 nameof(ShowFindOverlay),
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,

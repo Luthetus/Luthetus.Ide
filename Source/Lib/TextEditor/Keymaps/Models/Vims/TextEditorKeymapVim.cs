@@ -109,7 +109,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -136,7 +136,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -186,7 +186,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -240,7 +240,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -281,7 +281,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         async editContext =>
                         {
@@ -322,7 +322,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         async editContext =>
                         {
@@ -364,7 +364,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -390,7 +390,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -417,7 +417,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -444,7 +444,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -716,7 +716,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(commandDisplayName),
                     editContext =>
                     {
@@ -776,7 +776,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -802,7 +802,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                    commandArgs.TextEditorService.PostSimpleBatch(
+                    commandArgs.TextEditorService.PostDistinct(
                         nameof(commandDisplayName),
                         editContext =>
                         {
@@ -827,7 +827,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(displayName),
                     editContext =>
                     {
@@ -860,7 +860,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(commandDisplayName),
                     editContext =>
                     {

@@ -152,7 +152,7 @@ public class DotNetSolutionIdeApi
 
         if (solutionTextEditorModel is not null)
         {
-            _textEditorService.PostSimpleBatch(
+            _textEditorService.PostDistinct(
                 nameof(Website_AddExistingProjectToSolutionAsync),
                 _textEditorService.ModelApi.ReloadFactory(
                     solutionTextEditorModel.ResourceUri,

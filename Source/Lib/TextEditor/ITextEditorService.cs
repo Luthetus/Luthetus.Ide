@@ -46,23 +46,19 @@ public partial interface ITextEditorService
 	public LuthetusTextEditorConfig TextEditorConfig { get; }
 
     /// <summary>
-    /// This method will create an instance of <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>,
+    /// This method will create an instance of <see cref="DistinctTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- <see cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="BackgroundTasks.Models.SimpleBatchTextEditorTask"/>
     /// </summary>
-    public void PostSimpleBatch(
+    public void PostDistinct(
         string name,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null);
 
     /// <summary>
-    /// This method will create an instance of <see cref="BackgroundTasks.Models.TakeMostRecentTextEditorTask"/>,
+    /// This method will create an instance of <see cref="RedundantTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
-    /// --- <see cref="BackgroundTasks.Models.TakeMostRecentTextEditorTask"/>.cs inheritdoc:<br/><br/>
-    /// <inheritdoc cref="BackgroundTasks.Models.TakeMostRecentTextEditorTask"/>
     /// </summary>
-    public void PostTakeMostRecent(
+    public void PostRedundant(
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
@@ -70,14 +66,17 @@ public partial interface ITextEditorService
         TimeSpan? throttleTimeSpan = null);
 
     /// <summary>
-    /// This method creates a <see cref="TextEditorServiceTask"/>
-    /// that will encapsulate the provided innerTask.
-    /// When the queue invokes the encapsulating <see cref="TextEditorServiceTask"/>,
-    /// then the provided innerTask's <see cref="ITextEditorTask.InvokeWithEditContext(IEditContext)"/> will be invoked in turn.
-    /// When the innerTask is finished, the encapsulating <see cref="TextEditorServiceTask"/>
-    /// will update any state that was modified, and trigger re-renders for the UI.
+    /// This method will set the <see cref="ITextEditorTask.EditContext"/> property.
+    ///
+    /// Within the method
+    /// <see cref="Luthetus.Common.RazorLib.BackgroundTasks.Models.IBackgroundTask.HandleEvent"/>,
+    /// invoke <see cref="FinalizePost"/> to finalize any changes.
     /// </summary>
     public void Post(ITextEditorTask textEditorTask);
 
+	/// <summmary>
+	/// This method writes any mutated data within the <see cref="ITextEditorTask.EditContext"/>
+	/// to the <see cref="TextEditorState"/>, and afterwards causes a UI render.
+	/// </summary>
 	public Task FinalizePost(IEditContext editContext);
 }

@@ -46,7 +46,7 @@ public partial class FindOverlayDisplay : ComponentBase
             {
                 await _throttleInputValueChange.PushEvent(_ =>
                 {
-                    TextEditorService.PostSimpleBatch(
+                    TextEditorService.PostDistinct(
                         nameof(FindOverlayDisplay),
                         async editContext =>
                         {
@@ -135,7 +135,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 .FocusHtmlElementById(RenderBatch.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
-            TextEditorService.PostTakeMostRecent(
+            TextEditorService.PostRedundant(
                 nameof(FindOverlayDisplay),
 				RenderBatch.ViewModel.ResourceUri,
                 RenderBatch.ViewModel.ViewModelKey,
@@ -247,7 +247,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private Task HandleActiveIndexMatchedTextSpanChanged()
     {
-        TextEditorService.PostSimpleBatch(
+        TextEditorService.PostDistinct(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
             async editContext =>
             {

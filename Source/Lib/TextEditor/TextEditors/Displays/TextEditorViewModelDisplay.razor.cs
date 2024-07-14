@@ -285,7 +285,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
 		var localViewModelKey = TextEditorViewModelKey;
 
-		TextEditorService.PostSimpleBatch(
+		TextEditorService.PostDistinct(
 			nameof(ReceiveOnContextMenu),
 			editContext =>
 			{
@@ -371,7 +371,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                     if (!mouseNoLongerOverTooltipCancellationToken.IsCancellationRequested)
                     {
-						TextEditorService.PostSimpleBatch(
+						TextEditorService.PostDistinct(
 							nameof(ContextMenu),
 							editContext =>
 							{
@@ -401,7 +401,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 {
                     await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
-                    TextEditorService.PostSimpleBatch(
+                    TextEditorService.PostDistinct(
 						nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory),
 						TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory(
 							mouseEventArgs,
@@ -486,7 +486,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        TextEditorService.PostSimpleBatch(
+        TextEditorService.PostDistinct(
             nameof(QueueRemeasureBackgroundTask),
             async editContext =>
 			{
@@ -557,7 +557,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.PostTakeMostRecent(
+        TextEditorService.PostRedundant(
             nameof(QueueRemeasureBackgroundTask),
 			modelResourceUri,
 			viewModelKey.Value,
@@ -578,7 +578,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.PostTakeMostRecent(
+        TextEditorService.PostRedundant(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
 			modelResourceUri,
 			viewModelKey.Value,

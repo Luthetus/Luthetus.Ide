@@ -134,7 +134,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 	private void RegisterDetailsTextEditor(TextEditorModel model)
 	{
-		TextEditorService.PostSimpleBatch(
+		TextEditorService.PostDistinct(
 			nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
 			async editContext =>
 			{

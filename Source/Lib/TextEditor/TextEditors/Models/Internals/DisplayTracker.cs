@@ -141,7 +141,7 @@ public class DisplayTracker : IDisposable
 		// does not use the 'commandArgs' parameter
         var commandArgs = (TextEditorCommandArgs?)null;
 
-		_textEditorService.PostTakeMostRecent(
+		_textEditorService.PostRedundant(
 			nameof(AppDimensionStateWrap_StateChanged),
 			model.ResourceUri,
             viewModel.ViewModelKey,
@@ -162,7 +162,7 @@ public class DisplayTracker : IDisposable
 
 				// This virtualization result calculation is intentionally posted from within a post,
 				// in order to ensure that the preceeding remeasure is executed and the state is updated first
-				_textEditorService.PostTakeMostRecent(
+				_textEditorService.PostRedundant(
 	                nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory),
 					model.ResourceUri,
 	                viewModel.ViewModelKey,

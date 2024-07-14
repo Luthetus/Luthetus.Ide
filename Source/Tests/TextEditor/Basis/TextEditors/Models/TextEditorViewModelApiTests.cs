@@ -224,7 +224,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -272,7 +272,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(MoveCursorFactory_SelectText),
 			async editContext =>
             {
@@ -356,7 +356,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -479,7 +479,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -563,7 +563,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -686,7 +686,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -773,7 +773,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -896,7 +896,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -980,7 +980,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(MoveCursorFactory_SelectText),
             async editContext =>
             {
@@ -1247,7 +1247,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             oppositeShouldSetFocusAfterNextRender,
             inViewModel.UnsafeState.ShouldSetFocusAfterNextRender);
 
-        textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ViewModelApi.WithValueFactory),
             textEditorService.ViewModelApi.WithValueFactory(
                 inViewModel.ViewModelKey,

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Fluxor;
@@ -16,7 +17,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 
@@ -44,7 +44,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(USER_TYPES_OUT_CODE),
                 async editContext =>
                 {
@@ -97,7 +97,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(USER_TYPES_OUT_CODE),
                 async editContext =>
                 {
@@ -155,7 +155,7 @@ await builder.Build().RunAsync();
             {
                 char character = content[i];
 
-                textEditorService.PostSimpleBatch(
+                textEditorService.PostDistinct(
                     nameof(USER_TYPES_OUT_CODE),
                     async editContext =>
                     {

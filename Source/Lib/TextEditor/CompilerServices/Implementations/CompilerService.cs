@@ -161,7 +161,7 @@ public class CompilerService : ICompilerService
 
     protected virtual void QueueParseRequest(ResourceUri resourceUri)
     {
-		_textEditorService.Post(new ReadOnlyTextEditorTask(
+		_textEditorService.PostDistinct(
             nameof(QueueParseRequest),
             async editContext =>
             {
@@ -260,6 +260,6 @@ public class CompilerService : ICompilerService
 					OnResourceParsed();
 				}
             },
-			null));
+			null);
     }
 }

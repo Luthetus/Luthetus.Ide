@@ -81,7 +81,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 	        _dispatcher,
 	        TimeSpan.FromSeconds(5));
 	        
-	    _textEditorService.Post(new ReadOnlyTextEditorTask(
+	    _textEditorService.PostDistinct(
             nameof(TestExplorerTreeViewMouseEventHandler),
             TestExplorerHelper.ShowTestInEditorFactory(
             	className,
@@ -91,7 +91,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		        _compilerServiceRegistry,
 		        _textEditorService,
 		        _serviceProvider),
-            null));
+            null);
 
 		return Task.CompletedTask;
     }

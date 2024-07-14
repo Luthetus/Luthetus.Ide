@@ -120,25 +120,25 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public void PostSimpleBatch(
+    public void PostDistinct(
         string name,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new SimpleBatchTextEditorTask(
+        Post(new DistinctTextEditorTask(
             name,
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public void PostTakeMostRecent(
+    public void PostRedundant(
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new TakeMostRecentTextEditorTask(
+        Post(new RedundantTextEditorTask(
             name,
 			resourceUri,
             viewModelKey,
