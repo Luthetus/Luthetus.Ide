@@ -4,6 +4,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
@@ -33,8 +34,15 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 	public static readonly Key<TextEditorViewModel> DetailsTextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
 
 	private string? _previousContent = string.Empty;
+	private Throttle _updateContentThrottle = new Throttle(Throttle.Thirty_Frames_Per_Second);
 
 	protected override async Task OnParametersSetAsync()
+	{
+		_updateContentThrottle.Run(_ => UpdateContent());
+		await base.OnParametersSetAsync();
+	}
+	
+	private async Task UpdateContent()
 	{
 		var newContent = string.Empty;
 		var newDecorationTextSpanList = new List<TextEditorTextSpan>();
@@ -136,8 +144,6 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 					return Task.CompletedTask;
 				});
 		}
-
-		await base.OnParametersSetAsync();
 	}
 
 	/// <param name="newDecorationTextSpanList">
@@ -184,7 +190,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 			newContent = $"{treeViewStringFragment.Item.Value}:\n";
 
 			if (terminalCommand is not null)
-				newContent += (terminalCommand.TextSpan?.GetText() ?? "TextSpan was null");
+				newContent += (terminalCommand.OutputBuilder?.ToString() ?? $"{nameof(terminalCommand.OutputBuilder)} was null");
 			else
 				newContent += "TerminalCommand was null";
 		}
@@ -222,7 +228,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 			newContent = $"{treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}:\n";
 
 			if (terminalCommand is not null)
-				newContent += terminalCommand.TextSpan?.GetText() ?? "TextSpan was null";
+				newContent += (terminalCommand.OutputBuilder?.ToString() ?? $"{nameof(terminalCommand.OutputBuilder)} was null");
 			else
 				newContent += "terminalCommand was null";
 		}

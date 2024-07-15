@@ -109,7 +109,8 @@ public partial class Terminal
 
     private async Task HandleCommand(TerminalCommand terminalCommand)
     {
-		MoveCursorToEnd();
+    	if (terminalCommand.OutputBuilder is null)
+			MoveCursorToEnd();
 
 		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
 			SetWorkingDirectoryAbsolutePathString(terminalCommand.ChangeWorkingDirectoryTo);
@@ -210,15 +211,23 @@ public partial class Terminal
 								terminalCommand,
 								output);
 						}
-
-						TerminalOnOutput(
-							outputOffset,
-							output,
-							outputTextSpanList,
-							terminalCommand,
-							terminalCommandBoundary);
-
-						outputOffset += output.Length;
+						
+						if (terminalCommand.OutputBuilder is null)
+						{
+							TerminalOnOutput(
+								outputOffset,
+								output,
+								outputTextSpanList,
+								terminalCommand,
+								terminalCommandBoundary);
+	
+							outputOffset += output.Length;
+						}
+						else
+						{
+							terminalCommand.OutputBuilder.Append(output);
+							terminalCommand.TextSpanList = outputTextSpanList;
+						}
 					}
 
 					DispatchNewStateKey();

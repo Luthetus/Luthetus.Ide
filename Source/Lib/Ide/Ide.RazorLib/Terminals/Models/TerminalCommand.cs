@@ -1,3 +1,4 @@
+using System.Text;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -61,8 +62,14 @@ public record TerminalCommand(
 	/// Also, the execution terminal shouldn't have an editable final line,
 	/// it should be purely readonly for use by the IDE to show the program's output
 	/// when it runs.
+	///
+	/// I think I want the execution terminal to eventually use this StringBuilder too,
+	/// but for now I should keep the execution terminal writing to the text editor model,
+	/// and focus on getting the unit tests to use this StringBuilder, so I don't do too much
+	/// all at once.
 	/// </summary>
-	public StringBuilder? OutputBuilder { get; set; }
+	public StringBuilder? OutputBuilder { get; set; } = new();
+	public List<TextEditorTextSpan>? TextSpanList { get; set; }
 
 	public Task InvokeStateChangedCallbackFunc()
 	{
