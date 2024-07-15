@@ -12,7 +12,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests;
+namespace Luthetus.CompilerServices.CSharp.Tests;
 
 public class CSharpCompilerServiceTestsBase
 {

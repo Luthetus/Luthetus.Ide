@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.BinderCase;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.BinderCase;
 
 /// <summary>
 /// <see cref="CSharpBinder"/>

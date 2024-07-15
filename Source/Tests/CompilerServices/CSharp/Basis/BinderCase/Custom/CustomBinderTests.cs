@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.BinderCase.Custom;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.BinderCase.Custom;
 
 /// <summary>
 /// <see cref="CSharpBinderTests"/>
