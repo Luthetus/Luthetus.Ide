@@ -150,14 +150,21 @@ public partial class TestExplorerScheduler
     	
     	var localTestExplorerState = _testExplorerStateWrap.Value;
     
-    	var progressBarModel = new ProgressBarModel(0, $"Discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}");
+    	//var progressBarModel = new ProgressBarModel(0, $"Discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}");
 
-		NotificationHelper.DispatchProgress(
+		//NotificationHelper.DispatchProgress(
+	    //    "DiscoverTestsAsync",
+	    //    progressBarModel,
+	    //    _commonComponentRenderers,
+	    //    _dispatcher,
+	    //    TimeSpan.FromMilliseconds(-1));
+	    
+	    NotificationHelper.DispatchInformative(
 	        "DiscoverTestsAsync",
-	        progressBarModel,
+	        "DiscoverTestsAsync",
 	        _commonComponentRenderers,
 	        _dispatcher,
-	        TimeSpan.FromMilliseconds(-1));
+	        TimeSpan.FromSeconds(5));
 
 		_ = Task.Run(async () =>
     	{
@@ -179,9 +186,9 @@ public partial class TestExplorerScheduler
 		            	await treeViewProject.LoadChildListAsync();
 		            	
 		            	await Task.Delay(1_000);
-			    		progressBarModel.SetProgress(
-			    			projectsHandled * completionPercentPerProject,
-			    			$"{projectsHandled + 1}/{localTestExplorerState.ProjectTestModelList.Count}: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}");
+			    		//progressBarModel.SetProgress(
+			    		//	projectsHandled * completionPercentPerProject,
+			    		//	$"{projectsHandled + 1}/{localTestExplorerState.ProjectTestModelList.Count}: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}");
 			    		projectsHandled++;
 		            }
 		            
@@ -206,16 +213,23 @@ public partial class TestExplorerScheduler
 		            executionTerminal.EnqueueCommand(terminalCommand);
 		        }
 		    	
-		    	progressBarModel.SetProgress(1, $"Finished discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+		    	//progressBarModel.SetProgress(1, $"Finished discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
     		}
     		catch (Exception e)
 			{
-				var currentProgress = progressBarModel.GetProgress();
-				progressBarModel.SetProgress(currentProgress, e.ToString());
+				//var currentProgress = progressBarModel.GetProgress();
+				//progressBarModel.SetProgress(currentProgress, e.ToString());
+				
+				NotificationHelper.DispatchError(
+			        "DiscoverTestsAsync",
+			        e.ToString(),
+			        _commonComponentRenderers,
+			        _dispatcher,
+			        TimeSpan.FromSeconds(5));
 			}
 			finally
 			{
-				progressBarModel.Dispose();
+				//progressBarModel.Dispose();
 			}
     	});
     	
