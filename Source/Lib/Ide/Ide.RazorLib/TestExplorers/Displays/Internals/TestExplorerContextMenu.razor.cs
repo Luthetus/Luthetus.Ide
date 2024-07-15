@@ -281,7 +281,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 					"CheckTestOutcome",
 					() => 
 					{
-						var output = treeViewStringFragment.Item.TerminalCommand?.TextSpan?.GetText() ?? null;
+						var output = treeViewStringFragment.Item.TerminalCommand?.OutputBuilder?.ToString() ?? null;
 						
 						if (output is not null && output.Contains("Duration:"))
 						{
