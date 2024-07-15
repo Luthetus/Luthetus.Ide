@@ -1,6 +1,6 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.CompilerServices.FSharp.FSharp.SyntaxActors;
+using Luthetus.CompilerServices.FSharp.SyntaxActors;
 
 namespace Luthetus.CompilerServices.FSharp;
 

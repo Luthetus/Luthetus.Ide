@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.Razor.CompilerServiceCase;
-using Luthetus.CompilerServices.Razor.Razor.Facts;
+using Luthetus.CompilerServices.Razor.Facts;
 using Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
 using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 

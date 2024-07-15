@@ -1,6 +1,6 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.CompilerServices.Json.Json.SyntaxActors;
+using Luthetus.CompilerServices.Json.SyntaxActors;
 
 namespace Luthetus.CompilerServices.Json;
 

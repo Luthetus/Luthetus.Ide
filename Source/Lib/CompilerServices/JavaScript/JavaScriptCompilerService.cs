@@ -1,6 +1,6 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.CompilerServices.JavaScript.JavaScript.SyntaxActors;
+using Luthetus.CompilerServices.JavaScript.SyntaxActors;
 
 namespace Luthetus.CompilerServices.JavaScript;
 

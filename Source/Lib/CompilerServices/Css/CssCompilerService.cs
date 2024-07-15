@@ -1,6 +1,6 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.CompilerServices.Css.Css.SyntaxActors;
+using Luthetus.CompilerServices.Css.SyntaxActors;
 
 namespace Luthetus.CompilerServices.Css;
 

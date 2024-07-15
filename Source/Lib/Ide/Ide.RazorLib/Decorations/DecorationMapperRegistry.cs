@@ -2,8 +2,8 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.CompilerServices.Css.Css.Decoration;
-using Luthetus.CompilerServices.Json.Json.Decoration;
+using Luthetus.CompilerServices.Css.Decoration;
+using Luthetus.CompilerServices.Json.Decoration;
 using Luthetus.CompilerServices.Xml.Html.Decoration;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
