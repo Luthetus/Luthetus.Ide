@@ -1,7 +1,7 @@
-﻿using Fluxor;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.Nugets.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Nugets.States;
 

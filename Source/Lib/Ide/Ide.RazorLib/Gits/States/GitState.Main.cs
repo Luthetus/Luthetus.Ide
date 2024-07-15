@@ -1,8 +1,8 @@
-﻿using Fluxor;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Gits.States;
 
