@@ -91,6 +91,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Photino.NET", "External\pho
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.BUnit.Tests", "Source\Tests\BUnit\Luthetus.BUnit.Tests\Luthetus.BUnit.Tests.csproj", "{3C76BB5C-68B2-4EAD-80AF-9CE614076D0A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.CompilerServices.RazorLib", "Source\Lib\CompilerServices\Luthetus.CompilerServices.RazorLib\Luthetus.CompilerServices.RazorLib.csproj", "{5DD132FB-120D-4163-B01E-AF565B9E94D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -249,6 +251,10 @@ Global
 		{3C76BB5C-68B2-4EAD-80AF-9CE614076D0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C76BB5C-68B2-4EAD-80AF-9CE614076D0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C76BB5C-68B2-4EAD-80AF-9CE614076D0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DD132FB-120D-4163-B01E-AF565B9E94D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DD132FB-120D-4163-B01E-AF565B9E94D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DD132FB-120D-4163-B01E-AF565B9E94D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DD132FB-120D-4163-B01E-AF565B9E94D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -294,6 +300,7 @@ Global
 		{49900515-9358-41F5-85E6-5FEAD1891C31} = {343EBC7C-70AD-4B2D-AF6A-5A1079E55AB9}
 		{18F50C9D-2230-43FE-B6E8-A16D285A222F} = {343EBC7C-70AD-4B2D-AF6A-5A1079E55AB9}
 		{3C76BB5C-68B2-4EAD-80AF-9CE614076D0A} = {10712494-6403-4614-ADAD-0A3FA4451F0F}
+		{5DD132FB-120D-4163-B01E-AF565B9E94D5} = {ACC32A2F-DF9C-4B91-80AE-F0585CDD59EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6045BB8B-0C60-4077-93C3-16BA09C8FC27}
