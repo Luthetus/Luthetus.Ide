@@ -220,28 +220,54 @@ public partial class Terminal
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
+                    
+                var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is TerminalResource firstTerminalResource)
+                {
+	                firstTerminalResource.ManualDecorationTextSpanList.Clear();
+	                firstTerminalResource.SyntaxTokenList.Clear();
+                }
 
-                await TextEditorCommandDefaultFunctions.SelectAllFactory(
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        null)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+				modelModifier.SetContent(string.Empty);
+				await _textEditorService.ViewModelApi.MoveCursorFactory(
+	                    new KeyboardEventArgs
+	                    {
+	                        Code = KeyboardKeyFacts.MovementKeys.END,
+	                        Key = KeyboardKeyFacts.MovementKeys.END,
+	                        CtrlKey = true,
+	                    },
+	                    ResourceUri,
+	                    TextEditorViewModelKey)
+	                .Invoke(editContext)
+	                .ConfigureAwait(false);
+	                
+	            var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
-                await _textEditorService.ModelApi.DeleteTextByMotionFactory(
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        MotionKind.Delete,
+				var content = (WorkingDirectoryAbsolutePathString ?? "null") + '>';
+
+                await _textEditorService.ModelApi.InsertTextFactory(
+                        ResourceUri,
+                        TextEditorViewModelKey,
+                        content,
                         CancellationToken.None)
                     .Invoke(editContext)
                     .ConfigureAwait(false);
 
-                var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                    return;
-
-                terminalResource.ManualDecorationTextSpanList.Clear();
-                terminalResource.SyntaxTokenList.Clear();
+                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is TerminalResource secondTerminalResource)
+                {
+	                secondTerminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
+	                    startingPositionIndex,
+	                    modelModifier.GetPositionIndex(primaryCursorModifier),
+	                    (byte)TerminalDecorationKind.Keyword,
+	                    ResourceUri,
+	                    modelModifier.GetAllText()));
+	
+	                await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
+	                        modelModifier.ResourceUri,
+	                        secondTerminalResource.GetTokenTextSpans())
+	                    .Invoke(editContext)
+	                    .ConfigureAwait(false);
+                }
             });
     }
     

@@ -110,7 +110,7 @@ public partial class Terminal
     private async Task HandleCommand(TerminalCommand terminalCommand)
     {
     	if (terminalCommand.OutputBuilder is null)
-			MoveCursorToEnd();
+			ClearTerminal();
 
 		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
 			SetWorkingDirectoryAbsolutePathString(terminalCommand.ChangeWorkingDirectoryTo);
