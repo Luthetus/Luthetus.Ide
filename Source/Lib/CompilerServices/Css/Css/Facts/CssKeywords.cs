@@ -1,4 +1,4 @@
-namespace Luthetus.CompilerServices.Lang.Css.Css.Facts;
+namespace Luthetus.CompilerServices.Css.Css.Facts;
 
 public static class CssKeywords
 {

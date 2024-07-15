@@ -1,7 +1,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.CompilerServices.Lang.Json.Json.SyntaxObjects;
+using Luthetus.CompilerServices.Json.Json.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Json.Json;
+namespace Luthetus.CompilerServices.Json.Json;
 
 public class JsonSyntaxUnit
 {

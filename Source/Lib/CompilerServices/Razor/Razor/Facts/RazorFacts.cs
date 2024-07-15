@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.Razor.Razor.Facts;
+namespace Luthetus.CompilerServices.Razor.Razor.Facts;
 
 public static class RazorFacts
 {

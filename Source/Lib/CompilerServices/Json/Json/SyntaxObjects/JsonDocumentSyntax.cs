@@ -1,8 +1,8 @@
-﻿using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.Json.Json.SyntaxEnums;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Json.Json.SyntaxEnums;
 
-namespace Luthetus.CompilerServices.Lang.Json.Json.SyntaxObjects;
+namespace Luthetus.CompilerServices.Json.Json.SyntaxObjects;
 
 public class JsonDocumentSyntax : IJsonSyntax
 {

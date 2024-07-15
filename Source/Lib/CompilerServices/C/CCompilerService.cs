@@ -1,7 +1,7 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
-namespace Luthetus.CompilerServices.Lang.C;
+namespace Luthetus.CompilerServices.C;
 
 public sealed class CCompilerService : CompilerService
 {

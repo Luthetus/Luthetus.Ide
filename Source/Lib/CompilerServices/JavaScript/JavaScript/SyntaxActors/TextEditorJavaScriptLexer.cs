@@ -8,9 +8,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.JavaScript.JavaScript.Facts;
+using Luthetus.CompilerServices.JavaScript.JavaScript.Facts;
 
-namespace Luthetus.CompilerServices.Lang.JavaScript.JavaScript.SyntaxActors;
+namespace Luthetus.CompilerServices.JavaScript.JavaScript.SyntaxActors;
 
 public class TextEditorJavaScriptLexer : Lexer
 {

@@ -1,8 +1,8 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
+using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 
-namespace Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
+namespace Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 
 public sealed class CSharpProjectCompilerService : CompilerService
 {

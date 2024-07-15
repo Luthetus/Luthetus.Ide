@@ -1,13 +1,13 @@
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+using Luthetus.CompilerServices.CSharp.Tests.UserStories;
+using Luthetus.CompilerServices.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.ParserCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Custom;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Custom;
 
 /// <summary>
 /// <see cref="CSharpParserTests"/>

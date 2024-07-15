@@ -3,10 +3,10 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.LexerCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase;
 
 /// <summary>
 /// <see cref="ParserModel"/>

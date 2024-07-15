@@ -3,10 +3,10 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
-using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
+using Luthetus.CompilerServices.DotNetSolution.Facts;
+using Luthetus.CompilerServices.Xml.Html.Decoration;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
+namespace Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 
 public class DotNetSolutionLexer : Lexer
 {

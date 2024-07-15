@@ -1,8 +1,8 @@
-﻿using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.Css.Css.SyntaxEnums;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.Css.Css.SyntaxEnums;
 
-namespace Luthetus.CompilerServices.Lang.Css.Css.SyntaxObjects;
+namespace Luthetus.CompilerServices.Css.Css.SyntaxObjects;
 
 public class CssIdentifierSyntax : ICssSyntax
 {

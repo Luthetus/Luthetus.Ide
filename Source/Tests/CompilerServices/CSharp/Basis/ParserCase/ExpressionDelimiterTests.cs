@@ -1,9 +1,9 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.CSharp.ParserCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase;
 
 /// <summary>
 /// <see cref="ExpressionDelimiter"/>

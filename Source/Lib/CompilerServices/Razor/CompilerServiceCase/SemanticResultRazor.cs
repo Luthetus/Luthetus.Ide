@@ -1,9 +1,9 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
 
 public record SemanticResultRazor
 {

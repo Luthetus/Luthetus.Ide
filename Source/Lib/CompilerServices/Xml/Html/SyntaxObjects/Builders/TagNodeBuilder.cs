@@ -1,7 +1,7 @@
-﻿using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxEnums;
+using System.Collections.Immutable;
+using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects.Builders;
+namespace Luthetus.CompilerServices.Xml.Html.SyntaxObjects.Builders;
 
 public class TagNodeBuilder
 {

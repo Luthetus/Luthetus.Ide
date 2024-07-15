@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
+namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public static class ParseVariables
 {

@@ -1,8 +1,8 @@
 // - NamespaceStatementNode
 //       - KeywordToken: namespace
-//       - IdentifierToken: Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.DataForVisualizing
+//       - IdentifierToken: Luthetus.CompilerServices.CSharp.Tests.Basis.DataForVisualizing
 //       - CodeBlockNode: ...
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.DataForVisualizing;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.DataForVisualizing;
 
 // - TypeDefinitionNode
 //       - AccessModifierKind: "public"
@@ -62,7 +62,7 @@ public class MyClass
 //     - NamespaceGroupNodeMap:
 //       [
 //	       {
-//		       "Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.DataForVisualizing",
+//		       "Luthetus.CompilerServices.CSharp.Tests.Basis.DataForVisualizing",
 //               [
 //                   NamespaceStatementNode,
 //			   ]

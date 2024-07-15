@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Luthetus.CompilerServices.Lang.JavaScript.JavaScript.Facts;
+namespace Luthetus.CompilerServices.JavaScript.JavaScript.Facts;
 
 public static class JavaScriptKeywords
 {

@@ -6,12 +6,12 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+using Luthetus.CompilerServices.DotNetSolution.Facts;
+using Luthetus.CompilerServices.DotNetSolution.Models.Associated;
+using Luthetus.CompilerServices.DotNetSolution.Models;
+using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
+namespace Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 
 public class DotNetSolutionParser : IParser
 {

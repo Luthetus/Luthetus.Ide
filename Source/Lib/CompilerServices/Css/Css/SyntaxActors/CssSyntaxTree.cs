@@ -4,12 +4,12 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.CompilerServices.Lang.Css.Css.Decoration;
-using Luthetus.CompilerServices.Lang.Css.Css.SyntaxEnums;
-using Luthetus.CompilerServices.Lang.Css.Css.Facts;
-using Luthetus.CompilerServices.Lang.Css.Css.SyntaxObjects;
+using Luthetus.CompilerServices.Css.Css.Decoration;
+using Luthetus.CompilerServices.Css.Css.SyntaxEnums;
+using Luthetus.CompilerServices.Css.Css.Facts;
+using Luthetus.CompilerServices.Css.Css.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;
+namespace Luthetus.CompilerServices.Css.Css.SyntaxActors;
 
 public class CssSyntaxTree
 {

@@ -1,8 +1,8 @@
-﻿using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+namespace Luthetus.CompilerServices.DotNetSolution.Models;
 
 public class DotNetSolutionGlobalSectionBuilder
 {

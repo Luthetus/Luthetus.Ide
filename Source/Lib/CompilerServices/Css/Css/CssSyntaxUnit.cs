@@ -1,7 +1,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.CompilerServices.Lang.Css.Css.SyntaxObjects;
+using Luthetus.CompilerServices.Css.Css.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Css.Css;
+namespace Luthetus.CompilerServices.Css.Css;
 
 public class CssSyntaxUnit
 {

@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Lib\CompilerServices\Razor\Luthetus.CompilerServices.Lang.Razor.csproj" />
+    <ProjectReference Include="..\..\..\Lib\CompilerServices\Razor\Luthetus.CompilerServices.Razor.csproj" />
   </ItemGroup>
 
 </Project>

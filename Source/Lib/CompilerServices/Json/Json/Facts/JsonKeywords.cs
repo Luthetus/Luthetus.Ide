@@ -1,4 +1,4 @@
-namespace Luthetus.CompilerServices.Lang.Json.Json.Facts;
+namespace Luthetus.CompilerServices.Json.Json.Facts;
 
 public static class JsonKeywords
 {

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.Css.Css.Decoration;
+namespace Luthetus.CompilerServices.Css.Css.Decoration;
 
 public enum CssDecorationKind
 {

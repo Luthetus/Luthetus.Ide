@@ -1,7 +1,7 @@
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+namespace Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 
 public class DotNetSolutionResource : CompilerServiceResource
 {

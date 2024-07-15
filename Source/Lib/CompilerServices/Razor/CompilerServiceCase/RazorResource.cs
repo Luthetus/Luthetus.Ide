@@ -4,9 +4,9 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
+using Luthetus.CompilerServices.Xml.Html.Decoration;
 
-namespace Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
 
 public class RazorResource : CompilerServiceResource
 {

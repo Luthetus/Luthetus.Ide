@@ -1,8 +1,8 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;
+using Luthetus.CompilerServices.Css.Css.SyntaxActors;
 
-namespace Luthetus.CompilerServices.Lang.Css;
+namespace Luthetus.CompilerServices.Css;
 
 public sealed class CssCompilerService : CompilerService
 {

@@ -1,10 +1,10 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.RazorLib.CSharpProjects.Models;
 

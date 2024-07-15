@@ -1,4 +1,4 @@
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
 /// <summary>
 /// <see cref="DotNetProjectKind"/> is not to be confused with <see cref="IDotNetProject.ProjectTypeGuid"/>

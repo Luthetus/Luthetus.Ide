@@ -1,7 +1,7 @@
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html;
+namespace Luthetus.CompilerServices.Xml.Html;
 
 public class HtmlSyntaxUnit
 {

@@ -16,9 +16,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+namespace Luthetus.CompilerServices.CSharp.Tests.UserStories;
 
 /// <summary>
 /// Many tests in this project are pre-written string inputs.

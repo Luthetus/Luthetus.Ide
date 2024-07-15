@@ -1,10 +1,10 @@
-﻿using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.CompilerServices.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase;
 
 /// <summary>
 /// <see cref="ParseTokens"/>

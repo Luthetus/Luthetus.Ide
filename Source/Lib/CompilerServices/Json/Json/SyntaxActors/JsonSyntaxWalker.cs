@@ -1,7 +1,7 @@
-﻿using Luthetus.CompilerServices.Lang.Json.Json.SyntaxEnums;
-using Luthetus.CompilerServices.Lang.Json.Json.SyntaxObjects;
+using Luthetus.CompilerServices.Json.Json.SyntaxEnums;
+using Luthetus.CompilerServices.Json.Json.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
+namespace Luthetus.CompilerServices.Json.Json.SyntaxActors;
 
 public class JsonSyntaxWalker
 {

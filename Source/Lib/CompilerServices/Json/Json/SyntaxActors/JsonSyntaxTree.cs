@@ -3,11 +3,11 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.CompilerServices.Lang.Json.Json.SyntaxObjects;
-using Luthetus.CompilerServices.Lang.Json.Json.Facts;
-using Luthetus.CompilerServices.Lang.Json.Json.Decoration;
+using Luthetus.CompilerServices.Json.Json.SyntaxObjects;
+using Luthetus.CompilerServices.Json.Json.Facts;
+using Luthetus.CompilerServices.Json.Json.Decoration;
 
-namespace Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
+namespace Luthetus.CompilerServices.Json.Json.SyntaxActors;
 
 public class JsonSyntaxTree
 {

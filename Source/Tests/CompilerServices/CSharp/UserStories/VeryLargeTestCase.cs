@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+namespace Luthetus.CompilerServices.CSharp.Tests.UserStories;
 
 internal class VeryLargeTestCase
 {
@@ -17,12 +17,12 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Misc;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+namespace Luthetus.CompilerServices.CSharp.Tests.UserStories;
 
 /// <summary>
 /// Many tests in this project are pre-written string inputs.

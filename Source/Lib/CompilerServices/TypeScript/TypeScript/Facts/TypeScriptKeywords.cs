@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace Luthetus.CompilerServices.Lang.TypeScript.TypeScript.Facts;
+namespace Luthetus.CompilerServices.TypeScript.TypeScript.Facts;
 
 /// <summary>
 /// Found the list of keywords for TypeScript used in Monaco:

@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
 public class CSharpProjectToProjectReference
 {

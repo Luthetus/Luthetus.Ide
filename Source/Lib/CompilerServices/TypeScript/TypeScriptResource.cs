@@ -1,7 +1,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.CompilerServices.Lang.TypeScript;
+namespace Luthetus.CompilerServices.TypeScript;
 
 public class TypeScriptResource : CompilerServiceResource
 {

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.Json.Json.SyntaxEnums;
+namespace Luthetus.CompilerServices.Json.Json.SyntaxEnums;
 
 public enum JsonSyntaxKind
 {

@@ -8,10 +8,10 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
-using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
+namespace Luthetus.CompilerServices.CSharp.RuntimeAssemblies;
 
 public static class RuntimeAssembliesLoaderFactory
 {

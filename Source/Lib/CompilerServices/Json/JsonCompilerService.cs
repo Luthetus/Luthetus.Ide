@@ -1,8 +1,8 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
+using Luthetus.CompilerServices.Json.Json.SyntaxActors;
 
-namespace Luthetus.CompilerServices.Lang.Json;
+namespace Luthetus.CompilerServices.Json;
 
 public sealed class JsonCompilerService : CompilerService
 {

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.C.Facts;
+namespace Luthetus.CompilerServices.C.Facts;
 
 public partial class CLanguageFacts
 {

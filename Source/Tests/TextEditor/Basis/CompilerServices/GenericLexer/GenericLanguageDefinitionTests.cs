@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
-using Luthetus.CompilerServices.Lang.FSharp.FSharp.Facts;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.CompilerServices.FSharp.FSharp.Facts;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer;
 

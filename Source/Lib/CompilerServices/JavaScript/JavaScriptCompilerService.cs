@@ -1,8 +1,8 @@
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.CompilerServices.Lang.JavaScript.JavaScript.SyntaxActors;
+using Luthetus.CompilerServices.JavaScript.JavaScript.SyntaxActors;
 
-namespace Luthetus.CompilerServices.Lang.JavaScript;
+namespace Luthetus.CompilerServices.JavaScript;
 
 public sealed class JavaScriptCompilerService : CompilerService
 {

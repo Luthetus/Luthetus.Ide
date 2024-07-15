@@ -1,7 +1,7 @@
-﻿using Luthetus.CompilerServices.Lang.Css.Css.SyntaxEnums;
-using Luthetus.CompilerServices.Lang.Css.Css.SyntaxObjects;
+using Luthetus.CompilerServices.Css.Css.SyntaxEnums;
+using Luthetus.CompilerServices.Css.Css.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Css.Css.SyntaxActors;
+namespace Luthetus.CompilerServices.Css.Css.SyntaxActors;
 
 public class CssSyntaxWalker
 {

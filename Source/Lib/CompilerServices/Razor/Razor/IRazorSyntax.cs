@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.Razor.Razor;
+namespace Luthetus.CompilerServices.Razor.Razor;
 
 public interface IRazorSyntax
 {

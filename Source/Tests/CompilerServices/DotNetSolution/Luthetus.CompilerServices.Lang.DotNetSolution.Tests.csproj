@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Lib\CompilerServices\DotNetSolution\Luthetus.CompilerServices.Lang.DotNetSolution.csproj" />
+    <ProjectReference Include="..\..\..\Lib\CompilerServices\DotNetSolution\Luthetus.CompilerServices.DotNetSolution.csproj" />
   </ItemGroup>
 
 </Project>

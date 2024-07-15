@@ -8,9 +8,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.FSharp.FSharp.Facts;
+using Luthetus.CompilerServices.FSharp.FSharp.Facts;
 
-namespace Luthetus.CompilerServices.Lang.FSharp.FSharp.SyntaxActors;
+namespace Luthetus.CompilerServices.FSharp.FSharp.SyntaxActors;
 
 public class TextEditorFSharpLexer : Lexer
 {

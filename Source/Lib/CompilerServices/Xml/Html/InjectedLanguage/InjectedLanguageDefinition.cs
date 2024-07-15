@@ -1,9 +1,9 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
+namespace Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
 
 public class InjectedLanguageDefinition
 {

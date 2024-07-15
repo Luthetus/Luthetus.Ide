@@ -8,9 +8,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.TypeScript.TypeScript.Facts;
+using Luthetus.CompilerServices.TypeScript.TypeScript.Facts;
 
-namespace Luthetus.CompilerServices.Lang.TypeScript.TypeScript.SyntaxActors;
+namespace Luthetus.CompilerServices.TypeScript.TypeScript.SyntaxActors;
 
 public class TextEditorTypeScriptLexer : Lexer
 {

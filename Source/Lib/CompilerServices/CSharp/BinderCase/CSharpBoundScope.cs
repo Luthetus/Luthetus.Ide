@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+namespace Luthetus.CompilerServices.CSharp.BinderCase;
 
 public sealed record CSharpBoundScope : IBoundScope
 {

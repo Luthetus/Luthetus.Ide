@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.Json.Json.Decoration;
+namespace Luthetus.CompilerServices.Json.Json.Decoration;
 
 public enum JsonDecorationKind
 {

@@ -1,5 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.States;

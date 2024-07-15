@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.Css.Css.SyntaxEnums;
+namespace Luthetus.CompilerServices.Css.Css.SyntaxEnums;
 
 public enum CssSyntaxKind
 {

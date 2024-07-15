@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
-namespace Luthetus.CompilerServices.Lang.JavaScript.JavaScript.Facts;
+namespace Luthetus.CompilerServices.JavaScript.JavaScript.Facts;
 
 public static class JavaScriptFacts
 {

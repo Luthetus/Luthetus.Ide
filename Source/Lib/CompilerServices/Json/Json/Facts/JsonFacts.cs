@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
-namespace Luthetus.CompilerServices.Lang.Json.Json.Facts;
+namespace Luthetus.CompilerServices.Json.Json.Facts;
 
 public static class JsonFacts
 {

@@ -1,8 +1,8 @@
-using Luthetus.CompilerServices.Lang.FSharp.FSharp.SyntaxActors;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.CompilerServices.FSharp.FSharp.SyntaxActors;
 
-namespace Luthetus.CompilerServices.Lang.FSharp;
+namespace Luthetus.CompilerServices.FSharp;
 
 public sealed class FSharpCompilerService : CompilerService
 {

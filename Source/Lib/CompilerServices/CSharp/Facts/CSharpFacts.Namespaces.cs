@@ -1,8 +1,8 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Facts;
+namespace Luthetus.CompilerServices.CSharp.Facts;
 
 public partial class CSharpFacts
 {

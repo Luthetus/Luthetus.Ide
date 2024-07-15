@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+using System.Collections.Immutable;
+using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.Nugets.States;
 

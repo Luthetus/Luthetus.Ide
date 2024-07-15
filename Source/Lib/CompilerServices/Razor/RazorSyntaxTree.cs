@@ -7,19 +7,19 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
-using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.Razor.Razor.Facts;
-using Luthetus.CompilerServices.Lang.Xml.Html;
-using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
-using Luthetus.CompilerServices.Lang.Xml.Html.Facts;
-using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.Razor.Razor.Facts;
+using Luthetus.CompilerServices.Xml.Html;
+using Luthetus.CompilerServices.Xml.Html.Decoration;
+using Luthetus.CompilerServices.Xml.Html.Facts;
+using Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
+using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Razor;
+namespace Luthetus.CompilerServices.Razor;
 
 public class RazorSyntaxTree
 {

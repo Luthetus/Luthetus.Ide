@@ -1,7 +1,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.CompilerServices.Lang.C;
+namespace Luthetus.CompilerServices.C;
 
 public class CResource : CompilerServiceResource
 {

@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
-namespace Luthetus.CompilerServices.Lang.Json.Json.SyntaxActors;
+namespace Luthetus.CompilerServices.Json.Json.SyntaxActors;
 
 public class TextEditorJsonLexer : Lexer
 {

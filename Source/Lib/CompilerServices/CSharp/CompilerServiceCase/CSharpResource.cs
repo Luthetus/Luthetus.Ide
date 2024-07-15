@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 public class CSharpResource : CompilerServiceResource
 {

@@ -5,15 +5,15 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
-using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
-using Luthetus.CompilerServices.Lang.Xml.Html.ExtensionMethods;
-using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxEnums;
-using Luthetus.CompilerServices.Lang.Xml.Html.Facts;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects.Builders;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
+using Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
+using Luthetus.CompilerServices.Xml.Html.ExtensionMethods;
+using Luthetus.CompilerServices.Xml.Html.Decoration;
+using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
+using Luthetus.CompilerServices.Xml.Html.Facts;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects.Builders;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
+namespace Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 
 public static class HtmlSyntaxTree
 {

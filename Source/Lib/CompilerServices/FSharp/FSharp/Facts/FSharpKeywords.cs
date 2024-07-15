@@ -1,6 +1,6 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
-namespace Luthetus.CompilerServices.Lang.FSharp.FSharp.Facts;
+namespace Luthetus.CompilerServices.FSharp.FSharp.Facts;
 
 public class FSharpKeywords
 {

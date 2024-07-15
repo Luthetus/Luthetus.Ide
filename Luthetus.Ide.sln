@@ -23,27 +23,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Common.RazorLib", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.TextEditor.RazorLib", "Source\Lib\TextEditor\Luthetus.TextEditor.RazorLib.csproj", "{5AF40C80-05C8-44A0-81DC-6CCA77F934FF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.C", "Source\Lib\CompilerServices\C\Luthetus.CompilerServices.Lang.C.csproj", "{3072DFF9-483E-40E2-BE17-E8166002DAC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.C", "Source\Lib\CompilerServices\C\Luthetus.CompilerServices.C.csproj", "{3072DFF9-483E-40E2-BE17-E8166002DAC8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.CSharp", "Source\Lib\CompilerServices\CSharp\Luthetus.CompilerServices.Lang.CSharp.csproj", "{E30094A3-A5F9-4110-A581-61D60D312C31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.CSharp", "Source\Lib\CompilerServices\CSharp\Luthetus.CompilerServices.CSharp.csproj", "{E30094A3-A5F9-4110-A581-61D60D312C31}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.CSharpProject", "Source\Lib\CompilerServices\CSharpProject\Luthetus.CompilerServices.Lang.CSharpProject.csproj", "{58DFECCD-60C1-43C2-9AC8-ADF10A055C27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.CSharpProject", "Source\Lib\CompilerServices\CSharpProject\Luthetus.CompilerServices.CSharpProject.csproj", "{58DFECCD-60C1-43C2-9AC8-ADF10A055C27}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.Css", "Source\Lib\CompilerServices\Css\Luthetus.CompilerServices.Lang.Css.csproj", "{A65196BF-D32E-4505-8EAF-41C4969A80B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Css", "Source\Lib\CompilerServices\Css\Luthetus.CompilerServices.Css.csproj", "{A65196BF-D32E-4505-8EAF-41C4969A80B6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.DotNetSolution", "Source\Lib\CompilerServices\DotNetSolution\Luthetus.CompilerServices.Lang.DotNetSolution.csproj", "{8C40BC99-9FEC-4223-AD84-864FD35A6238}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.DotNetSolution", "Source\Lib\CompilerServices\DotNetSolution\Luthetus.CompilerServices.DotNetSolution.csproj", "{8C40BC99-9FEC-4223-AD84-864FD35A6238}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.FSharp", "Source\Lib\CompilerServices\FSharp\Luthetus.CompilerServices.Lang.FSharp.csproj", "{A1839DB3-FE99-4FF3-A910-CEBDAE3467A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.FSharp", "Source\Lib\CompilerServices\FSharp\Luthetus.CompilerServices.FSharp.csproj", "{A1839DB3-FE99-4FF3-A910-CEBDAE3467A3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.JavaScript", "Source\Lib\CompilerServices\JavaScript\Luthetus.CompilerServices.Lang.JavaScript.csproj", "{F297E0E8-3582-41BE-AB48-14D89413B7E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.JavaScript", "Source\Lib\CompilerServices\JavaScript\Luthetus.CompilerServices.JavaScript.csproj", "{F297E0E8-3582-41BE-AB48-14D89413B7E0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.Json", "Source\Lib\CompilerServices\Json\Luthetus.CompilerServices.Lang.Json.csproj", "{7348E3F2-3749-4D5F-AEA5-21C7D19FCC49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Json", "Source\Lib\CompilerServices\Json\Luthetus.CompilerServices.Json.csproj", "{7348E3F2-3749-4D5F-AEA5-21C7D19FCC49}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.Razor", "Source\Lib\CompilerServices\Razor\Luthetus.CompilerServices.Lang.Razor.csproj", "{943CF0EB-80DF-4D2F-BF23-0EF6A5B2DA49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Razor", "Source\Lib\CompilerServices\Razor\Luthetus.CompilerServices.Razor.csproj", "{943CF0EB-80DF-4D2F-BF23-0EF6A5B2DA49}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.TypeScript", "Source\Lib\CompilerServices\TypeScript\Luthetus.CompilerServices.Lang.TypeScript.csproj", "{FA133D31-0DCC-4737-A76F-8AF6D8755EDE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.TypeScript", "Source\Lib\CompilerServices\TypeScript\Luthetus.CompilerServices.TypeScript.csproj", "{FA133D31-0DCC-4737-A76F-8AF6D8755EDE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.Xml", "Source\Lib\CompilerServices\Xml\Luthetus.CompilerServices.Lang.Xml.csproj", "{83C1B854-C3AD-4C1E-B2BC-799642039C3D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Xml", "Source\Lib\CompilerServices\Xml\Luthetus.CompilerServices.Xml.csproj", "{83C1B854-C3AD-4C1E-B2BC-799642039C3D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Ide.RazorLib", "Source\Lib\Ide\Ide.RazorLib\Luthetus.Ide.RazorLib.csproj", "{4BC736B4-4A2D-43C7-AD2D-7B24F5E35518}"
 EndProject
@@ -53,29 +53,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Common.Tests", "So
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.TextEditor.Tests", "Source\Tests\TextEditor\Luthetus.TextEditor.Tests.csproj", "{71071FCE-FD74-4CC6-A811-C48CF5966D0A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.C.Tests", "Source\Tests\CompilerServices\C\Luthetus.CompilerServices.Lang.C.Tests.csproj", "{28D6717A-1EE5-4993-AA3D-B1CF5D1D43DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.C.Tests", "Source\Tests\CompilerServices\C\Luthetus.CompilerServices.C.Tests.csproj", "{28D6717A-1EE5-4993-AA3D-B1CF5D1D43DA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.CSharp.Tests", "Source\Tests\CompilerServices\CSharp\Luthetus.CompilerServices.Lang.CSharp.Tests.csproj", "{268771CF-DB98-4DB9-A105-8AFF30B7BEC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.CSharp.Tests", "Source\Tests\CompilerServices\CSharp\Luthetus.CompilerServices.CSharp.Tests.csproj", "{268771CF-DB98-4DB9-A105-8AFF30B7BEC4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.CSharpProject.Tests", "Source\Tests\CompilerServices\CSharpProject\Luthetus.CompilerServices.Lang.CSharpProject.Tests.csproj", "{E6850CA5-9811-4F99-BBF0-BC0BBD0FB5B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.CSharpProject.Tests", "Source\Tests\CompilerServices\CSharpProject\Luthetus.CompilerServices.CSharpProject.Tests.csproj", "{E6850CA5-9811-4F99-BBF0-BC0BBD0FB5B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.Css.Tests", "Source\Tests\CompilerServices\Css\Luthetus.CompilerServices.Lang.Css.Tests.csproj", "{204C4C6D-1B42-4576-AA85-696DC14A5B55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Css.Tests", "Source\Tests\CompilerServices\Css\Luthetus.CompilerServices.Css.Tests.csproj", "{204C4C6D-1B42-4576-AA85-696DC14A5B55}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.DotNetSolution.Tests", "Source\Tests\CompilerServices\DotNetSolution\Luthetus.CompilerServices.Lang.DotNetSolution.Tests.csproj", "{790560E2-1FE9-404D-9F3D-FEE47C047E53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.DotNetSolution.Tests", "Source\Tests\CompilerServices\DotNetSolution\Luthetus.CompilerServices.DotNetSolution.Tests.csproj", "{790560E2-1FE9-404D-9F3D-FEE47C047E53}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.FSharp.Tests", "Source\Tests\CompilerServices\FSharp\Luthetus.CompilerServices.Lang.FSharp.Tests.csproj", "{665E1CCF-FD05-4D24-880C-7E4F4EF492DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.FSharp.Tests", "Source\Tests\CompilerServices\FSharp\Luthetus.CompilerServices.FSharp.Tests.csproj", "{665E1CCF-FD05-4D24-880C-7E4F4EF492DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.JavaScript.Tests", "Source\Tests\CompilerServices\JavaScript\Luthetus.CompilerServices.Lang.JavaScript.Tests.csproj", "{98FF4745-D8F1-44C7-B8BB-84CE849710A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.JavaScript.Tests", "Source\Tests\CompilerServices\JavaScript\Luthetus.CompilerServices.JavaScript.Tests.csproj", "{98FF4745-D8F1-44C7-B8BB-84CE849710A4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.Json.Tests", "Source\Tests\CompilerServices\Json\Luthetus.CompilerServices.Lang.Json.Tests.csproj", "{3DEC84FA-0A6C-4700-B0B8-2D7EF381854C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Json.Tests", "Source\Tests\CompilerServices\Json\Luthetus.CompilerServices.Json.Tests.csproj", "{3DEC84FA-0A6C-4700-B0B8-2D7EF381854C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.Razor.Tests", "Source\Tests\CompilerServices\Razor\Luthetus.CompilerServices.Lang.Razor.Tests.csproj", "{C5E26FBE-DFCA-4237-A05B-B7F951E679AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Razor.Tests", "Source\Tests\CompilerServices\Razor\Luthetus.CompilerServices.Razor.Tests.csproj", "{C5E26FBE-DFCA-4237-A05B-B7F951E679AE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.Terminal.Tests", "Source\Tests\CompilerServices\Terminal\Luthetus.CompilerServices.Lang.Terminal.Tests.csproj", "{A850B547-BA87-4AF7-B0F2-800AA690FF40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Terminal.Tests", "Source\Tests\CompilerServices\Terminal\Luthetus.CompilerServices.Terminal.Tests.csproj", "{A850B547-BA87-4AF7-B0F2-800AA690FF40}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.TypeScript.Tests", "Source\Tests\CompilerServices\TypeScript\Luthetus.CompilerServices.Lang.TypeScript.Tests.csproj", "{C429D1BC-CF52-44D4-A4AD-97CEB026F3F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.TypeScript.Tests", "Source\Tests\CompilerServices\TypeScript\Luthetus.CompilerServices.TypeScript.Tests.csproj", "{C429D1BC-CF52-44D4-A4AD-97CEB026F3F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Lang.Xml.Tests", "Source\Tests\CompilerServices\Xml\Luthetus.CompilerServices.Lang.Xml.Tests.csproj", "{30F061DC-FBA2-4002-8738-93E0F1632E65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.CompilerServices.Xml.Tests", "Source\Tests\CompilerServices\Xml\Luthetus.CompilerServices.Xml.Tests.csproj", "{30F061DC-FBA2-4002-8738-93E0F1632E65}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Ide.Tests", "Source\Tests\Ide\Luthetus.Ide.Tests.csproj", "{3D35DCA3-2EB1-431F-A337-D7515E3C175F}"
 EndProject

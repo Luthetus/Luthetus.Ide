@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.Editors.Models;
@@ -19,7 +19,7 @@ namespace Luthetus.Ide.RazorLib.CompilerServices.Displays;
 public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 {
     /// <summary>
-    /// Start with <see cref="Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase.CSharpCompilerService"/>,
+    /// Start with <see cref="Luthetus.CompilerServices.CSharp.CompilerServiceCase.CSharpCompilerService"/>,
     /// then make <see cref="CompilerServiceEditorDisplay"/> more generic, to accept just an
     /// <see cref="TextEditor.RazorLib.CompilerServices.Interfaces.ILuthCompilerService"/>
     /// (2024-01-28)

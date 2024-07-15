@@ -1,6 +1,6 @@
-﻿using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
-namespace Luthetus.CompilerServices.Lang.Json.Json.Decoration;
+namespace Luthetus.CompilerServices.Json.Json.Decoration;
 
 public class TextEditorJsonDecorationMapper : IDecorationMapper
 {

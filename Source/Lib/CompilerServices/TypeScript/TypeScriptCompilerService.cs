@@ -1,8 +1,8 @@
-using Luthetus.CompilerServices.Lang.TypeScript.TypeScript.SyntaxActors;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.CompilerServices.TypeScript.TypeScript.SyntaxActors;
 
-namespace Luthetus.CompilerServices.Lang.TypeScript;
+namespace Luthetus.CompilerServices.TypeScript;
 
 public sealed class TypeScriptCompilerService : CompilerService
 {

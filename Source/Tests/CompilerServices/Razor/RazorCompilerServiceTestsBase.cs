@@ -10,11 +10,11 @@ using Luthetus.Common.RazorLib.Misc;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.Xml;
+using Luthetus.CompilerServices.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Xml;
 
-namespace Luthetus.CompilerServices.Lang.Razor.Tests;
+namespace Luthetus.CompilerServices.Razor.Tests;
 
 public class RazorCompilerServiceTestsBase
 {

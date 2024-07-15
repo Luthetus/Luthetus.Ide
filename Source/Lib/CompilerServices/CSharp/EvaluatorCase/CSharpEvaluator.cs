@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.EvaluatorCase;
+namespace Luthetus.CompilerServices.CSharp.EvaluatorCase;
 
 public class CSharpEvaluator
 {

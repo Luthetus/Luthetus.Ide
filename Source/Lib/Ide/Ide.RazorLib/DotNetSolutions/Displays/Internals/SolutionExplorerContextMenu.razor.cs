@@ -1,6 +1,6 @@
-using Fluxor;
-using Microsoft.AspNetCore.Components;
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components;
+using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -18,7 +18,7 @@ using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;

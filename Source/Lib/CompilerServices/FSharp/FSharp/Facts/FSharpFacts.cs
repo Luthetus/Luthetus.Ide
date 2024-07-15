@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
-namespace Luthetus.CompilerServices.Lang.FSharp.FSharp.Facts;
+namespace Luthetus.CompilerServices.FSharp.FSharp.Facts;
 
 public static class FSharpFacts
 {

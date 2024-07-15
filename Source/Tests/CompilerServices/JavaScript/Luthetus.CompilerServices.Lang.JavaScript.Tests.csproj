@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Lib\CompilerServices\JavaScript\Luthetus.CompilerServices.Lang.JavaScript.csproj" />
+    <ProjectReference Include="..\..\..\Lib\CompilerServices\JavaScript\Luthetus.CompilerServices.JavaScript.csproj" />
   </ItemGroup>
 
 </Project>

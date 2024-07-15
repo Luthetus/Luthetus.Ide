@@ -1,9 +1,9 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
-namespace Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
+namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
 
 public sealed class RazorCompilerService : CompilerService
 {

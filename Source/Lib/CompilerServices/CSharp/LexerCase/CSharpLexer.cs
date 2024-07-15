@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+namespace Luthetus.CompilerServices.CSharp.LexerCase;
 
 public class CSharpLexer : Lexer
 {

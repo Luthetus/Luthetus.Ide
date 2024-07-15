@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.CSharpProject.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
 

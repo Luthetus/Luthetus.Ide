@@ -3,13 +3,13 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.Razor.Razor.Facts;
-using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.Razor.Razor.Facts;
+using Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
+using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 
-namespace Luthetus.CompilerServices.Lang.Razor;
+namespace Luthetus.CompilerServices.Razor;
 
 public class RazorLexer : Lexer
 {
