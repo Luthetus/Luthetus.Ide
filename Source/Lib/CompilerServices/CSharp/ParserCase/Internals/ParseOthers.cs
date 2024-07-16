@@ -370,7 +370,7 @@ public static class ParseOthers
         }
 
         var fallbackExpressionNode = new LiteralExpressionNode(
-            new EndOfFileToken(new(0, 0, (byte)GenericDecorationKind.None, new(string.Empty), string.Empty)),
+            new EndOfFileToken(new(0, 0, (byte)GenericDecorationKind.None, ResourceUri.Empty, string.Empty)),
             CSharpFacts.Types.Void.ToTypeClause());
 
         model.SyntaxStack.Push(topMostExpressionNode ?? fallbackExpressionNode);

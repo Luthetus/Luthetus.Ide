@@ -39,7 +39,7 @@ public static class SyntaxReader
             minStartingIndexInclusive.Value,
             maxEndingIndexExclusive.Value,
             (byte)GenericDecorationKind.None,
-            resourceUri ?? new ResourceUri(string.Empty),
+            resourceUri ?? ResourceUri.Empty,
             sourceText ?? string.Empty);
     }
 }

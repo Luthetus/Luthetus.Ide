@@ -21,7 +21,7 @@ public class JsonPropertyValueSyntax : IJsonSyntax
                 0,
                 0,
                 default,
-                new ResourceUri(string.Empty),
+                ResourceUri.Empty,
                 string.Empty),
             null);
     }

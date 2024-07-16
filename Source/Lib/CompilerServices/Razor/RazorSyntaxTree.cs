@@ -1366,7 +1366,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        var lexer = new CSharpLexer(new ResourceUri(string.Empty), cSharpText);
+        var lexer = new CSharpLexer(ResourceUri.Empty, cSharpText);
 
         lexer.Lex();
 

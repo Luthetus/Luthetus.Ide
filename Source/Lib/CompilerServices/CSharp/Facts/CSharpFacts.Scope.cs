@@ -39,7 +39,7 @@ public partial class CSharpFacts
                 Types.Void.ToTypeClause(),
                 0,
                 null,
-                new ResourceUri(string.Empty),
+                ResourceUri.Empty,
                 typeDefinitionMap,
                 new(),
                 new(),

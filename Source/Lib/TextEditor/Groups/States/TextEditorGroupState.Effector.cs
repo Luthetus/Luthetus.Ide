@@ -52,7 +52,7 @@ public partial class TextEditorGroupState
 		{
 			_textEditorService.PostRedundant(
 				nameof(PostScroll),
-				new ResourceUri(string.Empty),
+				ResourceUri.Empty,
 				viewModelKey,
 				editContext =>
 				{

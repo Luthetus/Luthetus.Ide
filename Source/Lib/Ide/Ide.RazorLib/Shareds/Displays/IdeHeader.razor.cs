@@ -258,7 +258,7 @@ public partial class IdeHeader : ComponentBase
 
 					TextEditorCommandDefaultFacts.ShowFindOverlay.CommandFunc.Invoke(
 						new TextEditorCommandArgs(
-							new(string.Empty),
+							ResourceUri.Empty,
 					        activeViewModel.ViewModelKey,
 							null,
 							TextEditorService,

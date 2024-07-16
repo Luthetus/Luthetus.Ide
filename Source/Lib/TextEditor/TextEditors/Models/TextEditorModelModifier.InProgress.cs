@@ -266,7 +266,7 @@ public partial class TextEditorModelModifier
                 initialCursorPositionIndex,
                 initialCursorPositionIndex + lineEndingsChangedValueBuilder.Length,
                 0,
-                new(string.Empty),
+                ResourceUri.Empty,
                 string.Empty);
 
             var textModification = new TextEditorTextModification(true, textSpanForInsertion);
@@ -656,7 +656,7 @@ public partial class TextEditorModelModifier
                 positionIndex,
                 positionIndex + charCount,
                 0,
-                new(string.Empty),
+                ResourceUri.Empty,
                 string.Empty);
 
             var textModification = new TextEditorTextModification(false, textSpanForInsertion);

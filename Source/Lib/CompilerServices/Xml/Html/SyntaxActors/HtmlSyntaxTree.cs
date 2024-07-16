@@ -31,7 +31,7 @@ public static class HtmlSyntaxTree
                     0,
                     8,
                     (byte)HtmlDecorationKind.None,
-                    new ResourceUri(string.Empty),
+                    ResourceUri.Empty,
                     "document")),
         };
 

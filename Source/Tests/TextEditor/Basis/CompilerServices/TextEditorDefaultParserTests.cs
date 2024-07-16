@@ -17,7 +17,7 @@ public class TextEditorDefaultParserTests
 	public void DiagnosticsList()
 	{
 		var defaultLexer = new Lexer(
-			new ResourceUri(string.Empty),
+			ResourceUri.Empty,
             string.Empty,
 			LexerKeywords.Empty);
 

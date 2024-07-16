@@ -53,7 +53,7 @@ public class DotNetCliOutputParser : IOutputParser
 		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/DotNetRunOutputParser.txt"), outputLine);
         var textSpanList = new List<TextEditorTextSpan>();
 
-        TextEditorTextSpan errorKeywordAndErrorCodeTextSpan = new(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
+        TextEditorTextSpan errorKeywordAndErrorCodeTextSpan = new(0, 0, 0, ResourceUri.Empty, string.Empty);
 
         while (!stringWalker.IsEof)
         {
@@ -238,7 +238,7 @@ public class DotNetCliOutputParser : IOutputParser
 		// The columns are titled: { "Template Name", "Short Name", "Language", "Tags" }
 		var keywordTags = "Tags";
 
-		var resourceUri = new ResourceUri(string.Empty);
+		var resourceUri = ResourceUri.Empty;
 		var stringWalker = new StringWalker(resourceUri, outputLine);
 
 		while (!stringWalker.IsEof)

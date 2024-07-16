@@ -31,8 +31,8 @@ public class TerminalResource : CompilerServiceResource
     }
 
     public override ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
-    public TextEditorTextSpan ArgumentsTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
-    public TextEditorTextSpan TargetFilePathTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
+    public TextEditorTextSpan ArgumentsTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, ResourceUri.Empty, string.Empty);
+    public TextEditorTextSpan TargetFilePathTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, ResourceUri.Empty, string.Empty);
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
     public List<ITextEditorSymbol> ManualSymbolList { get; } = new List<ITextEditorSymbol>();
 
