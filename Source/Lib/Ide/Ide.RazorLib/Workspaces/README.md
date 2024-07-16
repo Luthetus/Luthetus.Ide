@@ -56,4 +56,12 @@ maybe it was vice versa idk
 
 I said the order that the events should happen in a .json file and then it worked?
 
+Wow, I somehow perfectly ripped out all the .NET code from the IDE and moved it in one sitting.
+The app runs without issue and the onnly difference is there's no solution explorer
+or test explorer (probably other UI that I'm not listing here but you get the point).
 
+I can open .cs files and the syntax highlighting and all is there.
+
+just as I wanted. I wanted to separate the compiler services and the UI that can compliment them.
+
+tired and my head hurts :3

@@ -10,8 +10,6 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.Models;
@@ -36,8 +34,6 @@ public class IdeBackgroundTaskApi
     private readonly ITreeViewService _treeViewService;
     private readonly IDispatcher _dispatcher;
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
-	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IFileSystemProvider _fileSystemProvider;
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
@@ -57,8 +53,6 @@ public class IdeBackgroundTaskApi
         ITreeViewService treeViewService,
         IDispatcher dispatcher,
         IEnvironmentProvider environmentProvider,
-        IState<DotNetSolutionState> dotNetSolutionStateWrap,
-		DotNetCliOutputParser dotNetCliOutputParser,
         IFileSystemProvider fileSystemProvider,
         ITextEditorService textEditorService,
         ICompilerServiceRegistry interfaceCompilerServiceRegistry,
@@ -78,8 +72,6 @@ public class IdeBackgroundTaskApi
         _treeViewService = treeViewService;
         _dispatcher = dispatcher;
         _environmentProvider = environmentProvider;
-        _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
-		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_fileSystemProvider = fileSystemProvider;
         _textEditorService = textEditorService;
         _interfaceCompilerServiceRegistry = interfaceCompilerServiceRegistry;
@@ -98,24 +90,6 @@ public class IdeBackgroundTaskApi
             _commonComponentRenderers,
             _treeViewService,
             _dispatcher);
-
-        DotNetSolution = new DotNetSolutionIdeApi(
-            this,
-            _backgroundTaskService,
-            _storageService,
-            _compilerServiceExplorerStateWrap,
-            _compilerServiceRegistry,
-            _ideComponentRenderers,
-            _commonComponentRenderers,
-            _treeViewService,
-            _dispatcher,
-            _environmentProvider,
-            _dotNetSolutionStateWrap,
-            _fileSystemProvider,
-            _textEditorService,
-            _interfaceCompilerServiceRegistry,
-            _terminalStateWrap,
-			serviceProvider);
 
         Editor = new EditorIdeApi(
             this,
@@ -158,8 +132,8 @@ public class IdeBackgroundTaskApi
             _treeViewService,
 			_textEditorService,
             _backgroundTaskService,
-			_dotNetCliOutputParser,
-            _dotNetSolutionStateWrap,
+			// _dotNetCliOutputParser,
+            // _dotNetSolutionStateWrap,
 			_terminalStateWrap,
 			_testExplorerStateWrap,
             _dispatcher);
@@ -176,7 +150,6 @@ public class IdeBackgroundTaskApi
     }
     
     public CompilerServiceIdeApi CompilerService { get; }
-    public DotNetSolutionIdeApi DotNetSolution { get; }
     public EditorIdeApi Editor { get; }
     public FileSystemIdeApi FileSystem { get; }
     public FolderExplorerIdeApi FolderExplorer { get; }

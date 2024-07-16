@@ -4,6 +4,11 @@
 @using Luthetus.TextEditor.RazorLib.Lexes.Models
 
 <div class="luth_output-display">
+	
+	<!--
+	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+    // =======================================================================
+	
 	@{ var localErrorList = DotNetCliOutputParser.ErrorList?.ToImmutableArray() ?? Array.Empty<List<TextEditorTextSpan>>().ToImmutableArray(); }
 
 	@(nameof(DotNetCliOutputParser)).@(nameof(DotNetCliOutputParser.ErrorList)).Length: @localErrorList.Length
@@ -20,4 +25,5 @@
 			</li>
 		}
 	</ol>
+	-->
 </div>

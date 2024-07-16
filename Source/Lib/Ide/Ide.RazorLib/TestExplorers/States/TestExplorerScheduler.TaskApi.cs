@@ -6,14 +6,16 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.TestExplorers.States;
 
-namespace Luthetus.Ide.RazorLib.TestExplorers.Models;
+namespace Luthetus.Ide.RazorLib.TestExplorers.States;
 
 public partial class TestExplorerScheduler
 {
     public Task Task_ConstructTreeView()
     {
+    	/*
+    	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+	    // =========================================================================
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
@@ -136,12 +138,16 @@ public partial class TestExplorerScheduler
         {
             ProjectTestModelList = localProjectTestModelList.ToImmutableList()
         }));
-
+		*/
+		
         return Task.CompletedTask;
     }
     
     public Task Task_DiscoverTests()
     {
+    	/*
+    	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+	    // =========================================================================
     	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
@@ -232,12 +238,16 @@ public partial class TestExplorerScheduler
 				//progressBarModel.Dispose();
 			}
     	});
+    	*/
     	
     	return Task.CompletedTask;
     }
     
     public Task Task_SumEachProjectTestCount()
     {
+    	/*
+    	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+	    // =========================================================================
     	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
@@ -301,6 +311,7 @@ public partial class TestExplorerScheduler
             NotRanTestHashSet = notRanTestHashSet,
             SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
         }));
+        */
         
         return Task.CompletedTask;
     }

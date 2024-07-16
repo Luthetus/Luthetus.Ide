@@ -26,8 +26,6 @@ public partial class TestExplorerContextMenu : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
-	[Inject]
-    private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 
 	[CascadingParameter]
     public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
@@ -258,7 +256,11 @@ public partial class TestExplorerContextMenu : ComponentBase
 		string fullyQualifiedName,
 		string? directoryNameForTestDiscovery)
 	{
-		var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+        // =========================================================================
+		FormattedCommand ThrowNotImplementedException() => throw new NotImplementedException("(2024-07-15)");
+		//var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
+		var dotNetTestByFullyQualifiedNameFormattedCommand = ThrowNotImplementedException();
 
 		if (string.IsNullOrWhiteSpace(directoryNameForTestDiscovery) ||
 			string.IsNullOrWhiteSpace(fullyQualifiedName))
@@ -268,6 +270,9 @@ public partial class TestExplorerContextMenu : ComponentBase
 
 		var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
 
+		/*
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+    	// =======================================================================
         var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
             treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
             dotNetTestByFullyQualifiedNameFormattedCommand,
@@ -315,5 +320,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 		treeViewStringFragment.Item.TerminalCommand = dotNetTestByFullyQualifiedNameTerminalCommand;
 
 		executionTerminal.EnqueueCommand(dotNetTestByFullyQualifiedNameTerminalCommand);
+		*/
 	}
 }

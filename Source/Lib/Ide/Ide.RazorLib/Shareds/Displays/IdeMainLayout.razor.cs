@@ -130,6 +130,9 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
     /// </summary>
     private async Task HACK_PersonalSettings()
     {
+    	/*
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+		// =======================================================================
         string? slnPersonalPath = null;
         string? projectPersonalPath = null;
 #if DEBUG
@@ -232,6 +235,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
                     projectAbsolutePath));
             }
         }
+        */
     }
 
     public void Dispose()

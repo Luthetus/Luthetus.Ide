@@ -27,8 +27,6 @@ public partial class StartupControlsDisplay : FluxorComponent
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
     [Inject]
-    private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
-    [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
@@ -50,6 +48,9 @@ public partial class StartupControlsDisplay : FluxorComponent
 
     private TerminalCommand? GetStartProgramTerminalCommand()
     {
+    	/*
+    	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+    	// =======================================================================
         var programExecutionState = ProgramExecutionStateWrap.Value;
 
         if (programExecutionState.StartupProjectAbsolutePath is null)
@@ -72,6 +73,9 @@ public partial class StartupControlsDisplay : FluxorComponent
         {
         	OutputBuilder = null
         };
+        */
+        
+        throw new NotImplementedException("(2024-07-15)");
     }
 
     private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)

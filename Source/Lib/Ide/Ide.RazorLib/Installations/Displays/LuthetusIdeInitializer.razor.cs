@@ -19,10 +19,8 @@ using Luthetus.Ide.RazorLib.Outputs.Displays;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
-using Luthetus.Ide.RazorLib.Nugets.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.CompilerServices.Displays;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.TestExplorers.Displays;
 using Luthetus.Ide.RazorLib.Gits.Displays;
@@ -61,6 +59,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+    	// TODO: This needs to be moved to 'OnInitializedAsync' otherwise...
+    	//       ...if one refreshes the application then this code, as it is now,
+    	//       will not run a second time.
         if (firstRender)
         {
             BackgroundTaskService.Enqueue(
@@ -122,21 +123,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private void InitializeLeftPanelTabs()
     {
         var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value);
-        leftPanel.Dispatcher = Dispatcher;
-
-        // solutionExplorerPanel
-        var solutionExplorerPanel = new Panel(
-			"Solution Explorer",
-			Key<Panel>.NewKey(),
-			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.SolutionExplorerContext.ContextKey,
-			typeof(SolutionExplorerDisplay),
-			null,
-            Dispatcher,
-            DialogService,
-            JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(solutionExplorerPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false));
+        leftPanel.Dispatcher = Dispatcher;        
 
         // gitPanel
         var gitPanel = new Panel(
@@ -167,7 +154,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, folderExplorerPanel, false));
 
         // SetActivePanelTabAction
-        Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(leftPanel.Key, solutionExplorerPanel.Key));
+        Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(leftPanel.Key, folderExplorerPanel.Key));
     }
 
     private void InitializeRightPanelTabs()
@@ -202,21 +189,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(compilerServiceEditorPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false));
-
-        // TODO: The ITextEditorDiffApi.Calculate method is being commented out as of (2024-02-23). It needs to be re-written...
-        // ...so that it uses the text editor's edit context by using ITextEditorService.Post()
-        //
-        // // gitChangesPanel
-        // var gitChangesPanel = new Panel(
-        //     Key<Panel>.NewKey(),
-        //     rightPanel.ElementDimensions,
-        //     typeof(GitChangesDisplay),
-        //     "Git")
-        // {
-        //     ContextRecordKey = ContextFacts.GitContext.ContextKey
-        // };
-        // Dispatcher.Dispatch(new PanelState.RegisterPanelAction(gitChangesPanel));
-        // Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(rightPanel.Key, gitChangesPanel, false));
     }
 
     private void InitializeBottomPanelTabs()
@@ -251,20 +223,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(outputPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, outputPanel, false));
-
-        // nuGetPanel
-        var nuGetPanel = new Panel(
-			"NuGet",
-			Key<Panel>.NewKey(),
-			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.NuGetPackageManagerContext.ContextKey,
-            typeof(NuGetPackageManager),
-            null,
-            Dispatcher,
-            DialogService,
-            JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(nuGetPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false));
 
         // activeContextsPanel
         var activeContextsPanel = new Panel(

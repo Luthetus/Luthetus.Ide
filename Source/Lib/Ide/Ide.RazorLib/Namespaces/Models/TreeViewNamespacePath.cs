@@ -75,11 +75,15 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                         return;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                        newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
-                        break;
+                    	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+		                // =========================================================================
+                        // newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
+                        throw new NotImplementedException("(2024-07-15)");
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                        newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
-                        break;
+                    	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+		                // =========================================================================
+                        // newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
+                        throw new NotImplementedException("(2024-07-15)");
                 }
             }
 
@@ -108,6 +112,11 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         if (Item.AbsolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
-            TreeViewHelperRazorMarkup.FindRelatedFiles(this, siblingsAndSelfTreeViews);
+        {
+            //// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+            // =========================================================================
+            // TreeViewHelperRazorMarkup.FindRelatedFiles(this, siblingsAndSelfTreeViews);
+            throw new NotImplementedException("(2024-07-15)");
+        }
     }
 }

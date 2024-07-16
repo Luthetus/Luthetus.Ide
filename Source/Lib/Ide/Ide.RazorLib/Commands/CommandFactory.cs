@@ -19,7 +19,6 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
@@ -138,62 +137,6 @@ public class CommandFactory : ICommandFactory
                 new KeymapArgument("KeyH", false, true, true, Key<KeymapLayer>.Empty),
                 ConstructFocusContextElementCommand(
                     ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header"));
-        }
-        // NuGetPackageManagerContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyN", false, true, true, Key<KeymapLayer>.Empty),
-                ConstructFocusContextElementCommand(
-                    ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager"));
-        }
-        // CSharpReplContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyR", false, true, true, Key<KeymapLayer>.Empty),
-                ConstructFocusContextElementCommand(
-                    ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl"));
-        }
-        // SolutionExplorerContext
-        {
-			var focusSolutionExplorerCommand = ConstructFocusContextElementCommand(
-	    		ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer");
-
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-	                new KeymapArgument("KeyS", false, true, true, Key<KeymapLayer>.Empty),
-	                focusSolutionExplorerCommand);
-
-			// Set active solution explorer tree view node to be the
-			// active text editor view model and,
-			// Set focus to the solution explorer;
-			{
-				var focusTextEditorCommand = new CommonCommand(
-	                "Focus: SolutionExplorer (with text editor view model)", "focus-solution-explorer_with-text-editor-view-model", false,
-	                async commandArgs =>
-	                {
-	                    await PerformGetFlattenedTree().ConfigureAwait(false);
-
-						var localNodeOfViewModel = _nodeOfViewModel;
-
-						if (localNodeOfViewModel is null)
-							return;
-
-						_treeViewService.SetActiveNode(
-							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
-							localNodeOfViewModel,
-							false,
-							false);
-
-						var elementId = _treeViewService.GetNodeElementId(localNodeOfViewModel);
-
-						await focusSolutionExplorerCommand.CommandFunc
-                            .Invoke(commandArgs)
-                            .ConfigureAwait(false);
-	                });
-	
-	            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-	                    new KeymapArgument("KeyS", true, true, true, Key<KeymapLayer>.Empty),
-	                    focusTextEditorCommand);
-			}
         }
         // ErrorListContext
         {
@@ -398,6 +341,11 @@ public class CommandFactory : ICommandFactory
 
 	private async Task PerformGetFlattenedTree()
 	{
+		/*
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+        //// But, in place we need a 'path' somehow. Probably the new workspace code
+        //// would give the path.
+        // =========================================================================
 		_nodeList.Clear();
 
 		var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
@@ -417,6 +365,7 @@ public class CommandFactory : ICommandFactory
 				}
 			}
 		}
+		*/
 	}
 
 	private async Task RecursiveGetFlattenedTree(

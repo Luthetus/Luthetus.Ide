@@ -6,23 +6,19 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexes.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.Nugets.Displays;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
-using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
 using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 using Luthetus.Ide.RazorLib.Namespaces.Displays;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
 
@@ -99,8 +95,6 @@ public static class ServiceCollectionExtensions
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
             .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
-            .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-            .AddScoped<DotNetCliOutputParser>()
 			.AddScoped<GitCliOutputParser>();
 
         return services;
@@ -110,21 +104,13 @@ public static class ServiceCollectionExtensions
         typeof(TreeViewNamespacePathDisplay),
         typeof(TreeViewAbsolutePathDisplay),
         typeof(TreeViewGitFileDisplay),
-        typeof(TreeViewCompilerServiceDisplay),
-        typeof(TreeViewCSharpProjectDependenciesDisplay),
-        typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
-        typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
-        typeof(TreeViewCSharpProjectNugetPackageReferenceDisplay),
-        typeof(TreeViewCSharpProjectToProjectReferenceDisplay),
-        typeof(TreeViewSolutionFolderDisplay));
+        typeof(TreeViewCompilerServiceDisplay));
 
     private static readonly IdeComponentRenderers _ideComponentRenderers = new(
         typeof(BooleanPromptOrCancelDisplay),
         typeof(FileFormDisplay),
         typeof(DeleteFileFormDisplay),
-        typeof(NuGetPackageManager),
         typeof(GitChangesDisplay),
-        typeof(RemoveCSharpProjectFromSolutionDisplay),
         typeof(InputFileDisplay),
         _ideTreeViews);
 }

@@ -23,8 +23,6 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Commands;
@@ -42,8 +40,6 @@ public partial class IdeHeader : ComponentBase
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
 	[Inject]
     private IState<DialogState> DialogStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
@@ -156,6 +152,9 @@ public partial class IdeHeader : ComponentBase
 					return Task.CompletedTask;
 				});
 
+			/*
+			//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+    		// =======================================================================
             var menuOptionOpenDotNetSolution = new MenuOptionRecord(
                 ".NET Solution",
                 MenuOptionKind.Other,
@@ -164,6 +163,7 @@ public partial class IdeHeader : ComponentBase
 					DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi);
 					return Task.CompletedTask;
 				});
+			*/
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
@@ -173,7 +173,13 @@ public partial class IdeHeader : ComponentBase
                     menuOptionOpenFile,
                     menuOptionOpenDirectory,
                     menuOptionOpenCSharpProject,
-                    menuOptionOpenDotNetSolution
+                    
+                    /*
+					//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+		    		// =======================================================================
+		            menuOptionOpenDotNetSolution
+					*/
+					
                 }.ToImmutableArray()));
 
             menuOptionsList.Add(menuOptionOpen);
@@ -363,6 +369,9 @@ public partial class IdeHeader : ComponentBase
 
 	private void InitializeMenuRun()
 	{
+		/*
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+		// =======================================================================
 		var menuOptionsList = new List<MenuOptionRecord>();
 
 		var dotNetSolutionState = DotNetSolutionStateWrap.Value;
@@ -396,10 +405,14 @@ public partial class IdeHeader : ComponentBase
         }
 
         _menuRun = new MenuRecord(menuOptionsList.ToImmutableArray());
+        */
 	}
 
 	private void BuildOnClick(string solutionAbsolutePathString)
 	{
+		/*
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+		// =======================================================================
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
@@ -410,10 +423,14 @@ public partial class IdeHeader : ComponentBase
             CancellationToken.None);
 
         generalTerminal.EnqueueCommand(terminalCommand);
+        */
 	}
 
 	private void CleanOnClick(string solutionAbsolutePathString)
 	{
+		/*
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+		// =======================================================================
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetClean(solutionAbsolutePathString);
         var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
@@ -424,6 +441,7 @@ public partial class IdeHeader : ComponentBase
             CancellationToken.None);
 
         generalTerminal.EnqueueCommand(terminalCommand);
+        */
 	}
 
 	private async Task RestoreFocusToElementReference(ElementReference? elementReference)
@@ -447,6 +465,9 @@ public partial class IdeHeader : ComponentBase
 
     private Task OpenNewDotNetSolutionDialog()
     {
+    	/*
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+		// =======================================================================
         var dialogRecord = new DialogViewModel(
             _newDotNetSolutionDialogKey,
             "New .NET Solution",
@@ -457,6 +478,8 @@ public partial class IdeHeader : ComponentBase
 			null);
 
         Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        */
+        
         return Task.CompletedTask;
     }
 

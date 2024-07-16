@@ -1,7 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.States;
 
@@ -11,16 +10,13 @@ public partial record CodeSearchState
     {
         private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
         private readonly IState<CodeSearchState> _codeSearchStateWrap;
-        private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
         private readonly IFileSystemProvider _fileSystemProvider;
 
         public Effector(
             IState<CodeSearchState> codeSearchStateWrap,
-            IState<DotNetSolutionState> dotNetSolutionStateWrap,
             IFileSystemProvider fileSystemProvider)
         {
             _codeSearchStateWrap = codeSearchStateWrap;
-            _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
             _fileSystemProvider = fileSystemProvider;
         }
 
@@ -44,18 +40,27 @@ public partial record CodeSearchState
                 dispatcher.Dispatch(new ClearResultListAction());
 
                 var codeSearchState = _codeSearchStateWrap.Value;
-                var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
-                var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
-
-                if (dotNetSolutionModel is null)
-                    return;
-
-                var parentDirectory = dotNetSolutionModel.AbsolutePath.ParentDirectory;
-
-                if (parentDirectory is null)
-                    return;
-
-                var startingAbsolutePathForSearch = parentDirectory.Value;
+                
+                //// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+                //// But, in place we need a 'path' somehow. Probably the new workspace code
+                //// would give the path.
+                // =========================================================================
+                //
+                // var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+                // var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+				//
+                // if (dotNetSolutionModel is null)
+                //    return;
+				//
+                // var parentDirectory = dotNetSolutionModel.AbsolutePath.ParentDirectory;
+				// 
+                // if (parentDirectory is null)
+                //     return;
+				//
+                // var startingAbsolutePathForSearch = parentDirectory.Value;
+                
+                string ThrowNotImplementedException() => throw new NotImplementedException("(2024-07-15)");
+				var startingAbsolutePathForSearch = ThrowNotImplementedException();
 
                 dispatcher.Dispatch(new WithAction(inState => inState with
                 {

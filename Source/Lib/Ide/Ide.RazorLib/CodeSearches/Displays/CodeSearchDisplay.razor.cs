@@ -10,7 +10,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
@@ -19,8 +18,6 @@ public partial class CodeSearchDisplay : FluxorComponent
 {
 	[Inject]
 	private IState<CodeSearchState> CodeSearchStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]

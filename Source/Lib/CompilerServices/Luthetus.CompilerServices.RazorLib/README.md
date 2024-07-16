@@ -27,29 +27,35 @@ But do I really want 2 projects per programming language,
 one for the compiler service and one for the UI?
 
 Move these:
-/CSharpProjects/
-/DotNetSolutions/
-/Nugets/
+[ ] /CSharpProjects/
+[ ] /DotNetSolutions/
+[ ] /Nugets/
 
-/CommandLines/Models/DotNetCliCommandFormatter.cs
-/CommandLines/Models/DotNetCliOutputParser.cs
-/ComponentRenderers/Models/INuGetPackageManagerRendererType.cs
-/ComponentRenderers/Models/IRemoveCSharpProjectFromSolutionRendererType.cs
-/ComponentRenderers/Models/ITreeViewCSharpProjectNugetPackageReferenceRendererType.cs
-/ComponentRenderers/Models/ITreeViewCSharpProjectToProjectReferenceRendererType.cs
-/ComponentRenderers/Models/ITreeViewSolutionFolderRendererType.cs
-/Menus/Models/IMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution()
-/Menus/Models/IMenuOptionsFactory.AddProjectToProjectReference()
-/Menus/Models/IMenuOptionsFactory.RemoveProjectToProjectReference()
-/Menus/Models/IMenuOptionsFactory.MoveProjectToSolutionFolder()
-/Menus/Models/IMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject()
-Repeat what is done for IMenuOptionsFactory.cs to its implementation MenuOptionsFactory.cs
-/Namespaces/Models/TreeViewHelperCSharpClass.cs
-/Namespaces/Models/TreeViewHelperCSharpProject.cs
-/Namespaces/Models/TreeViewHelperRazorMarkup.cs
-/Shareds/Displays/Internals/IdePromptOpenSolutionDisplay.razor
-/TestExplorers/ ###### Should /TestExplorers/ be moved????
-/Namespaces/ ###### Should /Namespaces/ be moved????
+[ ] /CommandLines/Models/DotNetCliCommandFormatter.cs
+[ ] /CommandLines/Models/DotNetCliOutputParser.cs
+[ ] /ComponentRenderers/Models/INuGetPackageManagerRendererType.cs
+[ ] /ComponentRenderers/Models/IRemoveCSharpProjectFromSolutionRendererType.cs
+[ ] /ComponentRenderers/Models/ITreeViewCSharpProjectNugetPackageReferenceRendererType.cs
+[ ] /ComponentRenderers/Models/ITreeViewCSharpProjectToProjectReferenceRendererType.cs
+[ ] /ComponentRenderers/Models/ITreeViewSolutionFolderRendererType.cs
+[ ] /Menus/Models/IMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution()
+[ ] /Menus/Models/IMenuOptionsFactory.AddProjectToProjectReference()
+[ ] /Menus/Models/IMenuOptionsFactory.RemoveProjectToProjectReference()
+[ ] /Menus/Models/IMenuOptionsFactory.MoveProjectToSolutionFolder()
+[ ] /Menus/Models/IMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject()
+[ ] Repeat what is done for IMenuOptionsFactory.cs to its implementation MenuOptionsFactory.cs
+[ ] /Namespaces/Models/TreeViewHelperCSharpClass.cs
+[ ] /Namespaces/Models/TreeViewHelperCSharpProject.cs
+[ ] /Namespaces/Models/TreeViewHelperRazorMarkup.cs
+[ ] /Shareds/Displays/Internals/IdePromptOpenSolutionDisplay.razor
+[ ] /TestExplorers/ ###### Should /TestExplorers/ be moved????
+[ ] /Namespaces/ ###### Should /Namespaces/ be moved????
 
 I need to make a 'Workspace' concept in order to permit arbitrary grouping of directories
 into a tree view.
+
+I moved over '/CSharpProjects/' and it is immediately apparent that this will be a headache.
+Some of the code in '/CSharpProjects/' relies on various bits and pieces of code that exist within
+the IDE, so I'll get a circular reference if I try to take the shortcut of having
+the IDE reference my new project for time being
+
