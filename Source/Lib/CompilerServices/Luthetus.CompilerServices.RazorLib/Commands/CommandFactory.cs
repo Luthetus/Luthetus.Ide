@@ -78,4 +78,41 @@ public class CommandFactory : ICommandFactory
 			}
         }
 	}
+	
+	public CommandNoType ConstructFocusContextElementCommand(
+        ContextRecord contextRecord,
+        string displayName,
+        string internalIdentifier)
+    {
+        throw new NotImplementedException("(2024-05-02)");
+    }
+    
+    private async Task PerformGetFlattenedTree()
+	{
+		/*
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+        //// But, in place we need a 'path' somehow. Probably the new workspace code
+        //// would give the path.
+        // =========================================================================
+		_nodeList.Clear();
+
+		var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
+
+		if (group is not null)
+		{
+			var textEditorViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
+
+			if (textEditorViewModel is not null)
+			{
+				if (_treeViewService.TryGetTreeViewContainer(
+						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
+						out var treeViewContainer) &&
+                    treeViewContainer is not null)
+				{
+					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel).ConfigureAwait(false);
+				}
+			}
+		}
+		*/
+	}
 }

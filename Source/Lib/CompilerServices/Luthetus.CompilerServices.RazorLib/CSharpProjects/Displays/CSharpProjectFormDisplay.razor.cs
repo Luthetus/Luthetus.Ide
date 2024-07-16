@@ -15,6 +15,7 @@ using Luthetus.CompilerServices.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.CompilerServices.RazorLib.Websites;
 using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
 using Luthetus.CompilerServices.RazorLib.CommandLines.Models;
+using Luthetus.CompilerServices.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -46,6 +47,8 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private CompilerServicesBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 
@@ -227,7 +230,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                         {
                             Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
-                            IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
+                            CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
                                 immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
 							return Task.CompletedTask;
 						});
@@ -244,7 +247,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
                     immutableView,
                     EnvironmentProvider,
                     FileSystemProvider,
-                    IdeBackgroundTaskApi,
+                    CompilerServicesBackgroundTaskApi,
                     Dispatcher,
                     DialogRecord,
                     LuthetusCommonComponentRenderers)

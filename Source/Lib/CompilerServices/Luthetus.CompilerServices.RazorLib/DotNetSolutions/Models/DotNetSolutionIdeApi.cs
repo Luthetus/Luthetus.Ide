@@ -19,6 +19,9 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
+using Luthetus.CompilerServices.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
@@ -27,8 +30,6 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.CompilerServices.RazorLib.Websites.ProjectTemplates.Models;
-using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
 
@@ -39,6 +40,7 @@ public class DotNetSolutionIdeApi
     private readonly IStorageService _storageService;
     private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
     private readonly CompilerServiceRegistry _compilerServiceRegistry;
+    private readonly ICompilerServicesComponentRenderers _compilerServicesComponentRenderers;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
@@ -590,6 +592,7 @@ public class DotNetSolutionIdeApi
 
         var rootNode = new TreeViewSolution(
             dotNetSolutionModel,
+            _compilerServicesComponentRenderers,
             _ideComponentRenderers,
             _commonComponentRenderers,
             _fileSystemProvider,

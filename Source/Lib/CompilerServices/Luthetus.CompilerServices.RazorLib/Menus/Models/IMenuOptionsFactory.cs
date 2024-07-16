@@ -9,7 +9,7 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Menus.Models;
 
-public interface IMenuOptionsFactory
+public interface ICompilerServicesMenuOptionsFactory
 {
 	public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
         TreeViewSolution solutionNode,

@@ -5,9 +5,10 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
 using Luthetus.CompilerServices.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.CompilerServices.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Websites;
 
@@ -17,7 +18,7 @@ public class WebsiteDotNetCliHelper
         CSharpProjectFormViewModelImmutable immutableView,
         IEnvironmentProvider environmentProvider,
         IFileSystemProvider fileSystemProvider,
-        IdeBackgroundTaskApi ideBackgroundTaskApi,
+        CompilerServicesBackgroundTaskApi compilerServicesBackgroundTaskApi,
         IDispatcher dispatcher,
 		IDialog dialogRecord,
         ICommonComponentRenderers commonComponentRenderers)
@@ -49,7 +50,7 @@ public class WebsiteDotNetCliHelper
             cSharpProjectAbsolutePathString,
             false);
 
-        ideBackgroundTaskApi.DotNetSolution.Website_AddExistingProjectToSolution(
+        compilerServicesBackgroundTaskApi.DotNetSolution.Website_AddExistingProjectToSolution(
             immutableView.DotNetSolutionModel.Key,
             immutableView.ProjectTemplateShortNameValue,
             immutableView.CSharpProjectNameValue,

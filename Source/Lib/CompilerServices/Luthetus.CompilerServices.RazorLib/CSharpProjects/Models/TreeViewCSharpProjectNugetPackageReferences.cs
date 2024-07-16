@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 using Luthetus.CompilerServices.RazorLib.Nugets.Models;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
@@ -12,6 +13,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 {
     public TreeViewCSharpProjectNugetPackageReferences(
             CSharpProjectNugetPackageReferences cSharpProjectNugetPackageReferences,
+            ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
             IIdeComponentRenderers ideComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
@@ -19,11 +21,13 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
             bool isExpanded)
         : base(cSharpProjectNugetPackageReferences, isExpandable, isExpanded)
     {
+        CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
         IdeComponentRenderers = ideComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
+    public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
     public IIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
@@ -41,7 +45,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.IdeTreeViews.TreeViewCSharpProjectNugetPackageReferencesRendererType,
+            CompilerServicesComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectNugetPackageReferencesRendererType,
             null);
     }
 
@@ -100,6 +104,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
         var newChildList = lightWeightNugetPackageRecords.Select(
             npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
                 new(cSharpProjectAbsolutePathString, npr),
+                CompilerServicesComponentRenderers,
                 IdeComponentRenderers,
                 FileSystemProvider,
                 EnvironmentProvider,

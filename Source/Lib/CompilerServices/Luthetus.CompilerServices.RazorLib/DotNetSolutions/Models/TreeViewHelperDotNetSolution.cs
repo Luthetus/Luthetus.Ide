@@ -13,6 +13,7 @@ public class TreeViewHelperDotNetSolution
         var childSolutionFolders = treeViewSolution.Item.SolutionFolderList.Select(
             x => (TreeViewNoType)new TreeViewSolutionFolder(
                 x,
+                treeViewSolution.CompilerServicesComponentRenderers,
                 treeViewSolution.IdeComponentRenderers,
                 treeViewSolution.CommonComponentRenderers,
                 treeViewSolution.FileSystemProvider,

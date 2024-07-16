@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models;
+using Luthetus.CompilerServices.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 
@@ -25,14 +26,16 @@ public partial record DotNetSolutionState(
     public DotNetSolutionModel? DotNetSolutionModel => DotNetSolutionsList.FirstOrDefault(x =>
         x.Key == DotNetSolutionModelKey);
 
-    public static void ShowInputFile(IdeBackgroundTaskApi ideBackgroundTaskApi)
+    public static void ShowInputFile(
+    	IdeBackgroundTaskApi ideBackgroundTaskApi,
+    	CompilerServicesBackgroundTaskApi compilerServicesBackgroundTaskApi)
     {
         ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             "Solution Explorer",
             absolutePath =>
             {
                 if (absolutePath is not null)
-                    ideBackgroundTaskApi.DotNetSolution.SetDotNetSolution(absolutePath);
+                    compilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(absolutePath);
 
 				return Task.CompletedTask;
             },

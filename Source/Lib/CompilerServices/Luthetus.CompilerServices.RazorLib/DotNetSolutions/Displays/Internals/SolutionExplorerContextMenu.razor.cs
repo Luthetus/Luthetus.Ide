@@ -20,6 +20,12 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.CompilerServices.RazorLib.CommandLines.Models;
+using Luthetus.CompilerServices.RazorLib.Menus.Models;
+using Luthetus.CompilerServices.RazorLib.BackgroundTasks.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
+using Luthetus.CompilerServices.RazorLib.CSharpProjects.Displays;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
@@ -30,10 +36,6 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
-using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
-using Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
-using Luthetus.CompilerServices.RazorLib.CSharpProjects.Displays;
-using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays.Internals;
 
@@ -46,11 +48,15 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     [Inject]
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
+    private ICompilerServicesMenuOptionsFactory CompilerServicesMenuOptionsFactory { get; set; } = null!;
+    [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private CompilerServicesBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
@@ -344,20 +350,20 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
                     await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false);
                 }),
-            MenuOptionsFactory.AddProjectToProjectReference(
+            CompilerServicesMenuOptionsFactory.AddProjectToProjectReference(
                 treeViewModel,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
                 Dispatcher,
                 IdeBackgroundTaskApi,
                 () => Task.CompletedTask),
-            MenuOptionsFactory.MoveProjectToSolutionFolder(
+            CompilerServicesMenuOptionsFactory.MoveProjectToSolutionFolder(
                 treeViewSolution,
                 treeViewModel,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
                 Dispatcher,
                 () =>
                 {
-                    IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+                    CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
 					return Task.CompletedTask;
                 }),
             new MenuOptionRecord(
@@ -368,14 +374,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(treeViewModel.Item.AbsolutePath));
                     return Task.CompletedTask;
                 }),
-            MenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
+            CompilerServicesMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
                 treeViewSolution,
                 treeViewModel,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
                 Dispatcher,
                 () =>
                 {
-                    IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
+                    CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(treeViewSolution.Item.NamespacePath.AbsolutePath);
 					return Task.CompletedTask;
                 }),
         };
@@ -386,7 +392,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
     {
         return new[]
         {
-            MenuOptionsFactory.RemoveProjectToProjectReference(
+            CompilerServicesMenuOptionsFactory.RemoveProjectToProjectReference(
                 treeViewCSharpProjectToProjectReference,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
                 Dispatcher, () => Task.CompletedTask),
@@ -404,7 +410,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
         
         return new[]
         {
-            MenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
+            CompilerServicesMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
                 treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
                 treeViewCSharpProjectNugetPackageReference,
                 TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
@@ -520,7 +526,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
                     CancellationToken.None,
                     () =>
                     {
-                        IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
+                        CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
 						return Task.CompletedTask;
                     });
 

@@ -21,19 +21,22 @@ using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Menus.Models;
 
-public class MenuOptionsFactory : IMenuOptionsFactory
+public class CompilerServicesMenuOptionsFactory : ICompilerServicesMenuOptionsFactory
 {
-	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly ICompilerServicesComponentRenderers _compilerServicesComponentRenderers;
+	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 
-	public MenuOptionsFactory(
-		IIdeComponentRenderers ideComponentRenderers,
+	public CompilerServicesMenuOptionsFactory(
 		IBackgroundTaskService backgroundTaskService,
+		ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
+		IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers)
 	{
-		_ideComponentRenderers = ideComponentRenderers;
 		_backgroundTaskService = backgroundTaskService;
+		_compilerServicesComponentRenderers = compilerServicesComponentRenderers;
+		_ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
 	}
 
@@ -45,7 +48,7 @@ public class MenuOptionsFactory : IMenuOptionsFactory
         Func<Task> onAfterCompletion)
     {
         return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
-            WidgetRendererType: _ideComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+            WidgetRendererType: _compilerServicesComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
             WidgetParameterMap: new Dictionary<string, object?>
             {
                 {

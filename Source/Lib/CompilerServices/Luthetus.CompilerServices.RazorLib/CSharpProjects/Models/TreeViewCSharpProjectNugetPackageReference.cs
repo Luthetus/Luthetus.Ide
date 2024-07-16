@@ -1,8 +1,9 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.CompilerServices.RazorLib.Nugets.Models;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
 
@@ -10,6 +11,7 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 {
     public TreeViewCSharpProjectNugetPackageReference(
             CSharpProjectNugetPackageReference cSharpProjectNugetPackageReference,
+            ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
             IIdeComponentRenderers ideComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
@@ -17,11 +19,13 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
             bool isExpanded)
         : base(cSharpProjectNugetPackageReference, isExpandable, isExpanded)
     {
+    	CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
         IdeComponentRenderers = ideComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
+    public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
     public IIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
@@ -43,7 +47,7 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.IdeTreeViews.TreeViewLightWeightNugetPackageRecordRendererType,
+            CompilerServicesComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectNugetPackageReferenceRendererType,
             new Dictionary<string, object?>
             {
                 {

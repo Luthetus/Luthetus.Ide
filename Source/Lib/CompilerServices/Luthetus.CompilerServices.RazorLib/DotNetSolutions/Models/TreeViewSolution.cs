@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
@@ -12,6 +13,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 {
     public TreeViewSolution(
             DotNetSolutionModel dotNetSolutionModel,
+            ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
             IIdeComponentRenderers ideComponentRenderers,
             ICommonComponentRenderers commonComponentRenderers,
             IFileSystemProvider fileSystemProvider,
@@ -20,12 +22,14 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
             bool isExpanded)
         : base(dotNetSolutionModel, isExpandable, isExpanded)
     {
+    	CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
         IdeComponentRenderers = ideComponentRenderers;
         CommonComponentRenderers = commonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
+    public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
     public IIdeComponentRenderers IdeComponentRenderers { get; }
     public ICommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }

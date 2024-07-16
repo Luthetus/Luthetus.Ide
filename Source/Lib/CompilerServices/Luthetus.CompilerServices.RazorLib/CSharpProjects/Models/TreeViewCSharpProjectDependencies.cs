@@ -2,6 +2,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
@@ -10,6 +11,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 {
     public TreeViewCSharpProjectDependencies(
             CSharpProjectDependencies cSharpProjectDependencies,
+            ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
             IIdeComponentRenderers ideComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
@@ -17,11 +19,13 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
             bool isExpanded)
         : base(cSharpProjectDependencies, isExpandable, isExpanded)
     {
+    	CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
         IdeComponentRenderers = ideComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
+    public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
     public IIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
@@ -39,7 +43,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.IdeTreeViews.TreeViewCSharpProjectDependenciesRendererType,
+            CompilerServicesComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectDependenciesRendererType,
             null);
     }
 
@@ -49,6 +53,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
         var treeViewCSharpProjectNugetPackageReferences = new TreeViewCSharpProjectNugetPackageReferences(
             new CSharpProjectNugetPackageReferences(Item.CSharpProjectNamespacePath),
+            CompilerServicesComponentRenderers,
             IdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,
@@ -60,6 +65,7 @@ public class TreeViewCSharpProjectDependencies : TreeViewWithType<CSharpProjectD
 
         var treeViewCSharpProjectToProjectReferences = new TreeViewCSharpProjectToProjectReferences(
             new CSharpProjectToProjectReferences(Item.CSharpProjectNamespacePath),
+            CompilerServicesComponentRenderers,
             IdeComponentRenderers,
             FileSystemProvider,
             EnvironmentProvider,

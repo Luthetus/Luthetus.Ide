@@ -12,22 +12,22 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 {
     public TreeViewCSharpProjectToProjectReferences(
             CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
-            IIdeComponentRenderers ideComponentRenderers,
             ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             bool isExpandable,
             bool isExpanded)
         : base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
     {
-        IdeComponentRenderers = ideComponentRenderers;
         CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
+        IdeComponentRenderers = ideComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
-    public IIdeComponentRenderers IdeComponentRenderers { get; }
     public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
+    public IIdeComponentRenderers IdeComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -108,6 +108,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         var newChildList = cSharpProjectToProjectReferences
             .Select(x => (TreeViewNoType)new TreeViewCSharpProjectToProjectReference(
                 x,
+                CompilerServicesComponentRenderers,
                 IdeComponentRenderers,
                 FileSystemProvider,
                 EnvironmentProvider,

@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
 
@@ -11,7 +12,9 @@ namespace Luthetus.CompilerServices.RazorLib.Namespaces.Models;
 
 public class TreeViewHelperCSharpProject
 {
-    public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath cSharpProjectTreeView)
+    public static async Task<List<TreeViewNoType>> LoadChildrenAsync(
+    	TreeViewNamespacePath cSharpProjectTreeView,
+    	ICompilerServicesComponentRenderers compilerServicesComponentRenderers)
     {
         var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.AbsolutePath.AncestorDirectoryList.Last();
         var ancestorDirectory = parentDirectoryOfCSharpProject;
@@ -85,6 +88,7 @@ public class TreeViewHelperCSharpProject
 
         var cSharpProjectDependenciesTreeViewNode = new TreeViewCSharpProjectDependencies(
             new CSharpProjectDependencies(cSharpProjectTreeView.Item),
+            compilerServicesComponentRenderers,
             cSharpProjectTreeView.IdeComponentRenderers,
             cSharpProjectTreeView.FileSystemProvider,
             cSharpProjectTreeView.EnvironmentProvider,

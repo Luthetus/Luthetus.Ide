@@ -38,6 +38,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
     private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private CompilerServicesBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]

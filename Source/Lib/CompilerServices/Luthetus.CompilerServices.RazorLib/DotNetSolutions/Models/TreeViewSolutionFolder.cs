@@ -15,6 +15,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 {
     public TreeViewSolutionFolder(
             SolutionFolder dotNetSolutionFolder,
+            ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
             IIdeComponentRenderers ideComponentRenderers,
             ICommonComponentRenderers commonComponentRenderers,
             IFileSystemProvider fileSystemProvider,
@@ -23,12 +24,14 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
             bool isExpanded)
         : base(dotNetSolutionFolder, isExpandable, isExpanded)
     {
+        CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
         IdeComponentRenderers = ideComponentRenderers;
         CommonComponentRenderers = commonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
+    public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
     public IIdeComponentRenderers IdeComponentRenderers { get; }
     public ICommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
@@ -47,7 +50,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.IdeTreeViews.TreeViewSolutionFolderRendererType,
+            CompilerServicesComponentRenderers.CompilerServicesTreeViews.TreeViewSolutionFolderRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -171,6 +174,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
     {
         return new TreeViewSolutionFolder(
             dotNetSolutionFolder,
+            CompilerServicesComponentRenderers,
             IdeComponentRenderers,
             CommonComponentRenderers,
             FileSystemProvider,

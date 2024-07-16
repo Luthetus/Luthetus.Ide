@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.CompilerServices.RazorLib.CommandLines.Models;
+using Luthetus.CompilerServices.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -35,6 +36,8 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private CompilerServicesBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
 
     [CascadingParameter]
     public IDialog DialogRecord { get; set; } = null!;
@@ -128,7 +131,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
                         solutionAbsolutePathString,
                         false);
 
-                    IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
+                    CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
                     return Task.CompletedTask;
                 });
 
@@ -172,7 +175,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
             solutionAbsolutePathString,
             false);
 
-        IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
+        CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
     }
 
     public const string HackForWebsite_NEW_SOLUTION_TEMPLATE = @"
