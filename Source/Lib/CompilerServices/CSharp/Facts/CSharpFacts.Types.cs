@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.CompilerServices.CSharp.Facts;
 
@@ -26,7 +27,7 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new IdentifierToken(new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, ResourceUriEmpty, "int")),
+            new IdentifierToken(new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "int")),
             typeof(int),
             null,
             null,
@@ -48,7 +49,7 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new IdentifierToken(new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, ResourceUriEmpty, "string")),
+            new IdentifierToken(new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "string")),
             typeof(string),
             null,
             null,
