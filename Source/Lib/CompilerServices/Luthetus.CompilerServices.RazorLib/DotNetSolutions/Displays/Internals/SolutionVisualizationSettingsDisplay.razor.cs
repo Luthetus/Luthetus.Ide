@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models.Internals;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays.Internals;
 

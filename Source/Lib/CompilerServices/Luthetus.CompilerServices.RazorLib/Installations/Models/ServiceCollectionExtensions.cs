@@ -1,7 +1,12 @@
-using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
-using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
-using Luthetus.Ide.RazorLib.Nugets.Displays;
-using Luthetus.Ide.RazorLib.Nugets.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays;
+using Luthetus.CompilerServices.RazorLib.CSharpProjects.Displays;
+using Luthetus.CompilerServices.RazorLib.Nugets.Displays;
+using Luthetus.CompilerServices.RazorLib.Nugets.Models;
+using Luthetus.CompilerServices.RazorLib.CommandLines.Models;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.Installations.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Installations.Models;
 
@@ -12,9 +17,9 @@ public static class ServiceCollectionExtensions
         LuthetusHostingInformation hostingInformation,
         Func<LuthetusIdeConfig, LuthetusIdeConfig>? configure = null)
     {
-    	services
+    	return services
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-            .AddScoped<DotNetCliOutputParser>()
+            .AddScoped<DotNetCliOutputParser>();
     }
     
     private static readonly CompilerServicesTreeViews _compilerServicesTreeViews = new(

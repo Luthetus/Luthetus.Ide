@@ -19,7 +19,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
@@ -29,10 +29,11 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
-using Luthetus.Ide.RazorLib.CSharpProjects.Models;
-using Luthetus.Ide.RazorLib.CSharpProjects.Displays;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
+using Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
+using Luthetus.CompilerServices.RazorLib.CSharpProjects.Displays;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays.Internals;
 

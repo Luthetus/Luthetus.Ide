@@ -5,11 +5,12 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.RazorLib.Nugets.Models;
+using Luthetus.CompilerServices.RazorLib.Nugets.States;
+using Luthetus.CompilerServices.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.Nugets.States;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.Ide.RazorLib.Nugets.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Nugets.Displays;

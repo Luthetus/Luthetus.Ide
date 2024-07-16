@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Fluxor;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.CompilerServices.RazorLib.CodeSearches.Displays;
 

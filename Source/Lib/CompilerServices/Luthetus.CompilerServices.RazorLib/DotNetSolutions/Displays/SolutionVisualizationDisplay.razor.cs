@@ -13,9 +13,9 @@ using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models.Internals;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays.Internals;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays;
 

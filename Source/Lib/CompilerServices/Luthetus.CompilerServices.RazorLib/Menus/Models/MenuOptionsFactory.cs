@@ -1,10 +1,42 @@
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
-using Luthetus.Ide.RazorLib.CSharpProjects.Models;
+using System.Collections.Immutable;
+using Fluxor;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
+using Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
+using Luthetus.CompilerServices.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.InputFiles.Models;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.FileSystems.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Menus.Models;
 
 public class MenuOptionsFactory : IMenuOptionsFactory
 {
+	private readonly IIdeComponentRenderers _ideComponentRenderers;
+	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly ICommonComponentRenderers _commonComponentRenderers;
+
+	public MenuOptionsFactory(
+		IIdeComponentRenderers ideComponentRenderers,
+		IBackgroundTaskService backgroundTaskService,
+		ICommonComponentRenderers commonComponentRenderers)
+	{
+		_ideComponentRenderers = ideComponentRenderers;
+		_backgroundTaskService = backgroundTaskService;
+		_commonComponentRenderers = commonComponentRenderers;
+	}
+
 	public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
         TreeViewSolution treeViewSolution,
         TreeViewNamespacePath projectNode,

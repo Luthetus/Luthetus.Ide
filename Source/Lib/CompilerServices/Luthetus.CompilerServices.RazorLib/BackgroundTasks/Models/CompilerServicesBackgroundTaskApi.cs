@@ -1,10 +1,25 @@
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.RazorLib.CommandLines.Models;
+using Luthetus.Ide.RazorLib.CompilerServices.States;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.CompilerServices.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.BackgroundTasks.Models;
 
-public class IdeBackgroundTaskApi
+public class CompilerServicesBackgroundTaskApi
 {
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly IStorageService _storageService;
     private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
@@ -22,7 +37,8 @@ public class IdeBackgroundTaskApi
     private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IServiceProvider _serviceProvider;
     
-    public IdeBackgroundTaskApi(
+    public CompilerServicesBackgroundTaskApi(
+    	IdeBackgroundTaskApi ideBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService,
         IStorageService storageService,
         IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
@@ -40,6 +56,7 @@ public class IdeBackgroundTaskApi
         IState<TerminalState> terminalStateWrap,
         IServiceProvider serviceProvider)
     {
+    	_ideBackgroundTaskApi = ideBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
         _storageService = storageService;
         _compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
@@ -57,11 +74,11 @@ public class IdeBackgroundTaskApi
         _terminalStateWrap = terminalStateWrap;
         
         DotNetSolution = new DotNetSolutionIdeApi(
-            this,
+            _ideBackgroundTaskApi,
             _backgroundTaskService,
             _storageService,
             _compilerServiceExplorerStateWrap,
-            _compilerServiceRegistry,
+            (CompilerServiceRegistry)_compilerServiceRegistry,
             _ideComponentRenderers,
             _commonComponentRenderers,
             _treeViewService,

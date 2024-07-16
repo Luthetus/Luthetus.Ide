@@ -24,11 +24,11 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.CompilerServices.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
 
@@ -128,7 +128,7 @@ public class DotNetSolutionIdeApi
 
         var dotNetSolutionModelBuilder = new DotNetSolutionModelBuilder(inDotNetSolutionModel);
 
-        var cSharpProject = new CSharpProject(
+        var cSharpProject = new CSharpProjectModel(
             cSharpProjectName,
             projectTypeGuid,
             relativePathFromSlnToProject,

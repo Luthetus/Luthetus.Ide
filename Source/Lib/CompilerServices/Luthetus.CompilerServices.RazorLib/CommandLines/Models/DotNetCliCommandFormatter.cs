@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.CommandLines.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.CommandLines.Models;
 

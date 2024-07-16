@@ -40,6 +40,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Ide.RazorLib\Luthetus.Ide.RazorLib.csproj" />
+      <ProjectReference Include="..\..\CompilerServices\Luthetus.CompilerServices.RazorLib\Luthetus.CompilerServices.RazorLib.csproj" />
       <ProjectReference Include="..\..\..\..\External\photino.Blazor-2.6.0_fork\Photino.Blazor\Photino.Blazor.csproj" />
     </ItemGroup>
 

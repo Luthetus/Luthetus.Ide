@@ -1,5 +1,5 @@
-using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
 using Microsoft.AspNetCore.Components;
+using Luthetus.CompilerServices.RazorLib.Websites.ProjectTemplates.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.CSharpProjects.Displays;
 

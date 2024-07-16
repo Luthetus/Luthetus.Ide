@@ -259,7 +259,7 @@ public class DotNetSolutionParser : IParser
                         }
                         else
                         {
-                            dotNetProject = new CSharpProject(
+                            dotNetProject = new CSharpProjectModel(
                                 displayName,
                                 projectTypeGuid,
                                 relativePathFromSolutionFileString,

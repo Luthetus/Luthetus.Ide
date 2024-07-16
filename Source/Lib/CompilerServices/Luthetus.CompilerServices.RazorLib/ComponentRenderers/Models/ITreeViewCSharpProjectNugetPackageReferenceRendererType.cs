@@ -1,4 +1,4 @@
-using Luthetus.Ide.RazorLib.Nugets.Models;
+using Luthetus.CompilerServices.RazorLib.Nugets.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
 

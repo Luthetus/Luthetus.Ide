@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.Nugets.Models;
+using Luthetus.CompilerServices.RazorLib.Nugets.Models;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.CSharpProjects.Displays;
 

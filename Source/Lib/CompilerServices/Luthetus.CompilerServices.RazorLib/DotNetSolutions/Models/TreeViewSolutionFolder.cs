@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
 
@@ -113,7 +114,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
             if (project.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
                 childTreeViewSolutionFolderList.Add(ConstructTreeViewSolutionFolder((SolutionFolder)project));
             else
-                childTreeViewCSharpProjectList.Add(ConstructTreeViewCSharpProject((CSharpProject)project));
+                childTreeViewCSharpProjectList.Add(ConstructTreeViewCSharpProject((CSharpProjectModel)project));
         }
 
         var childTreeViewList =
@@ -181,7 +182,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
         };
     }
 
-    private TreeViewNamespacePath ConstructTreeViewCSharpProject(CSharpProject cSharpProject)
+    private TreeViewNamespacePath ConstructTreeViewCSharpProject(CSharpProjectModel cSharpProject)
     {
         var namespacePath = new NamespacePath(
             cSharpProject.AbsolutePath.NameNoExtension,

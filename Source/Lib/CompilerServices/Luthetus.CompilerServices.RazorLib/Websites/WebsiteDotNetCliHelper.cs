@@ -6,8 +6,8 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.CSharpProjects.Models;
-using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
+using Luthetus.CompilerServices.RazorLib.Websites.ProjectTemplates.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Websites;
 

@@ -6,7 +6,7 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models.Internals;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models.Internals;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays.Internals;
 

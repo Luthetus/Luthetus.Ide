@@ -1,12 +1,27 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
-using Luthetus.Ide.RazorLib.Nugets.Displays;
+using Microsoft.JSInterop;
+using Fluxor;
+using Luthetus.Common.RazorLib.Panels.States;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays;
+using Luthetus.CompilerServices.RazorLib.Nugets.Displays;
 
 namespace Luthetus.CompilerServices.RazorLib.Installations.Displays;
 
 public partial class LuthetusCompilerServicesInitializer : ComponentBase
 {
 	[Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
+    [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;

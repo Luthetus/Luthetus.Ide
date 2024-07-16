@@ -1,9 +1,24 @@
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Commands;
 
 public class CommandFactory : ICommandFactory
 {
+	private readonly ITreeViewService _treeViewService;
+
+	public CommandFactory(ITreeViewService treeViewService)
+	{
+		_treeViewService = treeViewService;
+	}
+	
+	private TreeViewNamespacePath? _nodeOfViewModel = null;
+	
 	public void Initialize()
     {
     	// NuGetPackageManagerContext

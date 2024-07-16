@@ -1,4 +1,6 @@
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Fluxor;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.TestExplorers.States;
 
@@ -7,10 +9,13 @@ public partial record TestExplorerState
 	public class Effector
 	{
 		private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
+		private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	
-		public Effector(IState<DotNetSolutionState> dotNetSolutionStateWrap)
+		public Effector(
+			IState<DotNetSolutionState> dotNetSolutionStateWrap,
+			IdeBackgroundTaskApi ideBackgroundTaskApi)
 		{
-            _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
+            _ideBackgroundTaskApi = ideBackgroundTaskApi;
 		}
 		
 		[EffectMethod(typeof(DotNetSolutionState.StateHasChanged))]

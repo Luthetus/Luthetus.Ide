@@ -1,5 +1,5 @@
 using Fluxor;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
 

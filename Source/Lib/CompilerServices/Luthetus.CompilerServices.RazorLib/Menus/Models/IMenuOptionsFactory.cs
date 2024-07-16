@@ -1,5 +1,11 @@
-using Luthetus.Ide.RazorLib.CSharpProjects.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
+using Fluxor;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Menus.Models;
 

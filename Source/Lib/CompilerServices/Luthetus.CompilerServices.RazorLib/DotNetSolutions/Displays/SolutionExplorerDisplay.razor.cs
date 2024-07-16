@@ -13,11 +13,12 @@ using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.RazorLib.BackgroundTasks.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays.Internals;
 using Luthetus.Ide.RazorLib.Menus.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Displays.Internals;
 
 namespace Luthetus.CompilerServices.RazorLib.DotNetSolutions.Displays;
 

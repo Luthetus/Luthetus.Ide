@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
+using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.CSharpProjects.Models;
@@ -12,6 +13,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     public TreeViewCSharpProjectToProjectReferences(
             CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
             IIdeComponentRenderers ideComponentRenderers,
+            ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             bool isExpandable,
@@ -19,11 +21,13 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
         : base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
     {
         IdeComponentRenderers = ideComponentRenderers;
+        CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
     public IIdeComponentRenderers IdeComponentRenderers { get; }
+    public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
@@ -40,7 +44,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.IdeTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
+            CompilerServicesComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
             null);
     }
 
