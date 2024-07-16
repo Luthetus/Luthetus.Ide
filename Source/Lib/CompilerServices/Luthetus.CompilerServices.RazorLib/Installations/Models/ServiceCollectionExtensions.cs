@@ -6,6 +6,8 @@ using Luthetus.CompilerServices.RazorLib.Nugets.Displays;
 using Luthetus.CompilerServices.RazorLib.Nugets.Models;
 using Luthetus.CompilerServices.RazorLib.CommandLines.Models;
 using Luthetus.CompilerServices.RazorLib.ComponentRenderers.Models;
+using Luthetus.CompilerServices.RazorLib.Menus.Models;
+using Luthetus.CompilerServices.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 
 namespace Luthetus.CompilerServices.RazorLib.Installations.Models;
@@ -19,7 +21,9 @@ public static class ServiceCollectionExtensions
     {
     	return services
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
-            .AddScoped<DotNetCliOutputParser>();
+            .AddScoped<DotNetCliOutputParser>()
+            .AddScoped<CompilerServicesBackgroundTaskApi>()
+            .AddScoped<ICompilerServicesMenuOptionsFactory, CompilerServicesMenuOptionsFactory>();
     }
     
     private static readonly CompilerServicesTreeViews _compilerServicesTreeViews = new(

@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.CompilerServices.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.Photino;
@@ -26,11 +27,13 @@ class Program
             new BackgroundTaskService());
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
+        appBuilder.Services.AddLuthetusCompilerServicesRazorLibServices(hostingInformation);
 
         appBuilder.Services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
-            typeof(LuthetusIdeConfig).Assembly));
+            typeof(LuthetusIdeConfig).Assembly,
+            typeof(Luthetus.CompilerServices.RazorLib.Installations.Models.ServiceCollectionExtensions).Assembly));
 
         appBuilder.RootComponents.Add<App>("app");
 
