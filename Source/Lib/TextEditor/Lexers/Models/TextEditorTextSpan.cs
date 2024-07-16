@@ -1,6 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
-namespace Luthetus.TextEditor.RazorLib.Lexes.Models;
+namespace Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 public record TextEditorTextSpan(
     int StartingIndexInclusive,

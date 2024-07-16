@@ -1,8 +1,8 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.RenderStates.Models;
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.RenderStates.Models;
 
-namespace Luthetus.TextEditor.RazorLib.Lexes.Models;
+namespace Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 public interface TextEditorLexerResult
 {

@@ -1,6 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase;

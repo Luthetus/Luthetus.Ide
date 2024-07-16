@@ -1,4 +1,4 @@
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -1958,7 +1958,7 @@ public class CustomParserTests
     public void PARSE_UsingStatementNode()
     {
         var resourceUri = new ResourceUri("UnitTests");
-        var sourceText = "using Luthetus.TextEditor.RazorLib.Lexes.Models;";
+        var sourceText = "using Luthetus.TextEditor.RazorLib.Lexers.Models;";
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);

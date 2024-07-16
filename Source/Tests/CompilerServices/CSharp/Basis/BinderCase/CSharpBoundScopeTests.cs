@@ -1,5 +1,5 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.BinderCase;

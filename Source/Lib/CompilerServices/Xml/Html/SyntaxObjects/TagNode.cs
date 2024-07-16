@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
 
 namespace Luthetus.CompilerServices.Xml.Html.SyntaxObjects;

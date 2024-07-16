@@ -1,10 +1,10 @@
-﻿using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelModifier;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using static Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelModifier;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 

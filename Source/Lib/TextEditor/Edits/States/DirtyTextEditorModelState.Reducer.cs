@@ -1,5 +1,5 @@
-﻿using Fluxor;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Fluxor;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Edits.States;
 

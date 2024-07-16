@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.Lexes.Models;
+namespace Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 public class ResourceUriFacts
 {

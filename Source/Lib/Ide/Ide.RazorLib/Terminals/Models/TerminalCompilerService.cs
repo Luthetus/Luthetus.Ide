@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;

@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.C.Facts;
 
 namespace Luthetus.CompilerServices.C;

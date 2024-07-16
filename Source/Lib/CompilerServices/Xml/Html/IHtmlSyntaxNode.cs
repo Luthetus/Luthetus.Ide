@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.CompilerServices.Xml.Html;
 

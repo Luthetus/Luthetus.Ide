@@ -1,6 +1,6 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
-namespace Luthetus.TextEditor.Tests.Basis.Lexes.Models;
+namespace Luthetus.TextEditor.Tests.Basis.Lexers.Models;
 
 /// <summary>
 /// <see cref="ResourceUri"/>
