@@ -1,13 +1,10 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @using System.Collections.Immutable
+@using Luthetus.Extensions.DotNet.CommandLines.Models
 @using Luthetus.TextEditor.RazorLib.Lexers.Models
 
 <div class="luth_output-display">
-	
-	<!--
-	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-    // =======================================================================
 	
 	@{ var localErrorList = DotNetCliOutputParser.ErrorList?.ToImmutableArray() ?? Array.Empty<List<TextEditorTextSpan>>().ToImmutableArray(); }
 
@@ -25,5 +22,4 @@
 			</li>
 		}
 	</ol>
-	-->
 </div>

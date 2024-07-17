@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Fluxor;
@@ -13,6 +14,9 @@ using Luthetus.Extensions.DotNet.Nugets.Displays;
 using Luthetus.Extensions.DotNet.CompilerServices.Displays;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays;
 using Luthetus.Extensions.DotNet.Outputs.Displays;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.Installations.Displays;
 
@@ -22,7 +26,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
-	[Inject]
+    [Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
 	private IState<PanelState> PanelStateWrap { get; set; } = null!;
