@@ -31,6 +31,7 @@ using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
+using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
@@ -40,7 +41,6 @@ public class DotNetSolutionIdeApi
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IStorageService _storageService;
 	private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
-	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
@@ -50,7 +50,7 @@ public class DotNetSolutionIdeApi
 	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
-	private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
+	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IState<TerminalState> _terminalStateWrap;
 	private readonly IServiceProvider _serviceProvider;
 
@@ -59,7 +59,6 @@ public class DotNetSolutionIdeApi
 		IBackgroundTaskService backgroundTaskService,
 		IStorageService storageService,
 		IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
-		ICompilerServiceRegistry compilerServiceRegistry,
         IDotNetComponentRenderers dotNetComponentRenderers,
         IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
@@ -69,7 +68,7 @@ public class DotNetSolutionIdeApi
 		IState<DotNetSolutionState> dotNetSolutionStateWrap,
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
-		ICompilerServiceRegistry interfaceCompilerServiceRegistry,
+		ICompilerServiceRegistry compilerServiceRegistry,
 		IState<TerminalState> terminalStateWrap,
 		IServiceProvider serviceProvider)
 	{
@@ -87,7 +86,7 @@ public class DotNetSolutionIdeApi
 		_dotNetSolutionStateWrap = dotNetSolutionStateWrap;
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
-		_interfaceCompilerServiceRegistry = interfaceCompilerServiceRegistry;
+		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
 		_serviceProvider = serviceProvider;
 	}
@@ -216,13 +215,6 @@ public class DotNetSolutionIdeApi
 
 	private async Task SetDotNetSolutionAsync(IAbsolutePath inSolutionAbsolutePath)
 	{
-		NotificationHelper.DispatchDebugMessage(
-			"debug_SetDotNetSolutionAsync",
-			() => "start",
-			_commonComponentRenderers,
-			_dispatcher,
-			TimeSpan.FromSeconds(5));
-
 		var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
 		var content = await _fileSystemProvider.File.ReadAllTextAsync(
@@ -242,13 +234,6 @@ public class DotNetSolutionIdeApi
 
 		if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)
 		{
-			NotificationHelper.DispatchDebugMessage(
-				"debug_SetDotNetSolutionAsync",
-				() => "if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)",
-				_commonComponentRenderers,
-				_dispatcher,
-				TimeSpan.FromSeconds(5));
-
 			_textEditorService.ModelApi.RegisterTemplated(
 				ExtensionNoPeriodFacts.DOT_NET_SOLUTION,
 				resourceUri,
@@ -269,13 +254,6 @@ public class DotNetSolutionIdeApi
 		var parser = new DotNetSolutionParser(lexer);
 
 		var compilationUnit = parser.Parse();
-
-		NotificationHelper.DispatchDebugMessage(
-			"debug_SetDotNetSolutionAsync",
-			() => $"after:parser.Parse() {parser.DotNetProjectList.Count}",
-			_commonComponentRenderers,
-			_dispatcher,
-			TimeSpan.FromSeconds(5));
 
 		foreach (var project in parser.DotNetProjectList)
 		{
@@ -308,13 +286,6 @@ public class DotNetSolutionIdeApi
 			project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
 		}
 
-		NotificationHelper.DispatchDebugMessage(
-			"debug_SetDotNetSolutionAsync",
-			() => $"after looping the projects",
-			_commonComponentRenderers,
-			_dispatcher,
-			TimeSpan.FromSeconds(5));
-
 		var solutionFolderList = parser.DotNetProjectList
 			.Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
 			.Select(x => (SolutionFolder)x).ToImmutableArray();
@@ -342,39 +313,7 @@ public class DotNetSolutionIdeApi
 			dotNetSolutionModel.Key,
 			dotNetSolutionModel));
 
-		NotificationHelper.DispatchDebugMessage(
-					"debug_SetDotNetSolutionAsync",
-					() => $"aaa",
-					_commonComponentRenderers,
-					_dispatcher,
-					TimeSpan.FromSeconds(5));
-
-		ICompilerService dotNetSolutionCompilerService = null;
-
-		try
-		{
-			if (_interfaceCompilerServiceRegistry is null)
-			{
-				NotificationHelper.DispatchDebugMessage(
-					"debug_SetDotNetSolutionAsync",
-					() => "_interfaceCompilerServiceRegistry was null",
-					_commonComponentRenderers,
-					_dispatcher,
-					TimeSpan.FromSeconds(5));
-			}
-
-			dotNetSolutionCompilerService = _interfaceCompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e);
-			NotificationHelper.DispatchDebugMessage(
-				"debug_SetDotNetSolutionAsync",
-				() => e.ToString(),
-				_commonComponentRenderers,
-				_dispatcher,
-				TimeSpan.FromSeconds(5));
-		}
+		var dotNetSolutionCompilerService = (DotNetSolutionCompilerService)_compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
 
 		dotNetSolutionCompilerService.ResourceWasModified(
 			new ResourceUri(solutionAbsolutePath.Value),
@@ -384,13 +323,6 @@ public class DotNetSolutionIdeApi
 
 		if (parentDirectory is not null)
 		{
-			NotificationHelper.DispatchDebugMessage(
-				"debug_SetDotNetSolutionAsync",
-				() => $"after:if (parentDirectory is not null)",
-				_commonComponentRenderers,
-				_dispatcher,
-				TimeSpan.FromSeconds(5));
-
 			_environmentProvider.DeletionPermittedRegister(new(parentDirectory.Value, true));
 
 			_dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(
@@ -431,13 +363,6 @@ public class DotNetSolutionIdeApi
 		await ParseSolution(dotNetSolutionModel.Key).ConfigureAwait(false);
 
 		await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
-
-		NotificationHelper.DispatchDebugMessage(
-			"debug_SetDotNetSolutionAsync",
-			() => "end",
-			_commonComponentRenderers,
-			_dispatcher,
-			TimeSpan.FromSeconds(4));
 	}
 
 	private Task ParseSolution(Key<DotNetSolutionModel> dotNetSolutionModelKey)

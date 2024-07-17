@@ -8,6 +8,8 @@ using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.CommandLines.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.States;
 
@@ -22,6 +24,8 @@ public partial class TestExplorerScheduler : IStateScheduler
     private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IState<TerminalState> _terminalStateWrap;
 	private readonly IState<TestExplorerState> _testExplorerStateWrap;
+	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
+    private readonly DotNetCliOutputParser _dotNetCliOutputParser;
     private readonly IDispatcher _dispatcher;
 
     public TestExplorerScheduler(
@@ -31,6 +35,8 @@ public partial class TestExplorerScheduler : IStateScheduler
         ITreeViewService treeViewService,
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
+        DotNetCliOutputParser dotNetCliOutputParser,
+        IState<DotNetSolutionState> dotNetSolutionStateWrap,
         IState<TerminalState> terminalStateWrap,
         IState<TestExplorerState> testExplorerStateWrap,
         IDispatcher dispatcher)
@@ -43,6 +49,8 @@ public partial class TestExplorerScheduler : IStateScheduler
 		_backgroundTaskService = backgroundTaskService;
 		_terminalStateWrap = terminalStateWrap;
 		_testExplorerStateWrap = testExplorerStateWrap;
+        _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
+        _dotNetCliOutputParser = dotNetCliOutputParser;
         _dispatcher = dispatcher;
     }
 }

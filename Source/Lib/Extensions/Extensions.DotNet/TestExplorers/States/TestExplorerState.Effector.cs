@@ -29,9 +29,6 @@ public partial record TestExplorerState
 		[EffectMethod(typeof(TestExplorerState.UserInterfaceWasInitializedEffect))]
 		public Task HandleUserInterfaceWasInitializedEffect(IDispatcher dispatcher)
 		{
-			//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-			// =======================================================================
-			//
 			var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
 			var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 

@@ -97,8 +97,8 @@ public class DotNetBackgroundTaskApi
             _treeViewService,
             _textEditorService,
             _backgroundTaskService,
-            // _dotNetCliOutputParser,
-            // _dotNetSolutionStateWrap,
+            _dotNetCliOutputParser,
+            _dotNetSolutionStateWrap,
             _terminalStateWrap,
             _testExplorerStateWrap,
             _dispatcher);
@@ -108,7 +108,6 @@ public class DotNetBackgroundTaskApi
 			_backgroundTaskService,
 			_storageService,
 			_compilerServiceExplorerStateWrap,
-			_compilerServiceRegistry,
             _dotNetComponentRenderers,
             _ideComponentRenderers,
 			_commonComponentRenderers,

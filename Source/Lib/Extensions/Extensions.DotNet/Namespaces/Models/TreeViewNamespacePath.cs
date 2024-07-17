@@ -81,10 +81,10 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                         return;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
                         newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
-                        throw new NotImplementedException("(2024-07-15)");
+                        break;
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
                         newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
-                        throw new NotImplementedException("(2024-07-15)");
+                        break;
                 }
             }
 
@@ -113,11 +113,6 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
     public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
     {
         if (Item.AbsolutePath.ExtensionNoPeriod.EndsWith(ExtensionNoPeriodFacts.RAZOR_MARKUP))
-        {
-            //// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-            // =========================================================================
-            // TreeViewHelperRazorMarkup.FindRelatedFiles(this, siblingsAndSelfTreeViews);
-            throw new NotImplementedException("(2024-07-15)");
-        }
+            TreeViewHelperRazorMarkup.FindRelatedFiles(this, siblingsAndSelfTreeViews);
     }
 }

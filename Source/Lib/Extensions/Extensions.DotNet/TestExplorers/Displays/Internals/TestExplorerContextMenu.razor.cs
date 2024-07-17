@@ -8,10 +8,11 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
+using Luthetus.Extensions.DotNet.CommandLines.Models;
+using Luthetus.Extensions.DotNet.TestExplorers.States;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 
@@ -21,6 +22,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -255,11 +258,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 		string fullyQualifiedName,
 		string? directoryNameForTestDiscovery)
 	{
-		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-		// =========================================================================
-		FormattedCommand ThrowNotImplementedException() => throw new NotImplementedException("(2024-07-15)");
-		//var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
-		var dotNetTestByFullyQualifiedNameFormattedCommand = ThrowNotImplementedException();
+		var dotNetTestByFullyQualifiedNameFormattedCommand = DotNetCliCommandFormatter
+			.FormatDotNetTestByFullyQualifiedName(fullyQualifiedName);
 
 		if (string.IsNullOrWhiteSpace(directoryNameForTestDiscovery) ||
 			string.IsNullOrWhiteSpace(fullyQualifiedName))
@@ -269,9 +269,6 @@ public partial class TestExplorerContextMenu : ComponentBase
 
 		var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
 
-		/*
-		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-    	// =======================================================================
         var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
             treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
             dotNetTestByFullyQualifiedNameFormattedCommand,
@@ -319,6 +316,5 @@ public partial class TestExplorerContextMenu : ComponentBase
 		treeViewStringFragment.Item.TerminalCommand = dotNetTestByFullyQualifiedNameTerminalCommand;
 
 		executionTerminal.EnqueueCommand(dotNetTestByFullyQualifiedNameTerminalCommand);
-		*/
 	}
 }
