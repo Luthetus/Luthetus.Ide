@@ -2,7 +2,6 @@
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Extensions.DotNet.Namespaces.Models;
-using System.Linq;
 
 namespace Luthetus.Ide.RazorLib.Namespaces.Models;
 

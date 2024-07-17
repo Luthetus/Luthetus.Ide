@@ -15,7 +15,6 @@ using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
-using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Displays;

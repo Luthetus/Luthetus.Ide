@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
-using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 
 namespace Luthetus.Extensions.DotNet.Shareds.Displays;

@@ -1,8 +1,3 @@
-using System.Collections.Immutable;
-using Luthetus.CompilerServices.DotNetSolution.Models.Project;
-using Luthetus.Ide.RazorLib.Nugets.Models;
-using Luthetus.Ide.RazorLib.Nugets.States;
-
 namespace Luthetus.Ide.Tests.Basis.Nugets.States;
 
 /// <summary>

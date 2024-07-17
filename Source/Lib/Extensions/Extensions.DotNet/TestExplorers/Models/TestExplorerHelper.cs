@@ -9,7 +9,6 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.CompilerServices.CSharp.BinderCase;
-using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Models;

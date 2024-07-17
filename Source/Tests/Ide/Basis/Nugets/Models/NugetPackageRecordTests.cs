@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.Nugets.Models;
-
-namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
+﻿namespace Luthetus.Ide.Tests.Basis.Nugets.Models;
 
 /// <summary>
 /// <see cref="NugetPackageRecord"/>

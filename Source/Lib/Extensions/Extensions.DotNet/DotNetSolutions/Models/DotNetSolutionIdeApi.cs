@@ -27,10 +27,8 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
-using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;

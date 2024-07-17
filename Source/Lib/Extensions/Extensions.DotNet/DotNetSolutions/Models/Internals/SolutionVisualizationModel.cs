@@ -4,7 +4,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
-using Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models.Internals;
 

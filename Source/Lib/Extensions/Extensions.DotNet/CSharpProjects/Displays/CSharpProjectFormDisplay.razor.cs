@@ -11,7 +11,6 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;

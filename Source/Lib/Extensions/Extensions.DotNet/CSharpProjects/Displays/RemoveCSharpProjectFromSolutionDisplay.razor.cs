@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.DotNet.CSharpProjects.Displays;

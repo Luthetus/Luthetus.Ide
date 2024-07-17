@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.CSharpProjects.Models;
-
-namespace Luthetus.Ide.Tests.Basis.CSharpProjectForms.Models;
+﻿namespace Luthetus.Ide.Tests.Basis.CSharpProjectForms.Models;
 
 /// <summary>
 /// <see cref="CSharpProjectFormViewModelImmutable"/>

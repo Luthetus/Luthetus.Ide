@@ -12,7 +12,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Extensions.DotNet.CompilerServices.Models;
 
 namespace Luthetus.Extensions.DotNet.CompilerServices.Displays;
 

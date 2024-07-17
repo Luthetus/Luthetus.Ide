@@ -1,5 +1,3 @@
-using Luthetus.Ide.RazorLib.TestExplorers.Models;
-
 namespace Luthetus.Ide.Tests.Basis.TestExplorers.Models;
 
 /// <summary>

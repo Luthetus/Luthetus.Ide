@@ -3,7 +3,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Extensions.DotNet.CSharpProjects.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.DotNet.CSharpProjects.Models;

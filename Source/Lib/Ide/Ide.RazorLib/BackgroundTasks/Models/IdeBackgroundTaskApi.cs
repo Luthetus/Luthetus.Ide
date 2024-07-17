@@ -15,7 +15,6 @@ using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
-using Luthetus.Ide.RazorLib.CommandLines.Models;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
