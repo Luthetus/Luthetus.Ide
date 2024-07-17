@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ide.RazorLib\Luthetus.Ide.RazorLib.csproj" />
+    <ProjectReference Include="..\Luthetus.Ide.Config\Luthetus.Ide.Config.csproj" />
   </ItemGroup>
 
 </Project>

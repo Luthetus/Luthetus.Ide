@@ -213,6 +213,13 @@ public class DotNetSolutionIdeApi
 
     private async Task SetDotNetSolutionAsync(IAbsolutePath inSolutionAbsolutePath)
     {
+    	NotificationHelper.DispatchDebugMessage(
+    		"debug_SetDotNetSolutionAsync",
+	        () => "start",
+	        _commonComponentRenderers,
+	        _dispatcher,
+	        TimeSpan.FromSeconds(5));
+    
         var dotNetSolutionAbsolutePathString = inSolutionAbsolutePath.Value;
 
         var content = await _fileSystemProvider.File.ReadAllTextAsync(
@@ -232,6 +239,13 @@ public class DotNetSolutionIdeApi
 
         if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)
         {
+        	NotificationHelper.DispatchDebugMessage(
+	    		"debug_SetDotNetSolutionAsync",
+		        () => "if (_textEditorService.ModelApi.GetOrDefault(resourceUri) is null)",
+		        _commonComponentRenderers,
+		        _dispatcher,
+		        TimeSpan.FromSeconds(5));
+        
             _textEditorService.ModelApi.RegisterTemplated(
                 ExtensionNoPeriodFacts.DOT_NET_SOLUTION,
                 resourceUri,
@@ -248,8 +262,15 @@ public class DotNetSolutionIdeApi
         lexer.Lex();
 
         var parser = new DotNetSolutionParser(lexer);
-
+	        
         var compilationUnit = parser.Parse();
+        
+        NotificationHelper.DispatchDebugMessage(
+    		"debug_SetDotNetSolutionAsync",
+	        () => $"after:parser.Parse() {parser.DotNetProjectList.Count}",
+	        _commonComponentRenderers,
+	        _dispatcher,
+	        TimeSpan.FromSeconds(5));
 
         foreach (var project in parser.DotNetProjectList)
         {
@@ -281,6 +302,13 @@ public class DotNetSolutionIdeApi
 
             project.AbsolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, false);
         }
+        
+        NotificationHelper.DispatchDebugMessage(
+    		"debug_SetDotNetSolutionAsync",
+	        () => $"after looping the projects",
+	        _commonComponentRenderers,
+	        _dispatcher,
+	        TimeSpan.FromSeconds(5));
 
         var solutionFolderList = parser.DotNetProjectList
             .Where(x => x.DotNetProjectKind == DotNetProjectKind.SolutionFolder)
@@ -309,7 +337,39 @@ public class DotNetSolutionIdeApi
             dotNetSolutionModel.Key,
             dotNetSolutionModel));
 
-        var dotNetSolutionCompilerService = _interfaceCompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
+NotificationHelper.DispatchDebugMessage(
+    		"debug_SetDotNetSolutionAsync",
+	        () => $"aaa",
+	        _commonComponentRenderers,
+	        _dispatcher,
+	        TimeSpan.FromSeconds(5));
+	    
+	    ICompilerService dotNetSolutionCompilerService = null;
+	        
+	    try
+	    {
+	    	if (_interfaceCompilerServiceRegistry is null)
+	    	{
+		    	NotificationHelper.DispatchDebugMessage(
+		    		"debug_SetDotNetSolutionAsync",
+			        () => "_interfaceCompilerServiceRegistry was null",
+			        _commonComponentRenderers,
+			        _dispatcher,
+			        TimeSpan.FromSeconds(5));
+	    	}
+	    
+        	dotNetSolutionCompilerService = _interfaceCompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION);
+	    }
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			NotificationHelper.DispatchDebugMessage(
+	    		"debug_SetDotNetSolutionAsync",
+		        () => e.ToString(),
+		        _commonComponentRenderers,
+		        _dispatcher,
+		        TimeSpan.FromSeconds(5));
+		}
 
         dotNetSolutionCompilerService.ResourceWasModified(
             new ResourceUri(solutionAbsolutePath.Value),
@@ -319,6 +379,13 @@ public class DotNetSolutionIdeApi
 
         if (parentDirectory is not null)
         {
+        	NotificationHelper.DispatchDebugMessage(
+	    		"debug_SetDotNetSolutionAsync",
+		        () => $"after:if (parentDirectory is not null)",
+		        _commonComponentRenderers,
+		        _dispatcher,
+		        TimeSpan.FromSeconds(5));
+        
             _environmentProvider.DeletionPermittedRegister(new(parentDirectory.Value, true));
 
             _dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(
@@ -359,6 +426,13 @@ public class DotNetSolutionIdeApi
 		await ParseSolution(dotNetSolutionModel.Key).ConfigureAwait(false);
 
         await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
+        
+        NotificationHelper.DispatchDebugMessage(
+    		"debug_SetDotNetSolutionAsync",
+	        () => "end",
+	        _commonComponentRenderers,
+	        _dispatcher,
+	        TimeSpan.FromSeconds(4));
     }
 
 	private Task ParseSolution(Key<DotNetSolutionModel> dotNetSolutionModelKey)

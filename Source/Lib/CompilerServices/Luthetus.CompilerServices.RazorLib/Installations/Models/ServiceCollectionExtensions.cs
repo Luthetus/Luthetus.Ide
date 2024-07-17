@@ -23,7 +23,8 @@ public static class ServiceCollectionExtensions
             .AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
             .AddScoped<DotNetCliOutputParser>()
             .AddScoped<CompilerServicesBackgroundTaskApi>()
-            .AddScoped<ICompilerServicesMenuOptionsFactory, CompilerServicesMenuOptionsFactory>();
+            .AddScoped<ICompilerServicesMenuOptionsFactory, CompilerServicesMenuOptionsFactory>()
+            .AddScoped<ICompilerServicesComponentRenderers>(_ => _compilerServicesComponentRenderers);
     }
     
     private static readonly CompilerServicesTreeViews _compilerServicesTreeViews = new(

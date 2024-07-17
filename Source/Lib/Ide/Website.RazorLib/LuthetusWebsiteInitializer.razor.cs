@@ -13,8 +13,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.CompilerServices.RazorLib.DotNetSolutions.States;
+using Luthetus.CompilerServices.RazorLib.Websites.ProjectTemplates.Models;
+using Luthetus.CompilerServices.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.Wasm.Facts;
 
@@ -40,6 +41,8 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    [Inject]
+    private CompilerServicesBackgroundTaskApi CompilerServicesBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
     [Inject]
@@ -142,7 +145,7 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false);
 
-        IdeBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
+        CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
 
         // Display a file from the get-go so the user is less confused on what the website is.
         var absolutePath = EnvironmentProvider.AbsolutePathFactory(
