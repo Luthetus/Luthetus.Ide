@@ -17,6 +17,8 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.Installations.Models;
+using Luthetus.Extensions.Config.CompilerServices;
+using Luthetus.Extensions.Config.Decorations;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 

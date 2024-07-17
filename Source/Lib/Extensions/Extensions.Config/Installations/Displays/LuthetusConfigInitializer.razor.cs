@@ -46,8 +46,6 @@ public partial class LuthetusConfigInitializer : ComponentBase
     /// </summary>
     private async Task HACK_PersonalSettings()
     {
-        //// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-        // =======================================================================
         string? slnPersonalPath = null;
         string? projectPersonalPath = null;
 #if DEBUG
