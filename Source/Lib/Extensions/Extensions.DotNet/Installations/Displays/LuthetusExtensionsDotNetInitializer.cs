@@ -12,6 +12,7 @@ using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
 using Luthetus.Extensions.DotNet.CompilerServices.Displays;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays;
+using Luthetus.Extensions.DotNet.Outputs.Displays;
 
 namespace Luthetus.Extensions.DotNet.Installations.Displays;
 
@@ -114,19 +115,19 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 		var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelStateWrap.Value);
 		bottomPanel.Dispatcher = Dispatcher;
 
-		// nuGetPanel
-		var nuGetPanel = new Panel(
-			"NuGet",
-			Key<Panel>.NewKey(),
-			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.NuGetPackageManagerContext.ContextKey,
-			typeof(NuGetPackageManager),
-			null,
-			Dispatcher,
-			DialogService,
-			JsRuntime);
-		Dispatcher.Dispatch(new PanelState.RegisterPanelAction(nuGetPanel));
-		Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false));
+        // outputPanel
+        var outputPanel = new Panel(
+            "Output",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            ContextFacts.OutputContext.ContextKey,
+            typeof(OutputPanelDisplay),
+            null,
+            Dispatcher,
+            DialogService,
+            JsRuntime);
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(outputPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, outputPanel, false));
 
         // testExplorerPanel
         var testExplorerPanel = new Panel(
@@ -141,5 +142,19 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(testExplorerPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
+
+        // nuGetPanel
+        var nuGetPanel = new Panel(
+            "NuGet",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+            ContextFacts.NuGetPackageManagerContext.ContextKey,
+            typeof(NuGetPackageManager),
+            null,
+            Dispatcher,
+            DialogService,
+            JsRuntime);
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(nuGetPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false));
     }
 }

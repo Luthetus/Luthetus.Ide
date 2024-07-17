@@ -40,32 +40,11 @@ public partial record CodeSearchState
                 dispatcher.Dispatch(new ClearResultListAction());
 
                 var codeSearchState = _codeSearchStateWrap.Value;
-                
-                //// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-                //// But, in place we need a 'path' somehow. Probably the new workspace code
-                //// would give the path.
-                // =========================================================================
-                //
-                // var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
-                // var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
-				//
-                // if (dotNetSolutionModel is null)
-                //    return;
-				//
-                // var parentDirectory = dotNetSolutionModel.AbsolutePath.ParentDirectory;
-				// 
-                // if (parentDirectory is null)
-                //     return;
-				//
-                // var startingAbsolutePathForSearch = parentDirectory.Value;
-                
-                string ThrowNotImplementedException() => throw new NotImplementedException("(2024-07-15)");
-				var startingAbsolutePathForSearch = ThrowNotImplementedException();
 
-                dispatcher.Dispatch(new WithAction(inState => inState with
-                {
-                    StartingAbsolutePathForSearch = startingAbsolutePathForSearch
-                }));
+                var startingAbsolutePathForSearch = codeSearchState.StartingAbsolutePathForSearch;
+
+                if (startingAbsolutePathForSearch is null)
+                    return;
 
                 await RecursiveHandleSearchEffect(startingAbsolutePathForSearch).ConfigureAwait(false);
 

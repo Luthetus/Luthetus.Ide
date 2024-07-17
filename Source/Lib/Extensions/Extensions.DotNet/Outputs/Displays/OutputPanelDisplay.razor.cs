@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Ide.RazorLib.Outputs.Displays;
+namespace Luthetus.Extensions.DotNet.Outputs.Displays;
 
 public partial class OutputPanelDisplay : ComponentBase
 {
