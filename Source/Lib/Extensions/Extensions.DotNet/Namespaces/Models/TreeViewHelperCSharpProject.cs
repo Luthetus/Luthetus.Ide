@@ -14,7 +14,7 @@ public class TreeViewHelperCSharpProject
 {
 	public static async Task<List<TreeViewNoType>> LoadChildrenAsync(
 		TreeViewNamespacePath cSharpProjectTreeView,
-		ICompilerServicesComponentRenderers compilerServicesComponentRenderers)
+		IDotNetComponentRenderers dotNetComponentRenderers)
 	{
 		var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.AbsolutePath.AncestorDirectoryList.Last();
 		var ancestorDirectory = parentDirectoryOfCSharpProject;
@@ -88,7 +88,7 @@ public class TreeViewHelperCSharpProject
 
 		var cSharpProjectDependenciesTreeViewNode = new TreeViewCSharpProjectDependencies(
 			new CSharpProjectDependencies(cSharpProjectTreeView.Item),
-			compilerServicesComponentRenderers,
+			dotNetComponentRenderers,
 			cSharpProjectTreeView.IdeComponentRenderers,
 			cSharpProjectTreeView.FileSystemProvider,
 			cSharpProjectTreeView.EnvironmentProvider,

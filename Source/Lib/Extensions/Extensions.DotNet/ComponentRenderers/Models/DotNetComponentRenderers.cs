@@ -1,8 +1,8 @@
 namespace Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
-public class CompilerServicesComponentRenderers : ICompilerServicesComponentRenderers
+public class DotNetComponentRenderers : IDotNetComponentRenderers
 {
-	public CompilerServicesComponentRenderers(
+	public DotNetComponentRenderers(
 		Type nuGetPackageManagerRendererType,
 		Type removeCSharpProjectFromSolutionRendererType,
 		CompilerServicesTreeViews compilerServicesTreeViews)

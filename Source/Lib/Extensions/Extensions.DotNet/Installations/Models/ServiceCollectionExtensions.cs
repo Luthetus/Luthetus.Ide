@@ -24,11 +24,11 @@ public static class ServiceCollectionExtensions
 			.AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
 			.AddScoped<DotNetCliOutputParser>()
 			.AddScoped<DotNetBackgroundTaskApi>()
-			.AddScoped<ICompilerServicesMenuOptionsFactory, CompilerServicesMenuOptionsFactory>()
-			.AddScoped<ICompilerServicesComponentRenderers>(_ => _compilerServicesComponentRenderers);
+			.AddScoped<IDotNetMenuOptionsFactory, DotNetMenuOptionsFactory>()
+			.AddScoped<IDotNetComponentRenderers>(_ => _dotNetComponentRenderers);
 	}
 
-	private static readonly CompilerServicesTreeViews _compilerServicesTreeViews = new(
+	private static readonly CompilerServicesTreeViews _dotNetTreeViews = new(
 		typeof(TreeViewCSharpProjectDependenciesDisplay),
 		typeof(TreeViewCSharpProjectNugetPackageReferencesDisplay),
 		typeof(TreeViewCSharpProjectToProjectReferencesDisplay),
@@ -37,8 +37,8 @@ public static class ServiceCollectionExtensions
 		typeof(TreeViewSolutionFolderDisplay),
         typeof(TreeViewCompilerServiceDisplay));
 
-	private static readonly CompilerServicesComponentRenderers _compilerServicesComponentRenderers = new(
+	private static readonly DotNetComponentRenderers _dotNetComponentRenderers = new(
 		typeof(NuGetPackageManager),
 		typeof(RemoveCSharpProjectFromSolutionDisplay),
-		_compilerServicesTreeViews);
+		_dotNetTreeViews);
 }

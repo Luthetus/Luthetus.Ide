@@ -48,7 +48,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	[Inject]
 	private IMenuOptionsFactory MenuOptionsFactory { get; set; } = null!;
 	[Inject]
-	private ICompilerServicesMenuOptionsFactory CompilerServicesMenuOptionsFactory { get; set; } = null!;
+	private IDotNetMenuOptionsFactory DotNetMenuOptionsFactory { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
@@ -350,13 +350,13 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 					await ReloadTreeViewModel(treeViewModel).ConfigureAwait(false);
 				}),
-			CompilerServicesMenuOptionsFactory.AddProjectToProjectReference(
+			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
 				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
 				Dispatcher,
 				IdeBackgroundTaskApi,
 				() => Task.CompletedTask),
-			CompilerServicesMenuOptionsFactory.MoveProjectToSolutionFolder(
+			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
 				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
@@ -374,7 +374,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 					Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(treeViewModel.Item.AbsolutePath));
 					return Task.CompletedTask;
 				}),
-			CompilerServicesMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
+			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
 				treeViewSolution,
 				treeViewModel,
 				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
@@ -392,7 +392,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	{
 		return new[]
 		{
-			CompilerServicesMenuOptionsFactory.RemoveProjectToProjectReference(
+			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
 				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
 				Dispatcher, () => Task.CompletedTask),
@@ -410,7 +410,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 
 		return new[]
 		{
-			CompilerServicesMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
+			DotNetMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
 				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],

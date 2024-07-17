@@ -12,19 +12,19 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
 {
 	public TreeViewCompilerService(
 			ICompilerService compilerService,
-			ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
+			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
 			ICommonComponentRenderers commonComponentRenderers,
 			bool isExpandable,
 			bool isExpanded)
 		: base(compilerService, isExpandable, isExpanded)
 	{
-		CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
+		DotNetComponentRenderers = dotNetComponentRenderers;
         IdeComponentRenderers = ideComponentRenderers;
 		CommonComponentRenderers = commonComponentRenderers;
 	}
 
-	public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
+	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public ICommonComponentRenderers CommonComponentRenderers { get; }
 
@@ -41,7 +41,7 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
 	public override TreeViewRenderer GetTreeViewRenderer()
 	{
 		return new TreeViewRenderer(
-            CompilerServicesComponentRenderers.CompilerServicesTreeViews.TreeViewCompilerServiceRendererType,
+            DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCompilerServiceRendererType,
 			new Dictionary<string, object?>
 			{
 				{ nameof(ITreeViewCompilerServiceRendererType.TreeViewCompilerService), this },
@@ -60,7 +60,7 @@ public class TreeViewCompilerService : TreeViewWithType<ICompilerService>
 			{
 				ChildList.Add(new TreeViewCompilerService(
 					cSharpCompilerService,
-					CompilerServicesComponentRenderers,
+					DotNetComponentRenderers,
 					IdeComponentRenderers,
 					CommonComponentRenderers,
 					true,

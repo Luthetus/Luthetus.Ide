@@ -21,21 +21,21 @@ using Luthetus.Extensions.DotNet.CommandLines.Models;
 
 namespace Luthetus.Extensions.DotNet.Menus.Models;
 
-public class CompilerServicesMenuOptionsFactory : ICompilerServicesMenuOptionsFactory
+public class DotNetMenuOptionsFactory : IDotNetMenuOptionsFactory
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
-	private readonly ICompilerServicesComponentRenderers _compilerServicesComponentRenderers;
+	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 
-	public CompilerServicesMenuOptionsFactory(
+	public DotNetMenuOptionsFactory(
 		IBackgroundTaskService backgroundTaskService,
-		ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
+		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers)
 	{
 		_backgroundTaskService = backgroundTaskService;
-		_compilerServicesComponentRenderers = compilerServicesComponentRenderers;
+		_dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
 	}
@@ -48,7 +48,7 @@ public class CompilerServicesMenuOptionsFactory : ICompilerServicesMenuOptionsFa
 		Func<Task> onAfterCompletion)
 	{
 		return new MenuOptionRecord("Remove (no files are deleted)", MenuOptionKind.Delete,
-			WidgetRendererType: _compilerServicesComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
+			WidgetRendererType: _dotNetComponentRenderers.RemoveCSharpProjectFromSolutionRendererType,
 			WidgetParameterMap: new Dictionary<string, object?>
 			{
 				{

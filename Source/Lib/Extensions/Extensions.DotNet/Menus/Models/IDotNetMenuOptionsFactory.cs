@@ -9,7 +9,7 @@ using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.Menus.Models;
 
-public interface ICompilerServicesMenuOptionsFactory
+public interface IDotNetMenuOptionsFactory
 {
 	public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
 		TreeViewSolution solutionNode,

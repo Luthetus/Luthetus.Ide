@@ -13,7 +13,7 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 {
 	public TreeViewSolution(
 			DotNetSolutionModel dotNetSolutionModel,
-			ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
+			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
 			ICommonComponentRenderers commonComponentRenderers,
 			IFileSystemProvider fileSystemProvider,
@@ -22,14 +22,14 @@ public class TreeViewSolution : TreeViewWithType<DotNetSolutionModel>
 			bool isExpanded)
 		: base(dotNetSolutionModel, isExpandable, isExpanded)
 	{
-		CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
+		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
 		CommonComponentRenderers = commonComponentRenderers;
 		FileSystemProvider = fileSystemProvider;
 		EnvironmentProvider = environmentProvider;
 	}
 
-	public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
+	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public ICommonComponentRenderers CommonComponentRenderers { get; }
 	public IFileSystemProvider FileSystemProvider { get; }

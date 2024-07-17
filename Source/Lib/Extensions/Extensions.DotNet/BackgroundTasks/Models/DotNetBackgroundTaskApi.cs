@@ -38,7 +38,6 @@ public class DotNetBackgroundTaskApi
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
 	private readonly IState<TerminalState> _terminalStateWrap;
-	private readonly IServiceProvider _serviceProvider;
     private readonly IState<TestExplorerState> _testExplorerStateWrap;
 
     public DotNetBackgroundTaskApi(

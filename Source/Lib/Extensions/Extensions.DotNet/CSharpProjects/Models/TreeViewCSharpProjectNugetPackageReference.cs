@@ -11,7 +11,7 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 {
 	public TreeViewCSharpProjectNugetPackageReference(
 			CSharpProjectNugetPackageReference cSharpProjectNugetPackageReference,
-			ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
+			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
 			IFileSystemProvider fileSystemProvider,
 			IEnvironmentProvider environmentProvider,
@@ -19,13 +19,13 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 			bool isExpanded)
 		: base(cSharpProjectNugetPackageReference, isExpandable, isExpanded)
 	{
-		CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
+		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
 		FileSystemProvider = fileSystemProvider;
 		EnvironmentProvider = environmentProvider;
 	}
 
-	public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
+	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public IFileSystemProvider FileSystemProvider { get; }
 	public IEnvironmentProvider EnvironmentProvider { get; }
@@ -47,7 +47,7 @@ public class TreeViewCSharpProjectNugetPackageReference : TreeViewWithType<CShar
 	public override TreeViewRenderer GetTreeViewRenderer()
 	{
 		return new TreeViewRenderer(
-			CompilerServicesComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectNugetPackageReferenceRendererType,
+			DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectNugetPackageReferenceRendererType,
 			new Dictionary<string, object?>
 			{
 				{

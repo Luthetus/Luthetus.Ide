@@ -13,7 +13,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 {
 	public TreeViewCSharpProjectNugetPackageReferences(
 			CSharpProjectNugetPackageReferences cSharpProjectNugetPackageReferences,
-			ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
+			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
 			IFileSystemProvider fileSystemProvider,
 			IEnvironmentProvider environmentProvider,
@@ -21,13 +21,13 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 			bool isExpanded)
 		: base(cSharpProjectNugetPackageReferences, isExpandable, isExpanded)
 	{
-		CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
+		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
 		FileSystemProvider = fileSystemProvider;
 		EnvironmentProvider = environmentProvider;
 	}
 
-	public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
+	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public IFileSystemProvider FileSystemProvider { get; }
 	public IEnvironmentProvider EnvironmentProvider { get; }
@@ -45,7 +45,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 	public override TreeViewRenderer GetTreeViewRenderer()
 	{
 		return new TreeViewRenderer(
-			CompilerServicesComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectNugetPackageReferencesRendererType,
+			DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectNugetPackageReferencesRendererType,
 			null);
 	}
 
@@ -104,7 +104,7 @@ public class TreeViewCSharpProjectNugetPackageReferences : TreeViewWithType<CSha
 		var newChildList = lightWeightNugetPackageRecords.Select(
 			npr => (TreeViewNoType)new TreeViewCSharpProjectNugetPackageReference(
 				new(cSharpProjectAbsolutePathString, npr),
-				CompilerServicesComponentRenderers,
+				DotNetComponentRenderers,
 				IdeComponentRenderers,
 				FileSystemProvider,
 				EnvironmentProvider,

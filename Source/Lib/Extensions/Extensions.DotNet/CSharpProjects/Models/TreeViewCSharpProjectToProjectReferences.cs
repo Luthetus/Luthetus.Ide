@@ -13,7 +13,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 {
 	public TreeViewCSharpProjectToProjectReferences(
 			CSharpProjectToProjectReferences cSharpProjectToProjectReferences,
-			ICompilerServicesComponentRenderers compilerServicesComponentRenderers,
+			IDotNetComponentRenderers dotNetComponentRenderers,
 			IIdeComponentRenderers ideComponentRenderers,
 			IFileSystemProvider fileSystemProvider,
 			IEnvironmentProvider environmentProvider,
@@ -21,13 +21,13 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 			bool isExpanded)
 		: base(cSharpProjectToProjectReferences, isExpandable, isExpanded)
 	{
-		CompilerServicesComponentRenderers = compilerServicesComponentRenderers;
+		DotNetComponentRenderers = dotNetComponentRenderers;
 		IdeComponentRenderers = ideComponentRenderers;
 		FileSystemProvider = fileSystemProvider;
 		EnvironmentProvider = environmentProvider;
 	}
 
-	public ICompilerServicesComponentRenderers CompilerServicesComponentRenderers { get; }
+	public IDotNetComponentRenderers DotNetComponentRenderers { get; }
 	public IIdeComponentRenderers IdeComponentRenderers { get; }
 	public IFileSystemProvider FileSystemProvider { get; }
 	public IEnvironmentProvider EnvironmentProvider { get; }
@@ -45,7 +45,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 	public override TreeViewRenderer GetTreeViewRenderer()
 	{
 		return new TreeViewRenderer(
-			CompilerServicesComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
+			DotNetComponentRenderers.CompilerServicesTreeViews.TreeViewCSharpProjectToProjectReferencesRendererType,
 			null);
 	}
 
@@ -109,7 +109,7 @@ public class TreeViewCSharpProjectToProjectReferences : TreeViewWithType<CSharpP
 		var newChildList = cSharpProjectToProjectReferences
 			.Select(x => (TreeViewNoType)new TreeViewCSharpProjectToProjectReference(
 				x,
-				CompilerServicesComponentRenderers,
+				DotNetComponentRenderers,
 				IdeComponentRenderers,
 				FileSystemProvider,
 				EnvironmentProvider,

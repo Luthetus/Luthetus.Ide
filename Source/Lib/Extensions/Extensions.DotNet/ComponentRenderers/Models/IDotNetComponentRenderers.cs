@@ -1,6 +1,6 @@
 namespace Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
-public interface ICompilerServicesComponentRenderers
+public interface IDotNetComponentRenderers
 {
 	public Type NuGetPackageManagerRendererType { get; }
 	public Type RemoveCSharpProjectFromSolutionRendererType { get; }

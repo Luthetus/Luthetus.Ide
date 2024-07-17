@@ -41,7 +41,7 @@ public class DotNetSolutionIdeApi
 	private readonly IStorageService _storageService;
 	private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
-	private readonly ICompilerServicesComponentRenderers _compilerServicesComponentRenderers;
+	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITreeViewService _treeViewService;
@@ -669,7 +669,7 @@ public class DotNetSolutionIdeApi
 
 		var rootNode = new TreeViewSolution(
 			dotNetSolutionModel,
-			_compilerServicesComponentRenderers,
+			_dotNetComponentRenderers,
 			_ideComponentRenderers,
 			_commonComponentRenderers,
 			_fileSystemProvider,
