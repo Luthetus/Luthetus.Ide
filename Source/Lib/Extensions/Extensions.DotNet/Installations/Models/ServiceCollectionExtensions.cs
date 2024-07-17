@@ -10,6 +10,7 @@ using Luthetus.Extensions.DotNet.Nugets.Displays;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Displays;
+using Luthetus.Extensions.DotNet.Commands;
 
 namespace Luthetus.Extensions.DotNet.Installations.Models;
 
@@ -24,6 +25,7 @@ public static class ServiceCollectionExtensions
 			.AddScoped<INugetPackageManagerProvider, NugetPackageManagerProviderAzureSearchUsnc>()
 			.AddScoped<DotNetCliOutputParser>()
 			.AddScoped<DotNetBackgroundTaskApi>()
+			.AddScoped<IDotNetCommandFactory, DotNetCommandFactory>()
 			.AddScoped<IDotNetMenuOptionsFactory, DotNetMenuOptionsFactory>()
 			.AddScoped<IDotNetComponentRenderers>(_ => _dotNetComponentRenderers);
 	}

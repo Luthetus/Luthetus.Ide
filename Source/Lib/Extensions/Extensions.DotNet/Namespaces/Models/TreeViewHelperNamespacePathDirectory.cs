@@ -1,6 +1,8 @@
 ﻿using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Extensions.DotNet.Namespaces.Models;
+using System.Linq;
 
 namespace Luthetus.Ide.RazorLib.Namespaces.Models;
 
@@ -27,6 +29,7 @@ public class TreeViewHelperNamespacePathDirectory
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     new NamespacePath(namespaceString, absolutePath),
+                    directoryTreeView.DotNetComponentRenderers,
                     directoryTreeView.IdeComponentRenderers,
                     directoryTreeView.CommonComponentRenderers,
                     directoryTreeView.FileSystemProvider,
@@ -51,6 +54,7 @@ public class TreeViewHelperNamespacePathDirectory
 
                 return (TreeViewNoType)new TreeViewNamespacePath(
                     new NamespacePath(namespaceString, absolutePath),
+                    directoryTreeView.DotNetComponentRenderers,
                     directoryTreeView.IdeComponentRenderers,
                     directoryTreeView.CommonComponentRenderers,
                     directoryTreeView.FileSystemProvider,

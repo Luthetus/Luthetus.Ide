@@ -4,20 +4,33 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Namespaces.Models;
+using Luthetus.Extensions.DotNet.Namespaces.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.Editors.Models;
 
 namespace Luthetus.Extensions.DotNet.Commands;
 
-public class CommandFactory : ICommandFactory
+public class DotNetCommandFactory : IDotNetCommandFactory
 {
+	private readonly ITextEditorService _textEditorService;
 	private readonly ITreeViewService _treeViewService;
+	private readonly IEnvironmentProvider _environmentProvider;
 
-	public CommandFactory(ITreeViewService treeViewService)
+	public DotNetCommandFactory(
+        ITextEditorService textEditorService,
+        ITreeViewService treeViewService,
+		IEnvironmentProvider environmentProvider)
 	{
-		_treeViewService = treeViewService;
-	}
+		_textEditorService = textEditorService;
+        _treeViewService = treeViewService;
+		_environmentProvider = environmentProvider;
 
-	private TreeViewNamespacePath? _nodeOfViewModel = null;
+    }
+
+	private List<TreeViewNoType> _nodeList = new();
+    private TreeViewNamespacePath? _nodeOfViewModel = null;
 
 	public void Initialize()
 	{
@@ -87,13 +100,8 @@ public class CommandFactory : ICommandFactory
 		throw new NotImplementedException("(2024-05-02)");
 	}
 
-	private async Task PerformGetFlattenedTree()
-	{
-		/*
-		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-        //// But, in place we need a 'path' somehow. Probably the new workspace code
-        //// would give the path.
-        // =========================================================================
+    private async Task PerformGetFlattenedTree()
+    {
 		_nodeList.Clear();
 
 		var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
@@ -113,6 +121,42 @@ public class CommandFactory : ICommandFactory
 				}
 			}
 		}
-		*/
-	}
+    }
+
+    private async Task RecursiveGetFlattenedTree(
+        TreeViewNoType treeViewNoType,
+        TextEditorViewModel textEditorViewModel)
+    {
+        _nodeList.Add(treeViewNoType);
+
+        if (treeViewNoType is TreeViewNamespacePath treeViewNamespacePath)
+        {
+            if (textEditorViewModel is not null)
+            {
+                var viewModelAbsolutePath = _environmentProvider.AbsolutePathFactory(
+                    textEditorViewModel.ResourceUri.Value,
+                    false);
+
+                if (viewModelAbsolutePath.Value ==
+                        treeViewNamespacePath.Item.AbsolutePath.Value)
+                {
+                    _nodeOfViewModel = treeViewNamespacePath;
+                }
+            }
+
+            switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
+            {
+                case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
+                    await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
+                    break;
+            }
+        }
+
+        await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
+
+        foreach (var node in treeViewNoType.ChildList)
+        {
+            await RecursiveGetFlattenedTree(node, textEditorViewModel).ConfigureAwait(false);
+        }
+    }
 }

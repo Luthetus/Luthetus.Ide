@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
-using Luthetus.Ide.RazorLib.Namespaces.Models;
+using Luthetus.Extensions.DotNet.Namespaces.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
@@ -32,6 +32,7 @@ public class TreeViewHelperDotNetSolution
 			{
 				return (TreeViewNoType)new TreeViewNamespacePath(
 					new NamespacePath(x.AbsolutePath.NameNoExtension, x.AbsolutePath),
+					treeViewSolution.DotNetComponentRenderers,
 					treeViewSolution.IdeComponentRenderers,
 					treeViewSolution.CommonComponentRenderers,
 					treeViewSolution.FileSystemProvider,

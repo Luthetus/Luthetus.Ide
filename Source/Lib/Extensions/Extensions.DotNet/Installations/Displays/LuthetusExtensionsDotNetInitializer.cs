@@ -15,7 +15,7 @@ using Luthetus.Extensions.DotNet.TestExplorers.Displays;
 
 namespace Luthetus.Extensions.DotNet.Installations.Displays;
 
-public partial class LuthetusCompilerServicesInitializer : ComponentBase
+public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 {
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
@@ -38,7 +38,7 @@ public partial class LuthetusCompilerServicesInitializer : ComponentBase
 			BackgroundTaskService.Enqueue(
 				Key<IBackgroundTask>.NewKey(),
 				ContinuousBackgroundTaskWorker.GetQueueKey(),
-				nameof(LuthetusCompilerServicesInitializer),
+				nameof(LuthetusExtensionsDotNetInitializer),
 				async () =>
 				{
 					InitializePanelTabs();

@@ -1,5 +1,4 @@
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Extensions.DotNet.Namespaces.Models;
 

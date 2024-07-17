@@ -6,8 +6,8 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.Namespaces.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
+using Luthetus.Extensions.DotNet.Namespaces.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
@@ -194,6 +194,7 @@ public class TreeViewSolutionFolder : TreeViewWithType<SolutionFolder>
 
 		return new TreeViewNamespacePath(
 			namespacePath,
+			DotNetComponentRenderers,
 			IdeComponentRenderers,
 			CommonComponentRenderers,
 			FileSystemProvider,

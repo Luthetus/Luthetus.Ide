@@ -2,7 +2,6 @@ using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Extensions.DotNet.Namespaces.Models;
 
@@ -28,6 +27,7 @@ public class TreeViewHelperRazorMarkup
 
 				return (TreeViewNoType)new TreeViewNamespacePath(
 					new NamespacePath(namespaceString, absolutePath),
+					razorMarkupTreeView.DotNetComponentRenderers,
 					razorMarkupTreeView.IdeComponentRenderers,
 					razorMarkupTreeView.CommonComponentRenderers,
 					razorMarkupTreeView.FileSystemProvider,

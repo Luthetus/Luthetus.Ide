@@ -4,7 +4,6 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
@@ -33,10 +32,10 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
 
     public override bool Equals(object? obj)
     {
-        if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
+        if (obj is not TreeViewAbsolutePath treeViewAbsolutePath)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsolutePath.Value == Item.Value;
+        return treeViewAbsolutePath.Item.Value == Item.Value;
     }
 
     public override int GetHashCode() => Item.Value.GetHashCode();

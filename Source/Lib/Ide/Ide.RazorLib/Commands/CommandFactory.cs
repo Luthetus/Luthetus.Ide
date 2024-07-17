@@ -21,7 +21,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -53,8 +52,6 @@ public class CommandFactory : ICommandFactory
 		_jsRuntime = jsRuntime;
     }
 
-	private TreeViewNamespacePath? _nodeOfViewModel = null;
-	private List<TreeViewNoType> _nodeList = new();
     private IDialog? _contextSwitchDialog;
     
 	public IDialog? CodeSearchDialog { get; set; }
@@ -338,70 +335,4 @@ public class CommandFactory : ICommandFactory
                 .ConfigureAwait(false);
         }
     }
-
-	private async Task PerformGetFlattenedTree()
-	{
-		/*
-		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-        //// But, in place we need a 'path' somehow. Probably the new workspace code
-        //// would give the path.
-        // =========================================================================
-		_nodeList.Clear();
-
-		var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
-
-		if (group is not null)
-		{
-			var textEditorViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
-
-			if (textEditorViewModel is not null)
-			{
-				if (_treeViewService.TryGetTreeViewContainer(
-						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
-						out var treeViewContainer) &&
-                    treeViewContainer is not null)
-				{
-					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel).ConfigureAwait(false);
-				}
-			}
-		}
-		*/
-	}
-
-	private async Task RecursiveGetFlattenedTree(
-		TreeViewNoType treeViewNoType,
-		TextEditorViewModel textEditorViewModel)
-	{
-		_nodeList.Add(treeViewNoType);
-
-		if (treeViewNoType is TreeViewNamespacePath treeViewNamespacePath)
-		{
-			if (textEditorViewModel is not null)
-			{
-				var viewModelAbsolutePath = _environmentProvider.AbsolutePathFactory(
-					textEditorViewModel.ResourceUri.Value,
-					false);
-
-				if (viewModelAbsolutePath.Value ==
-						treeViewNamespacePath.Item.AbsolutePath.Value)
-				{
-					_nodeOfViewModel = treeViewNamespacePath;
-				}
-			}
-
-			switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
-            {
-                case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                    await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
-                    break;
-            }
-		}
-
-        // await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
-
-        foreach (var node in treeViewNoType.ChildList)
-		{
-			await RecursiveGetFlattenedTree(node, textEditorViewModel).ConfigureAwait(false);
-		}
-	}
 }

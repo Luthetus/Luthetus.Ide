@@ -6,13 +6,16 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.Namespaces.Models;
+using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
-namespace Luthetus.Ide.RazorLib.Namespaces.Models;
+namespace Luthetus.Extensions.DotNet.Namespaces.Models;
 
 public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 {
     public TreeViewNamespacePath(
             NamespacePath namespacePath,
+            IDotNetComponentRenderers dotNetComponentRenderers,
             IIdeComponentRenderers ideComponentRenderers,
             ICommonComponentRenderers commonComponentRenderers,
             IFileSystemProvider fileSystemProvider,
@@ -21,12 +24,14 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
             bool isExpanded)
         : base(namespacePath, isExpandable, isExpanded)
     {
+        DotNetComponentRenderers = dotNetComponentRenderers;
         IdeComponentRenderers = ideComponentRenderers;
         CommonComponentRenderers = commonComponentRenderers;
         FileSystemProvider = fileSystemProvider;
         EnvironmentProvider = environmentProvider;
     }
 
+    public IDotNetComponentRenderers DotNetComponentRenderers { get; }
     public IIdeComponentRenderers IdeComponentRenderers { get; }
     public ICommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
@@ -75,14 +80,10 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                     case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                         return;
                     case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                    	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-		                // =========================================================================
-                        // newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
+                        newChildList = await TreeViewHelperCSharpProject.LoadChildrenAsync(this).ConfigureAwait(false);
                         throw new NotImplementedException("(2024-07-15)");
                     case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                    	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-		                // =========================================================================
-                        // newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
+                        newChildList = await TreeViewHelperRazorMarkup.LoadChildrenAsync(this).ConfigureAwait(false);
                         throw new NotImplementedException("(2024-07-15)");
                 }
             }

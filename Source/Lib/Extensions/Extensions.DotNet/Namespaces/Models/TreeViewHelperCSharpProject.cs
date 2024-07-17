@@ -6,15 +6,12 @@ using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Extensions.DotNet.CSharpProjects.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Models;
-using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.DotNet.Namespaces.Models;
 
 public class TreeViewHelperCSharpProject
 {
-	public static async Task<List<TreeViewNoType>> LoadChildrenAsync(
-		TreeViewNamespacePath cSharpProjectTreeView,
-		IDotNetComponentRenderers dotNetComponentRenderers)
+	public static async Task<List<TreeViewNoType>> LoadChildrenAsync(TreeViewNamespacePath cSharpProjectTreeView)
 	{
 		var parentDirectoryOfCSharpProject = cSharpProjectTreeView.Item.AbsolutePath.AncestorDirectoryList.Last();
 		var ancestorDirectory = parentDirectoryOfCSharpProject;
@@ -36,6 +33,7 @@ public class TreeViewHelperCSharpProject
 					absolutePath.NameNoExtension;
 
 				return new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
+					cSharpProjectTreeView.DotNetComponentRenderers,
 					cSharpProjectTreeView.IdeComponentRenderers,
 					cSharpProjectTreeView.CommonComponentRenderers,
 					cSharpProjectTreeView.FileSystemProvider,
@@ -75,6 +73,7 @@ public class TreeViewHelperCSharpProject
 				var namespaceString = cSharpProjectTreeView.Item.Namespace;
 
 				return (TreeViewNoType)new TreeViewNamespacePath(new NamespacePath(namespaceString, absolutePath),
+					cSharpProjectTreeView.DotNetComponentRenderers,
 					cSharpProjectTreeView.IdeComponentRenderers,
 					cSharpProjectTreeView.CommonComponentRenderers,
 					cSharpProjectTreeView.FileSystemProvider,
@@ -88,7 +87,7 @@ public class TreeViewHelperCSharpProject
 
 		var cSharpProjectDependenciesTreeViewNode = new TreeViewCSharpProjectDependencies(
 			new CSharpProjectDependencies(cSharpProjectTreeView.Item),
-			dotNetComponentRenderers,
+            cSharpProjectTreeView.DotNetComponentRenderers,
 			cSharpProjectTreeView.IdeComponentRenderers,
 			cSharpProjectTreeView.FileSystemProvider,
 			cSharpProjectTreeView.EnvironmentProvider,
