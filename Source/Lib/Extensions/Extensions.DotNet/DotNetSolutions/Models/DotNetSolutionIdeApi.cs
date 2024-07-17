@@ -60,7 +60,8 @@ public class DotNetSolutionIdeApi
 		IStorageService storageService,
 		IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
 		ICompilerServiceRegistry compilerServiceRegistry,
-		IIdeComponentRenderers ideComponentRenderers,
+        IDotNetComponentRenderers dotNetComponentRenderers,
+        IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
 		ITreeViewService treeViewService,
 		IDispatcher dispatcher,
@@ -77,7 +78,8 @@ public class DotNetSolutionIdeApi
 		_storageService = storageService;
 		_compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
 		_compilerServiceRegistry = compilerServiceRegistry;
-		_ideComponentRenderers = ideComponentRenderers;
+        _dotNetComponentRenderers = dotNetComponentRenderers;
+        _ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
 		_treeViewService = treeViewService;
 		_dispatcher = dispatcher;

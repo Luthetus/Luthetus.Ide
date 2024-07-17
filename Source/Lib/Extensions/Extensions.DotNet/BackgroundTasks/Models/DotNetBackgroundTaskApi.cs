@@ -17,6 +17,7 @@ using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.States;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
@@ -27,6 +28,7 @@ public class DotNetBackgroundTaskApi
 	private readonly IStorageService _storageService;
     private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
+	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly ITreeViewService _treeViewService;
@@ -36,7 +38,6 @@ public class DotNetBackgroundTaskApi
 	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
 	private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly ITextEditorService _textEditorService;
-	private readonly ICompilerServiceRegistry _interfaceCompilerServiceRegistry;
 	private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IState<TestExplorerState> _testExplorerStateWrap;
 
@@ -46,6 +47,7 @@ public class DotNetBackgroundTaskApi
         IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
         IStorageService storageService,
 		ICompilerServiceRegistry compilerServiceRegistry,
+		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
 		ICommonComponentRenderers commonComponentRenderers,
 		ITreeViewService treeViewService,
@@ -55,7 +57,6 @@ public class DotNetBackgroundTaskApi
 		IState<DotNetSolutionState> dotNetSolutionStateWrap,
 		IFileSystemProvider fileSystemProvider,
 		ITextEditorService textEditorService,
-		ICompilerServiceRegistry interfaceCompilerServiceRegistry,
 		IState<TerminalState> terminalStateWrap,
         IState<TestExplorerState> testExplorerStateWrap,
         IServiceProvider serviceProvider)
@@ -64,6 +65,7 @@ public class DotNetBackgroundTaskApi
 		_backgroundTaskService = backgroundTaskService;
 		_storageService = storageService;
         _compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
+        _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
 		_commonComponentRenderers = commonComponentRenderers;
 		_treeViewService = treeViewService;
@@ -73,7 +75,7 @@ public class DotNetBackgroundTaskApi
 		_dotNetSolutionStateWrap = dotNetSolutionStateWrap;
 		_fileSystemProvider = fileSystemProvider;
 		_textEditorService = textEditorService;
-		_compilerServiceRegistry = interfaceCompilerServiceRegistry;
+		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
         _testExplorerStateWrap = testExplorerStateWrap;
 
@@ -107,7 +109,8 @@ public class DotNetBackgroundTaskApi
 			_storageService,
 			_compilerServiceExplorerStateWrap,
 			_compilerServiceRegistry,
-			_ideComponentRenderers,
+            _dotNetComponentRenderers,
+            _ideComponentRenderers,
 			_commonComponentRenderers,
 			_treeViewService,
 			_dispatcher,
@@ -115,7 +118,7 @@ public class DotNetBackgroundTaskApi
 			_dotNetSolutionStateWrap,
 			_fileSystemProvider,
 			_textEditorService,
-			_interfaceCompilerServiceRegistry,
+			_compilerServiceRegistry,
 			_terminalStateWrap,
 			serviceProvider);
 	}
