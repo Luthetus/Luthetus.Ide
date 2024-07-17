@@ -20,9 +20,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
-using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 using Luthetus.Ide.RazorLib.Commands;
-using Luthetus.Ide.RazorLib.TestExplorers.Displays;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
@@ -161,34 +159,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
     {
         var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelStateWrap.Value);
         rightPanel.Dispatcher = Dispatcher;
-
-        // compilerServiceExplorerPanel
-        var compilerServiceExplorerPanel = new Panel(
-			"Compiler Service Explorer",
-			Key<Panel>.NewKey(),
-			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.CompilerServiceExplorerContext.ContextKey,
-            typeof(CompilerServiceExplorerDisplay),
-			null,
-            Dispatcher,
-            DialogService,
-            JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(compilerServiceExplorerPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(rightPanel.Key, compilerServiceExplorerPanel, false));
-
-        // compilerServiceEditorPanel
-        var compilerServiceEditorPanel = new Panel(
-			"Compiler Service Editor",
-			Key<Panel>.NewKey(),
-			Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.CompilerServiceEditorContext.ContextKey,
-            typeof(CompilerServiceEditorDisplay),
-            null,
-            Dispatcher,
-            DialogService,
-            JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(compilerServiceEditorPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(rightPanel.Key, compilerServiceEditorPanel, false));
     }
 
     private void InitializeBottomPanelTabs()
@@ -237,20 +207,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(activeContextsPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, activeContextsPanel, false));
-
-        // testExplorerPanel
-        var testExplorerPanel = new Panel(
-			"Test Explorer",
-            Key<Panel>.NewKey(),
-            Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.TestExplorerContext.ContextKey,
-			typeof(TestExplorerDisplay),
-            null,
-            Dispatcher,
-            DialogService,
-            JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(testExplorerPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
 
         // SetActivePanelTabAction
         Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key));

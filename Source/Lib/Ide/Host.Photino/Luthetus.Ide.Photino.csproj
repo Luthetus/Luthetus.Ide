@@ -39,8 +39,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\Extensions\Extensions.Config\Luthetus.Extensions.Config.csproj" />
       <ProjectReference Include="..\Ide.RazorLib\Luthetus.Ide.RazorLib.csproj" />
-      <ProjectReference Include="..\Luthetus.Ide.Config\Luthetus.Ide.Config.csproj" />
       <ProjectReference Include="..\..\..\..\External\photino.Blazor-2.6.0_fork\Photino.Blazor\Photino.Blazor.csproj" />
     </ItemGroup>
 

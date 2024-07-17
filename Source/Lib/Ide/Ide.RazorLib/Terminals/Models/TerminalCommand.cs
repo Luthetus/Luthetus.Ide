@@ -28,7 +28,7 @@ public record TerminalCommand(
     public bool WasWrittenTo { get; set; }
     public bool WasStarted { get; set; }
     public bool IsCompleted { get; set; }
-	public Func<Task> StateChangedCallbackFunc { get; internal set; }
+	public Func<Task> StateChangedCallbackFunc { get; set; }
 	
 	/// <summary>
 	/// (2024-07-15)

@@ -21,17 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\CompilerServices\CSharpProject\Luthetus.CompilerServices.CSharpProject.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\CSharp\Luthetus.CompilerServices.CSharp.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\Css\Luthetus.CompilerServices.Css.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\C\Luthetus.CompilerServices.C.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\DotNetSolution\Luthetus.CompilerServices.DotNetSolution.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\FSharp\Luthetus.CompilerServices.FSharp.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\JavaScript\Luthetus.CompilerServices.JavaScript.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\Json\Luthetus.CompilerServices.Json.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\Razor\Luthetus.CompilerServices.Razor.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\TypeScript\Luthetus.CompilerServices.TypeScript.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\Xml\Luthetus.CompilerServices.Xml.csproj" />
+      <ProjectReference Include="..\..\TextEditor\Luthetus.TextEditor.RazorLib.csproj" />
     </ItemGroup>
 
 </Project>

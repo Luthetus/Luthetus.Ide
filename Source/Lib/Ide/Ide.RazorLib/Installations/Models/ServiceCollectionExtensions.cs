@@ -13,11 +13,8 @@ using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.FileSystems.Displays;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
-using Luthetus.Ide.RazorLib.Decorations;
-using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.CompilerServices.Displays;
 using Luthetus.Ide.RazorLib.Namespaces.Displays;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
@@ -91,8 +88,6 @@ public static class ServiceCollectionExtensions
             .AddSingleton<IIdeComponentRenderers>(_ideComponentRenderers)
             .AddScoped<IdeBackgroundTaskApi>()
             .AddScoped<ICommandFactory, CommandFactory>()
-            .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
-            .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>()
             .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
 			.AddScoped<GitCliOutputParser>();
@@ -103,8 +98,7 @@ public static class ServiceCollectionExtensions
     private static readonly IdeTreeViews _ideTreeViews = new(
         typeof(TreeViewNamespacePathDisplay),
         typeof(TreeViewAbsolutePathDisplay),
-        typeof(TreeViewGitFileDisplay),
-        typeof(TreeViewCompilerServiceDisplay));
+        typeof(TreeViewGitFileDisplay));
 
     private static readonly IdeComponentRenderers _ideComponentRenderers = new(
         typeof(BooleanPromptOrCancelDisplay),

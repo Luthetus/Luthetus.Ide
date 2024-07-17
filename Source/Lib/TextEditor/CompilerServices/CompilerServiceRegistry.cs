@@ -16,6 +16,7 @@ public class CompilerServiceRegistryDefault : ICompilerServiceRegistry
     public CompilerService DefaultCompilerService { get; }
     
     public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
+    public ImmutableList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToImmutableList();
 
     public ICompilerService GetCompilerService(string extensionNoPeriod)
     {

@@ -9,7 +9,7 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
-using Luthetus.Ide.Config.Installations.Models;
+using Luthetus.Extensions.Config.Installations.Models;
 
 namespace Luthetus.Ide.Photino;
 
@@ -33,7 +33,7 @@ class Program
             typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
             typeof(LuthetusIdeConfig).Assembly,
-            typeof(Luthetus.CompilerServices.RazorLib.Installations.Models.ServiceCollectionExtensions).Assembly));
+            typeof(Luthetus.Extensions.DotNet.Installations.Models.ServiceCollectionExtensions).Assembly));
 
         appBuilder.RootComponents.Add<App>("app");
 
