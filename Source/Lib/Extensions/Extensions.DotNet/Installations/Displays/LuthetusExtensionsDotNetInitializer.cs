@@ -48,6 +48,9 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private IDispatcher Dispatcher { get; set; } = null!;
 
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
+
+	private Key<PanelGroup> _leftPanelGroupKey;
+	private Key<Panel> _solutionExplorerPanelKey;
 	
 	protected override void OnInitialized()
 	{
@@ -129,6 +132,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 						}));
 						
 					InitializeMenuRun();
+					
+					Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(_leftPanelGroupKey, _solutionExplorerPanelKey));
 				});
 		}
 	}
@@ -158,6 +163,13 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			JsRuntime);
 		Dispatcher.Dispatch(new PanelState.RegisterPanelAction(solutionExplorerPanel));
 		Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, solutionExplorerPanel, false));
+		
+		// SetActivePanelTabAction
+		//
+		// HACK: capture the variables and do it in OnAfterRender so it doesn't get overwritten by the IDE
+		// 	  settings the active panel tab to the folder explorer.
+		_leftPanelGroupKey = leftPanel.Key;
+		_solutionExplorerPanelKey = solutionExplorerPanel.Key;
 	}
 
 	private void InitializeRightPanelTabs()

@@ -140,13 +140,6 @@ public partial class IdeHeader : ComponentBase
                     menuOptionOpenFile,
                     menuOptionOpenDirectory,
                     menuOptionOpenCSharpProject,
-                    
-                    /*
-					//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-		    		// =======================================================================
-		            menuOptionOpenDotNetSolution
-					*/
-					
                 }.ToImmutableArray()));
 
             menuOptionsList.Add(menuOptionOpen);
