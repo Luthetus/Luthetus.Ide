@@ -28,7 +28,7 @@ public partial class CommandBarDisplay : FluxorComponent
                 if (_commandBarDisplayElementReference is not null)
                 {
                     await _commandBarDisplayElementReference.Value
-                        .FocusAsync()
+                        .FocusAsync(preventScroll: true)
                         .ConfigureAwait(false);
                 }
             }
@@ -50,7 +50,7 @@ public partial class CommandBarDisplay : FluxorComponent
         {
             await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
 
-            TextEditorService.PostTakeMostRecent(
+            TextEditorService.PostRedundant(
                 nameof(HandleOnKeyDown),
                 RenderBatch.ViewModel.ResourceUri,
                 RenderBatch.ViewModel.ViewModelKey,

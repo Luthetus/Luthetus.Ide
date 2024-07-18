@@ -13,6 +13,13 @@ using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 
+/// <remarks>
+/// This class is an exception to the naming convention, "don't use the word 'Luthetus' in class names".
+/// 
+/// Reason for this exception: when one first starts interacting with this project,
+/// 	this type might be one of the first types they interact with. So, the redundancy of namespace
+/// 	and type containing 'Luthetus' feels reasonable here.
+/// </remarks>
 public partial class LuthetusTextEditorInitializer : ComponentBase
 {
     [Inject]
@@ -29,43 +36,40 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    
+    protected override void OnInitialized()
     {
-		if (firstRender)
-		{
-            BackgroundTaskService.Enqueue(
-                Key<IBackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(LuthetusCommonInitializer),
-                async () =>
+    	BackgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            nameof(LuthetusCommonInitializer),
+            async () =>
+            {
+                if (TextEditorConfig.CustomThemeRecordList is not null)
                 {
-                    if (TextEditorConfig.CustomThemeRecordList is not null)
+                    foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                     {
-                        foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
-                        {
-                            Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
-                        }
+                        Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
                     }
+                }
 
-                    var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
-                        x => x.Key == TextEditorConfig.InitialThemeKey);
+                var initialThemeRecord = ThemeRecordsCollectionService.ThemeStateWrap.Value.ThemeList.FirstOrDefault(
+                    x => x.Key == TextEditorConfig.InitialThemeKey);
 
-                    if (initialThemeRecord is not null)
-                        Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
+                if (initialThemeRecord is not null)
+                    Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
 
-                    foreach (var searchEngine in TextEditorConfig.SearchEngineList)
-                    {
-                        Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
-                    }
+                foreach (var searchEngine in TextEditorConfig.SearchEngineList)
+                {
+                    Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
+                }
 
-                    Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(
-                        new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap)));
+                Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(
+                    new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap)));
 
-                    await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
-                });
-		}
-	
-		await base.OnAfterRenderAsync(firstRender);
+                await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
+            });
+            
+        base.OnInitialized();
     }
 }

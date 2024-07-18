@@ -1,6 +1,6 @@
-using Fluxor;
 using System.Text.Json;
 using System.Text;
+using Fluxor;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
@@ -15,7 +15,7 @@ public class AppOptionsService : IAppOptionsService
 {
     private readonly IDispatcher _dispatcher;
     private readonly IStorageService _storageService;
-    private readonly LuthetusCommonBackgroundTaskApi _commonBackgroundTaskApi;
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public AppOptionsService(
@@ -23,7 +23,7 @@ public class AppOptionsService : IAppOptionsService
         IState<ThemeState> themeStateWrap,
         IDispatcher dispatcher,
         IStorageService storageService,
-        LuthetusCommonBackgroundTaskApi commonBackgroundTaskApi,
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService)
     {
         AppOptionsStateWrap = appOptionsStateWrap;

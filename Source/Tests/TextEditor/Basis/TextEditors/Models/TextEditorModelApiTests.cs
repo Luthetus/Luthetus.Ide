@@ -1,5 +1,11 @@
+using Fluxor;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.Misc;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
@@ -7,15 +13,9 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Fluxor;
-using Microsoft.AspNetCore.Components.Web;
-using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Common.RazorLib.Misc;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
 
 namespace Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
 
@@ -45,7 +45,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.UndoEditFactory(ResourceUri)"/>
     /// </summary>
     [Fact]
-    public async Task UndoEdit()
+    public void UndoEdit()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -62,7 +62,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
             textEditorService.ModelApi.InsertTextUnsafeFactory(
                 inModel.ResourceUri,
@@ -75,7 +75,7 @@ public class TextEditorModelApiTests
             insertedText + inModel.GetAllText(),
             outModel.GetAllText());
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.UndoEditFactory),
             textEditorService.ModelApi.UndoEditFactory(
                 inModel.ResourceUri));
@@ -90,7 +90,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.SetUsingLineEndKindFactory(ResourceUri, LineEndKind)"/>
     /// </summary>
     [Fact]
-    public async Task SetUsingRowEndingKind()
+    public void SetUsingRowEndingKind()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -105,7 +105,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(rowEndingKind, inModel.LineEndKindPreference);
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.SetUsingLineEndKindFactory),
             textEditorService.ModelApi.SetUsingLineEndKindFactory(
                 inModel.ResourceUri, rowEndingKind));
@@ -120,7 +120,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.SetResourceDataFactory(ResourceUri, DateTime)"/>
     /// </summary>
     [Fact]
-    public async Task SetResourceData()
+    public void SetResourceData()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -135,7 +135,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.SetResourceDataFactory),
             textEditorService.ModelApi.SetResourceDataFactory(
                 inModel.ResourceUri, newResourceLastWriteTime));
@@ -150,7 +150,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.ReloadFactory(ResourceUri, string, DateTime)"/>
     /// </summary>
     [Fact]
-    public async Task Reload()
+    public void Reload()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -165,7 +165,7 @@ public class TextEditorModelApiTests
         // Assert the current values are different from that which will be set.
         Assert.NotEqual(newContent, inModel.GetAllText());
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.ReloadFactory),
             textEditorService.ModelApi.ReloadFactory(
                 inModel.ResourceUri, newContent, DateTime.UtcNow));
@@ -258,7 +258,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.RedoEditFactory(ResourceUri)"/>
     /// </summary>
     [Fact]
-    public async Task RedoEditEnqueue()
+    public void RedoEditEnqueue()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -275,7 +275,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
             textEditorService.ModelApi.InsertTextUnsafeFactory(
                 inModel.ResourceUri,
@@ -286,7 +286,7 @@ public class TextEditorModelApiTests
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.UndoEditFactory),
             textEditorService.ModelApi.UndoEditFactory(
                 inModel.ResourceUri));
@@ -294,7 +294,7 @@ public class TextEditorModelApiTests
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.RedoEditFactory),
             textEditorService.ModelApi.RedoEditFactory(
                 inModel.ResourceUri));
@@ -307,7 +307,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.InsertTextFactory(ResourceUri, Key{TextEditorViewModel}, string, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public async Task InsertTextEnqueue()
+    public void InsertTextEnqueue()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -324,7 +324,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
             textEditorService.ModelApi.InsertTextUnsafeFactory(
                 inModel.ResourceUri,
@@ -340,7 +340,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.HandleKeyboardEventFactory(ResourceUri, Key{TextEditorViewModel}, KeyboardEventArgs, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public async Task HandleKeyboardEventEnqueue()
+    public void HandleKeyboardEventEnqueue()
     {
         InitializeTextEditorModelApiTests(
             out var inModel,
@@ -362,7 +362,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory),
             textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory(
                 inModel.ResourceUri,
@@ -466,7 +466,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.DeleteTextByRangeFactory(ResourceUri, Key{TextEditorViewModel}, int, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public async Task DeleteTextByRangeEnqueue()
+    public void DeleteTextByRangeEnqueue()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -484,7 +484,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory),
             textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
                 inModel.ResourceUri,
@@ -500,7 +500,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.DeleteTextByMotionFactory(ResourceUri, Key{TextEditorViewModel}, MotionKind, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public async Task DeleteTextByMotionEnqueue_Backspace()
+    public void DeleteTextByMotionEnqueue_Backspace()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -519,7 +519,7 @@ public class TextEditorModelApiTests
 
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
             textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
                 inModel.ResourceUri,
@@ -535,7 +535,7 @@ public class TextEditorModelApiTests
     /// <see cref="TextEditorModelApi.AddPresentationModelFactory(ResourceUri, TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
-    public async Task RegisterPresentationModel()
+    public void RegisterPresentationModel()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -545,7 +545,7 @@ public class TextEditorModelApiTests
 
         Assert.Empty(inModel!.PresentationModelList);
 
-        await textEditorService.PostSimpleBatch(
+        textEditorService.PostDistinct(
             nameof(textEditorService.ModelApi.AddPresentationModelFactory),
             textEditorService.ModelApi.AddPresentationModelFactory(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel));
 

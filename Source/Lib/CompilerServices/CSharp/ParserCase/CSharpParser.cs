@@ -1,6 +1,4 @@
-using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -8,12 +6,14 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.CompilerServices.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
-public class CSharpParser : ILuthParser
+public class CSharpParser : IParser
 {
     public CSharpParser(CSharpLexer lexer)
     {
@@ -27,13 +27,13 @@ public class CSharpParser : ILuthParser
     public CSharpBinderSession BinderSession { get; private set; }
     public CSharpLexer Lexer { get; }
 
-    ILuthBinder ILuthParser.Binder => Binder;
-    ILuthBinderSession ILuthParser.BinderSession => BinderSession;
-    ILuthLexer ILuthParser.Lexer => Lexer;
+    IBinder IParser.Binder => Binder;
+    IBinderSession IParser.BinderSession => BinderSession;
+    ILexer IParser.Lexer => Lexer;
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
     public CompilationUnit Parse(
-        ILuthBinder previousBinder,
+        IBinder previousBinder,
         ResourceUri resourceUri)
     {
         Binder = (CSharpBinder)previousBinder;
@@ -46,9 +46,9 @@ public class CSharpParser : ILuthParser
     {
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
-        var diagnosticBag = new LuthDiagnosticBag();
+        var diagnosticBag = new DiagnosticBag();
 
-        var model = new ParserModel(
+        var model = new CSharpParserModel(
             Binder,
             BinderSession,
             new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),

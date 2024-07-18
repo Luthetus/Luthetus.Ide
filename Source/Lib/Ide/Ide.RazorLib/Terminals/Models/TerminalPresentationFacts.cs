@@ -1,6 +1,6 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 

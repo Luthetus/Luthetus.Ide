@@ -1,16 +1,16 @@
-﻿using Luthetus.Common.RazorLib.TreeViews.States;
+using System.Collections.Immutable;
+using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
+using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
-using System.Collections.Immutable;
 using Luthetus.Common.Tests.Basis.TreeViews.Models.Internals;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using static Luthetus.Common.RazorLib.TreeViews.States.TreeViewState;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
+using static Luthetus.Common.RazorLib.TreeViews.States.TreeViewState;
 
 namespace Luthetus.Common.Tests.Basis.TreeViews.States;
 
@@ -913,8 +913,8 @@ public class TreeViewStateActionsTests
 
     private void InitializeTreeViewStateActionsTests(
         out IDispatcher dispatcher,
-        out LuthetusCommonTreeViews commonTreeViews,
-        out LuthetusCommonComponentRenderers commonComponentRenderers,
+        out CommonTreeViews commonTreeViews,
+        out CommonComponentRenderers commonComponentRenderers,
         out IState<TreeViewState> treeViewStateWrap,
         out ITreeViewService treeViewService,
         out IBackgroundTaskService backgroundTaskService,
@@ -952,7 +952,7 @@ public class TreeViewStateActionsTests
         backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
         dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
-        commonTreeViews = new LuthetusCommonTreeViews(
+        commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -963,9 +963,10 @@ public class TreeViewStateActionsTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        commonComponentRenderers = new LuthetusCommonComponentRenderers(
+        commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
+            typeof(CommonProgressNotificationDisplay),
             commonTreeViews);
 
         websiteServerState = new WebsiteServerState();

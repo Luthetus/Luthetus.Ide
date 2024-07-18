@@ -22,7 +22,7 @@ public partial class GitOriginDisplay : ComponentBase
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private GitCliOutputParser GitCliOutputParser { get; set; } = null!;
 

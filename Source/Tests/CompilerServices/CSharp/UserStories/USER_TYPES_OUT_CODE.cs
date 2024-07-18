@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Fluxor;
@@ -9,16 +10,15 @@ using Luthetus.Common.RazorLib.Misc;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using System.Collections.Immutable;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+namespace Luthetus.CompilerServices.CSharp.Tests.UserStories;
 
 /// <summary>
 /// Many tests in this project are pre-written string inputs.
@@ -28,7 +28,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
 public class USER_TYPES_OUT_CODE
 {
     [Fact]
-    public async Task ClassDefinition()
+    public void ClassDefinition()
     {
         Initialize_USER_TYPES_OUT_CODE(
             string.Empty,
@@ -44,7 +44,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(USER_TYPES_OUT_CODE),
                 async editContext =>
                 {
@@ -76,7 +76,7 @@ public class USER_TYPES_OUT_CODE
     }
     
     [Fact]
-    public async Task ConstructorUsage()
+    public void ConstructorUsage()
     {
         Initialize_USER_TYPES_OUT_CODE(
             string.Empty,
@@ -97,7 +97,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(USER_TYPES_OUT_CODE),
                 async editContext =>
                 {
@@ -123,7 +123,7 @@ public class USER_TYPES_OUT_CODE
     }
     
     [Fact]
-    public async Task BLAZOR_WASM_TEMPLATE_PROGRAM_CS()
+    public void BLAZOR_WASM_TEMPLATE_PROGRAM_CS()
     {
         Initialize_USER_TYPES_OUT_CODE(
             string.Empty,
@@ -155,7 +155,7 @@ await builder.Build().RunAsync();
             {
                 char character = content[i];
 
-                textEditorService.PostSimpleBatch(
+                textEditorService.PostDistinct(
                     nameof(USER_TYPES_OUT_CODE),
                     async editContext =>
                     {

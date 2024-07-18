@@ -1,6 +1,6 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+namespace Luthetus.CompilerServices.DotNetSolution.Facts;
 
 public partial class LexSolutionFacts
 {

@@ -1,6 +1,6 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using System.Collections.Immutable;
+using Fluxor;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
@@ -14,7 +14,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
     public InMemoryFileSystemProvider(
         IEnvironmentProvider environmentProvider,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher)
     {
         _environmentProvider = environmentProvider;

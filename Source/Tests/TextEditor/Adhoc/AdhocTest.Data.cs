@@ -2,7 +2,7 @@ namespace Luthetus.TextEditor.Tests.Adhoc;
 
 public partial class AdhocTest
 {
-    public const string _bigString = @"using Luthetus.TextEditor.RazorLib.Lexes.Models;
+    public const string _bigString = @"using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Fluxor;
@@ -19,7 +19,7 @@ using Luthetus.Ide.RazorLib.CompilerServices.Models;
 using Luthetus.Ide.RazorLib.Decorations;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;

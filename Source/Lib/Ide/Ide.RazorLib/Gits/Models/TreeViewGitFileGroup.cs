@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
@@ -11,8 +11,8 @@ public class TreeViewGitFileGroup : TreeViewWithType<string>
 {
     public TreeViewGitFileGroup(
             string item,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             bool isExpandable,
             bool isExpanded)
         : base(item, isExpandable, isExpanded)
@@ -21,8 +21,8 @@ public class TreeViewGitFileGroup : TreeViewWithType<string>
         CommonComponentRenderers = commonComponentRenderers;
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+    public IIdeComponentRenderers IdeComponentRenderers { get; }
+    public ICommonComponentRenderers CommonComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {

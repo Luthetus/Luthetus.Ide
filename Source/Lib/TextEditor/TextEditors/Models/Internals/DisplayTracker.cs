@@ -1,11 +1,8 @@
-using Fluxor;
-using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.Exceptions;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.TextEditors.States;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -144,7 +141,7 @@ public class DisplayTracker : IDisposable
 		// does not use the 'commandArgs' parameter
         var commandArgs = (TextEditorCommandArgs?)null;
 
-		_textEditorService.PostTakeMostRecent(
+		_textEditorService.PostRedundant(
 			nameof(AppDimensionStateWrap_StateChanged),
 			model.ResourceUri,
             viewModel.ViewModelKey,
@@ -165,7 +162,7 @@ public class DisplayTracker : IDisposable
 
 				// This virtualization result calculation is intentionally posted from within a post,
 				// in order to ensure that the preceeding remeasure is executed and the state is updated first
-				_textEditorService.PostTakeMostRecent(
+				_textEditorService.PostRedundant(
 	                nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory),
 					model.ResourceUri,
 	                viewModel.ViewModelKey,

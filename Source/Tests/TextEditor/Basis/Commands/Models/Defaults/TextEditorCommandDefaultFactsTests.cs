@@ -1,12 +1,12 @@
+using Microsoft.Extensions.DependencyInjection;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.Tests.Basis.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib;
 
 namespace Luthetus.TextEditor.Tests.Basis.Commands.Models.Defaults;
 
@@ -60,7 +60,7 @@ public class TextEditorCommandDefaultFactsTests
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
 				nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
 				{
@@ -130,7 +130,7 @@ public class TextEditorCommandDefaultFactsTests
             var inClipboard = await clipboardService.ReadClipboard();
             Assert.Empty(inClipboard);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -152,7 +152,7 @@ public class TextEditorCommandDefaultFactsTests
 
             await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(textEditorCommandArgs);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 async editContext =>
                 {
@@ -185,7 +185,7 @@ public class TextEditorCommandDefaultFactsTests
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 async editContext =>
                 {
@@ -227,7 +227,7 @@ public class TextEditorCommandDefaultFactsTests
 
             var clipboardService = serviceProvider.GetRequiredService<IClipboardService>();
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 async editContext =>
                 {
@@ -283,7 +283,7 @@ public class TextEditorCommandDefaultFactsTests
             var savedContent = (string?)null;
             Assert.Null(savedContent);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -305,7 +305,7 @@ public class TextEditorCommandDefaultFactsTests
 
             await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -325,7 +325,7 @@ public class TextEditorCommandDefaultFactsTests
                 Assert.Null(savedContent);
                 await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                     nameof(TextEditorCommandDefaultFactsTests),
                     editContext =>
                     {
@@ -368,7 +368,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -424,7 +424,7 @@ public class TextEditorCommandDefaultFactsTests
                     Key<TextEditorViewModel>.Empty,
                     new List<TextEditorCursorModifier> { new TextEditorCursorModifier(cursor) });
 
-                await textEditorService.PostSimpleBatch(
+                textEditorService.PostDistinct(
                     nameof(TextEditorCommandDefaultFactsTests),
                     textEditorService.ModelApi.InsertTextUnsafeFactory(
                         inModel.ResourceUri,
@@ -649,7 +649,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -722,7 +722,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -796,7 +796,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -870,7 +870,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -982,7 +982,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 async editContext =>
                 {
@@ -1051,7 +1051,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -1120,7 +1120,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -1214,7 +1214,7 @@ public class TextEditorCommandDefaultFactsTests
                 out var textEditorService, out var inModel, out var inViewModel,
                 out var textEditorCommandArgs, out var serviceProvider);
 
-            textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -1488,7 +1488,7 @@ public class Person
             var newRowIndex = 3;
             var newColumnIndex = 0;
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {
@@ -1558,7 +1558,7 @@ public class Person
             var newRowIndex = 3;
             var newColumnIndex = 0;
 
-            await textEditorService.PostSimpleBatch(
+            textEditorService.PostDistinct(
                 nameof(TextEditorCommandDefaultFactsTests),
                 editContext =>
                 {

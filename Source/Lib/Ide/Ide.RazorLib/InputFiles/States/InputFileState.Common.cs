@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
@@ -21,15 +21,15 @@ public partial record InputFileState
     private static InputFileState NewOpenedTreeViewModelHistory(
         InputFileState inInputFileState,
         TreeViewAbsolutePath selectedTreeViewModel,
-        ILuthetusIdeComponentRenderers luthetusIdeComponentRenderers,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        IIdeComponentRenderers ideComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider)
     {
         var selectionClone = new TreeViewAbsolutePath(
             selectedTreeViewModel.Item,
-            luthetusIdeComponentRenderers,
-            luthetusCommonComponentRenderers,
+            ideComponentRenderers,
+            commonComponentRenderers,
             fileSystemProvider,
             environmentProvider,
             false,

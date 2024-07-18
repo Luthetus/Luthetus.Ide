@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
@@ -8,7 +8,7 @@ using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
@@ -36,11 +36,11 @@ public partial class AutocompleteMenu : ComponentBase
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
 		{
-			TextEditorService.PostSimpleBatch(
+			TextEditorService.PostDistinct(
 				nameof(AutocompleteMenu),
 				editContext =>
 				{
@@ -60,7 +60,7 @@ public partial class AutocompleteMenu : ComponentBase
     {
         try
         {
-            TextEditorService.PostSimpleBatch(
+            TextEditorService.PostDistinct(
 				nameof(AutocompleteMenu),
 				editContext =>
 				{
@@ -176,7 +176,7 @@ public partial class AutocompleteMenu : ComponentBase
         {
             try
             {
-				TextEditorService.PostSimpleBatch(
+				TextEditorService.PostDistinct(
 					nameof(AutocompleteMenu),
 					editContext =>
 					{
@@ -207,7 +207,7 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        TextEditorService.PostSimpleBatch(
+        TextEditorService.PostDistinct(
             nameof(InsertAutocompleteMenuOption),
             TextEditorService.ModelApi.InsertTextFactory(
                 viewModel.ResourceUri,

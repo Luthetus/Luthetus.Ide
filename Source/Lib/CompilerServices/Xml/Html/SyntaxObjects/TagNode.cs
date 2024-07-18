@@ -1,9 +1,9 @@
-﻿using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxEnums;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
+namespace Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 
 public class TagNode : IHtmlSyntaxNode
 {
@@ -56,6 +56,6 @@ public class TagNode : IHtmlSyntaxNode
         0,
         0,
         (byte)GenericDecorationKind.None,
-        new ResourceUri(string.Empty),
+        ResourceUri.Empty,
         string.Empty);
 }

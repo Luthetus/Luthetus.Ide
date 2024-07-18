@@ -1,13 +1,13 @@
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+using Luthetus.CompilerServices.CSharp.Tests.UserStories;
+using Luthetus.CompilerServices.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.ParserCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Custom;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Custom;
 
 /// <summary>
 /// <see cref="CSharpParserTests"/>
@@ -1958,7 +1958,7 @@ public class CustomParserTests
     public void PARSE_UsingStatementNode()
     {
         var resourceUri = new ResourceUri("UnitTests");
-        var sourceText = "using Luthetus.TextEditor.RazorLib.Lexes.Models;";
+        var sourceText = "using Luthetus.TextEditor.RazorLib.Lexers.Models;";
         var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);

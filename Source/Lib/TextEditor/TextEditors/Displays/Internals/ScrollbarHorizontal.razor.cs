@@ -4,12 +4,9 @@ using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Drags.Displays;
-using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
-using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -33,7 +30,6 @@ public partial class ScrollbarHorizontal : ComponentBase, IDisposable
     private bool _thinksLeftMouseButtonIsDown;
     private MouseEventArgs? _mouseDownEventArgs;
 	private double _clientYThresholdToResetScrollLeftPosition;
-    private MouseEventArgs? _previousDragMouseEventArgs;
 	private double _scrollLeftOnMouseDown;
 
     private string ScrollbarElementId => $"luth_te_{_scrollbarGuid}";

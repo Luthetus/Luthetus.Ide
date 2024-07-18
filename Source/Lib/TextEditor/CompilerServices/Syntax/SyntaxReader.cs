@@ -1,5 +1,5 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
@@ -39,7 +39,7 @@ public static class SyntaxReader
             minStartingIndexInclusive.Value,
             maxEndingIndexExclusive.Value,
             (byte)GenericDecorationKind.None,
-            resourceUri ?? new ResourceUri(string.Empty),
+            resourceUri ?? ResourceUri.Empty,
             sourceText ?? string.Empty);
     }
 }

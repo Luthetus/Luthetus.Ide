@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
@@ -10,8 +9,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;

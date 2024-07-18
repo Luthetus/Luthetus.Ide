@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Website.RazorLib\Luthetus.Website.RazorLib.csproj" />
+    <ProjectReference Include="..\..\Extensions\Extensions.Website\Luthetus.Website.RazorLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

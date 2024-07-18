@@ -1,10 +1,10 @@
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Rows.Models;
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -21,14 +21,14 @@ public partial class TextEditorModel
         string fileExtension,
         string content,
         IDecorationMapper? decorationMapper,
-        ILuthCompilerService? compilerService,
+        ICompilerService? compilerService,
 		int partitionSize = 4_096)
     {
         ResourceUri = resourceUri;
         ResourceLastWriteTime = resourceLastWriteTime;
         FileExtension = fileExtension;
         DecorationMapper = decorationMapper ?? new TextEditorDecorationMapperDefault();
-        CompilerService = compilerService ?? new LuthCompilerServiceDoNothing();
+        CompilerService = compilerService ?? new CompilerServiceDoNothing();
 
 		PartitionSize = partitionSize;
 		var modifier = new TextEditorModelModifier(this);
@@ -63,7 +63,7 @@ public partial class TextEditorModel
 		DateTime resourceLastWriteTime,
 		string fileExtension,
 		IDecorationMapper decorationMapper,
-		ILuthCompilerService compilerService,
+		ICompilerService compilerService,
 		SaveFileHelper textEditorSaveFileHelper,
 		int editBlockIndex,
         bool isDirty,

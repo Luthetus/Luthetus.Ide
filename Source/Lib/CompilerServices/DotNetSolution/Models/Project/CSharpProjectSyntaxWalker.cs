@@ -1,7 +1,7 @@
-﻿using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
+using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
 public class CSharpProjectSyntaxWalker : XmlSyntaxWalker
 {

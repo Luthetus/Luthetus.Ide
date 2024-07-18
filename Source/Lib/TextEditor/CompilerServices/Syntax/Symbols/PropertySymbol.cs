@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 

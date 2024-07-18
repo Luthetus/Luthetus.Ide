@@ -1,13 +1,9 @@
-using Fluxor;
-using Luthetus.Common.RazorLib.Dynamics.Models;
-using Luthetus.Common.RazorLib.FileSystems.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.Common.RazorLib.Notifications.States;
-using Luthetus.Ide.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.AspNetCore.Components;
 using System.IO.Compression;
+using Microsoft.AspNetCore.Components;
+using Fluxor;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Ide.RazorLib.Exceptions;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
@@ -180,6 +176,9 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
 
     private void PromptUserOpenSolution(string absolutePathString)
     {
+    	/*
+		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
+		// =======================================================================
         var absolutePath = EnvironmentProvider.AbsolutePathFactory(
             absolutePathString,
             false);
@@ -200,6 +199,7 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
             null);
 
         Dispatcher.Dispatch(new NotificationState.RegisterAction(notificationRecord));
+		*/
     }
 
     public void Dispose()

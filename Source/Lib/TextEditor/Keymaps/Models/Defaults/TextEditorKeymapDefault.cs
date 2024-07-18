@@ -178,7 +178,17 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
 
     private void AddDefaultAltModifiedKeymap()
     {
-        return;
+    	Map.Add(new KeymapArgument("ArrowDown")
+        {
+        	AltKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.MoveLineDown);
+    
+        Map.Add(new KeymapArgument("ArrowUp")
+        {
+        	AltKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.MoveLineUp);
     }
 
     private void AddDefaultHasSelectionLayerModifiedKeymap()
@@ -227,6 +237,11 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
 
     private void AddDefaultMiscKeymap()
     {
+    	Map.Add(new KeymapArgument("F7")
+        {
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.RelatedFilesQuickPick);
+    
         Map.Add(new KeymapArgument("F12")
         {
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key

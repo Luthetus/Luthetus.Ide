@@ -1,7 +1,7 @@
-﻿using Fluxor;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.Terminals.States;
 

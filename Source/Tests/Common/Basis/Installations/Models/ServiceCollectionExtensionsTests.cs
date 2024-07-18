@@ -1,3 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
@@ -13,10 +17,6 @@ using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Logging;
-using Microsoft.JSInterop;
 
 namespace Luthetus.Common.Tests.Basis.Installations.Models;
 
@@ -135,7 +135,7 @@ public class ServiceCollectionExtensionsTests
 
         // 9. ILuthetusCommonComponentRenderers
         {
-            Assert.NotNull(serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>());
+            Assert.NotNull(serviceProvider.GetRequiredService<ICommonComponentRenderers>());
         }
 
         // 10. IThemeService

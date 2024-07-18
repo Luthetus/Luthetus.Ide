@@ -7,7 +7,7 @@ public class TreeViewSpinner : TreeViewWithType<Guid>
 {
     public TreeViewSpinner(
             Guid guid,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             bool isExpandable,
             bool isExpanded)
         : base(guid, isExpandable, isExpanded)
@@ -15,7 +15,7 @@ public class TreeViewSpinner : TreeViewWithType<Guid>
         CommonComponentRenderers = commonComponentRenderers;
     }
 
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+    public ICommonComponentRenderers CommonComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {

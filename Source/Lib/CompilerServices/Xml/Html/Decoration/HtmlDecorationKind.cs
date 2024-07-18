@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
+namespace Luthetus.CompilerServices.Xml.Html.Decoration;
 
 public enum HtmlDecorationKind
 {

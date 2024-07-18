@@ -3,7 +3,7 @@
 ![Example GIF](../../Images/TextEditor/Gifs/rootReadmeIntroGif.gif)
 
 ## Demo:
-https://luthetus.github.io/Luthetus.Website/
+https://luthetus.github.io/Luthetus.Ide/
 
 ## Introduction
 

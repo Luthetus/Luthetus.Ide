@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.Models;

@@ -1,6 +1,6 @@
-using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
+namespace Luthetus.CompilerServices.CSharp.RuntimeAssemblies;
 
 /// <summary>
 /// https://learn.microsoft.com/en-us/dotnet/standard/assembly/inspect-contents-using-metadataloadcontext
@@ -13,7 +13,7 @@ namespace Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
 ///          'cache' of the runtime types.<br/><br/>
 ///
 ///          The 'cache' is more so just a representation of the runtime types
-///          as if the source code itself were passed to the <see cref="Luthetus.CompilerServices.Lang.CSharp.ParserCase.CSharpParser"/><br/><br/>
+///          as if the source code itself were passed to the <see cref="Luthetus.CompilerServices.CSharp.ParserCase.CSharpParser"/><br/><br/>
 ///
 ///          The idea is to create the 'cache' once per .NET version that a user requests to reference.
 ///          Then re-use the 'cache' until the application is closed.<br/><br/>

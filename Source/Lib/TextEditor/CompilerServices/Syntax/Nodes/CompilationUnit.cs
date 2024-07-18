@@ -1,6 +1,6 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -13,14 +13,14 @@ public sealed record CompilationUnit : ISyntaxNode
 {
     public CompilationUnit(
         CodeBlockNode? rootCodeBlockNode,
-        ILuthLexer? lexer,
-        ILuthParser? parser,
-        ILuthBinder? binder)
+        ILexer? lexer,
+        IParser? parser,
+        IBinder? binder)
     {
         RootCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
-        Lexer = lexer ?? new LuthLexer(null, null, null);
-        Parser = parser ?? new LuthParser(Lexer);
-        Binder = binder ?? new LuthBinder();
+        Lexer = lexer ?? new Lexer(null, null, null);
+        Parser = parser ?? new Parser(Lexer);
+        Binder = binder ?? new Binder();
 
         var diagnosticsListBuilder = new List<TextEditorDiagnostic>();
 
@@ -37,9 +37,9 @@ public sealed record CompilationUnit : ISyntaxNode
     }
 
     public CodeBlockNode RootCodeBlockNode { get; }
-    public ILuthLexer Lexer { get; }
-    public ILuthParser Parser { get; }
-    public ILuthBinder Binder { get; }
+    public ILexer Lexer { get; }
+    public IParser Parser { get; }
+    public IBinder Binder { get; }
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
     public ImmutableArray<ISyntax> ChildList { get; init; }

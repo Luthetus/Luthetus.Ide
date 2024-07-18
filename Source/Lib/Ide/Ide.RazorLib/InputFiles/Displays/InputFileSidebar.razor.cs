@@ -22,9 +22,9 @@ public partial class InputFileSidebar : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
+    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
@@ -88,7 +88,7 @@ public partial class InputFileSidebar : ComponentBase
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			InputFileContextMenu.ContextMenuKey,
@@ -105,5 +105,6 @@ public partial class InputFileSidebar : ComponentBase
 			restoreFocusOnClose: null);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-    }
+		return Task.CompletedTask;
+	}
 }

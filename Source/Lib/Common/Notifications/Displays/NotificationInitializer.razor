@@ -1,6 +1,27 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using Luthetus.Common.RazorLib.Contexts.Models
+@using Luthetus.Common.RazorLib.Contexts.Displays
 
 @{ var notificationState = NotificationStateWrap.Value; }
+
+<ContextBoundary @ref="_notificationContextBoundary"
+				 ContextRecord="ContextFacts.NotificationContext"
+                 ClassCssString="luth_notification-initializer">
+	<ChildContent></ChildContent>
+</ContextBoundary>
+
+
+@for (int i = 0; i < notificationState.DefaultList.Count; i++)
+{
+    var index = i;
+    var notification = notificationState.DefaultList[index];
+    
+    <NotificationDisplay @key="notification.DynamicViewModelKey" 
+                         Notification="notification"
+                         Index="index"
+                         OnFocusInFunc="HandleOnFocusIn"
+                         OnFocusOutFunc="HandleOnFocusOut"/>
+}
 
 @*
 	TODO: Would wrapping the for-loop in a div i.e.:
@@ -14,13 +35,3 @@
 		  div for a reason or not, but I don't have time to look into this
 		  at the moment.
 *@
-
-@for (int i = 0; i < notificationState.DefaultList.Count; i++)
-{
-    var index = i;
-    var notification = notificationState.DefaultList[index];
-    
-    <NotificationDisplay @key="notification.DynamicViewModelKey" 
-                         Notification="notification"
-                         Index="index"/>
-}

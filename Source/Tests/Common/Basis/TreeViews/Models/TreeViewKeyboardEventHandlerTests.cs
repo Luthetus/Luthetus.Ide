@@ -1,18 +1,18 @@
-﻿using Fluxor;
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
-using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
-using System.Collections.Immutable;
-using Luthetus.Common.Tests.Basis.TreeViews.Models.Internals;
 using Luthetus.Common.RazorLib.Commands.Models;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
+using Luthetus.Common.Tests.Basis.TreeViews.Models.Internals;
 
 namespace Luthetus.Common.Tests.Basis.TreeViews.Models;
 
@@ -534,8 +534,8 @@ public class TreeViewKeyboardEventHandlerTests
 
     private void InitializeTreeViewKeyboardEventHandlerTests(
         out IDispatcher dispatcher,
-        out LuthetusCommonTreeViews commonTreeViews,
-        out LuthetusCommonComponentRenderers commonComponentRenderers,
+        out CommonTreeViews commonTreeViews,
+        out CommonComponentRenderers commonComponentRenderers,
         out IState<TreeViewState> treeViewStateWrap,
         out ITreeViewService treeViewService,
         out IBackgroundTaskService backgroundTaskService,
@@ -574,7 +574,7 @@ public class TreeViewKeyboardEventHandlerTests
         backgroundTaskService = serviceProvider.GetRequiredService<IBackgroundTaskService>();
         dispatcher = serviceProvider.GetRequiredService<IDispatcher>();
 
-        commonTreeViews = new LuthetusCommonTreeViews(
+        commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -585,9 +585,10 @@ public class TreeViewKeyboardEventHandlerTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        commonComponentRenderers = new LuthetusCommonComponentRenderers(
+        commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
+            typeof(CommonProgressNotificationDisplay),
             commonTreeViews);
 
         websiteServerState = new WebsiteServerState();

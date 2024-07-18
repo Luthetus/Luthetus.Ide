@@ -1,14 +1,14 @@
-﻿using Fluxor;
-using Luthetus.Ide.RazorLib.Terminals.States;
+using System.Collections.Immutable;
+using Fluxor;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public class TerminalResource : LuthCompilerServiceResource
+public class TerminalResource : CompilerServiceResource
 {
     private readonly IState<TerminalState> _terminalStateWrap;
 
@@ -31,8 +31,8 @@ public class TerminalResource : LuthCompilerServiceResource
     }
 
     public override ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
-    public TextEditorTextSpan ArgumentsTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
-    public TextEditorTextSpan TargetFilePathTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, new ResourceUri(string.Empty), string.Empty);
+    public TextEditorTextSpan ArgumentsTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, ResourceUri.Empty, string.Empty);
+    public TextEditorTextSpan TargetFilePathTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, ResourceUri.Empty, string.Empty);
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
     public List<ITextEditorSymbol> ManualSymbolList { get; } = new List<ITextEditorSymbol>();
 

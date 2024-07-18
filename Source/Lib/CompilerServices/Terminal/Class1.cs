@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.Terminal;
+namespace Luthetus.CompilerServices.Terminal;
 
 public class Class1
 {

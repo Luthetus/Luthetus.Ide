@@ -1,0 +1,25 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using System.Collections.Immutable
+@using Luthetus.Extensions.DotNet.CommandLines.Models
+@using Luthetus.TextEditor.RazorLib.Lexers.Models
+
+<div class="luth_output-display">
+	
+	@{ var localErrorList = DotNetCliOutputParser.ErrorList?.ToImmutableArray() ?? Array.Empty<List<TextEditorTextSpan>>().ToImmutableArray(); }
+
+	@(nameof(DotNetCliOutputParser)).@(nameof(DotNetCliOutputParser.ErrorList)).Length: @localErrorList.Length
+
+	<ol>
+		@foreach (var textSpanList in localErrorList)
+		{
+			var outputString = string.Join(" ", textSpanList.Select(x => x.GetText()));
+			
+			<li class="luth_tree-view-exception"
+				style="margin: calc(1.6em + 4px) 0;">
+				
+				@outputString
+			</li>
+		}
+	</ol>
+</div>

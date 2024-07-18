@@ -1,11 +1,11 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Text;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 
@@ -21,7 +21,7 @@ public class GenericSyntaxTree
     public virtual GenericSyntaxUnit ParseText(ResourceUri resourceUri, string content)
     {
         var documentChildList = new List<IGenericSyntax>();
-        var diagnosticBag = new LuthDiagnosticBag();
+        var diagnosticBag = new DiagnosticBag();
 
         var stringWalker = new StringWalker(resourceUri, content);
 
@@ -81,7 +81,7 @@ public class GenericSyntaxTree
 
     public virtual GenericCommentSingleLineSyntax ParseCommentSingleLine(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -120,7 +120,7 @@ public class GenericSyntaxTree
 
     public virtual GenericCommentMultiLineSyntax ParseCommentMultiLine(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -155,7 +155,7 @@ public class GenericSyntaxTree
 
     public virtual GenericStringSyntax ParseString(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -193,7 +193,7 @@ public class GenericSyntaxTree
     /// </summary>
     private bool TryParseKeyword(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         out GenericKeywordSyntax? genericKeywordSyntax)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
@@ -242,7 +242,7 @@ public class GenericSyntaxTree
 
     private bool TryParseFunctionIdentifier(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         out GenericFunctionSyntax? genericFunctionSyntax)
     {
         var rememberPositionIndex = stringWalker.PositionIndex;
@@ -301,7 +301,7 @@ public class GenericSyntaxTree
 
     private GenericPreprocessorDirectiveSyntax ParsePreprocessorDirective(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
 
@@ -352,7 +352,7 @@ public class GenericSyntaxTree
 
     private bool TryParsePreprocessorDirectiveDeliminationExtendedSyntaxes(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         out IGenericSyntax? genericSyntax)
     {
         var entryPositionIndex = stringWalker.PositionIndex;

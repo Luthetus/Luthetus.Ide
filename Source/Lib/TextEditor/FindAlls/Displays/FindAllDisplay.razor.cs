@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -5,10 +6,9 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.Displays;
 
@@ -28,7 +28,6 @@ public partial class FindAllDisplay : FluxorComponent
     private IDispatcher Dispatcher { get; set; } = null!;
 
 	private CancellationTokenSource _doSearchCancellationTokenSource = new();
-    private bool _isSearching;
     private bool _disposed;
 
 	public SearchEngineFileSystem SearchEngineFileSystem => (SearchEngineFileSystem)
@@ -156,7 +155,6 @@ public partial class FindAllDisplay : FluxorComponent
     {
         try
         {
-            _isSearching = true;
             await InvokeAsync(StateHasChanged);
 
             _doSearchCancellationTokenSource.Cancel();
@@ -170,7 +168,6 @@ public partial class FindAllDisplay : FluxorComponent
         }
         finally
         {
-            _isSearching = false;
             await InvokeAsync(StateHasChanged);
         }
     }

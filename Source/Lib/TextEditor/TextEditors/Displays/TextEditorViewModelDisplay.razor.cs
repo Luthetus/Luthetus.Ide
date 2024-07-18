@@ -2,11 +2,8 @@ using Fluxor;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
-using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -17,16 +14,10 @@ using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
@@ -80,9 +71,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private TextEditorRenderBatchUnsafe? _previousRenderBatch;
     private TextEditorViewModel? _linkedViewModel;
 	private Task _shouldRenderSkipTask = Task.CompletedTask;
-
-	// TODO: Delete '_countQueueCalculateVirtualizationResultBackgroundTaskInvocations'
-	private int _countQueueCalculateVirtualizationResultBackgroundTaskInvocations;
 
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
     private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
@@ -297,7 +285,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
 		var localViewModelKey = TextEditorViewModelKey;
 
-		TextEditorService.PostSimpleBatch(
+		TextEditorService.PostDistinct(
 			nameof(ReceiveOnContextMenu),
 			editContext =>
 			{
@@ -383,7 +371,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                     if (!mouseNoLongerOverTooltipCancellationToken.IsCancellationRequested)
                     {
-						TextEditorService.PostSimpleBatch(
+						TextEditorService.PostDistinct(
 							nameof(ContextMenu),
 							editContext =>
 							{
@@ -413,7 +401,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 {
                     await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
-                    TextEditorService.PostSimpleBatch(
+                    TextEditorService.PostDistinct(
 						nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory),
 						TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory(
 							mouseEventArgs,
@@ -498,7 +486,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        TextEditorService.PostSimpleBatch(
+        TextEditorService.PostDistinct(
             nameof(QueueRemeasureBackgroundTask),
             async editContext =>
 			{
@@ -569,7 +557,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.PostTakeMostRecent(
+        TextEditorService.PostRedundant(
             nameof(QueueRemeasureBackgroundTask),
 			modelResourceUri,
 			viewModelKey.Value,
@@ -590,7 +578,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (modelResourceUri is null || viewModelKey is null)
             return;
 
-        TextEditorService.PostTakeMostRecent(
+        TextEditorService.PostRedundant(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
 			modelResourceUri,
 			viewModelKey.Value,

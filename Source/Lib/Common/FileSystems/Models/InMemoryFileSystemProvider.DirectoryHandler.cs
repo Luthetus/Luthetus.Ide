@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 
@@ -12,13 +12,13 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
 
         private readonly InMemoryFileSystemProvider _inMemoryFileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
-        private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+        private readonly ICommonComponentRenderers _commonComponentRenderers;
         private readonly IDispatcher _dispatcher;
 
         public InMemoryDirectoryHandler(
             InMemoryFileSystemProvider inMemoryFileSystemProvider,
             IEnvironmentProvider environmentProvider,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             IDispatcher dispatcher)
         {
             _inMemoryFileSystemProvider = inMemoryFileSystemProvider;

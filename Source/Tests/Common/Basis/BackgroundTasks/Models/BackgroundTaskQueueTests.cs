@@ -1,7 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Fluxor;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
 
@@ -19,7 +19,7 @@ public class BackgroundTaskQueueTests
     [Fact]
     public void Constructor()
     {
-        var key = Key<BackgroundTaskQueue>.NewKey();
+        var key = Key<IBackgroundTaskQueue>.NewKey();
         var displayName = "Continuous";
         
         var queue = new BackgroundTaskQueue(key, displayName);
@@ -27,8 +27,8 @@ public class BackgroundTaskQueueTests
         Assert.Equal(key, queue.Key);
         Assert.Equal(displayName, queue.DisplayName);
 
-        var taskKey = Key<BackgroundTask>.NewKey();
-        var taskQueueKey = Key<BackgroundTaskQueue>.NewKey();
+        var taskKey = Key<IBackgroundTask>.NewKey();
+        var taskQueueKey = Key<IBackgroundTaskQueue>.NewKey();
         var name = "Write \"Hello World!\" to the console";
 
         var backgroundTask = new BackgroundTask(
@@ -41,8 +41,8 @@ public class BackgroundTaskQueueTests
                 return Task.CompletedTask;
             });
         
-        Assert.Empty(queue.BackgroundTasks);
-        Assert.Equal(0, queue.CountOfBackgroundTasks);
+        Assert.Empty(queue.BackgroundTaskList);
+        Assert.Equal(0, queue.Count);
 
         {
             // Broke this test (2024-03-17)
@@ -50,8 +50,8 @@ public class BackgroundTaskQueueTests
             // queue.BackgroundTasks.Enqueue(backgroundTask);
         }
         
-        Assert.NotEmpty(queue.BackgroundTasks);
-        Assert.Equal(1, queue.CountOfBackgroundTasks);
+        Assert.NotEmpty(queue.BackgroundTaskList);
+        Assert.Equal(1, queue.Count);
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ public class BackgroundTaskQueueTests
         var number = 0;
         Assert.Equal(0, number);
 
-        var backgroundTaskKey = Key<BackgroundTask>.NewKey();
+        var backgroundTaskKey = Key<IBackgroundTask>.NewKey();
 
         // number += 2; from the event.
         // Set executing to the task is +1, then set the executing to null is another +1
@@ -134,7 +134,7 @@ public class BackgroundTaskQueueTests
                 return Task.CompletedTask;
             });
         
-        backgroundTaskService.EnqueueAsync(backgroundTask);
+        backgroundTaskService.Enqueue(backgroundTask);
 
         Assert.Equal(3, number);
         Assert.Null(queue.ExecutingBackgroundTask);

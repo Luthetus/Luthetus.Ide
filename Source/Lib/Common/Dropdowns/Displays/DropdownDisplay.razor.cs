@@ -23,6 +23,10 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Func<DropdownRecord, Task> OnFocusInFunc { get; set; } = null!;
+	[Parameter, EditorRequired]
+    public Func<DropdownRecord, Task> OnFocusOutFunc { get; set; } = null!;
 
 	private readonly object _hasPendingEventLock = new();
 
@@ -153,6 +157,16 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 
 		return styleBuilder.ToString();
 	}
+	
+	private Task HandleOnFocusIn()
+    {
+       return OnFocusInFunc.Invoke(Dropdown);
+    }
+    
+	private Task HandleOnFocusOut()
+    {
+    	return OnFocusOutFunc.Invoke(Dropdown);
+    }
 
 #if DEBUG
 	/// <summary>

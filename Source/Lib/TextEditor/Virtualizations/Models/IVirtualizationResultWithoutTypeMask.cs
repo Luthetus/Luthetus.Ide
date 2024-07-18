@@ -1,5 +1,3 @@
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
 public interface IVirtualizationResultWithoutTypeMask

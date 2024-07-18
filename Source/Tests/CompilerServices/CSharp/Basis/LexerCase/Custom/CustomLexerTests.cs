@@ -1,9 +1,9 @@
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.CompilerServices.CSharp.LexerCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.LexerCase.Custom;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.LexerCase.Custom;
 
 public class CustomLexerTests
 {

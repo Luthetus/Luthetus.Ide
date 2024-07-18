@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -23,7 +23,7 @@ public partial class WatchWindowDisplay : FluxorComponent
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers LuthetusCommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
@@ -56,7 +56,7 @@ public partial class WatchWindowDisplay : FluxorComponent
                     WatchWindowObject,
                     true,
                     false,
-                    LuthetusCommonComponentRenderers);
+                    CommonComponentRenderers);
 
                 TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
                     TreeViewContainerKey,
@@ -68,7 +68,7 @@ public partial class WatchWindowDisplay : FluxorComponent
         return base.OnAfterRenderAsync(firstRender);
     }
 
-    private async Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+    private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
     {
 		var dropdownRecord = new DropdownRecord(
 			WatchWindowContextMenuDropdownKey,
@@ -85,6 +85,7 @@ public partial class WatchWindowDisplay : FluxorComponent
 			treeViewCommandArgs.RestoreFocusToTreeView);
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        return Task.CompletedTask;
     }
 
     protected override void Dispose(bool disposing)

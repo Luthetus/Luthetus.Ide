@@ -1,9 +1,9 @@
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+using Luthetus.CompilerServices.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.ParserCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase.Internals;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 
 public class ParsePrototypes
 {

@@ -17,17 +17,17 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
-    private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDispatcher _dispatcher;
 
     public FolderExplorerTreeViewKeyboardEventHandler(
-            LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi,
+            IdeBackgroundTaskApi ideBackgroundTaskApi,
             IMenuOptionsFactory menuOptionsFactory,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             ITreeViewService treeViewService,
 		    IBackgroundTaskService backgroundTaskService,
             IEnvironmentProvider environmentProvider,

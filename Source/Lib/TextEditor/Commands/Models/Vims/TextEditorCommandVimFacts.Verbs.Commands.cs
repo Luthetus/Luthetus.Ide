@@ -12,7 +12,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(DeleteLineCommand),
                     DeleteLineFactory(commandArgs));
 				return Task.CompletedTask;
@@ -31,7 +31,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(ChangeLineCommand),
                     ChangeLineFactory(commandArgs));
 				return Task.CompletedTask;
@@ -52,7 +52,7 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.InnerCommand = innerTextEditorCommand;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(DeleteMotionCommandConstructor),
                     DeleteMotionFactory(commandArgs));
 				return Task.CompletedTask;
@@ -76,7 +76,7 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.InnerCommand = innerTextEditorCommand;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(ChangeMotionCommandConstructor),
                     GetChangeMotionFactory(commandArgs));
 				return Task.CompletedTask;
@@ -98,7 +98,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(ChangeSelectionCommand),
                     ChangeSelectionFactory(commandArgs));
 				return Task.CompletedTask;
@@ -117,7 +117,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(YankCommand),
                     YankFactory(commandArgs));
 				return Task.CompletedTask;
@@ -136,7 +136,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(NewLineBelowCommand),
                     NewLineBelowFactory(commandArgs));
 				return Task.CompletedTask;
@@ -155,7 +155,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
                     nameof(NewLineAboveCommand),
                     NewLineAboveFactory(commandArgs));
 				return Task.CompletedTask;

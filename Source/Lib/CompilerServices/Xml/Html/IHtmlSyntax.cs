@@ -1,6 +1,6 @@
-﻿using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxEnums;
+using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html;
+namespace Luthetus.CompilerServices.Xml.Html;
 
 public interface IHtmlSyntax
 {

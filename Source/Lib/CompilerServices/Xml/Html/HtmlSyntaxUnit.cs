@@ -1,31 +1,31 @@
-﻿using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html;
+namespace Luthetus.CompilerServices.Xml.Html;
 
 public class HtmlSyntaxUnit
 {
     public HtmlSyntaxUnit(
         TagNode rootTagSyntax,
-        LuthDiagnosticBag diagnosticBag)
+        DiagnosticBag diagnosticBag)
     {
         DiagnosticBag = diagnosticBag;
         RootTagSyntax = rootTagSyntax;
     }
 
     public TagNode RootTagSyntax { get; }
-    public LuthDiagnosticBag DiagnosticBag { get; }
+    public DiagnosticBag DiagnosticBag { get; }
 
     public class HtmlSyntaxUnitBuilder
     {
-        public HtmlSyntaxUnitBuilder(TagNode rootTagSyntax, LuthDiagnosticBag diagnosticBag)
+        public HtmlSyntaxUnitBuilder(TagNode rootTagSyntax, DiagnosticBag diagnosticBag)
         {
             RootTagSyntax = rootTagSyntax;
             DiagnosticBag = diagnosticBag;
         }
 
         public TagNode RootTagSyntax { get; }
-        public LuthDiagnosticBag DiagnosticBag { get; }
+        public DiagnosticBag DiagnosticBag { get; }
 
         public HtmlSyntaxUnit Build()
         {

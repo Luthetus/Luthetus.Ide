@@ -1,10 +1,10 @@
-﻿using Luthetus.Common.RazorLib.FileSystems.Models;
+using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
-using System.Collections.Immutable;
+using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+namespace Luthetus.CompilerServices.DotNetSolution.Models;
 
 public interface IDotNetSolution
 {

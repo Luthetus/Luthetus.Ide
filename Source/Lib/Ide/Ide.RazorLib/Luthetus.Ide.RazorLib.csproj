@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Version>0.8.6</Version>
+        <Version>0.9.0</Version>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,17 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\CompilerServices\CSharpProject\Luthetus.CompilerServices.Lang.CSharpProject.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\CSharp\Luthetus.CompilerServices.Lang.CSharp.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\Css\Luthetus.CompilerServices.Lang.Css.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\C\Luthetus.CompilerServices.Lang.C.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\DotNetSolution\Luthetus.CompilerServices.Lang.DotNetSolution.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\FSharp\Luthetus.CompilerServices.Lang.FSharp.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\JavaScript\Luthetus.CompilerServices.Lang.JavaScript.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\Json\Luthetus.CompilerServices.Lang.Json.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\Razor\Luthetus.CompilerServices.Lang.Razor.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\TypeScript\Luthetus.CompilerServices.Lang.TypeScript.csproj" />
-      <ProjectReference Include="..\..\CompilerServices\Xml\Luthetus.CompilerServices.Lang.Xml.csproj" />
+      <ProjectReference Include="..\..\TextEditor\Luthetus.TextEditor.RazorLib.csproj" />
     </ItemGroup>
 
 </Project>

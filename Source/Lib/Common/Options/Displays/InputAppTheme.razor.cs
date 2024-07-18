@@ -30,7 +30,7 @@ public partial class InputAppTheme : IDisposable
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnThemeSelectChanged(ChangeEventArgs changeEventArgs)
+    private void OnThemeSelectChanged(ChangeEventArgs changeEventArgs)
     {
         if (changeEventArgs.Value is null)
             return;

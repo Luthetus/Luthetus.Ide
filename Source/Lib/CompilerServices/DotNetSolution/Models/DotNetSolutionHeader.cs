@@ -1,6 +1,6 @@
-﻿using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
+using Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models;
+namespace Luthetus.CompilerServices.DotNetSolution.Models;
 
 public record DotNetSolutionHeader
 {

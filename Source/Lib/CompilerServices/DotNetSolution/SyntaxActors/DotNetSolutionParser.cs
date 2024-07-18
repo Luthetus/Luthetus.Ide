@@ -1,22 +1,22 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models;
-using Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.CompilerServices.DotNetSolution.Facts;
+using Luthetus.CompilerServices.DotNetSolution.Models.Associated;
+using Luthetus.CompilerServices.DotNetSolution.Models;
+using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
+namespace Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 
-public class DotNetSolutionParser : ILuthParser
+public class DotNetSolutionParser : IParser
 {
     private readonly TokenWalker _tokenWalker;
-    private readonly LuthDiagnosticBag _diagnosticBag = new();
+    private readonly DiagnosticBag _diagnosticBag = new();
     private readonly Stack<AssociatedEntryGroupBuilder> _associatedEntryGroupBuilderStack = new();
     private readonly List<IDotNetProject> _dotNetProjectList = new();
     private readonly List<NestedProjectEntry> _nestedProjectEntryList = new();
@@ -41,11 +41,11 @@ public class DotNetSolutionParser : ILuthParser
     public List<IDotNetProject> DotNetProjectList => _dotNetProjectList;
     public List<NestedProjectEntry> NestedProjectEntryList => _nestedProjectEntryList;
 
-    ILuthBinder ILuthParser.Binder => throw new NotImplementedException();
+    IBinder IParser.Binder => throw new NotImplementedException();
 
-    ILuthBinderSession ILuthParser.BinderSession => throw new NotImplementedException();
+    IBinderSession IParser.BinderSession => throw new NotImplementedException();
 
-    ILuthLexer ILuthParser.Lexer => throw new NotImplementedException();
+    ILexer IParser.Lexer => throw new NotImplementedException();
 
     public CompilationUnit Parse()
     {
@@ -259,7 +259,7 @@ public class DotNetSolutionParser : ILuthParser
                         }
                         else
                         {
-                            dotNetProject = new CSharpProject(
+                            dotNetProject = new CSharpProjectModel(
                                 displayName,
                                 projectTypeGuid,
                                 relativePathFromSolutionFileString,
@@ -311,7 +311,7 @@ public class DotNetSolutionParser : ILuthParser
         }
     }
 
-    CompilationUnit ILuthParser.Parse(ILuthBinder previousBinder, ResourceUri resourceUri)
+    CompilationUnit IParser.Parse(IBinder previousBinder, ResourceUri resourceUri)
     {
         Parse();
 

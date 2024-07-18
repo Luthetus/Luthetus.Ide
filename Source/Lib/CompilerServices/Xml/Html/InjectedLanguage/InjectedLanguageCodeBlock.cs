@@ -1,4 +1,4 @@
-namespace Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
+namespace Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
 
 public class InjectedLanguageCodeBlock
 {

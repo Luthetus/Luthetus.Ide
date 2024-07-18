@@ -1,8 +1,8 @@
-﻿using System.Collections.Immutable;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxEnums;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
+namespace Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 
 public class TagNameNode : IHtmlSyntaxNode
 {

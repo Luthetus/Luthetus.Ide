@@ -8,8 +8,7 @@ using Luthetus.TextEditor.RazorLib.Htmls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -131,11 +130,9 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
                 await _throttleShouldRevealCursor.PushEvent(_ =>
                 {
-                    // TODO: Need to add 'TextEditorService.PostTakeMostRecent' and simple batch combination.
-                    //
                     // I think after removing the throttle, that this is an infinite loop on WASM,
                     // i.e. holding down ArrowRight
-                    TextEditorService.PostSimpleBatch(
+                    TextEditorService.PostDistinct(
                         nameof(_throttleShouldRevealCursor),
                         async editContext =>
                         {
@@ -334,7 +331,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             if (_cursorDisplayElementReference is not null)
             {
                 await _cursorDisplayElementReference.Value
-                    .FocusAsync()
+                    .FocusAsync(preventScroll: true)
                     .ConfigureAwait(false);
             }
         }

@@ -1,5 +1,6 @@
-﻿@using Fluxor.Blazor.Web.Components
+@using Fluxor.Blazor.Web.Components
 @using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.Common.RazorLib.Keys.Models;
 
 @inherits FluxorComponent
 
@@ -35,13 +36,24 @@
         @{
             var contextKeysToRender = contextState.InspectedContextHeirarchy
                 ?? contextState.FocusedContextHeirarchy;
+                
+            var seenContextKeyList = new HashSet<Key<ContextRecord>>();
         }
 
-        @foreach (var contextKey in contextKeysToRender.KeyList)
+
+		@foreach (var contextKey in contextKeysToRender.KeyList)
         {
-            <ContextDisplay @key="contextKey"
-                            ContextKey="contextKey" />
-            <hr />
+        	if (seenContextKeyList.Add(contextKey))
+        	{
+        		<ContextDisplay @key="contextKey"
+                            	ContextKey="contextKey" />
+            	<hr />
+        	}
+            else
+            {
+            	<div>ERROR: duplicate key when rendering @(nameof(ContextDisplay))</div>
+            }
         }
+        
     </div>
 </ContextBoundary>

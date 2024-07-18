@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Ide.RazorLib.Shareds.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
