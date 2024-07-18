@@ -66,9 +66,31 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				});
 				
 			Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuFileAction(
-				inMenu => inMenu with
+				inMenu => 
 				{
-					MenuOptionList = inMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
+					var inMenuOptionOpen = inMenu.MenuOptionList.FirstOrDefault(
+						x => x.DisplayName == "Open");
+				
+					if (inMenuOptionOpen?.SubMenu is null)
+					{
+						return inMenu with
+						{
+							MenuOptionList = inMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
+						};
+					}
+					
+					var outMenuOptionOpen = inMenuOptionOpen with
+					{
+						SubMenu = inMenuOptionOpen.SubMenu with
+						{
+							MenuOptionList = inMenuOptionOpen.SubMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
+						}
+					};
+					
+					return inMenu with
+					{
+						MenuOptionList = inMenu.MenuOptionList.Replace(inMenuOptionOpen, outMenuOptionOpen)
+					}; 
 				}));
 		}
 	}
