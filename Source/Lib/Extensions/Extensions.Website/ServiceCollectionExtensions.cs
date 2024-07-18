@@ -20,6 +20,6 @@ public static class ServiceCollectionExtensions
             typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
             typeof(LuthetusIdeConfig).Assembly,
-            typeof(Luthetus.Extensions.Config.Installations.Models.ServiceCollectionExtensions).Assembly));
+            typeof(Luthetus.Extensions.DotNet.Installations.Models.ServiceCollectionExtensions).Assembly));
     }
 }
