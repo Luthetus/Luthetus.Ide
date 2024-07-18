@@ -30,6 +30,7 @@ using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Shareds.States;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -41,6 +42,8 @@ public partial class IdeHeader : ComponentBase
     private IState<DialogState> DialogStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	[Inject]
+	private IState<IdeHeaderState> IdeHeaderStateWrap { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -66,25 +69,10 @@ public partial class IdeHeader : ComponentBase
 	private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
 
-    private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private string _buttonFileId = "luth_ide_header-button-file";
-    private ElementReference? _buttonFileElementReference;
-
-	private Key<DropdownRecord> _dropdownKeyTools = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menuTools = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private string _buttonToolsId = "luth_ide_header-button-tools";
-    private ElementReference? _buttonToolsElementReference;
-
-	private Key<DropdownRecord> _dropdownKeyView = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private string _buttonViewId = "luth_ide_header-button-view";
-    private ElementReference? _buttonViewElementReference;
-
-	private Key<DropdownRecord> _dropdownKeyRun = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menuRun = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private string _buttonRunId = "luth_ide_header-button-run";
-    private ElementReference? _buttonRunElementReference;
+	public ElementReference? _buttonFileElementReference;
+    public ElementReference? _buttonToolsElementReference;
+    public ElementReference? _buttonViewElementReference;
+    public ElementReference? _buttonRunElementReference;
     
     private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
     
@@ -194,7 +182,8 @@ public partial class IdeHeader : ComponentBase
             menuOptionsList.Add(menuOptionPermissions);
         }
 
-        _menuFile = new MenuRecord(menuOptionsList.ToImmutableArray());
+		Dispatcher.Dispatch(new IdeHeaderState.SetMenuFileAction(
+			new MenuRecord(menuOptionsList.ToImmutableArray())));
     }
 
 	private void InitializeMenuTools()
@@ -319,7 +308,7 @@ public partial class IdeHeader : ComponentBase
         //    menuOptionsList.Add(menuOptionSolutionVisualization);
         //}
 
-        _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
+        Dispatcher.Dispatch(new IdeHeaderState.SetMenuToolsAction(new MenuRecord(menuOptionsList.ToImmutableArray())));
     }
 
 	private void InitializeMenuView()
@@ -361,9 +350,15 @@ public partial class IdeHeader : ComponentBase
 		}
 
 		if (menuOptionsList.Count == 0)
-			_menuView = MenuRecord.Empty;
+		{
+			Dispatcher.Dispatch(new IdeHeaderState.SetMenuViewAction(
+				MenuRecord.Empty));
+		}
 		else
-			_menuView = new MenuRecord(menuOptionsList.ToImmutableArray());
+		{
+			Dispatcher.Dispatch(new IdeHeaderState.SetMenuViewAction(
+				new MenuRecord(menuOptionsList.ToImmutableArray())));
+		}
     }
 
 	private void InitializeMenuRun()
@@ -547,12 +542,12 @@ public partial class IdeHeader : ComponentBase
 		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
 		        new KeymapArgument("KeyF", false, false, true, Key<KeymapLayer>.Empty),
 		        new CommonCommand("Open File Dropdown", "open-file-dropdown", false,
-		        	commandArgs => RenderDropdownOnClick(_buttonFileId, _buttonFileElementReference, _dropdownKeyFile, _menuFile)));
+		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonFileId, _buttonFileElementReference, IdeHeaderState.DropdownKeyFile, IdeHeaderStateWrap.Value.MenuFile)));
 		        
 		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
 		        new KeymapArgument("KeyT", false, false, true, Key<KeymapLayer>.Empty),
 		        new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false,
-		        	commandArgs => RenderDropdownOnClick(_buttonToolsId, _buttonToolsElementReference, _dropdownKeyTools, _menuTools)));
+		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonToolsId, _buttonToolsElementReference, IdeHeaderState.DropdownKeyTools, IdeHeaderStateWrap.Value.MenuTools)));
 		        	
 		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
 		        new KeymapArgument("KeyV", false, false, true, Key<KeymapLayer>.Empty),
@@ -560,7 +555,7 @@ public partial class IdeHeader : ComponentBase
 		        	commandArgs => 
 		        	{
 		        		InitializeMenuView();
-		        		return RenderDropdownOnClick(_buttonViewId, _buttonViewElementReference, _dropdownKeyView, _menuView);
+		        		return RenderDropdownOnClick(IdeHeaderState.ButtonViewId, _buttonViewElementReference, IdeHeaderState.DropdownKeyView, IdeHeaderStateWrap.Value.MenuView);
 		        	}));
 		
 		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
@@ -569,7 +564,7 @@ public partial class IdeHeader : ComponentBase
 		        	commandArgs =>
 		        	{
 		        		InitializeMenuRun();
-		        		return RenderDropdownOnClick(_buttonRunId, _buttonRunElementReference, _dropdownKeyRun, _menuRun);
+		        		return RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun);
 		        	}));
 	}
 }
