@@ -1,8 +1,8 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.TextEditor.Usage.RazorLib;
 

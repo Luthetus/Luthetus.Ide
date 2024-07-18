@@ -14,7 +14,7 @@ public partial class GitControlsDisplay : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     [CascadingParameter]
     public GitState GitState { get; set; } = null!;

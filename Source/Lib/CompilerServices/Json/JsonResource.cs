@@ -1,9 +1,9 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
-namespace Luthetus.CompilerServices.Lang.Json;
+namespace Luthetus.CompilerServices.Json;
 
-public class JsonResource : LuthCompilerServiceResource
+public class JsonResource : CompilerServiceResource
 {
     public JsonResource(ResourceUri resourceUri, JsonCompilerService jsonCompilerService)
         : base(resourceUri, jsonCompilerService)

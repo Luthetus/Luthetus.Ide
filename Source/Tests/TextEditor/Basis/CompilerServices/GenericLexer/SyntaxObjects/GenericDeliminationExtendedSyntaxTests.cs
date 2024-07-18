@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxObjects;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices.GenericLexer.SyntaxObjects;

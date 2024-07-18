@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
@@ -89,10 +89,10 @@ public class TreeViewNoTypeTests
     }
 
     private void InitializeTreeViewNoTypeTests(
-        out LuthetusCommonTreeViews commonTreeViews,
-        out LuthetusCommonComponentRenderers commonComponentRenderers)
+        out CommonTreeViews commonTreeViews,
+        out CommonComponentRenderers commonComponentRenderers)
     {
-        commonTreeViews = new LuthetusCommonTreeViews(
+        commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -103,9 +103,10 @@ public class TreeViewNoTypeTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        commonComponentRenderers = new LuthetusCommonComponentRenderers(
+        commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
+            typeof(CommonProgressNotificationDisplay),
             commonTreeViews);
     }
 }

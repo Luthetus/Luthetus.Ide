@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.Tests.Basis.CodeSearches.States;
 

@@ -1,9 +1,9 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
-namespace Luthetus.CompilerServices.Lang.FSharp;
+namespace Luthetus.CompilerServices.FSharp;
 
-public class FSharpResource : LuthCompilerServiceResource
+public class FSharpResource : CompilerServiceResource
 {
     public FSharpResource(ResourceUri resourceUri, FSharpCompilerService fSharpCompilerService)
         : base(resourceUri, fSharpCompilerService)

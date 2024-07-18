@@ -1,11 +1,8 @@
-using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Groups.States;
 
@@ -53,9 +50,9 @@ public partial class TextEditorGroupState
 			Key<TextEditorGroup> groupKey,
         	Key<TextEditorViewModel> viewModelKey)
 		{
-			_textEditorService.PostTakeMostRecent(
+			_textEditorService.PostRedundant(
 				nameof(PostScroll),
-				new ResourceUri(string.Empty),
+				ResourceUri.Empty,
 				viewModelKey,
 				editContext =>
 				{

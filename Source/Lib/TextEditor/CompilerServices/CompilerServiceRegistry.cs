@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
@@ -6,18 +6,19 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class CompilerServiceRegistryDefault : ICompilerServiceRegistry
 {
-    private readonly Dictionary<string, ILuthCompilerService> _map = new();
+    private readonly Dictionary<string, ICompilerService> _map = new();
 
     public CompilerServiceRegistryDefault()
     {
-        DefaultCompilerService = new LuthCompilerService(null);
+        DefaultCompilerService = new CompilerService(null);
     }
 
-    public LuthCompilerService DefaultCompilerService { get; }
+    public CompilerService DefaultCompilerService { get; }
     
-    public ImmutableDictionary<string, ILuthCompilerService> Map => _map.ToImmutableDictionary();
+    public ImmutableDictionary<string, ICompilerService> Map => _map.ToImmutableDictionary();
+    public ImmutableList<ICompilerService> CompilerServiceList => _map.Select(x => x.Value).ToImmutableList();
 
-    public ILuthCompilerService GetCompilerService(string extensionNoPeriod)
+    public ICompilerService GetCompilerService(string extensionNoPeriod)
     {
         if (_map.TryGetValue(extensionNoPeriod, out var compilerService))
             return compilerService;

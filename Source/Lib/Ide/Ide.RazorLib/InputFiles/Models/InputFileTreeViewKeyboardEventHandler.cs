@@ -16,8 +16,8 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
 {
     private readonly IState<InputFileState> _inputFileStateWrap;
     private readonly IDispatcher _dispatcher;
-    private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly IIdeComponentRenderers _ideComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly Func<IAbsolutePath, Task> _setInputFileContentTreeViewRootFunc;
@@ -26,17 +26,17 @@ public class InputFileTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandle
     private readonly IBackgroundTaskService _backgroundTaskService;
 
     public InputFileTreeViewKeyboardEventHandler(
-        ITreeViewService treeViewService,
-        IState<InputFileState> inputFileStateWrap,
-        IDispatcher dispatcher,
-        ILuthetusIdeComponentRenderers ideComponentRenderers,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
-        IFileSystemProvider fileSystemProvider,
-        IEnvironmentProvider environmentProvider,
-        Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
-        Func<Task> focusSearchInputElementFunc,
-        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
-        IBackgroundTaskService backgroundTaskService)
+	        ITreeViewService treeViewService,
+	        IState<InputFileState> inputFileStateWrap,
+	        IDispatcher dispatcher,
+	        IIdeComponentRenderers ideComponentRenderers,
+	        ICommonComponentRenderers commonComponentRenderers,
+	        IFileSystemProvider fileSystemProvider,
+	        IEnvironmentProvider environmentProvider,
+	        Func<IAbsolutePath, Task> setInputFileContentTreeViewRootFunc,
+	        Func<Task> focusSearchInputElementFunc,
+	        Func<List<(Key<TreeViewContainer> treeViewStateKey, TreeViewAbsolutePath treeViewAbsolutePath)>> getSearchMatchTuplesFunc,
+	        IBackgroundTaskService backgroundTaskService)
         : base(treeViewService, backgroundTaskService)
     {
         _inputFileStateWrap = inputFileStateWrap;

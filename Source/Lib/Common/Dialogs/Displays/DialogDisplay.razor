@@ -6,6 +6,9 @@
      id="@Dialog.DialogFocusPointHtmlElementId"
      tabindex="-1"
      @onfocusin="HandleOnFocusIn"
+     @onfocusin:stopPropagation="true"
+     @onfocusout="HandleOnFocusOut"
+     @onfocusout:stopPropagation="true"
      @onmousedown="HandleOnMouseDown">
 
     @if (Dialog.DialogIsResizable && !Dialog.DialogIsMaximized)

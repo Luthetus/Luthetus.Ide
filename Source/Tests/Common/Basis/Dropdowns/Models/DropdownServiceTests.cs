@@ -1,8 +1,8 @@
-﻿using Fluxor;
+using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Dropdowns.Models;
 
@@ -33,16 +33,7 @@ public class DropdownServiceTests
     {
         InitializeDropdownServiceTests(out var dropdownService, out var dropdownKey, out _);
 
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
-
-        dropdownService.AddActiveDropdownKey(dropdownKey);
-        
-        Assert.NotEmpty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
-        Assert.Single(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
-
-        Assert.Contains(
-            dropdownService.DropdownStateWrap.Value.ActiveKeyList,
-            x => x == dropdownKey);
+        throw new NotImplementedException("TODO: this test was broken by a substantial rework to the dropdown code, and needs to be re-visited (2024-07-07).");
     }
 
     /// <summary>
@@ -53,19 +44,7 @@ public class DropdownServiceTests
     {
         InitializeDropdownServiceTests(out var dropdownService, out var dropdownKey, out _);
 
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
-
-        dropdownService.AddActiveDropdownKey(dropdownKey);
-
-        Assert.Single(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
-
-        Assert.Contains(
-            dropdownService.DropdownStateWrap.Value.ActiveKeyList,
-            x => x == dropdownKey);
-
-        dropdownService.RemoveActiveDropdownKey(dropdownKey);
-        
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
+        throw new NotImplementedException("TODO: this test was broken by a substantial rework to the dropdown code, and needs to be re-visited (2024-07-07).");
     }
 
     /// <summary>
@@ -76,21 +55,7 @@ public class DropdownServiceTests
     {
         InitializeDropdownServiceTests(out var dropdownService, out _, out _);
 
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
-
-        var keyCount = 3;
-
-        for (int i = 0; i < keyCount; i++)
-        {
-            dropdownService.AddActiveDropdownKey(Key<DropdownRecord>.NewKey());
-        }
-
-        Assert.NotEmpty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
-        Assert.Equal(3, dropdownService.DropdownStateWrap.Value.ActiveKeyList.Count);
-
-        dropdownService.ClearActiveDropdownKeysAction();
-
-        Assert.Empty(dropdownService.DropdownStateWrap.Value.ActiveKeyList);
+        throw new NotImplementedException("TODO: this test was broken by a substantial rework to the dropdown code, and needs to be re-visited (2024-07-07).");
     }
 
     private void InitializeDropdownServiceTests(

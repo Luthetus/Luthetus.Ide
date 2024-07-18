@@ -5,16 +5,16 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.Xml;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Misc;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.CompilerServices.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.Xml;
 
-namespace Luthetus.CompilerServices.Lang.Razor.Tests;
+namespace Luthetus.CompilerServices.Razor.Tests;
 
 public class RazorCompilerServiceTestsBase
 {
@@ -36,7 +36,7 @@ public class RazorCompilerServiceTestsBase
             .AddScoped<IEnvironmentProvider>(serviceProvider => new InMemoryEnvironmentProvider())
             .AddScoped<IFileSystemProvider>(serviceProvider => new InMemoryFileSystemProvider(
                 serviceProvider.GetRequiredService<IEnvironmentProvider>(),
-                serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>(),
+                serviceProvider.GetRequiredService<ICommonComponentRenderers>(),
                 serviceProvider.GetRequiredService<IDispatcher>()));
 
         var hostingInformation = new LuthetusHostingInformation(

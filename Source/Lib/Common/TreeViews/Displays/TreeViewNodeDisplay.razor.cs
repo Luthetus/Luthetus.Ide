@@ -94,7 +94,7 @@ public partial class TreeViewNodeDisplay : ComponentBase
         }
     }
 
-    private async Task HandleExpansionChevronOnMouseDown(TreeViewNoType localTreeViewNoType)
+    private void HandleExpansionChevronOnMouseDown(TreeViewNoType localTreeViewNoType)
     {
         if (!localTreeViewNoType.IsExpandable)
             return;

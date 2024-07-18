@@ -6,7 +6,7 @@
 ![Example GIF](../../Images/Ide/Gifs/ide0.3.0.gif)
 
 ## Demo:
-https://luthetus.github.io/Luthetus.Website/
+https://luthetus.github.io/Luthetus.Ide/
 
 ## Features
 

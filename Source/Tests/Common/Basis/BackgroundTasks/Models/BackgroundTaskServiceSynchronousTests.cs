@@ -1,7 +1,7 @@
-﻿using Fluxor;
+using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
 
@@ -32,7 +32,7 @@ public class BackgroundTaskServiceSynchronousTests
         var number = 0;
         Assert.Equal(0, number);
 
-        var backgroundTaskKey = Key<BackgroundTask>.NewKey();
+        var backgroundTaskKey = Key<IBackgroundTask>.NewKey();
 
         // number += 2; from the event.
         // Set executing to the task is +1, then set the executing to null is another +1
@@ -58,7 +58,7 @@ public class BackgroundTaskServiceSynchronousTests
                 return Task.CompletedTask;
             });
 
-        backgroundTaskService.EnqueueAsync(backgroundTask);
+        backgroundTaskService.Enqueue(backgroundTask);
 
         Assert.Equal(3, number);
         Assert.Null(queue.ExecutingBackgroundTask);
@@ -88,7 +88,7 @@ public class BackgroundTaskServiceSynchronousTests
         var number = 0;
         Assert.Equal(0, number);
 
-        var backgroundTaskKey = Key<BackgroundTask>.NewKey();
+        var backgroundTaskKey = Key<IBackgroundTask>.NewKey();
 
         // number += 2; from the event.
         // Set executing to the task is +1, then set the executing to null is another +1
@@ -99,7 +99,7 @@ public class BackgroundTaskServiceSynchronousTests
 
         queue.ExecutingBackgroundTaskChanged += OnExecutingBackgroundTaskChanged;
 
-        backgroundTaskService.EnqueueAsync(
+        backgroundTaskService.Enqueue(
             backgroundTaskKey,
             queue.Key,
             "Abc",
@@ -112,7 +112,7 @@ public class BackgroundTaskServiceSynchronousTests
                 number++;
 
                 return Task.CompletedTask;
-            }).Wait();
+            });
 
         Assert.Equal(3, number);
         Assert.Null(queue.ExecutingBackgroundTask);

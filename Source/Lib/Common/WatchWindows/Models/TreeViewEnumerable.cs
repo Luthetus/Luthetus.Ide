@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Exceptions;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -7,16 +7,16 @@ namespace Luthetus.Common.RazorLib.WatchWindows.Models;
 
 public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
 {
-    private readonly ILuthetusCommonComponentRenderers _luthetusCommonComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
 
     public TreeViewEnumerable(
             WatchWindowObject watchWindowObject,
             bool isExpandable,
             bool isExpanded,
-            ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers)
+            ICommonComponentRenderers commonComponentRenderers)
         : base(watchWindowObject, isExpandable, isExpanded)
     {
-        _luthetusCommonComponentRenderers = luthetusCommonComponentRenderers;
+        _commonComponentRenderers = commonComponentRenderers;
     }
 
     public override bool Equals(object? obj)
@@ -35,7 +35,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            _luthetusCommonComponentRenderers.LuthetusCommonTreeViews.TreeViewEnumerableRenderer,
+            _commonComponentRenderers.CommonTreeViews.TreeViewEnumerableRenderer,
             new Dictionary<string, object?>
             {
                 {
@@ -73,7 +73,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
                         childNode,
                         true,
                         false,
-                        _luthetusCommonComponentRenderers));
+                        _commonComponentRenderers));
                 }
             }
             else
@@ -87,7 +87,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
                     "Enumeration returned no results.",
                     false,
                     false,
-                    _luthetusCommonComponentRenderers));
+                    _commonComponentRenderers));
             }
         }
         catch (Exception e)
@@ -98,7 +98,7 @@ public class TreeViewEnumerable : TreeViewWithType<WatchWindowObject>
                 e,
                 false,
                 false,
-                _luthetusCommonComponentRenderers));
+                _commonComponentRenderers));
         }
 
         LinkChildren(previousChildren, ChildList);

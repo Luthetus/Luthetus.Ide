@@ -11,7 +11,11 @@
      style="white-space: nowrap; @GetStyleCssString(localDropdown)"
 	 id="@_htmlElementId"
 	 @onclick:stopPropagation="true"
-	 @oncontextmenu:preventDefault="true">
+	 @oncontextmenu:preventDefault="true"
+     @onfocusin="HandleOnFocusIn"
+     @onfocusin:stopPropagation="true"
+     @onfocusout="HandleOnFocusOut"
+     @onfocusout:stopPropagation="true">
 
 @*
 <environment include="Development">

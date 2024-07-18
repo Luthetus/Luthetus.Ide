@@ -1,6 +1,6 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.Notifications.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
@@ -32,7 +32,7 @@ public class NotificationHelperTests
 
         var notificationService = serviceProvider.GetRequiredService<INotificationService>();
 
-        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+        var commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -43,17 +43,18 @@ public class NotificationHelperTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
+        var commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
-            luthetusCommonTreeViews);
+            typeof(CommonProgressNotificationDisplay),
+            commonTreeViews);
 
         Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
 
         NotificationHelper.DispatchInformative(
             "Test",
             "Message testing",
-            luthetusCommonComponentRenderers,
+            commonComponentRenderers,
             dispatcher,
             null);
 
@@ -79,7 +80,7 @@ public class NotificationHelperTests
 
         var notificationService = serviceProvider.GetRequiredService<INotificationService>();
 
-        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+        var commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -90,17 +91,18 @@ public class NotificationHelperTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        var luthetusCommonComponentRenderers = new LuthetusCommonComponentRenderers(
+        var commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
-            luthetusCommonTreeViews);
+            typeof(CommonProgressNotificationDisplay),
+            commonTreeViews);
 
         Assert.Empty(notificationService.NotificationStateWrap.Value.DefaultList);
 
         NotificationHelper.DispatchError(
             "Test",
             "Message testing",
-            luthetusCommonComponentRenderers,
+            commonComponentRenderers,
             dispatcher,
             null);
 

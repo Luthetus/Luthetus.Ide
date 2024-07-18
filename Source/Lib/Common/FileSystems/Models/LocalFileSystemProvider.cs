@@ -7,7 +7,7 @@ public class LocalFileSystemProvider : IFileSystemProvider
 {
     public LocalFileSystemProvider(
         IEnvironmentProvider environmentProvider,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher)
     {
         File = new LocalFileHandler(environmentProvider, commonComponentRenderers, dispatcher);

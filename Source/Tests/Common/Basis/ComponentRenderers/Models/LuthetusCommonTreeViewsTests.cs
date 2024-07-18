@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
 
@@ -25,7 +25,7 @@ public class LuthetusCommonTreeViewsTests
     [Fact]
     public void Constructor()
     {
-        var luthetusCommonTreeViews = new LuthetusCommonTreeViews(
+        var commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -36,13 +36,13 @@ public class LuthetusCommonTreeViewsTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        Assert.NotNull(luthetusCommonTreeViews.TreeViewMissingRendererFallbackType);
-        Assert.NotNull(luthetusCommonTreeViews.TreeViewTextRenderer);
-        Assert.NotNull(luthetusCommonTreeViews.TreeViewReflectionRenderer);
-        Assert.NotNull(luthetusCommonTreeViews.TreeViewPropertiesRenderer);
-        Assert.NotNull(luthetusCommonTreeViews.TreeViewInterfaceImplementationRenderer);
-        Assert.NotNull(luthetusCommonTreeViews.TreeViewFieldsRenderer);
-        Assert.NotNull(luthetusCommonTreeViews.TreeViewExceptionRenderer);
-        Assert.NotNull(luthetusCommonTreeViews.TreeViewEnumerableRenderer);
+        Assert.NotNull(commonTreeViews.TreeViewMissingRendererFallbackType);
+        Assert.NotNull(commonTreeViews.TreeViewTextRenderer);
+        Assert.NotNull(commonTreeViews.TreeViewReflectionRenderer);
+        Assert.NotNull(commonTreeViews.TreeViewPropertiesRenderer);
+        Assert.NotNull(commonTreeViews.TreeViewInterfaceImplementationRenderer);
+        Assert.NotNull(commonTreeViews.TreeViewFieldsRenderer);
+        Assert.NotNull(commonTreeViews.TreeViewExceptionRenderer);
+        Assert.NotNull(commonTreeViews.TreeViewEnumerableRenderer);
     }
 }

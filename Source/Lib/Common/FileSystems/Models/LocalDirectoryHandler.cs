@@ -9,12 +9,12 @@ public class LocalDirectoryHandler : IDirectoryHandler
     private const bool IS_DIRECTORY_RESPONSE = true;
 
     private readonly IEnvironmentProvider _environmentProvider;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IDispatcher _dispatcher;
 
     public LocalDirectoryHandler(
         IEnvironmentProvider environmentProvider,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher)
     {
         _environmentProvider = environmentProvider;

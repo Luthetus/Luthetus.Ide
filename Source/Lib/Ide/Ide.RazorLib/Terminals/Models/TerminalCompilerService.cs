@@ -1,13 +1,13 @@
+using System.Collections.Immutable;
 using Fluxor;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
-public sealed class TerminalCompilerService : LuthCompilerService
+public sealed class TerminalCompilerService : CompilerService
 {
     public TerminalCompilerService(
             ITextEditorService textEditorService,

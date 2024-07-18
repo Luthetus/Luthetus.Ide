@@ -1,17 +1,17 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
-using System.Collections.Immutable;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
+namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public static class ParseTokens
 {
     public static void ParseNumericLiteralToken(
         NumericLiteralToken consumedNumericLiteralToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
@@ -30,7 +30,7 @@ public static class ParseTokens
 
 	public static void ParseCharLiteralToken(
         CharLiteralToken consumedCharLiteralToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
@@ -49,7 +49,7 @@ public static class ParseTokens
 
     public static void ParseStringLiteralToken(
         StringLiteralToken consumedStringLiteralToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
@@ -68,7 +68,7 @@ public static class ParseTokens
 
     public static void ParsePreprocessorDirectiveToken(
         PreprocessorDirectiveToken consumedPreprocessorDirectiveToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         var consumedToken = model.TokenWalker.Consume();
 
@@ -91,7 +91,7 @@ public static class ParseTokens
 
     public static void ParseIdentifierToken(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax is AmbiguousIdentifierNode)
             ResolveAmbiguousIdentifier((AmbiguousIdentifierNode)model.SyntaxStack.Pop(), model);
@@ -114,7 +114,7 @@ public static class ParseTokens
         return;
     }
 
-    private static bool TryParseGenericArguments(ParserModel model)
+    private static bool TryParseGenericArguments(CSharpParserModel model)
     {
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
@@ -131,7 +131,7 @@ public static class ParseTokens
     }
 
     private static bool TryParseGenericParameters(
-        ParserModel model,
+        CSharpParserModel model,
         out GenericParametersListingNode? genericParametersListingNode)
     {
         if (SyntaxKind.OpenAngleBracketToken == model.TokenWalker.Current.SyntaxKind)
@@ -152,7 +152,7 @@ public static class ParseTokens
 
     private static bool TryParseConstructorDefinition(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
             model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
@@ -167,7 +167,7 @@ public static class ParseTokens
 
     private static bool TryParseTypedIdentifier(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax is TypeClauseNode typeClauseNode)
         {
@@ -206,7 +206,7 @@ public static class ParseTokens
 
     private static bool TryParseReference(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         var text = consumedIdentifierToken.TextSpan.GetText();
 
@@ -250,7 +250,7 @@ public static class ParseTokens
 
     private static bool TryParseVariableAssignment(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         {
@@ -266,7 +266,7 @@ public static class ParseTokens
 
     private static bool TryParseGenericTypeOrFunctionInvocation(
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken &&
             model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
@@ -303,7 +303,7 @@ public static class ParseTokens
         IdentifierToken consumedIdentifierToken,
         TypeClauseNode consumedTypeClauseNode,
         GenericArgumentsListingNode? consumedGenericArgumentsListingNode,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
         {
@@ -322,7 +322,7 @@ public static class ParseTokens
     private static bool TryParseVariableDeclaration(
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         var isLocalOrField = model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
                              model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken;
@@ -367,7 +367,7 @@ public static class ParseTokens
 
     public static void ResolveAmbiguousIdentifier(
         AmbiguousIdentifierNode consumedAmbiguousIdentifierNode,
-        ParserModel model)
+        CSharpParserModel model)
     {
         var expectingTypeClause = false;
 
@@ -415,7 +415,7 @@ public static class ParseTokens
 
     public static void ParsePlusToken(
         PlusToken consumedPlusToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
@@ -434,7 +434,7 @@ public static class ParseTokens
 
     public static void ParsePlusPlusToken(
         PlusPlusToken consumedPlusPlusToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.VariableReferenceNode)
         {
@@ -455,7 +455,7 @@ public static class ParseTokens
 
     public static void ParseMinusToken(
         MinusToken consumedMinusToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
@@ -474,7 +474,7 @@ public static class ParseTokens
 
     public static void ParseStarToken(
         StarToken consumedStarToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
@@ -493,7 +493,7 @@ public static class ParseTokens
 
     public static void ParseDollarSignToken(
         DollarSignToken consumedDollarSignToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
@@ -512,7 +512,7 @@ public static class ParseTokens
 
     public static void ParseColonToken(
         ColonToken consumedColonToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
         {
@@ -540,7 +540,7 @@ public static class ParseTokens
 
     public static void ParseOpenBraceToken(
         OpenBraceToken consumedOpenBraceToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
 		var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
         ICodeBlockOwner? nextCodeBlockOwner = null;
@@ -694,7 +694,7 @@ public static class ParseTokens
 
     public static void ParseCloseBraceToken(
         CloseBraceToken consumedCloseBraceToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
 		if (model.ParseChildScopeQueue.TryDequeue(out var action))
 		{
@@ -717,7 +717,7 @@ public static class ParseTokens
 
     public static void ParseOpenParenthesisToken(
         OpenParenthesisToken consumedOpenParenthesisToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.SyntaxStack.TryPeek(out var syntax) &&
             syntax is TypeDefinitionNode typeDefinitionNode)
@@ -766,13 +766,13 @@ public static class ParseTokens
 
     public static void ParseCloseParenthesisToken(
         CloseParenthesisToken consumedCloseParenthesisToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
     }
 
     public static void ParseOpenAngleBracketToken(
         OpenAngleBracketToken consumedOpenAngleBracketToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
             model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
@@ -806,7 +806,7 @@ public static class ParseTokens
 
     public static void ParseCloseAngleBracketToken(
         CloseAngleBracketToken consumedCloseAngleBracketToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         model.DiagnosticBag.ReportTodoException(
             consumedCloseAngleBracketToken.TextSpan,
@@ -815,7 +815,7 @@ public static class ParseTokens
 
     public static void ParseOpenSquareBracketToken(
         OpenSquareBracketToken consumedOpenSquareBracketToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
             model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
@@ -838,13 +838,13 @@ public static class ParseTokens
 
     public static void ParseCloseSquareBracketToken(
         CloseSquareBracketToken consumedCloseSquareBracketToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
     }
 
     public static void ParseEqualsToken(
         EqualsToken consumedEqualsToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.SyntaxStack.TryPeek(out var syntax) &&
             syntax is FunctionDefinitionNode functionDefinitionNode)
@@ -886,7 +886,7 @@ public static class ParseTokens
 
     public static void ParseMemberAccessToken(
         MemberAccessToken consumedMemberAccessToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         model.SyntaxStack.Push(consumedMemberAccessToken);
 
@@ -918,7 +918,7 @@ public static class ParseTokens
 
     public static void ParseStatementDelimiterToken(
         StatementDelimiterToken consumedStatementDelimiterToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
@@ -955,7 +955,7 @@ public static class ParseTokens
 
     public static void ParseKeywordToken(
         KeywordToken consumedKeywordToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         // 'return', 'if', 'get', etc...
         switch (consumedKeywordToken.SyntaxKind)
@@ -1202,7 +1202,7 @@ public static class ParseTokens
 
     public static void ParseKeywordContextualToken(
         KeywordContextualToken consumedKeywordContextualToken,
-        ParserModel model)
+        CSharpParserModel model)
     {
         switch (consumedKeywordContextualToken.SyntaxKind)
         {

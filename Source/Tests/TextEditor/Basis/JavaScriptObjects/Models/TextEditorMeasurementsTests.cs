@@ -31,10 +31,14 @@ public class TextEditorMeasurementsTests
 		var marginScrollHeight = 20;
 		var width = 3000;
 		var height = 4000;
+		var boundingClientRectLeft = 250;
+		var boundingClientRectTop = 300;
 
         var textEditorDimensions = new TextEditorDimensions(
             width,
-            height);
+            height,
+            boundingClientRectLeft,
+            boundingClientRectTop);
 		
 		var scrollbarDimensions = new ScrollbarDimensions(
             scrollLeft,
@@ -50,5 +54,7 @@ public class TextEditorMeasurementsTests
 		Assert.Equal(marginScrollHeight, scrollbarDimensions.MarginScrollHeight);
 		Assert.Equal(width, textEditorDimensions.Width);
 		Assert.Equal(height, textEditorDimensions.Height);
+		Assert.Equal(boundingClientRectLeft, textEditorDimensions.BoundingClientRectLeft);
+		Assert.Equal(boundingClientRectTop, textEditorDimensions.BoundingClientRectTop);
 	}
 }

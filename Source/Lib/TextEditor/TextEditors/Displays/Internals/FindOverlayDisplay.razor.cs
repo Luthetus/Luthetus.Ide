@@ -1,14 +1,14 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 
@@ -19,7 +19,7 @@ public partial class FindOverlayDisplay : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
-    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -46,7 +46,7 @@ public partial class FindOverlayDisplay : ComponentBase
             {
                 await _throttleInputValueChange.PushEvent(_ =>
                 {
-                    TextEditorService.PostSimpleBatch(
+                    TextEditorService.PostDistinct(
                         nameof(FindOverlayDisplay),
                         async editContext =>
                         {
@@ -117,7 +117,7 @@ public partial class FindOverlayDisplay : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
-	private void HandleOnFocusIn()
+	private void HandleOnFocus()
 	{
 		// In the case where the find over value was changed, by an outside event,
 		// just refresh the InputValue to be sure its up to date.
@@ -135,7 +135,7 @@ public partial class FindOverlayDisplay : ComponentBase
                 .FocusHtmlElementById(RenderBatch.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
-            TextEditorService.PostTakeMostRecent(
+            TextEditorService.PostRedundant(
                 nameof(FindOverlayDisplay),
 				RenderBatch.ViewModel.ResourceUri,
                 RenderBatch.ViewModel.ViewModelKey,
@@ -247,7 +247,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private Task HandleActiveIndexMatchedTextSpanChanged()
     {
-        TextEditorService.PostSimpleBatch(
+        TextEditorService.PostDistinct(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
             async editContext =>
             {

@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
@@ -42,7 +42,7 @@ public partial class ContextMenu : ComponentBase
                 try
                 {
                     await _textEditorContextMenuElementReference.Value
-                        .FocusAsync()
+                        .FocusAsync(preventScroll: true)
                         .ConfigureAwait(false);
                 }
                 catch (Exception)
@@ -74,7 +74,7 @@ public partial class ContextMenu : ComponentBase
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
         {
-            TextEditorService.PostSimpleBatch(
+            TextEditorService.PostDistinct(
 				nameof(ContextMenu),
 				editContext =>
 				{
@@ -94,7 +94,7 @@ public partial class ContextMenu : ComponentBase
     {
         try
         {
-            TextEditorService.PostSimpleBatch(
+            TextEditorService.PostDistinct(
 				nameof(ContextMenu),
 				editContext =>
 				{
@@ -141,7 +141,7 @@ public partial class ContextMenu : ComponentBase
         {
             try
             {
-				TextEditorService.PostSimpleBatch(
+				TextEditorService.PostDistinct(
 					nameof(ContextMenu),
 					editContext =>
 					{

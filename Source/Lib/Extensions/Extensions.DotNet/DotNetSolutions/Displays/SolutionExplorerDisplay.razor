@@ -1,0 +1,57 @@
+@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.Common.RazorLib.Dropdowns.Displays
+@using Luthetus.Common.RazorLib.Dropdowns.Models;
+@using Luthetus.Common.RazorLib.TreeViews.Displays
+@using Luthetus.Common.RazorLib.TreeViews.Models;
+@using Luthetus.Extensions.DotNet.DotNetSolutions.Displays.Internals;
+@using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<ContextBoundary ContextRecord="ContextFacts.SolutionExplorerContext"
+                 ClassCssString="luth_ide_solution-explorer-display"
+                 StyleCssString="height: 100%">
+
+    @{ var dotNetSolutionState = DotNetSolutionStateWrap.Value; }
+
+    <div class="luth_ide_section-title">
+        Solution Explorer
+
+        @if (dotNetSolutionState.IsExecutingAsyncTaskLinks > 0)
+        {
+            <IconLoading />
+        }
+    </div>
+
+    <div class="luth_ide_section-body">
+        @if (dotNetSolutionState.DotNetSolutionModel is null)
+        {
+            <button class="luth_button"
+                    style="display: inline; margin-right: 12px; margin-bottom: 12px;"
+                    @onclick="() => DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi, CompilerServicesBackgroundTaskApi)">
+                Open Solution
+            </button>
+
+            <button class="luth_button"
+                    style="display: inline;"
+            @onclick="OpenNewDotNetSolutionDialog">
+                New Solution
+            </button>
+        }
+        else
+        {
+            <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                        <TreeViewContainerDisplay TreeViewContainerKey="DotNetSolutionState.TreeViewSolutionExplorerStateKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeyboardEventHandler="_solutionExplorerTreeViewKeymap"
+                                                  TreeViewMouseEventHandler="_solutionExplorerTreeViewMouseEventHandler" />
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        }
+    </div>
+</ContextBoundary>

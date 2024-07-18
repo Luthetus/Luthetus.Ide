@@ -1,6 +1,6 @@
-﻿using Fluxor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.Drags.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -22,6 +22,13 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
+/// <remarks>
+/// This class is an exception to the naming convention, "don't use the word 'Luthetus' in class names".
+/// 
+/// Reason for this exception: when one first starts interacting with this project,
+/// 	this type might be one of the first types they interact with. So, the redundancy of namespace
+/// 	and type containing 'Luthetus' feels reasonable here.
+/// </remarks>
 public record LuthetusCommonFactories
 {
     public Func<IServiceProvider, IDragService> DragServiceFactory { get; init; } =
@@ -58,7 +65,7 @@ public record LuthetusCommonFactories
             serviceProvider.GetRequiredService<IState<ThemeState>>(),
             serviceProvider.GetRequiredService<IDispatcher>(),
             serviceProvider.GetRequiredService<IStorageService>(),
-            serviceProvider.GetRequiredService<LuthetusCommonBackgroundTaskApi>(),
+            serviceProvider.GetRequiredService<CommonBackgroundTaskApi>(),
             serviceProvider.GetRequiredService<IBackgroundTaskService>());
 
     public Func<IServiceProvider, IThemeService> ThemeServiceFactory { get; init; } =

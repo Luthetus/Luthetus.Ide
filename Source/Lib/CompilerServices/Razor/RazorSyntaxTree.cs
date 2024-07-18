@@ -1,25 +1,25 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Text;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
-using Luthetus.CompilerServices.Lang.Razor.CompilerServiceCase;
-using Luthetus.CompilerServices.Lang.Razor.Razor.Facts;
-using Luthetus.CompilerServices.Lang.Xml.Html;
-using Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
-using Luthetus.CompilerServices.Lang.Xml.Html.Facts;
-using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.Razor.CompilerServiceCase;
+using Luthetus.CompilerServices.Razor.Facts;
+using Luthetus.CompilerServices.Xml.Html;
+using Luthetus.CompilerServices.Xml.Html.Decoration;
+using Luthetus.CompilerServices.Xml.Html.Facts;
+using Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
+using Luthetus.CompilerServices.Xml.Html.SyntaxActors;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Razor;
+namespace Luthetus.CompilerServices.Razor;
 
 public class RazorSyntaxTree
 {
@@ -123,7 +123,7 @@ public class RazorSyntaxTree
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>
     public List<IHtmlSyntaxNode> ParseInjectedLanguageFragment(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         // current character is '@'
@@ -219,7 +219,7 @@ public class RazorSyntaxTree
 
     public void ParseTagName(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition,
         TextEditorTextSpan textSpan)
     {
@@ -253,7 +253,7 @@ public class RazorSyntaxTree
 
     public static AttributeNameNode ParseAttributeName(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var startingPositionIndex = stringWalker.PositionIndex;
@@ -282,7 +282,7 @@ public class RazorSyntaxTree
 
     public static AttributeValueNode ParseAttributeValue(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         throw new NotImplementedException();
@@ -291,7 +291,7 @@ public class RazorSyntaxTree
     /// <summary> The @code{...} section must be wrapped in an adhoc class definition so that Roslyn can syntax highlight methods. <br/><br/> The @{...} code blocks must be wrapped in an adhoc method.</summary>
     private List<IHtmlSyntaxNode> ReadCodeBlock(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition,
         bool isClassLevelCodeBlock)
     {
@@ -456,7 +456,7 @@ public class RazorSyntaxTree
 
     private List<IHtmlSyntaxNode> ReadInlineExpression(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         if (stringWalker.CurrentCharacter == RazorFacts.EXPLICIT_EXPRESSION_START)
@@ -476,7 +476,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @(myVariable)</summary>
     private List<IHtmlSyntaxNode> ReadExplicitInlineExpression(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -539,7 +539,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @myVariable</summary>
     private List<IHtmlSyntaxNode> ReadImplicitInlineExpression(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -575,7 +575,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @if (true) { ... } else { ... }</summary>
     private List<IHtmlSyntaxNode> ReadCSharpRazorKeyword(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string matchedOn)
     {
@@ -841,7 +841,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @page "/counter"</summary>
     private List<IHtmlSyntaxNode> ReadRazorKeyword(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string matchedOn)
     {
@@ -914,7 +914,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @* This is a razor comment *@</summary>
     private List<IHtmlSyntaxNode> ReadComment(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -986,7 +986,7 @@ public class RazorSyntaxTree
     /// <summary>Example: @* This is a razor comment *@</summary>
     private List<IHtmlSyntaxNode> ReadSingleLineTextOutputWithoutAddingHtmlElement(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition)
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
@@ -1024,7 +1024,7 @@ public class RazorSyntaxTree
 
     private bool TryReadCodeBlock(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1071,7 +1071,7 @@ public class RazorSyntaxTree
 
     private bool TryReadExplicitInlineExpression(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1113,7 +1113,7 @@ public class RazorSyntaxTree
 
     private bool TryReadElseIf(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1190,7 +1190,7 @@ public class RazorSyntaxTree
 
     private bool TryReadElse(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1248,7 +1248,7 @@ public class RazorSyntaxTree
 
     private bool TryReadWhileOfDoWhile(
         StringWalker stringWalker,
-        LuthDiagnosticBag diagnosticBag,
+        DiagnosticBag diagnosticBag,
         InjectedLanguageDefinition injectedLanguageDefinition,
         string keywordText,
         out List<IHtmlSyntaxNode>? tagSyntaxes)
@@ -1366,7 +1366,7 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        var lexer = new CSharpLexer(new ResourceUri(string.Empty), cSharpText);
+        var lexer = new CSharpLexer(ResourceUri.Empty, cSharpText);
 
         lexer.Lex();
 

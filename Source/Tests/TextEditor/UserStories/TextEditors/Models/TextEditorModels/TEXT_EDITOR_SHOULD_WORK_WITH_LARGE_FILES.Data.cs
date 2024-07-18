@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.Tests.UserStories.TextEditors.Models;
+namespace Luthetus.TextEditor.Tests.UserStories.TextEditors.Models;
 
 public partial class TEXT_EDITOR_SHOULD_WORK_WITH_LARGE_FILES
 {
@@ -28,7 +28,7 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
@@ -1119,7 +1119,7 @@ using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 

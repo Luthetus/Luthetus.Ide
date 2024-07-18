@@ -1,4 +1,4 @@
-namespace Luthetus.CompilerServices.Lang.Terminal.Tests;
+namespace Luthetus.CompilerServices.Terminal.Tests;
 
 public class UnitTest1
 {

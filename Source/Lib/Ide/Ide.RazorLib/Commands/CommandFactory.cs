@@ -1,7 +1,9 @@
-using Fluxor;
+using System.Collections.Immutable;
 using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.States;
@@ -9,21 +11,22 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
 public class CommandFactory : ICommandFactory
 {
     private readonly IState<PanelState> _panelStateWrap;
+    private readonly IState<ContextState> _contextStateWrap;
     private readonly ITextEditorService _textEditorService;
     private readonly ITreeViewService _treeViewService;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -35,6 +38,7 @@ public class CommandFactory : ICommandFactory
 		ITreeViewService treeViewService,
 		IEnvironmentProvider environmentProvider,
         IState<PanelState> panelStateWrap,
+        IState<ContextState> contextStateWrap,
         IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
     {
@@ -42,12 +46,11 @@ public class CommandFactory : ICommandFactory
 		_treeViewService = treeViewService;
 		_environmentProvider = environmentProvider;
         _panelStateWrap = panelStateWrap;
+        _contextStateWrap = contextStateWrap;
         _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
     }
 
-	private TreeViewNamespacePath? _nodeOfViewModel = null;
-	private List<TreeViewNoType> _nodeList = new();
     private IDialog? _contextSwitchDialog;
     
 	public IDialog? CodeSearchDialog { get; set; }
@@ -131,62 +134,6 @@ public class CommandFactory : ICommandFactory
                 ConstructFocusContextElementCommand(
                     ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header"));
         }
-        // NuGetPackageManagerContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyN", false, true, true, Key<KeymapLayer>.Empty),
-                ConstructFocusContextElementCommand(
-                    ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager"));
-        }
-        // CSharpReplContext
-        {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyR", false, true, true, Key<KeymapLayer>.Empty),
-                ConstructFocusContextElementCommand(
-                    ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl"));
-        }
-        // SolutionExplorerContext
-        {
-			var focusSolutionExplorerCommand = ConstructFocusContextElementCommand(
-	    		ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer");
-
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-	                new KeymapArgument("KeyS", false, true, true, Key<KeymapLayer>.Empty),
-	                focusSolutionExplorerCommand);
-
-			// Set active solution explorer tree view node to be the
-			// active text editor view model and,
-			// Set focus to the solution explorer;
-			{
-				var focusTextEditorCommand = new CommonCommand(
-	                "Focus: SolutionExplorer (with text editor view model)", "focus-solution-explorer_with-text-editor-view-model", false,
-	                async commandArgs =>
-	                {
-	                    await PerformGetFlattenedTree().ConfigureAwait(false);
-
-						var localNodeOfViewModel = _nodeOfViewModel;
-
-						if (localNodeOfViewModel is null)
-							return;
-
-						_treeViewService.SetActiveNode(
-							DotNetSolutionState.TreeViewSolutionExplorerStateKey,
-							localNodeOfViewModel,
-							false,
-							false);
-
-						var elementId = _treeViewService.GetNodeElementId(localNodeOfViewModel);
-
-						await focusSolutionExplorerCommand.CommandFunc
-                            .Invoke(commandArgs)
-                            .ConfigureAwait(false);
-	                });
-	
-	            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-	                    new KeymapArgument("KeyS", true, true, true, Key<KeymapLayer>.Empty),
-	                    focusTextEditorCommand);
-			}
-        }
         // ErrorListContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
@@ -229,7 +176,7 @@ public class CommandFactory : ICommandFactory
                 "Focus: Text Editor", "focus-text-editor", false,
                 async commandArgs =>
                 {
-                    var group = _textEditorService.GroupApi.GetOrDefault(LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
+                    var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
 
                     if (group is null)
                         return;
@@ -296,8 +243,48 @@ public class CommandFactory : ICommandFactory
             //       then restore focus to that element when this dialog is closed.
 			var openContextSwitchDialogCommand = new CommonCommand(
 	            "Open: Context Switch", "open-context-switch", false,
-	            commandArgs => 
+	            async commandArgs =>
 				{
+					var jsRuntimeCommonApi = _jsRuntime.GetLuthetusCommonApi();
+					
+					var elementDimensions = await jsRuntimeCommonApi
+						.MeasureElementById("luth_ide_header-button-file")
+						.ConfigureAwait(false);
+						
+					var contextState = _contextStateWrap.Value;
+					
+					var menuOptionList = new List<MenuOptionRecord>();
+					
+					foreach (var context in contextState.AllContextsList)
+			        {
+			        	menuOptionList.Add(new MenuOptionRecord(
+			        		context.DisplayNameFriendly,
+			        		MenuOptionKind.Other));
+			        }
+					
+					MenuRecord menu;
+					
+					if (menuOptionList.Count == 0)
+						menu = MenuRecord.Empty;
+					else
+						menu = new MenuRecord(menuOptionList.ToImmutableArray());
+						
+					var dropdownRecord = new DropdownRecord(
+						Key<DropdownRecord>.NewKey(),
+						elementDimensions.LeftInPixels,
+						elementDimensions.TopInPixels + elementDimensions.HeightInPixels,
+						typeof(MenuDisplay),
+						new Dictionary<string, object?>
+						{
+							{
+								nameof(MenuDisplay.MenuRecord),
+								menu
+							}
+						},
+						() => Task.CompletedTask);
+			
+			        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+				
                     _contextSwitchDialog ??= new DialogViewModel(
                         Key<IDynamicViewModel>.NewKey(),
 						"Context Switch",
@@ -308,11 +295,14 @@ public class CommandFactory : ICommandFactory
 						null);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(_contextSwitchDialog));
-                    return Task.CompletedTask;
 				});
 
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument("Backslash", false, true, true, Key<KeymapLayer>.Empty),
+					new KeymapArgument("Tab", false, true, false, Key<KeymapLayer>.Empty),
+					openContextSwitchDialogCommand);
+					
+			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+					new KeymapArgument("Slash", false, true, true, Key<KeymapLayer>.Empty),
 					openContextSwitchDialogCommand);
 		}
     }
@@ -344,64 +334,4 @@ public class CommandFactory : ICommandFactory
                 .ConfigureAwait(false);
         }
     }
-
-	private async Task PerformGetFlattenedTree()
-	{
-		_nodeList.Clear();
-
-		var group = _textEditorService.GroupApi.GetOrDefault(LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
-
-		if (group is not null)
-		{
-			var textEditorViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
-
-			if (textEditorViewModel is not null)
-			{
-				if (_treeViewService.TryGetTreeViewContainer(
-						DotNetSolutionState.TreeViewSolutionExplorerStateKey,
-						out var treeViewContainer) &&
-                    treeViewContainer is not null)
-				{
-					await RecursiveGetFlattenedTree(treeViewContainer.RootNode, textEditorViewModel).ConfigureAwait(false);
-				}
-			}
-		}
-	}
-
-	private async Task RecursiveGetFlattenedTree(
-		TreeViewNoType treeViewNoType,
-		TextEditorViewModel textEditorViewModel)
-	{
-		_nodeList.Add(treeViewNoType);
-
-		if (treeViewNoType is TreeViewNamespacePath treeViewNamespacePath)
-		{
-			if (textEditorViewModel is not null)
-			{
-				var viewModelAbsolutePath = _environmentProvider.AbsolutePathFactory(
-					textEditorViewModel.ResourceUri.Value,
-					false);
-
-				if (viewModelAbsolutePath.Value ==
-						treeViewNamespacePath.Item.AbsolutePath.Value)
-				{
-					_nodeOfViewModel = treeViewNamespacePath;
-				}
-			}
-
-			switch (treeViewNamespacePath.Item.AbsolutePath.ExtensionNoPeriod)
-            {
-                case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                    await treeViewNamespacePath.LoadChildListAsync().ConfigureAwait(false);
-                    break;
-            }
-		}
-
-        // await treeViewNoType.LoadChildListAsync().ConfigureAwait(false);
-
-        foreach (var node in treeViewNoType.ChildList)
-		{
-			await RecursiveGetFlattenedTree(node, textEditorViewModel).ConfigureAwait(false);
-		}
-	}
 }

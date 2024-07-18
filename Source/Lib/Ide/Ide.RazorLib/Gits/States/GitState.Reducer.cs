@@ -1,6 +1,6 @@
-﻿using Fluxor;
-using Luthetus.Ide.RazorLib.Gits.Models;
 using System.Collections.Immutable;
+using Fluxor;
+using Luthetus.Ide.RazorLib.Gits.Models;
 
 namespace Luthetus.Ide.RazorLib.Gits.States;
 

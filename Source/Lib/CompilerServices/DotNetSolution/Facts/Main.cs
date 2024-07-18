@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.DotNetSolution.Facts;
+namespace Luthetus.CompilerServices.DotNetSolution.Facts;
 
 public partial class LexSolutionFacts
 {

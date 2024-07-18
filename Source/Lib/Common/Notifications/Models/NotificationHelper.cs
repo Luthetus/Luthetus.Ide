@@ -12,14 +12,14 @@ public static class NotificationHelper
     public static void DispatchInformative(
         string title,
         string message,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationInformative = new NotificationViewModel(
             Key<IDynamicViewModel>.NewKey(),
             title,
-            luthetusCommonComponentRenderers.InformativeNotificationRendererType,
+            commonComponentRenderers.InformativeNotificationRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -37,13 +37,13 @@ public static class NotificationHelper
     public static void DispatchError(
         string title,
         string message,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            luthetusCommonComponentRenderers.ErrorNotificationRendererType,
+            commonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(IErrorNotificationRendererType.Message), $"ERROR: {message}" },
@@ -58,13 +58,13 @@ public static class NotificationHelper
     public static void DispatchProgress(
         string title,
         ProgressBarModel progressBarModel,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationProgress = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            luthetusCommonComponentRenderers.ProgressNotificationRendererType,
+            commonComponentRenderers.ProgressNotificationRendererType,
             new Dictionary<string, object?>
             {
                 {
@@ -92,13 +92,13 @@ public static class NotificationHelper
 	public static void DispatchDebugMessage(
         string title,
         Func<string> messageFunc,
-        ILuthetusCommonComponentRenderers luthetusCommonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         IDispatcher dispatcher,
         TimeSpan? notificationOverlayLifespan)
     {
         var notificationError = new NotificationViewModel(Key<IDynamicViewModel>.NewKey(),
             title,
-            luthetusCommonComponentRenderers.ErrorNotificationRendererType,
+            commonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(IErrorNotificationRendererType.Message), $"ERROR: {messageFunc.Invoke()}" },

@@ -1,6 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Models;

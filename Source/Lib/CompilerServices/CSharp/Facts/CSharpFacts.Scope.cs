@@ -1,8 +1,8 @@
-﻿using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Facts;
+namespace Luthetus.CompilerServices.CSharp.Facts;
 
 public partial class CSharpFacts
 {
@@ -39,7 +39,7 @@ public partial class CSharpFacts
                 Types.Void.ToTypeClause(),
                 0,
                 null,
-                new ResourceUri(string.Empty),
+                ResourceUri.Empty,
                 typeDefinitionMap,
                 new(),
                 new(),

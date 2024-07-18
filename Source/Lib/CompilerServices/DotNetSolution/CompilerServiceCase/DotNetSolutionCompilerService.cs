@@ -1,10 +1,10 @@
-﻿using Luthetus.CompilerServices.Lang.DotNetSolution.SyntaxActors;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.CompilerServiceCase;
+namespace Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 
-public sealed class DotNetSolutionCompilerService : LuthCompilerService
+public sealed class DotNetSolutionCompilerService : CompilerService
 {
     public DotNetSolutionCompilerService(ITextEditorService textEditorService)
         : base(textEditorService)

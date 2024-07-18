@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
@@ -7,7 +7,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
 {
     public TreeViewGitFile(
             GitFile item,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
             bool isExpandable,
             bool isExpanded)
         : base(item, isExpandable, isExpanded)
@@ -15,7 +15,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
         IdeComponentRenderers = ideComponentRenderers;
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
+    public IIdeComponentRenderers IdeComponentRenderers { get; }
 
     public override bool Equals(object? obj)
     {
@@ -31,7 +31,7 @@ public class TreeViewGitFile : TreeViewWithType<GitFile>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewGitFileRendererType,
+            IdeComponentRenderers.IdeTreeViews.TreeViewGitFileRendererType,
             new Dictionary<string, object?>
             {
                 {

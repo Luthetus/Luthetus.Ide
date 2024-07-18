@@ -1,18 +1,18 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Fluxor;
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Misc;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests;
+namespace Luthetus.CompilerServices.CSharp.Tests;
 
 public class CSharpCompilerServiceTestsBase
 {
@@ -30,7 +30,7 @@ public class CSharpCompilerServiceTestsBase
             .AddScoped<IEnvironmentProvider>(serviceProvider => new InMemoryEnvironmentProvider())
             .AddScoped<IFileSystemProvider>(serviceProvider => new InMemoryFileSystemProvider(
                 serviceProvider.GetRequiredService<IEnvironmentProvider>(),
-                serviceProvider.GetRequiredService<ILuthetusCommonComponentRenderers>(),
+                serviceProvider.GetRequiredService<ICommonComponentRenderers>(),
                 serviceProvider.GetRequiredService<IDispatcher>()));
 
         var hostingInformation = new LuthetusHostingInformation(

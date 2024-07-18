@@ -16,7 +16,7 @@ using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.Keymaps.Models.Defaults;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
@@ -75,11 +75,11 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
 		command = new TextEditorCommand(
 			commandDisplayName, "terminal_intercept-default-keymap", false, true, TextEditKind.None, null,
-			async interfaceCommandArgs =>
+			interfaceCommandArgs =>
 			{
 				var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostSimpleBatch(
+                commandArgs.TextEditorService.PostDistinct(
 					nameof(commandDisplayName),
                     async editContext =>
 					{
@@ -268,6 +268,8 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
                             terminalCompilerService.ResourceWasModified(terminalResource.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
                         }
 					});
+
+				return Task.CompletedTask;
 			});
 
 		return true;

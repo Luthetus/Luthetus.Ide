@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.Xml.Html.SyntaxEnums;
+namespace Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
 
 public enum HtmlSyntaxKind
 {

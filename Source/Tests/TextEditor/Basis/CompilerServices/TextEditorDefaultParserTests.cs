@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
@@ -16,12 +16,12 @@ public class TextEditorDefaultParserTests
 	[Fact]
 	public void DiagnosticsList()
 	{
-		var defaultLexer = new LuthLexer(
-			new ResourceUri(string.Empty),
+		var defaultLexer = new Lexer(
+			ResourceUri.Empty,
             string.Empty,
-			LuthLexerKeywords.Empty);
+			LexerKeywords.Empty);
 
-        var defaultParser = new LuthParser(defaultLexer);
+        var defaultParser = new Parser(defaultLexer);
 
         Assert.Equal(
             ImmutableArray<TextEditorDiagnostic>.Empty,

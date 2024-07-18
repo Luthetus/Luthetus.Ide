@@ -1,11 +1,11 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
@@ -51,9 +51,9 @@ public static class ServiceCollectionExtensions
             .AddSingleton(commonConfig)
             .AddSingleton(hostingInformation)
             .AddSingleton(hostingInformation.BackgroundTaskService)
-            .AddSingleton<ILuthetusCommonComponentRenderers>(_ => _commonRendererTypes)
+            .AddSingleton<ICommonComponentRenderers>(_ => _commonRendererTypes)
             .AddCommonFactories(hostingInformation, commonConfig)
-            .AddScoped<LuthetusCommonBackgroundTaskApi>();
+            .AddScoped<CommonBackgroundTaskApi>();
 
         return services;
     }
@@ -98,7 +98,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static readonly LuthetusCommonTreeViews _commonTreeViews = new(
+    private static readonly CommonTreeViews _commonTreeViews = new(
         typeof(TreeViewExceptionDisplay),
         typeof(TreeViewMissingRendererFallbackDisplay),
         typeof(TreeViewTextDisplay),
@@ -109,7 +109,7 @@ public static class ServiceCollectionExtensions
         typeof(TreeViewExceptionDisplay),
         typeof(TreeViewEnumerableDisplay));
 
-    private static readonly LuthetusCommonComponentRenderers _commonRendererTypes = new(
+    private static readonly CommonComponentRenderers _commonRendererTypes = new(
         typeof(CommonErrorNotificationDisplay),
         typeof(CommonInformativeNotificationDisplay),
         typeof(CommonProgressNotificationDisplay),

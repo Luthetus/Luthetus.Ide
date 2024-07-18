@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
+namespace Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 
 public enum AssociatedEntryKind
 {
