@@ -19,6 +19,7 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -61,10 +62,11 @@ public partial class IdeHeader : ComponentBase
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject]
+	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
 	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
-	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
@@ -81,46 +83,25 @@ public partial class IdeHeader : ComponentBase
 
 	protected override void OnInitialized()
 	{
-		InitializeMenuFile();
-		InitializeMenuTools();
-		InitializeMenuView();
-		InitializeMenuRun();
-		
-		AddAltKeymap();
+		BackgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			nameof(IdeHeader),
+			async () =>
+			{
+				InitializeMenuFile();
+				InitializeMenuTools();
+				InitializeMenuView();
+				
+				AddAltKeymap();
+			});
 
         base.OnInitialized();
 	}
 
-    protected override Task OnInitializedAsync()
-    {
-        InitializeMenuFile();
-		InitializeMenuTools();
-		InitializeMenuView();
-		InitializeMenuRun();
-		
-		AddAltKeymap();
-
-        return base.OnInitializedAsync();
-    }
-
     private void InitializeMenuFile()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-
-        // Menu Option New
-        {
-            var menuOptionNewDotNetSolution = new MenuOptionRecord(
-                ".NET Solution",
-                MenuOptionKind.Other,
-                OpenNewDotNetSolutionDialog);
-
-            var menuOptionNew = new MenuOptionRecord(
-                "New",
-                MenuOptionKind.Other,
-                SubMenu: new MenuRecord(new[] { menuOptionNewDotNetSolution }.ToImmutableArray()));
-
-            menuOptionsList.Add(menuOptionNew);
-        }
 
         // Menu Option Open
         {
@@ -360,83 +341,6 @@ public partial class IdeHeader : ComponentBase
 		}
     }
 
-	private void InitializeMenuRun()
-	{
-		/*
-		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-		// =======================================================================
-		var menuOptionsList = new List<MenuOptionRecord>();
-
-		var dotNetSolutionState = DotNetSolutionStateWrap.Value;
-
-        // Menu Option Build
-        {
-            var menuOption = new MenuOptionRecord(
-				"Build",
-                MenuOptionKind.Create,
-                () =>
-				{
-					BuildOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
-					return Task.CompletedTask;
-				});
-
-            menuOptionsList.Add(menuOption);
-        }
-
-		// Menu Option Clean
-        {
-            var menuOption = new MenuOptionRecord(
-				"Clean",
-                MenuOptionKind.Delete,
-                () =>
-				{
-					CleanOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
-					return Task.CompletedTask;
-				});
-
-            menuOptionsList.Add(menuOption);
-        }
-
-        _menuRun = new MenuRecord(menuOptionsList.ToImmutableArray());
-        */
-	}
-
-	private void BuildOnClick(string solutionAbsolutePathString)
-	{
-		/*
-		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-		// =======================================================================
-		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
-        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
-        var terminalCommand = new TerminalCommand(
-            Key<TerminalCommand>.NewKey(),
-            formattedCommand,
-            null,
-            CancellationToken.None);
-
-        generalTerminal.EnqueueCommand(terminalCommand);
-        */
-	}
-
-	private void CleanOnClick(string solutionAbsolutePathString)
-	{
-		/*
-		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-		// =======================================================================
-		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetClean(solutionAbsolutePathString);
-        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
-        var terminalCommand = new TerminalCommand(
-            Key<TerminalCommand>.NewKey(),
-            formattedCommand,
-            null,
-            CancellationToken.None);
-
-        generalTerminal.EnqueueCommand(terminalCommand);
-        */
-	}
-
 	private async Task RestoreFocusToElementReference(ElementReference? elementReference)
     {
         try
@@ -454,26 +358,6 @@ public partial class IdeHeader : ComponentBase
 			//       ...tries to set focus to an HTML element, but that HTML element
 			//       was not found.
         }
-    }
-
-    private Task OpenNewDotNetSolutionDialog()
-    {
-    	/*
-		//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-		// =======================================================================
-        var dialogRecord = new DialogViewModel(
-            _newDotNetSolutionDialogKey,
-            "New .NET Solution",
-            typeof(DotNetSolutionFormDisplay),
-            null,
-            null,
-			true,
-			null);
-
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-        */
-        
-        return Task.CompletedTask;
     }
 
     private Task OpenInfoDialogOnClick()
@@ -560,11 +444,7 @@ public partial class IdeHeader : ComponentBase
 		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
 		        new KeymapArgument("KeyR", false, false, true, Key<KeymapLayer>.Empty),
 		        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false,
-		        	commandArgs =>
-		        	{
-		        		InitializeMenuRun();
-		        		return RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun);
-		        	}));
+		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun)));
 	}
 	
 	private Task RenderFileDropdownOnClick()

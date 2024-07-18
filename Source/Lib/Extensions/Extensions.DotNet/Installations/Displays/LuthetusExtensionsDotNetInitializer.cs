@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Fluxor;
@@ -8,9 +9,12 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
@@ -18,6 +22,7 @@ using Luthetus.Extensions.DotNet.CompilerServices.Displays;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays;
 using Luthetus.Extensions.DotNet.Outputs.Displays;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.CommandLines.Models;
 
 namespace Luthetus.Extensions.DotNet.Installations.Displays;
 
@@ -36,7 +41,13 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	[Inject]
 	private IState<PanelState> PanelStateWrap { get; set; } = null!;
 	[Inject]
+	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
+	[Inject]
+	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
+
+	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	
 	protected override void OnInitialized()
 	{
@@ -56,42 +67,69 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	{
 		if (firstRender)
 		{
-			var menuOptionOpenDotNetSolution = new MenuOptionRecord(
-                ".NET Solution",
-                MenuOptionKind.Other,
-                () =>
+			BackgroundTaskService.Enqueue(
+				Key<IBackgroundTask>.NewKey(),
+				ContinuousBackgroundTaskWorker.GetQueueKey(),
+				nameof(LuthetusExtensionsDotNetInitializer),
+				async () =>
 				{
-					DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi, DotNetBackgroundTaskApi);
-					return Task.CompletedTask;
+					var menuOptionOpenDotNetSolution = new MenuOptionRecord(
+		                ".NET Solution",
+		                MenuOptionKind.Other,
+		                () =>
+						{
+							DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi, DotNetBackgroundTaskApi);
+							return Task.CompletedTask;
+						});
+						
+					Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuFileAction(
+						inMenu => 
+						{
+							var inMenuOptionOpen = inMenu.MenuOptionList.FirstOrDefault(
+								x => x.DisplayName == "Open");
+						
+							if (inMenuOptionOpen?.SubMenu is null)
+							{
+								return inMenu with
+								{
+									MenuOptionList = inMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
+								};
+							}
+							
+							var outMenuOptionOpen = inMenuOptionOpen with
+							{
+								SubMenu = inMenuOptionOpen.SubMenu with
+								{
+									MenuOptionList = inMenuOptionOpen.SubMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
+								}
+							};
+							
+							var outMenu = inMenu with
+							{
+								MenuOptionList = inMenu.MenuOptionList.Replace(inMenuOptionOpen, outMenuOptionOpen)
+							};
+							
+							// Menu Option New
+					        {
+					            var menuOptionNewDotNetSolution = new MenuOptionRecord(
+					                ".NET Solution",
+					                MenuOptionKind.Other,
+					                OpenNewDotNetSolutionDialog);
+					
+					            var menuOptionNew = new MenuOptionRecord(
+					                "New",
+					                MenuOptionKind.Other,
+					                SubMenu: new MenuRecord(new[] { menuOptionNewDotNetSolution }.ToImmutableArray()));
+					
+					            return outMenu with
+								{
+									MenuOptionList = outMenu.MenuOptionList.Insert(0, menuOptionNew)
+								};
+					        }
+						}));
+						
+					InitializeMenuRun();
 				});
-				
-			Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuFileAction(
-				inMenu => 
-				{
-					var inMenuOptionOpen = inMenu.MenuOptionList.FirstOrDefault(
-						x => x.DisplayName == "Open");
-				
-					if (inMenuOptionOpen?.SubMenu is null)
-					{
-						return inMenu with
-						{
-							MenuOptionList = inMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
-						};
-					}
-					
-					var outMenuOptionOpen = inMenuOptionOpen with
-					{
-						SubMenu = inMenuOptionOpen.SubMenu with
-						{
-							MenuOptionList = inMenuOptionOpen.SubMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
-						}
-					};
-					
-					return inMenu with
-					{
-						MenuOptionList = inMenu.MenuOptionList.Replace(inMenuOptionOpen, outMenuOptionOpen)
-					}; 
-				}));
 		}
 	}
 
@@ -203,4 +241,92 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(nuGetPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, nuGetPanel, false));
     }
+    
+    private Task OpenNewDotNetSolutionDialog()
+    {
+        var dialogRecord = new DialogViewModel(
+            _newDotNetSolutionDialogKey,
+            "New .NET Solution",
+            typeof(DotNetSolutionFormDisplay),
+            null,
+            null,
+			true,
+			null);
+
+        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+        return Task.CompletedTask;
+    }
+    
+    private void InitializeMenuRun()
+	{
+		var menuOptionsList = new List<MenuOptionRecord>();
+
+		var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+
+        // Menu Option Build
+        {
+            var menuOption = new MenuOptionRecord(
+				"Build",
+                MenuOptionKind.Create,
+                () =>
+				{
+					BuildOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
+					return Task.CompletedTask;
+				});
+
+            menuOptionsList.Add(menuOption);
+        }
+
+		// Menu Option Clean
+        {
+            var menuOption = new MenuOptionRecord(
+				"Clean",
+                MenuOptionKind.Delete,
+                () =>
+				{
+					CleanOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
+					return Task.CompletedTask;
+				});
+
+            menuOptionsList.Add(menuOption);
+        }
+
+        Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuRunAction(inMenu =>
+        {
+        	var outMenuOptionList = inMenu.MenuOptionList.AddRange(menuOptionsList);
+        	
+        	return inMenu with
+        	{
+        		MenuOptionList = outMenuOptionList
+        	};
+        }));
+	}
+
+	private void BuildOnClick(string solutionAbsolutePathString)
+	{
+		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
+        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+
+        var terminalCommand = new TerminalCommand(
+            Key<TerminalCommand>.NewKey(),
+            formattedCommand,
+            null,
+            CancellationToken.None);
+
+        generalTerminal.EnqueueCommand(terminalCommand);
+	}
+
+	private void CleanOnClick(string solutionAbsolutePathString)
+	{
+		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetClean(solutionAbsolutePathString);
+        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+
+        var terminalCommand = new TerminalCommand(
+            Key<TerminalCommand>.NewKey(),
+            formattedCommand,
+            null,
+            CancellationToken.None);
+
+        generalTerminal.EnqueueCommand(terminalCommand);
+	}
 }

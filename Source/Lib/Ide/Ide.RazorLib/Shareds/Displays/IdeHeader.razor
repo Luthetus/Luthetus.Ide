@@ -43,7 +43,7 @@
          </button>
 
 		<button @ref="_buttonRunElementReference"
-                @onclick="async () => { InitializeMenuRun(); await RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun); }"
+                @onclick="async () => { await RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun); }"
 			    id="@IdeHeaderState.ButtonRunId"
 				class="luth_button"
                 style="margin-left: 15px;">
