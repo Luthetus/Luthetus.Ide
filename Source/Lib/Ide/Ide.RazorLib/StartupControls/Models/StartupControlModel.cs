@@ -13,6 +13,7 @@ public class StartupControlModel : IStartupControlModel
 		TerminalCommand? executingTerminalCommand,
 		Type? componentType,
 		Dictionary<string, object?>? componentParameterMap,
+		Func<Task<TerminalCommand?>> getTerminalCommandFunc,
 		Func<IStartupControlModel, Task> startButtonOnClickTask)
 	{
 		Key = key;
@@ -22,6 +23,7 @@ public class StartupControlModel : IStartupControlModel
 		ExecutingTerminalCommand = executingTerminalCommand;
 		ComponentType = componentType;
 		ComponentParameterMap = componentParameterMap;
+		GetTerminalCommandFunc = getTerminalCommandFunc;
 		StartButtonOnClickTask = startButtonOnClickTask;
 	}
 	
@@ -34,6 +36,7 @@ public class StartupControlModel : IStartupControlModel
 	public TerminalCommand? ExecutingTerminalCommand { get; }
 	public Type? ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; }
+	public Func<Task<TerminalCommand?>> GetTerminalCommandFunc { get; }
 	public Func<IStartupControlModel, Task> StartButtonOnClickTask { get; }
 	public bool IsExecuting { get; }
 }

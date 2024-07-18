@@ -15,6 +15,7 @@ using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.Displays;
 
@@ -35,9 +36,6 @@ public partial class StartupControlDisplay : FluxorComponent
 
     private const string _startButtonElementId = "luth_ide_startup-controls-display_id";
 
-    private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
-    private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
-    
     private TerminalCommand? _executingTerminalCommand;
     
     private ElementReference? _startButtonElementReference;
@@ -48,47 +46,22 @@ public partial class StartupControlDisplay : FluxorComponent
     private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
     	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
 
-    private TerminalCommand? GetStartProgramTerminalCommand()
-    {
-    	/*
-    	//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-    	// =======================================================================
-        var programExecutionState = ProgramExecutionStateWrap.Value;
-
-        if (programExecutionState.StartupProjectAbsolutePath is null)
-            return null;
-
-        var ancestorDirectory = programExecutionState.StartupProjectAbsolutePath.ParentDirectory;
-
-        if (ancestorDirectory is null)
-            return null;
-
-        var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
-            programExecutionState.StartupProjectAbsolutePath);
-
-        return new TerminalCommand(
-            _newDotNetSolutionTerminalCommandKey,
-            formattedCommand,
-            ancestorDirectory.Value,
-            _newDotNetSolutionCancellationTokenSource.Token,
-            OutputParser: DotNetCliOutputParser)
-        {
-        	OutputBuilder = null
-        };
-        */
-        
-        throw new NotImplementedException("(2024-07-15)");
-    }
-
     private async Task StartProgramWithoutDebuggingOnClick(bool isExecuting)
     {
+    	var localStartupControlState = StartupControlStateWrap.Value;
+    	
+    	if (localStartupControlState.ActiveStartupControl is null)
+	    	return;
+    
     	if (isExecuting)
     	{
     		await RenderDropdownOnClick();
 		}
         else
         {
-	        var startProgramTerminalCommand = GetStartProgramTerminalCommand();
+	        var startProgramTerminalCommand = await ((StartupControlModel)localStartupControlState.ActiveStartupControl)
+	        	.GetTerminalCommandFunc.Invoke();
+	        	
 	        if (startProgramTerminalCommand is null)
 	            return;
 	

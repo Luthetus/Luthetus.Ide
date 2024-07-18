@@ -29,8 +29,10 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
+using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
@@ -52,7 +54,12 @@ public class DotNetSolutionIdeApi
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IState<TerminalState> _terminalStateWrap;
+	private readonly IState<ProgramExecutionState> _programExecutionStateWrap;
+	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IServiceProvider _serviceProvider;
+	
+	private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
+    private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
 	public DotNetSolutionIdeApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
@@ -70,6 +77,8 @@ public class DotNetSolutionIdeApi
 		ITextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IState<TerminalState> terminalStateWrap,
+		IState<ProgramExecutionState> programExecutionStateWrap,
+		DotNetCliOutputParser dotNetCliOutputParser,
 		IServiceProvider serviceProvider)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -88,6 +97,8 @@ public class DotNetSolutionIdeApi
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
+		_programExecutionStateWrap = programExecutionStateWrap;
+		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_serviceProvider = serviceProvider;
 	}
 
@@ -645,6 +656,33 @@ public class DotNetSolutionIdeApi
 				null,
 				null,
 				null,
+				() => Task.FromResult(StartupControl_GetStartProgramTerminalCommand()),
 				_ => Task.CompletedTask)));
 	}
+	
+	private TerminalCommand? StartupControl_GetStartProgramTerminalCommand()
+    {
+        var localProgramExecutionState = _programExecutionStateWrap.Value;
+
+        if (localProgramExecutionState.StartupProjectAbsolutePath is null)
+            return null;
+
+        var ancestorDirectory = localProgramExecutionState.StartupProjectAbsolutePath.ParentDirectory;
+
+        if (ancestorDirectory is null)
+            return null;
+
+        var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
+            localProgramExecutionState.StartupProjectAbsolutePath);
+
+        return new TerminalCommand(
+            _newDotNetSolutionTerminalCommandKey,
+            formattedCommand,
+            ancestorDirectory.Value,
+            _newDotNetSolutionCancellationTokenSource.Token,
+            OutputParser: _dotNetCliOutputParser)
+        {
+        	OutputBuilder = null
+        };
+    }
 }
