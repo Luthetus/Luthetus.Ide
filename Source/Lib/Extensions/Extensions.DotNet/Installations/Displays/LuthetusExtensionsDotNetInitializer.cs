@@ -8,11 +8,16 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Ide.RazorLib.Shareds.States;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
+using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
 using Luthetus.Extensions.DotNet.CompilerServices.Displays;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays;
 using Luthetus.Extensions.DotNet.Outputs.Displays;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.DotNet.Installations.Displays;
 
@@ -20,6 +25,10 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 {
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+	[Inject]
+	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
     [Inject]
@@ -39,19 +48,29 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			{
 				InitializePanelTabs();
 			});
+			
+		base.OnInitialized();
 	}
-
-	protected override async Task OnAfterRenderAsync(bool firstRender)
+	
+	protected override void OnAfterRender(bool firstRender)
 	{
-		// TODO: This needs to be moved to 'OnInitializedAsync' otherwise...
-		//       ...if one refreshes the application then this code, as it is now,
-		//       will not run a second time.
 		if (firstRender)
 		{
-			
+			var menuOptionOpenDotNetSolution = new MenuOptionRecord(
+                ".NET Solution",
+                MenuOptionKind.Other,
+                () =>
+				{
+					DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi, DotNetBackgroundTaskApi);
+					return Task.CompletedTask;
+				});
+				
+			Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuFileAction(
+				inMenu => inMenu with
+				{
+					MenuOptionList = inMenu.MenuOptionList.Add(menuOptionOpenDotNetSolution)
+				}));
 		}
-
-		await base.OnAfterRenderAsync(firstRender);
 	}
 
 	private void InitializePanelTabs()

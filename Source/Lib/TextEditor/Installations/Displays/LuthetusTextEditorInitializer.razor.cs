@@ -69,5 +69,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 
                 await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
             });
+            
+        base.OnInitialized();
     }
 }

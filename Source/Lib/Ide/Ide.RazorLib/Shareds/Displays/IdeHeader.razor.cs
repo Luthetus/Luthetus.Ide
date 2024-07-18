@@ -79,6 +79,18 @@ public partial class IdeHeader : ComponentBase
     private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
     	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
 
+	protected override void OnInitialized()
+	{
+		InitializeMenuFile();
+		InitializeMenuTools();
+		InitializeMenuView();
+		InitializeMenuRun();
+		
+		AddAltKeymap();
+
+        base.OnInitialized();
+	}
+
     protected override Task OnInitializedAsync()
     {
         InitializeMenuFile();
@@ -138,19 +150,6 @@ public partial class IdeHeader : ComponentBase
 					IdeBackgroundTaskApi.Editor.ShowInputFile();
 					return Task.CompletedTask;
 				});
-
-			/*
-			//// Am moving .NET code out so the IDE is language agnostic. (2024-07-15)
-    		// =======================================================================
-            var menuOptionOpenDotNetSolution = new MenuOptionRecord(
-                ".NET Solution",
-                MenuOptionKind.Other,
-                () =>
-				{
-					DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi);
-					return Task.CompletedTask;
-				});
-			*/
 
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
@@ -566,5 +565,10 @@ public partial class IdeHeader : ComponentBase
 		        		InitializeMenuRun();
 		        		return RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun);
 		        	}));
+	}
+	
+	private Task RenderFileDropdownOnClick()
+	{
+		return RenderDropdownOnClick(IdeHeaderState.ButtonFileId, _buttonFileElementReference, IdeHeaderState.DropdownKeyFile, IdeHeaderStateWrap.Value.MenuFile);
 	}
 }

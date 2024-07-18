@@ -100,6 +100,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 InitializePanelTabs();
                 CommandFactory.Initialize();
             });
+            
+        base.OnInitialized();
 	}
 
     private void InitializePanelTabs()

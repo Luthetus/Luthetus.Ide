@@ -19,7 +19,7 @@
         <SettingsDialogEntryPoint/>
 
         <button @ref="_buttonFileElementReference"
-                @onclick="async () => await RenderDropdownOnClick(IdeHeaderState.ButtonFileId, _buttonFileElementReference, IdeHeaderState.DropdownKeyFile, IdeHeaderStateWrap.Value.MenuFile)"
+                @onclick="RenderFileDropdownOnClick"
 			    id="@IdeHeaderState.ButtonFileId"
                 class="luth_button"
                 style="margin-left: 15px;">

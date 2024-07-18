@@ -36,5 +36,7 @@ public partial class LuthetusCommonInitializer : ComponentBase
                     .SetFromLocalStorageAsync()
                     .ConfigureAwait(false);
             });
+	
+		base.OnInitialized();
 	}
 }

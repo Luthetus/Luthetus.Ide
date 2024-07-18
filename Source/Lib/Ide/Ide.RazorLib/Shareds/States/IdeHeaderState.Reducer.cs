@@ -49,5 +49,54 @@ public partial record IdeHeaderState
 				MenuRun = setMenuRunAction.Menu
 			};
 		}
+		
+		[ReducerMethod]
+		public static IdeHeaderState ReduceModifyMenuFileAction(
+			IdeHeaderState inState,
+			ModifyMenuFileAction modifyMenuFileAction)
+		{
+			Console.WriteLine("ReduceModifyMenuFileAction");
+			return inState with
+			{
+				MenuFile = modifyMenuFileAction.MenuFunc.Invoke(
+					inState.MenuFile)
+			};
+		}
+		
+		[ReducerMethod]
+		public static IdeHeaderState ReduceModifyMenuToolsAction(
+			IdeHeaderState inState,
+			ModifyMenuToolsAction modifyMenuToolsAction)
+		{
+			return inState with
+			{
+				MenuTools = modifyMenuToolsAction.MenuFunc.Invoke(
+					inState.MenuTools)
+			};
+		}
+
+		[ReducerMethod]
+		public static IdeHeaderState ReduceModifyMenuViewAction(
+			IdeHeaderState inState,
+			ModifyMenuViewAction modifyMenuViewAction)
+		{
+			return inState with
+			{
+				MenuView = modifyMenuViewAction.MenuFunc.Invoke(
+					inState.MenuView)
+			};
+		}
+		
+		[ReducerMethod]
+		public static IdeHeaderState ReduceModifyMenuRunAction(
+			IdeHeaderState inState,
+			ModifyMenuRunAction modifyMenuRunAction)
+		{
+			return inState with
+			{
+				MenuRun = modifyMenuRunAction.MenuFunc.Invoke(
+					inState.MenuRun)
+			};
+		}
 	}
 }
