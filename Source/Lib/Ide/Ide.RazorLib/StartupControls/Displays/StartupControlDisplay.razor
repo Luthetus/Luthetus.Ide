@@ -1,6 +1,7 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @{ 
+	var localStartupControlState = StartupControlStateWrap.Value;
 	var localExecutingTerminalCommand = _executingTerminalCommand;
 	bool isExecuting;
 	
@@ -16,9 +17,22 @@
 
 <div class="luth_ide_startup-controls-display">
    <div class="luth_ide_startup-controls-display-entry">
-       StartupProject:
-       &nbsp;
-       @(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath?.NameNoExtension ?? "null")
+       <select title="Startup: @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
+       	<option title="Choose startup project"
+   			    value="@Guid.Empty"
+   			    selected="@(localStartupControlState.ActiveStartupControl?.Key == null)">
+   	    	Choose startup project
+   	    </option>
+       
+       	@foreach (var startupControl in localStartupControlState.StartupControlList)
+       	{
+       		<option title="@startupControl.TitleVerbose"
+       			    value="@startupControl.Key.Guid"
+       			    selected="@(localStartupControlState.ActiveStartupControl?.Key == startupControl.Key)">
+       	    	@startupControl.Title
+       	    </option>
+       	}
+       </select>
        &nbsp;
    </div>
    <div class="luth_ide_startup-controls-display-entry">

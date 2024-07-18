@@ -14,10 +14,11 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.StartupControls.States;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.Displays;
 
-public partial class StartupControlsDisplay : FluxorComponent
+public partial class StartupControlDisplay : FluxorComponent
 {
     [Inject]
     private IState<ProgramExecutionState> ProgramExecutionStateWrap { get; set; } = null!;
@@ -25,6 +26,8 @@ public partial class StartupControlsDisplay : FluxorComponent
     private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
