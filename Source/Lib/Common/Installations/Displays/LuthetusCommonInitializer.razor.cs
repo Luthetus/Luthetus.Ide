@@ -22,24 +22,19 @@ public partial class LuthetusCommonInitializer : ComponentBase
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            BackgroundTaskService.Enqueue(
-                Key<IBackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(LuthetusCommonInitializer),
-                async () =>
-                {
-                    AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
+	protected override void OnInitialized()
+	{
+		BackgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            nameof(LuthetusCommonInitializer),
+            async () =>
+            {
+                AppOptionsService.SetActiveThemeRecordKey(CommonConfig.InitialThemeKey, false);
 
-                    await AppOptionsService
-                        .SetFromLocalStorageAsync()
-                        .ConfigureAwait(false);
-                });
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
+                await AppOptionsService
+                    .SetFromLocalStorageAsync()
+                    .ConfigureAwait(false);
+            });
+	}
 }

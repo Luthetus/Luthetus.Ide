@@ -54,61 +54,53 @@ public partial class LuthetusIdeInitializer : ComponentBase
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-    	// TODO: This needs to be moved to 'OnInitializedAsync' otherwise...
-    	//       ...if one refreshes the application then this code, as it is now,
-    	//       will not run a second time.
-        if (firstRender)
-        {
-            BackgroundTaskService.Enqueue(
-                Key<IBackgroundTask>.NewKey(),
-                ContinuousBackgroundTaskWorker.GetQueueKey(),
-                nameof(LuthetusIdeInitializer),
-                async () =>
+	protected override void OnInitialized()
+	{
+		BackgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            nameof(LuthetusIdeInitializer),
+            async () =>
+            {
+                if (TextEditorConfig.CustomThemeRecordList is not null)
                 {
-                    if (TextEditorConfig.CustomThemeRecordList is not null)
+                    foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
                     {
-                        foreach (var themeRecord in TextEditorConfig.CustomThemeRecordList)
-                        {
-                            Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
-                        }
+                        Dispatcher.Dispatch(new ThemeState.RegisterAction(themeRecord));
                     }
+                }
 
-                    foreach (var searchEngine in TextEditorConfig.SearchEngineList)
-                    {
-                        Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
-                    }
+                foreach (var searchEngine in TextEditorConfig.SearchEngineList)
+                {
+                    Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
+                }
 
-                    foreach (var terminalKey in TerminalFacts.WELL_KNOWN_TERMINAL_KEYS)
-                    {
-                        var displayName = $"BAD_WellKnownTerminalKey:{terminalKey.Guid}";
+                foreach (var terminalKey in TerminalFacts.WELL_KNOWN_TERMINAL_KEYS)
+                {
+                    var displayName = $"BAD_WellKnownTerminalKey:{terminalKey.Guid}";
 
-                        if (terminalKey == TerminalFacts.EXECUTION_TERMINAL_KEY)
-                            displayName = "Execution";
-                        else if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
-                            displayName = "General";
+                    if (terminalKey == TerminalFacts.EXECUTION_TERMINAL_KEY)
+                        displayName = "Execution";
+                    else if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
+                        displayName = "General";
 
-                        var terminal = await Terminal.Factory(
-                            displayName,
-                            null,
-                            Dispatcher,
-                            BackgroundTaskService,
-                            TextEditorService,
-                            CommonComponentRenderers,
-                            CompilerServiceRegistry,
-							terminalKey);
+                    var terminal = await Terminal.Factory(
+                        displayName,
+                        null,
+                        Dispatcher,
+                        BackgroundTaskService,
+                        TextEditorService,
+                        CommonComponentRenderers,
+                        CompilerServiceRegistry,
+						terminalKey);
 
-                        Dispatcher.Dispatch(new TerminalState.RegisterAction(terminal));
-                    }
+                    Dispatcher.Dispatch(new TerminalState.RegisterAction(terminal));
+                }
 
-                    InitializePanelTabs();
-                    CommandFactory.Initialize();
-                });
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
+                InitializePanelTabs();
+                CommandFactory.Initialize();
+            });
+	}
 
     private void InitializePanelTabs()
     {

@@ -28,6 +28,18 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private IState<PanelState> PanelStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
+	
+	protected override void OnInitialized()
+	{
+		BackgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			nameof(LuthetusExtensionsDotNetInitializer),
+			async () =>
+			{
+				InitializePanelTabs();
+			});
+	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -36,14 +48,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 		//       will not run a second time.
 		if (firstRender)
 		{
-			BackgroundTaskService.Enqueue(
-				Key<IBackgroundTask>.NewKey(),
-				ContinuousBackgroundTaskWorker.GetQueueKey(),
-				nameof(LuthetusExtensionsDotNetInitializer),
-				async () =>
-				{
-					InitializePanelTabs();
-				});
+			
 		}
 
 		await base.OnAfterRenderAsync(firstRender);
