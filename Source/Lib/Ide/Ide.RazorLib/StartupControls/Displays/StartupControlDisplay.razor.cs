@@ -41,6 +41,23 @@ public partial class StartupControlDisplay : FluxorComponent
     private ElementReference? _startButtonElementReference;
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
     
+    public string? SelectedStartupControlGuidString
+    {
+    	get => StartupControlStateWrap.Value.ActiveStartupControlKey.Guid.ToString();
+    	set
+    	{
+    		Key<IStartupControlModel> startupControlKey = Key<IStartupControlModel>.Empty;
+    		
+    		if (value is not null &&
+    			Guid.TryParse(value, out var guid))
+    		{
+    			startupControlKey = new Key<IStartupControlModel>(guid);
+    		}
+    		
+    		Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControlKey));
+    	}
+    }
+    
     private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
     
     private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>

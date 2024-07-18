@@ -7,5 +7,5 @@ public partial record StartupControlState
 {
 	public record RegisterStartupControlAction(IStartupControlModel StartupControl);
 	public record DisposeStartupControlAction(Key<IStartupControlModel> StartupControlKey);
-	public record SetActiveStartupControlAction(Key<IStartupControlModel>? StartupControlKey);
+	public record SetActiveStartupControlKeyAction(Key<IStartupControlModel> StartupControlKey);
 }

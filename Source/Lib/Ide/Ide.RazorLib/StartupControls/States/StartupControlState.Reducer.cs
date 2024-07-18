@@ -1,4 +1,6 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.States;
 
@@ -35,39 +37,37 @@ public partial record StartupControlState
 			if (indexOfStartupControl == -1)
 				return inState;
 			
-			var outActiveStartupControl = inState.ActiveStartupControl;
-			if (inState.ActiveStartupControl.Key == disposeStartupControlAction.StartupControlKey)
-				outActiveStartupControl = null;
+			var outActiveStartupControlKey = inState.ActiveStartupControlKey;
+			if (inState.ActiveStartupControlKey == disposeStartupControlAction.StartupControlKey)
+				outActiveStartupControlKey = Key<IStartupControlModel>.Empty;
 						
 			return inState with
 			{
 				StartupControlList = inState.StartupControlList.RemoveAt(indexOfStartupControl),
-				ActiveStartupControl = outActiveStartupControl
+				ActiveStartupControlKey = outActiveStartupControlKey
 			};
 		}
 		
 		[ReducerMethod]
-		public static StartupControlState ReduceSetActiveStartupControlAction(
+		public static StartupControlState ReduceSetActiveStartupControlKeyAction(
 			StartupControlState inState,
-			SetActiveStartupControlAction setActiveStartupControlAction)
+			SetActiveStartupControlKeyAction setActiveStartupControlKeyAction)
 		{
-			if (setActiveStartupControlAction.StartupControlKey is null)
+			var startupControl = inState.StartupControlList.FirstOrDefault(
+				x => x.Key == setActiveStartupControlKeyAction.StartupControlKey);
+		
+			if (setActiveStartupControlKeyAction.StartupControlKey == Key<IStartupControlModel>.Empty ||
+			    startupControl is null)
 			{
 				return inState with
 				{
-					ActiveStartupControl = null
+					ActiveStartupControlKey = Key<IStartupControlModel>.Empty
 				};
 			}
 		
-			var startupControl = inState.StartupControlList.FirstOrDefault(
-				x => x.Key == setActiveStartupControlAction.StartupControlKey);
-				
-			if (startupControl is null)
-				return inState;
-		
 			return inState with
 			{
-				ActiveStartupControl = startupControl
+				ActiveStartupControlKey = startupControl.Key
 			};
 		}
 	}

@@ -17,18 +17,17 @@
 
 <div class="luth_ide_startup-controls-display">
    <div class="luth_ide_startup-controls-display-entry">
-       <select title="Startup: @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
+       <select @bind="SelectedStartupControlGuidString"
+               title="Startup: @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
        	<option title="Choose startup project"
-   			    value="@Guid.Empty"
-   			    selected="@(localStartupControlState.ActiveStartupControl?.Key == null)">
+   			    value="@Guid.Empty.ToString()">
    	    	Choose startup project
    	    </option>
        
        	@foreach (var startupControl in localStartupControlState.StartupControlList)
        	{
        		<option title="@startupControl.TitleVerbose"
-       			    value="@startupControl.Key.Guid"
-       			    selected="@(localStartupControlState.ActiveStartupControl?.Key == startupControl.Key)">
+       			    value="@startupControl.Key.Guid.ToString()">
        	    	@startupControl.Title
        	    </option>
        	}
