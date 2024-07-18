@@ -1,0 +1,53 @@
+@using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+@using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
+@using Luthetus.CompilerServices.Css;
+@using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
+@using Luthetus.CompilerServices.FSharp;
+@using Luthetus.CompilerServices.JavaScript;
+@using Luthetus.CompilerServices.Json;
+@using Luthetus.CompilerServices.Razor.CompilerServiceCase;
+@using Luthetus.CompilerServices.TypeScript;
+@using Luthetus.CompilerServices.Xml;
+
+@if (TreeViewCompilerService.Item is XmlCompilerService xmlCompilerService)
+{
+    @: TODO: XmlCompilerService
+}
+else if (TreeViewCompilerService.Item is DotNetSolutionCompilerService dotNetSolutionCompilerService)
+{
+    @: TODO: DotNetSolutionCompilerService
+}
+else if (TreeViewCompilerService.Item is CSharpProjectCompilerService cSharpProjectCompilerService)
+{
+    @: TODO: CSharpProjectCompilerService
+}
+else if (TreeViewCompilerService.Item is CSharpCompilerService cSharpCompilerService)
+{
+    <div>
+        @cSharpCompilerService.CSharpBinder.NamespaceGroupNodes
+    </div>
+}
+else if (TreeViewCompilerService.Item is RazorCompilerService razorCompilerService)
+{
+    @: TODO: RazorCompilerService
+}
+else if (TreeViewCompilerService.Item is CssCompilerService cssCompilerService)
+{
+    @: TODO: CssCompilerService
+}
+else if (TreeViewCompilerService.Item is FSharpCompilerService fSharpCompilerService)
+{
+    @: TODO: FSharpCompilerService
+}
+else if (TreeViewCompilerService.Item is JavaScriptCompilerService javaScriptCompilerService)
+{
+    @: TODO: JavaScriptCompilerService
+}
+else if (TreeViewCompilerService.Item is TypeScriptCompilerService typeScriptCompilerService)
+{
+    @: TODO: TypeScriptCompilerService
+}
+else if (TreeViewCompilerService.Item is JsonCompilerService jsonCompilerService)
+{
+    @: TODO: JsonCompilerService
+}

@@ -1,6 +1,8 @@
 <div class="luth_out-of-bounds-click-display"
      style="z-index: @ZIndex;"
-     @onmousedown="OnClickCallback"
-	 @oncontextmenu:preventDefault="true">
+     @onmousedown="OnMouseDownCallback"
+	 @oncontextmenu:preventDefault="true"
+     @onfocusin:stopPropagation="true"
+     @onfocusout:stopPropagation="true">
 
 </div>

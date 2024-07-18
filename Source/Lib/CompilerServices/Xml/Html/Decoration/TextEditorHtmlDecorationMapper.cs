@@ -1,6 +1,6 @@
-﻿using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html.Decoration;
+namespace Luthetus.CompilerServices.Xml.Html.Decoration;
 
 public class TextEditorHtmlDecorationMapper : IDecorationMapper
 {

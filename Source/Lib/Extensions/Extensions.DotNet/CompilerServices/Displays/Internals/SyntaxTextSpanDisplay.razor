@@ -1,0 +1,16 @@
+@using Luthetus.TextEditor.RazorLib.Lexers.Models;
+
+<div class="luth_ide_syntax-text-span">
+    <div>
+        Spans from
+        <span title="@nameof(TextSpan.StartingIndexInclusive)">@TextSpan.StartingIndexInclusive</span>
+        to
+        <span title="@nameof(TextSpan.EndingIndexExclusive)">@TextSpan.EndingIndexExclusive</span>
+    </div>
+
+    <input class="luth_ide_input luth_ide_input-text"
+           @bind="InputValue"
+           @bind:event="oninput"
+           @onfocusout="CompleteForm"
+           @onkeypress="HandleOnKeyDown" />
+</div>

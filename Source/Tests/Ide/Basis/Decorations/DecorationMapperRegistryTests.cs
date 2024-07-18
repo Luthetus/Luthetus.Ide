@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.Decorations;
-
-namespace Luthetus.Ide.Tests.Basis.Decorations;
+﻿namespace Luthetus.Ide.Tests.Basis.Decorations;
 
 /// <summary>
 /// <see cref="DecorationMapperRegistry"/>

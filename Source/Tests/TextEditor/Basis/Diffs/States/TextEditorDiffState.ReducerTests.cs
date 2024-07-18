@@ -1,10 +1,10 @@
-﻿using Luthetus.TextEditor.RazorLib.Diffs.States;
-using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.TextEditor.RazorLib.Diffs.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Diffs.States;
+using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Basis.Diffs.States;
 

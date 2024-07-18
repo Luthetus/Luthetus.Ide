@@ -1,6 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
-
-namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
+﻿namespace Luthetus.TextEditor.Tests.Basis.CompilerServices;
 
 /// <summary>
 /// <see cref="LuthDiagnosticBag"/>

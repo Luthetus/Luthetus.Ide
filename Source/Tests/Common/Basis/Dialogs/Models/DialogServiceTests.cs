@@ -1,7 +1,7 @@
-﻿using Luthetus.Common.RazorLib.Dialogs.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Fluxor;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 
@@ -110,6 +110,7 @@ public class DialogServiceTests
                 }
             },
             null,
-            true);
+            true,
+            "luth_element-id");
     }
 }

@@ -3,11 +3,11 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase.Internals;
+namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 internal static class TokenWalkerExtensionMethods
 {
-    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, ParserModel model)
+    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpParserModel model)
     {
         return ParseTypes.MatchTypeClause(model);
     }
@@ -15,7 +15,7 @@ internal static class TokenWalkerExtensionMethods
 	public static void DeferParsingOfChildScope(
 		this TokenWalker tokenWalker,
 		OpenBraceToken consumedOpenBraceToken,
-		ParserModel model)
+		CSharpParserModel model)
     {
 		var currentCodeBlockBuilderChildListCount = model.CurrentCodeBlockBuilder.ChildList.Count;
 		_ = model.SyntaxStack.TryPeek(out var syntax);

@@ -1,21 +1,10 @@
-using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.Common.RazorLib.Keymaps.Models;
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Luthetus.Common.RazorLib.RenderStates.Models;
-using Luthetus.TextEditor.RazorLib.Characters.Models;
-using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
-using Luthetus.TextEditor.RazorLib.Edits.Models;
-using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
-using System.Text;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -51,7 +40,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         _decorationMapper = decorationMapper;
     }
 
-    public void SetCompilerService(ILuthCompilerService compilerService)
+    public void SetCompilerService(ICompilerService compilerService)
     {
         _compilerService = compilerService;
     }

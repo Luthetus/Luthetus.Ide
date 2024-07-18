@@ -1,11 +1,11 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
-public class CSharpProject : IDotNetProject
+public class CSharpProjectModel : IDotNetProject
 {
-    public CSharpProject(
+    public CSharpProjectModel(
         string displayName,
         Guid projectTypeGuid,
         string relativePathFromSolutionFileString,

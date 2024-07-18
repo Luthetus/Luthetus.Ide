@@ -30,8 +30,12 @@ public partial class DialogDisplay : ComponentBase, IDisposable
 
     [Parameter]
     public IDialog Dialog { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Func<IDialog, Task> OnFocusInFunc { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public Func<IDialog, Task> OnFocusOutFunc { get; set; } = null!;
 
-    private const int COUNT_OF_CONTROL_BUTTONS = 2;
+	private const int COUNT_OF_CONTROL_BUTTONS = 2;
 
     private ResizableDisplay? _resizableDisplay;
 
@@ -116,9 +120,15 @@ public partial class DialogDisplay : ComponentBase, IDisposable
             : string.Empty;
     }
 
-    private void HandleOnFocusIn()
+    private Task HandleOnFocusIn()
     {
         Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(Dialog.DynamicViewModelKey));
+        return OnFocusInFunc.Invoke(Dialog);
+    }
+    
+	private Task HandleOnFocusOut()
+    {
+    	return OnFocusOutFunc.Invoke(Dialog);
     }
 
     private void HandleOnMouseDown()

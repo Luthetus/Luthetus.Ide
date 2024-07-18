@@ -8,7 +8,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
@@ -26,11 +26,11 @@ public partial class GitDiffDisplay : ComponentBase
     [Inject]
     private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -192,7 +192,7 @@ public partial class GitDiffDisplay : ComponentBase
 
     private Task CreateDiffModel(Key<TextEditorViewModel> inViewModelKey, Key<TextEditorViewModel> outViewModelKey)
     {
-        TextEditorService.PostSimpleBatch(
+        TextEditorService.PostDistinct(
             nameof(GitDiffDisplay),
             editContext =>
             {

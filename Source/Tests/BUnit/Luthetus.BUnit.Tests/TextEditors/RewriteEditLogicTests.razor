@@ -12,7 +12,7 @@
 @using Luthetus.TextEditor.RazorLib.Installations.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
-@using Luthetus.TextEditor.RazorLib.Lexes.Models
+@using Luthetus.TextEditor.RazorLib.Lexers.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 @using Luthetus.Ide.RazorLib.Installations.Models
 
@@ -26,7 +26,7 @@
 		Assert.Equal(string.Empty, testData.InModel.AllText);
 		Assert.Equal(1, testData.InModel.EditBlockList.Count);
 
-		testData.TextEditorService.PostSimpleBatch(
+		testData.TextEditorService.PostDistinct(
 			nameof(RewriteEditLogicTests),
 			editContext =>
 			{

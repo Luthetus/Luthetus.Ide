@@ -3,11 +3,10 @@ using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Events.Models;
 
@@ -23,7 +22,7 @@ public partial class Terminal
 	public ResourceUri ResourceUri { get; init; }
 	public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
 
-    private async Task CreateTextEditor()
+    private void CreateTextEditor()
     {
         var line1 = "Integrated-Terminal";
         var line2 = "Try: cmd /c \"dir\"";
@@ -43,7 +42,7 @@ public partial class Terminal
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
-        _textEditorService.PostSimpleBatch(
+        _textEditorService.PostDistinct(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
             async editContext =>
             {
@@ -80,7 +79,7 @@ public partial class Terminal
             FindOverlayPresentationFacts.PresentationKey,
         }.ToImmutableArray();
 
-        _textEditorService.PostSimpleBatch(
+        _textEditorService.PostDistinct(
             nameof(Terminal),
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
@@ -89,7 +88,7 @@ public partial class Terminal
                         FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
                     }));
 
-        _textEditorService.PostSimpleBatch(
+        _textEditorService.PostDistinct(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             async editContext =>
             {
@@ -132,9 +131,9 @@ public partial class Terminal
             });
     }
 
-    public async Task WriteWorkingDirectory(bool prependNewLine = false)
+    public void WriteWorkingDirectory(bool prependNewLine = false)
     {
-        _textEditorService.PostSimpleBatch(
+        _textEditorService.PostDistinct(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             async editContext =>
             {
@@ -179,9 +178,9 @@ public partial class Terminal
             });
     }
     
-    public async Task MoveCursorToEnd()
+    public void MoveCursorToEnd()
     {
-        _textEditorService.PostSimpleBatch(
+        _textEditorService.PostDistinct(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             async editContext =>
             {
@@ -207,9 +206,9 @@ public partial class Terminal
             });
     }
 
-    public async Task ClearTerminal()
+    public void ClearTerminal()
     {
-        _textEditorService.PostSimpleBatch(
+        _textEditorService.PostDistinct(
             nameof(ClearTerminal),
             async editContext =>
             {
@@ -220,32 +219,58 @@ public partial class Terminal
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return;
+                    
+                var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
+                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is TerminalResource firstTerminalResource)
+                {
+	                firstTerminalResource.ManualDecorationTextSpanList.Clear();
+	                firstTerminalResource.SyntaxTokenList.Clear();
+                }
 
-                await TextEditorCommandDefaultFunctions.SelectAllFactory(
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        null)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+				modelModifier.SetContent(string.Empty);
+				await _textEditorService.ViewModelApi.MoveCursorFactory(
+	                    new KeyboardEventArgs
+	                    {
+	                        Code = KeyboardKeyFacts.MovementKeys.END,
+	                        Key = KeyboardKeyFacts.MovementKeys.END,
+	                        CtrlKey = true,
+	                    },
+	                    ResourceUri,
+	                    TextEditorViewModelKey)
+	                .Invoke(editContext)
+	                .ConfigureAwait(false);
+	                
+	            var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
-                await _textEditorService.ModelApi.DeleteTextByMotionFactory(
-                        modelModifier.ResourceUri,
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        MotionKind.Delete,
+				var content = (WorkingDirectoryAbsolutePathString ?? "null") + '>';
+
+                await _textEditorService.ModelApi.InsertTextFactory(
+                        ResourceUri,
+                        TextEditorViewModelKey,
+                        content,
                         CancellationToken.None)
                     .Invoke(editContext)
                     .ConfigureAwait(false);
 
-                var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
-                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                    return;
-
-                terminalResource.ManualDecorationTextSpanList.Clear();
-                terminalResource.SyntaxTokenList.Clear();
+                if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is TerminalResource secondTerminalResource)
+                {
+	                secondTerminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
+	                    startingPositionIndex,
+	                    modelModifier.GetPositionIndex(primaryCursorModifier),
+	                    (byte)TerminalDecorationKind.Keyword,
+	                    ResourceUri,
+	                    modelModifier.GetAllText()));
+	
+	                await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
+	                        modelModifier.ResourceUri,
+	                        secondTerminalResource.GetTokenTextSpans())
+	                    .Invoke(editContext)
+	                    .ConfigureAwait(false);
+                }
             });
     }
     
-    private Task TerminalOnOutput(
+    private void TerminalOnOutput(
 		int outputOffset,
 		string output,
 		List<TextEditorTextSpan> outputTextSpanList,
@@ -261,6 +286,5 @@ public partial class Terminal
 			terminalCommand,
 			terminalCommandBoundary,
 		    TextEditorViewModelKey));
-		return Task.CompletedTask;
 	}
 }

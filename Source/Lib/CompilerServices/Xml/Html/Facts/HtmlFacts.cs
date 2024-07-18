@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html.Facts;
+namespace Luthetus.CompilerServices.Xml.Html.Facts;
 
 public static class HtmlFacts
 {

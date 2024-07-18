@@ -1,11 +1,11 @@
+using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Facts;
+namespace Luthetus.CompilerServices.CSharp.Facts;
 
 public partial class CSharpFacts
 {
@@ -15,7 +15,7 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new IdentifierToken(new TextEditorTextSpan(0, "void".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "void")),
+            new IdentifierToken(new TextEditorTextSpan(0, "void".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "void")),
             typeof(void),
             null,
             null,
@@ -26,7 +26,7 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new IdentifierToken(new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "int")),
+            new IdentifierToken(new TextEditorTextSpan(0, "int".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "int")),
             typeof(int),
             null,
             null,
@@ -37,7 +37,7 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new IdentifierToken(new TextEditorTextSpan(0, "char".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "char")),
+            new IdentifierToken(new TextEditorTextSpan(0, "char".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "char")),
             typeof(char),
             null,
             null,
@@ -48,7 +48,7 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new IdentifierToken(new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "string")),
+            new IdentifierToken(new TextEditorTextSpan(0, "string".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "string")),
             typeof(string),
             null,
             null,
@@ -59,7 +59,7 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new IdentifierToken(new TextEditorTextSpan(0, "bool".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "bool")),
+            new IdentifierToken(new TextEditorTextSpan(0, "bool".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "bool")),
             typeof(bool),
             null,
             null,
@@ -70,7 +70,7 @@ public partial class CSharpFacts
             AccessModifierKind.Public,
             false,
             StorageModifierKind.Class,
-            new IdentifierToken(new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, new ResourceUri(string.Empty), "var")),
+            new IdentifierToken(new TextEditorTextSpan(0, "var".Length, (byte)GenericDecorationKind.None, ResourceUri.Empty, "var")),
             typeof(void),
             null,
             null,

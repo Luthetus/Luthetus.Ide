@@ -1,7 +1,6 @@
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.States;
 
@@ -11,16 +10,13 @@ public partial record CodeSearchState
     {
         private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
         private readonly IState<CodeSearchState> _codeSearchStateWrap;
-        private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
         private readonly IFileSystemProvider _fileSystemProvider;
 
         public Effector(
             IState<CodeSearchState> codeSearchStateWrap,
-            IState<DotNetSolutionState> dotNetSolutionStateWrap,
             IFileSystemProvider fileSystemProvider)
         {
             _codeSearchStateWrap = codeSearchStateWrap;
-            _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
             _fileSystemProvider = fileSystemProvider;
         }
 
@@ -44,23 +40,11 @@ public partial record CodeSearchState
                 dispatcher.Dispatch(new ClearResultListAction());
 
                 var codeSearchState = _codeSearchStateWrap.Value;
-                var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
-                var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
-                if (dotNetSolutionModel is null)
+                var startingAbsolutePathForSearch = codeSearchState.StartingAbsolutePathForSearch;
+
+                if (startingAbsolutePathForSearch is null)
                     return;
-
-                var parentDirectory = dotNetSolutionModel.AbsolutePath.ParentDirectory;
-
-                if (parentDirectory is null)
-                    return;
-
-                var startingAbsolutePathForSearch = parentDirectory.Value;
-
-                dispatcher.Dispatch(new WithAction(inState => inState with
-                {
-                    StartingAbsolutePathForSearch = startingAbsolutePathForSearch
-                }));
 
                 await RecursiveHandleSearchEffect(startingAbsolutePathForSearch).ConfigureAwait(false);
 

@@ -1,7 +1,7 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models.Associated;
+namespace Luthetus.CompilerServices.DotNetSolution.Models.Associated;
 
 public class AssociatedEntryGroupBuilder
 {

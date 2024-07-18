@@ -1,9 +1,9 @@
-﻿using Fluxor;
-using Luthetus.Common.RazorLib.BackgroundTasks.Models;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Fluxor;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.Tests.Basis.BackgroundTasks.Models;
 
@@ -54,7 +54,7 @@ public class BackgroundTaskServiceTests
 
         // 1st backgroundTask
         {
-            var firstBackgroundTaskKey = Key<BackgroundTask>.NewKey();
+            var firstBackgroundTaskKey = Key<IBackgroundTask>.NewKey();
 
             var firstBackgroundTask = new BackgroundTask(
                 firstBackgroundTaskKey,
@@ -72,14 +72,14 @@ public class BackgroundTaskServiceTests
                     number++;
                 });
 
-            await backgroundTaskService.EnqueueAsync(firstBackgroundTask);
+            backgroundTaskService.Enqueue(firstBackgroundTask);
         }
 
         // 2nd backgroundTask
         {
-            var secondBackgroundTaskKey = Key<BackgroundTask>.NewKey();
+            var secondBackgroundTaskKey = Key<IBackgroundTask>.NewKey();
 
-            await backgroundTaskService.EnqueueAsync(
+            backgroundTaskService.Enqueue(
                 secondBackgroundTaskKey,
                 queue.Key,
                 "Zyx",

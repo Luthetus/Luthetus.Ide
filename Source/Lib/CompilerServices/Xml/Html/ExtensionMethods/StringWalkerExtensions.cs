@@ -1,7 +1,7 @@
-﻿using Luthetus.CompilerServices.Lang.Xml.Html.InjectedLanguage;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.CompilerServices.Xml.Html.InjectedLanguage;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html.ExtensionMethods;
+namespace Luthetus.CompilerServices.Xml.Html.ExtensionMethods;
 
 public static class StringWalkerExtensions
 {

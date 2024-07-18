@@ -2,16 +2,15 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.Ide.RazorLib.CodeSearches.Models;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.CodeSearches.States;
-using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
+using Luthetus.Ide.RazorLib.CodeSearches.States;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Displays;
 
@@ -19,8 +18,6 @@ public partial class CodeSearchDisplay : FluxorComponent
 {
 	[Inject]
 	private IState<CodeSearchState> CodeSearchStateWrap { get; set; } = null!;
-	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]

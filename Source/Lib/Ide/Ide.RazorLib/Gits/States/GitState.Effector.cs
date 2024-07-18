@@ -14,18 +14,18 @@ public partial record GitState
 	public class Effector
 	{
         private readonly IState<GitState> _gitStateWrap;
-        private readonly ILuthetusIdeComponentRenderers _ideComponentRenderers;
-        private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+        private readonly IIdeComponentRenderers _ideComponentRenderers;
+        private readonly ICommonComponentRenderers _commonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
-        private readonly LuthetusIdeBackgroundTaskApi _ideBackgroundTaskApi;
+        private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
         private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
 
         public Effector(
             IState<GitState> gitStateWrap,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             ITreeViewService treeViewService,
-            LuthetusIdeBackgroundTaskApi ideBackgroundTaskApi)
+            IdeBackgroundTaskApi ideBackgroundTaskApi)
         {
             _gitStateWrap = gitStateWrap;
             _ideComponentRenderers = ideComponentRenderers;

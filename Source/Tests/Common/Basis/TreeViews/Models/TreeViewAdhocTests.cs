@@ -1,7 +1,6 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
-using Luthetus.Common.RazorLib.TreeViews.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
@@ -217,7 +216,7 @@ public class TreeViewAdhocTests
     [Fact]
     public void ConstructTreeViewAdhocB()
     {
-        var commonTreeViews = new LuthetusCommonTreeViews(
+        var commonTreeViews = new CommonTreeViews(
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewMissingRendererFallbackDisplay),
             typeof(TreeViewTextDisplay),
@@ -228,9 +227,10 @@ public class TreeViewAdhocTests
             typeof(TreeViewExceptionDisplay),
             typeof(TreeViewEnumerableDisplay));
 
-        var commonComponentRenderers = new LuthetusCommonComponentRenderers(
+        var commonComponentRenderers = new CommonComponentRenderers(
             typeof(CommonErrorNotificationDisplay),
             typeof(CommonInformativeNotificationDisplay),
+            typeof(CommonProgressNotificationDisplay),
             commonTreeViews);
 
         var childOneText = "Hello World!";

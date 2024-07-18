@@ -1,12 +1,17 @@
-﻿window.luthetusCommon = {
-    focusHtmlElementById: function (elementId) {
+window.luthetusCommon = {
+    focusHtmlElementById: function (elementId, preventScroll) {
         let element = document.getElementById(elementId);
 
         if (!element) {
             return;
         }
 
-        element.focus();
+		if (preventScroll) {
+			element.focus({preventScroll: true});
+		}
+		else {
+			element.focus();
+		}
     },
     tryFocusHtmlElementById: function (elementId) {
         let element = document.getElementById(elementId);

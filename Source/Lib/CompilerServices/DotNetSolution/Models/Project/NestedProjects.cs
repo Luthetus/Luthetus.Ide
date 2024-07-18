@@ -1,6 +1,6 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
-namespace Luthetus.CompilerServices.Lang.DotNetSolution.Models.Project;
+namespace Luthetus.CompilerServices.DotNetSolution.Models.Project;
 
 public record NestedProjects(
     ImmutableArray<NestedProjectEntry> NestedProjectEntries);

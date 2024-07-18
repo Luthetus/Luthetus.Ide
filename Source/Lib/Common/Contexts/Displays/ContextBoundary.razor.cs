@@ -1,12 +1,13 @@
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Outlines.States;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
@@ -14,6 +15,15 @@ public partial class ContextBoundary : ComponentBase
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    /// <summary>
+    /// Warning: Do not take lightly a future decision to have this type
+    ///          inherit FluxorComponent without noting that this injection will
+    ///          cause re-renders whenever the context state is changed.
+    /// </summary>
+    [Inject]
+    private IState<ContextState> ContextStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<OutlineState> OutlineStateWrap { get; set; } = null!;
 
     [CascadingParameter]
     public ContextBoundary? ParentContextBoundary { get; set; }
@@ -39,12 +49,31 @@ public partial class ContextBoundary : ComponentBase
         else
             Dispatcher.Dispatch(new ContextState.SetFocusedContextHeirarchyAction(new(contextRecordKeyList.ToImmutableArray())));
     }
-
-    public void HandleOnFocusIn()
+    
+    /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
+    public void HandleOnFocus()
     {
-        DispatchSetActiveContextStatesAction(new());
+    	Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
+	    	ContextRecord.ContextElementId,
+	    	null,
+	    	true));
+    }
+    
+    public void HandleOnBlur()
+    {
+    	Dispatcher.Dispatch(new OutlineState.SetOutlineAction(
+	    	null,
+	    	null,
+	    	false));
     }
 
+    /// <summary>NOTE: 'onfocus' event does not bubble, whereas 'onfocusin' does bubble. Usage of both events in this file is intentional.</summary>
+    public void HandleOnFocusIn()
+    {
+    	if (ContextStateWrap.Value.FocusedContextHeirarchy.NearestAncestorKey != ContextRecord.ContextKey)
+    		DispatchSetActiveContextStatesAction(new());
+    }
+    
     public async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == "Shift" ||

@@ -1,13 +1,12 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
-using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.CompilerServices.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.LexerCase;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.Tests.Basis.ParserCase;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase;
 
 /// <summary>
 /// <see cref="ParserModel"/>
@@ -35,9 +34,9 @@ public class ParserModelTests
 
         var binder = new CSharpBinder();
         var binderSession = binder.ConstructBinderSession(resourceUri);
-        var tokenWalker = new TokenWalker(lexer.SyntaxTokenList, new LuthDiagnosticBag());
+        var tokenWalker = new TokenWalker(lexer.SyntaxTokenList, new DiagnosticBag());
         var syntaxStack = new Stack<ISyntax>();
-        var diagnosticBag = new LuthDiagnosticBag();
+        var diagnosticBag = new DiagnosticBag();
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
         var finalizeNamespaceFileScopeCodeBlockNodeAction = new Action<CodeBlockNode>(cbn => { });

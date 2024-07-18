@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Common.RazorLib.Contexts.Models;
 
@@ -119,6 +119,24 @@ public static class ContextFacts
         "Terminal",
         "terminal",
         Keymap.Empty);
+        
+    public static readonly ContextRecord NotificationContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Notification",
+        "notification",
+        Keymap.Empty);
+    
+    public static readonly ContextRecord DialogContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Dialog",
+        "dialog",
+        Keymap.Empty);
+    
+    public static readonly ContextRecord DropdownContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Dropdown",
+        "dropdown",
+        Keymap.Empty);
 
     public static readonly ImmutableArray<ContextRecord> AllContextsList = new[]
     {
@@ -140,5 +158,8 @@ public static class ContextFacts
         NuGetPackageManagerContext,
         GitContext,
         TerminalContext,
+        NotificationContext,
+        DialogContext,
+        DropdownContext,
     }.ToImmutableArray();
 }

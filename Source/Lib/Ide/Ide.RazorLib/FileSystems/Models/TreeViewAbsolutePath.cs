@@ -1,10 +1,9 @@
-﻿using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.WatchWindows.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
-using Luthetus.Ide.RazorLib.Namespaces.Models;
 
 namespace Luthetus.Ide.RazorLib.FileSystems.Models;
 
@@ -12,8 +11,8 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
 {
     public TreeViewAbsolutePath(
             IAbsolutePath absolutePath,
-            ILuthetusIdeComponentRenderers ideComponentRenderers,
-            ILuthetusCommonComponentRenderers commonComponentRenderers,
+            IIdeComponentRenderers ideComponentRenderers,
+            ICommonComponentRenderers commonComponentRenderers,
             IFileSystemProvider fileSystemProvider,
             IEnvironmentProvider environmentProvider,
             bool isExpandable,
@@ -26,17 +25,17 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
         EnvironmentProvider = environmentProvider;
     }
 
-    public ILuthetusIdeComponentRenderers IdeComponentRenderers { get; }
-    public ILuthetusCommonComponentRenderers CommonComponentRenderers { get; }
+    public IIdeComponentRenderers IdeComponentRenderers { get; }
+    public ICommonComponentRenderers CommonComponentRenderers { get; }
     public IFileSystemProvider FileSystemProvider { get; }
     public IEnvironmentProvider EnvironmentProvider { get; }
 
     public override bool Equals(object? obj)
     {
-        if (obj is not TreeViewNamespacePath treeViewSolutionExplorer)
+        if (obj is not TreeViewAbsolutePath treeViewAbsolutePath)
             return false;
 
-        return treeViewSolutionExplorer.Item.AbsolutePath.Value == Item.Value;
+        return treeViewAbsolutePath.Item.Value == Item.Value;
     }
 
     public override int GetHashCode() => Item.Value.GetHashCode();
@@ -44,7 +43,7 @@ public class TreeViewAbsolutePath : TreeViewWithType<IAbsolutePath>
     public override TreeViewRenderer GetTreeViewRenderer()
     {
         return new TreeViewRenderer(
-            IdeComponentRenderers.LuthetusIdeTreeViews.TreeViewAbsolutePathRendererType,
+            IdeComponentRenderers.IdeTreeViews.TreeViewAbsolutePathRendererType,
             new Dictionary<string, object?>
             {
                 { nameof(ITreeViewAbsolutePathRendererType.TreeViewAbsolutePath), this },

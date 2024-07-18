@@ -1,7 +1,7 @@
-using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.Ide.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 

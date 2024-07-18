@@ -1,13 +1,13 @@
+using System.Collections.Immutable;
+using System.Reactive.Linq;
 using CliWrap;
 using CliWrap.EventStream;
 using Fluxor;
-using System.Collections.Immutable;
-using System.Reactive.Linq;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -18,7 +18,7 @@ public partial class Terminal
 {
     private readonly IDispatcher _dispatcher;
     private readonly IBackgroundTaskService _backgroundTaskService;
-    private readonly ILuthetusCommonComponentRenderers _commonComponentRenderers;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
 
@@ -26,13 +26,13 @@ public partial class Terminal
 	/// This factory method exists because the terminal has async methods
 	/// it invokes immediately after being constructed.
 	/// </summary>
-	public static async Task<Terminal> Factory(
+	public static Task<Terminal> Factory(
         string displayName,
         string? workingDirectoryAbsolutePathString,
         IDispatcher dispatcher,
         IBackgroundTaskService backgroundTaskService,
         ITextEditorService textEditorService,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         ICompilerServiceRegistry compilerServiceRegistry,
 		Key<Terminal> terminalKey)
 	{
@@ -47,9 +47,9 @@ public partial class Terminal
 				Key = terminalKey
 			};
 
-		await terminal.CreateTextEditor();
-		await terminal.SetWorkingDirectoryAbsolutePathString(workingDirectoryAbsolutePathString);
-		return terminal;
+		terminal.CreateTextEditor();
+		terminal.SetWorkingDirectoryAbsolutePathString(workingDirectoryAbsolutePathString);
+		return Task.FromResult(terminal);
 	}
 
     /// <summary>
@@ -60,7 +60,7 @@ public partial class Terminal
         IDispatcher dispatcher,
         IBackgroundTaskService backgroundTaskService,
         ITextEditorService textEditorService,
-        ILuthetusCommonComponentRenderers commonComponentRenderers,
+        ICommonComponentRenderers commonComponentRenderers,
         ICompilerServiceRegistry compilerServiceRegistry)
     {
         _dispatcher = dispatcher;
@@ -89,13 +89,13 @@ public partial class Terminal
 
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
 
-	public async Task SetWorkingDirectoryAbsolutePathString(string? value)
+	public void SetWorkingDirectoryAbsolutePathString(string? value)
 	{
 		_previousWorkingDirectoryAbsolutePathString = _workingDirectoryAbsolutePathString;
         _workingDirectoryAbsolutePathString = value;
 
         if (_previousWorkingDirectoryAbsolutePathString != _workingDirectoryAbsolutePathString)
-            await WriteWorkingDirectory(true);
+            WriteWorkingDirectory(true);
 	}
 
     public void EnqueueCommand(TerminalCommand terminalCommand)
@@ -109,26 +109,27 @@ public partial class Terminal
 
     private async Task HandleCommand(TerminalCommand terminalCommand)
     {
-		await MoveCursorToEnd();
+    	if (terminalCommand.OutputBuilder is null)
+			ClearTerminal();
 
 		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-			await SetWorkingDirectoryAbsolutePathString(terminalCommand.ChangeWorkingDirectoryTo);
+			SetWorkingDirectoryAbsolutePathString(terminalCommand.ChangeWorkingDirectoryTo);
 
 		if (terminalCommand.FormattedCommand.TargetFileName == "cd")
 		{
 			// TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
 			if (terminalCommand.FormattedCommand.HACK_ArgumentsString is not null)
-				await SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.HACK_ArgumentsString);
+				SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.HACK_ArgumentsString);
 			else if (terminalCommand.FormattedCommand.ArgumentsList.Any())
-				await SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0));
+				SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0));
 
 			return;
 		}
 
 		if (terminalCommand.FormattedCommand.TargetFileName == "clear")
 		{
-			await ClearTerminal();
-			await WriteWorkingDirectory();
+			ClearTerminal();
+			WriteWorkingDirectory();
 			return;
 		}
 
@@ -210,16 +211,23 @@ public partial class Terminal
 								terminalCommand,
 								output);
 						}
-
-						await TerminalOnOutput(
+						
+						if (terminalCommand.OutputBuilder is null)
+						{
+							TerminalOnOutput(
 								outputOffset,
 								output,
 								outputTextSpanList,
 								terminalCommand,
-								terminalCommandBoundary)
-							.ConfigureAwait(false);
-
-						outputOffset += output.Length;
+								terminalCommandBoundary);
+	
+							outputOffset += output.Length;
+						}
+						else
+						{
+							terminalCommand.OutputBuilder.Append(output);
+							terminalCommand.TextSpanList = outputTextSpanList;
+						}
 					}
 
 					DispatchNewStateKey();
@@ -234,7 +242,7 @@ public partial class Terminal
 			terminalCommand.IsCompleted = true;
 			await terminalCommand.InvokeStateChangedCallbackFunc();
 			HasExecutingProcess = false;
-			await WriteWorkingDirectory().ConfigureAwait(false);
+			WriteWorkingDirectory();
 			DispatchNewStateKey();
 
 			// It is important to invoke 'OnAfterCommandFinished' prior to 'terminalCommand.ContinueWith'

@@ -1,6 +1,9 @@
-﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using System.Collections.Immutable;
+
+namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 public interface ICompilerServiceRegistry
 {
-    public ILuthCompilerService GetCompilerService(string extensionNoPeriod);
+    public ICompilerService GetCompilerService(string extensionNoPeriod);
+    public ImmutableList<ICompilerService> CompilerServiceList { get; }
 }

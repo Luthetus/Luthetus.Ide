@@ -1,15 +1,15 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Fluxor;
+using Photino.Blazor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
-using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Photino.Blazor;
-using System;
-using Luthetus.Common.RazorLib.Reflectives.Models;
-using System.Threading;
-using System.Threading.Tasks;
+using Luthetus.Ide.RazorLib.Installations.Models;
+using Luthetus.Extensions.Config.Installations.Models;
 
 namespace Luthetus.Ide.Photino;
 
@@ -27,11 +27,13 @@ class Program
             new BackgroundTaskService());
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
+        appBuilder.Services.AddLuthetusConfigServices(hostingInformation);
 
         appBuilder.Services.AddFluxor(options => options.ScanAssemblies(
             typeof(LuthetusCommonConfig).Assembly,
             typeof(LuthetusTextEditorConfig).Assembly,
-            typeof(LuthetusIdeConfig).Assembly));
+            typeof(LuthetusIdeConfig).Assembly,
+            typeof(Luthetus.Extensions.DotNet.Installations.Models.ServiceCollectionExtensions).Assembly));
 
         appBuilder.RootComponents.Add<App>("app");
 

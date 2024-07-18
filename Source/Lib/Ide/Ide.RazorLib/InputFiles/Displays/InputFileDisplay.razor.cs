@@ -1,8 +1,7 @@
+using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
-using Microsoft.AspNetCore.Components;
-using System.Collections.Immutable;
-using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
@@ -13,6 +12,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
+using Luthetus.Ide.RazorLib.InputFiles.States;
 
 namespace Luthetus.Ide.RazorLib.InputFiles.Displays;
 
@@ -21,9 +21,9 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
+    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]

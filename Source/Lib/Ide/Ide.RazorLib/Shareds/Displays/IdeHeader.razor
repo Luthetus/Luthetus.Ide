@@ -7,6 +7,7 @@
 @using Luthetus.Ide.RazorLib.Settings.Displays
 @using Luthetus.Ide.RazorLib.Shareds.Displays.Internals
 @using Luthetus.Ide.RazorLib.StartupControls.Displays
+@using Luthetus.Ide.RazorLib.Shareds.States;
 
 <ContextBoundary ContextRecord="ContextFacts.MainLayoutHeaderContext"
                  ClassCssString="luth_ide_header"
@@ -18,34 +19,34 @@
         <SettingsDialogEntryPoint/>
 
         <button @ref="_buttonFileElementReference"
-                @onclick="async () => await RenderDropdownOnClick(_buttonFileId, _buttonFileElementReference, _dropdownKeyFile, _menuFile)"
-			    id="@_buttonFileId"
+                @onclick="RenderFileDropdownOnClick"
+			    id="@IdeHeaderState.ButtonFileId"
                 class="luth_button"
-                style="position: relative; margin-left: 15px;">
+                style="margin-left: 15px;">
             File
         </button>
 
 		<button @ref="_buttonToolsElementReference"
-                @onclick="async () => await RenderDropdownOnClick(_buttonToolsId, _buttonToolsElementReference, _dropdownKeyTools, _menuTools)"
-			    id="@_buttonToolsId"
+                @onclick="async () => await RenderDropdownOnClick(IdeHeaderState.ButtonToolsId, _buttonToolsElementReference, IdeHeaderState.DropdownKeyTools, IdeHeaderStateWrap.Value.MenuTools)"
+			    id="@IdeHeaderState.ButtonToolsId"
                 class="luth_button"
-                style="position: relative; margin-left: 15px;">
+                style="margin-left: 15px;">
             Tools
         </button>
 
 		<button @ref="_buttonViewElementReference"
-                @onclick="async () => { InitializeMenuView(); await RenderDropdownOnClick(_buttonViewId, _buttonViewElementReference, _dropdownKeyView, _menuView); }"
-			    id="@_buttonViewId"
+                @onclick="async () => { InitializeMenuView(); await RenderDropdownOnClick(IdeHeaderState.ButtonViewId, _buttonViewElementReference, IdeHeaderState.DropdownKeyView, IdeHeaderStateWrap.Value.MenuView); }"
+			    id="@IdeHeaderState.ButtonViewId"
                 class="luth_button"
-                style="position: relative; margin-left: 15px;">
+                style="margin-left: 15px;">
 			View
          </button>
 
 		<button @ref="_buttonRunElementReference"
-                @onclick="async () => { InitializeMenuRun(); await RenderDropdownOnClick(_buttonRunId, _buttonRunElementReference, _dropdownKeyRun, _menuRun); }"
-			    id="@_buttonRunId"
+                @onclick="async () => { await RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun); }"
+			    id="@IdeHeaderState.ButtonRunId"
 				class="luth_button"
-                style="position: relative; margin-left: 15px;">
+                style="margin-left: 15px;">
             Run
         </button>
 
@@ -60,6 +61,6 @@
             <IdeImportExportButtons/>
         }
 
-        <StartupControlsDisplay/>
+        <StartupControlDisplay/>
     </div>
 </ContextBoundary>

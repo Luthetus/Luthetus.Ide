@@ -1,0 +1,22 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+
+@{ var localOutlineState = OutlineStateWrap.Value; }
+
+@if (localOutlineState.MeasuredHtmlElementDimensions is not null)
+{
+	<div class="luth_outline luth_outline-left"
+		 style="@GetStyleCssLeft(localOutlineState)">
+	</div>
+	
+	<div class="luth_outline luth_outline-right"
+		 style="@GetStyleCssRight(localOutlineState)">
+	</div>
+	
+	<div class="luth_outline luth_outline-top"
+		 style="@GetStyleCssTop(localOutlineState)">
+	</div>
+	
+	<div class="luth_outline luth_outline-bottom"
+		 style="@GetStyleCssBottom(localOutlineState)">
+	</div>
+}

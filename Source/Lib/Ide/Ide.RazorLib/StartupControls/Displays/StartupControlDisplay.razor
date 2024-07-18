@@ -1,0 +1,55 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@{ 
+	var localStartupControlState = StartupControlStateWrap.Value;
+	var localExecutingTerminalCommand = _executingTerminalCommand;
+	bool isExecuting;
+	
+	if (localExecutingTerminalCommand is null)
+	{
+		isExecuting = false;
+	}
+	else
+	{
+		isExecuting = !localExecutingTerminalCommand.IsCompleted;
+	}
+}
+
+<div class="luth_ide_startup-controls-display">
+   <div class="luth_ide_startup-controls-display-entry">
+       <select @bind="SelectedStartupControlGuidString"
+               title="Startup: @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
+       	<option title="Choose startup project"
+   			    value="@Guid.Empty.ToString()">
+   	    	Choose startup project
+   	    </option>
+       
+       	@foreach (var startupControl in localStartupControlState.StartupControlList)
+       	{
+       		<option title="@startupControl.TitleVerbose"
+       			    value="@startupControl.Key.Guid.ToString()">
+       	    	@startupControl.Title
+       	    </option>
+       	}
+       </select>
+       &nbsp;
+  </div>
+   <div class="luth_ide_startup-controls-display-entry">
+        <button @ref="_startButtonElementReference"
+        	    @onclick="() => StartProgramWithoutDebuggingOnClick(isExecuting)"
+                class="luth_button"
+                id="@_startButtonElementId"
+                disabled=@(localStartupControlState.ActiveStartupControl is null)
+                title="Start without debugging:  @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
+            
+            @if (isExecuting)
+            {
+				<IconStopCircle/>
+            }
+            else
+            {
+				<IconStartWithoutDebugging/>
+            }
+        </button>
+   </div>
+</div>

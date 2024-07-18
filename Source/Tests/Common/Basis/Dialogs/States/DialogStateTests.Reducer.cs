@@ -1,10 +1,10 @@
-﻿using Fluxor;
+using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Luthetus.Common.Tests.Basis.Dialogs.States;
 
@@ -103,6 +103,7 @@ public class DialogStateReducerTests
                 }
             },
             null,
-            true);
+            true,
+            "luth_element-id");
     }
 }

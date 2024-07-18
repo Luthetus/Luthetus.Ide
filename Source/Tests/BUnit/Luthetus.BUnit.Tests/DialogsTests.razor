@@ -34,7 +34,8 @@
 		        typeof(CommonInformativeNotificationDisplay),
 		        null,
 		        null,
-		        true);
+		        true,
+		        null);
 			
 			dialogService.RegisterDialogRecord(dialog);
 	
@@ -54,14 +55,14 @@
 		        typeof(CommonInformativeNotificationDisplay),
 		        null,
 		        null,
-		        true);
+		        true,
+		        null);
 			
 			dialogService.RegisterDialogRecord(dialog);
 	
 			// Assert dialog rendered
 			allDialogs = cut.FindAll(".luth_dialog-display");
 			Assert.Equal(2, allDialogs.Count);
-
 
 			var firstDialogElement = allDialogs[0];
 			// Assert that the first dialog lost the 'luth_active' class.

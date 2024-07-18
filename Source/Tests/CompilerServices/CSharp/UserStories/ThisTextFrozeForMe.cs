@@ -1,4 +1,4 @@
-﻿namespace Luthetus.CompilerServices.Lang.CSharp.Tests.UserStories;
+namespace Luthetus.CompilerServices.CSharp.Tests.UserStories;
 
 internal class ThisTextFrozeForMe
 {

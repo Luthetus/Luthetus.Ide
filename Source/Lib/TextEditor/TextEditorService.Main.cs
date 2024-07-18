@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
-using Fluxor;
 using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -15,15 +15,12 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Edits.States;
-using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
@@ -44,7 +41,7 @@ public partial class TextEditorService : ITextEditorService
     private readonly IStorageService _storageService;
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
     private readonly IJSRuntime _jsRuntime;
-    private readonly LuthetusCommonBackgroundTaskApi _commonBackgroundTaskApi;
+    private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
 
     public TextEditorService(
         IState<TextEditorState> textEditorStateWrap,
@@ -58,7 +55,7 @@ public partial class TextEditorService : ITextEditorService
         ITextEditorRegistryWrap textEditorRegistryWrap,
         IStorageService storageService,
         IJSRuntime jsRuntime,
-        LuthetusCommonBackgroundTaskApi commonBackgroundTaskApi,
+        CommonBackgroundTaskApi commonBackgroundTaskApi,
         IDispatcher dispatcher,
         IDialogService dialogService,
 		IAutocompleteIndexer autocompleteIndexer,
@@ -123,25 +120,25 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public void PostSimpleBatch(
+    public void PostDistinct(
         string name,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new SimpleBatchTextEditorTask(
+        Post(new DistinctTextEditorTask(
             name,
             textEditorEdit,
             throttleTimeSpan));
     }
 
-    public void PostTakeMostRecent(
+    public void PostRedundant(
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new TakeMostRecentTextEditorTask(
+        Post(new RedundantTextEditorTask(
             name,
 			resourceUri,
             viewModelKey,

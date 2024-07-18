@@ -22,6 +22,8 @@ public class DialogRecordTests
     [Fact]
     public void Constructor()
     {
+    	var setFocusOnCloseElementId = "luth_element-id";
+    
         var dialogRecord = new DialogViewModel(Key<IDynamicViewModel>.NewKey(), "Test title",
             typeof(CommonInformativeNotificationDisplay),
             new Dictionary<string, object?>
@@ -32,7 +34,8 @@ public class DialogRecordTests
                 }
             },
             null,
-            false);
+            false,
+            setFocusOnCloseElementId);
 
         Assert.Equal(ElementPositionKind.Fixed, dialogRecord.DialogElementDimensions.ElementPositionKind);
 
@@ -67,6 +70,29 @@ public class DialogRecordTests
 
             dialogRecord.DialogIsResizable = false;
             Assert.False(dialogRecord.DialogIsResizable);
+        }
+        
+        // SetFocusOnCloseElementId
+        {
+        	// Assert constructor
+        	Assert.Equal(setFocusOnCloseElementId, dialogRecord.SetFocusOnCloseElementId);
+        	
+        	// Assert set STRING over existing STRING.
+        	var otherSetFocusOnCloseElementId = "abc123";
+        	dialogRecord.SetFocusOnCloseElementId = otherSetFocusOnCloseElementId;
+        	Assert.Equal(otherSetFocusOnCloseElementId, dialogRecord.SetFocusOnCloseElementId);
+        	
+        	// Assert set NULL over existing STRING.
+        	dialogRecord.SetFocusOnCloseElementId = null;
+        	Assert.Null(dialogRecord.SetFocusOnCloseElementId);
+        	
+        	// Assert set NULL over existing NULL.
+        	dialogRecord.SetFocusOnCloseElementId = null;
+        	Assert.Null(dialogRecord.SetFocusOnCloseElementId);
+        	
+        	// Assert set STRING over NULL.
+        	dialogRecord.SetFocusOnCloseElementId = setFocusOnCloseElementId;
+        	Assert.Equal(setFocusOnCloseElementId, dialogRecord.SetFocusOnCloseElementId);
         }
     }
     

@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
-using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
@@ -11,9 +11,7 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
-using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
@@ -49,9 +47,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     private Task _cursorShouldBlinkTask = Task.CompletedTask;
     private CancellationTokenSource _cursorShouldBlinkCancellationTokenSource = new();
     private TimeSpan _blinkingCursorTaskDelay = TimeSpan.FromMilliseconds(1000);
-
-	// TODO: Delete '_countCalculateVirtualizationResultFactoryInvocations'
-	private int _countCalculateVirtualizationResultFactoryInvocations;
 
     public bool CursorShouldBlink { get; private set; } = true;
     public event Action? CursorShouldBlinkChanged;
@@ -363,7 +358,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         return async editContext =>
         {
             await _jsRuntime.GetLuthetusCommonApi()
-                .FocusHtmlElementById(primaryCursorContentId)
+                .FocusHtmlElementById(primaryCursorContentId, preventScroll: true)
                 .ConfigureAwait(false);
         };
     }
@@ -463,15 +458,59 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         {
                             if (keyboardEventArgs.CtrlKey)
                             {
-                                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+                            	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                                     cursorModifier.LineIndex,
                                     cursorModifier.ColumnIndex,
                                     true);
 
-                                if (columnIndexOfCharacterWithDifferingKind == -1)
+                                if (columnIndexOfCharacterWithDifferingKind == -1) // Move to start of line
+                                {
                                     cursorModifier.SetColumnIndexAndPreferred(0);
+                                }
                                 else
-                                    cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+                                {
+                                	if (!keyboardEventArgs.AltKey) // Move by character kind
+                                	{
+                                		cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+                                	}
+                                    else // Move by camel case
+                                    {
+                                    	var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
+										var rememberStartPositionIndex = positionIndex;
+										
+										var minPositionIndex = columnIndexOfCharacterWithDifferingKind;
+										var infiniteLoopPrediction = false;
+										
+										if (minPositionIndex > positionIndex)
+											infiniteLoopPrediction = true;
+										
+										bool useCamelCaseResult = false;
+										
+										if (!infiniteLoopPrediction)
+										{
+											while (--positionIndex > minPositionIndex)
+											{
+												var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
+												
+												if (Char.IsUpper(currentRichCharacter.Value) || currentRichCharacter.Value == '_')
+												{
+													useCamelCaseResult = true;
+													break;
+												}
+											}
+										}
+										
+										if (useCamelCaseResult)
+										{
+											var columnDisplacement = positionIndex - rememberStartPositionIndex;
+											cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
+										}
+										else
+										{
+											cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
+										}
+                                    }
+                                }
                             }
                             else
                             {
@@ -545,17 +584,61 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                         {
                             if (keyboardEventArgs.CtrlKey)
                             {
-                                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+                            	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                                     cursorModifier.LineIndex,
                                     cursorModifier.ColumnIndex,
                                     false);
 
-                                if (columnIndexOfCharacterWithDifferingKind == -1)
+                                if (columnIndexOfCharacterWithDifferingKind == -1) // Move to end of line
+                                {
                                     cursorModifier.SetColumnIndexAndPreferred(lengthOfLine);
+                                }
                                 else
                                 {
-                                    cursorModifier.SetColumnIndexAndPreferred(
-                                        columnIndexOfCharacterWithDifferingKind);
+                                	if (!keyboardEventArgs.AltKey) // Move by character kind
+                                	{
+                                		cursorModifier.SetColumnIndexAndPreferred(
+                                        	columnIndexOfCharacterWithDifferingKind);
+                                	}
+                                    else // Move by camel case
+                                    {
+                                    	var positionIndex = modelModifier.GetPositionIndex(cursorModifier);
+										var rememberStartPositionIndex = positionIndex;
+										
+										var maxPositionIndex = columnIndexOfCharacterWithDifferingKind;
+										
+										var infiniteLoopPrediction = false;
+										
+										if (maxPositionIndex < positionIndex)
+											infiniteLoopPrediction = true;
+										
+										bool useCamelCaseResult = false;
+										
+										if (!infiniteLoopPrediction)
+										{
+											while (++positionIndex < maxPositionIndex)
+											{
+												var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
+												
+												if (Char.IsUpper(currentRichCharacter.Value) || currentRichCharacter.Value == '_')
+												{
+													useCamelCaseResult = true;
+													break;
+												}
+											}
+										}
+										
+										if (useCamelCaseResult)
+										{
+											var columnDisplacement = positionIndex - rememberStartPositionIndex;
+											cursorModifier.SetColumnIndexAndPreferred(cursorModifier.ColumnIndex + columnDisplacement);
+										}
+										else
+										{
+											cursorModifier.SetColumnIndexAndPreferred(
+                                        		columnIndexOfCharacterWithDifferingKind);
+										}
+                                    }
                                 }
                             }
                             else
@@ -695,10 +778,10 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         Key<TextEditorViewModel> viewModelKey,
         CancellationToken cancellationToken)
     {
-        return async editContext =>
+        return editContext =>
         {
             if (cancellationToken.IsCancellationRequested)
-                return;
+                return Task.CompletedTask;
 
             var modelModifier = editContext.GetModelModifier(modelResourceUri, true);
             var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
@@ -706,9 +789,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
+				return Task.CompletedTask;
 
-            try
+			try
             {
 				var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
 
@@ -968,6 +1051,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				Console.WriteLine(exception);
 #endif
             }
+
+            return Task.CompletedTask;
         };
 
 // Goal: Optimize 'CalculateVirtualizationResultFactory(...)' method (2024-06-10).

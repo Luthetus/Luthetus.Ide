@@ -7,7 +7,7 @@ namespace Luthetus.Ide.RazorLib.Gits.Displays;
 public partial class GitBranchCheckoutDisplay : ComponentBase
 {
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public GitState GitState { get; set; } = null!;

@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Components;
 using System.Text;
+using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -105,7 +105,7 @@ public partial class RowSection : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        TextEditorService.PostTakeMostRecent(
+        TextEditorService.PostRedundant(
             nameof(VirtualizationDisplayItemsProviderFunc),
             model.ResourceUri,
             viewModel.ViewModelKey,

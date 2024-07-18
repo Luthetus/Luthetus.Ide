@@ -1,20 +1,27 @@
+using System.Text;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
+using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Menus.Displays;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
-using Luthetus.TextEditor.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 
@@ -530,8 +537,34 @@ public class TextEditorCommandDefaultFunctions
 
             primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
             primaryCursorModifier.ColumnIndex = lengthOfRow;
+            
+            // NOTE: keep the value to insert as '\n' because this will be changed to the user's
+            //       preferred line ending upon insertion.
+            var valueToInsert = "\n";
+            
+            // GOAL: Match indentation on newline keystroke (2024-07-07)
+            {
+				var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 
-            modelModifier.Insert("\n", cursorModifierBag, cancellationToken: CancellationToken.None);
+				var cursorPositionIndex = line.StartPositionIndexInclusive + primaryCursorModifier.ColumnIndex;
+				var indentationPositionIndex = line.StartPositionIndexInclusive;
+
+				var indentationBuilder = new StringBuilder();
+
+				while (indentationPositionIndex < cursorPositionIndex)
+				{
+					var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+
+					if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+						indentationBuilder.Append(possibleIndentationChar);
+					else
+						break;
+				}
+
+				valueToInsert += indentationBuilder.ToString();
+            }
+
+            modelModifier.Insert(valueToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
             return Task.CompletedTask;
         };
     }
@@ -550,18 +583,176 @@ public class TextEditorCommandDefaultFunctions
                 return Task.CompletedTask;
 
             primaryCursorModifier.SelectionAnchorPositionIndex = null;
+            
+            var originalColumnIndex = primaryCursorModifier.ColumnIndex;
 
             primaryCursorModifier.LineIndex = primaryCursorModifier.LineIndex;
             primaryCursorModifier.ColumnIndex = 0;
+            
+            // NOTE: keep the value to insert as '\n' because this will be changed to the user's
+            //       preferred line ending upon insertion.
+            var valueToInsert = "\n";
+            
+            var indentationLength = 0;
+            
+            // GOAL: Match indentation on newline keystroke (2024-07-07)
+            {
+				var line = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
 
-            modelModifier.Insert("\n", cursorModifierBag, cancellationToken: CancellationToken.None);
+				var cursorPositionIndex = line.StartPositionIndexInclusive + originalColumnIndex;
+				var indentationPositionIndex = line.StartPositionIndexInclusive;
+
+				var indentationBuilder = new StringBuilder();
+
+				while (indentationPositionIndex < cursorPositionIndex)
+				{
+					var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndex++].Value;
+
+					if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+						indentationBuilder.Append(possibleIndentationChar);
+					else
+						break;
+				}
+
+				valueToInsert = indentationBuilder.ToString() + valueToInsert;
+				indentationLength = indentationBuilder.Length;
+            }
+
+            modelModifier.Insert(valueToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
 
             if (primaryCursorModifier.LineIndex > 1)
             {
                 primaryCursorModifier.LineIndex--;
-                primaryCursorModifier.ColumnIndex = 0;
+                primaryCursorModifier.ColumnIndex = indentationLength;
             }
 
+            return Task.CompletedTask;
+        };
+    }
+    
+    public static TextEditorEdit MoveLineDownFactory(
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    {
+        return (IEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+                
+           var lineIndexOriginal = primaryCursorModifier.LineIndex;
+           var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
+
+			var nextLineIndex = lineIndexOriginal + 1;
+			var nextLineInformation = modelModifier.GetLineInformation(nextLineIndex);
+
+			// Insert
+			{
+				var currentLineContent = modelModifier.GetLineTextRange(lineIndexOriginal, 1);
+			
+				primaryCursorModifier.LineIndex = nextLineIndex + 1;
+				primaryCursorModifier.ColumnIndex = 0;
+				
+				var innerCursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { primaryCursorModifier });
+	
+				modelModifier.Insert(
+					value: currentLineContent,
+					cursorModifierBag: innerCursorModifierBag,
+					useLineEndKindPreference: false);
+			}
+
+			// Delete
+			{
+				primaryCursorModifier.LineIndex = lineIndexOriginal;
+				primaryCursorModifier.ColumnIndex = 0;
+				
+				var currentLineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+				var columnCount = currentLineInformation.EndPositionIndexExclusive -
+					currentLineInformation.StartPositionIndexInclusive;
+	
+				var innerCursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { primaryCursorModifier });
+	
+				modelModifier.Delete(
+			        innerCursorModifierBag,
+			        columnCount,
+			        false,
+			        TextEditorModelModifier.DeleteKind.Delete);
+			}
+			
+			primaryCursorModifier.LineIndex = lineIndexOriginal + 1;
+			primaryCursorModifier.ColumnIndex = 0;
+
+            return Task.CompletedTask;
+        };
+    }
+    
+    public static TextEditorEdit MoveLineUpFactory(
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    {
+        return (IEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+
+			var lineIndexOriginal = primaryCursorModifier.LineIndex;
+			var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
+				
+			var previousLineIndex = lineIndexOriginal - 1;
+			var previousLineInformation = modelModifier.GetLineInformation(previousLineIndex);
+
+			// Insert
+			{
+				var currentLineContent = modelModifier.GetLineTextRange(lineIndexOriginal, 1);
+			
+				primaryCursorModifier.LineIndex = previousLineIndex;
+				primaryCursorModifier.ColumnIndex = 0;
+	
+				var innerCursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { primaryCursorModifier });
+	
+				modelModifier.Insert(
+					value: currentLineContent,
+					cursorModifierBag: innerCursorModifierBag,
+					useLineEndKindPreference: false);
+			}
+
+			// Delete
+			{
+				// Add 1 because a line was inserted
+				primaryCursorModifier.LineIndex = lineIndexOriginal + 1;
+				primaryCursorModifier.ColumnIndex = 0;
+				
+				var currentLineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+				var columnCount = currentLineInformation.EndPositionIndexExclusive -
+					currentLineInformation.StartPositionIndexInclusive;
+	
+				var innerCursorModifierBag = new CursorModifierBagTextEditor(
+			        Key<TextEditorViewModel>.Empty,
+			        new List<TextEditorCursorModifier> { primaryCursorModifier });
+	
+				modelModifier.Delete(
+			        innerCursorModifierBag,
+			        columnCount,
+			        false,
+			        TextEditorModelModifier.DeleteKind.Delete);
+			}
+			
+			primaryCursorModifier.LineIndex = lineIndexOriginal - 1;
+			primaryCursorModifier.ColumnIndex = 0;
+			
             return Task.CompletedTask;
         };
     }
@@ -682,6 +873,141 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
+    public static TextEditorEdit RelatedFilesQuickPickFactory(
+        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    {
+        return async (IEditContext editContext) =>
+        {
+            var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+            
+            var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
+            var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
+			       
+			var cursorDimensions = await jsRuntimeCommonApi
+				.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
+				.ConfigureAwait(false);
+
+            var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
+            
+			var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelResourceUri.Value, false);
+			var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory.Value, true);
+		
+			var fileSystemProvider = commandArgs.ServiceProvider.GetRequiredService<IFileSystemProvider>();
+			
+			var siblingFileStringList = Array.Empty<string>();
+			
+			try
+			{
+				siblingFileStringList = await fileSystemProvider.Directory
+					.GetFilesAsync(parentDirectoryAbsolutePath.Value)
+					.ConfigureAwait(false);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+			}
+			
+			var menuOptionList = new List<MenuOptionRecord>();
+			
+			foreach (var file in siblingFileStringList)
+			{
+				var siblingAbsolutePath = environmentProvider.AbsolutePathFactory(file, false);
+				
+				menuOptionList.Add(new MenuOptionRecord(
+					siblingAbsolutePath.NameWithExtension,
+					MenuOptionKind.Other,
+					OnClickFunc: async () =>
+					{
+						var resourceUri = new ResourceUri(file);
+						var textEditorConfig = commandArgs.TextEditorService.TextEditorConfig;
+
+				        if (textEditorConfig.RegisterModelFunc is null)
+				            return;
+				
+				        await textEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
+				                resourceUri,
+				                commandArgs.ServiceProvider))
+				            .ConfigureAwait(false);
+				
+				        if (textEditorConfig.TryRegisterViewModelFunc is not null)
+				        {
+				            var viewModelKey = await textEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+				                    Key<TextEditorViewModel>.NewKey(),
+				                    resourceUri,
+				                    new Category("main"),
+				                    false,
+				                    commandArgs.ServiceProvider))
+				                .ConfigureAwait(false);
+				
+				            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
+				                textEditorConfig.TryShowViewModelFunc is not null)
+				            {
+				                await textEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+				                        viewModelKey,
+				                        Key<TextEditorGroup>.Empty,
+				                        commandArgs.ServiceProvider))
+				                    .ConfigureAwait(false);
+				            }
+				        }
+					}));
+			}
+			
+			MenuRecord menu;
+			
+			if (menuOptionList.Count == 0)
+				menu = MenuRecord.Empty;
+			else
+				menu = new MenuRecord(menuOptionList.ToImmutableArray());
+			
+			var dropdownRecord = new DropdownRecord(
+				Key<DropdownRecord>.NewKey(),
+				cursorDimensions.LeftInPixels,
+				cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
+				typeof(MenuDisplay),
+				new Dictionary<string, object?>
+				{
+					{
+						nameof(MenuDisplay.MenuRecord),
+						menu
+					}
+				},
+				// TODO: this callback when the dropdown closes is suspect.
+				//       The editContext is supposed to live the lifespan of the
+				//       Post. But what if the Post finishes before the dropdown is closed?
+				() => 
+				{
+					// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
+					//       ...I'm too tired at the moment, need to make this sensible.
+					//	   The key is in the IDE project yet its circular reference if I do so, gotta
+					//       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
+					//       |
+					//       I ran this and it didn't work. Its for the best that it doesn't.
+					//	   maybe when I wake up tomorrow I'll realize what im doing here.
+					var mainEditorGroup = commandArgs.TextEditorService.GroupStateWrap.Value.GroupList.SingleOrDefault();
+					
+					if (mainEditorGroup is not null &&
+						mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
+					{
+						var activeViewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+
+						if (activeViewModel is not null)
+							return activeViewModel.FocusFactory().Invoke(editContext);
+					}
+					
+					return viewModelModifier.ViewModel.FocusFactory().Invoke(editContext);
+				});
+	
+			var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();
+	        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+        };
+    }
+    
     public static TextEditorEdit GoToDefinitionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {

@@ -20,7 +20,7 @@
         <CascadingValue Value="localGitState">
 
             <button @ref="_menuButtonElementReference"
-                    @onclick="() => { ShowMenuDropdown(_menuDropdownKey); return Task.CompletedTask; }"
+                    @onclick="() => { return ShowMenuDropdown(_menuDropdownKey); }"
 					id="@_dropdownMenuHtmlElementId"
                     class="luth_button luth_ide_git-justify-end"
                     style="position: relative; margin-top: 10px; padding: 8px; justify-content: center; align-items: center;">

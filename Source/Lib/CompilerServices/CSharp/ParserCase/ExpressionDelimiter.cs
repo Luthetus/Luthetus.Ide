@@ -1,6 +1,6 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.ParserCase;
+namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public class ExpressionDelimiter
 {

@@ -1,5 +1,6 @@
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
+@using Luthetus.Common.RazorLib.CustomEvents.Models
 @using Luthetus.TextEditor.RazorLib.Options.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -40,15 +41,15 @@
         }
 
         <div @onclick="FocusTextEditorAsync"
-             @onkeydown="ReceiveOnKeyDown"
+             @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"
              @onkeydown:preventDefault="true"
-             @oncontextmenu="ReceiveOnContextMenu"
+             @oncontextmenu="EventUtil.AsNonRenderingEventHandler(ReceiveOnContextMenu)"
              @oncontextmenu:preventDefault="true"
-             @onmousedown="ReceiveContentOnMouseDown"
-             @onmousemove="ReceiveContentOnMouseMove"
-             @onmouseout="ReceiveContentOnMouseOut"
-             @ondblclick="ReceiveOnDoubleClick"
-             @onwheel="ReceiveOnWheel"
+             @onmousedown="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseDown)"
+             @onmousemove="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseMove)"
+             @onmouseout="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseOut)"
+             @ondblclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveOnDoubleClick)"
+             @onwheel="EventUtil.AsNonRenderingEventHandler<WheelEventArgs>(ReceiveOnWheel)"
              @ontouchstart="ReceiveOnTouchStart"
              @ontouchmove="ReceiveOnTouchMove"
              @ontouchend="ClearTouch"

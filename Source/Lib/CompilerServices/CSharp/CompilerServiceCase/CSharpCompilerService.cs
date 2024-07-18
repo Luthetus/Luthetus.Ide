@@ -1,21 +1,21 @@
-using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Immutable;
+using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.CompilerServices.Lang.CSharp.BinderCase;
-using Luthetus.CompilerServices.Lang.CSharp.LexerCase;
-using Luthetus.CompilerServices.Lang.CSharp.ParserCase;
-using Luthetus.CompilerServices.Lang.CSharp.RuntimeAssemblies;
+using Luthetus.CompilerServices.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.CSharp.RuntimeAssemblies;
 
-namespace Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
-public sealed class CSharpCompilerService : LuthCompilerService
+public sealed class CSharpCompilerService : CompilerService
 {
     /// <summary>
     /// TODO: The CSharpBinder should be private, but for now I'm making it public to be usable in the CompilerServiceExplorer Blazor component.
@@ -111,7 +111,7 @@ public sealed class CSharpCompilerService : LuthCompilerService
                             return Task.CompletedTask;
                         }
 
-                        _textEditorService.PostSimpleBatch(
+                        _textEditorService.PostDistinct(
                             "Add using statement",
                             async editContext =>
                             {

@@ -1,4 +1,4 @@
-﻿.luth_dialog-display {
+.luth_dialog-display {
     z-index: var(--luth_dialog-display-z-index);
     color: var(--luth_secondary-foreground-color);
     background-color: var(--luth_secondary-background-color);
@@ -6,7 +6,7 @@
 }
 
     .luth_dialog-display:focus {
-        outline: 5px solid var(--luth_toggled-on-hover-background-color);
+        outline: 4px solid var(--luth_toggled-on-hover-background-color);
     }
 
 .luth_dialog-display.luth_active {

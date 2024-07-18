@@ -1,7 +1,7 @@
-﻿using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxEnums;
-using Luthetus.CompilerServices.Lang.Xml.Html.SyntaxObjects;
+using Luthetus.CompilerServices.Xml.Html.SyntaxEnums;
+using Luthetus.CompilerServices.Xml.Html.SyntaxObjects;
 
-namespace Luthetus.CompilerServices.Lang.Xml.Html.SyntaxActors;
+namespace Luthetus.CompilerServices.Xml.Html.SyntaxActors;
 
 public abstract class XmlSyntaxWalker
 {

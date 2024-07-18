@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
@@ -16,20 +16,22 @@ using Luthetus.Common.RazorLib.Panels.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.DotNetSolutions.Displays;
-using Luthetus.Ide.RazorLib.DotNetSolutions.States;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Commands;
-using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Editors.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Shareds.States;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
@@ -40,13 +42,13 @@ public partial class IdeHeader : ComponentBase
 	[Inject]
     private IState<DialogState> DialogStateWrap { get; set; } = null!;
 	[Inject]
-	private IState<DotNetSolutionState> DotNetSolutionStateWrap { get; set; } = null!;
-	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	[Inject]
+	private IState<IdeHeaderState> IdeHeaderStateWrap { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
     [Inject]
@@ -60,67 +62,46 @@ public partial class IdeHeader : ComponentBase
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject]
+	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
 	private static readonly Key<IDynamicViewModel> _infoDialogKey = Key<IDynamicViewModel>.NewKey();
-	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _permissionsDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _backgroundTaskDialogKey = Key<IDynamicViewModel>.NewKey();
 	private static readonly Key<IDynamicViewModel> _solutionVisualizationDialogKey = Key<IDynamicViewModel>.NewKey();
 
-    private Key<DropdownRecord> _dropdownKeyFile = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menuFile = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private string _buttonFileId = "luth_ide_header-button-file";
-    private ElementReference? _buttonFileElementReference;
-
-	private Key<DropdownRecord> _dropdownKeyTools = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menuTools = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private string _buttonToolsId = "luth_ide_header-button-tools";
-    private ElementReference? _buttonToolsElementReference;
-
-	private Key<DropdownRecord> _dropdownKeyView = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menuView = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private string _buttonViewId = "luth_ide_header-button-view";
-    private ElementReference? _buttonViewElementReference;
-
-	private Key<DropdownRecord> _dropdownKeyRun = Key<DropdownRecord>.NewKey();
-    private MenuRecord _menuRun = new(ImmutableArray<MenuOptionRecord>.Empty);
-    private string _buttonRunId = "luth_ide_header-button-run";
-    private ElementReference? _buttonRunElementReference;
+	public ElementReference? _buttonFileElementReference;
+    public ElementReference? _buttonToolsElementReference;
+    public ElementReference? _buttonViewElementReference;
+    public ElementReference? _buttonRunElementReference;
     
     private LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
     
     private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
     	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
 
-    protected override Task OnInitializedAsync()
-    {
-        InitializeMenuFile();
-		InitializeMenuTools();
-		InitializeMenuView();
-		InitializeMenuRun();
+	protected override void OnInitialized()
+	{
+		BackgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			nameof(IdeHeader),
+			async () =>
+			{
+				InitializeMenuFile();
+				InitializeMenuTools();
+				InitializeMenuView();
+				
+				AddAltKeymap();
+			});
 
-        return base.OnInitializedAsync();
-    }
+        base.OnInitialized();
+	}
 
     private void InitializeMenuFile()
     {
         var menuOptionsList = new List<MenuOptionRecord>();
-
-        // Menu Option New
-        {
-            var menuOptionNewDotNetSolution = new MenuOptionRecord(
-                ".NET Solution",
-                MenuOptionKind.Other,
-                OpenNewDotNetSolutionDialog);
-
-            var menuOptionNew = new MenuOptionRecord(
-                "New",
-                MenuOptionKind.Other,
-                SubMenu: new MenuRecord(new[] { menuOptionNewDotNetSolution }.ToImmutableArray()));
-
-            menuOptionsList.Add(menuOptionNew);
-        }
 
         // Menu Option Open
         {
@@ -151,15 +132,6 @@ public partial class IdeHeader : ComponentBase
 					return Task.CompletedTask;
 				});
 
-            var menuOptionOpenDotNetSolution = new MenuOptionRecord(
-                ".NET Solution",
-                MenuOptionKind.Other,
-                () =>
-				{
-					DotNetSolutionState.ShowInputFile(IdeBackgroundTaskApi);
-					return Task.CompletedTask;
-				});
-
             var menuOptionOpen = new MenuOptionRecord(
                 "Open",
                 MenuOptionKind.Other,
@@ -168,7 +140,6 @@ public partial class IdeHeader : ComponentBase
                     menuOptionOpenFile,
                     menuOptionOpenDirectory,
                     menuOptionOpenCSharpProject,
-                    menuOptionOpenDotNetSolution
                 }.ToImmutableArray()));
 
             menuOptionsList.Add(menuOptionOpen);
@@ -184,7 +155,8 @@ public partial class IdeHeader : ComponentBase
             menuOptionsList.Add(menuOptionPermissions);
         }
 
-        _menuFile = new MenuRecord(menuOptionsList.ToImmutableArray());
+		Dispatcher.Dispatch(new IdeHeaderState.SetMenuFileAction(
+			new MenuRecord(menuOptionsList.ToImmutableArray())));
     }
 
 	private void InitializeMenuTools()
@@ -235,7 +207,7 @@ public partial class IdeHeader : ComponentBase
                 MenuOptionKind.Delete,
                 () =>
 				{
-					var group = TextEditorService.GroupApi.GetOrDefault(LuthetusIdeEditorBackgroundTaskApi.EditorTextEditorGroupKey);
+					var group = TextEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
 
                     if (group is null)
                         return Task.CompletedTask;
@@ -247,7 +219,7 @@ public partial class IdeHeader : ComponentBase
 
 					TextEditorCommandDefaultFacts.ShowFindOverlay.CommandFunc.Invoke(
 						new TextEditorCommandArgs(
-							new(string.Empty),
+							ResourceUri.Empty,
 					        activeViewModel.ViewModelKey,
 							null,
 							TextEditorService,
@@ -309,7 +281,7 @@ public partial class IdeHeader : ComponentBase
         //    menuOptionsList.Add(menuOptionSolutionVisualization);
         //}
 
-        _menuTools = new MenuRecord(menuOptionsList.ToImmutableArray());
+        Dispatcher.Dispatch(new IdeHeaderState.SetMenuToolsAction(new MenuRecord(menuOptionsList.ToImmutableArray())));
     }
 
 	private void InitializeMenuView()
@@ -351,75 +323,16 @@ public partial class IdeHeader : ComponentBase
 		}
 
 		if (menuOptionsList.Count == 0)
-			_menuView = MenuRecord.Empty;
+		{
+			Dispatcher.Dispatch(new IdeHeaderState.SetMenuViewAction(
+				MenuRecord.Empty));
+		}
 		else
-			_menuView = new MenuRecord(menuOptionsList.ToImmutableArray());
+		{
+			Dispatcher.Dispatch(new IdeHeaderState.SetMenuViewAction(
+				new MenuRecord(menuOptionsList.ToImmutableArray())));
+		}
     }
-
-	private void InitializeMenuRun()
-	{
-		var menuOptionsList = new List<MenuOptionRecord>();
-
-		var dotNetSolutionState = DotNetSolutionStateWrap.Value;
-
-        // Menu Option Build
-        {
-            var menuOption = new MenuOptionRecord(
-				"Build",
-                MenuOptionKind.Create,
-                () =>
-				{
-					BuildOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
-					return Task.CompletedTask;
-				});
-
-            menuOptionsList.Add(menuOption);
-        }
-
-		// Menu Option Clean
-        {
-            var menuOption = new MenuOptionRecord(
-				"Clean",
-                MenuOptionKind.Delete,
-                () =>
-				{
-					CleanOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
-					return Task.CompletedTask;
-				});
-
-            menuOptionsList.Add(menuOption);
-        }
-
-        _menuRun = new MenuRecord(menuOptionsList.ToImmutableArray());
-	}
-
-	private void BuildOnClick(string solutionAbsolutePathString)
-	{
-		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
-        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
-        var terminalCommand = new TerminalCommand(
-            Key<TerminalCommand>.NewKey(),
-            formattedCommand,
-            null,
-            CancellationToken.None);
-
-        generalTerminal.EnqueueCommand(terminalCommand);
-	}
-
-	private void CleanOnClick(string solutionAbsolutePathString)
-	{
-		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetClean(solutionAbsolutePathString);
-        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
-        var terminalCommand = new TerminalCommand(
-            Key<TerminalCommand>.NewKey(),
-            formattedCommand,
-            null,
-            CancellationToken.None);
-
-        generalTerminal.EnqueueCommand(terminalCommand);
-	}
 
 	private async Task RestoreFocusToElementReference(ElementReference? elementReference)
     {
@@ -432,27 +345,12 @@ public partial class IdeHeader : ComponentBase
                     .ConfigureAwait(false);
             }
         }
-        catch (Exception e)
+        catch (Exception)
         {
 			// TODO: Capture specifically the exception that is fired when the JsRuntime...
 			//       ...tries to set focus to an HTML element, but that HTML element
 			//       was not found.
         }
-    }
-
-    private Task OpenNewDotNetSolutionDialog()
-    {
-        var dialogRecord = new DialogViewModel(
-            _newDotNetSolutionDialogKey,
-            "New .NET Solution",
-            typeof(DotNetSolutionFormDisplay),
-            null,
-            null,
-			true,
-			null);
-
-        Dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
-        return Task.CompletedTask;
     }
 
     private Task OpenInfoDialogOnClick()
@@ -510,5 +408,40 @@ public partial class IdeHeader : ComponentBase
 			() => RestoreFocusToElementReference(elementReference));
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+	}
+
+	/// <summary>
+	/// Add option to allow a user to disable the alt keymap to access to the header button dropdowns.
+	/// </summary>
+	private void AddAltKeymap()
+	{
+		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+		        new KeymapArgument("KeyF", false, false, true, Key<KeymapLayer>.Empty),
+		        new CommonCommand("Open File Dropdown", "open-file-dropdown", false,
+		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonFileId, _buttonFileElementReference, IdeHeaderState.DropdownKeyFile, IdeHeaderStateWrap.Value.MenuFile)));
+		        
+		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+		        new KeymapArgument("KeyT", false, false, true, Key<KeymapLayer>.Empty),
+		        new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false,
+		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonToolsId, _buttonToolsElementReference, IdeHeaderState.DropdownKeyTools, IdeHeaderStateWrap.Value.MenuTools)));
+		        	
+		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+		        new KeymapArgument("KeyV", false, false, true, Key<KeymapLayer>.Empty),
+		        new CommonCommand("Open View Dropdown", "open-view-dropdown", false,
+		        	commandArgs => 
+		        	{
+		        		InitializeMenuView();
+		        		return RenderDropdownOnClick(IdeHeaderState.ButtonViewId, _buttonViewElementReference, IdeHeaderState.DropdownKeyView, IdeHeaderStateWrap.Value.MenuView);
+		        	}));
+		
+		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+		        new KeymapArgument("KeyR", false, false, true, Key<KeymapLayer>.Empty),
+		        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false,
+		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun)));
+	}
+	
+	private Task RenderFileDropdownOnClick()
+	{
+		return RenderDropdownOnClick(IdeHeaderState.ButtonFileId, _buttonFileElementReference, IdeHeaderState.DropdownKeyFile, IdeHeaderStateWrap.Value.MenuFile);
 	}
 }

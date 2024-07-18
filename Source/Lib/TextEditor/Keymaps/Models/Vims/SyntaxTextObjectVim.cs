@@ -8,8 +8,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorServices;
-using Luthetus.TextEditor.RazorLib.Lexes.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
@@ -238,7 +237,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostDistinct(
                                     nameof(MoveCursorOneColumnLeftFactory),
                                     MoveCursorOneColumnLeftFactory(
                                         commandArgs.ModelResourceUri,
@@ -271,7 +270,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostDistinct(
                                     nameof(MoveCursorOneRowDownFactory),
                                     MoveCursorOneRowDownFactory(
                                         commandArgs.ModelResourceUri,
@@ -304,7 +303,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostDistinct(
                                     nameof(MoveCursorOneRowUpFactory),
                                     MoveCursorOneRowUpFactory(
                                         commandArgs.ModelResourceUri,
@@ -337,7 +336,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostDistinct(
                                     nameof(MoveCursorOneColumnRightFactory),
                                     MoveCursorOneColumnRightFactory(
                                         commandArgs.ModelResourceUri,
@@ -376,7 +375,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostDistinct(
                                     nameof(MoveCursorEndCurrentLineFactory),
                                     MoveCursorEndCurrentLineFactory(
                                         commandArgs.ModelResourceUri,
@@ -409,7 +408,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostSimpleBatch(
+                                commandArgs.TextEditorService.PostDistinct(
                                     nameof(MoveCursorStartCurrentLineFactory),
                                     MoveCursorStartCurrentLineFactory(
                                         commandArgs.ModelResourceUri,

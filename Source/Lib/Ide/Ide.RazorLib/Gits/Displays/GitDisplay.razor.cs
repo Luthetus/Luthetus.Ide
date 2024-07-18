@@ -1,8 +1,8 @@
-using Fluxor;
 using System.Collections.Immutable;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Fluxor;
+using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -31,11 +31,11 @@ public partial class GitDisplay : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private ILuthetusIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
+    private IIdeComponentRenderers IdeComponentRenderers { get; set; } = null!;
     [Inject]
-    private ILuthetusCommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
-    private LuthetusIdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
+    private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
