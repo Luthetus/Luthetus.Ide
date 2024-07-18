@@ -27,6 +27,8 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
+using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
@@ -392,6 +394,8 @@ public class DotNetSolutionIdeApi
 				progressBarModel.SetProgress(0.05, "Discovering projects...");
 				foreach (var project in dotNetSolutionModel.DotNetProjectList)
 				{
+					RegisterStartupControl(project);
+				
 					var resourceUri = new ResourceUri(project.AbsolutePath.Value);
 
 					if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
@@ -628,5 +632,19 @@ public class DotNetSolutionIdeApi
 		_dispatcher.Dispatch(ConstructModelReplacement(
 			dotNetSolutionModel.Key,
 			dotNetSolutionModel));
+	}
+	
+	private void RegisterStartupControl(IDotNetProject project)
+	{
+		_dispatcher.Dispatch(new StartupControlState.RegisterStartupControlAction(
+			new StartupControlModel(
+				Key<IStartupControlModel>.NewKey(),
+				project.DisplayName,
+				project.AbsolutePath.Value,
+				Key<TerminalCommand>.NewKey(),
+				null,
+				null,
+				null,
+				_ => Task.CompletedTask)));
 	}
 }
