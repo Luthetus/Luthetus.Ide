@@ -11,7 +11,6 @@ using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
-using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
@@ -39,7 +38,6 @@ public class DotNetBackgroundTaskApi
 	private readonly ITextEditorService _textEditorService;
 	private readonly IState<TerminalState> _terminalStateWrap;
     private readonly IState<TestExplorerState> _testExplorerStateWrap;
-    private readonly IState<ProgramExecutionState> _programExecutionStateWrap;
 
     public DotNetBackgroundTaskApi(
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
@@ -59,7 +57,6 @@ public class DotNetBackgroundTaskApi
 		ITextEditorService textEditorService,
 		IState<TerminalState> terminalStateWrap,
         IState<TestExplorerState> testExplorerStateWrap,
-        IState<ProgramExecutionState> programExecutionStateWrap,
         IServiceProvider serviceProvider)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -79,7 +76,6 @@ public class DotNetBackgroundTaskApi
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
         _testExplorerStateWrap = testExplorerStateWrap;
-        _programExecutionStateWrap = programExecutionStateWrap;
 
         CompilerService = new CompilerServiceIdeApi(
 			this,
@@ -121,7 +117,6 @@ public class DotNetBackgroundTaskApi
 			_textEditorService,
 			_compilerServiceRegistry,
 			_terminalStateWrap,
-			_programExecutionStateWrap,
 			_dotNetCliOutputParser,
 			serviceProvider);
 	}

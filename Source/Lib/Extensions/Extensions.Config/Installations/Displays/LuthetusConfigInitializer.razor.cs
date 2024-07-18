@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.Components;
+using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
@@ -9,8 +10,7 @@ using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.InputFiles.States;
-using Luthetus.Ide.RazorLib.ProgramExecutions.States;
-using Fluxor;
+using Luthetus.Ide.RazorLib.StartupControls.States;
 
 namespace Luthetus.Extensions.Config.Installations.Displays;
 
@@ -28,6 +28,8 @@ public partial class LuthetusConfigInitializer : ComponentBase
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	[Inject]
+	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -143,8 +145,15 @@ public partial class LuthetusConfigInitializer : ComponentBase
                     projectPersonalPath,
                     false);
 
-                Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(
-                    projectAbsolutePath));
+                // SingleOrDefault here is intentional, one can start a project many different ways.
+				// But current support for this does not exist. So in this situation don't continue, for now.
+				var startupControl = StartupControlStateWrap.Value.StartupControlList.SingleOrDefault(
+					x => x.StartupProjectAbsolutePath.Value == projectAbsolutePath.Value);
+					
+				if (startupControl is null)
+					return;
+				
+				Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));	
             }
         }
     }

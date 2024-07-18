@@ -21,13 +21,13 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Extensions.DotNet.CSharpProjects.Displays;
 using Luthetus.Extensions.DotNet.Menus.Models;
 using Luthetus.Extensions.DotNet.CSharpProjects.Models;
@@ -42,6 +42,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 {
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	[Inject]
+	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
@@ -370,7 +372,15 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				MenuOptionKind.Other,
 				() =>
 				{
-					Dispatcher.Dispatch(new ProgramExecutionState.SetStartupProjectAbsolutePathAction(treeViewModel.Item.AbsolutePath));
+					// SingleOrDefault here is intentional, one can start a project many different ways.
+					// But current support for this does not exist. So in this situation don't continue, for now.
+					var startupControl = StartupControlStateWrap.Value.StartupControlList.SingleOrDefault(
+						x => x.StartupProjectAbsolutePath.Value == treeViewModel.Item.AbsolutePath.Value);
+						
+					if (startupControl is null)
+						return Task.CompletedTask;
+					
+					Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));	
 					return Task.CompletedTask;
 				}),
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(

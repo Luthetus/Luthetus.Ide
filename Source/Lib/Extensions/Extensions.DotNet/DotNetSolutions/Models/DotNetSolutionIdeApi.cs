@@ -29,7 +29,6 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;
-using Luthetus.Ide.RazorLib.ProgramExecutions.States;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -54,7 +53,6 @@ public class DotNetSolutionIdeApi
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IState<TerminalState> _terminalStateWrap;
-	private readonly IState<ProgramExecutionState> _programExecutionStateWrap;
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IServiceProvider _serviceProvider;
 	
@@ -77,7 +75,6 @@ public class DotNetSolutionIdeApi
 		ITextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IState<TerminalState> terminalStateWrap,
-		IState<ProgramExecutionState> programExecutionStateWrap,
 		DotNetCliOutputParser dotNetCliOutputParser,
 		IServiceProvider serviceProvider)
 	{
@@ -97,7 +94,6 @@ public class DotNetSolutionIdeApi
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_terminalStateWrap = terminalStateWrap;
-		_programExecutionStateWrap = programExecutionStateWrap;
 		_dotNetCliOutputParser = dotNetCliOutputParser;
 		_serviceProvider = serviceProvider;
 	}
@@ -652,28 +648,24 @@ public class DotNetSolutionIdeApi
 				Key<IStartupControlModel>.NewKey(),
 				project.DisplayName,
 				project.AbsolutePath.Value,
+				project.AbsolutePath,
 				Key<TerminalCommand>.NewKey(),
 				null,
 				null,
 				null,
-				() => Task.FromResult(StartupControl_GetStartProgramTerminalCommand()),
+				() => Task.FromResult(StartupControl_GetStartProgramTerminalCommand(project)),
 				_ => Task.CompletedTask)));
 	}
 	
-	private TerminalCommand? StartupControl_GetStartProgramTerminalCommand()
+	private TerminalCommand? StartupControl_GetStartProgramTerminalCommand(IDotNetProject project)
     {
-        var localProgramExecutionState = _programExecutionStateWrap.Value;
-
-        if (localProgramExecutionState.StartupProjectAbsolutePath is null)
-            return null;
-
-        var ancestorDirectory = localProgramExecutionState.StartupProjectAbsolutePath.ParentDirectory;
+        var ancestorDirectory = project.AbsolutePath.ParentDirectory;
 
         if (ancestorDirectory is null)
             return null;
 
         var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
-            localProgramExecutionState.StartupProjectAbsolutePath);
+            project.AbsolutePath);
 
         return new TerminalCommand(
             _newDotNetSolutionTerminalCommandKey,

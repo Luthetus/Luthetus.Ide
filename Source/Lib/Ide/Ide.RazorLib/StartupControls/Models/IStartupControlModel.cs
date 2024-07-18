@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.Models;
 
@@ -15,6 +16,8 @@ public interface IStartupControlModel
 	/// By default, this is used as hover text (HTML 'title' attribute on the select dropdown)
 	/// </summary>
 	public string TitleVerbose { get; }
+	
+	public IAbsolutePath StartupProjectAbsolutePath { get; }
 	
 	/// <summary>
 	/// If more than a 'start button' is necessary, one can provide a Blazor component,

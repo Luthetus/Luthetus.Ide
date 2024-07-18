@@ -33,14 +33,15 @@
        	}
        </select>
        &nbsp;
-   </div>
+       @(localStartupControlState.ActiveStartupControl?.Title)
+  </div>
    <div class="luth_ide_startup-controls-display-entry">
         <button @ref="_startButtonElementReference"
         	    @onclick="() => StartProgramWithoutDebuggingOnClick(isExecuting)"
                 class="luth_button"
                 id="@_startButtonElementId"
-                disabled=@(ProgramExecutionStateWrap.Value.StartupProjectAbsolutePath is null)
-                title="Start without debugging">
+                disabled=@(localStartupControlState.ActiveStartupControl is null)
+                title="Start without debugging:  @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
             
             @if (isExecuting)
             {
