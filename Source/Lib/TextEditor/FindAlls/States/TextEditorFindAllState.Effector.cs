@@ -30,9 +30,12 @@ public partial record TextEditorFindAllState
 			_throttleSetSearchQuery.Run(async _ => 
 			{
 				dispatcher.Dispatch(new CancelSearchAction());
+				dispatcher.Dispatch(new ClearSearchAction());
 				
+				var textEditorFindAllState = _textEditorFindAllStateWrap.Value;
+				var cancellationToken = textEditorFindAllState._searchCancellationTokenSource.Token;
 				var progressBarModel = new ProgressBarModel();
-				
+
 				dispatcher.Dispatch(new SetProgressBarModelAction(progressBarModel));
 				
 				try
@@ -40,8 +43,9 @@ public partial record TextEditorFindAllState
 					await StartSearchTask(
 						progressBarModel,
 						_fileSystemProvider,
-						_textEditorFindAllStateWrap.Value,
-						dispatcher);
+						textEditorFindAllState,
+						dispatcher,
+						cancellationToken);
 				}
 				catch (Exception e)
 				{
@@ -58,14 +62,18 @@ public partial record TextEditorFindAllState
 			ProgressBarModel progressBarModel,
 			IFileSystemProvider fileSystemProvider,
 			TextEditorFindAllState textEditorFindAllState,
-			IDispatcher dispatcher)
+			IDispatcher dispatcher,
+			CancellationToken cancellationToken)
 		{
 			var filePathList = new List<string>();
+			var searchException = (Exception?)null;
 			
 			try
 			{
 				for (int i = 0; i < 10; i++)
 				{
+					cancellationToken.ThrowIfCancellationRequested();
+				
 					progressBarModel.SetProgress(i/(10.0));
 					
 					filePathList.Add(i.ToString());
@@ -74,9 +82,23 @@ public partial record TextEditorFindAllState
 					await Task.Delay(500);
 				}
 			}
+			catch (Exception e)
+			{
+				searchException = e;
+			}
 			finally
 			{
-				progressBarModel.SetProgress(1.0);
+				if (searchException is null)
+				{
+					progressBarModel.SetProgress(1.0);
+				}
+				else
+				{
+					progressBarModel.SetProgress(
+						progressBarModel.DecimalPercentProgress,
+						searchException.ToString());
+				}
+				
 				progressBarModel.Dispose();
 			}
 		}

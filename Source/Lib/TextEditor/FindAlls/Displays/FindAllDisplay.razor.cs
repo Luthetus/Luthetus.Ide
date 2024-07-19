@@ -85,4 +85,9 @@ public partial class FindAllDisplay : FluxorComponent
     {
     	Dispatcher.Dispatch(new TextEditorFindAllState.StartSearchAction());
     }
+
+	private void CancelSearchOnClick()
+    {
+    	Dispatcher.Dispatch(new TextEditorFindAllState.CancelSearchAction());
+    }
 }

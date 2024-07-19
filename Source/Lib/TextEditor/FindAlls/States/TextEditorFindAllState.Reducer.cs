@@ -69,5 +69,16 @@ public partial record TextEditorFindAllState
             	SearchResultList = localSearchResultList.ToImmutableList()
             };
         }
+
+        [ReducerMethod]
+        public static TextEditorFindAllState ReduceClearSearchAction(
+            TextEditorFindAllState inState,
+            ClearSearchAction clearSearchAction)
+        {
+            return inState with
+            {
+            	SearchResultList = ImmutableList<string>.Empty
+            };
+        }
     }
 }

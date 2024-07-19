@@ -10,6 +10,7 @@ public partial record TextEditorFindAllState
     public record SetStartingDirectoryPathAction(string StartingDirectoryPath);
     public record StartSearchAction;
     public record CancelSearchAction;
+    public record ClearSearchAction;
     
     /// <summary>Intended for use only by the 'Effector'</summary>
     public record SetProgressBarModelAction(ProgressBarModel ProgressBarModel);

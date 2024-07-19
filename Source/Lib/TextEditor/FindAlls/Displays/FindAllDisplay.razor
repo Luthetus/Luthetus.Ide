@@ -31,19 +31,29 @@
 				   @bind:event="oninput" />
 		</div>
 
-		<button class="luth_button"
-                @onclick="DoSearchOnClick">
-            Find All
-        </button>
-
 		@if (findAllState.ProgressBarModel is null || findAllState.ProgressBarModel.IsDisposed)
-	    {
+		{
+			<button class="luth_button"
+	                @onclick="DoSearchOnClick">
+	            Find All
+	        </button>
+	        
 	        <div>Not Searching</div>
-	    }
-	    else
-	    {
+	        
+	        if (findAllState.ProgressBarModel is not null)
+	        {
+	        	<ProgressBarDisplay ProgressBarModel="findAllState.ProgressBarModel"/>
+	        }
+		}
+		else
+		{
+			<button class="luth_button"
+	                @onclick="CancelSearchOnClick">
+	            Cancel
+	        </button>
+	        
 	        <ProgressBarDisplay ProgressBarModel="findAllState.ProgressBarModel"/>
-	    }
+		}
 	
 		<div class="luth_te_search-engine-file-system-results">
 
