@@ -1,0 +1,78 @@
+/* _content/Luthetus.Extensions.DotNet/CompilerServices/Displays/CompilerServiceEditorDisplay.razor.rz.scp.css */
+[b-euzopjthje] .luth_ide_syntax-node-property {
+    display: flex;
+}
+
+[b-euzopjthje] .luth_ide_syntax-node-property-name {
+    margin-right: 20px;
+}
+/* _content/Luthetus.Extensions.DotNet/CompilerServices/Displays/CompilerServiceExplorerTreeViewDisplay.razor.rz.scp.css */
+.luth_ide_compiler-explorer-tree-view[b-2gxpyos4a5] {
+    height: calc(100%);
+}
+
+.luth_ide_compiler-explorer-tree-view-title[b-2gxpyos4a5] {
+    height: 2rem;
+    text-wrap: nowrap;
+}
+
+.luth_ide_compiler-explorer-tree-view-body[b-2gxpyos4a5] {
+    height: calc(100% - 2rem);
+}
+/* _content/Luthetus.Extensions.DotNet/CompilerServices/Displays/Internals/SyntaxDisplay.razor.rz.scp.css */
+.luth_ide_syntax-body[b-to1gqa8gy0] {
+    margin: 7px;
+    padding: 7px;
+    border-left: 1px solid var(--luth_primary-border-color);
+}
+/* _content/Luthetus.Extensions.DotNet/CSharpProjects/Displays/CSharpProjectFormDisplay.razor.rz.scp.css */
+.luth_ide_graphical-project-template-inputs[b-a23d1y6che] {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.luth_ide_c-sharp-project-form-graphical-panel .luth_ide_c-sharp-project-form-middle-inputs[b-a23d1y6che] {
+    height: 50%;
+    min-height: 200px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.luth_ide_c-sharp-project-form-sticky[b-a23d1y6che] {
+    position: sticky;
+    top: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    background-color: var(--luth_secondary-background-color);
+    color: var(--luth_secondary-foreground-color);
+}
+
+.luth_ide_graphical-project-template-container[b-a23d1y6che] {
+    width: 100%;
+}
+
+.luth_ide_disable-display-flex[b-a23d1y6che] {
+    display: unset;
+}
+
+/* _content/Luthetus.Extensions.DotNet/CSharpProjects/Displays/ProjectTemplateDisplay.razor.rz.scp.css */
+.luth_ide_project-template[b-rc1ccn977v] {
+    margin-bottom: 12px;
+    background-color: var(--luth_tertiary-background-color);
+    color: var(--luth_tertiary-foreground-color);
+}
+
+.luth_ide_project-template-title[b-rc1ccn977v] {
+    background-color: var(--luth_ide_section-title-background-color);
+    color: var(--luth_primary-foreground-color);
+    cursor: pointer;
+}
+    .luth_ide_project-template-title:hover[b-rc1ccn977v] {
+        background-color: var(--luth_active-no-focus-background-color);
+    }
+
+    .luth_ide_project-template-title.luth_active[b-rc1ccn977v] {
+        background-color: var(--luth_active-with-focus-background-color);
+    }

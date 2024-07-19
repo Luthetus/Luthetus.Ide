@@ -1,9 +1,19 @@
 /* _content/Luthetus.Common/Contexts/Displays/ContextBoundary.razor.rz.scp.css */
-.luth_ide_context-boundary:focus[b-h3a6e2rd8v] {
+/* 
+The component 'OutlineInitializer.razor' is in development as a replacement
+to the '.luth_ide_context-boundary:focus' css in this file.
+
+TODO: Decide if 'OutlineInitializer.razor' is an improvement,
+      and if so delete this css block or file entirely if its empty.
+*/
+/*
+.luth_ide_context-boundary:focus {
     box-shadow: 0 0 8px var(--luth_primary-overlay-box-shadow-color) inset;
     outline: 5px solid var(--luth_toggled-on-hover-background-color);
     outline-offset: -5px;
 }
+*/
+
 /* _content/Luthetus.Common/Contexts/Displays/ContextBoundaryOverlay.razor.rz.scp.css */
 .luth_ide_context-boundary-overlay[b-3kwqjioiky] {
     position: fixed;
@@ -25,7 +35,7 @@
 }
 
     .luth_dialog-display:focus[b-lalhgf9r7e] {
-        outline: 5px solid var(--luth_toggled-on-hover-background-color);
+        outline: 4px solid var(--luth_toggled-on-hover-background-color);
     }
 
 .luth_dialog-display.luth_active[b-lalhgf9r7e] {
@@ -256,6 +266,12 @@
 
 .luth_web_notifications-view-tab-entry-count[b-499isn9b3w] {
     margin: 0 5px;
+}
+/* _content/Luthetus.Common/Outlines/Displays/OutlineInitializer.razor.rz.scp.css */
+.luth_outline[b-4ddjiekzex] {
+	position: fixed;
+	z-index: 1;
+	background-color: var(--luth_toggled-on-hover-background-color);
 }
 /* _content/Luthetus.Common/OutOfBoundsClicks/Displays/OutOfBoundsClickDisplay.razor.rz.scp.css */
 .luth_out-of-bounds-click-display[b-v5mtfq7utp] {
