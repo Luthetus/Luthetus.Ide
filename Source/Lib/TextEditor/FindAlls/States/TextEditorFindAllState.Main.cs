@@ -10,8 +10,7 @@ public partial record TextEditorFindAllState(
 	string SearchQuery,
 	string StartingDirectoryPath,
 	ImmutableList<string> SearchResultList,
-	ProgressBarModel? ProgressBarModel,
-	Task? SearchTask)
+	ProgressBarModel? ProgressBarModel)
 {
 	/// <summary>
     /// Each instance of the state will share this because the 'with' keyword will copy
@@ -23,7 +22,6 @@ public partial record TextEditorFindAllState(
     	string.Empty,
     	string.Empty,
     	ImmutableList<string>.Empty,
-    	null,
     	null)
     {
     }

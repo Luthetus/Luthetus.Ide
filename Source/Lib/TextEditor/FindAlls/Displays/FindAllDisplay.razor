@@ -1,6 +1,7 @@
 @using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Keys.Models;
 @using Luthetus.Common.RazorLib.Tabs.Displays
+@using Luthetus.Common.RazorLib.Reactives.Displays
 @using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 @inherits FluxorComponent
@@ -35,13 +36,13 @@
             Find All
         </button>
 
-		@if (findAllState.SearchTask?.IsCompleted ?? false)
+		@if (findAllState.ProgressBarModel is null || findAllState.ProgressBarModel.IsDisposed)
 	    {
-	        <IconLoading/>
+	        <div>Not Searching</div>
 	    }
 	    else
 	    {
-	        <div>Not Searching</div>
+	        <ProgressBarDisplay ProgressBarModel="findAllState.ProgressBarModel"/>
 	    }
 	
 		<div class="luth_te_search-engine-file-system-results">

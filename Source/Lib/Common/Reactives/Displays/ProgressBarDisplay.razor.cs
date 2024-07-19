@@ -12,7 +12,7 @@ public partial class ProgressBarDisplay : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 
 	[CascadingParameter]
-	public INotification Notification { get; set; } = null!;
+	public INotification? Notification { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public ProgressBarModel ProgressBarModel { get; set; } = null!;
@@ -27,7 +27,7 @@ public partial class ProgressBarDisplay : ComponentBase, IDisposable
 
 	protected override Task OnAfterRenderAsync(bool firstRender)
 	{
-		if (!_hasSeenProgressModelIsDisposed && ProgressBarModel.IsDisposed)
+		if (Notification is not null && !_hasSeenProgressModelIsDisposed && ProgressBarModel.IsDisposed)
 		{
 			_hasSeenProgressModelIsDisposed = true;
 

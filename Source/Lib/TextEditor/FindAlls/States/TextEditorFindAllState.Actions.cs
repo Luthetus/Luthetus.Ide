@@ -12,7 +12,7 @@ public partial record TextEditorFindAllState
     public record CancelSearchAction;
     
     /// <summary>Intended for use only by the 'Effector'</summary>
-    public record SetSearchTaskAction(Task SearchTask, ProgressBarModel ProgressBarModel);
+    public record SetProgressBarModelAction(ProgressBarModel ProgressBarModel);
     
     /// <summary>
     /// While the search task is being executed, any search results are being

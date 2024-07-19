@@ -27,17 +27,17 @@ public partial record TextEditorFindAllState
 		[EffectMethod(typeof(StartSearchAction))]
 		public Task HandleStartSearchAction(IDispatcher dispatcher)
 		{
-			_throttleSetSearchQuery.Run(_ => 
+			_throttleSetSearchQuery.Run(async _ => 
 			{
 				dispatcher.Dispatch(new CancelSearchAction());
 				
 				var progressBarModel = new ProgressBarModel();
 				
-				var searchTask = (Task?)null;
+				dispatcher.Dispatch(new SetProgressBarModelAction(progressBarModel));
 				
 				try
 				{
-					searchTask = StartSearchTask(
+					await StartSearchTask(
 						progressBarModel,
 						_fileSystemProvider,
 						_textEditorFindAllStateWrap.Value,
@@ -48,8 +48,7 @@ public partial record TextEditorFindAllState
 					Console.WriteLine(e);
 				}
 				
-				dispatcher.Dispatch(new SetSearchTaskAction(searchTask, progressBarModel));
-				return searchTask;
+				dispatcher.Dispatch(new SetProgressBarModelAction(progressBarModel));
 			});
 
 			return Task.CompletedTask;

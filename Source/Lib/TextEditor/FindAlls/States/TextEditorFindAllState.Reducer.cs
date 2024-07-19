@@ -41,14 +41,13 @@ public partial record TextEditorFindAllState
         }
 
         [ReducerMethod]
-        public static TextEditorFindAllState ReduceSetSearchTaskAction(
+        public static TextEditorFindAllState ReduceSetProgressBarModelAction(
             TextEditorFindAllState inState,
-            SetSearchTaskAction setSearchTaskAction)
+            SetProgressBarModelAction setProgressBarModelAction)
         {
             return inState with
             {
-            	SearchTask = setSearchTaskAction.SearchTask,
-            	ProgressBarModel = setSearchTaskAction.ProgressBarModel,
+            	ProgressBarModel = setProgressBarModelAction.ProgressBarModel,
             };
         }
 
