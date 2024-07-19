@@ -27,13 +27,6 @@ public partial class FindAllDisplay : FluxorComponent
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-	private CancellationTokenSource _doSearchCancellationTokenSource = new();
-    private bool _disposed;
-
-	public SearchEngineFileSystem SearchEngineFileSystem => (SearchEngineFileSystem)
-		TextEditorFindAllStateWrap.Value.SearchEngineList
-			.FirstOrDefault(x => x.DisplayName == "FileSystem");
-
 	private string SearchQuery
     {
         get => TextEditorFindAllStateWrap.Value.SearchQuery;
@@ -53,67 +46,6 @@ public partial class FindAllDisplay : FluxorComponent
                 Dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(value));
         }
     }
-
-    private bool MatchCase
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.MatchCase.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.MatchCase.Value = value;
-        }
-    }
-
-    private bool MatchWholeWord
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.MatchWholeWord.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.MatchWholeWord.Value = value;
-        }
-    }
-
-    private bool UseRegularExpressions
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.UseRegularExpressions.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.UseRegularExpressions.Value = value;
-        }
-    }
-
-    private bool IncludeExternalItems
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.IncludeExternalItems.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.IncludeExternalItems.Value = value;
-        }
-    }
-
-    private bool IncludeMiscellaneousFiles
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.IncludeMiscellaneousFiles.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.IncludeMiscellaneousFiles.Value = value;
-        }
-    }
-
-    private bool AppendResults
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.AppendResults.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.AppendResults.Value = value;
-        }
-    }
-
-	protected override void OnInitialized()
-	{
-		SearchEngineFileSystem.ProgressOccurred += On_SearchEngineFileSystem_ProgressOccurred;
-
-		base.OnInitialized();
-	}
 
 	private async Task OpenInEditorOnClick(string filePath)
 	{
@@ -149,49 +81,8 @@ public partial class FindAllDisplay : FluxorComponent
         }
 	}
 
-	private async Task DoSearchOnClickAsync(
-        TextEditorFindAllState findAllState,
-        ITextEditorSearchEngine activeSearchEngine)
+	private void DoSearchOnClick()
     {
-        try
-        {
-            await InvokeAsync(StateHasChanged);
-
-            _doSearchCancellationTokenSource.Cancel();
-            _doSearchCancellationTokenSource = new();
-
-            var cancellationToken = _doSearchCancellationTokenSource.Token;
-
-            await activeSearchEngine
-                .SearchAsync(findAllState.SearchQuery, cancellationToken)
-                .ConfigureAwait(false);
-        }
-        finally
-        {
-            await InvokeAsync(StateHasChanged);
-        }
-    }
-
-	private async void On_SearchEngineFileSystem_ProgressOccurred()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-
-	protected override void Dispose(bool disposing)
-    {
-        if (_disposed)
-        {
-            return;
-        }
-
-        if (disposing)
-        {
-            _disposed = true;
-
-            _doSearchCancellationTokenSource.Cancel();
-        	SearchEngineFileSystem.ProgressOccurred -= On_SearchEngineFileSystem_ProgressOccurred;
-		}
-
-        base.Dispose(disposing);
+    	Dispatcher.Dispatch(new TextEditorFindAllState.StartSearchAction());
     }
 }

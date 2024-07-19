@@ -31,11 +31,11 @@
 		</div>
 
 		<button class="luth_button"
-                @onclick="() => DoSearchOnClickAsync(findAllState, SearchEngineFileSystem)">
+                @onclick="DoSearchOnClick">
             Find All
         </button>
 
-		@if (SearchEngineFileSystem.IsSearching)
+		@if (findAllState.SearchTask?.IsCompleted ?? false)
 	    {
 	        <IconLoading/>
 	    }
@@ -46,7 +46,7 @@
 	
 		<div class="luth_te_search-engine-file-system-results">
 
-			@{ var localFilePathList = SearchEngineFileSystem.FilePathList.ToArray(); }
+			@{ var localFilePathList = findAllState.SearchResultList; }
 			@foreach (var filePath in localFilePathList)
 			{
 				var absolutePath = EnvironmentProvider.AbsolutePathFactory(filePath, false);

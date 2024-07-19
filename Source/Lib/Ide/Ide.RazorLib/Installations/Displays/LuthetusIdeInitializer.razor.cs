@@ -70,11 +70,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
                     }
                 }
 
-                foreach (var searchEngine in TextEditorConfig.SearchEngineList)
-                {
-                    Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
-                }
-
                 foreach (var terminalKey in TerminalFacts.WELL_KNOWN_TERMINAL_KEYS)
                 {
                     var displayName = $"BAD_WellKnownTerminalKey:{terminalKey.Guid}";
