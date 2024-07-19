@@ -120,12 +120,12 @@ public partial class TextEditorService : ITextEditorService
     public ITextEditorDiffApi DiffApi { get; }
     public ITextEditorOptionsApi OptionsApi { get; }
 
-    public void PostDistinct(
+    public void PostUnique(
         string name,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null)
     {
-        Post(new DistinctTextEditorTask(
+        Post(new UniqueTextEditorTask(
             name,
             textEditorEdit,
             throttleTimeSpan));

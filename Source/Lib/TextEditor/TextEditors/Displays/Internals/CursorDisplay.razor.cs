@@ -132,7 +132,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                 {
                     // I think after removing the throttle, that this is an infinite loop on WASM,
                     // i.e. holding down ArrowRight
-                    TextEditorService.PostDistinct(
+                    TextEditorService.PostUnique(
                         nameof(_throttleShouldRevealCursor),
                         async editContext =>
                         {

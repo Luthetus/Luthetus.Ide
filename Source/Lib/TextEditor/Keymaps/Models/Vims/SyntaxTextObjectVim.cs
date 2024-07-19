@@ -237,7 +237,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostDistinct(
+                                commandArgs.TextEditorService.PostUnique(
                                     nameof(MoveCursorOneColumnLeftFactory),
                                     MoveCursorOneColumnLeftFactory(
                                         commandArgs.ModelResourceUri,
@@ -270,7 +270,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostDistinct(
+                                commandArgs.TextEditorService.PostUnique(
                                     nameof(MoveCursorOneRowDownFactory),
                                     MoveCursorOneRowDownFactory(
                                         commandArgs.ModelResourceUri,
@@ -303,7 +303,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostDistinct(
+                                commandArgs.TextEditorService.PostUnique(
                                     nameof(MoveCursorOneRowUpFactory),
                                     MoveCursorOneRowUpFactory(
                                         commandArgs.ModelResourceUri,
@@ -336,7 +336,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostDistinct(
+                                commandArgs.TextEditorService.PostUnique(
                                     nameof(MoveCursorOneColumnRightFactory),
                                     MoveCursorOneColumnRightFactory(
                                         commandArgs.ModelResourceUri,
@@ -375,7 +375,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostDistinct(
+                                commandArgs.TextEditorService.PostUnique(
                                     nameof(MoveCursorEndCurrentLineFactory),
                                     MoveCursorEndCurrentLineFactory(
                                         commandArgs.ModelResourceUri,
@@ -408,7 +408,7 @@ public static class SyntaxTextObjectVim
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
 
-                                commandArgs.TextEditorService.PostDistinct(
+                                commandArgs.TextEditorService.PostUnique(
                                     nameof(MoveCursorStartCurrentLineFactory),
                                     MoveCursorStartCurrentLineFactory(
                                         commandArgs.ModelResourceUri,

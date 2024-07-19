@@ -12,7 +12,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostDistinct(
+                commandArgs.TextEditorService.PostUnique(
                     nameof(Word),
                     WordFactory(commandArgs));
 				return Task.CompletedTask;
@@ -31,7 +31,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostDistinct(
+                commandArgs.TextEditorService.PostUnique(
                     nameof(End),
                     EndFactory(commandArgs));
 				return Task.CompletedTask;
@@ -50,7 +50,7 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-                commandArgs.TextEditorService.PostDistinct(
+                commandArgs.TextEditorService.PostUnique(
                     nameof(Back),
                     BackFactory(commandArgs));
 				return Task.CompletedTask;
@@ -74,7 +74,7 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    commandArgs.TextEditorService.PostDistinct(
+                    commandArgs.TextEditorService.PostUnique(
                         nameof(GetVisualFactory),
                         VisualFactory(commandArgs));
 					return Task.CompletedTask;
@@ -101,7 +101,7 @@ public static partial class TextEditorCommandVimFacts
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
 
-                    commandArgs.TextEditorService.PostDistinct(
+                    commandArgs.TextEditorService.PostUnique(
                         nameof(GetVisualLineFactory),
                         VisualLineFactory(commandArgs));
 					return Task.CompletedTask;
