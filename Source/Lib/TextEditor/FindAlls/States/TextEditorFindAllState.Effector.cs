@@ -45,6 +45,13 @@ public partial record TextEditorFindAllState
 				dispatcher.Dispatch(new ClearSearchAction());
 				
 				var textEditorFindAllState = _textEditorFindAllStateWrap.Value;
+
+				if (string.IsNullOrWhiteSpace(textEditorFindAllState.StartingDirectoryPath) ||
+					string.IsNullOrWhiteSpace(textEditorFindAllState.SearchQuery))
+				{
+					return;
+				}
+				
 				var cancellationToken = textEditorFindAllState._searchCancellationTokenSource.Token;
 				var progressBarModel = new ProgressBarModel();
 
@@ -208,8 +215,6 @@ public partial record TextEditorFindAllState
 		
 		private void ConstructTreeView(TextEditorFindAllState textEditorFindAllState)
 		{
-			Console.WriteLine("textEditorFindAllState.SearchResultList.Count: " + textEditorFindAllState.SearchResultList.Count);
-		
 		    var treeViewList = textEditorFindAllState.SearchResultList.Select(
 		    	x => (TreeViewNoType)new TreeViewFindAllTextSpan(
 			        x,
