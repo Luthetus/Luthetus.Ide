@@ -1,6 +1,7 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 
@@ -27,5 +28,5 @@ public partial record TextEditorFindAllState
     ///
     /// Then, the search will continue.
     /// </summary>
-    public record FlushSearchResultsAction(List<string> SearchResultList);
+    public record FlushSearchResultsAction(List<TextEditorTextSpan> SearchResultList);
 }

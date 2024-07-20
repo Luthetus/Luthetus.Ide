@@ -2,6 +2,8 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 
@@ -65,7 +67,7 @@ public partial record TextEditorFindAllState
 			CancellationToken cancellationToken)
 		{
 			var filesProcessedCount = 0;
-			var filePathList = new List<string>();
+			var textSpanList = new List<TextEditorTextSpan>();
 			var searchException = (Exception?)null;
 			
 			try
@@ -79,7 +81,7 @@ public partial record TextEditorFindAllState
 			}
 			finally
 			{
-				dispatcher.Dispatch(new FlushSearchResultsAction(filePathList));
+				dispatcher.Dispatch(new FlushSearchResultsAction(textSpanList));
 			
 				if (searchException is null)
 				{
@@ -136,10 +138,39 @@ public partial record TextEditorFindAllState
 			
 			async Task PerformSearchFile(string filePath)
 			{
-				var contents = await fileSystemProvider.File.ReadAllTextAsync(filePath).ConfigureAwait(false);
+				var text = await fileSystemProvider.File.ReadAllTextAsync(filePath).ConfigureAwait(false);
+				var query = textEditorFindAllState.SearchQuery;
+					
+		        var matchedTextSpanList = new List<TextEditorTextSpan>();
 		
-				if (contents.Contains(textEditorFindAllState.SearchQuery))
-					filePathList.Add(filePath);
+		        for (int outerI = 0; outerI < text.Length; outerI++)
+		        {
+		            if (outerI + query.Length <= text.Length)
+		            {
+		                int innerI = 0;
+		                for (; innerI < query.Length; innerI++)
+		                {
+		                    if (text[outerI + innerI] != query[innerI])
+		                        break;
+		                }
+		
+		                if (innerI == query.Length)
+		                {
+		                    // Then the entire query was matched
+		                    matchedTextSpanList.Add(new TextEditorTextSpan(
+		                        outerI,
+		                        outerI + innerI,
+		                        (byte)FindOverlayDecorationKind.LongestCommonSubsequence,
+		                        new ResourceUri(filePath),
+		                        text));
+		                }
+		            }
+		        }
+		
+		        foreach (var matchedTextSpan in matchedTextSpanList)
+		        {
+					textSpanList.Add(matchedTextSpan);
+		        }
 			}
 			
 			void ShowFilesProcessedCountOnUi(double decimalPercentProgress, bool shouldDisposeProgressBarModel = false)

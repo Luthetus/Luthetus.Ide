@@ -57,18 +57,16 @@
 	
 		<div class="luth_te_search-engine-file-system-results">
 
-			@{ var localFilePathList = findAllState.SearchResultList; }
-			@foreach (var filePath in localFilePathList)
+			@foreach (var textSpan in findAllState.SearchResultList)
 			{
-				var absolutePath = EnvironmentProvider.AbsolutePathFactory(filePath, false);
+				var absolutePath = EnvironmentProvider.AbsolutePathFactory(textSpan.ResourceUri.Value, false);
 
 				<div>
-					<label>Open in editor:</label>
 					<button class="luth_button"
 							style="display: inline; margin-bottom: 15px;"
 							title="@absolutePath.Value"
-							@onclick="() => OpenInEditorOnClick(filePath)">
-						@absolutePath.NameWithExtension
+							@onclick="() => OpenInEditorOnClick(textSpan.ResourceUri.Value)">
+						@(absolutePath.NameWithExtension)____@(textSpan.StartingIndexInclusive) position index
 					</button>
 				</div>
 			}

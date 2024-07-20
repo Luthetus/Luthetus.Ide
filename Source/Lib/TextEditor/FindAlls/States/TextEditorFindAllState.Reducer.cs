@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Fluxor;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 
@@ -56,10 +57,10 @@ public partial record TextEditorFindAllState
             TextEditorFindAllState inState,
             FlushSearchResultsAction flushSearchResultsAction)
         {
-        	List<string> localSearchResultList;
+        	List<TextEditorTextSpan> localSearchResultList;
         	lock (inState._flushSearchResultsLock)
         	{
-      		  localSearchResultList = new List<string>(inState.SearchResultList);
+      		  localSearchResultList = new List<TextEditorTextSpan>(inState.SearchResultList);
         		localSearchResultList.AddRange(flushSearchResultsAction.SearchResultList);
         		flushSearchResultsAction.SearchResultList.Clear();
         	}
@@ -77,7 +78,7 @@ public partial record TextEditorFindAllState
         {
             return inState with
             {
-            	SearchResultList = ImmutableList<string>.Empty
+            	SearchResultList = ImmutableList<TextEditorTextSpan>.Empty
             };
         }
     }

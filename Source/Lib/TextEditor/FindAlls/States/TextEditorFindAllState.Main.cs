@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 
@@ -9,7 +10,7 @@ namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 public partial record TextEditorFindAllState(
 	string SearchQuery,
 	string StartingDirectoryPath,
-	ImmutableList<string> SearchResultList,
+	ImmutableList<TextEditorTextSpan> SearchResultList,
 	ProgressBarModel? ProgressBarModel)
 {
 	/// <summary>
@@ -21,7 +22,7 @@ public partial record TextEditorFindAllState(
     public TextEditorFindAllState() : this(
     	string.Empty,
     	string.Empty,
-    	ImmutableList<string>.Empty,
+    	ImmutableList<TextEditorTextSpan>.Empty,
     	null)
     {
     }
