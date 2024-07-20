@@ -107,40 +107,6 @@ public partial class FindAllDisplay : FluxorComponent
 		return Task.CompletedTask;
 	}
 
-	private async Task OpenInEditorOnClick(string filePath)
-	{
-		var resourceUri = new ResourceUri(filePath);
-
-        if (TextEditorConfig.RegisterModelFunc is null)
-			return;
-
-        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-                resourceUri,
-                ServiceProvider))
-            .ConfigureAwait(false);
-
-        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
-		{
-			var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-				    Key<TextEditorViewModel>.NewKey(),
-                    resourceUri,
-                    new Category("main"),
-				    false,
-				    ServiceProvider))
-                .ConfigureAwait(false);
-
-            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-				TextEditorConfig.TryShowViewModelFunc is not null)
-            {
-				await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-					    viewModelKey,
-					    Key<TextEditorGroup>.Empty,
-					    ServiceProvider))
-                    .ConfigureAwait(false);
-            }
-        }
-	}
-
 	private void DoSearchOnClick()
     {
     	Dispatcher.Dispatch(new TextEditorFindAllState.StartSearchAction());

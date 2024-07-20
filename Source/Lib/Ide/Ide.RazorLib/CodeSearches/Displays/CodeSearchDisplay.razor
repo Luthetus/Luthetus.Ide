@@ -42,20 +42,7 @@
 
         <hr />
 
-        @foreach (var filePath in codeSearchState.ResultList)
-        {
-            var absolutePath = EnvironmentProvider.AbsolutePathFactory(filePath, false);
-
-            <div>
-                <button class="luth_button"
-                        style="display: inline; margin-bottom: 15px;"
-                        title="@absolutePath.Value"
-                        @onclick="() => HandleOnClick(filePath)"
-                        @ondblclick="() => HandleOnDoubleClick(filePath)">
-                    @absolutePath.NameWithExtension
-                </button>
-            </div>
-        }
+        <div>Results: @($"{codeSearchState.ResultList.Count:N0}")</div>
         
         <CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
             <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">

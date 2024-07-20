@@ -215,14 +215,24 @@ public partial record TextEditorFindAllState
 		
 		private void ConstructTreeView(TextEditorFindAllState textEditorFindAllState)
 		{
-		    var treeViewList = textEditorFindAllState.SearchResultList.Select(
-		    	x => (TreeViewNoType)new TreeViewFindAllTextSpan(
-			        x,
-					_environmentProvider,
-					_fileSystemProvider,
-					false,
-					false))
-				.ToArray();
+			var groupedResults = textEditorFindAllState.SearchResultList.GroupBy(x => x.ResourceUri);
+		
+		    var treeViewList = groupedResults.Select(group =>
+		    {
+		    	var absolutePath = _environmentProvider.AbsolutePathFactory(
+		    		group.Key.Value,
+		    		false);
+		    		
+		    	return (TreeViewNoType)new TreeViewFindAllGroup(
+			        group.Select(textSpan => new TreeViewFindAllTextSpan(
+			        	textSpan,
+			        	absolutePath,
+			        	false,
+			        	false)).ToList(),
+			        absolutePath,
+					true,
+					false);
+		    }).ToArray();
 		
 		    var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(treeViewList);
 		    var firstNode = treeViewList.FirstOrDefault();

@@ -5,14 +5,14 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
-public class TreeViewFindAllTextSpan : TreeViewWithType<TextEditorTextSpan>
+public class TreeViewFindAllGroup : TreeViewWithType<List<TreeViewFindAllTextSpan>>
 {
-	public TreeViewFindAllTextSpan(
-			TextEditorTextSpan textSpan,
+	public TreeViewFindAllGroup(
+			List<TreeViewFindAllTextSpan> treeViewFindAllTextSpanList,
 			IAbsolutePath absolutePath,
 			bool isExpandable,
 			bool isExpanded)
-		: base(textSpan, isExpandable, isExpanded)
+		: base(treeViewFindAllTextSpanList, isExpandable, isExpanded)
 	{
 		AbsolutePath = absolutePath;
 	}
@@ -21,22 +21,22 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<TextEditorTextSpan>
 	
 	public override bool Equals(object? obj)
 	{
-		if (obj is not TreeViewFindAllTextSpan otherTreeView)
+		if (obj is not TreeViewFindAllGroup otherTreeView)
 			return false;
 
 		return otherTreeView.GetHashCode() == GetHashCode();
 	}
 
-	public override int GetHashCode() => Item.ResourceUri.Value.GetHashCode();
+	public override int GetHashCode() => AbsolutePath.Value.GetHashCode();
 	
 	public override TreeViewRenderer GetTreeViewRenderer()
 	{
 		return new TreeViewRenderer(
-			typeof(TreeViewFindAllTextSpanDisplay),
+			typeof(TreeViewFindAllGroupDisplay),
 			new Dictionary<string, object?>
 			{
 				{
-					nameof(TreeViewFindAllTextSpanDisplay.TreeViewFindAllTextSpan),
+					nameof(TreeViewFindAllGroupDisplay.TreeViewFindAllGroup),
 					this
 				}
 			});
@@ -44,6 +44,13 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<TextEditorTextSpan>
 	
 	public override Task LoadChildListAsync()
 	{
+		if (ChildList.Count != 0)
+			return Task.CompletedTask;
+		
+		var previousChildList = ChildList;
+		ChildList = Item.Select(x => (TreeViewNoType)x).ToList();
+		LinkChildren(previousChildList, ChildList);
+		
 		return Task.CompletedTask;
 	}
 }
