@@ -18,6 +18,8 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<TextEditorTextSpan>
 	}
 	
 	public IAbsolutePath AbsolutePath { get; }
+	public string? PreviewEarlierNearbyText { get; set; }
+	public string? PreviewLaterNearbyText { get; set; }
 	
 	public override bool Equals(object? obj)
 	{
