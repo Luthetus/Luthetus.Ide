@@ -147,8 +147,15 @@ public partial record TextEditorFindAllState
 		
 					foreach (var subdirectory in subdirectoryList)
 					{
-						if (subdirectory.Contains(".git")  || subdirectory.Contains("bin") || subdirectory.Contains("obj"))
+						if (subdirectory.Contains(".git") ||
+							subdirectory.Contains(".vs") ||
+							subdirectory.Contains(".vscode") ||
+							subdirectory.Contains(".idea") ||
+							subdirectory.Contains("bin") ||
+							subdirectory.Contains("obj"))
+						{
 							continue;
+						}
 		
 						await RecursiveSearch(subdirectory).ConfigureAwait(false);
 					}

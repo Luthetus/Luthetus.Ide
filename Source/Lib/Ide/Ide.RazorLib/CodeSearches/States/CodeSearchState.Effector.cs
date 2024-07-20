@@ -89,8 +89,15 @@ public partial record CodeSearchState
                         if (searchEffect.CancellationToken.IsCancellationRequested)
                             return;
 
-                        if (directoryPathChild.Contains(".vs") || directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
-                            continue;
+                        if (directoryPathChild.Contains(".git") ||
+							directoryPathChild.Contains(".vs") ||
+							directoryPathChild.Contains(".vscode") ||
+							directoryPathChild.Contains(".idea") ||
+							directoryPathChild.Contains("bin") ||
+							directoryPathChild.Contains("obj"))
+						{
+							continue;
+						}
 
                         await RecursiveHandleSearchEffect(directoryPathChild).ConfigureAwait(false);
                     }
