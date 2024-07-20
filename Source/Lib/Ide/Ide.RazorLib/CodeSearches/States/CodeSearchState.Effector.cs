@@ -80,7 +80,9 @@ public partial record CodeSearchState
 
                     foreach (var filePathChild in filePathChildList)
                     {
-                        if (filePathChild.Contains(codeSearchState.Query))
+                    	var absolutePath = _environmentProvider.AbsolutePathFactory(filePathChild, false);
+                    
+                        if (absolutePath.NameWithExtension.Contains(codeSearchState.Query))
                             dispatcher.Dispatch(new AddResultAction(filePathChild));
                     }
 
