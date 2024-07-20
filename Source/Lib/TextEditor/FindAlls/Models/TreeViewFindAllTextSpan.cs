@@ -38,7 +38,13 @@ public class TreeViewFindAllTextSpan : TreeViewWithType<TextEditorTextSpan>
 	{
 		return new TreeViewRenderer(
 			typeof(TreeViewFindAllTextSpanDisplay),
-			null);
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(TreeViewFindAllTextSpanDisplay.TreeViewFindAllTextSpan),
+					this
+				}
+			});
 	}
 	
 	public override Task LoadChildListAsync()

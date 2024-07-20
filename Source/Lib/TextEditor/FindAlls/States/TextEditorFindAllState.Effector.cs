@@ -1,9 +1,12 @@
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 
@@ -12,6 +15,8 @@ public partial record TextEditorFindAllState
 	public class Effector : IDisposable
 	{
 		private readonly IFileSystemProvider _fileSystemProvider;
+		private readonly IEnvironmentProvider _environmentProvider;
+		private readonly ITreeViewService _treeViewService;
 		private readonly IState<TextEditorFindAllState> _textEditorFindAllStateWrap;
 		private readonly IDispatcher _dispatcher;
 		private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
@@ -19,10 +24,14 @@ public partial record TextEditorFindAllState
 		
 		public Effector(
 			IFileSystemProvider fileSystemProvider,
+			IEnvironmentProvider environmentProvider,
+			ITreeViewService treeViewService,
 			IState<TextEditorFindAllState> textEditorFindAllStateWrap,
 			IDispatcher dispatcher)
 		{
 			_fileSystemProvider = fileSystemProvider;
+			_environmentProvider = environmentProvider;
+			_treeViewService = treeViewService;
 			_textEditorFindAllStateWrap = textEditorFindAllStateWrap;
 			_dispatcher = dispatcher;
 		}
@@ -38,6 +47,8 @@ public partial record TextEditorFindAllState
 				var textEditorFindAllState = _textEditorFindAllStateWrap.Value;
 				var cancellationToken = textEditorFindAllState._searchCancellationTokenSource.Token;
 				var progressBarModel = new ProgressBarModel();
+
+				ConstructTreeView(textEditorFindAllState);
 
 				dispatcher.Dispatch(new SetProgressBarModelAction(progressBarModel));
 				
@@ -94,7 +105,8 @@ public partial record TextEditorFindAllState
 						searchException.ToString());
 						
 					progressBarModel.Dispose();
-					
+					// The use of '_textEditorFindAllStateWrap.Value' is purposeful.
+					ConstructTreeView(_textEditorFindAllStateWrap.Value);
 					dispatcher.Dispatch(new SetProgressBarModelAction(progressBarModel));
 				}
 			}
@@ -184,12 +196,53 @@ public partial record TextEditorFindAllState
 					if (shouldDisposeProgressBarModel)
 					{
 						progressBarModel.Dispose();
+						// The use of '_textEditorFindAllStateWrap.Value' is purposeful.
+						ConstructTreeView(_textEditorFindAllStateWrap.Value);
 						dispatcher.Dispatch(new SetProgressBarModelAction(progressBarModel));
 					}
 						
 					return Task.CompletedTask;
 				});
 			}
+		}
+		
+		private void ConstructTreeView(TextEditorFindAllState textEditorFindAllState)
+		{
+			Console.WriteLine("textEditorFindAllState.SearchResultList.Count: " + textEditorFindAllState.SearchResultList.Count);
+		
+		    var treeViewList = textEditorFindAllState.SearchResultList.Select(
+		    	x => (TreeViewNoType)new TreeViewFindAllTextSpan(
+			        x,
+					_environmentProvider,
+					_fileSystemProvider,
+					false,
+					false))
+				.ToArray();
+		
+		    var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(treeViewList);
+		    var firstNode = treeViewList.FirstOrDefault();
+		
+		    var activeNodes = firstNode is null
+		        ? Array.Empty<TreeViewNoType>()
+		        : new[] { firstNode };
+		
+		    if (!_treeViewService.TryGetTreeViewContainer(TextEditorFindAllState.TreeViewFindAllContainerKey, out _))
+		    {
+		        _treeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+		            TextEditorFindAllState.TreeViewFindAllContainerKey,
+		            adhocRoot,
+		            activeNodes.ToImmutableList()));
+		    }
+		    else
+		    {
+		        _treeViewService.SetRoot(TextEditorFindAllState.TreeViewFindAllContainerKey, adhocRoot);
+		
+		        _treeViewService.SetActiveNode(
+		            TextEditorFindAllState.TreeViewFindAllContainerKey,
+		            firstNode,
+		            true,
+		            false);
+		    }
 		}
 		
 		// Count the amount of top level directories

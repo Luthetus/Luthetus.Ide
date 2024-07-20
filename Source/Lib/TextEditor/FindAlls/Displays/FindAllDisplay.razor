@@ -58,34 +58,37 @@
 		}
 	
 		<div class="luth_te_search-engine-file-system-results">
-
-			@foreach (var textSpan in findAllState.SearchResultList)
+		
+			@if (findAllState.ProgressBarModel is not null && findAllState.ProgressBarModel.IsDisposed)
 			{
-				var absolutePath = EnvironmentProvider.AbsolutePathFactory(textSpan.ResourceUri.Value, false);
-
-				<div>
-					<button class="luth_button"
-							style="display: inline; margin-bottom: 15px;"
-							title="@absolutePath.Value"
-							@onclick="() => OpenInEditorOnClick(textSpan.ResourceUri.Value)">
-						@(absolutePath.NameWithExtension)____@(textSpan.StartingIndexInclusive) position index
-					</button>
-				</div>
+				<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+	                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+	                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+	                        <TreeViewContainerDisplay TreeViewContainerKey="TextEditorFindAllState.TreeViewFindAllContainerKey"
+	                                                  CssStyleString="height: 100%;"
+	                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+	                                                  TreeViewKeyboardEventHandler="_treeViewKeymap"
+	                                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+	                    </CascadingValue>
+	                </CascadingValue>
+	            </CascadingValue>
 			}
-			
-			<hr/>
-			
-			<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
-                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
-                        <TreeViewContainerDisplay TreeViewContainerKey="TextEditorFindAllState.TreeViewFindAllContainerKey"
-                                                  CssStyleString="height: 100%;"
-                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
-                                                  TreeViewKeyboardEventHandler="_treeViewKeymap"
-                                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
-                    </CascadingValue>
-                </CascadingValue>
-            </CascadingValue>
+			else
+			{
+				foreach (var textSpan in findAllState.SearchResultList)
+				{
+					var absolutePath = EnvironmentProvider.AbsolutePathFactory(textSpan.ResourceUri.Value, false);
+	
+					<div>
+						<button class="luth_button"
+								style="display: inline; margin-bottom: 15px;"
+								title="@absolutePath.Value"
+								@onclick="() => OpenInEditorOnClick(textSpan.ResourceUri.Value)">
+							@(absolutePath.NameWithExtension)____@(textSpan.StartingIndexInclusive) position index
+						</button>
+					</div>
+				}
+			}
 		</div>
     </div>
 </div>
