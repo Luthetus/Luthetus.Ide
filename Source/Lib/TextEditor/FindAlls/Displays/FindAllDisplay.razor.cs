@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -37,10 +38,12 @@ public partial class FindAllDisplay : FluxorComponent
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     
-    private TreeViewKeyboardEventHandler _treeViewKeymap = null!;
-	private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+    private FindAllTreeViewKeyboardEventHandler _treeViewKeymap = null!;
+	private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
 		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
@@ -67,11 +70,17 @@ public partial class FindAllDisplay : FluxorComponent
     
     protected override void OnInitialized()
 	{
-		_treeViewKeymap = new TreeViewKeyboardEventHandler(
+		_treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(
+			TextEditorService,
+			TextEditorConfig,
+			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
 
-		_treeViewMouseEventHandler = new TreeViewMouseEventHandler(
+		_treeViewMouseEventHandler = new FindAllTreeViewMouseEventHandler(
+			TextEditorService,
+			TextEditorConfig,
+			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
 
