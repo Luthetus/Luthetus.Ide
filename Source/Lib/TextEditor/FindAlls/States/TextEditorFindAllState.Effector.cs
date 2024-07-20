@@ -13,6 +13,7 @@ public partial record TextEditorFindAllState
 		private readonly IState<TextEditorFindAllState> _textEditorFindAllStateWrap;
 		private readonly IDispatcher _dispatcher;
 		private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
+		private readonly Throttle _throttleUiUpdate = new Throttle(Throttle.Thirty_Frames_Per_Second);
 		
 		public Effector(
 			IFileSystemProvider fileSystemProvider,
@@ -51,8 +52,6 @@ public partial record TextEditorFindAllState
 				{
 					Console.WriteLine(e);
 				}
-				
-				dispatcher.Dispatch(new SetProgressBarModelAction(progressBarModel));
 			});
 
 			return Task.CompletedTask;
@@ -65,22 +64,14 @@ public partial record TextEditorFindAllState
 			IDispatcher dispatcher,
 			CancellationToken cancellationToken)
 		{
+			var filesProcessedCount = 0;
 			var filePathList = new List<string>();
 			var searchException = (Exception?)null;
 			
 			try
 			{
-				for (int i = 0; i < 10; i++)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				
-					progressBarModel.SetProgress(i/(10.0));
-					
-					filePathList.Add(i.ToString());
-					
-					dispatcher.Dispatch(new FlushSearchResultsAction(filePathList));
-					await Task.Delay(500);
-				}
+				ShowFilesProcessedCountOnUi(0);
+				await RecursiveSearch(textEditorFindAllState.StartingDirectoryPath);
 			}
 			catch (Exception e)
 			{
@@ -88,91 +79,117 @@ public partial record TextEditorFindAllState
 			}
 			finally
 			{
+				dispatcher.Dispatch(new FlushSearchResultsAction(filePathList));
+			
 				if (searchException is null)
 				{
-					progressBarModel.SetProgress(1.0);
+					ShowFilesProcessedCountOnUi(1, true);
 				}
 				else
 				{
 					progressBarModel.SetProgress(
 						progressBarModel.DecimalPercentProgress,
 						searchException.ToString());
+						
+					progressBarModel.Dispose();
+					
+					dispatcher.Dispatch(new SetProgressBarModelAction(progressBarModel));
 				}
+			}
+			
+			async Task RecursiveSearch(string directoryPath)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
 				
-				progressBarModel.Dispose();
+				// Considering the use a breadth first algorithm
+	
+				// Search Files
+				{
+					var childFileList = await fileSystemProvider.Directory
+						.GetFilesAsync(directoryPath)
+						.ConfigureAwait(false);
+		
+					foreach (var childFile in childFileList)
+					{
+						await PerformSearchFile(childFile).ConfigureAwait(false);
+						
+						filesProcessedCount++;
+						ShowFilesProcessedCountOnUi(0);
+					}
+				}
+		
+				// Recurse into subdirectories
+				{
+					var subdirectoryList = await fileSystemProvider.Directory
+						.GetDirectoriesAsync(directoryPath)
+						.ConfigureAwait(false);
+		
+					foreach (var subdirectory in subdirectoryList)
+					{
+						if (subdirectory.Contains(".git")  || subdirectory.Contains("bin") || subdirectory.Contains("obj"))
+							continue;
+		
+						await RecursiveSearch(subdirectory).ConfigureAwait(false);
+					}
+				}
+			}
+			
+			async Task PerformSearchFile(string filePath)
+			{
+				var contents = await fileSystemProvider.File.ReadAllTextAsync(filePath).ConfigureAwait(false);
+		
+				if (contents.Contains(textEditorFindAllState.SearchQuery))
+					filePathList.Add(filePath);
+			}
+			
+			void ShowFilesProcessedCountOnUi(double decimalPercentProgress, bool shouldDisposeProgressBarModel = false)
+			{
+				_throttleUiUpdate.Run(_ =>
+				{
+					progressBarModel.SetProgress(
+						decimalPercentProgress,
+						$"{filesProcessedCount:N0} files processed");
+						
+					if (shouldDisposeProgressBarModel)
+					{
+						progressBarModel.Dispose();
+						dispatcher.Dispatch(new SetProgressBarModelAction(progressBarModel));
+					}
+						
+					return Task.CompletedTask;
+				});
 			}
 		}
 		
-		/*
-	    public Task SearchAsync(string searchQuery, CancellationToken cancellationToken = default)
-	    {
-			if (_runCount != 0)
-				return Task.CompletedTask;
-	
-			_runCount++;
-	
-			_ =  Task.Run(async () => 
-			{
-				var textEditorFindAllState = _textEditorFindAllStateWrap.Value;
-	
-				FilePathList.Clear();
-				IsSearching = true;
-				ProgressOccurred?.Invoke();
+		// Count the amount of top level directories
 				
-				await RecursiveSearchAsync(textEditorFindAllState.StartingDirectoryPath, searchQuery, cancellationToken).ConfigureAwait(false);
-				IsSearching = false;
-				ProgressOccurred?.Invoke();
-				_runCount--;
-			}).ConfigureAwait(false);
-	
-			return Task.CompletedTask;
-	    }
-	
-		private async Task RecursiveSearchAsync(string directoryPath, string searchQuery, CancellationToken cancellationToken = default)
-		{
-			// Considering the use a breadth first algorithm
-	
-			// Search Files
-			{
-				var childFileList = await _fileSystemProvider.Directory
-					.GetFilesAsync(directoryPath)
-					.ConfigureAwait(false);
-	
-				foreach (var childFile in childFileList)
-				{
-					await PerformSearchFileAsync(childFile, searchQuery, cancellationToken).ConfigureAwait(false);
-				}
-			}
-	
-			// Update UI with progress
-			{
-				ProgressOccurred?.Invoke();
-			}
-	
-			// Recurse into subdirectories
-			{
-				var subdirectoryList = await _fileSystemProvider.Directory
-					.GetDirectoriesAsync(directoryPath)
-					.ConfigureAwait(false);
-	
-				foreach (var subdirectory in subdirectoryList)
-				{
-					if (subdirectory.Contains(".git")  || subdirectory.Contains("bin") || subdirectory.Contains("obj"))
-						continue;
-	
-					await RecursiveSearchAsync(subdirectory, searchQuery, cancellationToken).ConfigureAwait(false);
-				}
-			}
-		}
-	
-		private async Task PerformSearchFileAsync(string filePath, string searchQuery, CancellationToken cancellationToken = default)
-		{
-			var contents = await _fileSystemProvider.File.ReadAllTextAsync(filePath).ConfigureAwait(false);
-	
-			if (contents.Contains(searchQuery))
-				FilePathList.Add(filePath);
-		}
-		*/
+		// Start at BlazorCrudApp/
+		// Track 2 directories deep for the progress bar.
+		// Percentage of the percentage
+		//
+		// Here BlazorCrudApp/ is made up of 50%
+		// 	BlazorCrudApp.sln
+		// 	BlazorCrudApp.ServerSide/
+		
+		// Get DirectoryList of BlazorCrudApp/
+		// Get FileList of BlazorCrudApp/
+		
+		// Draw the tree view as it goes.
+		
+		// BlazorCrudApp.sln
+		// BlazorCrudApp.ServerSide/
+		// 	Properties/
+		// 		launchSettings.json
+		// 	wwwroot/
+		// 		css/
+		// 			site.css/
+		// 		favicon.ico/
+		// 	Pages/
+		// 		_Host.cshtml
+		// 		Error.cshtml.cs
+		// 	_Imports.razor
+		// 	App.razor
+		// 	appsettings.Development.json
 		
 		/// <summary>
 		/// TODO: If the app were to crash while this was running, would the Task be cancelled?...
