@@ -35,10 +35,10 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 	private string? _previousContent = string.Empty;
 	private Throttle _updateContentThrottle = new Throttle(Throttle.Thirty_Frames_Per_Second);
 
-	protected override async Task OnParametersSetAsync()
+	protected override void OnParametersSet()
 	{
 		_updateContentThrottle.Run(_ => UpdateContent());
-		await base.OnParametersSetAsync();
+		base.OnParametersSet();
 	}
 
 	private async Task UpdateContent()

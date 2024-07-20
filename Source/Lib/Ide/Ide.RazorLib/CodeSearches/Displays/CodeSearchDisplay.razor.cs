@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -28,6 +29,8 @@ public partial class CodeSearchDisplay : FluxorComponent
     [Inject]
 	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
+	private IState<TreeViewState> TreeViewStateWrap { get; set; } = null!;
+	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
@@ -44,6 +47,9 @@ public partial class CodeSearchDisplay : FluxorComponent
 	
 	private CodeSearchTreeViewKeyboardEventHandler _treeViewKeymap = null!;
 	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+	
+	private Key<TextEditorViewModel> _previousTextEditorViewModelKey = Key<TextEditorViewModel>.Empty;
+	private Throttle _updateContentThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
     private int OffsetPerDepthInPixels => (int)Math.Ceiling(
 		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
@@ -72,6 +78,10 @@ public partial class CodeSearchDisplay : FluxorComponent
 	
 	protected override void OnInitialized()
 	{
+		// Suppress unused property warning.
+		// 	(am injecting this as a hack to easily re-render when the tree view changes)
+		_ = TreeViewStateWrap;
+	
 		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
 			TextEditorService,
 			TextEditorConfig,
@@ -87,6 +97,12 @@ public partial class CodeSearchDisplay : FluxorComponent
 			BackgroundTaskService);
 
 		base.OnInitialized();
+	}
+	
+	protected override void OnAfterRender(bool firstRender)
+	{
+		_updateContentThrottle.Run(_ => UpdateContent());
+		base.OnAfterRender(firstRender);
 	}
 	
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -116,12 +132,42 @@ public partial class CodeSearchDisplay : FluxorComponent
 			: string.Empty;
 	}
 
-	private async Task HandleOnClick(string filePath)
+	private async Task HandleResizableRowReRenderAsync()
 	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	private async Task UpdateContent()
+	{
+		Console.WriteLine(nameof(UpdateContent));
+	
+		if (!TreeViewService.TryGetTreeViewContainer(
+				CodeSearchState.TreeViewCodeSearchContainerKey,
+				out var treeViewContainer))
+		{
+			Console.WriteLine("TryGetTreeViewContainer");
+			return;
+		}
+		
+		if (treeViewContainer.SelectedNodeList.Count > 1)
+		{
+			Console.WriteLine("treeViewContainer.SelectedNodeList.Count > 1");
+			return;
+		}
+			
+		var activeNode = treeViewContainer.ActiveNode;
+		
+		if (activeNode is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan)
+		{
+			Console.WriteLine("activeNode is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan");
+			return;
+		}
+	
 		var inPreviewViewModelKey = CodeSearchStateWrap.Value.PreviewViewModelKey;
 		var outPreviewViewModelKey = Key<TextEditorViewModel>.NewKey();
 
-		var resourceUri = new ResourceUri(filePath);
+		var filePath = treeViewCodeSearchTextSpan.Item.ResourceUri.Value;
+		var resourceUri = treeViewCodeSearchTextSpan.Item.ResourceUri;
 
         if (TextEditorConfig.RegisterModelFunc is null)
             return;
@@ -157,43 +203,4 @@ public partial class CodeSearchDisplay : FluxorComponent
             }
         }
     }
-	
-	private async Task HandleOnDoubleClick(string filePath)
-	{
-        var resourceUri = new ResourceUri(filePath);
-
-        if (TextEditorConfig.RegisterModelFunc is null)
-            return;
-
-        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-                resourceUri,
-                ServiceProvider))
-            .ConfigureAwait(false);
-
-        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
-        {
-            var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-                    Key<TextEditorViewModel>.NewKey(),
-                    resourceUri,
-                    new Category("main"),
-                    false,
-                    ServiceProvider))
-                .ConfigureAwait(false);
-
-            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-                TextEditorConfig.TryShowViewModelFunc is not null)
-            {
-                await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-                        viewModelKey,
-                        Key<TextEditorGroup>.Empty,
-                        ServiceProvider))
-                    .ConfigureAwait(false);
-            }
-        }
-    }
-
-	private async Task HandleResizableRowReRenderAsync()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
 }
