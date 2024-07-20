@@ -1,7 +1,9 @@
 <div title="@TreeViewFindAllGroup.AbsolutePath.Value">
-	@(TreeViewFindAllGroup.AbsolutePath.NameWithExtension)
+	<span class="luth_te_keyword">
+		@(TreeViewFindAllGroup.AbsolutePath.NameWithExtension)
+	</span>
 	
-	<span class="luth_te_comment">
-		@($"{TreeViewFindAllGroup.Item.Count:N0}") matches
+	<span title="matches">
+		@($"{TreeViewFindAllGroup.Item.Count:N0}")
 	</span>
 </div>
