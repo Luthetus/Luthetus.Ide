@@ -1,6 +1,8 @@
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
@@ -13,6 +15,8 @@ public partial record TextEditorFindAllState(
 	ImmutableList<TextEditorTextSpan> SearchResultList,
 	ProgressBarModel? ProgressBarModel)
 {
+	public static readonly Key<TreeViewContainer> TreeViewFindAllContainerKey = Key<TreeViewContainer>.NewKey();
+	
 	/// <summary>
     /// Each instance of the state will share this because the 'with' keyword will copy
     /// any private members too. This allows us to pause the searching while flushing (as to render the UI).

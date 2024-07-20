@@ -2,7 +2,9 @@
 @using Luthetus.Common.RazorLib.Keys.Models;
 @using Luthetus.Common.RazorLib.Tabs.Displays
 @using Luthetus.Common.RazorLib.Reactives.Displays
+@using Luthetus.Common.RazorLib.TreeViews.Displays
 @using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+@using Luthetus.TextEditor.RazorLib.FindAlls.States;
 
 @inherits FluxorComponent
 
@@ -70,6 +72,20 @@
 					</button>
 				</div>
 			}
+			
+			<hr/>
+			
+			<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                        <TreeViewContainerDisplay TreeViewContainerKey="TextEditorFindAllState.TreeViewFindAllContainerKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeyboardEventHandler="_treeViewKeymap"
+                                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
 		</div>
     </div>
 </div>

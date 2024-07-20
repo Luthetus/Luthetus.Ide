@@ -3,6 +3,12 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -17,6 +23,8 @@ public partial class FindAllDisplay : FluxorComponent
 	[Inject]
     private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
     [Inject]
+	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;	
@@ -26,6 +34,16 @@ public partial class FindAllDisplay : FluxorComponent
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    
+    private TreeViewKeyboardEventHandler _treeViewKeymap = null!;
+	private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+    
+    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private string SearchQuery
     {
@@ -46,6 +64,39 @@ public partial class FindAllDisplay : FluxorComponent
                 Dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(value));
         }
     }
+    
+    protected override void OnInitialized()
+	{
+		_treeViewKeymap = new TreeViewKeyboardEventHandler(
+			TreeViewService,
+			BackgroundTaskService);
+
+		_treeViewMouseEventHandler = new TreeViewMouseEventHandler(
+			TreeViewService,
+			BackgroundTaskService);
+
+		base.OnInitialized();
+	}
+	
+	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+	{
+		var dropdownRecord = new DropdownRecord(
+			FindAllDisplayContextMenu.ContextMenuEventDropdownKey,
+			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+			typeof(FindAllDisplayContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(FindAllDisplayContextMenu.TreeViewCommandArgs),
+					treeViewCommandArgs
+				}
+			},
+			null);
+
+		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		return Task.CompletedTask;
+	}
 
 	private async Task OpenInEditorOnClick(string filePath)
 	{
