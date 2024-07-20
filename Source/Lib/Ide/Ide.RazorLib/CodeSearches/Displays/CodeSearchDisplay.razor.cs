@@ -3,6 +3,13 @@ using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.TreeViews.States;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -18,16 +25,28 @@ public partial class CodeSearchDisplay : FluxorComponent
 {
 	[Inject]
 	private IState<CodeSearchState> CodeSearchStateWrap { get; set; } = null!;
+    [Inject]
+	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
+	private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;
+	
+	private CodeSearchTreeViewKeyboardEventHandler _treeViewKeymap = null!;
+	private CodeSearchTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+    
+    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
@@ -49,6 +68,45 @@ public partial class CodeSearchDisplay : FluxorComponent
 
 			Dispatcher.Dispatch(new CodeSearchState.SearchEffect());
 		}
+	}
+	
+	protected override void OnInitialized()
+	{
+		_treeViewKeymap = new CodeSearchTreeViewKeyboardEventHandler(
+			TextEditorService,
+			TextEditorConfig,
+			ServiceProvider,
+			TreeViewService,
+			BackgroundTaskService);
+
+		_treeViewMouseEventHandler = new CodeSearchTreeViewMouseEventHandler(
+			TextEditorService,
+			TextEditorConfig,
+			ServiceProvider,
+			TreeViewService,
+			BackgroundTaskService);
+
+		base.OnInitialized();
+	}
+	
+	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
+	{
+		var dropdownRecord = new DropdownRecord(
+			CodeSearchContextMenu.ContextMenuEventDropdownKey,
+			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+			typeof(CodeSearchContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(CodeSearchContextMenu.TreeViewCommandArgs),
+					treeViewCommandArgs
+				}
+			},
+			null);
+
+		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		return Task.CompletedTask;
 	}
 
 	private string GetIsActiveCssClass(CodeSearchFilterKind codeSearchFilterKind)

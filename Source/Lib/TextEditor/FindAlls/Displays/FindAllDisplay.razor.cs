@@ -90,14 +90,14 @@ public partial class FindAllDisplay : FluxorComponent
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
 	{
 		var dropdownRecord = new DropdownRecord(
-			FindAllDisplayContextMenu.ContextMenuEventDropdownKey,
+			FindAllContextMenu.ContextMenuEventDropdownKey,
 			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
 			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
-			typeof(FindAllDisplayContextMenu),
+			typeof(FindAllContextMenu),
 			new Dictionary<string, object?>
 			{
 				{
-					nameof(FindAllDisplayContextMenu.TreeViewCommandArgs),
+					nameof(FindAllContextMenu.TreeViewCommandArgs),
 					treeViewCommandArgs
 				}
 			},

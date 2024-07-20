@@ -7,7 +7,7 @@ using Luthetus.Common.RazorLib.Dropdowns.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.Displays;
 
-public partial class FindAllDisplayContextMenu : ComponentBase
+public partial class FindAllContextMenu : ComponentBase
 {
 	[Parameter, EditorRequired]
 	public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
