@@ -111,7 +111,7 @@ public sealed class CSharpCompilerService : CompilerService
                             return Task.CompletedTask;
                         }
 
-                        _textEditorService.PostDistinct(
+                        _textEditorService.PostUnique(
                             "Add using statement",
                             async editContext =>
                             {

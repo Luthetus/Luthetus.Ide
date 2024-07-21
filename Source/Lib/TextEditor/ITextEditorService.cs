@@ -46,10 +46,10 @@ public partial interface ITextEditorService
 	public LuthetusTextEditorConfig TextEditorConfig { get; }
 
     /// <summary>
-    /// This method will create an instance of <see cref="DistinctTextEditorTask"/>,
+    /// This method will create an instance of <see cref="UniqueTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
     /// </summary>
-    public void PostDistinct(
+    public void PostUnique(
         string name,
         TextEditorEdit textEditorEdit,
         TimeSpan? throttleTimeSpan = null);

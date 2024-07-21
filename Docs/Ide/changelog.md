@@ -5,7 +5,35 @@ All notable changes to the "Luthetus.Ide" repository will be documented in this 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.8.6.0] - (WIP_DATE)
+## [0.9.1.0] - WIP_DATE
+<details>
+  <summary>Click to show changes</summary>
+
+	### FIX
+	- 'Find All' tool shows results in a tree view.
+	  As well, it shows multiple results per file,
+	  preview text for each result,
+	  and moves cursor to the respective result within the file.
+	- '@onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"'
+      This avoids unnecessary rendering due to implicit state has changed in the Blazor events.
+      Note: the exact version this was added in is uncertain. It was recent though.
+</details>
+
+---
+
+## [0.9.0.0] - 2024-07-18
+<details>
+  <summary>Click to show changes</summary>
+
+	### FIX
+	- IDE is language "neutral".
+	  All .NET support was moved to its own project 'Luthetus.Extensions.DotNet.csproj'.
+	  This allows one to pick and choose which programming languages the IDE supports.
+</details>
+
+---
+
+## [0.8.6.0] - 2024-07-05
 <details>
   <summary>Click to show changes</summary>
 

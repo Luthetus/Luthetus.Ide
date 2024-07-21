@@ -3,6 +3,13 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dropdowns.States;
+using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Dropdowns.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -17,6 +24,8 @@ public partial class FindAllDisplay : FluxorComponent
 	[Inject]
     private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
     [Inject]
+	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 	[Inject]
 	private IServiceProvider ServiceProvider { get; set; } = null!;	
@@ -26,13 +35,18 @@ public partial class FindAllDisplay : FluxorComponent
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
-
-	private CancellationTokenSource _doSearchCancellationTokenSource = new();
-    private bool _disposed;
-
-	public SearchEngineFileSystem SearchEngineFileSystem => (SearchEngineFileSystem)
-		TextEditorFindAllStateWrap.Value.SearchEngineList
-			.FirstOrDefault(x => x.DisplayName == "FileSystem");
+    [Inject]
+    private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    
+    private FindAllTreeViewKeyboardEventHandler _treeViewKeymap = null!;
+	private FindAllTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+    
+    private int OffsetPerDepthInPixels => (int)Math.Ceiling(
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
 
 	private string SearchQuery
     {
@@ -53,145 +67,53 @@ public partial class FindAllDisplay : FluxorComponent
                 Dispatcher.Dispatch(new TextEditorFindAllState.SetStartingDirectoryPathAction(value));
         }
     }
-
-    private bool MatchCase
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.MatchCase.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.MatchCase.Value = value;
-        }
-    }
-
-    private bool MatchWholeWord
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.MatchWholeWord.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.MatchWholeWord.Value = value;
-        }
-    }
-
-    private bool UseRegularExpressions
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.UseRegularExpressions.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.UseRegularExpressions.Value = value;
-        }
-    }
-
-    private bool IncludeExternalItems
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.IncludeExternalItems.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.IncludeExternalItems.Value = value;
-        }
-    }
-
-    private bool IncludeMiscellaneousFiles
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.IncludeMiscellaneousFiles.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.IncludeMiscellaneousFiles.Value = value;
-        }
-    }
-
-    private bool AppendResults
-    {
-        get => TextEditorFindAllStateWrap.Value.Options.AppendResults.Value;
-        set
-        {
-            TextEditorFindAllStateWrap.Value.Options.AppendResults.Value = value;
-        }
-    }
-
-	protected override void OnInitialized()
+    
+    protected override void OnInitialized()
 	{
-		SearchEngineFileSystem.ProgressOccurred += On_SearchEngineFileSystem_ProgressOccurred;
+		_treeViewKeymap = new FindAllTreeViewKeyboardEventHandler(
+			TextEditorService,
+			TextEditorConfig,
+			ServiceProvider,
+			TreeViewService,
+			BackgroundTaskService);
+
+		_treeViewMouseEventHandler = new FindAllTreeViewMouseEventHandler(
+			TextEditorService,
+			TextEditorConfig,
+			ServiceProvider,
+			TreeViewService,
+			BackgroundTaskService);
 
 		base.OnInitialized();
 	}
-
-	private async Task OpenInEditorOnClick(string filePath)
+	
+	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
 	{
-		var resourceUri = new ResourceUri(filePath);
+		var dropdownRecord = new DropdownRecord(
+			FindAllContextMenu.ContextMenuEventDropdownKey,
+			treeViewCommandArgs.ContextMenuFixedPosition.LeftPositionInPixels,
+			treeViewCommandArgs.ContextMenuFixedPosition.TopPositionInPixels,
+			typeof(FindAllContextMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(FindAllContextMenu.TreeViewCommandArgs),
+					treeViewCommandArgs
+				}
+			},
+			null);
 
-        if (TextEditorConfig.RegisterModelFunc is null)
-			return;
-
-        await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-                resourceUri,
-                ServiceProvider))
-            .ConfigureAwait(false);
-
-        if (TextEditorConfig.TryRegisterViewModelFunc is not null)
-		{
-			var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-				    Key<TextEditorViewModel>.NewKey(),
-                    resourceUri,
-                    new Category("main"),
-				    false,
-				    ServiceProvider))
-                .ConfigureAwait(false);
-
-            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-				TextEditorConfig.TryShowViewModelFunc is not null)
-            {
-				await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-					    viewModelKey,
-					    Key<TextEditorGroup>.Empty,
-					    ServiceProvider))
-                    .ConfigureAwait(false);
-            }
-        }
+		Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+		return Task.CompletedTask;
 	}
 
-	private async Task DoSearchOnClickAsync(
-        TextEditorFindAllState findAllState,
-        ITextEditorSearchEngine activeSearchEngine)
+	private void DoSearchOnClick()
     {
-        try
-        {
-            await InvokeAsync(StateHasChanged);
-
-            _doSearchCancellationTokenSource.Cancel();
-            _doSearchCancellationTokenSource = new();
-
-            var cancellationToken = _doSearchCancellationTokenSource.Token;
-
-            await activeSearchEngine
-                .SearchAsync(findAllState.SearchQuery, cancellationToken)
-                .ConfigureAwait(false);
-        }
-        finally
-        {
-            await InvokeAsync(StateHasChanged);
-        }
+    	Dispatcher.Dispatch(new TextEditorFindAllState.StartSearchAction());
     }
 
-	private async void On_SearchEngineFileSystem_ProgressOccurred()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
-
-	protected override void Dispose(bool disposing)
+	private void CancelSearchOnClick()
     {
-        if (_disposed)
-        {
-            return;
-        }
-
-        if (disposing)
-        {
-            _disposed = true;
-
-            _doSearchCancellationTokenSource.Cancel();
-        	SearchEngineFileSystem.ProgressOccurred -= On_SearchEngineFileSystem_ProgressOccurred;
-		}
-
-        base.Dispose(disposing);
+    	Dispatcher.Dispatch(new TextEditorFindAllState.CancelSearchAction());
     }
 }

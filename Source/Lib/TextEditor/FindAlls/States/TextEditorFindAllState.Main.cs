@@ -1,33 +1,39 @@
-using Fluxor;
-using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using System.Collections.Immutable;
+using Fluxor;
+using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.States;
 
 [FeatureState]
-public partial class TextEditorFindAllState
+public partial record TextEditorFindAllState(
+	string SearchQuery,
+	string StartingDirectoryPath,
+	ImmutableList<TextEditorTextSpan> SearchResultList,
+	ProgressBarModel? ProgressBarModel)
 {
-    public TextEditorFindAllState()
-    {
-        SearchEngineList = ImmutableList<ITextEditorSearchEngine>.Empty;
-        SearchQuery = string.Empty;
-        Options = new();
-    }
+	public static readonly Key<TreeViewContainer> TreeViewFindAllContainerKey = Key<TreeViewContainer>.NewKey();
+	
+	/// <summary>
+    /// Each instance of the state will share this because the 'with' keyword will copy
+    /// any private members too. This allows us to pause the searching while flushing (as to render the UI).
+    /// </summary>
+	private readonly object _flushSearchResultsLock = new();
 
-	public TextEditorFindAllState(
-        ImmutableList<ITextEditorSearchEngine> searchEngineList,
-        string searchQuery,
-		string startingDirectoryPath,
-        TextEditorFindAllOptions findAllOptions)
+    public TextEditorFindAllState() : this(
+    	string.Empty,
+    	string.Empty,
+    	ImmutableList<TextEditorTextSpan>.Empty,
+    	null)
     {
-        SearchEngineList = searchEngineList;
-        SearchQuery = searchQuery;
-		StartingDirectoryPath = startingDirectoryPath;
-        Options = findAllOptions;
     }
-
-    public ImmutableList<ITextEditorSearchEngine> SearchEngineList { get; init; }
-    public string SearchQuery { get; init; }
-    public string StartingDirectoryPath { get; init; }
-    public TextEditorFindAllOptions Options { get; init; }
+    
+    /// <summary>
+    /// Each instance of the state will share this cancellation token source because the 'with' keyword
+    /// will copy any private members too, and <see cref="CancellationTokenSource"/> is a reference type.
+    /// </summary>
+    private CancellationTokenSource _searchCancellationTokenSource = new();
 }
