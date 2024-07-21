@@ -129,7 +129,7 @@ public class EditorIdeApi
 
             _textEditorService.ModelApi.RegisterCustom(model);
 
-            _textEditorService.PostDistinct(
+            _textEditorService.PostUnique(
                 nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
                 async editContext =>
                 {
@@ -199,7 +199,7 @@ public class EditorIdeApi
             registerViewModelArgs.ResourceUri.Value,
             false);
 
-        _textEditorService.PostDistinct(
+        _textEditorService.PostUnique(
             nameof(TryRegisterViewModelFunc),
             _textEditorService.ViewModelApi.WithValueFactory(
                 viewModelKey,
@@ -230,7 +230,7 @@ public class EditorIdeApi
                 {
                     if (writtenDateTime is not null)
                     {
-                        _textEditorService.PostDistinct(
+                        _textEditorService.PostUnique(
                             nameof(HandleOnSaveRequested),
                             _textEditorService.ModelApi.SetResourceDataFactory(
                                 innerTextEditor.ResourceUri,
@@ -359,7 +359,7 @@ public class EditorIdeApi
                                                 .ReadAllTextAsync(inputFileAbsolutePathString)
                                                 .ConfigureAwait(false);
 
-                                            _textEditorService.PostDistinct(
+                                            _textEditorService.PostUnique(
                                                 nameof(CheckIfContentsWereModifiedAsync),
                                                 async editContext =>
                                                 {

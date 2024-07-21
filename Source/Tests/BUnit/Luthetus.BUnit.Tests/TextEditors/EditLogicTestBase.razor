@@ -34,7 +34,7 @@
 
 		var textEditorService = Services.GetService<ITextEditorService>();
 
-		textEditorService.PostDistinct(
+		textEditorService.PostUnique(
 			nameof(RewriteEditLogicTests),
 			async editContext =>
 			{
@@ -68,7 +68,7 @@
 
 		var textEditorService = Services.GetService<ITextEditorService>();
 
-		textEditorService.PostDistinct(
+		textEditorService.PostUnique(
 			nameof(RewriteEditLogicTests),
 			async editContext =>
 			{

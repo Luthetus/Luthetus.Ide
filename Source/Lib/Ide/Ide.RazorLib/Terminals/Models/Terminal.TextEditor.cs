@@ -42,7 +42,7 @@ public partial class Terminal
 
         _textEditorService.ModelApi.RegisterCustom(model);
 
-        _textEditorService.PostDistinct(
+        _textEditorService.PostUnique(
             nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
             async editContext =>
             {
@@ -79,7 +79,7 @@ public partial class Terminal
             FindOverlayPresentationFacts.PresentationKey,
         }.ToImmutableArray();
 
-        _textEditorService.PostDistinct(
+        _textEditorService.PostUnique(
             nameof(Terminal),
             _textEditorService.ViewModelApi.WithValueFactory(
                 TextEditorViewModelKey,
@@ -88,7 +88,7 @@ public partial class Terminal
                         FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
                     }));
 
-        _textEditorService.PostDistinct(
+        _textEditorService.PostUnique(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             async editContext =>
             {
@@ -133,7 +133,7 @@ public partial class Terminal
 
     public void WriteWorkingDirectory(bool prependNewLine = false)
     {
-        _textEditorService.PostDistinct(
+        _textEditorService.PostUnique(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             async editContext =>
             {
@@ -180,7 +180,7 @@ public partial class Terminal
     
     public void MoveCursorToEnd()
     {
-        _textEditorService.PostDistinct(
+        _textEditorService.PostUnique(
             nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
             async editContext =>
             {
@@ -208,7 +208,7 @@ public partial class Terminal
 
     public void ClearTerminal()
     {
-        _textEditorService.PostDistinct(
+        _textEditorService.PostUnique(
             nameof(ClearTerminal),
             async editContext =>
             {

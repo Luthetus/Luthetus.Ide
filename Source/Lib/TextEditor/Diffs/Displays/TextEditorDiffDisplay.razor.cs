@@ -90,7 +90,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
         //
         //await _throttleDiffCalculation.PushEvent(_ =>
         //{
-        //    return TextEditorService.PostDistinct(
+        //    return TextEditorService.PostUnique(
         //        nameof(TextEditorDiffDisplay),
         //        nameof(TextEditorDiffDisplay),
         //        TextEditorService.DiffApi.CalculateFactory(TextEditorDiffKey, CancellationToken.None));

@@ -40,7 +40,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     InResourceUri,
                     new Category(nameof(GitChangesDisplay)));
 
-                TextEditorService.PostDistinct(
+                TextEditorService.PostUnique(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
                     async editContext =>
                     {
@@ -87,7 +87,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     OutResourceUri,
                     new Category(nameof(GitChangesDisplay)));
 
-                TextEditorService.PostDistinct(
+                TextEditorService.PostUnique(
                     nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
                     async editContext =>
                     {

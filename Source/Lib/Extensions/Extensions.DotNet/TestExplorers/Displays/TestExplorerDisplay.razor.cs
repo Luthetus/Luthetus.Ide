@@ -132,7 +132,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 	private void RegisterDetailsTextEditor(TextEditorModel model)
 	{
-		TextEditorService.PostDistinct(
+		TextEditorService.PostUnique(
 			nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
 			async editContext =>
 			{

@@ -160,7 +160,7 @@ public class CompilerService : ICompilerService
 
     protected virtual void QueueParseRequest(ResourceUri resourceUri)
     {
-		_textEditorService.PostDistinct(
+		_textEditorService.PostUnique(
             nameof(QueueParseRequest),
             async editContext =>
             {

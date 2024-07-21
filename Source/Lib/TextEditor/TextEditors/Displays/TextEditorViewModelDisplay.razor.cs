@@ -285,7 +285,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
 		var localViewModelKey = TextEditorViewModelKey;
 
-		TextEditorService.PostDistinct(
+		TextEditorService.PostUnique(
 			nameof(ReceiveOnContextMenu),
 			editContext =>
 			{
@@ -371,7 +371,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
                     if (!mouseNoLongerOverTooltipCancellationToken.IsCancellationRequested)
                     {
-						TextEditorService.PostDistinct(
+						TextEditorService.PostUnique(
 							nameof(ContextMenu),
 							editContext =>
 							{
@@ -401,7 +401,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 {
                     await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
-                    TextEditorService.PostDistinct(
+                    TextEditorService.PostUnique(
 						nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory),
 						TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory(
 							mouseEventArgs,
@@ -486,7 +486,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffX = previousTouchPoint.ClientX - currentTouchPoint.ClientX;
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
-        TextEditorService.PostDistinct(
+        TextEditorService.PostUnique(
             nameof(QueueRemeasureBackgroundTask),
             async editContext =>
 			{

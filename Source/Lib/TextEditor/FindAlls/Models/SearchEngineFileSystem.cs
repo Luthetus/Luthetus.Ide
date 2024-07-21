@@ -83,8 +83,15 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
 
 			foreach (var subdirectory in subdirectoryList)
 			{
-				if (subdirectory.Contains(".git")  || subdirectory.Contains("bin") || subdirectory.Contains("obj"))
+				if (subdirectory.Contains(".git") ||
+					subdirectory.Contains(".vs") ||
+					subdirectory.Contains(".vscode") ||
+					subdirectory.Contains(".idea") ||
+					subdirectory.Contains("bin") ||
+					subdirectory.Contains("obj"))
+				{
 					continue;
+				}
 
 				await RecursiveSearchAsync(subdirectory, searchQuery, cancellationToken).ConfigureAwait(false);
 			}

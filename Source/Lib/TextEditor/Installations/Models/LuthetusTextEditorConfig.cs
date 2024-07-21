@@ -1,11 +1,10 @@
+using System.Collections.Immutable;
+using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
-using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Models;
 
@@ -48,11 +47,6 @@ public record LuthetusTextEditorConfig
     /// of the given find all dialog.
     /// </summary>
     public FindAllDialogConfig FindAllDialogConfig { get; init; } = new();
-    /// <summary>
-    /// The <see cref="ITextEditorSearchEngine"/>(s) are used by the <see cref="FindAllDialogConfig"/>
-    /// to search through all the files and find matching text.
-    /// </summary>
-    public ImmutableArray<ITextEditorSearchEngine> SearchEngineList { get; init; } = SearchEngineFacts.DefaultSearchEngineList;
     /// <summary>
     /// The go-to definition implementation makes use of <see cref="RegisterModelFunc"/>.<br/>
     /// 
