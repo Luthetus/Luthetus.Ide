@@ -40,7 +40,7 @@ public partial class AutocompleteMenu : ComponentBase
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
 		{
-			TextEditorService.PostDistinct(
+			TextEditorService.PostUnique(
 				nameof(AutocompleteMenu),
 				editContext =>
 				{
@@ -60,7 +60,7 @@ public partial class AutocompleteMenu : ComponentBase
     {
         try
         {
-            TextEditorService.PostDistinct(
+            TextEditorService.PostUnique(
 				nameof(AutocompleteMenu),
 				editContext =>
 				{
@@ -176,7 +176,7 @@ public partial class AutocompleteMenu : ComponentBase
         {
             try
             {
-				TextEditorService.PostDistinct(
+				TextEditorService.PostUnique(
 					nameof(AutocompleteMenu),
 					editContext =>
 					{
@@ -207,7 +207,7 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-        TextEditorService.PostDistinct(
+        TextEditorService.PostUnique(
             nameof(InsertAutocompleteMenuOption),
             TextEditorService.ModelApi.InsertTextFactory(
                 viewModel.ResourceUri,

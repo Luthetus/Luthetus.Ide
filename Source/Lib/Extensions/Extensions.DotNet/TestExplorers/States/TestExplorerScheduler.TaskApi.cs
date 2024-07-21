@@ -142,53 +142,73 @@ public partial class TestExplorerScheduler
     
     public Task Task_DiscoverTests()
     {
-    	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
-        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
-
-        if (dotNetSolutionModel is null)
-            return Task.CompletedTask;
-    	
-    	var localTestExplorerState = _testExplorerStateWrap.Value;
-    
-    	//var progressBarModel = new ProgressBarModel(0, $"Discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}");
-
-		//NotificationHelper.DispatchProgress(
-	    //    "DiscoverTestsAsync",
-	    //    progressBarModel,
-	    //    _commonComponentRenderers,
-	    //    _dispatcher,
-	    //    TimeSpan.FromMilliseconds(-1));
-	    
-	    NotificationHelper.DispatchInformative(
-	        "DiscoverTestsAsync",
-	        "DiscoverTestsAsync",
-	        _commonComponentRenderers,
-	        _dispatcher,
-	        TimeSpan.FromSeconds(5));
-
-		_ = Task.Run(async () =>
+    	_throttleDiscoverTests.Run(async _ => 
     	{
-    		try
-    		{
-    			var completionPercentPerProject = 1.0 / (double)localTestExplorerState.ProjectTestModelList.Count;
+    		// TODO: This method enqueues the test discovery,
+    		//       Therefore, the test finishing cannot be awaited.
+    		//       |
+    		//       '_throttleDiscoverTests' avoids many of this method being executed
+    		//       concurrently.
+    		// 	  |
+    		// 	  '_sumEachProjectTestCountTask' is where one awaits the enqueue'd task.
+    		//       |
+    		// 	  I didn't think 'awaiting' a background task would be useful.
+    		//       Because it would cause one to block, but I think I see now,
+    		//       in the case where one has a non UI context (like a fire and forget task).
+    		//       That it can be useful to block.
+    		//       |
+    		// 	  This blocking method needs to be added.
+    		var localSumEachProjectTestCountTask = _sumEachProjectTestCountTask;
+    		
+    		if (localSumEachProjectTestCountTask is null ||
+    			!localSumEachProjectTestCountTask.IsCompleted)
+			{
+				// This code is here to avoid multiple of this method running concurrently.
+				// The current solution here though is quite hacky.
+				//
+				// If during the time between setting _sumEachProjectTestCountTask to null
+				// and localSumEachProjectTestCountTask to a completed task,
+				// an exception occurs.
+				//
+				// Then corrupt state could occur where this method will ALWAYS return
+				// upon entering and one will never be able to discover tests again
+				// unless they restart the application.
+				//
+				// Sure: try, catch, finally; but it is still incredibly unsettling.
+				return;
+			}
+    	
+	    	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+	        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+	
+	        if (dotNetSolutionModel is null)
+	            return;
+	    	
+	    	var localTestExplorerState = _testExplorerStateWrap.Value;
+		    
+		    NotificationHelper.DispatchInformative(
+		        "DiscoverTestsAsync",
+		        "DiscoverTestsAsync",
+		        _commonComponentRenderers,
+		        _dispatcher,
+		        TimeSpan.FromSeconds(5));
+	
+			try
+			{
+				var completionPercentPerProject = 1.0 / (double)localTestExplorerState.ProjectTestModelList.Count;
 	    		var projectsHandled = 0;
 	    		
 	    		if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
 		        {
 		        	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
-		        		return;
+						return;
 		        		
 		            foreach (var treeViewProject in treeViewAdhoc.ChildList)
 		            {
 		            	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
-		            		return;
+		            		continue;
 		            
 		            	await treeViewProject.LoadChildListAsync();
-		            	
-		            	await Task.Delay(1_000);
-			    		//progressBarModel.SetProgress(
-			    		//	projectsHandled * completionPercentPerProject,
-			    		//	$"{projectsHandled + 1}/{localTestExplorerState.ProjectTestModelList.Count}: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}");
 			    		projectsHandled++;
 		            }
 		            
@@ -202,24 +222,22 @@ public partial class TestExplorerScheduler
 		            // If we enqueue a new terminal command, which does nothing in terminal, but has a continue with func
 		            // we can time the code to run once all the tests have been discovered.
 		            //
-		            // TODO: This solution is incredibly hacky and nonsensical. It needs to be reworked.
-		            
+		            // TODO: This solution is hacky. It needs to be reworked.
 		            var terminalCommand = new TerminalCommand(
 					    Key<TerminalCommand>.NewKey(),
 					    new FormattedCommand(string.Empty, Array.Empty<string>()),
 					    ContinueWith: Task_SumEachProjectTestCount);
 		            
 		            var executionTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+		            
+		            _sumEachProjectTestCountTask = null;
 		            executionTerminal.EnqueueCommand(terminalCommand);
 		        }
-		    	
-		    	//progressBarModel.SetProgress(1, $"Finished discovering tests in: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
-    		}
-    		catch (Exception e)
+			}
+			catch (Exception e)
 			{
-				//var currentProgress = progressBarModel.GetProgress();
-				//progressBarModel.SetProgress(currentProgress, e.ToString());
-				
+				_sumEachProjectTestCountTask = Task.CompletedTask;
+			
 				NotificationHelper.DispatchError(
 			        "DiscoverTestsAsync",
 			        e.ToString(),
@@ -227,81 +245,84 @@ public partial class TestExplorerScheduler
 			        _dispatcher,
 			        TimeSpan.FromSeconds(5));
 			}
-			finally
-			{
-				//progressBarModel.Dispose();
-			}
-    	});
-    	
-    	return Task.CompletedTask;
+		});
+		
+		return Task.CompletedTask;
     }
     
     public Task Task_SumEachProjectTestCount()
     {
-    	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
-        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
-
-        if (dotNetSolutionModel is null)
-            return Task.CompletedTask;
-    
-    	var totalTestCount = 0;
-    	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
-    	
-    	var containsTestsTreeViewGroup = new TreeViewGroup(
-	    	"Found",
-            true,
-            true);
-            
-        var noTestsTreeViewGroup = new TreeViewGroup(
-	    	"Empty",
-            true,
-            true);
-    
-    	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
-        {
-        	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
-        		return Task.CompletedTask;
-        		
-            foreach (var treeViewProject in treeViewAdhoc.ChildList)
-            {
-            	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
-            		return Task.CompletedTask;
-            
-            	totalTestCount += treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0;
-            	
-            	if ((treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0) > 0)
-            		containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
-            	else
-            		noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
-            	
-            	if (treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput is not null)
-            	{
-            		foreach (var output in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+    	try
+    	{
+    		var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
+	        var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+	
+	        if (dotNetSolutionModel is null)
+	            return Task.CompletedTask;
+	    
+	    	var totalTestCount = 0;
+	    	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
+	    	
+	    	var containsTestsTreeViewGroup = new TreeViewGroup(
+		    	"Found",
+	            true,
+	            true);
+	            
+	        var noTestsTreeViewGroup = new TreeViewGroup(
+		    	"Empty",
+	            true,
+	            true);
+	    
+	    	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+	        {
+	        	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
+	        		return Task.CompletedTask;
+	        		
+	            foreach (var treeViewProject in treeViewAdhoc.ChildList)
+	            {
+	            	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
+	            		return Task.CompletedTask;
+	            
+	            	totalTestCount += treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0;
+	            	
+	            	if ((treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0) > 0)
+	            		containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+	            	else
+	            		noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+	            	
+	            	if (treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput is not null)
 	            	{
-	            		notRanTestHashSet = notRanTestHashSet.Add(output);
+	            		foreach (var output in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+		            	{
+		            		notRanTestHashSet = notRanTestHashSet.Add(output);
+		            	}
 	            	}
-            	}
-            }
-            
-            containsTestsTreeViewGroup.LinkChildren(new(), containsTestsTreeViewGroup.ChildList);
-            noTestsTreeViewGroup.LinkChildren(new(), noTestsTreeViewGroup.ChildList);
-            
-            var nextTreeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc(
-            	containsTestsTreeViewGroup,
-            	noTestsTreeViewGroup);
-            	
-            nextTreeViewAdhoc.LinkChildren(new(), nextTreeViewAdhoc.ChildList);
-            
-            _treeViewService.SetRoot(TestExplorerState.TreeViewTestExplorerKey, nextTreeViewAdhoc);
-        }
+	            }
+	            
+	            containsTestsTreeViewGroup.LinkChildren(new(), containsTestsTreeViewGroup.ChildList);
+	            noTestsTreeViewGroup.LinkChildren(new(), noTestsTreeViewGroup.ChildList);
+	            
+	            var nextTreeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc(
+	            	containsTestsTreeViewGroup,
+	            	noTestsTreeViewGroup);
+	            	
+	            nextTreeViewAdhoc.LinkChildren(new(), nextTreeViewAdhoc.ChildList);
+	            
+	            _treeViewService.SetRoot(TestExplorerState.TreeViewTestExplorerKey, nextTreeViewAdhoc);
+	        }
+	    
+	    	_dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+	        {
+	            TotalTestCount = totalTestCount,
+	            NotRanTestHashSet = notRanTestHashSet,
+	            SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
+	        }));
+    	}
+    	finally
+    	{
+    		_sumEachProjectTestCountTask = Task.CompletedTask;
+    	}
     
-    	_dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
-        {
-            TotalTestCount = totalTestCount,
-            NotRanTestHashSet = notRanTestHashSet,
-            SolutionFilePath = dotNetSolutionModel.AbsolutePath.Value
-        }));
-        
         return Task.CompletedTask;
     }
 }

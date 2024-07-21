@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.Tests.Basis.FindAlls.States;
 

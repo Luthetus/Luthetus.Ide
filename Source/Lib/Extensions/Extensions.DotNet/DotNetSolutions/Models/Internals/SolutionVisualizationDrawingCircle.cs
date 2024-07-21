@@ -213,8 +213,15 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 
 			foreach (var directoryPathChild in directoryPathChildList)
 			{
-				if (directoryPathChild.Contains(".vs") || directoryPathChild.Contains(".git") || directoryPathChild.Contains("bin") || directoryPathChild.Contains("obj"))
+				if (directoryPathChild.Contains(".git") ||
+					directoryPathChild.Contains(".vs") ||
+					directoryPathChild.Contains(".vscode") ||
+					directoryPathChild.Contains(".idea") ||
+					directoryPathChild.Contains("bin") ||
+					directoryPathChild.Contains("obj"))
+				{
 					continue;
+				}
 
 				await DiscoverFilesRecursively(directoryPathChild, discoveredFileList).ConfigureAwait(false);
 			}

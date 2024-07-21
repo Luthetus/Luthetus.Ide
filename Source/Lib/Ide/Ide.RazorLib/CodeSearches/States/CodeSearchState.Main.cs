@@ -1,10 +1,11 @@
+using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
+using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using System.Collections.Immutable;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.States;
 
@@ -17,7 +18,9 @@ public partial record CodeSearchState(
     string PreviewFilePath,
     Key<TextEditorViewModel> PreviewViewModelKey)
 {
-    public CodeSearchState() : this(
+    public static readonly Key<TreeViewContainer> TreeViewCodeSearchContainerKey = Key<TreeViewContainer>.NewKey();
+    
+	public CodeSearchState() : this(
         string.Empty,
         null,
         CodeSearchFilterKind.None,

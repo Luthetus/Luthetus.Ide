@@ -33,12 +33,12 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 	public static readonly Key<TextEditorViewModel> DetailsTextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
 
 	private string? _previousContent = string.Empty;
-	private Throttle _updateContentThrottle = new Throttle(Throttle.Thirty_Frames_Per_Second);
+	private Throttle _updateContentThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
 
-	protected override async Task OnParametersSetAsync()
+	protected override void OnParametersSet()
 	{
 		_updateContentThrottle.Run(_ => UpdateContent());
-		await base.OnParametersSetAsync();
+		base.OnParametersSet();
 	}
 
 	private async Task UpdateContent()
@@ -110,7 +110,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 				};
 			}
 
-			TextEditorService.PostDistinct(
+			TextEditorService.PostUnique(
 				nameof(TestExplorerDetailsDisplay),
 				editContext =>
 				{

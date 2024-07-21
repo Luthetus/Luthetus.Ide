@@ -74,7 +74,7 @@ public partial class ContextMenu : ComponentBase
     {
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
         {
-            TextEditorService.PostDistinct(
+            TextEditorService.PostUnique(
 				nameof(ContextMenu),
 				editContext =>
 				{
@@ -94,7 +94,7 @@ public partial class ContextMenu : ComponentBase
     {
         try
         {
-            TextEditorService.PostDistinct(
+            TextEditorService.PostUnique(
 				nameof(ContextMenu),
 				editContext =>
 				{
@@ -141,7 +141,7 @@ public partial class ContextMenu : ComponentBase
         {
             try
             {
-				TextEditorService.PostDistinct(
+				TextEditorService.PostUnique(
 					nameof(ContextMenu),
 					editContext =>
 					{

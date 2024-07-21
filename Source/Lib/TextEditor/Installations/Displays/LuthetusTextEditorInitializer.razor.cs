@@ -59,14 +59,6 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
                 if (initialThemeRecord is not null)
                     Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
 
-                foreach (var searchEngine in TextEditorConfig.SearchEngineList)
-                {
-                    Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(searchEngine));
-                }
-
-                Dispatcher.Dispatch(new TextEditorFindAllState.RegisterAction(
-                    new SearchEngineFileSystem(FileSystemProvider, TextEditorFindAllStateWrap)));
-
                 await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
             });
             

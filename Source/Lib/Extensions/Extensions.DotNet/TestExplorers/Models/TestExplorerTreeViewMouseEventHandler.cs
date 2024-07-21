@@ -80,7 +80,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 			_dispatcher,
 			TimeSpan.FromSeconds(5));
 
-		_textEditorService.PostDistinct(
+		_textEditorService.PostUnique(
 			nameof(TestExplorerTreeViewMouseEventHandler),
 			TestExplorerHelper.ShowTestInEditorFactory(
 				className,

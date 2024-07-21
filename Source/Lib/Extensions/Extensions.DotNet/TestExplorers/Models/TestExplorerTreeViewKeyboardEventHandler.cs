@@ -99,7 +99,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 			_dispatcher,
 			TimeSpan.FromSeconds(5));
 
-		_textEditorService.PostDistinct(
+		_textEditorService.PostUnique(
 			nameof(TestExplorerTreeViewKeyboardEventHandler),
 			TestExplorerHelper.ShowTestInEditorFactory(
 				className,

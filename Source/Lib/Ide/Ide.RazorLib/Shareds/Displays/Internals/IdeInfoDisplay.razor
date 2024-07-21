@@ -130,13 +130,36 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.8.6.0 </em> WIP_DATE</div>
+                <div>v <em class="luth_em">0.9.1.0 </em> (WIP_DATE)</div>
+                <ul>
+                    <li>
+                        'Find All' tool shows results in a tree view.
+                        As well, it shows multiple results per file,
+                        preview text for each result,
+                        and moves cursor to the respective result within the file.
+                    </li>
+                    <li>
+                        '@@onkeydown="EventUtil.AsNonRenderingEventHandler&lt;KeyboardEventArgs&gt;(ReceiveOnKeyDown)"'
+                        This avoids unnecessary rendering due to implicit state has changed in the Blazor events.
+                        Note: the exact version this was added in is uncertain. It was recent though.
+                    </li>
+                </ul>
+            </div>
+			<div>
+                <div>v <em class="luth_em">0.9.0.0 </em> (2024-07-18)</div>
+                <ul>
+                    <li>
+                        IDE is language "neutral". All ".NET" support was moved
+                        to its own project 'Luthetus.Extensions.DotNet.csproj'.
+                        This allows one to pick and choose which programming languages the IDE supports.
+                    </li>
+                </ul>
+            </div>
+			<div>
+                <div>v <em class="luth_em">0.8.6.0 </em> (2024-07-05)</div>
                 <ul>
                     <li>
                         If a context menu is rendered off-screen, then it is repositioned.
-                    </li>
-                    <li>
-                        Making draft PR (delete this list item).
                     </li>
                 </ul>
             </div>

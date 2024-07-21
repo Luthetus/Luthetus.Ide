@@ -44,7 +44,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostDistinct(
+            textEditorService.PostUnique(
                 nameof(USER_TYPES_OUT_CODE),
                 async editContext =>
                 {
@@ -97,7 +97,7 @@ public class USER_TYPES_OUT_CODE
 
         foreach (var character in content)
         {
-            textEditorService.PostDistinct(
+            textEditorService.PostUnique(
                 nameof(USER_TYPES_OUT_CODE),
                 async editContext =>
                 {
@@ -155,7 +155,7 @@ await builder.Build().RunAsync();
             {
                 char character = content[i];
 
-                textEditorService.PostDistinct(
+                textEditorService.PostUnique(
                     nameof(USER_TYPES_OUT_CODE),
                     async editContext =>
                     {

@@ -1,7 +1,10 @@
 @using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Keys.Models;
 @using Luthetus.Common.RazorLib.Tabs.Displays
+@using Luthetus.Common.RazorLib.Reactives.Displays
+@using Luthetus.Common.RazorLib.TreeViews.Displays
 @using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+@using Luthetus.TextEditor.RazorLib.FindAlls.States;
 
 @inherits FluxorComponent
 
@@ -30,37 +33,44 @@
 				   @bind:event="oninput" />
 		</div>
 
-		<button class="luth_button"
-                @onclick="() => DoSearchOnClickAsync(findAllState, SearchEngineFileSystem)">
-            Find All
-        </button>
-
-		@if (SearchEngineFileSystem.IsSearching)
-	    {
-	        <IconLoading/>
-	    }
-	    else
-	    {
+		@if (findAllState.ProgressBarModel is null || findAllState.ProgressBarModel.IsDisposed)
+		{
+			<button class="luth_button"
+	                @onclick="DoSearchOnClick">
+	            Find All
+	        </button>
+	        
 	        <div>Not Searching</div>
-	    }
+	        
+	        if (findAllState.ProgressBarModel is not null)
+	        {
+	        	<ProgressBarDisplay ProgressBarModel="findAllState.ProgressBarModel"/>
+	        }
+		}
+		else
+		{
+			<button class="luth_button"
+	                @onclick="CancelSearchOnClick">
+	            Cancel
+	        </button>
+	        
+	        <ProgressBarDisplay ProgressBarModel="findAllState.ProgressBarModel"/>
+		}
+		
+		<div>Results: @($"{findAllState.SearchResultList.Count:N0}")</div>
 	
 		<div class="luth_te_search-engine-file-system-results">
-
-			@{ var localFilePathList = SearchEngineFileSystem.FilePathList.ToArray(); }
-			@foreach (var filePath in localFilePathList)
-			{
-				var absolutePath = EnvironmentProvider.AbsolutePathFactory(filePath, false);
-
-				<div>
-					<label>Open in editor:</label>
-					<button class="luth_button"
-							style="display: inline; margin-bottom: 15px;"
-							title="@absolutePath.Value"
-							@onclick="() => OpenInEditorOnClick(filePath)">
-						@absolutePath.NameWithExtension
-					</button>
-				</div>
-			}
+			<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                <CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+                    <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+                        <TreeViewContainerDisplay TreeViewContainerKey="TextEditorFindAllState.TreeViewFindAllContainerKey"
+                                                  CssStyleString="height: 100%;"
+                                                  OnContextMenuFunc="OnTreeViewContextMenuFunc"
+                                                  TreeViewKeyboardEventHandler="_treeViewKeymap"
+                                                  TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
 		</div>
     </div>
 </div>
