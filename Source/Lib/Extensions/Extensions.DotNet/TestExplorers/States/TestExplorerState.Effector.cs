@@ -25,6 +25,15 @@ public partial record TestExplorerState
             _testExplorerStateWrap = testExplorerStateWrap;
             _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
         }
+        
+        [EffectMethod(typeof(DotNetSolutionState.StateHasChanged))]
+		public Task HandleDotNetSolutionStateStateHasChanged(IDispatcher dispatcher)
+		{
+			_ = dispatcher; // Suppress unused parameter
+
+            _dotNetBackgroundTaskApi.TestExplorer.Enqueue_ConstructTreeView();
+			return Task.CompletedTask;
+		}
 
 		[EffectMethod(typeof(TestExplorerState.UserInterfaceWasInitializedEffect))]
 		public Task HandleUserInterfaceWasInitializedEffect(IDispatcher dispatcher)

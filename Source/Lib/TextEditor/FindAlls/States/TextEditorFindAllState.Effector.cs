@@ -132,7 +132,21 @@ public partial record TextEditorFindAllState
 		
 					foreach (var childFile in childFileList)
 					{
-						await PerformSearchFile(childFile).ConfigureAwait(false);
+						// TODO: Don't hardcode file extensions here to avoid searching through them.
+						//       Reason being, hardcoding them isn't going to work well as a long term solution.
+						//       How does one detect if a file is not text?
+						//       |
+						//       I seem to get away with opening some non-text files, but I think a gif I opened
+						//       had 1 million characters in it? So this takes 2 million bytes in a 2byte char?
+						//       I'm not sure exactly what happened, I opened the gif and the app froze,
+						//       I saw the character only at a glance. (2024-07-20)
+						if (!childFile.EndsWith(".jpg") &&
+							!childFile.EndsWith(".png") &&
+							!childFile.EndsWith(".pdf") &&
+							!childFile.EndsWith(".gif"))
+						{
+							await PerformSearchFile(childFile).ConfigureAwait(false);
+						}
 						
 						filesProcessedCount++;
 						ShowFilesProcessedCountOnUi(0);
