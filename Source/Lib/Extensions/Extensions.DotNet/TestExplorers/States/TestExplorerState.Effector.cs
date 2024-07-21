@@ -57,8 +57,7 @@ public partial record TestExplorerState
 		{
 			_ = dispatcher; // Suppress unused parameter
 
-            _dotNetBackgroundTaskApi.TestExplorer.Enqueue_DiscoverTests();
-			return Task.CompletedTask;
+            return _dotNetBackgroundTaskApi.TestExplorer.Task_DiscoverTests();
 		}
 	}
 }

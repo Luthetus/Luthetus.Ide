@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.States;
 
@@ -12,14 +13,5 @@ public partial class TestExplorerScheduler
             ContinuousBackgroundTaskWorker.GetQueueKey(),
             "Refresh TestExplorer",
             Task_ConstructTreeView);
-    }
-    
-    public void Enqueue_DiscoverTests()
-    {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "DiscoverTests",
-            Task_DiscoverTests);
     }
 }

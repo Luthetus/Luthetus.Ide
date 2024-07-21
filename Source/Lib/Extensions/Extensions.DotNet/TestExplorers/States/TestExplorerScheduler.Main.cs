@@ -15,6 +15,7 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.States;
 /// <inheritdoc cref="IStateScheduler"/>
 public partial class TestExplorerScheduler : IStateScheduler
 {
+	// Dependency injection
     private readonly DotNetBackgroundTaskApi _dotNetBackgroundTaskApi;
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
@@ -26,6 +27,8 @@ public partial class TestExplorerScheduler : IStateScheduler
 	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
     private readonly DotNetCliOutputParser _dotNetCliOutputParser;
     private readonly IDispatcher _dispatcher;
+    
+    private readonly Throttle _throttleDiscoverTests = new Throttle(TimeSpan.FromMilliseconds(100));
 
     public TestExplorerScheduler(
         DotNetBackgroundTaskApi dotNetBackgroundTaskApi,
@@ -52,5 +55,7 @@ public partial class TestExplorerScheduler : IStateScheduler
         _dotNetCliOutputParser = dotNetCliOutputParser;
         _dispatcher = dispatcher;
     }
+    
+    private Task? _sumEachProjectTestCountTask = Task.CompletedTask;
 }
 
