@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 	  As well, it shows multiple results per file,
 	  preview text for each result,
 	  and moves cursor to the respective result within the file.
-	- '@@onkeydown="EventUtil.AsNonRenderingEventHandler&lt;KeyboardEventArgs&gt;(ReceiveOnKeyDown)"'
+	- '@onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"'
       This avoids unnecessary rendering due to implicit state has changed in the Blazor events.
       Note: the exact version this was added in is uncertain. It was recent though.
 </details>
