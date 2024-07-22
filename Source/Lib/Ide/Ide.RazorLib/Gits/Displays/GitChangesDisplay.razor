@@ -1,4 +1,4 @@
-﻿@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.TextEditor.RazorLib.Diffs.Displays
 
@@ -6,11 +6,14 @@
                  ClassCssString="luth_ide_git-display"
                  StyleCssString="height: 100%; width: 100%;">
 
-    <div class="luth_ide_section-title">
-        Git Changes (TODO)
-    </div>
+	@if (AppOptionsService.ShowPanelTitles)
+	{
+	    <div class="luth_ide_section-title">
+	        Git Changes (TODO)
+	    </div>
+    }
 
-    <div class="luth_ide_section-body"
+    <div class="luth_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass"
          style="width: 100%;">
 
         <TextEditorDiffDisplay TextEditorDiffKey="DiffModelKey"/>

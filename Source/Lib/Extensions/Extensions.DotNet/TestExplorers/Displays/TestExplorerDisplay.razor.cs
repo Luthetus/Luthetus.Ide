@@ -5,6 +5,7 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -27,6 +28,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<TreeViewState> TreeViewStateWrap { get; set; } = null!;
+    [Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]

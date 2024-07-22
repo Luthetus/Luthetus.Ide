@@ -10,28 +10,30 @@
 
     @{ var contextState = ContextStateWrap.Value; }
 
-    <div class="luth_ide_section-title">
+	@if (AppOptionsService.ShowPanelTitles)
+	{
+	    <div class="luth_ide_section-title">
+	        @{ var isInspecting = GetIsInspecting(contextState); }
+	
+	        <button class="luth_button"
+	                style="display: inline;"
+	                @onclick="() => DispatchToggleInspectActionOnClick(isInspecting)">
+	
+	            @if (isInspecting)
+	            {
+	                <IconLock />
+	            }
+	            else
+	            {
+	                <IconInspect />
+	            }
+	        </button>
+	
+	        ActiveContextsDisplay
+	    </div>
+    }
 
-        @{ var isInspecting = GetIsInspecting(contextState); }
-
-        <button class="luth_button"
-                style="display: inline;"
-                @onclick="() => DispatchToggleInspectActionOnClick(isInspecting)">
-
-            @if (isInspecting)
-            {
-                <IconLock />
-            }
-            else
-            {
-                <IconInspect />
-            }
-        </button>
-
-        ActiveContextsDisplay
-    </div>
-
-    <div class="luth_ide_section-body">
+    <div class="luth_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
 
         @{
             var contextKeysToRender = contextState.InspectedContextHeirarchy

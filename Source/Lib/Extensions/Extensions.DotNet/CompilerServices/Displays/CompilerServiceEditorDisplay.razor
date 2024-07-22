@@ -12,9 +12,13 @@
 <ContextBoundary ContextRecord="ContextFacts.CompilerServiceEditorContext"
                  ClassCssString="luth_ide_compiler-service-editor"
                  StyleCssString="height: 100%">
-    <div class="luth_ide_section-title">
-        Compiler Service Editor Display
-    </div>
+                 
+    @if (AppOptionsService.ShowPanelTitles)
+    {
+	    <div class="luth_ide_section-title">
+	        Compiler Service Editor Display
+	    </div>
+    }
 
     <div class="luth_ide_section-body">
 

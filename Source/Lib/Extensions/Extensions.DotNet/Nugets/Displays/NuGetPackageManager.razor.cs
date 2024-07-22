@@ -3,6 +3,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.States;
@@ -23,6 +24,8 @@ public partial class NuGetPackageManager : FluxorComponent, INuGetPackageManager
 	private INugetPackageManagerProvider NugetPackageManagerProvider { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private IAppOptionsService AppOptionsService { get; set; } = null!;
 
 	private bool _performingNugetQuery;
 	private Exception? _exceptionFromNugetQuery;
