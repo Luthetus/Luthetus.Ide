@@ -14,7 +14,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnKeyDownLateBatching : ITextEditorTask
+public class OnKeyDownLateBatching : ITextEditorWork
 {
     public OnKeyDownLateBatching(
 			TextEditorComponentData componentData,

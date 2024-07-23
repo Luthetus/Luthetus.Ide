@@ -21,14 +21,14 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// data, and will entirely overwrite the upstream event's result.
 /// </summary>
 /// <remarks>
-/// For further control over the batching, one needs to implement <see cref="ITextEditorTask"/>
+/// For further control over the batching, one needs to implement <see cref="ITextEditorWork"/>
 /// and implement the method: <see cref="IBackgroundTask.BatchOrDefault"/>.
 /// </remarks>
-public sealed class RedundantTextEditorTask : ITextEditorTask
+public sealed class RedundantTextEditorWork : ITextEditorWork
 {
     private readonly TextEditorFunc _textEditorFunc;
 
-    public RedundantTextEditorTask(
+    public RedundantTextEditorWork(
         string name,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
@@ -53,15 +53,15 @@ public sealed class RedundantTextEditorTask : ITextEditorTask
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is not RedundantTextEditorTask oldRedundantTextEditorTask)
+        if (oldEvent is not RedundantTextEditorWork oldRedundantTextEditorWork)
         {
             // Keep both events
             return null;
         }
 
-        if (oldRedundantTextEditorTask.Name == Name &&
-		    oldRedundantTextEditorTask.ResourceUri == ResourceUri &&
-            oldRedundantTextEditorTask.ViewModelKey == ViewModelKey)
+        if (oldRedundantTextEditorWork.Name == Name &&
+		    oldRedundantTextEditorWork.ResourceUri == ResourceUri &&
+            oldRedundantTextEditorWork.ViewModelKey == ViewModelKey)
         {
             // Keep this event (via replacement)
             return this;

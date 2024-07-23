@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnScrollVertical : ITextEditorTask
+public class OnScrollVertical : ITextEditorWork
 {
     public OnScrollVertical(
         double scrollTop,

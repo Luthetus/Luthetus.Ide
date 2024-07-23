@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnWheelBatch : ITextEditorTask
+public class OnWheelBatch : ITextEditorWork
 {
     public OnWheelBatch(
         List<WheelEventArgs> wheelEventArgsList,

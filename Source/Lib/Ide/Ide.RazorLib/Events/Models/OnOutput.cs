@@ -20,7 +20,7 @@ namespace Luthetus.Ide.RazorLib.Events.Models;
 /// one could furthermore invoke this event to write to the text editor
 /// in a batched manner.
 /// </summary>
-public class OnOutput : ITextEditorTask
+public class OnOutput : ITextEditorWork
 {
     private readonly TerminalCommandBoundary _terminalCommandBoundary;
 
