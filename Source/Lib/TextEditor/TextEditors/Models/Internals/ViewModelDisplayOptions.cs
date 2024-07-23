@@ -29,7 +29,7 @@ public class ViewModelDisplayOptions
         ResourceUri,
         Key<TextEditorViewModel>,
         KeyboardEventArgs,
-        TextEditorEdit>?
+        TextEditorEditAsync>?
         AfterOnKeyDownAsyncFactory { get; set; }
 
     /// <summary>
@@ -44,7 +44,7 @@ public class ViewModelDisplayOptions
         ResourceUri,
         Key<TextEditorViewModel>,
         List<KeyboardEventArgs>,
-        TextEditorEdit>?
+        TextEditorEditAsync>?
         AfterOnKeyDownRangeAsyncFactory { get; set; }
 
     /// <summary>

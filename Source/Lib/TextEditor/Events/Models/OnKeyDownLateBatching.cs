@@ -106,10 +106,10 @@ public class OnKeyDownLateBatching : ITextEditorTask
 							ComponentData.ServiceProvider);
 
                         if (command is TextEditorCommand textEditorCommand &&
-                            textEditorCommand.TextEditorEditFactory is not null)
+                            textEditorCommand.TextEditorEditAsyncFactory is not null)
                         {
 							// Avoid invoking ITextEditorService.Post(...) since we already have an IEditContext.
-                            await textEditorCommand.TextEditorEditFactory
+                            await textEditorCommand.TextEditorEditAsyncFactory
                                 .Invoke(commandArgs)
                                 .Invoke(EditContext)
                                 .ConfigureAwait(false);

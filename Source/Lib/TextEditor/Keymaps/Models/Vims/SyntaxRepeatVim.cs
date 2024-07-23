@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using System.Collections.Immutable;
@@ -78,7 +78,7 @@ public static class SyntaxRepeatVim
                     }
                 })
             {
-                TextEditorEditFactory = interfaceCommandArgs =>
+                TextEditorEditAsyncFactory = interfaceCommandArgs =>
                 {
                     var textEditorCommandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 

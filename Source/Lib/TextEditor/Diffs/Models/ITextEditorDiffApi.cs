@@ -13,7 +13,7 @@ public interface ITextEditorDiffApi
 
     public void Dispose(Key<TextEditorDiffModel> diffModelKey);
 
-    public TextEditorEdit CalculateFactory(Key<TextEditorDiffModel> diffModelKey, CancellationToken cancellationToken);
+    public TextEditorEditAsync CalculateFactory(Key<TextEditorDiffModel> diffModelKey, CancellationToken cancellationToken);
 
     public TextEditorDiffModel? GetOrDefault(Key<TextEditorDiffModel> diffModelKey);
 

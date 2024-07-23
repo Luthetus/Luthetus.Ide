@@ -29,7 +29,7 @@ namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 public class TextEditorCommandDefaultFunctions
 {
-    public static TextEditorEdit DoNothingDiscardFactory()
+    public static TextEditorEditAsync DoNothingDiscardFactory()
     {
         return (IEditContext editContext) =>
         {
@@ -37,7 +37,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit CopyFactory(
+    public static TextEditorEditAsync CopyFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -58,7 +58,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit CutFactory(
+    public static TextEditorEditAsync CutFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -92,7 +92,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit PasteFactory(
+    public static TextEditorEditAsync PasteFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -110,7 +110,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit SaveFactory(
+    public static TextEditorEditAsync SaveFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -129,7 +129,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit SelectAllFactory(
+    public static TextEditorEditAsync SelectAllFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -148,19 +148,19 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit UndoFactory(
+    public static TextEditorEditAsync UndoFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return commandArgs.TextEditorService.ModelApi.UndoEditFactory(modelResourceUri);
     }
 
-    public static TextEditorEdit RedoFactory(
+    public static TextEditorEditAsync RedoFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return commandArgs.TextEditorService.ModelApi.RedoEditFactory(modelResourceUri);
     }
 
-    public static TextEditorEdit RemeasureFactory(
+    public static TextEditorEditAsync RemeasureFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -170,7 +170,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit ScrollLineDownFactory(
+    public static TextEditorEditAsync ScrollLineDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -190,7 +190,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit ScrollLineUpFactory(
+    public static TextEditorEditAsync ScrollLineUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -210,7 +210,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit ScrollPageDownFactory(
+    public static TextEditorEditAsync ScrollPageDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -230,7 +230,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit ScrollPageUpFactory(
+    public static TextEditorEditAsync ScrollPageUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -250,7 +250,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit CursorMovePageBottomFactory(
+    public static TextEditorEditAsync CursorMovePageBottomFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -276,7 +276,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit CursorMovePageTopFactory(
+    public static TextEditorEditAsync CursorMovePageTopFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -301,7 +301,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit DuplicateFactory(
+    public static TextEditorEditAsync DuplicateFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -346,7 +346,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit IndentMoreFactory(
+    public static TextEditorEditAsync IndentMoreFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -405,7 +405,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit IndentLessFactory(
+    public static TextEditorEditAsync IndentLessFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -500,7 +500,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit ClearTextSelectionFactory(
+    public static TextEditorEditAsync ClearTextSelectionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -518,7 +518,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit NewLineBelowFactory(
+    public static TextEditorEditAsync NewLineBelowFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -569,7 +569,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit NewLineAboveFactory(
+    public static TextEditorEditAsync NewLineAboveFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -630,7 +630,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
     
-    public static TextEditorEdit MoveLineDownFactory(
+    public static TextEditorEditAsync MoveLineDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -693,7 +693,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
     
-    public static TextEditorEdit MoveLineUpFactory(
+    public static TextEditorEditAsync MoveLineUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -757,7 +757,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit GoToMatchingCharacterFactory(
+    public static TextEditorEditAsync GoToMatchingCharacterFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -873,7 +873,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit RelatedFilesQuickPickFactory(
+    public static TextEditorEditAsync RelatedFilesQuickPickFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -1008,7 +1008,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
     
-    public static TextEditorEdit GoToDefinitionFactory(
+    public static TextEditorEditAsync GoToDefinitionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -1108,7 +1108,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit ShowFindAllDialogFactory(
+    public static TextEditorEditAsync ShowFindAllDialogFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -1118,7 +1118,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEdit ShowTooltipByCursorPositionFactory(
+    public static TextEditorEditAsync ShowTooltipByCursorPositionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -1157,7 +1157,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
 	/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
-	public static TextEditorEdit HandleAfterOnKeyDownAsyncFactory(
+	public static TextEditorEditAsync HandleAfterOnKeyDownAsyncFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
@@ -1230,7 +1230,7 @@ public class TextEditorCommandDefaultFunctions
 	/// Therefore, the syntax highlighting was erroneously not refreshed due to batching.
 	/// This method is intended to solve this problem, but it was forgotten at some point.
 	/// </summary>
-	public static TextEditorEdit HandleAfterOnKeyDownRangeAsyncFactory(
+	public static TextEditorEditAsync HandleAfterOnKeyDownRangeAsyncFactory(
 		ViewModelDisplayOptions viewModelDisplayOptions,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
@@ -1308,7 +1308,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-	public static TextEditorEdit HandleMouseStoppedMovingEventAsyncFactory(
+	public static TextEditorEditAsync HandleMouseStoppedMovingEventAsyncFactory(
 		MouseEventArgs mouseEventArgs,		
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,

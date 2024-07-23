@@ -51,7 +51,7 @@ public partial interface ITextEditorService
     /// </summary>
     public void PostUnique(
         string name,
-        TextEditorEdit textEditorEdit,
+        TextEditorEditAsync textEditorEditAsync,
         TimeSpan? throttleTimeSpan = null);
 
     /// <summary>
@@ -62,7 +62,7 @@ public partial interface ITextEditorService
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        TextEditorEdit textEditorEdit,
+        TextEditorEditAsync textEditorEditAsync,
         TimeSpan? throttleTimeSpan = null);
 
     /// <summary>

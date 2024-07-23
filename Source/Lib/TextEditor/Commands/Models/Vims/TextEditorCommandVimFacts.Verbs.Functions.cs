@@ -11,7 +11,7 @@ public static partial class TextEditorCommandVimFacts
 {
     public static partial class Verbs
     {
-        public static TextEditorEdit DeleteLineFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorEditAsync DeleteLineFactory(TextEditorCommandArgs commandArgs)
         {
             return TextEditorCommandDefaultFunctions.CutFactory(
                 commandArgs.ModelResourceUri,
@@ -19,7 +19,7 @@ public static partial class TextEditorCommandVimFacts
                 commandArgs);
         }
 
-        public static TextEditorEdit ChangeLineFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorEditAsync ChangeLineFactory(TextEditorCommandArgs commandArgs)
         {
             return async editContext =>
             {
@@ -36,7 +36,7 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorEdit DeleteMotionFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorEditAsync DeleteMotionFactory(TextEditorCommandArgs commandArgs)
         {
             return async editContext =>
             {
@@ -62,10 +62,10 @@ public static partial class TextEditorCommandVimFacts
                     primaryCursorModifier,
                     async () => 
                     {
-                        if (commandArgs.InnerCommand.TextEditorEditFactory is null)
+                        if (commandArgs.InnerCommand.TextEditorEditAsyncFactory is null)
                             return;
 
-                        var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(textEditorCommandArgsForMotion);
+                        var textEditorEdit = commandArgs.InnerCommand.TextEditorEditAsyncFactory.Invoke(textEditorCommandArgsForMotion);
                         await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
                     }).ConfigureAwait(false);
 
@@ -92,7 +92,7 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorEdit GetChangeMotionFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorEditAsync GetChangeMotionFactory(TextEditorCommandArgs commandArgs)
         {
             return async editContext =>
             {
@@ -107,7 +107,7 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorEdit ChangeSelectionFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorEditAsync ChangeSelectionFactory(TextEditorCommandArgs commandArgs)
         {
             return async editContext =>
             {
@@ -120,7 +120,7 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorEdit YankFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorEditAsync YankFactory(TextEditorCommandArgs commandArgs)
         {
             return async editContext =>
             {
@@ -129,7 +129,7 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorEdit NewLineBelowFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorEditAsync NewLineBelowFactory(TextEditorCommandArgs commandArgs)
         {
             return async editContext =>
             {
@@ -142,7 +142,7 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorEdit NewLineAboveFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorEditAsync NewLineAboveFactory(TextEditorCommandArgs commandArgs)
         {
             return async editContext =>
             {

@@ -31,7 +31,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -57,7 +57,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -83,7 +83,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -111,7 +111,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -139,7 +139,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -165,7 +165,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -191,7 +191,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -219,7 +219,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -256,7 +256,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -291,7 +291,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -317,7 +317,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -343,7 +343,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -369,7 +369,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -397,7 +397,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -425,7 +425,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -451,7 +451,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -477,7 +477,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -503,7 +503,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -531,7 +531,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -557,7 +557,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -583,7 +583,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -609,7 +609,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -635,7 +635,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -662,7 +662,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -690,7 +690,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -718,7 +718,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -746,7 +746,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -778,7 +778,7 @@ public static class TextEditorCommandDefaultFacts
 			return Task.CompletedTask;
         })
     {
-        TextEditorEditFactory = interfaceCommandArgs =>
+        TextEditorEditAsyncFactory = interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 

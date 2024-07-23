@@ -170,7 +170,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public TextEditorEdit WithValueFactory(
+    public TextEditorEditAsync WithValueFactory(
         Key<TextEditorViewModel> viewModelKey,
         Func<TextEditorViewModel, TextEditorViewModel> withFunc)
     {
@@ -186,7 +186,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit WithTaskFactory(
+    public TextEditorEditAsync WithTaskFactory(
         Key<TextEditorViewModel> viewModelKey,
         Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
     {
@@ -208,7 +208,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     /// <summary>
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>
-    public TextEditorEdit SetScrollPositionFactory(
+    public TextEditorEditAsync SetScrollPositionFactory(
         Key<TextEditorViewModel> viewModelKey,
         double? scrollLeftInPixels,
         double? scrollTopInPixels)
@@ -243,7 +243,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit MutateScrollVerticalPositionFactory(
+    public TextEditorEditAsync MutateScrollVerticalPositionFactory(
         Key<TextEditorViewModel> viewModelKey,
         double pixels)
     {
@@ -265,7 +265,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit MutateScrollHorizontalPositionFactory(
+    public TextEditorEditAsync MutateScrollHorizontalPositionFactory(
         Key<TextEditorViewModel> viewModelKey,
         double pixels)
     {
@@ -287,7 +287,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit ScrollIntoViewFactory(
+    public TextEditorEditAsync ScrollIntoViewFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorTextSpan textSpan)
@@ -353,7 +353,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit FocusPrimaryCursorFactory(string primaryCursorContentId)
+    public TextEditorEditAsync FocusPrimaryCursorFactory(string primaryCursorContentId)
     {
         return async editContext =>
         {
@@ -363,7 +363,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit MoveCursorFactory(
+    public TextEditorEditAsync MoveCursorFactory(
         KeyboardEventArgs keyboardEventArgs,
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey)
@@ -386,7 +386,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit MoveCursorUnsafeFactory(
+    public TextEditorEditAsync MoveCursorUnsafeFactory(
         KeyboardEventArgs keyboardEventArgs,
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
@@ -684,7 +684,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit CursorMovePageTopFactory(
+    public TextEditorEditAsync CursorMovePageTopFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -703,7 +703,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit CursorMovePageTopUnsafeFactory(
+    public TextEditorEditAsync CursorMovePageTopUnsafeFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCursorModifier cursorModifier)
@@ -728,7 +728,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit CursorMovePageBottomFactory(
+    public TextEditorEditAsync CursorMovePageBottomFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey)
     {
@@ -747,7 +747,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit CursorMovePageBottomUnsafeFactory(
+    public TextEditorEditAsync CursorMovePageBottomUnsafeFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCursorModifier cursorModifier)
@@ -773,7 +773,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit CalculateVirtualizationResultFactory(
+    public TextEditorEditAsync CalculateVirtualizationResultFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         CancellationToken cancellationToken)
@@ -1123,7 +1123,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 //         move everything into a List<RichCharacter> seems silly.
     }
 
-    public TextEditorEdit RemeasureFactory(
+    public TextEditorEditAsync RemeasureFactory(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         string measureCharacterWidthAndLineHeightElementId,
@@ -1167,7 +1167,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         };
     }
 
-    public TextEditorEdit ForceRenderFactory(
+    public TextEditorEditAsync ForceRenderFactory(
         Key<TextEditorViewModel> viewModelKey,
         CancellationToken cancellationToken)
     {
