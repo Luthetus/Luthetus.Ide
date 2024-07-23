@@ -185,7 +185,7 @@ public class TextEditorCommandDefaultFunctions
             .Invoke(editContext);
     }
 
-    public static TextEditorFunc ScrollPageUpFactory(
+    public static Task ScrollPageUp(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
@@ -194,7 +194,7 @@ public class TextEditorCommandDefaultFunctions
             .Invoke(editContext);
     }
 
-    public static TextEditorFunc CursorMovePageBottomFactory(
+    public static void CursorMovePageBottom(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
@@ -207,7 +207,7 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-    public static TextEditorFunc CursorMovePageTopFactory(
+    public static void CursorMovePageTop(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
@@ -219,7 +219,7 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-    public static TextEditorFunc DuplicateFactory(
+    public static void Duplicate(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
@@ -251,11 +251,11 @@ public class TextEditorCommandDefaultFunctions
             cancellationToken: CancellationToken.None);
     }
 
-    public static TextEditorFunc IndentMoreFactory(
+    public static void IndentMore(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
-            return Task.CompletedTask;
+            return;
 
         var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
 
@@ -298,7 +298,7 @@ public class TextEditorCommandDefaultFunctions
         primaryCursorModifier.SetColumnIndexAndPreferred(1 + primaryCursorModifier.ColumnIndex);
     }
 
-    public static TextEditorFunc IndentLessFactory(
+    public static void IndentLess(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
@@ -380,13 +380,13 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-    public static TextEditorFunc ClearTextSelectionFactory(
+    public static void ClearTextSelection(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
     }
 
-    public static TextEditorFunc NewLineBelowFactory(
+    public static void NewLineBelow(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
@@ -425,7 +425,7 @@ public class TextEditorCommandDefaultFunctions
         modelModifier.Insert(valueToInsert, cursorModifierBag, cancellationToken: CancellationToken.None);
     }
 
-    public static TextEditorFunc NewLineAboveFactory(
+    public static void NewLineAbove(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
@@ -473,7 +473,7 @@ public class TextEditorCommandDefaultFunctions
         }
     }
     
-    public static TextEditorFunc MoveLineDownFactory(
+    public static void MoveLineDown(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         var lineIndexOriginal = primaryCursorModifier.LineIndex;
@@ -523,7 +523,7 @@ public class TextEditorCommandDefaultFunctions
 		primaryCursorModifier.ColumnIndex = 0;
     }
     
-    public static TextEditorFunc MoveLineUpFactory(
+    public static void MoveLineUp(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         var lineIndexOriginal = primaryCursorModifier.LineIndex;
@@ -574,7 +574,7 @@ public class TextEditorCommandDefaultFunctions
 		primaryCursorModifier.ColumnIndex = 0;
     }
 
-    public static TextEditorFunc GoToMatchingCharacterFactory(
+    public static void GoToMatchingCharacter(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
@@ -679,7 +679,7 @@ public class TextEditorCommandDefaultFunctions
             primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
     }
 
-    public static TextEditorFunc RelatedFilesQuickPickFactory(
+    public static async Task RelatedFilesQuickPick(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
@@ -803,22 +803,22 @@ public class TextEditorCommandDefaultFunctions
         dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }
     
-    public static TextEditorFunc GoToDefinitionFactory(
+    public static void GoToDefinition(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         if (modelModifier.CompilerService.Binder is null)
-            return Task.CompletedTask;
+            return;
 
         var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
         var wordTextSpan = modelModifier.GetWordTextSpan(positionIndex);
 
         if (wordTextSpan is null)
-            return Task.CompletedTask;
+            return;
 
         var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(wordTextSpan);
 
         if (definitionTextSpan is null)
-            return Task.CompletedTask;
+            return;
 
         var definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
 
@@ -832,11 +832,11 @@ public class TextEditorCommandDefaultFunctions
                 var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
 
                 if (definitionModel is null)
-                    return Task.CompletedTask;
+                    return;
             }
             else
             {
-                return Task.CompletedTask;
+                return;
             }
         }
 
@@ -856,11 +856,11 @@ public class TextEditorCommandDefaultFunctions
                 definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
 
                 if (!definitionViewModels.Any())
-                    return Task.CompletedTask;
+                    return;
             }
             else
             {
-                return Task.CompletedTask;
+                return;
             }
         }
 
@@ -871,7 +871,7 @@ public class TextEditorCommandDefaultFunctions
         var definitionPrimaryCursorModifier = editContext.GetPrimaryCursorModifier(definitionCursorModifierBag);
 
         if (definitionViewModelModifier is null || definitionCursorModifierBag is null || definitionPrimaryCursorModifier is null)
-            return Task.CompletedTask;
+            return;
 
         var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
         var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
@@ -890,13 +890,13 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-    public static TextEditorFunc ShowFindAllDialogFactory(
+    public static void ShowFindAllDialogFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         commandArgs.TextEditorService.OptionsApi.ShowFindAllDialog();
     }
 
-    public static TextEditorFunc ShowTooltipByCursorPositionFactory(
+    public static async Task ShowTooltipByCursorPositionAsync(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         var elementPositionInPixels = await commandArgs.TextEditorService.JsRuntimeTextEditorApi
@@ -924,7 +924,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
 	/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
-	public static TextEditorFunc HandleAfterOnKeyDownAsyncFactory(
+	public static async Task HandleAfterOnKeyDownAsync(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
@@ -986,7 +986,7 @@ public class TextEditorCommandDefaultFunctions
 	/// Therefore, the syntax highlighting was erroneously not refreshed due to batching.
 	/// This method is intended to solve this problem, but it was forgotten at some point.
 	/// </summary>
-	public static TextEditorFunc HandleAfterOnKeyDownRangeAsyncFactory(
+	public static async Task HandleAfterOnKeyDownRangeAsync(
 		ViewModelDisplayOptions viewModelDisplayOptions,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
@@ -1053,7 +1053,7 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-	public static TextEditorFunc HandleMouseStoppedMovingEventAsyncFactory(
+	public static async Task HandleMouseStoppedMovingEventAsync(
 		MouseEventArgs mouseEventArgs,		
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
