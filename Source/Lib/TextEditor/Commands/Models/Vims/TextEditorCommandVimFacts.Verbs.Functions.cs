@@ -50,7 +50,7 @@ public static partial class TextEditorCommandVimFacts
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static Task DeleteMotion(
+        public static async Task DeleteMotion(
         	IEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -74,11 +74,9 @@ public static partial class TextEditorCommandVimFacts
                 primaryCursorModifier,
                 async () => 
                 {
-                    if (commandArgs.InnerCommand.TextEditorFuncFactory is null)
-                        return;
-
-                    var textEditorEdit = commandArgs.InnerCommand.TextEditorFuncFactory.Invoke(textEditorCommandArgsForMotion);
-                    await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
+                    await commandArgs.InnerCommand.CommandFunc
+                    	.Invoke(textEditorCommandArgsForMotion)
+                    	.ConfigureAwait(false);
                 }).ConfigureAwait(false);
 
             primaryCursorModifier.LineIndex = inCursor.LineIndex;
@@ -94,16 +92,16 @@ public static partial class TextEditorCommandVimFacts
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier> { new(cursorForDeletion) });
 
-            await editContext.TextEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
-                    modelModifier.ResourceUri,
+            await editContext.TextEditorService.ModelApi.DeleteTextByRangeUnsafe(
+            		editContext,
+                    modelModifier,
                     cursorModifierBagForDeletion,
                     motionResult.PositionIndexDisplacement,
                     CancellationToken.None)
-                .Invoke(editContext)
 				.ConfigureAwait(false);
         }
 
-        public static void ChangeMotion(
+        public static async Task ChangeMotion(
         	IEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -120,7 +118,7 @@ public static partial class TextEditorCommandVimFacts
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static void ChangeSelection(
+        public static async Task ChangeSelection(
         	IEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -157,7 +155,14 @@ public static partial class TextEditorCommandVimFacts
             if (activeKeymap is not TextEditorKeymapVim keymapVim)
                 return;
 
-            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+            TextEditorCommandDefaultFunctions.NewLineBelow(
+	            	editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs)
+		        .ConfigureAwait(false);
+		        
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
@@ -172,7 +177,14 @@ public static partial class TextEditorCommandVimFacts
             if (activeKeymap is not TextEditorKeymapVim keymapVim)
                 return;
 
-            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+            TextEditorCommandDefaultFunctions.NewLineAbove(
+	            	editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs)
+		        .ConfigureAwait(false);
+		        
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
     }

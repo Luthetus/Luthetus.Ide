@@ -157,7 +157,6 @@ public class TextEditorCommandDefaultFunctions
     {
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
     		editContext,
-	        modelModifier,
 	        viewModelModifier,
 	        cursorModifierBag,
 	        viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
@@ -172,7 +171,6 @@ public class TextEditorCommandDefaultFunctions
     {
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
-	        modelModifier,
 	        viewModelModifier,
 	        cursorModifierBag,
 	        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
@@ -187,7 +185,6 @@ public class TextEditorCommandDefaultFunctions
     {
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
-	        modelModifier,
 	        viewModelModifier,
 	        cursorModifierBag,
 	        viewModelModifier.ViewModel.TextEditorDimensions.Height);
@@ -202,7 +199,6 @@ public class TextEditorCommandDefaultFunctions
     {
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
-	        modelModifier,
 	        viewModelModifier,
 	        cursorModifierBag,
 	        -1 * viewModelModifier.ViewModel.TextEditorDimensions.Height);
@@ -290,6 +286,8 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
+    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+    
         if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
             return;
 

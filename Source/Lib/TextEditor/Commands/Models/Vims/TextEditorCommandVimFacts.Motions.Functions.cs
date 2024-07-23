@@ -61,7 +61,12 @@ public static partial class TextEditorCommandVimFacts
 	        CursorModifierBagTextEditor cursorModifierBag,
         	TextEditorCommandArgs commandArgs)
         {
-            PerformEnd(commandArgs, editContext);
+            PerformEnd(
+            	editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+	        	commandArgs);
         }
 
         private static void PerformEnd(
@@ -72,6 +77,8 @@ public static partial class TextEditorCommandVimFacts
         	TextEditorCommandArgs commandArgs,
         	bool isRecursiveCall = false)
         {
+        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        
             void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
             {
                 primaryCursorModifier.ColumnIndex = columnIndex;
