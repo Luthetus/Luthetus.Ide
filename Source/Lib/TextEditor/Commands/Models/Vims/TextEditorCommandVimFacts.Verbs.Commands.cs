@@ -11,161 +11,65 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(DeleteLineCommand),
-                    DeleteLineFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                return DeleteLineFactory(commandArgs);
-            }
-        };
+                DeleteLine(commandArgs.EditContext);
+            });
 
         public static readonly TextEditorCommand ChangeLineCommand = new(
             "Vim::Change(Line)", "Vim::Change(Line)", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(ChangeLineCommand),
-                    ChangeLineFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                return ChangeLineFactory(commandArgs);
-            }
-        };
+                ChangeLine(commandArgs.EditContext);
+            });
 
         public static TextEditorCommand DeleteMotionCommandConstructor(TextEditorCommand innerTextEditorCommand) => new(
             $"Vim::Delete({innerTextEditorCommand.DisplayName})", $"Vim::Delete({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
                 commandArgs.InnerCommand = innerTextEditorCommand;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(DeleteMotionCommandConstructor),
-                    DeleteMotionFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.InnerCommand = innerTextEditorCommand;
-
-                return DeleteMotionFactory(commandArgs);
-            }
-        };
+                DeleteMotion(commandArgs.EditContext);
+            });
 
         public static TextEditorCommand ChangeMotionCommandConstructor(TextEditorCommand innerTextEditorCommand) => new(
             $"Vim::Change({innerTextEditorCommand.DisplayName})", $"Vim::Change({innerTextEditorCommand.DisplayName})", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
                 commandArgs.InnerCommand = innerTextEditorCommand;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(ChangeMotionCommandConstructor),
-                    GetChangeMotionFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                
-                commandArgs.InnerCommand = innerTextEditorCommand;
-
-                return GetChangeMotionFactory(commandArgs);
-            }
-        };
+				GetChangeMotion(commandArgs.EditContext);
+            });
 
         public static readonly TextEditorCommand ChangeSelectionCommand = new(
             "Vim::Change(Selection)", "Vim::Change(Selection)", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(ChangeSelectionCommand),
-                    ChangeSelectionFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                return ChangeSelectionFactory(commandArgs);
-            }
-        };
+				ChangeSelection(commandArgs.EditContext);
+            });
 
         public static readonly TextEditorCommand YankCommand = new(
-            "Vim::Change(Selection)", "Vim::Change(Selection)", false, true, TextEditKind.None, null,
+            "Vim::Yank(Selection)", "Vim::Yank(Selection)", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(YankCommand),
-                    YankFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                return YankFactory(commandArgs);
-            }
-        };
+				Yank(commandArgs.EditContext);
+            });
 
         public static readonly TextEditorCommand NewLineBelowCommand = new(
             "Vim::NewLineBelow()", "Vim::NewLineBelow()", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(NewLineBelowCommand),
-                    NewLineBelowFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                return NewLineBelowFactory(commandArgs);
-            }
-        };
+                NewLineBelow(commandArgs.EditContext);
+            });
 
         public static readonly TextEditorCommand NewLineAboveCommand = new(
             "Vim::NewLineAbove()", "Vim::NewLineAbove()", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(NewLineAboveCommand),
-                    NewLineAboveFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                return NewLineAboveFactory(commandArgs);
-            }
-        };
+				NewLineAbove(commandArgs.EditContext);
+            });
     }
 }

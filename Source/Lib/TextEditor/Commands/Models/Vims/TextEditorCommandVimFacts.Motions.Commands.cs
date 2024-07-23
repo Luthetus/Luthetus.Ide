@@ -11,57 +11,24 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(Word),
-                    Word(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                return WordFactory(commandArgs);
-            }
-        };
+                Word(commandArgs.EditContext);
+            });
 
         public static readonly TextEditorCommand EndCommand = new(
             "Vim::End()", "Vim::End()", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(End),
-                    EndFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                return EndFactory(commandArgs);
-            }
-        };
+                End(commandArgs.EditContext);
+            });
 
         public static readonly TextEditorCommand BackCommand = new(
             "Vim::Back()", "Vim::Back()", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                commandArgs.TextEditorService.PostUnique(
-                    nameof(Back),
-                    BackFactory(commandArgs));
-				return Task.CompletedTask;
-            })
-        {
-            TextEditorFuncFactory = interfaceCommandArgs =>
-            {
-                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                return BackFactory(commandArgs);
-            }
-        };
+				Back(commandArgs.EditContext)
+            });
 
         public static TextEditorCommand GetVisualFactory(
             TextEditorCommand innerCommand,
@@ -73,21 +40,8 @@ public static partial class TextEditorCommandVimFacts
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
-
-                    commandArgs.TextEditorService.PostUnique(
-                        nameof(GetVisualFactory),
-                        VisualFactory(commandArgs));
-					return Task.CompletedTask;
-                })
-            {
-                TextEditorFuncFactory = interfaceCommandArgs =>
-                {
-                    var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                    commandArgs.InnerCommand = innerCommand;
-
-                    return VisualFactory(commandArgs);
-                }
-            };
+                    Visual(commandArgs.EditContext);
+                });
         }
         
         public static TextEditorCommand GetVisualLineFactory(
@@ -100,21 +54,8 @@ public static partial class TextEditorCommandVimFacts
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
-
-                    commandArgs.TextEditorService.PostUnique(
-                        nameof(GetVisualLineFactory),
-                        VisualLineFactory(commandArgs));
-					return Task.CompletedTask;
-                })
-            {
-                TextEditorFuncFactory = interfaceCommandArgs =>
-                {
-                    var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                    commandArgs.InnerCommand = innerCommand;
-
-                    return VisualLineFactory(commandArgs);
-                }
-            };
+                    VisualLineFactory(commandArgs.EditContext)
+                });
         }
     }
 }
