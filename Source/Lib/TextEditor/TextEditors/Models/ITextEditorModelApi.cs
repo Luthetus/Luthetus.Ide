@@ -97,7 +97,7 @@ public interface ITextEditorModelApi
         CancellationToken cancellationToken);
 
     /// <summary>
-    /// If one wants to guarantee that the state is up to date use <see cref="HandleKeyboardEventFactory"/>
+    /// If one wants to guarantee that the state is up to date use <see cref="HandleKeyboardEvent"/>
     /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
     /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
     /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.

@@ -478,6 +478,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
+    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
             
         var originalColumnIndex = primaryCursorModifier.ColumnIndex;
@@ -530,6 +531,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
+    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         var lineIndexOriginal = primaryCursorModifier.LineIndex;
         var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
 
@@ -584,6 +586,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
+    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         var lineIndexOriginal = primaryCursorModifier.LineIndex;
 		var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
 			
@@ -639,6 +642,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
+    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
         if (commandArgs.ShouldSelectText)
@@ -714,13 +718,13 @@ public class TextEditorCommandDefaultFunctions
                 };
             }
 
-            await editContext.TextEditorService.ViewModelApi.MoveCursorUnsafe(
-                    keyboardEventArgs,
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-                    primaryCursorModifier)
-                .Invoke(editContext)
-				.ConfigureAwait(false);
+            editContext.TextEditorService.ViewModelApi.MoveCursorUnsafe(
+        		keyboardEventArgs,
+		        editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        primaryCursorModifier);
 
             var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
             var characterAt = modelModifier.GetCharacter(positionIndex);

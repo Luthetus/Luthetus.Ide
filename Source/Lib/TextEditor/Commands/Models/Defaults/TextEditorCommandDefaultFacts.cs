@@ -649,20 +649,21 @@ public static class TextEditorCommandDefaultFacts
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
                 
-            TextEditorCommandDefaultFunctions.ShowTooltipByCursorPosition(
+            return TextEditorCommandDefaultFunctions.ShowTooltipByCursorPositionAsync(
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
         });
 
     public static readonly TextEditorCommand ShowFindOverlay = new(
         "ShowFindOverlay", "defaults_show-find-overlay", false, true, TextEditKind.None, null,
-        interfaceCommandArgs =>
+        async interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
-            var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+            var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
 
             if (viewModelModifier is null)
                 return;
@@ -670,9 +671,9 @@ public static class TextEditorCommandDefaultFacts
 			// If the user has an active text selection,
 			// then populate the find overlay with their selection.
 			{
-				var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
-	            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-	            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+				var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+	            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+	            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 	
 	            if (modelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 	                return;

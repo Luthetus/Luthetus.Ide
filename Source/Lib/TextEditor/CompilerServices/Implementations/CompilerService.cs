@@ -250,10 +250,9 @@ public class CompilerService : ICompilerService
 						CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
 						diagnosticTextSpans);
 
-					await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
-							resourceUri)
-						.Invoke(editContext)
-						.ConfigureAwait(false);
+					editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+						editContext,
+						modelModifier);
 
 					OnResourceParsed();
 				}

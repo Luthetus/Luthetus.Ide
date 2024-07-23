@@ -103,24 +103,12 @@ public class OnKeyDownLateBatching : ITextEditorWork
                             viewModelModifier.ViewModel.ViewModelKey,
 							ComponentData,
 							EditContext.TextEditorService,
-							ComponentData.ServiceProvider);
+							ComponentData.ServiceProvider,
+							EditContext);
 
-                        if (command is TextEditorCommand textEditorCommand &&
-                            textEditorCommand.TextEditorFuncFactory is not null)
-                        {
-							// Avoid invoking ITextEditorService.Post(...) since we already have an IEditContext.
-                            await textEditorCommand.TextEditorFuncFactory
-                                .Invoke(commandArgs)
-                                .Invoke(EditContext)
-                                .ConfigureAwait(false);
-                        }
-                        else
-                        {
-							// This isn't desirable, it will re-post using 'ITextEditorService.Post(...)'
-                            await command.CommandFunc
-                                .Invoke(commandArgs)
-                                .ConfigureAwait(false);
-                        }
+                        await command.CommandFunc
+                            .Invoke(commandArgs)
+                            .ConfigureAwait(false);
 	                    break;
 	                case KeyboardEventArgsKind.Movement:
 	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
@@ -134,12 +122,12 @@ public class OnKeyDownLateBatching : ITextEditorWork
 	                    }
 	                    else
 	                    {
-	                        await EditContext.TextEditorService.ViewModelApi.MoveCursorFactory(
-	                                keyboardEventArgs,
-	                                modelModifier.ResourceUri,
-	                                viewModelModifier.ViewModel.ViewModelKey)
-	                            .Invoke(EditContext)
-	                            .ConfigureAwait(false);
+	                        EditContext.TextEditorService.ViewModelApi.MoveCursor(
+                        		keyboardEventArgs,
+						        EditContext,
+						        modelModifier,
+						        viewModelModifier,
+						        cursorModifierBag);
 	
 							viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 							{
@@ -266,13 +254,12 @@ public class OnKeyDownLateBatching : ITextEditorWork
 			                }
 							else
 							{
-								await EditContext.TextEditorService.ModelApi.HandleKeyboardEventFactory(
-				                        ResourceUri,
-				                        ViewModelKey,
-				                        keyboardEventArgs,
-				                        CancellationToken.None)
-				                    .Invoke(EditContext)
-				                    .ConfigureAwait(false);
+								EditContext.TextEditorService.ModelApi.HandleKeyboardEventFactory(
+									EditContext,
+							        modelModifier,
+							        cursorModifierBag,
+							        keyboardEventArgs,
+							        CancellationToken.None);
 							}
 						}
 	                    break;

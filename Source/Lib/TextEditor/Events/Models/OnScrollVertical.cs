@@ -52,9 +52,11 @@ public class OnScrollVertical : ITextEditorWork
             if (viewModelModifier is null)
                 return;
 
-            await EditContext.TextEditorService.ViewModelApi
-                .SetScrollPositionFactory(ViewModelKey, null, ScrollTop)
-                .Invoke(EditContext);
+            EditContext.TextEditorService.ViewModelApi.SetScrollPosition(
+            	EditContext,
+        		viewModelModifier,
+            	null,
+            	ScrollTop);
 		}
 		finally
 		{

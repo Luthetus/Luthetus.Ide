@@ -318,9 +318,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public void MoveCursor(
         KeyboardEventArgs keyboardEventArgs,
 		IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        Key<TextEditorViewModel> viewModelKey)
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         await MoveCursorUnsafeFactory(keyboardEventArgs, modelResourceUri, viewModelKey, primaryCursorModifier)
             .Invoke(editContext)

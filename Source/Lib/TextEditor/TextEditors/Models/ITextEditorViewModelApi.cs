@@ -77,9 +77,9 @@ public interface ITextEditorViewModelApi
     public void MoveCursor(
     	KeyboardEventArgs keyboardEventArgs,
         IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
-        Key<TextEditorViewModel> viewModelKey);
+        CursorModifierBagTextEditor cursorModifierBag);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="MoveCursorFactory"/>
