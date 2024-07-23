@@ -254,7 +254,7 @@ public class OnKeyDownLateBatching : ITextEditorWork
 			                }
 							else
 							{
-								EditContext.TextEditorService.ModelApi.HandleKeyboardEventFactory(
+								EditContext.TextEditorService.ModelApi.HandleKeyboardEvent(
 									EditContext,
 							        modelModifier,
 							        cursorModifierBag,
@@ -284,12 +284,13 @@ public class OnKeyDownLateBatching : ITextEditorWork
 			        }
 					else
 					{
-						await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsyncFactory(
-	                            modelModifier.ResourceUri,
-	                            viewModelModifier.ViewModel.ViewModelKey,
-	                            keyboardEventArgs,
+						await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsync(
+								EditContext,
+						        modelModifier,
+						        viewModelModifier,
+						        cursorModifierBag,
+						        keyboardEventArgs,
 								ComponentData)
-	                        .Invoke(EditContext)
 	                        .ConfigureAwait(false);
 					}
 	            }

@@ -178,11 +178,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         _dispatcher.Dispatch(new TextEditorState.SetViewModelWithAction(
             TextEditorService.AuthenticatedActionKey,
             editContext,
-            viewModelKey,
+            viewModelModifier.ViewModel.ViewModelKey,
             withFunc));
     }
 
-    public Task WithTask(
+    public async Task WithTask(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
@@ -190,7 +190,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         _dispatcher.Dispatch(new TextEditorState.SetViewModelWithAction(
             TextEditorService.AuthenticatedActionKey,
             editContext,
-            viewModelKey,
+            viewModelModifier.ViewModel.ViewModelKey,
             await withFuncWrap.Invoke(viewModelModifier.ViewModel).ConfigureAwait(false)));
     }
 
@@ -299,20 +299,19 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
         // Return early if both values are 'null'
         if (scrollLeft is null && scrollTop is null)
-            return Task.CompletedTask;
+            return;
 
-        return SetScrollPositionFactory(
-                viewModelKey,
-                scrollLeft,
-                scrollTop)
-            .Invoke(editContext);
+        SetScrollPosition(
+            editContext,
+	        viewModelModifier,
+	        scrollLeft,
+            scrollTop);
     }
 
-    public void FocusPrimaryCursor(string primaryCursorContentId)
+    public async Task FocusPrimaryCursorAsync(string primaryCursorContentId)
     {
         await _jsRuntime.GetLuthetusCommonApi()
-            .FocusHtmlElementById(primaryCursorContentId, preventScroll: true)
-            .ConfigureAwait(false);
+            .FocusHtmlElementById(primaryCursorContentId, preventScroll: true);
     }
 
     public void MoveCursor(
@@ -322,9 +321,13 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-        await MoveCursorUnsafeFactory(keyboardEventArgs, modelResourceUri, viewModelKey, primaryCursorModifier)
-            .Invoke(editContext)
-            .ConfigureAwait(false);
+        MoveCursorUnsafe(
+        	keyboardEventArgs,
+	        editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        editContext.GetPrimaryCursorModifier(cursorModifierBag));
 
         viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
     }

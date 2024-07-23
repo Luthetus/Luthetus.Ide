@@ -72,7 +72,7 @@ public interface ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         double pixels);
 
-    public void FocusPrimaryCursor(string primaryCursorContentId);
+    public Task FocusPrimaryCursorAsync(string primaryCursorContentId);
 
     public void MoveCursor(
     	KeyboardEventArgs keyboardEventArgs,

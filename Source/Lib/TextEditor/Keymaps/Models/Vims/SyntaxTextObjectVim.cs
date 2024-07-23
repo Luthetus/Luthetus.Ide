@@ -63,15 +63,16 @@ public static class SyntaxTextObjectVim
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
-                    new KeyboardEventArgs
-                    {
-                        Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                        ShiftKey = commandArgs.ShiftKey
-                    },
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey)
-                .Invoke(editContext);
+            commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+        		new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+		        editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag);
 
             return Task.CompletedTask;
         };

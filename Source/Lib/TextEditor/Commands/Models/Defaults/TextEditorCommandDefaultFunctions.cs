@@ -761,7 +761,7 @@ public class TextEditorCommandDefaultFunctions
 
         var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
         
-		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelResourceUri.Value, false);
+		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
 		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory.Value, true);
 	
 		var fileSystemProvider = commandArgs.ServiceProvider.GetRequiredService<IFileSystemProvider>();
@@ -882,6 +882,8 @@ public class TextEditorCommandDefaultFunctions
     {
         if (modelModifier.CompilerService.Binder is null)
             return;
+            
+        var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
         var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
         var wordTextSpan = modelModifier.GetWordTextSpan(positionIndex);
@@ -999,41 +1001,44 @@ public class TextEditorCommandDefaultFunctions
 	            },
 				commandArgs.ComponentData,
 				commandArgs.ServiceProvider.GetRequiredService<ILuthetusTextEditorComponentRenderers>(),
-				modelResourceUri,
-				viewModelKey)
-			.Invoke(editContext)
+				modelModifier.ResourceUri,
+				viewModelModifier.ViewModel.ViewModelKey)
 			.ConfigureAwait(false);
     }
 
 	/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
 	public static async Task HandleAfterOnKeyDownAsync(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+		IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         KeyboardEventArgs keyboardEventArgs,
 		TextEditorComponentData componentData)
     {
         // Indexing can be invoked and this method still check for syntax highlighting and such
         if (EventUtils.IsAutocompleteIndexerInvoker(keyboardEventArgs))
         {
-            _ = Task.Run(async () =>
+        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        	
+            if (primaryCursorModifier.ColumnIndex > 0)
             {
-                if (primaryCursorModifier.ColumnIndex > 0)
-                {
-                    // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
-                    // are to be 1 character long, as well either specific whitespace or punctuation.
-                    // Therefore 1 character behind might be a word that can be indexed.
-                    var word = modelModifier.ReadPreviousWordOrDefault(
-                        primaryCursorModifier.LineIndex,
-                        primaryCursorModifier.ColumnIndex);
+                // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
+                // are to be 1 character long, as well either specific whitespace or punctuation.
+                // Therefore 1 character behind might be a word that can be indexed.
+                var word = modelModifier.ReadPreviousWordOrDefault(
+                    primaryCursorModifier.LineIndex,
+                    primaryCursorModifier.ColumnIndex);
 
-                    if (word is not null)
-                    {
-                        await editContext.TextEditorService.AutocompleteIndexer
-                            .IndexWordAsync(word)
-                            .ConfigureAwait(false);
-                    }
+                if (word is not null)
+                {
+	                _ = Task.Run(async () =>
+        			{
+	                    await editContext.TextEditorService.AutocompleteIndexer
+	                        .IndexWordAsync(word)
+	                        .ConfigureAwait(false);
+        			});
                 }
-            });
+            }
         }
 
         if (EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
@@ -1069,18 +1074,21 @@ public class TextEditorCommandDefaultFunctions
 	/// This method is intended to solve this problem, but it was forgotten at some point.
 	/// </summary>
 	public static async Task HandleAfterOnKeyDownRangeAsync(
-		ViewModelDisplayOptions viewModelDisplayOptions,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+		IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         List<KeyboardEventArgs> keyboardEventArgsList,
-		TextEditorComponentData componentData)
+		TextEditorComponentData componentData,
+		ViewModelDisplayOptions viewModelDisplayOptions)
     {
         if (viewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory is not null)
         {
-            return viewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory.Invoke(
-                resourceUri,
-                viewModelKey,
+            await viewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory.Invoke(
+                modelModifier.ResourceUri,
+                viewModelModifier.ViewModel.ViewModelKey,
                 keyboardEventArgsList);
+            return;
         }
 
         var seenIsAutocompleteIndexerInvoker = false;
@@ -1100,25 +1108,27 @@ public class TextEditorCommandDefaultFunctions
 
         if (seenIsAutocompleteIndexerInvoker)
         {
-            _ = Task.Run(async () =>
+        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        	
+            if (primaryCursorModifier.ColumnIndex > 0)
             {
-                if (primaryCursorModifier.ColumnIndex > 0)
-                {
-                    // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
-                    // are to be 1 character long, as well either specific whitespace or punctuation.
-                    // Therefore 1 character behind might be a word that can be indexed.
-                    var word = modelModifier.ReadPreviousWordOrDefault(
-                        primaryCursorModifier.LineIndex,
-                        primaryCursorModifier.ColumnIndex);
+                // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
+                // are to be 1 character long, as well either specific whitespace or punctuation.
+                // Therefore 1 character behind might be a word that can be indexed.
+                var word = modelModifier.ReadPreviousWordOrDefault(
+                    primaryCursorModifier.LineIndex,
+                    primaryCursorModifier.ColumnIndex);
 
-                    if (word is not null)
-                    {
+                if (word is not null)
+                {
+		            _ = Task.Run(async () =>
+		            {
                         await editContext.TextEditorService.AutocompleteIndexer
                             .IndexWordAsync(word)
                             .ConfigureAwait(false);
-                    }
+		            });
                 }
-            });
+            }
         }
 
         if (seenIsAutocompleteMenuInvoker)
