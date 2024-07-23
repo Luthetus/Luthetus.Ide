@@ -37,38 +37,38 @@ public interface ITextEditorViewModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public TextEditorFunc WithValueFactory(
+    public void WithValue(
         Key<TextEditorViewModel> viewModelKey,
         Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 
-    public TextEditorFunc WithTaskFactory(
+    public Task WithTask(
         Key<TextEditorViewModel> viewModelKey,
         Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
 
     /// <summary>
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>
-    public TextEditorFunc SetScrollPositionFactory(
+    public void SetScrollPosition(
         Key<TextEditorViewModel> viewModelKey,
         double? scrollLeftInPixels,
         double? scrollTopInPixels);
 
-    public TextEditorFunc ScrollIntoViewFactory(
+    public void ScrollIntoView(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorTextSpan textSpan);
 
-    public TextEditorFunc MutateScrollVerticalPositionFactory(
+    public void MutateScrollVerticalPosition(
         Key<TextEditorViewModel> viewModelKey,
         double pixels);
 
-    public TextEditorFunc MutateScrollHorizontalPositionFactory(
+    public void MutateScrollHorizontalPosition(
         Key<TextEditorViewModel> viewModelKey,
         double pixels);
 
-    public TextEditorFunc FocusPrimaryCursorFactory(string primaryCursorContentId);
+    public void FocusPrimaryCursor(string primaryCursorContentId);
 
-    public TextEditorFunc MoveCursorFactory(
+    public void MoveCursor(
         KeyboardEventArgs keyboardEventArgs,
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey);
@@ -83,13 +83,13 @@ public interface ITextEditorViewModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorFunc MoveCursorUnsafeFactory(
+    public void MoveCursorUnsafe(
         KeyboardEventArgs keyboardEventArgs,
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCursorModifier primaryCursor);
 
-    public TextEditorFunc CursorMovePageTopFactory(
+    public void CursorMovePageTop(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey);
 
@@ -103,12 +103,12 @@ public interface ITextEditorViewModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorFunc CursorMovePageTopUnsafeFactory(
+    public void CursorMovePageTopUnsafe(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCursorModifier primaryCursor);
 
-    public TextEditorFunc CursorMovePageBottomFactory(
+    public void CursorMovePageBottom(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey);
 
@@ -122,24 +122,24 @@ public interface ITextEditorViewModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorFunc CursorMovePageBottomUnsafeFactory(
+    public void CursorMovePageBottomUnsafe(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         TextEditorCursorModifier cursorModifier);
 
-    public TextEditorFunc CalculateVirtualizationResultFactory(
+    public void CalculateVirtualizationResult(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         CancellationToken cancellationToken);
 
-    public TextEditorFunc RemeasureFactory(
+    public void Remeasure(
         ResourceUri modelResourceUri,
         Key<TextEditorViewModel> viewModelKey,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken);
 
-    public TextEditorFunc ForceRenderFactory(
+    public void ForceRender(
         Key<TextEditorViewModel> viewModelKey,
         CancellationToken cancellationToken);
     #endregion

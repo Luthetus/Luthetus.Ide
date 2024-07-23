@@ -175,8 +175,10 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static Task ScrollPageDown(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
         return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
@@ -186,7 +188,11 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static Task ScrollPageUp(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
                 viewModelKey,
@@ -195,7 +201,11 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void CursorMovePageBottom(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
         {
@@ -208,7 +218,11 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void CursorMovePageTop(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
         {
@@ -220,7 +234,11 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void Duplicate(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
 
@@ -252,7 +270,11 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void IndentMore(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         if (!TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
             return;
@@ -299,7 +321,11 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void IndentLess(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(primaryCursorModifier);
 
@@ -381,13 +407,21 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void ClearTextSelection(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
     }
 
     public static void NewLineBelow(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
 
@@ -426,7 +460,11 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void NewLineAbove(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
             
@@ -474,7 +512,11 @@ public class TextEditorCommandDefaultFunctions
     }
     
     public static void MoveLineDown(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         var lineIndexOriginal = primaryCursorModifier.LineIndex;
         var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
@@ -524,7 +566,11 @@ public class TextEditorCommandDefaultFunctions
     }
     
     public static void MoveLineUp(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         var lineIndexOriginal = primaryCursorModifier.LineIndex;
 		var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
@@ -575,7 +621,11 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void GoToMatchingCharacter(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         var cursorPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
@@ -680,7 +730,11 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static async Task RelatedFilesQuickPick(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
         var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
@@ -804,7 +858,11 @@ public class TextEditorCommandDefaultFunctions
     }
     
     public static void GoToDefinition(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         if (modelModifier.CompilerService.Binder is null)
             return;
@@ -891,13 +949,21 @@ public class TextEditorCommandDefaultFunctions
     }
 
     public static void ShowFindAllDialogFactory(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         commandArgs.TextEditorService.OptionsApi.ShowFindAllDialog();
     }
 
     public static async Task ShowTooltipByCursorPositionAsync(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
     {
         var elementPositionInPixels = await commandArgs.TextEditorService.JsRuntimeTextEditorApi
             .GetBoundingClientRect(viewModelModifier.ViewModel.PrimaryCursorContentId)

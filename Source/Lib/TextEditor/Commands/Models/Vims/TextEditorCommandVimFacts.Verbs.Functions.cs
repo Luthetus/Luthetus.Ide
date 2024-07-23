@@ -11,148 +11,119 @@ public static partial class TextEditorCommandVimFacts
 {
     public static partial class Verbs
     {
-        public static TextEditorFunc DeleteLineFactory(TextEditorCommandArgs commandArgs)
+        public static Task DeleteLine(TextEditorCommandArgs commandArgs)
         {
-            return TextEditorCommandDefaultFunctions.CutFactory(
+            return TextEditorCommandDefaultFunctions.CutAsync(
                 commandArgs.ModelResourceUri,
                 commandArgs.ViewModelKey,
                 commandArgs);
         }
 
-        public static TextEditorFunc ChangeLineFactory(TextEditorCommandArgs commandArgs)
+        public static async Task ChangeLine(TextEditorCommandArgs commandArgs)
         {
-            return async editContext =>
-            {
-                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
-                if (activeKeymap is not TextEditorKeymapVim keymapVim)
-                    return;
+            var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+            if (activeKeymap is not TextEditorKeymapVim keymapVim)
+                return;
 
-                await TextEditorCommandDefaultFunctions
-                    .CutFactory(commandArgs.ModelResourceUri, commandArgs.ViewModelKey, commandArgs)
-                    .Invoke(editContext)
-					.ConfigureAwait(false);
+            await TextEditorCommandDefaultFunctions
+                .CutAsync(commandArgs.ModelResourceUri, commandArgs.ViewModelKey, commandArgs)
+                .Invoke(editContext)
+				.ConfigureAwait(false);
 
-                keymapVim.ActiveVimMode = VimMode.Insert;
-            };
+            keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static TextEditorFunc DeleteMotionFactory(TextEditorCommandArgs commandArgs)
+        public static Task DeleteMotion(TextEditorCommandArgs commandArgs)
         {
-            return async editContext =>
-            {
-                var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+            var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
+                modelModifier.ResourceUri,
+                viewModelModifier.ViewModel.ViewModelKey,
+				commandArgs.ComponentData,
+                commandArgs.TextEditorService,
+                commandArgs.ServiceProvider);
 
-                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
+            var inCursor = primaryCursorModifier.ToCursor();
 
-                var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
+            var motionResult = await VimMotionResult.GetResultAsync(
+                modelModifier,
+                primaryCursorModifier,
+                async () => 
+                {
+                    if (commandArgs.InnerCommand.TextEditorFuncFactory is null)
+                        return;
+
+                    var textEditorEdit = commandArgs.InnerCommand.TextEditorFuncFactory.Invoke(textEditorCommandArgsForMotion);
+                    await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
+                }).ConfigureAwait(false);
+
+            primaryCursorModifier.LineIndex = inCursor.LineIndex;
+            primaryCursorModifier.ColumnIndex = inCursor.ColumnIndex;
+            primaryCursorModifier.PreferredColumnIndex = inCursor.ColumnIndex;
+
+            var cursorForDeletion = new TextEditorCursor(
+                motionResult.LowerPositionIndexCursor.LineIndex,
+                motionResult.LowerPositionIndexCursor.ColumnIndex,
+                true);
+
+            var cursorModifierBagForDeletion = new CursorModifierBagTextEditor(
+                Key<TextEditorViewModel>.Empty,
+                new List<TextEditorCursorModifier> { new(cursorForDeletion) });
+
+            await editContext.TextEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
                     modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey,
-					commandArgs.ComponentData,
-                    commandArgs.TextEditorService,
-                    commandArgs.ServiceProvider);
-
-                var inCursor = primaryCursorModifier.ToCursor();
-
-                var motionResult = await VimMotionResult.GetResultAsync(
-                    modelModifier,
-                    primaryCursorModifier,
-                    async () => 
-                    {
-                        if (commandArgs.InnerCommand.TextEditorFuncFactory is null)
-                            return;
-
-                        var textEditorEdit = commandArgs.InnerCommand.TextEditorFuncFactory.Invoke(textEditorCommandArgsForMotion);
-                        await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
-                    }).ConfigureAwait(false);
-
-                primaryCursorModifier.LineIndex = inCursor.LineIndex;
-                primaryCursorModifier.ColumnIndex = inCursor.ColumnIndex;
-                primaryCursorModifier.PreferredColumnIndex = inCursor.ColumnIndex;
-
-                var cursorForDeletion = new TextEditorCursor(
-                    motionResult.LowerPositionIndexCursor.LineIndex,
-                    motionResult.LowerPositionIndexCursor.ColumnIndex,
-                    true);
-
-                var cursorModifierBagForDeletion = new CursorModifierBagTextEditor(
-                    Key<TextEditorViewModel>.Empty,
-                    new List<TextEditorCursorModifier> { new(cursorForDeletion) });
-
-                await editContext.TextEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
-                        modelModifier.ResourceUri,
-                        cursorModifierBagForDeletion,
-                        motionResult.PositionIndexDisplacement,
-                        CancellationToken.None)
-                    .Invoke(editContext)
-					.ConfigureAwait(false);
-            };
+                    cursorModifierBagForDeletion,
+                    motionResult.PositionIndexDisplacement,
+                    CancellationToken.None)
+                .Invoke(editContext)
+				.ConfigureAwait(false);
         }
 
         public static TextEditorFunc GetChangeMotionFactory(TextEditorCommandArgs commandArgs)
         {
-            return async editContext =>
-            {
-                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
-                if (activeKeymap is not TextEditorKeymapVim keymapVim)
-                    return;
+            var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+            if (activeKeymap is not TextEditorKeymapVim keymapVim)
+                return;
 
-                var deleteMotion = DeleteMotionCommandConstructor(commandArgs.InnerCommand);
+            var deleteMotion = DeleteMotionCommandConstructor(commandArgs.InnerCommand);
 
-                await deleteMotion.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-                keymapVim.ActiveVimMode = VimMode.Insert;
-            };
+            await deleteMotion.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+            keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
         public static TextEditorFunc ChangeSelectionFactory(TextEditorCommandArgs commandArgs)
         {
-            return async editContext =>
-            {
-                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
-                if (activeKeymap is not TextEditorKeymapVim keymapVim)
-                    return;
+            var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+            if (activeKeymap is not TextEditorKeymapVim keymapVim)
+                return;
 
-                await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-                keymapVim.ActiveVimMode = VimMode.Insert;
-            };
+            await TextEditorCommandDefaultFacts.Cut.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+            keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
         public static TextEditorFunc YankFactory(TextEditorCommandArgs commandArgs)
         {
-            return async editContext =>
-            {
-                await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-                await TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-            };
+            await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+            await TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
         }
 
         public static TextEditorFunc NewLineBelowFactory(TextEditorCommandArgs commandArgs)
         {
-            return async editContext =>
-            {
-                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
-                if (activeKeymap is not TextEditorKeymapVim keymapVim)
-                    return;
+            var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+            if (activeKeymap is not TextEditorKeymapVim keymapVim)
+                return;
 
-                await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-                keymapVim.ActiveVimMode = VimMode.Insert;
-            };
+            await TextEditorCommandDefaultFacts.NewLineBelow.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+            keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
         public static TextEditorFunc NewLineAboveFactory(TextEditorCommandArgs commandArgs)
         {
-            return async editContext =>
-            {
-                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
-                if (activeKeymap is not TextEditorKeymapVim keymapVim)
-                    return;
+            var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+            if (activeKeymap is not TextEditorKeymapVim keymapVim)
+                return;
 
-                await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
-                keymapVim.ActiveVimMode = VimMode.Insert;
-            };
+            await TextEditorCommandDefaultFacts.NewLineAbove.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+            keymapVim.ActiveVimMode = VimMode.Insert;
         }
     }
 }
