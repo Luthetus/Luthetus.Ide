@@ -1,4 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Keymaps.Models;
@@ -19,9 +21,11 @@ public static partial class TextEditorCommandVimFacts
         	TextEditorCommandArgs commandArgs)
         {
             return TextEditorCommandDefaultFunctions.CutAsync(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
+                editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>());
         }
 
         public static async Task ChangeLine(
@@ -35,9 +39,12 @@ public static partial class TextEditorCommandVimFacts
             if (activeKeymap is not TextEditorKeymapVim keymapVim)
                 return;
 
-            await TextEditorCommandDefaultFunctions
-                .CutAsync(commandArgs.ModelResourceUri, commandArgs.ViewModelKey, commandArgs)
-                .Invoke(editContext)
+            await TextEditorCommandDefaultFunctions.CutAsync(
+	                editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>())
 				.ConfigureAwait(false);
 
             keymapVim.ActiveVimMode = VimMode.Insert;

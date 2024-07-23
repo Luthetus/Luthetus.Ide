@@ -47,7 +47,7 @@ public class TextEditorCommandDefaultFunctions
         selectedText ??= modelModifier.GetLineTextRange(primaryCursorModifier.LineIndex, 1);
 
         await clipboardService.SetClipboard(selectedText).ConfigureAwait(false);
-        await viewModelModifier.ViewModel.FocusFactory().Invoke(editContext).ConfigureAwait(false);
+        await viewModelModifier.ViewModel.Focus().Invoke(editContext).ConfigureAwait(false);
     }
 
     public static async Task CutAsync(
@@ -71,7 +71,7 @@ public class TextEditorCommandDefaultFunctions
         var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier) ?? string.Empty;
         await clipboardService.SetClipboard(selectedText).ConfigureAwait(false);
 
-        await viewModelModifier.ViewModel.FocusFactory().Invoke(editContext).ConfigureAwait(false);
+        await viewModelModifier.ViewModel.Focus().Invoke(editContext).ConfigureAwait(false);
 
         modelModifier.HandleKeyboardEvent(
             new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
@@ -148,15 +148,15 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.OptionsApi.SetRenderStateKey(Key<RenderState>.NewKey());
     }
 
-    public static Task ScrollLineDownFactory(
+    public static Task ScrollLineDown(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                viewModelKey,
+        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+                viewModelModifier.ViewModel.ViewModelKey,
                 viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight)
             .Invoke(editContext);
     }
@@ -168,8 +168,8 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                viewModelKey,
+        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+                viewModelModifier.ViewModel.ViewModelKey,
                 -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight)
             .Invoke(editContext);
     }
@@ -181,8 +181,8 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                viewModelKey,
+        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+                viewModelModifier.ViewModel.ViewModelKey,
                 viewModelModifier.ViewModel.TextEditorDimensions.Height)
             .Invoke(editContext);
     }
@@ -194,8 +194,8 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                viewModelKey,
+        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+                viewModelModifier.ViewModel.ViewModelKey,
                 -1 * viewModelModifier.ViewModel.TextEditorDimensions.Height)
             .Invoke(editContext);
     }
@@ -702,7 +702,7 @@ public class TextEditorCommandDefaultFunctions
                 };
             }
 
-            await editContext.TextEditorService.ViewModelApi.MoveCursorUnsafeFactory(
+            await editContext.TextEditorService.ViewModelApi.MoveCursorUnsafe(
                     keyboardEventArgs,
                     modelModifier.ResourceUri,
                     viewModelModifier.ViewModel.ViewModelKey,
@@ -799,7 +799,7 @@ public class TextEditorCommandDefaultFunctions
 			                textEditorConfig.TryShowViewModelFunc is not null)
 			            {
 			                await textEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-			                        viewModelKey,
+			                        viewModelModifier.ViewModel.ViewModelKey,
 			                        Key<TextEditorGroup>.Empty,
 			                        commandArgs.ServiceProvider))
 			                    .ConfigureAwait(false);
@@ -847,10 +847,10 @@ public class TextEditorCommandDefaultFunctions
 					var activeViewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
 					if (activeViewModel is not null)
-						return activeViewModel.FocusFactory().Invoke(editContext);
+						return activeViewModel.Focus().Invoke(editContext);
 				}
 				
-				return viewModelModifier.ViewModel.FocusFactory().Invoke(editContext);
+				return viewModelModifier.ViewModel.Focus().Invoke(editContext);
 			});
 
 		var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();
@@ -948,7 +948,7 @@ public class TextEditorCommandDefaultFunctions
         }
     }
 
-    public static void ShowFindAllDialogFactory(
+    public static void ShowFindAllDialog(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -975,7 +975,7 @@ public class TextEditorCommandDefaultFunctions
                 (.9 * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight)
         };
 
-        await HandleMouseStoppedMovingEventAsyncFactory(
+        await HandleMouseStoppedMovingEventAsync(
 				new MouseEventArgs
 	            {
 	                ClientX = elementPositionInPixels.Left,

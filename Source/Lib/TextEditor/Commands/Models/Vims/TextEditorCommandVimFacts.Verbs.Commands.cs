@@ -11,7 +11,22 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                DeleteLine(commandArgs.EditContext);
+                
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                
+                DeleteLine(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand ChangeLineCommand = new(
@@ -19,7 +34,22 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                ChangeLine(commandArgs.EditContext);
+                
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                ChangeLine(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static TextEditorCommand DeleteMotionCommandConstructor(TextEditorCommand innerTextEditorCommand) => new(
@@ -28,7 +58,22 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 commandArgs.InnerCommand = innerTextEditorCommand;
-                DeleteMotion(commandArgs.EditContext);
+                
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                DeleteMotion(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static TextEditorCommand ChangeMotionCommandConstructor(TextEditorCommand innerTextEditorCommand) => new(
@@ -37,7 +82,22 @@ public static partial class TextEditorCommandVimFacts
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 commandArgs.InnerCommand = innerTextEditorCommand;
-				GetChangeMotion(commandArgs.EditContext);
+				
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                ChangeMotion(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand ChangeSelectionCommand = new(
@@ -45,7 +105,22 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-				ChangeSelection(commandArgs.EditContext);
+				
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                ChangeSelection(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand YankCommand = new(
@@ -53,7 +128,22 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-				Yank(commandArgs.EditContext);
+				
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                YankAsync(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand NewLineBelowCommand = new(
@@ -61,7 +151,22 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                NewLineBelow(commandArgs.EditContext);
+                
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                NewLineBelow(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand NewLineAboveCommand = new(
@@ -69,7 +174,22 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-				NewLineAbove(commandArgs.EditContext);
+				
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                NewLineAbove(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
     }
 }

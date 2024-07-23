@@ -11,7 +11,22 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                Word(commandArgs.EditContext);
+                
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                Word(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand EndCommand = new(
@@ -19,7 +34,22 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                End(commandArgs.EditContext);
+                
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                End(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand BackCommand = new(
@@ -27,7 +57,22 @@ public static partial class TextEditorCommandVimFacts
             interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-				Back(commandArgs.EditContext)
+				
+                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+                    
+                Back(
+	            	commandArgs.EditContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag,
+			        commandArgs);
+			    return Task.CompletedTask;
             });
 
         public static TextEditorCommand GetVisualFactory(
@@ -40,7 +85,22 @@ public static partial class TextEditorCommandVimFacts
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
-                    Visual(commandArgs.EditContext);
+                    
+	                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+	                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+	                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+	                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+	
+	                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+	                    return Task.CompletedTask;
+	                    
+	                Visual(
+		            	commandArgs.EditContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+			        	commandArgs);
+			    	return Task.CompletedTask;
                 });
         }
         
@@ -54,7 +114,22 @@ public static partial class TextEditorCommandVimFacts
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
-                    VisualLineFactory(commandArgs.EditContext)
+                    
+	                var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+	                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+	                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+	                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+	
+	                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+	                    return Task.CompletedTask;
+	                    
+	                VisualLine(
+		            	commandArgs.EditContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+			        	commandArgs);
+			    	return Task.CompletedTask;
                 });
         }
     }
