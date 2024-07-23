@@ -29,8 +29,8 @@ public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
     public TextEditKind TextEditKind { get; }
     public string? OtherTextEditKindIdentifier { get; }
     /// <summary>
-    /// In order to avoid multiple invocations of <see cref="ITextEditorService.Post(string, TextEditorEdit)"/>
-    /// one can continue on the current Post by invoking this TextEditorEdit directly.
+    /// In order to avoid multiple invocations of <see cref="ITextEditorService.Post(string, TextEditorFunc)"/>
+    /// one can continue on the current Post by invoking this TextEditorFunc directly.
     /// <br/><br/>
     /// If one invokes the <see cref="CommandNoType.CommandFunc"/> then a post will occur.
     /// <br/><br/>
@@ -42,7 +42,7 @@ public class TextEditorCommand : CommandWithType<TextEditorCommandArgs>
     /// I think going down this path will reveal the true solution so I'm going to
     /// write out the bad code version for now. (2024-01-11)
     /// </summary>
-    public Func<ICommandArgs, TextEditorEdit>? TextEditorEditFactory { get; set; }
+    public Func<ICommandArgs, TextEditorFunc>? TextEditorFuncFactory { get; set; }
 
     public static LuthetusTextEditorException ThrowOtherTextEditKindIdentifierWasExpectedException(TextEditKind textEditKind)
     {

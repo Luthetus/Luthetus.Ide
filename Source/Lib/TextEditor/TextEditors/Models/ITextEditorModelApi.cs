@@ -41,25 +41,25 @@ public interface ITextEditorModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public TextEditorEdit UndoEditFactory(
+    public TextEditorFunc UndoEditFactory(
         ResourceUri resourceUri);
 
-    public TextEditorEdit SetUsingLineEndKindFactory(
+    public TextEditorFunc SetUsingLineEndKindFactory(
         ResourceUri resourceUri,
         LineEndKind lineEndKind);
 
-    public TextEditorEdit SetResourceDataFactory(
+    public TextEditorFunc SetResourceDataFactory(
         ResourceUri resourceUri,
         DateTime resourceLastWriteTime);
 
-    public TextEditorEdit ReloadFactory(
+    public TextEditorFunc ReloadFactory(
         ResourceUri resourceUri,
         string content,
         DateTime resourceLastWriteTime);
 
-    public TextEditorEdit RedoEditFactory(ResourceUri resourceUri);
+    public TextEditorFunc RedoEditFactory(ResourceUri resourceUri);
 
-    public TextEditorEdit InsertTextFactory(
+    public TextEditorFunc InsertTextFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         string content,
@@ -75,13 +75,13 @@ public interface ITextEditorModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorEdit InsertTextUnsafeFactory(
+    public TextEditorFunc InsertTextUnsafeFactory(
         ResourceUri resourceUri,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken);
 
-    public TextEditorEdit HandleKeyboardEventFactory(
+    public TextEditorFunc HandleKeyboardEventFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
@@ -97,14 +97,14 @@ public interface ITextEditorModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorEdit HandleKeyboardEventUnsafeFactory(
+    public TextEditorFunc HandleKeyboardEventUnsafeFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
         CancellationToken cancellationToken,
         CursorModifierBagTextEditor cursorModifierBag);
 
-    public TextEditorEdit DeleteTextByRangeFactory(
+    public TextEditorFunc DeleteTextByRangeFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         int count,
@@ -120,13 +120,13 @@ public interface ITextEditorModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorEdit DeleteTextByRangeUnsafeFactory(
+    public TextEditorFunc DeleteTextByRangeUnsafeFactory(
         ResourceUri resourceUri,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken);
 
-    public TextEditorEdit DeleteTextByMotionFactory(
+    public TextEditorFunc DeleteTextByMotionFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         MotionKind motionKind,
@@ -142,20 +142,20 @@ public interface ITextEditorModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorEdit DeleteTextByMotionUnsafeFactory(
+    public TextEditorFunc DeleteTextByMotionUnsafeFactory(
         ResourceUri resourceUri,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken);
 
-    public TextEditorEdit AddPresentationModelFactory(
+    public TextEditorFunc AddPresentationModelFactory(
         ResourceUri resourceUri,
         TextEditorPresentationModel emptyPresentationModel);
 
     /// <param name="emptyPresentationModel">
     /// If the presentation model was not found, the empty presentation model will be registered.
     /// </param>
-    public TextEditorEdit StartPendingCalculatePresentationModelFactory(
+    public TextEditorFunc StartPendingCalculatePresentationModelFactory(
         ResourceUri resourceUri,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel);
@@ -163,7 +163,7 @@ public interface ITextEditorModelApi
     /// <param name="emptyPresentationModel">
     /// If the presentation model was not found, the empty presentation model will be registered.
     /// </param>
-    public TextEditorEdit CompletePendingCalculatePresentationModel(
+    public TextEditorFunc CompletePendingCalculatePresentationModel(
         ResourceUri resourceUri,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
@@ -173,11 +173,11 @@ public interface ITextEditorModelApi
     /// If applying syntax highlighting it may be preferred to use <see cref="ApplySyntaxHighlightingAsync" />.
     /// It is effectively just invoking the lexer and then <see cref="ApplyDecorationRange" />
     /// </summary>
-    public TextEditorEdit ApplyDecorationRangeFactory(
+    public TextEditorFunc ApplyDecorationRangeFactory(
         ResourceUri resourceUri,
         IEnumerable<TextEditorTextSpan> textSpans);
 
-    public TextEditorEdit ApplySyntaxHighlightingFactory(
+    public TextEditorFunc ApplySyntaxHighlightingFactory(
         ResourceUri resourceUri);
     #endregion
 

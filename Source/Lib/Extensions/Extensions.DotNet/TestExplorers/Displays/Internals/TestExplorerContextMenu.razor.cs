@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.States;
@@ -93,6 +94,66 @@ public partial class TestExplorerContextMenu : ComponentBase
 					commandArgs,
 					isRecursiveCall));
 			}
+		}
+		else if (commandArgs.NodeThatReceivedMouseEvent is TreeViewProjectTestModel treeViewProjectTestModel)
+		{
+			menuRecordsList.Add(new MenuOptionRecord(
+				$"Refresh: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}",
+				MenuOptionKind.Other,
+				OnClickFunc: async () =>
+				{
+					// TODO: This code is not concurrency safe with 'TestExplorerScheduler.Task_DiscoverTests()'
+					Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
+					{
+						var mutablePassedTestHashSet = inState.PassedTestHashSet.ToHashSet();
+						var mutableNotRanTestHashSet = inState.NotRanTestHashSet.ToHashSet();
+						var mutableFailedTestHashSet = inState.FailedTestHashSet.ToHashSet();
+						
+						foreach (var fullyQualifiedTestName in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+						{
+							mutablePassedTestHashSet.Remove(fullyQualifiedTestName);
+							mutableNotRanTestHashSet.Remove(fullyQualifiedTestName);
+							mutableFailedTestHashSet.Remove(fullyQualifiedTestName);
+						}
+						
+						return inState with
+				        {
+				            PassedTestHashSet = mutablePassedTestHashSet.ToImmutableHashSet(),
+				            NotRanTestHashSet = mutableNotRanTestHashSet.ToImmutableHashSet(),
+				            FailedTestHashSet = mutableFailedTestHashSet.ToImmutableHashSet(),
+				        };
+				    }));
+			        
+					treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput = null;
+					await treeViewProjectTestModel.LoadChildListAsync();
+					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
+					
+					var terminalCommand = new TerminalCommand(
+					    Key<TerminalCommand>.NewKey(),
+					    new FormattedCommand(string.Empty, Array.Empty<string>()),
+					    ContinueWith: () =>
+					    {
+					    	Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
+							{
+								var mutableNotRanTestHashSet = inState.NotRanTestHashSet.ToHashSet();
+								
+								foreach (var fullyQualifiedTestName in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+								{
+									mutableNotRanTestHashSet.Add(fullyQualifiedTestName);
+								}
+								
+								return inState with
+						        {
+						            NotRanTestHashSet = mutableNotRanTestHashSet.ToImmutableHashSet(),
+						        };
+						    }));
+						    
+						    return Task.CompletedTask;
+					    });
+		            
+		            var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+		            executionTerminal.EnqueueCommand(terminalCommand);
+				}));
 		}
 
 		if (!menuRecordsList.Any())

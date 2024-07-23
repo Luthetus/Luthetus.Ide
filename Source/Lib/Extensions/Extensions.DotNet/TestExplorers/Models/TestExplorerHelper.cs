@@ -19,7 +19,7 @@ public static class TestExplorerHelper
 	/// TODO: D.R.Y.: This method is copy and pasted, then altered a bit, from
 	/// <see cref="TextEditor.RazorLib.Commands.Models.Defaults.TextEditorCommandDefaultFunctions.GoToDefinitionFactory"/>.
 	/// </summary>
-	public static TextEditorEdit ShowTestInEditorFactory(
+	public static TextEditorFunc ShowTestInEditorFactory(
 		string className,
 		string methodName,
 		ICommonComponentRenderers commonComponentRenderers,
@@ -242,7 +242,7 @@ public static class TestExplorerHelper
 					dispatcher,
 					TimeSpan.FromSeconds(5));
 			}
-
+			
 			return Task.CompletedTask;
 		};
 	}

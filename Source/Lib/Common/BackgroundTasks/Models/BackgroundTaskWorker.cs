@@ -48,10 +48,18 @@ public class BackgroundTaskWorker : BackgroundService
 					// TODO: Could it be that the reason for ThrottleController locking the UI thread...
 					// ...was because I was using Task.WhenAll, and once the tasks actually got awaited,
 					// they both finished synchronously somehow, therefore an await never occurred?
-					await Task.WhenAll(
-							backgroundTask.HandleEvent(cancellationToken),
-							Task.Delay(backgroundTask.ThrottleTimeSpan))
-						.ConfigureAwait(false);
+					var task = backgroundTask.HandleEvent(cancellationToken);
+					
+					if (task.IsCompleted)
+					{
+						// If task completes synchronously then yield
+						// for any single threaded runtimes so the UI doesn't freeze.
+						await Task.Yield();
+					}
+					else
+					{
+						await task.ConfigureAwait(false);
+					}
                 }
                 catch (Exception ex)
                 {

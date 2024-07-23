@@ -26,21 +26,19 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </remarks>
 public sealed class RedundantTextEditorTask : ITextEditorTask
 {
-    private readonly TextEditorEdit _textEditorEdit;
+    private readonly TextEditorFunc _textEditorFunc;
 
     public RedundantTextEditorTask(
         string name,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
+        TextEditorFunc textEditorFunc)
     {
-        _textEditorEdit = textEditorEdit;
+        _textEditorFunc = textEditorFunc;
 
         Name = name;
         ResourceUri = resourceUri;
         ViewModelKey = ViewModelKey;
-        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorComponentData.ThrottleDelayDefault;
     }
 
 	public string Name { get; set; }
@@ -48,7 +46,7 @@ public sealed class RedundantTextEditorTask : ITextEditorTask
     public Key<TextEditorViewModel> ViewModelKey { get; set; }
     public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public TimeSpan ThrottleTimeSpan { get; set; }
+    public TimeSpan ThrottleTimeSpan { get; set; } = TextEditorComponentData.ThrottleDelayDefault;
     public Task? WorkProgress { get; set; }
 
 	public IEditContext EditContext { get; set; }
@@ -77,7 +75,7 @@ public sealed class RedundantTextEditorTask : ITextEditorTask
     {
 		try
 		{
-            await _textEditorEdit
+            await _textEditorFunc
                 .Invoke(EditContext)
                 .ConfigureAwait(false);
                 

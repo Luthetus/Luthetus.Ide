@@ -122,28 +122,24 @@ public partial class TextEditorService : ITextEditorService
 
     public void PostUnique(
         string name,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
+        TextEditorFunc textEditorFunc)
     {
         Post(new UniqueTextEditorTask(
             name,
-            textEditorEdit,
-            throttleTimeSpan));
+            textEditorFunc));
     }
 
     public void PostRedundant(
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
+        TextEditorFunc textEditorFunc)
     {
         Post(new RedundantTextEditorTask(
             name,
 			resourceUri,
             viewModelKey,
-            textEditorEdit,
-            throttleTimeSpan));
+            textEditorFunc));
     }
 
     public void Post(ITextEditorTask task)

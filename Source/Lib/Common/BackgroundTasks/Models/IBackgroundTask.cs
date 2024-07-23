@@ -7,21 +7,6 @@ public interface IBackgroundTask
     public Key<IBackgroundTask> BackgroundTaskKey { get; }
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public string Name { get; }
-    public Task? WorkProgress { get; }
-
-    /// <summary>
-    /// The <see cref="ThrottleController"/> will await this prior to
-    /// reading, and invoking <see cref="HandleEvent(CancellationToken)"/>, on the next event from the queue.<br/><br/>
-    /// 
-    /// Example use: One might want to throttle an 'onmousemove' event, longer than that of a 'onmousedown' event.
-    ///              In particular, one could set the 'onmousemove' to 50 miliseconds, and the 'onmousedown' to 0 miliseconds.
-    ///              The reasoning here is that 'onmousemove' happens far more often than 'onmousedown'.<br/><br/>
-    ///             |<br/><br/>
-    ///              Further details: one likely wants to have all the UI events be handled in the order that they occurred.
-    ///              Since all the delays are awaited from the same <see cref="ThrottleController"/>,
-    ///              one can set <see cref="ThrottleTimeSpan"/> relative to the event.<br/><br/>
-    /// </summary>
-	public TimeSpan ThrottleTimeSpan { get; }
 
     /// <summary>
     /// Before a throttle event is enqueued, this method is invoked.

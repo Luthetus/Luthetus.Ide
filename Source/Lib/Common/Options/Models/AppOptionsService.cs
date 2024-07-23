@@ -69,6 +69,12 @@ public class AppOptionsService : IAppOptionsService
             return $"font-size: {fontSizeInPixelsCssValue}px;";
         }
     }
+    
+    public bool ShowPanelTitles => AppOptionsStateWrap.Value.Options.ShowPanelTitles;
+    
+    public string ShowPanelTitlesCssClass => AppOptionsStateWrap.Value.Options.ShowPanelTitles
+    	? string.Empty
+    	: "luth_ide_section-no-title";
 
     public string ColorSchemeCssStyleString
     {
