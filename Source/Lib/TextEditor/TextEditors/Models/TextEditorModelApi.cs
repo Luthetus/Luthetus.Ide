@@ -92,8 +92,7 @@ public class TextEditorModelApi : ITextEditorModelApi
     #region UPDATE_METHODS
     public void UndoEdit(
 	    IEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        TextEditorModelModifier modelModifier)
     {
         modelModifier.UndoEdit();
     }
@@ -101,7 +100,6 @@ public class TextEditorModelApi : ITextEditorModelApi
     public void SetUsingLineEndKind(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         LineEndKind lineEndKind)
     {
         modelModifier.SetLineEndKindPreference(lineEndKind);
@@ -110,7 +108,6 @@ public class TextEditorModelApi : ITextEditorModelApi
     public void SetResourceData(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         DateTime resourceLastWriteTime)
     {
         modelModifier.SetResourceData(resourceUri, resourceLastWriteTime);
@@ -119,7 +116,6 @@ public class TextEditorModelApi : ITextEditorModelApi
     public void Reload(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         string content,
         DateTime resourceLastWriteTime)
     {
@@ -129,8 +125,7 @@ public class TextEditorModelApi : ITextEditorModelApi
 
     public void RedoEdit(
     	IEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        TextEditorModelModifier modelModifier)
     {
         modelModifier.RedoEdit();
     }
@@ -218,7 +213,6 @@ public class TextEditorModelApi : ITextEditorModelApi
     public void AddPresentationModel(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorPresentationModel emptyPresentationModel)
     {
         modelModifier.PerformRegisterPresentationModelAction(emptyPresentationModel);
@@ -227,7 +221,6 @@ public class TextEditorModelApi : ITextEditorModelApi
     public void StartPendingCalculatePresentationModel(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel)
     {
@@ -237,7 +230,6 @@ public class TextEditorModelApi : ITextEditorModelApi
     public void CompletePendingCalculatePresentationModel(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
         ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
@@ -251,7 +243,6 @@ public class TextEditorModelApi : ITextEditorModelApi
     public void ApplyDecorationRange(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         IEnumerable<TextEditorTextSpan> textSpans)
     {
         var localRichCharacterList = modelModifier.RichCharacterList;
@@ -282,8 +273,7 @@ public class TextEditorModelApi : ITextEditorModelApi
 
     public void ApplySyntaxHighlighting(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag)
+        TextEditorModelModifier modelModifier)
     {
         var syntacticTextSpansList = modelModifier.CompilerService.GetTokenTextSpansFor(modelModifier.ResourceUri);
         var symbolsList = modelModifier.CompilerService.GetSymbolsFor(modelModifier.ResourceUri);

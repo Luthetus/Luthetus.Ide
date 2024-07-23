@@ -43,32 +43,27 @@ public interface ITextEditorModelApi
     #region UPDATE_METHODS
     public void UndoEdit(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag);
+        TextEditorModelModifier modelModifier);
 
     public void SetUsingLineEndKind(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         LineEndKind lineEndKind);
 
     public void SetResourceData(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         DateTime resourceLastWriteTime);
 
     public void Reload(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         string content,
         DateTime resourceLastWriteTime);
 
     public void RedoEdit(
     	IEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag);
+        TextEditorModelModifier modelModifier);
 
     public void InsertText(
         IEditContext editContext,
@@ -169,7 +164,6 @@ public interface ITextEditorModelApi
     public void AddPresentationModel(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorPresentationModel emptyPresentationModel);
 
     /// <param name="emptyPresentationModel">
@@ -178,7 +172,6 @@ public interface ITextEditorModelApi
     public void StartPendingCalculatePresentationModel(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel);
 
@@ -188,7 +181,6 @@ public interface ITextEditorModelApi
     public void CompletePendingCalculatePresentationModel(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
         ImmutableArray<TextEditorTextSpan> calculatedTextSpans);
@@ -200,13 +192,11 @@ public interface ITextEditorModelApi
     public void ApplyDecorationRange(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         IEnumerable<TextEditorTextSpan> textSpans);
 
     public void ApplySyntaxHighlighting(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
-        CursorModifierBagTextEditor cursorModifierBag);
+        TextEditorModelModifier modelModifier);
     #endregion
 
     #region DELETE_METHODS

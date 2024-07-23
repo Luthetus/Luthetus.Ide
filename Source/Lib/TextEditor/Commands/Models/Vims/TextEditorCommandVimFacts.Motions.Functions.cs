@@ -130,11 +130,13 @@ public static partial class TextEditorCommandVimFacts
                              * will erroneously be at the start of the next word otherwise.
                              */
 
-                            await PerformEndAsync(
-                                    commandArgs,
-                                    editContext,
-                                    isRecursiveCall: true)
-                                .ConfigureAwait(false);
+                            PerformEnd(
+                        		editContext,
+						        modelModifier,
+						        viewModelModifier,
+						        cursorModifierBag,
+					        	commandArgs,
+                                isRecursiveCall: true);
 
                             // Leave method early as all is finished.
                             return;
@@ -154,6 +156,8 @@ public static partial class TextEditorCommandVimFacts
 	        CursorModifierBagTextEditor cursorModifierBag,
         	TextEditorCommandArgs commandArgs)
         {
+        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        
             void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
             {
                 primaryCursorModifier.ColumnIndex = columnIndex;
@@ -188,7 +192,7 @@ public static partial class TextEditorCommandVimFacts
                 primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
         }
 
-        public static void Visual(
+        public static async Task Visual(
         	IEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -198,15 +202,13 @@ public static partial class TextEditorCommandVimFacts
             var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
             if (activeKeymap is not TextEditorKeymapVim keymapVim)
                 return;
+                
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
             var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 
-            if (commandArgs.InnerCommand.TextEditorFuncFactory is null)
-                return;
-
-            var textEditorEdit = commandArgs.InnerCommand.TextEditorFuncFactory.Invoke(commandArgs);
-            await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
+            await commandArgs.InnerCommand.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
 
             var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 
@@ -230,7 +232,7 @@ public static partial class TextEditorCommandVimFacts
             }
         }
 
-        public static void VisualLine(
+        public static async Task VisualLine(
         	IEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
@@ -244,11 +246,7 @@ public static partial class TextEditorCommandVimFacts
             var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
             var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 
-            if (commandArgs.InnerCommand.TextEditorFuncFactory is null)
-                return;
-
-            var textEditorEdit = commandArgs.InnerCommand.TextEditorFuncFactory.Invoke(commandArgs);
-            await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
+            await commandArgs.InnerCommand.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
 
             var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 

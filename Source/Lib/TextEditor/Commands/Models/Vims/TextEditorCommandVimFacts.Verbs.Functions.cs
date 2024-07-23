@@ -92,13 +92,12 @@ public static partial class TextEditorCommandVimFacts
                 Key<TextEditorViewModel>.Empty,
                 new List<TextEditorCursorModifier> { new(cursorForDeletion) });
 
-            await editContext.TextEditorService.ModelApi.DeleteTextByRangeUnsafe(
-            		editContext,
-                    modelModifier,
-                    cursorModifierBagForDeletion,
-                    motionResult.PositionIndexDisplacement,
-                    CancellationToken.None)
-				.ConfigureAwait(false);
+            editContext.TextEditorService.ModelApi.DeleteTextByRangeUnsafe(
+        		editContext,
+                modelModifier,
+                cursorModifierBagForDeletion,
+                motionResult.PositionIndexDisplacement,
+                CancellationToken.None);
         }
 
         public static async Task ChangeMotion(
@@ -156,12 +155,11 @@ public static partial class TextEditorCommandVimFacts
                 return;
 
             TextEditorCommandDefaultFunctions.NewLineBelow(
-	            	editContext,
-			        modelModifier,
-			        viewModelModifier,
-			        cursorModifierBag,
-			        commandArgs)
-		        .ConfigureAwait(false);
+            	editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        commandArgs);
 		        
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
@@ -178,12 +176,11 @@ public static partial class TextEditorCommandVimFacts
                 return;
 
             TextEditorCommandDefaultFunctions.NewLineAbove(
-	            	editContext,
-			        modelModifier,
-			        viewModelModifier,
-			        cursorModifierBag,
-			        commandArgs)
-		        .ConfigureAwait(false);
+            	editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        commandArgs);
 		        
             keymapVim.ActiveVimMode = VimMode.Insert;
         }

@@ -28,11 +28,12 @@ public static class TextEditorCommandDefaultFacts
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
                 
-            TextEditorCommandDefaultFunctions.Copy(
+            return TextEditorCommandDefaultFunctions.CopyAsync(
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>());
         });
 
     public static readonly TextEditorCommand Cut = new(
@@ -49,11 +50,12 @@ public static class TextEditorCommandDefaultFacts
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
                 
-            TextEditorCommandDefaultFunctions.Cut(
+            return TextEditorCommandDefaultFunctions.CutAsync(
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>());
         });
 
     public static readonly TextEditorCommand PasteCommand = new(
@@ -70,7 +72,7 @@ public static class TextEditorCommandDefaultFacts
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
                 
-            TextEditorCommandDefaultFunctions.Paste(
+            return TextEditorCommandDefaultFunctions.PasteAsync(
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,

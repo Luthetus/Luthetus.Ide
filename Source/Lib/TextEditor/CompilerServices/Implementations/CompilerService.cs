@@ -169,12 +169,11 @@ public class CompilerService : ICompilerService
 				if (modelModifier is null)
 					return;
 
-				await _textEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
-						modelModifier.ResourceUri,
-						CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-						CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
+					editContext,
+			        modelModifier,
+			        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+					CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
 				var presentationModel = modelModifier.PresentationModelList.First(
 					x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
