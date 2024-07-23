@@ -202,6 +202,44 @@
                         I guess I'll find out tomorrow.
                     </li>
                     <li>
+                    	Note to self: before going to bed I published the new code
+                    	that I described above this 'li'.
+                    	
+                    	I think having the Task.Delay(...) after every IBackgroundTask
+                    	was a horrific idea.
+                    	
+                    	But, I think there is something about scrolling up and down
+                    	very quickly in LARGE files like its super obvious in 60k length file
+                    	the or maybe its not I don't know.
+                    	
+                    	I'm quite tired at the moment.
+                    	
+                    	The parsing of the entire Luthetus.Ide solution is comically faster.
+                    	If I pick the first number in my head its like 20x faster.
+                    	I have no idea in reality how much faster it is though
+                    	I'm super out of it right now.
+                    	
+                    	Also, there is the odd polling code I wrote to determine
+                    	when one file was finished being parsed, instead of awaiting the
+                    	background task because I didn't think awaiting a background task
+                    	made sense but it does make sense because you need to lock the state
+                    	so nobody else touches it even though in terms of the 'background'
+                    	part of it you say you want to just block instead.
+                    	
+                    	Also, I remember I used to think that Task.Run(...) was not guaranteed
+                    	to start my tasks.
+                    	
+                    	I even said so during the community livestream thing I was on.
+                    	I think about the fact that I said that many times a day these days.
+                    	It makes me feel sick and cringe that I said that.
+                    	
+                    	It turns out that Task.Run(...) is guaranteed to immediately start the task,
+                    	thus the thread starvation scenario.
+                    	
+                    	Although I shouldn't say thus the "insert scenario here" because I feel
+                    	confident about the. I'm going to bed.
+                    </li>
+                    <li>
                         'Find All' tool shows results in a tree view.
                         As well, it shows multiple results per file,
                         preview text for each result,
