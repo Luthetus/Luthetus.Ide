@@ -44,16 +44,15 @@ public partial interface ITextEditorService
 	public IAutocompleteIndexer AutocompleteIndexer { get; }
 	public IAutocompleteService AutocompleteService { get; }
 	public LuthetusTextEditorConfig TextEditorConfig { get; }
-
+        
     /// <summary>
     /// This method will create an instance of <see cref="UniqueTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
     /// </summary>
     public void PostUnique(
         string name,
-        TextEditorEditAsync textEditorEditAsync,
-        TimeSpan? throttleTimeSpan = null);
-
+        TextEditorFunc textEditorFunc);
+        
     /// <summary>
     /// This method will create an instance of <see cref="RedundantTextEditorTask"/>,
     /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
@@ -62,8 +61,7 @@ public partial interface ITextEditorService
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        TextEditorEditAsync textEditorEditAsync,
-        TimeSpan? throttleTimeSpan = null);
+        TextEditorFunc textEditorFunc);
 
     /// <summary>
     /// This method will set the <see cref="ITextEditorTask.EditContext"/> property.

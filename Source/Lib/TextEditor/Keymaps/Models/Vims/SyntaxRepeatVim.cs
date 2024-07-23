@@ -78,7 +78,7 @@ public static class SyntaxRepeatVim
                     }
                 })
             {
-                TextEditorEditAsyncFactory = interfaceCommandArgs =>
+                TextEditorFuncFactory = interfaceCommandArgs =>
                 {
                     var textEditorCommandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 

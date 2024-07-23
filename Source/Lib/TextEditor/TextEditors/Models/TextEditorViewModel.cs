@@ -190,7 +190,7 @@ public record TextEditorViewModel : IDisposable
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
     public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
 
-    public TextEditorEditAsync FocusFactory()
+    public TextEditorFunc FocusFactory()
     {
         return TextEditorService.ViewModelApi.FocusPrimaryCursorFactory(PrimaryCursorContentId);
     }

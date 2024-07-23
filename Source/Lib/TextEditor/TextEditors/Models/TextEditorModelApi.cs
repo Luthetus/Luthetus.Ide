@@ -90,7 +90,7 @@ public class TextEditorModelApi : ITextEditorModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public TextEditorEditAsync UndoEditFactory(ResourceUri resourceUri)
+    public TextEditorFunc UndoEditFactory(ResourceUri resourceUri)
     {
         return editContext =>
         {
@@ -104,7 +104,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync SetUsingLineEndKindFactory(
+    public TextEditorFunc SetUsingLineEndKindFactory(
         ResourceUri resourceUri,
         LineEndKind lineEndKind)
     {
@@ -120,7 +120,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync SetResourceDataFactory(
+    public TextEditorFunc SetResourceDataFactory(
         ResourceUri resourceUri,
         DateTime resourceLastWriteTime)
     {
@@ -136,7 +136,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync ReloadFactory(
+    public TextEditorFunc ReloadFactory(
         ResourceUri resourceUri,
         string content,
         DateTime resourceLastWriteTime)
@@ -154,7 +154,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync RedoEditFactory(ResourceUri resourceUri)
+    public TextEditorFunc RedoEditFactory(ResourceUri resourceUri)
     {
         return editContext =>
         {
@@ -168,7 +168,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync InsertTextFactory(
+    public TextEditorFunc InsertTextFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         string content,
@@ -189,7 +189,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync InsertTextUnsafeFactory(
+    public TextEditorFunc InsertTextUnsafeFactory(
         ResourceUri resourceUri,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
@@ -207,7 +207,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync HandleKeyboardEventFactory(
+    public TextEditorFunc HandleKeyboardEventFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
@@ -228,7 +228,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync HandleKeyboardEventUnsafeFactory(
+    public TextEditorFunc HandleKeyboardEventUnsafeFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
@@ -247,7 +247,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync DeleteTextByRangeFactory(
+    public TextEditorFunc DeleteTextByRangeFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         int count,
@@ -268,7 +268,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync DeleteTextByRangeUnsafeFactory(
+    public TextEditorFunc DeleteTextByRangeUnsafeFactory(
         ResourceUri resourceUri,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
@@ -286,7 +286,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync DeleteTextByMotionFactory(
+    public TextEditorFunc DeleteTextByMotionFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         MotionKind motionKind,
@@ -307,7 +307,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync DeleteTextByMotionUnsafeFactory(
+    public TextEditorFunc DeleteTextByMotionUnsafeFactory(
         ResourceUri resourceUri,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
@@ -325,7 +325,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync AddPresentationModelFactory(
+    public TextEditorFunc AddPresentationModelFactory(
         ResourceUri resourceUri,
         TextEditorPresentationModel emptyPresentationModel)
     {
@@ -341,7 +341,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync StartPendingCalculatePresentationModelFactory(
+    public TextEditorFunc StartPendingCalculatePresentationModelFactory(
         ResourceUri resourceUri,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel)
@@ -358,7 +358,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync CompletePendingCalculatePresentationModel(
+    public TextEditorFunc CompletePendingCalculatePresentationModel(
         ResourceUri resourceUri,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
@@ -380,7 +380,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync ApplyDecorationRangeFactory(
+    public TextEditorFunc ApplyDecorationRangeFactory(
         ResourceUri resourceUri,
         IEnumerable<TextEditorTextSpan> textSpans)
     {
@@ -420,7 +420,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         };
     }
 
-    public TextEditorEditAsync ApplySyntaxHighlightingFactory(
+    public TextEditorFunc ApplySyntaxHighlightingFactory(
         ResourceUri resourceUri)
     {
         return async editContext =>

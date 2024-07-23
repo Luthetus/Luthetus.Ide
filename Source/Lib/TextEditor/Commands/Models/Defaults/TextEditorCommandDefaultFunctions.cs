@@ -29,15 +29,12 @@ namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 public class TextEditorCommandDefaultFunctions
 {
-    public static TextEditorEditAsync DoNothingDiscardFactory()
+    public static TextEditorFunc DoNothingDiscardFactory()
     {
-        return (IEditContext editContext) =>
-        {
-            return Task.CompletedTask;
-        };
+        return (IEditContext editContext) => Task.CompletedTask;
     }
 
-    public static TextEditorEditAsync CopyFactory(
+    public static TextEditorFunc CopyFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -58,7 +55,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync CutFactory(
+    public static TextEditorFunc CutFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -92,7 +89,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync PasteFactory(
+    public static TextEditorFunc PasteFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -110,7 +107,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync SaveFactory(
+    public static TextEditorFunc SaveFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -129,7 +126,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync SelectAllFactory(
+    public static TextEditorFunc SelectAllFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -148,19 +145,19 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync UndoFactory(
+    public static TextEditorFunc UndoFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return commandArgs.TextEditorService.ModelApi.UndoEditFactory(modelResourceUri);
     }
 
-    public static TextEditorEditAsync RedoFactory(
+    public static TextEditorFunc RedoFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return commandArgs.TextEditorService.ModelApi.RedoEditFactory(modelResourceUri);
     }
 
-    public static TextEditorEditAsync RemeasureFactory(
+    public static TextEditorFunc RemeasureFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -170,7 +167,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync ScrollLineDownFactory(
+    public static TextEditorFunc ScrollLineDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -190,7 +187,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync ScrollLineUpFactory(
+    public static TextEditorFunc ScrollLineUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -210,7 +207,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync ScrollPageDownFactory(
+    public static TextEditorFunc ScrollPageDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -230,7 +227,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync ScrollPageUpFactory(
+    public static TextEditorFunc ScrollPageUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -250,7 +247,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync CursorMovePageBottomFactory(
+    public static TextEditorFunc CursorMovePageBottomFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -271,12 +268,12 @@ public class TextEditorCommandDefaultFunctions
                 primaryCursorModifier.LineIndex = lastEntry.Index;
                 primaryCursorModifier.ColumnIndex = lastEntriesRowLength;
             }
-
+            
             return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEditAsync CursorMovePageTopFactory(
+    public static TextEditorFunc CursorMovePageTopFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -296,12 +293,12 @@ public class TextEditorCommandDefaultFunctions
                 primaryCursorModifier.LineIndex = firstEntry.Index;
                 primaryCursorModifier.ColumnIndex = 0;
             }
-
+            
             return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEditAsync DuplicateFactory(
+    public static TextEditorFunc DuplicateFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -346,7 +343,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync IndentMoreFactory(
+    public static TextEditorFunc IndentMoreFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -405,7 +402,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync IndentLessFactory(
+    public static TextEditorFunc IndentLessFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -495,12 +492,12 @@ public class TextEditorCommandDefaultFunctions
                     primaryCursorModifier.ColumnIndex = Math.Max(0, nextColumnIndex);
                 }
             }
-
+            
             return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEditAsync ClearTextSelectionFactory(
+    public static TextEditorFunc ClearTextSelectionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -518,7 +515,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync NewLineBelowFactory(
+    public static TextEditorFunc NewLineBelowFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -569,7 +566,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync NewLineAboveFactory(
+    public static TextEditorFunc NewLineAboveFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -625,12 +622,12 @@ public class TextEditorCommandDefaultFunctions
                 primaryCursorModifier.LineIndex--;
                 primaryCursorModifier.ColumnIndex = indentationLength;
             }
-
+            
             return Task.CompletedTask;
         };
     }
     
-    public static TextEditorEditAsync MoveLineDownFactory(
+    public static TextEditorFunc MoveLineDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -688,12 +685,11 @@ public class TextEditorCommandDefaultFunctions
 			
 			primaryCursorModifier.LineIndex = lineIndexOriginal + 1;
 			primaryCursorModifier.ColumnIndex = 0;
-
-            return Task.CompletedTask;
+			return Task.CompletedTask;
         };
     }
     
-    public static TextEditorEditAsync MoveLineUpFactory(
+    public static TextEditorFunc MoveLineUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -753,11 +749,11 @@ public class TextEditorCommandDefaultFunctions
 			primaryCursorModifier.LineIndex = lineIndexOriginal - 1;
 			primaryCursorModifier.ColumnIndex = 0;
 			
-            return Task.CompletedTask;
+			return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEditAsync GoToMatchingCharacterFactory(
+    public static TextEditorFunc GoToMatchingCharacterFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -873,7 +869,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync RelatedFilesQuickPickFactory(
+    public static TextEditorFunc RelatedFilesQuickPickFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -1008,7 +1004,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
     
-    public static TextEditorEditAsync GoToDefinitionFactory(
+    public static TextEditorFunc GoToDefinitionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -1103,12 +1099,12 @@ public class TextEditorCommandDefaultFunctions
                     Key<TextEditorGroup>.Empty,
                     commandArgs.ServiceProvider));
             }
-
+            
             return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEditAsync ShowFindAllDialogFactory(
+    public static TextEditorFunc ShowFindAllDialogFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -1118,7 +1114,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-    public static TextEditorEditAsync ShowTooltipByCursorPositionFactory(
+    public static TextEditorFunc ShowTooltipByCursorPositionFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return async (IEditContext editContext) =>
@@ -1157,7 +1153,7 @@ public class TextEditorCommandDefaultFunctions
     }
 
 	/// <summary>The default <see cref="AfterOnKeyDownAsync"/> will provide syntax highlighting, and autocomplete.<br/><br/>The syntax highlighting occurs on ';', whitespace, paste, undo, redo<br/><br/>The autocomplete occurs on LetterOrDigit typed or { Ctrl + Space }. Furthermore, the autocomplete is done via <see cref="IAutocompleteService"/> and the one can provide their own implementation when registering the Luthetus.TextEditor services using <see cref="LuthetusTextEditorConfig.AutocompleteServiceFactory"/></summary>
-	public static TextEditorEditAsync HandleAfterOnKeyDownAsyncFactory(
+	public static TextEditorFunc HandleAfterOnKeyDownAsyncFactory(
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
         KeyboardEventArgs keyboardEventArgs,
@@ -1230,7 +1226,7 @@ public class TextEditorCommandDefaultFunctions
 	/// Therefore, the syntax highlighting was erroneously not refreshed due to batching.
 	/// This method is intended to solve this problem, but it was forgotten at some point.
 	/// </summary>
-	public static TextEditorEditAsync HandleAfterOnKeyDownRangeAsyncFactory(
+	public static TextEditorFunc HandleAfterOnKeyDownRangeAsyncFactory(
 		ViewModelDisplayOptions viewModelDisplayOptions,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
@@ -1308,7 +1304,7 @@ public class TextEditorCommandDefaultFunctions
         };
     }
 
-	public static TextEditorEditAsync HandleMouseStoppedMovingEventAsyncFactory(
+	public static TextEditorFunc HandleMouseStoppedMovingEventAsyncFactory(
 		MouseEventArgs mouseEventArgs,		
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,

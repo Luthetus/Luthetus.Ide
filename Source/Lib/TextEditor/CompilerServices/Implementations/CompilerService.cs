@@ -258,7 +258,6 @@ public class CompilerService : ICompilerService
 
 					OnResourceParsed();
 				}
-            },
-			null);
+            });
     }
 }
