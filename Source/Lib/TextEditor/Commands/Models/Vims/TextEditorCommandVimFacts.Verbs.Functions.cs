@@ -62,7 +62,10 @@ public static partial class TextEditorCommandVimFacts
                 viewModelModifier.ViewModel.ViewModelKey,
 				commandArgs.ComponentData,
                 commandArgs.TextEditorService,
-                commandArgs.ServiceProvider);
+                commandArgs.ServiceProvider,
+                editContext);
+                
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             var inCursor = primaryCursorModifier.ToCursor();
 

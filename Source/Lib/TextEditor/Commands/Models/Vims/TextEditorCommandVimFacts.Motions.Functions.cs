@@ -61,7 +61,7 @@ public static partial class TextEditorCommandVimFacts
 	        CursorModifierBagTextEditor cursorModifierBag,
         	TextEditorCommandArgs commandArgs)
         {
-            await PerformEndAsync(commandArgs, editContext).ConfigureAwait(false);
+            PerformEnd(commandArgs, editContext);
         }
 
         private static void PerformEnd(

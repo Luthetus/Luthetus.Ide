@@ -172,7 +172,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     #region UPDATE_METHODS
     public void WithValue(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         Func<TextEditorViewModel, TextEditorViewModel> withFunc)
@@ -186,7 +185,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public Task WithTask(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
@@ -203,7 +201,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     /// </summary>
     public void SetScrollPosition(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         double? scrollLeftInPixels,
@@ -232,7 +229,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void MutateScrollVerticalPosition(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         double pixels)
@@ -248,7 +244,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void MutateScrollHorizontalPosition(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         double pixels)
@@ -329,7 +324,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public void MoveCursor(
         KeyboardEventArgs keyboardEventArgs,
 		IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorViewModel> viewModelKey)
@@ -632,7 +626,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CursorMovePageTop(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
@@ -642,7 +635,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CursorMovePageTopUnsafe(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
@@ -658,7 +650,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CursorMovePageBottom(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
@@ -954,7 +945,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void Remeasure(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string measureCharacterWidthAndLineHeightElementId,
@@ -986,7 +976,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void ForceRender(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken)

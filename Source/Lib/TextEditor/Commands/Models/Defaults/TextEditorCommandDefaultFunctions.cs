@@ -252,6 +252,8 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
+    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+    
         var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
 
         TextEditorCursor cursorForInsertion;

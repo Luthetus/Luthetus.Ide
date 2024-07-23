@@ -44,27 +44,23 @@ public interface ITextEditorModelApi
     public void UndoEdit(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
 
     public void SetUsingLineEndKind(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         LineEndKind lineEndKind);
 
     public void SetResourceData(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         DateTime resourceLastWriteTime);
 
     public void Reload(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         DateTime resourceLastWriteTime);
@@ -72,13 +68,11 @@ public interface ITextEditorModelApi
     public void RedoEdit(
     	IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
 
     public void InsertText(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken);
@@ -96,7 +90,6 @@ public interface ITextEditorModelApi
     public void InsertTextUnsafe(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken);
@@ -104,7 +97,6 @@ public interface ITextEditorModelApi
     public void HandleKeyboardEvent(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         KeyboardEventArgs keyboardEventArgs,
         CancellationToken cancellationToken);
@@ -122,7 +114,6 @@ public interface ITextEditorModelApi
     public void HandleKeyboardEventUnsafe(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         KeyboardEventArgs keyboardEventArgs,
         CancellationToken cancellationToken);
@@ -130,7 +121,6 @@ public interface ITextEditorModelApi
     public void DeleteTextByRange(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken);
@@ -148,7 +138,6 @@ public interface ITextEditorModelApi
     public void DeleteTextByRangeUnsafe(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken);
@@ -156,7 +145,6 @@ public interface ITextEditorModelApi
     public void DeleteTextByMotion(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken);
@@ -174,7 +162,6 @@ public interface ITextEditorModelApi
     public void DeleteTextByMotionUnsafe(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken);
@@ -182,7 +169,6 @@ public interface ITextEditorModelApi
     public void AddPresentationModel(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorPresentationModel emptyPresentationModel);
 
@@ -192,7 +178,6 @@ public interface ITextEditorModelApi
     public void StartPendingCalculatePresentationModel(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel);
@@ -203,7 +188,6 @@ public interface ITextEditorModelApi
     public void CompletePendingCalculatePresentationModel(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
@@ -216,14 +200,12 @@ public interface ITextEditorModelApi
     public void ApplyDecorationRange(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         IEnumerable<TextEditorTextSpan> textSpans);
 
     public void ApplySyntaxHighlighting(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
     #endregion
 
