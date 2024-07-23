@@ -102,7 +102,7 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-            TextEditorCommandDefaultFunctions.ScrollLineUp(commandArgs.EditContext)
+            TextEditorCommandDefaultFunctions.ScrollLineUp(commandArgs.EditContext);
         });
 
     public static readonly TextEditorCommand ScrollPageDown = new(
@@ -110,292 +110,88 @@ public static class TextEditorCommandDefaultFacts
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostUnique(
-                nameof(ScrollPageDown),
-                TextEditorCommandDefaultFunctions.ScrollPageDownFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.ScrollPageDownFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+            TextEditorCommandDefaultFunctions.ScrollPageDown(commandArgs.EditContext);
+        });
 
     public static readonly TextEditorCommand ScrollPageUp = new(
         "Scroll Page Up", "defaults_scroll-page-up", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostUnique(
-                nameof(ScrollPageUp),
-                TextEditorCommandDefaultFunctions.ScrollPageUpFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.ScrollPageUpFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+            TextEditorCommandDefaultFunctions.ScrollPageUp(commandArgs.EditContext);
+        });
 
     public static readonly TextEditorCommand CursorMovePageBottom = new(
         "Move Cursor to Bottom of the Page", "defaults_cursor-move-page-bottom", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostRedundant(
-                nameof(CursorMovePageBottom),
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                TextEditorCommandDefaultFunctions.CursorMovePageBottomFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.CursorMovePageBottomFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+            TextEditorCommandDefaultFunctions.CursorMovePageBottom(commandArgs.EditContext);
+        });
 
     public static readonly TextEditorCommand CursorMovePageTop = new(
         "Move Cursor to Top of the Page", "defaults_cursor-move-page-top", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostRedundant(
-                nameof(CursorMovePageTop),
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                TextEditorCommandDefaultFunctions.CursorMovePageTopFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.CursorMovePageTopFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+			TextEditorCommandDefaultFunctions.CursorMovePageTop(commandArgs.EditContext);
+        });
 
     public static readonly TextEditorCommand Duplicate = new(
         "Duplicate", "defaults_duplicate", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostUnique(
-                nameof(Duplicate),
-                TextEditorCommandDefaultFunctions.DuplicateFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.DuplicateFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+			TextEditorCommandDefaultFunctions.Duplicate(commandArgs.EditContext);
+        });
 
     public static readonly TextEditorCommand IndentMore = new(
         "Indent More", "defaults_indent-more", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostUnique(
-                nameof(IndentMore),
-                TextEditorCommandDefaultFunctions.IndentMoreFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.IndentMoreFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+			TextEditorCommandDefaultFunctions.IndentMore(commandArgs.EditContext);
+        });
 
     public static readonly TextEditorCommand IndentLess = new(
         "Indent Less", "defaults_indent-less", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostUnique(
-                nameof(IndentLess),
-                TextEditorCommandDefaultFunctions.IndentLessFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.IndentLessFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+			TextEditorCommandDefaultFunctions.IndentLess(commandArgs.EditContext);
+        });
 
     public static readonly TextEditorCommand ClearTextSelection = new(
         "ClearTextSelection", "defaults_clear-text-selection", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostRedundant(
-                nameof(ClearTextSelection),
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                TextEditorCommandDefaultFunctions.ClearTextSelectionFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.ClearTextSelectionFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+			TextEditorCommandDefaultFunctions.ClearTextSelection(commandArgs.EditContext);
+        });
 
     public static readonly TextEditorCommand NewLineBelow = new(
         "NewLineBelow", "defaults_new-line-below", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostUnique(
-                nameof(NewLineBelow),
-                TextEditorCommandDefaultFunctions.NewLineBelowFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.NewLineBelowFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+			TextEditorCommandDefaultFunctions.NewLineBelow(commandArgs.EditContext);
+        });
 
     public static readonly TextEditorCommand NewLineAbove = new(
         "NewLineAbove", "defaults_new-line-above", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostUnique(
-                nameof(NewLineAbove),
-                TextEditorCommandDefaultFunctions.NewLineAboveFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.NewLineAboveFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+			TextEditorCommandDefaultFunctions.NewLineAbove(commandArgs.EditContext);
+        });
     
     public static readonly TextEditorCommand MoveLineDown = new(
         "MoveLineDown", "defaults_move-line-down", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            commandArgs.TextEditorService.PostUnique(
-                nameof(MoveLineUp),
-                TextEditorCommandDefaultFunctions.MoveLineDownFactory(
-                    commandArgs.ModelResourceUri,
-                    commandArgs.ViewModelKey,
-                    commandArgs));
-			return Task.CompletedTask;
-        })
-    {
-        TextEditorFuncFactory = interfaceCommandArgs =>
-        {
-            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-            return TextEditorCommandDefaultFunctions.MoveLineDownFactory(
-                commandArgs.ModelResourceUri,
-                commandArgs.ViewModelKey,
-                commandArgs);
-        }
-    };
+            TextEditorCommandDefaultFunctions.MoveLineDown(commandArgs.EditContext);
+        });
     
     public static readonly TextEditorCommand MoveLineUp = new(
         "MoveLineUp", "defaults_move-line-up", false, false, TextEditKind.None, null,
