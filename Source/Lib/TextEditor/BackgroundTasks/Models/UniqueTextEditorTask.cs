@@ -15,23 +15,20 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </remarks>
 public sealed class UniqueTextEditorTask : ITextEditorTask
 {
-    private readonly TextEditorEdit _textEditorEdit;
+    private readonly TextEditorFunc _textEditorFunc;
 
     public UniqueTextEditorTask(
         string name,
-        TextEditorEdit textEditorEdit,
-        TimeSpan? throttleTimeSpan = null)
+        TextEditorFunc textEditorFunc)
     {
-        _textEditorEdit = textEditorEdit;
-
+        _textEditorFunc = textEditorFunc;
         Name = name;
-        ThrottleTimeSpan = throttleTimeSpan ?? TextEditorComponentData.ThrottleDelayDefault;
     }
 
 	public string Name { get; set; }
     public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public TimeSpan ThrottleTimeSpan { get; set; }
+    public TimeSpan ThrottleTimeSpan { get; set; } = TextEditorComponentData.ThrottleDelayDefault;
     public Task? WorkProgress { get; set; }
 
 	public IEditContext EditContext { get; set; }
@@ -46,7 +43,7 @@ public sealed class UniqueTextEditorTask : ITextEditorTask
     {
 		try
 		{
-            await _textEditorEdit
+            await _textEditorFunc
                 .Invoke(EditContext)
                 .ConfigureAwait(false);
                 

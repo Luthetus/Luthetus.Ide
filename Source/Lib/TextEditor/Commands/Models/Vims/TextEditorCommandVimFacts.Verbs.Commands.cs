@@ -18,7 +18,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 return DeleteLineFactory(commandArgs);
@@ -37,7 +37,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 return ChangeLineFactory(commandArgs);
@@ -58,7 +58,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
@@ -82,7 +82,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 
@@ -104,7 +104,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 return ChangeSelectionFactory(commandArgs);
@@ -123,7 +123,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 return YankFactory(commandArgs);
@@ -142,7 +142,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 return NewLineBelowFactory(commandArgs);
@@ -161,7 +161,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 return NewLineAboveFactory(commandArgs);

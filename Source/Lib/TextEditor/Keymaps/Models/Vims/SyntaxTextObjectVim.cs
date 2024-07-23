@@ -50,7 +50,7 @@ public static class SyntaxTextObjectVim
         return false;
     }
 
-    public static TextEditorEdit MoveCursorOneColumnLeftFactory(
+    public static TextEditorFunc MoveCursorOneColumnLeftFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -77,7 +77,7 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static TextEditorEdit MoveCursorOneRowDownFactory(
+    public static TextEditorFunc MoveCursorOneRowDownFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -102,7 +102,7 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static TextEditorEdit MoveCursorOneRowUpFactory(
+    public static TextEditorFunc MoveCursorOneRowUpFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -127,7 +127,7 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static TextEditorEdit MoveCursorOneColumnRightFactory(
+    public static TextEditorFunc MoveCursorOneColumnRightFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -152,7 +152,7 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static TextEditorEdit MoveCursorEndCurrentLineFactory(
+    public static TextEditorFunc MoveCursorEndCurrentLineFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -177,7 +177,7 @@ public static class SyntaxTextObjectVim
         };
     }
 
-    public static TextEditorEdit MoveCursorStartCurrentLineFactory(
+    public static TextEditorFunc MoveCursorStartCurrentLineFactory(
         ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
@@ -246,7 +246,7 @@ public static class SyntaxTextObjectVim
 								return Task.CompletedTask;
                             })
                         {
-                            TextEditorEditFactory = interfaceCommandArgs =>
+                            TextEditorFuncFactory = interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
@@ -279,7 +279,7 @@ public static class SyntaxTextObjectVim
 								return Task.CompletedTask;
                             })
                         {
-                            TextEditorEditFactory = interfaceCommandArgs =>
+                            TextEditorFuncFactory = interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
@@ -312,7 +312,7 @@ public static class SyntaxTextObjectVim
 								return Task.CompletedTask;
                             })
                         {
-                            TextEditorEditFactory = interfaceCommandArgs =>
+                            TextEditorFuncFactory = interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
@@ -345,7 +345,7 @@ public static class SyntaxTextObjectVim
 								return Task.CompletedTask;
                             })
                         {
-                            TextEditorEditFactory = interfaceCommandArgs =>
+                            TextEditorFuncFactory = interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
@@ -384,7 +384,7 @@ public static class SyntaxTextObjectVim
 								return Task.CompletedTask;
                             })
                         {
-                            TextEditorEditFactory = interfaceCommandArgs =>
+                            TextEditorFuncFactory = interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;
@@ -417,7 +417,7 @@ public static class SyntaxTextObjectVim
 								return Task.CompletedTask;
                             })
                         {
-                            TextEditorEditFactory = interfaceCommandArgs =>
+                            TextEditorFuncFactory = interfaceCommandArgs =>
                             {
                                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                                 commandArgs.ShiftKey = shiftKey;

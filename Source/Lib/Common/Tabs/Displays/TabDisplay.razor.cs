@@ -49,8 +49,8 @@ public partial class TabDisplay : ComponentBase, IDisposable
 	private ElementReference? _tabButtonElementReference;
 
 	private string HtmlId => IsBeingDragged
-		? _htmlId ??= $"luth_polymorphic-tab_{Tab.DynamicViewModelKey}"
-		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.DynamicViewModelKey}";
+		? _htmlId ??= $"luth_polymorphic-tab_{Tab.DynamicViewModelKey.Guid}"
+		: _htmlIdDragged ??= $"luth_polymorphic-tab-drag_{Tab.DynamicViewModelKey.Guid}";
 
 	private string IsActiveCssClass => (Tab.TabGroup?.GetIsActive(Tab) ?? false)
 		? "luth_active"

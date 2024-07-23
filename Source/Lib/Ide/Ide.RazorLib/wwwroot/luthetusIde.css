@@ -49,6 +49,10 @@ input[type="checkbox"]{
     overflow: auto;
 }
 
+.luth_ide_section-body.luth_ide_section-no-title {
+	height: 100%;
+}
+
 .luth_ide_header {
     display: flex;
 }

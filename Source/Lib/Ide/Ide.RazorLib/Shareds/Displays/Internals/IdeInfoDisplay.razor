@@ -132,6 +132,75 @@
 			<div>
                 <div>v <em class="luth_em">0.9.1.0 </em> (WIP_DATE)</div>
                 <ul>
+                	<li>
+                        I changed how the background tasks work, and the
+                        change in performance is so immense I might just be dreaming at the moment
+                        I'm not sure. I can't accept this into the main branch
+                        because it is 9:30 PM and I don't want quote unquote "commit on a friday"
+                        kind of scenario.
+                        
+                        I feel ill and ill and if I wake up tomorrow and this is real I'll
+                        probably cry. The keyboard events are screw-y with this change,
+                        but that's because I'm doing this weird late batching logic.
+                        
+                        Everything other than the keyboard events are 100x faster?
+                        I feel like out of nowhere I was sitting here and something
+                        about async programming clicked with me.
+                        
+                        I still don't understand async programming fully but oh my goodness
+                        this change is surreal.
+                        
+                        I'm not even done making all the changes I have in my mind right now.
+                        
+                        I think I'm creating thousands of Func instances when I edit the
+                        text editor. I'm looking at my old code, but with todays eyes.
+                        
+                        And I am just astonished at how stoooopid I am. Why I was doing this?
+                        
+                        I think a big summary of the change is that async code
+                        is invoked with the '()' syntax NOT the 'await' syntax.
+                        
+                        And that, using 'await' will create overhead in the form of a
+                        state machine, among other things. There's things relating
+                        to SynchronizationContext switching when using 'await' too.
+                        
+                        I just invoked the Task with '()' and did NOT use the 'await'.
+                        
+                        I checked if the Task finished synchronously with 'task.IsCompleted'
+                        If it completed synchronously then run 'await Task.Yield()'
+                        in case I'm on a single threaded runtime like wasm.
+                        
+                        Otherwise, I 'await' the task. And no yield is necessary
+                        because I already triggered an opportunity for the thread
+                        to execute other work by awaiting the task itself.
+                        
+                        I also removed the overhead of invoking 'Task.Delay(80 milliseconds)'
+                        everyime I ran a background task.
+                        
+                        The delay came about just due to the natural progression of me writing the
+                        code.
+                        
+                        Something relating the UI events it was triggering too often
+                        I can't recall, maybe onmouse move.
+                        
+                        Tomorrow I can fix all the 'Func' instantiation I'm doing too.
+                        That'll speed up the text editor a ton as well.
+                        
+                        I guess I want to make a note to myself.
+                        
+                        1. Fix the excessive 'Func' instantiation
+                        2.a. Fix the keyboard events they tend to lock the UI.
+                        2.b. Maybe the keyboard event issue is due to the editing of
+                             the immutable text editor.
+                             
+                        Oh boi I hope this is an actually good change.
+                        I'm too tired to figure out if it is or not tonight.
+                        
+                        I might just be manically blabbering on about nonsense right now
+                        I have no idea.
+                        
+                        I guess I'll find out tomorrow.
+                    </li>
                     <li>
                         'Find All' tool shows results in a tree view.
                         As well, it shows multiple results per file,

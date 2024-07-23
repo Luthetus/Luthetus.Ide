@@ -10,7 +10,7 @@ public static partial class TextEditorCommandVimFacts
 {
     public static partial class Motions
     {
-        public static TextEditorEdit WordFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorFunc WordFactory(TextEditorCommandArgs commandArgs)
         {
             return (IEditContext editContext) =>
             {
@@ -60,7 +60,7 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorEdit EndFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorFunc EndFactory(TextEditorCommandArgs commandArgs)
         {
             return async (IEditContext editContext) =>
             {
@@ -148,7 +148,7 @@ public static partial class TextEditorCommandVimFacts
                 primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
         }
 
-        public static TextEditorEdit BackFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorFunc BackFactory(TextEditorCommandArgs commandArgs)
         {
             return (IEditContext editContext) =>
             {
@@ -197,7 +197,7 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorEdit VisualFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorFunc VisualFactory(TextEditorCommandArgs commandArgs)
         {
             return async (IEditContext editContext) =>
             {
@@ -216,10 +216,10 @@ public static partial class TextEditorCommandVimFacts
                 var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
                 var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 
-                if (commandArgs.InnerCommand.TextEditorEditFactory is null)
+                if (commandArgs.InnerCommand.TextEditorFuncFactory is null)
                     return;
 
-                var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(commandArgs);
+                var textEditorEdit = commandArgs.InnerCommand.TextEditorFuncFactory.Invoke(commandArgs);
                 await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
 
                 var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
@@ -245,7 +245,7 @@ public static partial class TextEditorCommandVimFacts
             };
         }
 
-        public static TextEditorEdit VisualLineFactory(TextEditorCommandArgs commandArgs)
+        public static TextEditorFunc VisualLineFactory(TextEditorCommandArgs commandArgs)
         {
             return async (IEditContext editContext) =>
             {
@@ -264,10 +264,10 @@ public static partial class TextEditorCommandVimFacts
                 var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
                 var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
 
-                if (commandArgs.InnerCommand.TextEditorEditFactory is null)
+                if (commandArgs.InnerCommand.TextEditorFuncFactory is null)
                     return;
 
-                var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(commandArgs);
+                var textEditorEdit = commandArgs.InnerCommand.TextEditorFuncFactory.Invoke(commandArgs);
                 await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
 
                 var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;

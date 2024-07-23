@@ -18,7 +18,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 return WordFactory(commandArgs);
@@ -37,7 +37,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 return EndFactory(commandArgs);
@@ -56,7 +56,7 @@ public static partial class TextEditorCommandVimFacts
 				return Task.CompletedTask;
             })
         {
-            TextEditorEditFactory = interfaceCommandArgs =>
+            TextEditorFuncFactory = interfaceCommandArgs =>
             {
                 var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                 return BackFactory(commandArgs);
@@ -80,7 +80,7 @@ public static partial class TextEditorCommandVimFacts
 					return Task.CompletedTask;
                 })
             {
-                TextEditorEditFactory = interfaceCommandArgs =>
+                TextEditorFuncFactory = interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;
@@ -107,7 +107,7 @@ public static partial class TextEditorCommandVimFacts
 					return Task.CompletedTask;
                 })
             {
-                TextEditorEditFactory = interfaceCommandArgs =>
+                TextEditorFuncFactory = interfaceCommandArgs =>
                 {
                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
                     commandArgs.InnerCommand = innerCommand;

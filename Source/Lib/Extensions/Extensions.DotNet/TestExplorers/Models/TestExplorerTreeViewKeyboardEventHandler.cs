@@ -108,8 +108,7 @@ public class TestExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHan
 				_dispatcher,
 				_compilerServiceRegistry,
 				_textEditorService,
-				_serviceProvider),
-			null);
+				_serviceProvider));
 
 		return Task.CompletedTask;
 	}

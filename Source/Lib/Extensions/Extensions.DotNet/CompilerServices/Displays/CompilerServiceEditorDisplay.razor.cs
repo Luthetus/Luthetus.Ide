@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Exceptions;
@@ -25,6 +26,8 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 	/// </summary>
 	[Inject]
 	public ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
+	[Inject]
+	public IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private IState<CompilerServiceEditorState> CompilerServiceEditorStateWrap { get; set; } = null!;
 	[Inject]
