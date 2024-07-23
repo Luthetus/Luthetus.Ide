@@ -11,7 +11,12 @@ public static partial class TextEditorCommandVimFacts
 {
     public static partial class Verbs
     {
-        public static Task DeleteLine(TextEditorCommandArgs commandArgs)
+        public static Task DeleteLine(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
             return TextEditorCommandDefaultFunctions.CutAsync(
                 commandArgs.ModelResourceUri,
@@ -19,7 +24,12 @@ public static partial class TextEditorCommandVimFacts
                 commandArgs);
         }
 
-        public static async Task ChangeLine(TextEditorCommandArgs commandArgs)
+        public static async Task ChangeLine(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
             var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
             if (activeKeymap is not TextEditorKeymapVim keymapVim)
@@ -33,7 +43,12 @@ public static partial class TextEditorCommandVimFacts
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static Task DeleteMotion(TextEditorCommandArgs commandArgs)
+        public static Task DeleteMotion(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
             var textEditorCommandArgsForMotion = new TextEditorCommandArgs(
                 modelModifier.ResourceUri,
@@ -78,7 +93,12 @@ public static partial class TextEditorCommandVimFacts
 				.ConfigureAwait(false);
         }
 
-        public static TextEditorFunc GetChangeMotionFactory(TextEditorCommandArgs commandArgs)
+        public static void ChangeMotion(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
             var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
             if (activeKeymap is not TextEditorKeymapVim keymapVim)
@@ -90,7 +110,12 @@ public static partial class TextEditorCommandVimFacts
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static TextEditorFunc ChangeSelectionFactory(TextEditorCommandArgs commandArgs)
+        public static void ChangeSelection(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
             var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
             if (activeKeymap is not TextEditorKeymapVim keymapVim)
@@ -100,13 +125,23 @@ public static partial class TextEditorCommandVimFacts
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static TextEditorFunc YankFactory(TextEditorCommandArgs commandArgs)
+        public static async Task YankAsync(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
             await TextEditorCommandDefaultFacts.Copy.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
             await TextEditorCommandDefaultFacts.ClearTextSelection.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
         }
 
-        public static TextEditorFunc NewLineBelowFactory(TextEditorCommandArgs commandArgs)
+        public static void NewLineBelow(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
             var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
             if (activeKeymap is not TextEditorKeymapVim keymapVim)
@@ -116,7 +151,12 @@ public static partial class TextEditorCommandVimFacts
             keymapVim.ActiveVimMode = VimMode.Insert;
         }
 
-        public static TextEditorFunc NewLineAboveFactory(TextEditorCommandArgs commandArgs)
+        public static void NewLineAbove(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
             var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
             if (activeKeymap is not TextEditorKeymapVim keymapVim)

@@ -6,7 +6,7 @@ public static partial class TextEditorCommandVimFacts
 {
     public static partial class Motions
     {
-        public static readonly TextEditorCommand Word = new(
+        public static readonly TextEditorCommand WordCommand = new(
             "Vim::Word()", "Vim::Word()", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
@@ -14,7 +14,7 @@ public static partial class TextEditorCommandVimFacts
 
                 commandArgs.TextEditorService.PostUnique(
                     nameof(Word),
-                    WordFactory(commandArgs));
+                    Word(commandArgs));
 				return Task.CompletedTask;
             })
         {
@@ -25,7 +25,7 @@ public static partial class TextEditorCommandVimFacts
             }
         };
 
-        public static readonly TextEditorCommand End = new(
+        public static readonly TextEditorCommand EndCommand = new(
             "Vim::End()", "Vim::End()", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {
@@ -44,7 +44,7 @@ public static partial class TextEditorCommandVimFacts
             }
         };
 
-        public static readonly TextEditorCommand Back = new(
+        public static readonly TextEditorCommand BackCommand = new(
             "Vim::Back()", "Vim::Back()", false, true, TextEditKind.None, null,
             interfaceCommandArgs =>
             {

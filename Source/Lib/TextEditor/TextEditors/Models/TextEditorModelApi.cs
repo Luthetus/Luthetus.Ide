@@ -90,27 +90,40 @@ public class TextEditorModelApi : ITextEditorModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public void UndoEdit(ResourceUri resourceUri)
+    public void UndoEdit(
+	    IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         modelModifier.UndoEdit();
     }
 
     public void SetUsingLineEndKind(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         LineEndKind lineEndKind)
     {
         modelModifier.SetLineEndKindPreference(lineEndKind);
     }
 
     public void SetResourceData(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         DateTime resourceLastWriteTime)
     {
         modelModifier.SetResourceData(resourceUri, resourceLastWriteTime);
     }
 
     public void Reload(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         string content,
         DateTime resourceLastWriteTime)
     {
@@ -118,14 +131,20 @@ public class TextEditorModelApi : ITextEditorModelApi
         modelModifier.SetResourceData(resourceUri, resourceLastWriteTime);
     }
 
-    public void RedoEdit(ResourceUri resourceUri)
+    public void RedoEdit(
+    	IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         modelModifier.RedoEdit();
     }
 
     public void InsertText(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken)
     {
@@ -133,7 +152,9 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void InsertTextUnsafe(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken)
@@ -142,8 +163,10 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void HandleKeyboardEvent(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         KeyboardEventArgs keyboardEventArgs,
         CancellationToken cancellationToken)
     {
@@ -151,18 +174,21 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void HandleKeyboardEventUnsafe(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         KeyboardEventArgs keyboardEventArgs,
-        CancellationToken cancellationToken,
-        CursorModifierBagTextEditor cursorModifierBag)
+        CancellationToken cancellationToken)
     {
         modelModifier.HandleKeyboardEvent(keyboardEventArgs, cursorModifierBag, cancellationToken);
     }
 
     public void DeleteTextByRange(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken)
     {
@@ -170,7 +196,9 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void DeleteTextByRangeUnsafe(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken)
@@ -179,8 +207,10 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void DeleteTextByMotion(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken)
     {
@@ -188,7 +218,9 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void DeleteTextByMotionUnsafe(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken)
@@ -197,14 +229,20 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void AddPresentationModel(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorPresentationModel emptyPresentationModel)
     {
         modelModifier.PerformRegisterPresentationModelAction(emptyPresentationModel);
     }
 
     public void StartPendingCalculatePresentationModel(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel)
     {
@@ -212,7 +250,10 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void CompletePendingCalculatePresentationModel(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
         ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
@@ -224,7 +265,10 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void ApplyDecorationRange(
-        ResourceUri resourceUri,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         IEnumerable<TextEditorTextSpan> textSpans)
     {
         var localRichCharacterList = modelModifier.RichCharacterList;
@@ -254,7 +298,10 @@ public class TextEditorModelApi : ITextEditorModelApi
     }
 
     public void ApplySyntaxHighlighting(
-        ResourceUri resourceUri)
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag)
     {
         var syntacticTextSpansList = modelModifier.CompilerService.GetTokenTextSpansFor(modelModifier.ResourceUri);
         var symbolsList = modelModifier.CompilerService.GetSymbolsFor(modelModifier.ResourceUri);

@@ -38,39 +38,59 @@ public interface ITextEditorViewModelApi
 
     #region UPDATE_METHODS
     public void WithValue(
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 
     public Task WithTask(
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
 
     /// <summary>
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>
     public void SetScrollPosition(
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         double? scrollLeftInPixels,
         double? scrollTopInPixels);
 
     public void ScrollIntoView(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorTextSpan textSpan);
 
     public void MutateScrollVerticalPosition(
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         double pixels);
 
     public void MutateScrollHorizontalPosition(
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         double pixels);
 
     public void FocusPrimaryCursor(string primaryCursorContentId);
 
     public void MoveCursor(
-        KeyboardEventArgs keyboardEventArgs,
-        ResourceUri modelResourceUri,
+    	KeyboardEventArgs keyboardEventArgs,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         Key<TextEditorViewModel> viewModelKey);
 
     /// <summary>
@@ -84,14 +104,18 @@ public interface ITextEditorViewModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void MoveCursorUnsafe(
-        KeyboardEventArgs keyboardEventArgs,
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+    	KeyboardEventArgs keyboardEventArgs,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor);
 
     public void CursorMovePageTop(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey);
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="CursorMovePageTopFactory"/>
@@ -104,13 +128,17 @@ public interface ITextEditorViewModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void CursorMovePageTopUnsafe(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor);
 
     public void CursorMovePageBottom(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey);
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="CursorMovePageBottomFactory"/>
@@ -123,24 +151,33 @@ public interface ITextEditorViewModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void CursorMovePageBottomUnsafe(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier);
 
     public void CalculateVirtualizationResult(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken);
 
     public void Remeasure(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken);
 
     public void ForceRender(
-        Key<TextEditorViewModel> viewModelKey,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken);
     #endregion
 
