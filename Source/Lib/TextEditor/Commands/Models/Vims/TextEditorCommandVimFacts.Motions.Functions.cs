@@ -17,6 +17,8 @@ public static partial class TextEditorCommandVimFacts
 	        CursorModifierBagTextEditor cursorModifierBag,
         	TextEditorCommandArgs commandArgs)
         {
+        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        
             void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
             {
                 primaryCursorModifier.ColumnIndex = columnIndex;

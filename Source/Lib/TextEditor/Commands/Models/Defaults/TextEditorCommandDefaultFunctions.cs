@@ -148,56 +148,64 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.OptionsApi.SetRenderStateKey(Key<RenderState>.NewKey());
     }
 
-    public static Task ScrollLineDown(
+    public static void ScrollLineDown(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-                viewModelModifier.ViewModel.ViewModelKey,
-                viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight)
-            .Invoke(editContext);
+        editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+    		editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
     }
 
-    public static Task ScrollLineUp(
+    public static void ScrollLineUp(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-                viewModelModifier.ViewModel.ViewModelKey,
-                -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight)
-            .Invoke(editContext);
+        editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+            editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
     }
 
-    public static Task ScrollPageDown(
+    public static void ScrollPageDown(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-                viewModelModifier.ViewModel.ViewModelKey,
-                viewModelModifier.ViewModel.TextEditorDimensions.Height)
-            .Invoke(editContext);
+        editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+            editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        viewModelModifier.ViewModel.TextEditorDimensions.Height);
     }
 
-    public static Task ScrollPageUp(
+    public static void ScrollPageUp(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        return editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-                viewModelModifier.ViewModel.ViewModelKey,
-                -1 * viewModelModifier.ViewModel.TextEditorDimensions.Height)
-            .Invoke(editContext);
+        editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+            editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        -1 * viewModelModifier.ViewModel.TextEditorDimensions.Height);
     }
 
     public static void CursorMovePageBottom(
@@ -209,6 +217,8 @@ public class TextEditorCommandDefaultFunctions
     {
         if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
         {
+			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        
             var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
             var lastEntriesRowLength = modelModifier.GetLineLength(lastEntry.Index);
 
@@ -226,6 +236,8 @@ public class TextEditorCommandDefaultFunctions
     {
         if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
         {
+        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        
             var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
 
             primaryCursorModifier.LineIndex = firstEntry.Index;
