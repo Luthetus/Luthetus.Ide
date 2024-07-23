@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -76,10 +77,11 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs.ServiceProvider.GetRequiredService<IClipboardService>());
         });
 
-    public static readonly TextEditorCommand Save = new(
+    public static readonly TextEditorCommand TriggerSave = new(
         "Save", "defaults_save", false, false, TextEditKind.None, null,
         interfaceCommandArgs =>
         {
@@ -93,11 +95,13 @@ public static class TextEditorCommandDefaultFacts
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
                 
-            TextEditorCommandDefaultFunctions.Save(
+            TextEditorCommandDefaultFunctions.TriggerSave(
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+	        return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand SelectAll = new(
@@ -118,7 +122,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand Undo = new(
@@ -139,7 +145,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand Redo = new(
@@ -160,7 +168,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand Remeasure = new(
@@ -177,11 +187,13 @@ public static class TextEditorCommandDefaultFacts
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
                 
-            TextEditorCommandDefaultFunctions.Remeasure(
+            TextEditorCommandDefaultFunctions.TriggerRemeasure(
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand RefreshSyntaxHighlighting = new(
@@ -201,6 +213,7 @@ public static class TextEditorCommandDefaultFacts
             modelModifier.CompilerService.ResourceWasModified(
 				modelModifier.ResourceUri,
 				ImmutableArray<TextEditorTextSpan>.Empty);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollLineDown = new(
@@ -221,7 +234,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollLineUp = new(
@@ -242,7 +257,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollPageDown = new(
@@ -263,7 +280,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand ScrollPageUp = new(
@@ -284,7 +303,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand CursorMovePageBottom = new(
@@ -305,7 +326,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand CursorMovePageTop = new(
@@ -326,7 +349,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand Duplicate = new(
@@ -347,7 +372,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand IndentMore = new(
@@ -368,7 +395,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand IndentLess = new(
@@ -389,7 +418,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand ClearTextSelection = new(
@@ -410,7 +441,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand NewLineBelow = new(
@@ -431,7 +464,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand NewLineAbove = new(
@@ -452,7 +487,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
     
     public static readonly TextEditorCommand MoveLineDown = new(
@@ -473,7 +510,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
     
     public static readonly TextEditorCommand MoveLineUp = new(
@@ -494,7 +533,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static TextEditorCommand GoToMatchingCharacterFactory(bool shouldSelectText) => new(
@@ -516,7 +557,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand RelatedFilesQuickPick = new(
@@ -537,7 +580,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
     
     public static readonly TextEditorCommand GoToDefinition = new(
@@ -558,7 +603,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     public static readonly TextEditorCommand ShowFindAllDialog = new(
@@ -579,7 +626,9 @@ public static class TextEditorCommandDefaultFacts
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag);
+		        cursorModifierBag,
+		        commandArgs);
+		    return Task.CompletedTask;
         });
 
     /// <summary>

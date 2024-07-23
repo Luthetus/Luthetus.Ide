@@ -173,7 +173,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public void WithValue(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Func<TextEditorViewModel, TextEditorViewModel> withFunc)
     {
         _dispatcher.Dispatch(new TextEditorState.SetViewModelWithAction(
@@ -186,7 +185,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public Task WithTask(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
     {
         _dispatcher.Dispatch(new TextEditorState.SetViewModelWithAction(
@@ -202,7 +200,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public void SetScrollPosition(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         double? scrollLeftInPixels,
         double? scrollTopInPixels)
     {
@@ -230,7 +227,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public void MutateScrollVerticalPosition(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         double pixels)
     {
         viewModelModifier.ScrollWasModified = true;
@@ -245,7 +241,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public void MutateScrollHorizontalPosition(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         double pixels)
     {
         viewModelModifier.ScrollWasModified = true;
@@ -261,7 +256,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorTextSpan textSpan)
     {
         var lineInformation = modelModifier.GetLineInformationFromPositionIndex(textSpan.StartingIndexInclusive);
@@ -678,7 +672,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken)
     {
         try
@@ -946,7 +939,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public void Remeasure(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken)
@@ -977,7 +969,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public void ForceRender(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken)
     {
         // Getting the ViewModel from the 'editContext' triggers a re-render

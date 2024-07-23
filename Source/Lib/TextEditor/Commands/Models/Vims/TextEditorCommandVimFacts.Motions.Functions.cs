@@ -242,6 +242,8 @@ public static partial class TextEditorCommandVimFacts
             var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
             if (activeKeymap is not TextEditorKeymapVim keymapVim)
                 return;
+                
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
             var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
             var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;

@@ -66,12 +66,11 @@ public class TextEditorDiffApi : ITextEditorDiffApi
                 return;
 
             // In
-            await editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
-                    inModelModifier.ResourceUri,
-                    DiffPresentationFacts.InPresentationKey,
-                    DiffPresentationFacts.EmptyInPresentationModel)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
+            editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+            	editContext,
+		        inModelModifier,
+		        DiffPresentationFacts.InPresentationKey,
+                DiffPresentationFacts.EmptyInPresentationModel);
             var inPresentationModel = inModelModifier.PresentationModelList.First(
                 x => x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
             if (inPresentationModel.PendingCalculation is null)
@@ -79,12 +78,11 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             var inText = inPresentationModel.PendingCalculation.ContentAtRequest;
             
             // Out
-            await editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
-                    outModelModifier.ResourceUri,
-                    DiffPresentationFacts.OutPresentationKey,
-                    DiffPresentationFacts.EmptyOutPresentationModel)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
+            editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+            	editContext,
+                outModelModifier,
+                DiffPresentationFacts.OutPresentationKey,
+                DiffPresentationFacts.EmptyOutPresentationModel);
             var outPresentationModel = outModelModifier.PresentationModelList.First(
                 x => x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
             if (outPresentationModel.PendingCalculation is null)

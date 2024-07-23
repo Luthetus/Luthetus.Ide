@@ -92,7 +92,7 @@ public class TextEditorCommandDefaultFunctions
         modelModifier.Insert(clipboard, cursorModifierBag, cancellationToken: CancellationToken.None);
     }
 
-    public static void Save(
+    public static void TriggerSave(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -158,7 +158,6 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
     		editContext,
 	        viewModelModifier,
-	        cursorModifierBag,
 	        viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
     }
 
@@ -172,7 +171,6 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
 	        viewModelModifier,
-	        cursorModifierBag,
 	        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
     }
 
@@ -186,7 +184,6 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
 	        viewModelModifier,
-	        cursorModifierBag,
 	        viewModelModifier.ViewModel.TextEditorDimensions.Height);
     }
 
@@ -200,7 +197,6 @@ public class TextEditorCommandDefaultFunctions
         editContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
             editContext,
 	        viewModelModifier,
-	        cursorModifierBag,
 	        -1 * viewModelModifier.ViewModel.TextEditorDimensions.Height);
     }
 
@@ -427,6 +423,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
+    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
     }
 
@@ -437,6 +434,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
+    	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         primaryCursorModifier.SelectionAnchorPositionIndex = null;
 
         var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);

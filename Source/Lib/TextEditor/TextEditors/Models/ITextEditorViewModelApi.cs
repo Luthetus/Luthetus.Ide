@@ -40,13 +40,11 @@ public interface ITextEditorViewModelApi
     public void WithValue(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 
     public Task WithTask(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
 
     /// <summary>
@@ -55,7 +53,6 @@ public interface ITextEditorViewModelApi
     public void SetScrollPosition(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         double? scrollLeftInPixels,
         double? scrollTopInPixels);
 
@@ -63,19 +60,16 @@ public interface ITextEditorViewModelApi
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorTextSpan textSpan);
 
     public void MutateScrollVerticalPosition(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         double pixels);
 
     public void MutateScrollHorizontalPosition(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         double pixels);
 
     public void FocusPrimaryCursor(string primaryCursorContentId);
@@ -152,13 +146,11 @@ public interface ITextEditorViewModelApi
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken);
 
     public void Remeasure(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken);
@@ -166,7 +158,6 @@ public interface ITextEditorViewModelApi
     public void ForceRender(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken);
     #endregion
 

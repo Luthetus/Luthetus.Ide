@@ -213,15 +213,17 @@ public class OnWheel : ITextEditorWork
 
             if (WheelEventArgs.ShiftKey)
             {
-                await EditContext.TextEditorService.ViewModelApi
-                    .MutateScrollHorizontalPositionFactory(ViewModelKey, WheelEventArgs.DeltaX)
-                    .Invoke(EditContext);
+                EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+                	EditContext,
+			        viewModelModifier,
+			        WheelEventArgs.DeltaX);
             }
             else
             {
-                await EditContext.TextEditorService.ViewModelApi
-                    .MutateScrollVerticalPositionFactory(ViewModelKey, WheelEventArgs.DeltaY)
-                    .Invoke(EditContext);
+                EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+                	EditContext,
+			        viewModelModifier,
+                	WheelEventArgs.DeltaY);
             }
 		}
 		finally

@@ -70,7 +70,6 @@ public class OnWheelBatch : ITextEditorWork
                 EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
                     EditContext,
 			        viewModelModifier,
-			        EditContext.GetCursorModifierBag(viewModelModifier.ViewModel),
 			        horizontalMutateScrollPositionByPixels.Value);
             }
 
@@ -79,7 +78,6 @@ public class OnWheelBatch : ITextEditorWork
                 EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
                     EditContext,
 			        viewModelModifier,
-			        EditContext.GetCursorModifierBag(viewModelModifier.ViewModel),
 			        verticalMutateScrollPositionByPixels.Value);
             }
 		}
