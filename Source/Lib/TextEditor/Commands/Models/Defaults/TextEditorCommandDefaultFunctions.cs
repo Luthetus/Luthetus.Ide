@@ -994,6 +994,9 @@ public class TextEditorCommandDefaultFunctions
         };
 
         await HandleMouseStoppedMovingEventAsync(
+        		editContext,
+        		modelModifier,
+        		viewModelModifier,
 				new MouseEventArgs
 	            {
 	                ClientX = elementPositionInPixels.Left,
@@ -1001,8 +1004,7 @@ public class TextEditorCommandDefaultFunctions
 	            },
 				commandArgs.ComponentData,
 				commandArgs.ServiceProvider.GetRequiredService<ILuthetusTextEditorComponentRenderers>(),
-				modelModifier.ResourceUri,
-				viewModelModifier.ViewModel.ViewModelKey)
+				modelModifier.ResourceUri)
 			.ConfigureAwait(false);
     }
 
@@ -1082,12 +1084,15 @@ public class TextEditorCommandDefaultFunctions
 		TextEditorComponentData componentData,
 		ViewModelDisplayOptions viewModelDisplayOptions)
     {
-        if (viewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory is not null)
+        if (viewModelDisplayOptions.AfterOnKeyDownRangeAsync is not null)
         {
-            await viewModelDisplayOptions.AfterOnKeyDownRangeAsyncFactory.Invoke(
-                modelModifier.ResourceUri,
-                viewModelModifier.ViewModel.ViewModelKey,
-                keyboardEventArgsList);
+            await viewModelDisplayOptions.AfterOnKeyDownRangeAsync.Invoke(
+                editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        keyboardEventArgsList,
+				componentData);
             return;
         }
 
@@ -1146,16 +1151,18 @@ public class TextEditorCommandDefaultFunctions
     }
 
 	public static async Task HandleMouseStoppedMovingEventAsync(
+		IEditContext editContext,
+		TextEditorModelModifier modelModifier,
+		TextEditorViewModelModifier viewModelModifier,
 		MouseEventArgs mouseEventArgs,		
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey)
+        ResourceUri resourceUri)
     {
     	// Lazily calculate row and column index a second time. Otherwise one has to calculate it every mouse moved event.
         var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
 				resourceUri,
-				viewModelKey,
+				viewModelModifier.ViewModel.ViewModelKey,
 				mouseEventArgs,
 				componentData,
 				editContext)

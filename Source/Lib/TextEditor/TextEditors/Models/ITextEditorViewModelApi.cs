@@ -122,6 +122,7 @@ public interface ITextEditorViewModelApi
 
     public void CursorMovePageBottom(
         IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
 
@@ -148,7 +149,7 @@ public interface ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken);
 
-    public void Remeasure(
+    public Task Remeasure(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,

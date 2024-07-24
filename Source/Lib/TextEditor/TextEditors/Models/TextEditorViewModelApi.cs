@@ -626,8 +626,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-        return CursorMovePageTopUnsafeFactory(modelResourceUri, viewModelKey, primaryCursorModifier)
-            .Invoke(editContext);
+        CursorMovePageTopUnsafe(
+	        editContext,
+        	viewModelModifier,
+        	cursorModifierBag,
+        	editContext.GetPrimaryCursorModifier(cursorModifierBag));
     }
 
     public void CursorMovePageTopUnsafe(
@@ -647,11 +650,16 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void CursorMovePageBottom(
         IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
-        return CursorMovePageBottomUnsafeFactory(modelResourceUri, viewModelKey, primaryCursorModifier)
-            .Invoke(editContext);
+        CursorMovePageBottomUnsafe(
+        	editContext,
+        	modelModifier,
+        	viewModelModifier,
+        	cursorModifierBag,
+        	editContext.GetPrimaryCursorModifier(cursorModifierBag));
     }
 
     public void CursorMovePageBottomUnsafe(
@@ -674,7 +682,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     public void CalculateVirtualizationResult(
         IEditContext editContext,
         TextEditorModelModifier modelModifier,
-        TextEditorViewModelModifier viewModelModifier,
+		TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken)
     {
         try
@@ -922,13 +930,19 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 			 at Luthetus.TextEditor.RazorLib.TextEditorServiceTask.HandleEvent(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditorServiceTask.cs:line 113
 			 at Luthetus.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\BackgroundTaskWorker.cs:line 49
 			 */
-
-			if (primaryCursorModifier.LineIndex >= modelModifier.LineCount)
-				primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
-
-			var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
-
-			primaryCursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+			
+			var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+			
+			if (primaryCursorModifier is not null)
+			{
+				if (primaryCursorModifier.LineIndex >= modelModifier.LineCount)
+					primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
+	
+				var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+	
+				primaryCursorModifier.ColumnIndex = lineInformation.LastValidColumnIndex;
+			}
 
 #if DEBUG
 			// This exception happens a lot while using the editor.
@@ -939,7 +953,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 		}
     }
 
-    public void Remeasure(
+    public async Task Remeasure(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,
@@ -975,7 +989,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         CancellationToken cancellationToken)
     {
         // Getting the ViewModel from the 'editContext' triggers a re-render
-		var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+        //
+        // A lot code is being changed and one result is this method now reads like non-sense,
+        // (or more non-sense than it previously did)
+        // Because we get a viewModelModifier passed in to this method as an argument.
+        // So this seems quite silly.
+		var viewModelModifier = editContext.GetViewModelModifier(viewModelModifier.ViewModel.ViewModelKey);
     }
     #endregion
 

@@ -218,10 +218,11 @@ public partial class TextEditorService : ITextEditorService
 			if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
 				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
-	            await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-	                    viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
-	                .Invoke(editContext)
-	                .ConfigureAwait(false);
+	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
+	            	editContext,
+	            	editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri),
+			        viewModelModifier,
+			        CancellationToken.None);
 			}
             
 			_dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(

@@ -273,13 +273,15 @@ public class OnKeyDownLateBatching : ITextEditorWork
 	                    viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 	                }
 	
-					if (ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory is not null)
+					if (ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync is not null)
 			        {
-			            await ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory.Invoke(
-				                ResourceUri,
-				                ViewModelKey,
-				                keyboardEventArgs)
-							.Invoke(EditContext)
+			            await ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync.Invoke(
+				                EditContext,
+						        modelModifier,
+						        viewModelModifier,
+						        cursorModifierBag,
+						        keyboardEventArgs,
+								ComponentData)
 	                        .ConfigureAwait(false);
 			        }
 					else
