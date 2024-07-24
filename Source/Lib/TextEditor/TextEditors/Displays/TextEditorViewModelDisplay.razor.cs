@@ -405,10 +405,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 						nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync),
 						editContext =>
 						{
-							var modelModifier = commandArgs.EditContext.GetModelModifier(modelResourceUri);
-			                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(viewModelKey);
-			                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-			                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+							var modelModifier = editContext.GetModelModifier(modelResourceUri);
+			                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+			                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 			
 			                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 			                    return Task.CompletedTask;
@@ -500,18 +500,25 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         var diffY = previousTouchPoint.ClientY - currentTouchPoint.ClientY;
 
         TextEditorService.PostUnique(
-            nameof(QueueRemeasureBackgroundTask),
-            async editContext =>
+            nameof(ReceiveOnTouchMove),
+            editContext =>
 			{
-                await editContext.TextEditorService.ViewModelApi
-                    .MutateScrollHorizontalPositionFactory(viewModel.ViewModelKey, diffX)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+				var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+				
+				if (viewModelModifier is null)
+					return Task.CompletedTask;
+				
+                TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+                	editContext,
+			        viewModelModifier,
+                	diffX);
 
-                await editContext.TextEditorService.ViewModelApi
-                    .MutateScrollVerticalPositionFactory(viewModel.ViewModelKey, diffY)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+                	editContext,
+			        viewModelModifier,
+                	diffY);
+                	
+                return Task.CompletedTask;
 			});
 
         _previousTouchEventArgs = touchEventArgs;
@@ -574,12 +581,21 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             nameof(QueueRemeasureBackgroundTask),
 			modelResourceUri,
 			viewModelKey.Value,
-            TextEditorService.ViewModelApi.RemeasureFactory(
-                modelResourceUri,
-                viewModelKey.Value,
-                localMeasureCharacterWidthAndRowHeightElementId,
-                countOfTestCharacters,
-                CancellationToken.None));
+            editContext =>
+            {
+            	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+
+				if (viewModelModifier is null)
+					return Task.CompletedTask;
+
+            	TextEditorService.ViewModelApi.Remeasure(
+            		editContext,
+			        viewModelModifier,
+			        localMeasureCharacterWidthAndRowHeightElementId,
+	                countOfTestCharacters,
+			        CancellationToken.None);
+				return Task.CompletedTask;	                
+	        });
     }
 
     private void QueueCalculateVirtualizationResultBackgroundTask(
@@ -595,10 +611,21 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
 			modelResourceUri,
 			viewModelKey.Value,
-            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                modelResourceUri,
-                viewModelKey.Value,
-                CancellationToken.None));
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(modelResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+
+				if (modelModifier is null || viewModelModifier is null)
+					return Task.CompletedTask;
+            	
+            	TextEditorService.ViewModelApi.CalculateVirtualizationResult(
+            		editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        CancellationToken.None);
+			    return Task.CompletedTask;
+            });
     }
 
     public void Dispose()

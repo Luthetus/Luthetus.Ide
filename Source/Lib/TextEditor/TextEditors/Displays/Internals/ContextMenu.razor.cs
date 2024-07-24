@@ -67,7 +67,8 @@ public partial class ContextMenu : ComponentBase
             RenderBatch.ViewModel.ViewModelKey,
 			RenderBatch.ComponentData,
 			TextEditorService,
-            ServiceProvider);
+            ServiceProvider,
+            null);
     }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)

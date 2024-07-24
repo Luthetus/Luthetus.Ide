@@ -56,8 +56,18 @@ public partial class CommandBarDisplay : FluxorComponent
                 RenderBatch.ViewModel.ViewModelKey,
                 editContext =>
                 {
+                	var modelModifier = editContext.GetModelModifier(RenderBatch.ViewModel.ResourceUri);
+		            var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		
+		            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+		                return Task.CompletedTask;
+                
                 	TextEditorService.ViewModelApi.WithValue(
-	                    RenderBatch.ViewModel.ViewModelKey,
+                		editContext,
+                		modelModifier,
+	                    viewModelModifier,
 	                    previousViewModel => previousViewModel with
 	                    {
 	                        CommandBarValue = string.Empty,

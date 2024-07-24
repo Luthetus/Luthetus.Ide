@@ -258,7 +258,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 previousViewModel => previousViewModel with
                                 {
                                     ShowCommandBar = true
-                                }).Invoke(editContext);
+                                });
 
                             return Task.CompletedTask;
                         });
@@ -294,11 +294,13 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return;
 
-                            commandArgs.TextEditorService.ModelApi
-                                .UndoEdit(commandArgs.ModelResourceUri);
+                            commandArgs.TextEditorService.ModelApi.UndoEdit(
+                            	editContext,
+                            	modelModifier);
 
                             editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-                                commandArgs.ModelResourceUri);
+                                editContext,
+                            	modelModifier);
                         });
 					return Task.CompletedTask;
                 });
@@ -332,10 +334,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 return;
 
                             commandArgs.TextEditorService.ModelApi.RedoEdit(
-                            	commandArgs.ModelResourceUri);
+                            	editContext,
+                            	modelModifier);
 
                             editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-                                commandArgs.ModelResourceUri);
+                                editContext,
+                            	modelModifier);
                         });
 					return Task.CompletedTask;
                 });
@@ -883,13 +887,21 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 interfaceCommandArgs =>
                                 {
                                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                    
+                                    var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+						            var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+						            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+						            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+						
+						            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+						                return Task.CompletedTask;
 
-                                    commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
-                                            keyboardEventArgs,
-                                            commandArgs.ModelResourceUri,
-                                            commandArgs.ViewModelKey)
-                                        .Invoke(editContext);
-
+                                    commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+                                    	keyboardEventArgs,
+								        editContext,
+								        modelModifier,
+								        viewModelModifier,
+								        cursorModifierBag);
                                     return Task.CompletedTask;
                                 });
 
