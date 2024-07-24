@@ -134,10 +134,10 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 						terminalResource.ManualDecorationTextSpanList.Clear();
 						terminalResource.ManualDecorationTextSpanList.AddRange(newDecorationTextSpanList);
 
-						return editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
-								modelModifier.ResourceUri,
-								terminalResource.GetTokenTextSpans())
-							.Invoke(editContext);
+						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+							editContext,
+							modelModifier,
+							terminalResource.GetTokenTextSpans());
 					}
 
 					return Task.CompletedTask;

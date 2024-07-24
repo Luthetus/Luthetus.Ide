@@ -165,10 +165,19 @@ public class DotNetSolutionIdeApi
 		{
 			_textEditorService.PostUnique(
 				nameof(Website_AddExistingProjectToSolutionAsync),
-				_textEditorService.ModelApi.ReloadFactory(
-					solutionTextEditorModel.ResourceUri,
-					outDotNetSolutionModel.SolutionFileContents,
-					DateTime.UtcNow));
+				editContext =>
+				{
+					var modelModifier = editContext.GetModelModifier(solutionTextEditorModel.ResourceUri);
+					if (modelModifier is null)
+						return Task.CompletedTask;
+				
+					_textEditorService.ModelApi.Reload(
+						editContext,
+				        modelModifier,
+				        outDotNetSolutionModel.SolutionFileContents,
+				        DateTime.UtcNow);
+					return Task.CompletedTask;
+				});
 		}
 
 		// TODO: Putting a hack for now to overwrite if somehow model was registered already
