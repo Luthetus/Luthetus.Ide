@@ -66,13 +66,13 @@ public partial class CommandBarDisplay : FluxorComponent
                 
                 	TextEditorService.ViewModelApi.WithValue(
                 		editContext,
-                		modelModifier,
 	                    viewModelModifier,
 	                    previousViewModel => previousViewModel with
 	                    {
 	                        CommandBarValue = string.Empty,
 	                        ShowCommandBar = false
 	                    });
+	                return Task.CompletedTask;
                 });
         }
     }

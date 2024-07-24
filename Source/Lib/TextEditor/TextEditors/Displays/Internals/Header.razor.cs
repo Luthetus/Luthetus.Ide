@@ -50,7 +50,8 @@ public partial class Header : ComponentBase
             viewModel.ViewModelKey,
             RenderBatch.ComponentData,
 			TextEditorService,
-            ServiceProvider);
+            ServiceProvider,
+            null);
     }
 
     private async Task DoCopyOnClick(MouseEventArgs arg)
@@ -118,7 +119,7 @@ public partial class Header : ComponentBase
             return;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Save.CommandFunc
+        await TextEditorCommandDefaultFacts.TriggerSave.CommandFunc
             .Invoke(commandArgs)
             .ConfigureAwait(false);
     }

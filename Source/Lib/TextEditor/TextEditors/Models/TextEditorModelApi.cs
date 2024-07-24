@@ -110,7 +110,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         TextEditorModelModifier modelModifier,
         DateTime resourceLastWriteTime)
     {
-        modelModifier.SetResourceData(resourceUri, resourceLastWriteTime);
+        modelModifier.SetResourceData(modelModifier.ResourceUri, resourceLastWriteTime);
     }
 
     public void Reload(
@@ -120,7 +120,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         DateTime resourceLastWriteTime)
     {
         modelModifier.SetContent(content);
-        modelModifier.SetResourceData(resourceUri, resourceLastWriteTime);
+        modelModifier.SetResourceData(modelModifier.ResourceUri, resourceLastWriteTime);
     }
 
     public void RedoEdit(
@@ -284,11 +284,10 @@ public class TextEditorModelApi : ITextEditorModelApi
         textSpanList.AddRange(syntacticTextSpansList);
         textSpanList.AddRange(symbolTextSpansList);
 
-        await ApplyDecorationRangeFactory(
-                resourceUri,
-                textSpanList)
-            .Invoke(editContext)
-            .ConfigureAwait(false);
+        ApplyDecorationRange(
+        	editContext,
+            modelModifier,
+            textSpanList);
     }
     #endregion
 

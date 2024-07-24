@@ -109,10 +109,21 @@ public partial class RowSection : ComponentBase
             nameof(VirtualizationDisplayItemsProviderFunc),
             model.ResourceUri,
             viewModel.ViewModelKey,
-            TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-                model.ResourceUri,
-                viewModel.ViewModelKey,
-                virtualizationRequest.CancellationToken));
-		return Task.CompletedTask;
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+
+				if (modelModifier is null || viewModelModifier is null)
+					return Task.CompletedTask;
+            	
+            	TextEditorService.ViewModelApi.CalculateVirtualizationResult(
+            		editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        CancellationToken.None);
+			    return Task.CompletedTask;
+            });
+    	return Task.CompletedTask;
     }
 }
