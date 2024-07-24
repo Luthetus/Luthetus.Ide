@@ -284,7 +284,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     commandArgs.TextEditorService.PostUnique(
                         nameof(commandDisplayName),
-                        async editContext =>
+                        editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -292,7 +292,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                                return;
+                                return Task.CompletedTask;
 
                             commandArgs.TextEditorService.ModelApi.UndoEdit(
                             	editContext,
@@ -301,6 +301,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
                                 editContext,
                             	modelModifier);
+                            return Task.CompletedTask;
                         });
 					return Task.CompletedTask;
                 });
@@ -323,7 +324,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     commandArgs.TextEditorService.PostUnique(
                         nameof(commandDisplayName),
-                        async editContext =>
+                        editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -331,7 +332,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                                return;
+                                return Task.CompletedTask;
 
                             commandArgs.TextEditorService.ModelApi.RedoEdit(
                             	editContext,
@@ -340,6 +341,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
                                 editContext,
                             	modelModifier);
+                            return Task.CompletedTask;
                         });
 					return Task.CompletedTask;
                 });

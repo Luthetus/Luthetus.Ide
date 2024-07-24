@@ -94,7 +94,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 
                 TextEditorService.PostUnique(
                     nameof(TextEditorService.ModelApi.AddPresentationModel),
-                    async editContext =>
+                    editContext =>
                     {
                     	var modelModifier = editContext.GetModelModifier(OutResourceUri);
                     
@@ -111,7 +111,7 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
 
                         if (viewModelModifier is null)
-                            return;
+                            return Task.CompletedTask;
 
                         var presentationKeys = new[]
                         {
@@ -122,6 +122,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         {
                             FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
                         };
+
+                        return Task.CompletedTask;
                     });
             }
 

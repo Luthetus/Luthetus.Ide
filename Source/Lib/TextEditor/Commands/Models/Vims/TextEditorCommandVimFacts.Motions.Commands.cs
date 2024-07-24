@@ -94,13 +94,12 @@ public static partial class TextEditorCommandVimFacts
 	                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 	                    return Task.CompletedTask;
 	                    
-	                Visual(
+	                return Visual(
 		            	commandArgs.EditContext,
 				        modelModifier,
 				        viewModelModifier,
 				        cursorModifierBag,
 			        	commandArgs);
-			    	return Task.CompletedTask;
                 });
         }
         
@@ -123,13 +122,12 @@ public static partial class TextEditorCommandVimFacts
 	                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 	                    return Task.CompletedTask;
 	                    
-	                VisualLine(
+	                return VisualLine(
 		            	commandArgs.EditContext,
 				        modelModifier,
 				        viewModelModifier,
 				        cursorModifierBag,
 			        	commandArgs);
-			    	return Task.CompletedTask;
                 });
         }
     }

@@ -162,12 +162,12 @@ public class CompilerService : ICompilerService
     {
 		_textEditorService.PostUnique(
             nameof(QueueParseRequest),
-            async editContext =>
+            editContext =>
             {
 				var modelModifier = editContext.GetModelModifier(resourceUri);
 
 				if (modelModifier is null)
-					return;
+					return Task.CompletedTask;
 
 				_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
 					editContext,
@@ -182,13 +182,13 @@ public class CompilerService : ICompilerService
 					throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
 
 				if (_compilerServiceOptions.GetLexerFunc is null)
-					return;
+                    return Task.CompletedTask;
 
-				ILexer lexer;
+                ILexer lexer;
 				lock (_resourceMapLock)
 				{
 					if (!_resourceMap.ContainsKey(resourceUri))
-						return;
+						return Task.CompletedTask;
 
 					var resource = _resourceMap[resourceUri];
 					lexer = _compilerServiceOptions.GetLexerFunc.Invoke(resource, presentationModel.PendingCalculation.ContentAtRequest);
@@ -198,9 +198,9 @@ public class CompilerService : ICompilerService
 				lock (_resourceMapLock)
 				{
 					if (!_resourceMap.ContainsKey(resourceUri))
-						return;
+                        return Task.CompletedTask;
 
-					var resource = _resourceMap[resourceUri];
+                    var resource = _resourceMap[resourceUri];
 					_compilerServiceOptions.OnAfterLexAction?.Invoke(resource, lexer);
 				}
 
@@ -210,13 +210,13 @@ public class CompilerService : ICompilerService
 				try
 				{
 					if (_compilerServiceOptions.GetParserFunc is null || Binder is null)
-						return;
+                        return Task.CompletedTask;
 
-					IParser parser;
+                    IParser parser;
 					lock (_resourceMapLock)
 					{
 						if (!_resourceMap.ContainsKey(resourceUri))
-							return;
+							return Task.CompletedTask;
 
 						var resource = _resourceMap[resourceUri];
 						parser = _compilerServiceOptions.GetParserFunc.Invoke(resource, lexer);
@@ -255,7 +255,9 @@ public class CompilerService : ICompilerService
 						modelModifier);
 
 					OnResourceParsed();
-				}
+                }
+
+                return Task.CompletedTask;
             });
     }
 }

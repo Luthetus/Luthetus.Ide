@@ -113,12 +113,12 @@ public sealed class CSharpCompilerService : CompilerService
 
                         _textEditorService.PostUnique(
                             "Add using statement",
-                            async editContext =>
+                            editContext =>
                             {
                                 var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
 
                                 if (modelModifier is null)
-                                    return;
+                                    return Task.CompletedTask;
 
                                 var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
 
@@ -162,6 +162,8 @@ public sealed class CSharpCompilerService : CompilerService
                                         editContext,
                                         modelModifier);
                                 }
+
+                                return Task.CompletedTask;
                             });
 						return Task.CompletedTask;
                     });

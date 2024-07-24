@@ -1,6 +1,4 @@
-﻿using Luthetus.Ide.RazorLib.ProgramExecutions.States;
-
-namespace Luthetus.Ide.Tests.Basis.ProgramExecutions.States;
+﻿namespace Luthetus.Ide.Tests.Basis.ProgramExecutions.States;
 
 /// <summary>
 /// <see cref="ProgramExecutionState.Reducer"/>

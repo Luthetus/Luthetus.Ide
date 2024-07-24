@@ -200,28 +200,28 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
             TextEditorService.ModelApi.RegisterCustom(textEditorModel);
 
             TextEditorService.PostUnique(
-                nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
+                nameof(TextEditorService.ModelApi.AddPresentationModel),
                 async editContext =>
                 {
-                    await TextEditorService.ModelApi.AddPresentationModelFactory(
+                    await TextEditorService.ModelApi.AddPresentationModel(
                             textEditorModel.ResourceUri,
                             CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
                         .Invoke(editContext)
                         .ConfigureAwait(false);
                     
-                    await TextEditorService.ModelApi.AddPresentationModelFactory(
+                    await TextEditorService.ModelApi.AddPresentationModel(
                             textEditorModel.ResourceUri,
                             FindOverlayPresentationFacts.EmptyPresentationModel)
                         .Invoke(editContext)
                         .ConfigureAwait(false);
 
-                    await TextEditorService.ModelApi.AddPresentationModelFactory(
+                    await TextEditorService.ModelApi.AddPresentationModel(
                             textEditorModel.ResourceUri,
                             DiffPresentationFacts.EmptyInPresentationModel)
                         .Invoke(editContext)
                         .ConfigureAwait(false);
 
-                    await TextEditorService.ModelApi.AddPresentationModelFactory(
+                    await TextEditorService.ModelApi.AddPresentationModel(
                             textEditorModel.ResourceUri,
                             DiffPresentationFacts.EmptyOutPresentationModel)
                         .Invoke(editContext)

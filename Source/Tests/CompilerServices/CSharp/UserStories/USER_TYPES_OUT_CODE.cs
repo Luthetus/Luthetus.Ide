@@ -46,15 +46,22 @@ public class USER_TYPES_OUT_CODE
         {
             textEditorService.PostUnique(
                 nameof(USER_TYPES_OUT_CODE),
-                async editContext =>
+                editContext =>
                 {
-                    await textEditorService.ModelApi.InsertTextFactory(
-                            textEditorModel.ResourceUri,
-                            textEditorViewModel.ViewModelKey,
-                            character.ToString(),
-                            CancellationToken.None)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                    var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
+                    var viewModelModifier = editContext.GetViewModelModifier(textEditorViewModel.ViewModelKey);
+                    var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+
+                    if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null)
+                        return Task.CompletedTask;
+
+					textEditorService.ModelApi.InsertText(
+                        editContext,
+                        modelModifier,
+                        cursorModifierBag,
+                        character.ToString(),
+                        CancellationToken.None);
+                    return Task.CompletedTask;
                 });
 
             cSharpCompilerService.ResourceWasModified(
@@ -99,15 +106,22 @@ public class USER_TYPES_OUT_CODE
         {
             textEditorService.PostUnique(
                 nameof(USER_TYPES_OUT_CODE),
-                async editContext =>
+                editContext =>
                 {
-                    await textEditorService.ModelApi.InsertTextFactory(
-                            textEditorModel.ResourceUri,
-                            textEditorViewModel.ViewModelKey,
-                            character.ToString(),
-                            CancellationToken.None)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+					var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
+					var viewModelModifier = editContext.GetViewModelModifier(textEditorViewModel.ViewModelKey);
+					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+
+					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null)
+						return Task.CompletedTask;
+
+					textEditorService.ModelApi.InsertText(
+						editContext,
+						modelModifier,
+                        cursorModifierBag,
+                        character.ToString(),
+                        CancellationToken.None);
+                    return Task.CompletedTask;
                 });
 
             cSharpCompilerService.ResourceWasModified(
@@ -157,15 +171,22 @@ await builder.Build().RunAsync();
 
                 textEditorService.PostUnique(
                     nameof(USER_TYPES_OUT_CODE),
-                    async editContext =>
+                    editContext =>
                     {
-                        await textEditorService.ModelApi.InsertTextFactory(
-                                textEditorModel.ResourceUri,
-                                textEditorViewModel.ViewModelKey,
-                                character.ToString(),
-                                CancellationToken.None)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+						var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
+						var viewModelModifier = editContext.GetViewModelModifier(textEditorViewModel.ViewModelKey);
+						var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+
+						if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null)
+							return Task.CompletedTask;
+
+						textEditorService.ModelApi.InsertText(
+							editContext,
+							modelModifier,
+							cursorModifierBag,
+							character.ToString(),
+							CancellationToken.None);
+						return Task.CompletedTask;
                     });
 
                 if (char.IsLetterOrDigit(character))

@@ -43,27 +43,27 @@ public class TextEditorDiffApi : ITextEditorDiffApi
         Key<TextEditorDiffModel> diffModelKey,
         CancellationToken cancellationToken)
     {
-        return async editContext =>
+        return editContext =>
         {
             if (cancellationToken.IsCancellationRequested)
-                return;
+                return Task.CompletedTask;
 
             var diffModelModifier = editContext.GetDiffModelModifier(diffModelKey);
 
             if (diffModelModifier is null)
-                return;
+                return Task.CompletedTask;
 
             var inViewModelModifier = editContext.GetViewModelModifier(diffModelModifier.DiffModel.InViewModelKey);
             var outViewModelModifier = editContext.GetViewModelModifier(diffModelModifier.DiffModel.OutViewModelKey);
 
             if (inViewModelModifier is null || outViewModelModifier is null)
-                return;
+                return Task.CompletedTask;
 
             var inModelModifier = editContext.GetModelModifier(inViewModelModifier.ViewModel.ResourceUri);
             var outModelModifier = editContext.GetModelModifier(outViewModelModifier.ViewModel.ResourceUri);
 
             if (inModelModifier is null || outModelModifier is null)
-                return;
+                return Task.CompletedTask;
 
             // In
             editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
@@ -74,7 +74,7 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             var inPresentationModel = inModelModifier.PresentationModelList.First(
                 x => x.TextEditorPresentationKey == DiffPresentationFacts.InPresentationKey);
             if (inPresentationModel.PendingCalculation is null)
-                return;
+                return Task.CompletedTask;
             var inText = inPresentationModel.PendingCalculation.ContentAtRequest;
             
             // Out
@@ -86,7 +86,7 @@ public class TextEditorDiffApi : ITextEditorDiffApi
             var outPresentationModel = outModelModifier.PresentationModelList.First(
                 x => x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
             if (outPresentationModel.PendingCalculation is null)
-                return;
+                return Task.CompletedTask;
             var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
 
             var diffResult = TextEditorDiffResult.Calculate(
@@ -104,6 +104,8 @@ public class TextEditorDiffApi : ITextEditorDiffApi
                 DiffPresentationFacts.OutPresentationKey,
                 DiffPresentationFacts.EmptyOutPresentationModel,
                 diffResult.OutResultTextSpanList.ToImmutableArray());
+
+            return Task.CompletedTask;
         };
     }
 

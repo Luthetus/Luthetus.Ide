@@ -574,13 +574,12 @@ public static class TextEditorCommandDefaultFacts
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
                 
-            TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
+            return TextEditorCommandDefaultFunctions.RelatedFilesQuickPick(
             	commandArgs.EditContext,
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag,
 		        commandArgs);
-		    return Task.CompletedTask;
         });
     
     public static readonly TextEditorCommand GoToDefinition = new(

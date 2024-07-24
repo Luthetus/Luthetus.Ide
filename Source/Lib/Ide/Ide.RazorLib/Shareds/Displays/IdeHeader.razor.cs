@@ -87,14 +87,15 @@ public partial class IdeHeader : ComponentBase
 			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
 			nameof(IdeHeader),
-			async () =>
+			() =>
 			{
 				InitializeMenuFile();
 				InitializeMenuTools();
 				InitializeMenuView();
 				
 				AddAltKeymap();
-			});
+                return Task.CompletedTask;
+            });
 
         base.OnInitialized();
 	}

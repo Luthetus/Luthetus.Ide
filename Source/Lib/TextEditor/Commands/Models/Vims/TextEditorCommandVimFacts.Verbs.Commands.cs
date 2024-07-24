@@ -43,13 +43,12 @@ public static partial class TextEditorCommandVimFacts
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
                     
-                ChangeLine(
+                return ChangeLine(
 	            	commandArgs.EditContext,
 			        modelModifier,
 			        viewModelModifier,
 			        cursorModifierBag,
 			        commandArgs);
-			    return Task.CompletedTask;
             });
 
         public static TextEditorCommand DeleteMotionCommandConstructor(TextEditorCommand innerTextEditorCommand) => new(
@@ -67,13 +66,12 @@ public static partial class TextEditorCommandVimFacts
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
                     
-                DeleteMotion(
+                return DeleteMotion(
 	            	commandArgs.EditContext,
 			        modelModifier,
 			        viewModelModifier,
 			        cursorModifierBag,
 			        commandArgs);
-			    return Task.CompletedTask;
             });
 
         public static TextEditorCommand ChangeMotionCommandConstructor(TextEditorCommand innerTextEditorCommand) => new(
@@ -90,14 +88,13 @@ public static partial class TextEditorCommandVimFacts
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
-                    
-                ChangeMotion(
+
+                return ChangeMotion(
 	            	commandArgs.EditContext,
 			        modelModifier,
 			        viewModelModifier,
 			        cursorModifierBag,
 			        commandArgs);
-			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand ChangeSelectionCommand = new(
@@ -114,13 +111,12 @@ public static partial class TextEditorCommandVimFacts
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
                     
-                ChangeSelection(
+                return ChangeSelection(
 	            	commandArgs.EditContext,
 			        modelModifier,
 			        viewModelModifier,
 			        cursorModifierBag,
 			        commandArgs);
-			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand YankCommand = new(
@@ -136,14 +132,13 @@ public static partial class TextEditorCommandVimFacts
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                     return Task.CompletedTask;
-                    
-                YankAsync(
+
+                return YankAsync(
 	            	commandArgs.EditContext,
 			        modelModifier,
 			        viewModelModifier,
 			        cursorModifierBag,
 			        commandArgs);
-			    return Task.CompletedTask;
             });
 
         public static readonly TextEditorCommand NewLineBelowCommand = new(

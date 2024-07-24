@@ -147,7 +147,7 @@ public partial class Terminal
     {
         _textEditorService.PostUnique(
             nameof(_textEditorService.ViewModelApi.MoveCursor),
-            async editContext =>
+            editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
@@ -155,7 +155,7 @@ public partial class Terminal
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
+                    return Task.CompletedTask;
 
                 var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
@@ -172,7 +172,7 @@ public partial class Terminal
 
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                    return;
+                    return Task.CompletedTask;
 
                 terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
                     startingPositionIndex,
@@ -185,6 +185,7 @@ public partial class Terminal
                 	editContext,
                     modelModifier,
                     terminalResource.GetTokenTextSpans());
+                return Task.CompletedTask;
             });
     }
     
@@ -221,7 +222,7 @@ public partial class Terminal
     {
         _textEditorService.PostUnique(
             nameof(ClearTerminal),
-            async editContext =>
+            editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
@@ -229,8 +230,8 @@ public partial class Terminal
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
-                    
+                    return Task.CompletedTask;
+
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is TerminalResource firstTerminalResource)
                 {
@@ -277,6 +278,8 @@ public partial class Terminal
                         modelModifier,
                         secondTerminalResource.GetTokenTextSpans());
                 }
+
+                return Task.CompletedTask;
             });
     }
     
