@@ -130,8 +130,20 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.1.0 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.1.0 </em> (2024-07-24)</div>
                 <ul>
+                	<li>
+                        IBackgroundTask service received immense optimizations.
+                        Some of these optimizations include: no Task.Delay between
+                        background task invocations, and attempt to run
+                        a task synchronously, and only await it if it did not finish
+                        synchronously.
+                    </li>
+                	<li>
+                        The text editor's 'IEditContext' received immense optimizations.
+                        Some of these optimizations include: do not instantiate a 'Func'
+                        for every method that takes an 'IEditContext' as a parameter.
+                    </li>
                     <li>
                         'Find All' tool shows results in a tree view.
                         As well, it shows multiple results per file,

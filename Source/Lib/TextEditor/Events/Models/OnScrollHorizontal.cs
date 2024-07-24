@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnScrollHorizontal : ITextEditorTask
+public class OnScrollHorizontal : ITextEditorWork
 {
     public OnScrollHorizontal(
         double scrollLeft,
@@ -52,9 +52,11 @@ public class OnScrollHorizontal : ITextEditorTask
             if (viewModelModifier is null)
                 return;
 
-            await EditContext.TextEditorService.ViewModelApi
-                .SetScrollPositionFactory(ViewModelKey, ScrollLeft, null)
-                .Invoke(EditContext);
+            EditContext.TextEditorService.ViewModelApi.SetScrollPosition(
+            	EditContext,
+        		viewModelModifier,
+            	ScrollLeft,
+            	null);
 		}
 		finally
 		{

@@ -10,76 +10,75 @@ public static partial class TextEditorCommandVimFacts
 {
     public static partial class Motions
     {
-        public static TextEditorEdit WordFactory(TextEditorCommandArgs commandArgs)
+        public static void Word(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
-            return (IEditContext editContext) =>
+        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        
+            void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
             {
-                var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+                primaryCursorModifier.ColumnIndex = columnIndex;
+                primaryCursorModifier.PreferredColumnIndex = columnIndex;
+            }
 
-                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return Task.CompletedTask;
+            var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
 
-                void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
-                {
-                    primaryCursorModifier.ColumnIndex = columnIndex;
-                    primaryCursorModifier.PreferredColumnIndex = columnIndex;
-                }
+            if (primaryCursorModifier.ColumnIndex == lengthOfRow &&
+                primaryCursorModifier.LineIndex < modelModifier.LineCount - 1)
+            {
+                MutateIndexCoordinatesAndPreferredColumnIndex(0);
+                primaryCursorModifier.LineIndex++;
+            }
+            else if (primaryCursorModifier.ColumnIndex != lengthOfRow)
+            {
+                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+                    primaryCursorModifier.LineIndex,
+                    primaryCursorModifier.ColumnIndex,
+                    false);
 
-                var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
+                if (columnIndexOfCharacterWithDifferingKind == -1)
+                    MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
+                else
+                    MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
+            }
 
-                if (primaryCursorModifier.ColumnIndex == lengthOfRow &&
-                    primaryCursorModifier.LineIndex < modelModifier.LineCount - 1)
-                {
-                    MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                    primaryCursorModifier.LineIndex++;
-                }
-                else if (primaryCursorModifier.ColumnIndex != lengthOfRow)
-                {
-                    var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                        primaryCursorModifier.LineIndex,
-                        primaryCursorModifier.ColumnIndex,
-                        false);
-
-                    if (columnIndexOfCharacterWithDifferingKind == -1)
-                        MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
-                    else
-                        MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
-                }
-
-                if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
-                {
-                    primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
-                        primaryCursorModifier.LineIndex,
-                        primaryCursorModifier.ColumnIndex);
-                }
-
-                return Task.CompletedTask;
-            };
+            if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+            {
+                primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
+                    primaryCursorModifier.LineIndex,
+                    primaryCursorModifier.ColumnIndex);
+            }
         }
 
-        public static TextEditorEdit EndFactory(TextEditorCommandArgs commandArgs)
+        public static void End(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
-            return async (IEditContext editContext) =>
-            {
-                await PerformEndAsync(commandArgs, editContext).ConfigureAwait(false);
-                return;
-            };
+            PerformEnd(
+            	editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+	        	commandArgs);
         }
 
-        private static async Task PerformEndAsync(
-            TextEditorCommandArgs commandArgs, IEditContext editContext, bool isRecursiveCall = false)
+        private static void PerformEnd(
+            IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs,
+        	bool isRecursiveCall = false)
         {
-            var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return;
-
+        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        
             void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
             {
                 primaryCursorModifier.ColumnIndex = columnIndex;
@@ -131,11 +130,13 @@ public static partial class TextEditorCommandVimFacts
                              * will erroneously be at the start of the next word otherwise.
                              */
 
-                            await PerformEndAsync(
-                                    commandArgs,
-                                    editContext,
-                                    isRecursiveCall: true)
-                                .ConfigureAwait(false);
+                            PerformEnd(
+                        		editContext,
+						        modelModifier,
+						        viewModelModifier,
+						        cursorModifierBag,
+					        	commandArgs,
+                                isRecursiveCall: true);
 
                             // Leave method early as all is finished.
                             return;
@@ -148,167 +149,145 @@ public static partial class TextEditorCommandVimFacts
                 primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
         }
 
-        public static TextEditorEdit BackFactory(TextEditorCommandArgs commandArgs)
+        public static void Back(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
-            return (IEditContext editContext) =>
+        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        
+            void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
             {
-                var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+                primaryCursorModifier.ColumnIndex = columnIndex;
+                primaryCursorModifier.PreferredColumnIndex = columnIndex;
+            }
 
-                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return Task.CompletedTask;
-
-                void MutateIndexCoordinatesAndPreferredColumnIndex(int columnIndex)
+            if (primaryCursorModifier.ColumnIndex == 0)
+            {
+                if (primaryCursorModifier.LineIndex != 0)
                 {
-                    primaryCursorModifier.ColumnIndex = columnIndex;
-                    primaryCursorModifier.PreferredColumnIndex = columnIndex;
+                    primaryCursorModifier.LineIndex--;
+
+                    var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
+
+                    MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
                 }
+            }
+            else
+            {
+                var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
+                    primaryCursorModifier.LineIndex,
+                    primaryCursorModifier.ColumnIndex,
+                    true);
 
-                if (primaryCursorModifier.ColumnIndex == 0)
-                {
-                    if (primaryCursorModifier.LineIndex != 0)
-                    {
-                        primaryCursorModifier.LineIndex--;
-
-                        var lengthOfRow = modelModifier.GetLineLength(primaryCursorModifier.LineIndex);
-
-                        MutateIndexCoordinatesAndPreferredColumnIndex(lengthOfRow);
-                    }
-                }
+                if (columnIndexOfCharacterWithDifferingKind == -1)
+                    MutateIndexCoordinatesAndPreferredColumnIndex(0);
                 else
-                {
-                    var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
-                        primaryCursorModifier.LineIndex,
-                        primaryCursorModifier.ColumnIndex,
-                        true);
+                    MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
+            }
 
-                    if (columnIndexOfCharacterWithDifferingKind == -1)
-                        MutateIndexCoordinatesAndPreferredColumnIndex(0);
-                    else
-                        MutateIndexCoordinatesAndPreferredColumnIndex(columnIndexOfCharacterWithDifferingKind);
-                }
-
-                if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
-                    primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
-
-                return Task.CompletedTask;
-            };
+            if (TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier))
+                primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
         }
 
-        public static TextEditorEdit VisualFactory(TextEditorCommandArgs commandArgs)
+        public static async Task Visual(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
-            return async (IEditContext editContext) =>
+            var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+            if (activeKeymap is not TextEditorKeymapVim keymapVim)
+                return;
+                
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
+            var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
+
+            await commandArgs.InnerCommand.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+
+            var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
+
+            if (nextEndingPositionIndex < primaryCursorModifier.SelectionAnchorPositionIndex)
             {
-                var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
-
-                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
-                if (activeKeymap is not TextEditorKeymapVim keymapVim)
-                    return;
-
-                var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
-                var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
-
-                if (commandArgs.InnerCommand.TextEditorEditFactory is null)
-                    return;
-
-                var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(commandArgs);
-                await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
-
-                var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
-
-                if (nextEndingPositionIndex < primaryCursorModifier.SelectionAnchorPositionIndex)
+                if (previousAnchorPositionIndex < previousEndingPositionIndex)
                 {
-                    if (previousAnchorPositionIndex < previousEndingPositionIndex)
-                    {
-                        // Anchor went from being the lower bound to the upper bound.
-                        primaryCursorModifier.SelectionAnchorPositionIndex += 1;
-                    }
+                    // Anchor went from being the lower bound to the upper bound.
+                    primaryCursorModifier.SelectionAnchorPositionIndex += 1;
                 }
-                else if (nextEndingPositionIndex >= primaryCursorModifier.SelectionAnchorPositionIndex)
+            }
+            else if (nextEndingPositionIndex >= primaryCursorModifier.SelectionAnchorPositionIndex)
+            {
+                if (previousAnchorPositionIndex > previousEndingPositionIndex)
                 {
-                    if (previousAnchorPositionIndex > previousEndingPositionIndex)
-                    {
-                        // Anchor went from being the upper bound to the lower bound.
-                        primaryCursorModifier.SelectionAnchorPositionIndex -= 1;
-                    }
-
-                    primaryCursorModifier.SelectionEndingPositionIndex += 1;
+                    // Anchor went from being the upper bound to the lower bound.
+                    primaryCursorModifier.SelectionAnchorPositionIndex -= 1;
                 }
-            };
+
+                primaryCursorModifier.SelectionEndingPositionIndex += 1;
+            }
         }
 
-        public static TextEditorEdit VisualLineFactory(TextEditorCommandArgs commandArgs)
+        public static async Task VisualLine(
+        	IEditContext editContext,
+	        TextEditorModelModifier modelModifier,
+	        TextEditorViewModelModifier viewModelModifier,
+	        CursorModifierBagTextEditor cursorModifierBag,
+        	TextEditorCommandArgs commandArgs)
         {
-            return async (IEditContext editContext) =>
+            var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
+            if (activeKeymap is not TextEditorKeymapVim keymapVim)
+                return;
+                
+            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
+            var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
+
+            await commandArgs.InnerCommand.CommandFunc.Invoke(commandArgs).ConfigureAwait(false);
+
+            var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
+
+            if (nextEndingPositionIndex < primaryCursorModifier.SelectionAnchorPositionIndex)
             {
-                var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
-                var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
-                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
-
-                var activeKeymap = commandArgs.ComponentData.Options.Keymap ?? TextEditorKeymapFacts.DefaultKeymap;
-                if (activeKeymap is not TextEditorKeymapVim keymapVim)
-                    return;
-
-                var previousAnchorPositionIndex = primaryCursorModifier.SelectionAnchorPositionIndex;
-                var previousEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
-
-                if (commandArgs.InnerCommand.TextEditorEditFactory is null)
-                    return;
-
-                var textEditorEdit = commandArgs.InnerCommand.TextEditorEditFactory.Invoke(commandArgs);
-                await textEditorEdit.Invoke(editContext).ConfigureAwait(false);
-
-                var nextEndingPositionIndex = primaryCursorModifier.SelectionEndingPositionIndex;
-
-                if (nextEndingPositionIndex < primaryCursorModifier.SelectionAnchorPositionIndex)
+                if (previousAnchorPositionIndex < previousEndingPositionIndex)
                 {
-                    if (previousAnchorPositionIndex < previousEndingPositionIndex)
-                    {
-                        // Anchor went from being the lower bound to the upper bound.
-                        var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(
-                            previousAnchorPositionIndex.Value);
+                    // Anchor went from being the lower bound to the upper bound.
+                    var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(
+                        previousAnchorPositionIndex.Value);
 
-                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.LineEndList[
-                            rowDataAnchorIsOn.Index]
-                            .EndPositionIndexExclusive;
-                    }
-
-                    var rowStartPositionInclusive = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex)
-                        .StartPositionIndexInclusive;
-
-                    primaryCursorModifier.SelectionEndingPositionIndex = rowStartPositionInclusive;
-                }
-                else if (nextEndingPositionIndex >= primaryCursorModifier.SelectionAnchorPositionIndex)
-                {
-                    if (previousAnchorPositionIndex > previousEndingPositionIndex)
-                    {
-                        // Anchor went from being the upper bound to the lower bound.
-                        var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(
-                            previousAnchorPositionIndex.Value);
-
-                        primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
-                            .GetLineInformation(rowDataAnchorIsOn.Index - 1)
-                            .StartPositionIndexInclusive;
-                    }
-
-                    var endingPositionOfRow = modelModifier.LineEndList[primaryCursorModifier.LineIndex]
+                    primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier.LineEndList[
+                        rowDataAnchorIsOn.Index]
                         .EndPositionIndexExclusive;
-
-                    primaryCursorModifier.SelectionEndingPositionIndex = endingPositionOfRow;
                 }
-            };
+
+                var rowStartPositionInclusive = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex)
+                    .StartPositionIndexInclusive;
+
+                primaryCursorModifier.SelectionEndingPositionIndex = rowStartPositionInclusive;
+            }
+            else if (nextEndingPositionIndex >= primaryCursorModifier.SelectionAnchorPositionIndex)
+            {
+                if (previousAnchorPositionIndex > previousEndingPositionIndex)
+                {
+                    // Anchor went from being the upper bound to the lower bound.
+                    var rowDataAnchorIsOn = modelModifier.GetLineInformationFromPositionIndex(
+                        previousAnchorPositionIndex.Value);
+
+                    primaryCursorModifier.SelectionAnchorPositionIndex = modelModifier
+                        .GetLineInformation(rowDataAnchorIsOn.Index - 1)
+                        .StartPositionIndexInclusive;
+                }
+
+                var endingPositionOfRow = modelModifier.LineEndList[primaryCursorModifier.LineIndex]
+                    .EndPositionIndexExclusive;
+
+                primaryCursorModifier.SelectionEndingPositionIndex = endingPositionOfRow;
+            }
         }
     }
 }

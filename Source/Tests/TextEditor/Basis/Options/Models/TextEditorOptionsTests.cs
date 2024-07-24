@@ -32,7 +32,8 @@ public class TextEditorOptionsTests
             TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
             TextEditorOptionsState.DEFAULT_ICON_SIZE_IN_PIXELS,
             ThemeFacts.VisualStudioDarkThemeClone.Key,
-            null);
+            null,
+            ShowPanelTitles: false);
 
         var showWhitespace = false;
         var showNewlines = false;

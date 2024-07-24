@@ -145,33 +145,38 @@ public class DisplayTracker : IDisposable
 			nameof(AppDimensionStateWrap_StateChanged),
 			model.ResourceUri,
             viewModel.ViewModelKey,
-			async editContext =>
+			editContext =>
 			{
+				var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
-	            if (viewModelModifier is null)
-	                return;
+				
+	            if (modelModifier is null || viewModelModifier is null)
+	                return Task.CompletedTask;
 	
 				viewModelModifier.ScrollWasModified = true;
 				
-				await TextEditorCommandDefaultFunctions.RemeasureFactory(
-		                model.ResourceUri,
-		                viewModel.ViewModelKey,
-		                commandArgs)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				TextEditorCommandDefaultFunctions.TriggerRemeasure(
+	                editContext,
+	                viewModelModifier,
+	                commandArgs);
 
 				// This virtualization result calculation is intentionally posted from within a post,
 				// in order to ensure that the preceeding remeasure is executed and the state is updated first
 				_textEditorService.PostRedundant(
-	                nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory),
+	                nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResult),
 					model.ResourceUri,
 	                viewModel.ViewModelKey,
-	                _textEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-	                    model.ResourceUri,
-	                	viewModel.ViewModelKey,
-	                    CancellationToken.None));
+	                editContext =>
+	                {
+	                	_textEditorService.ViewModelApi.CalculateVirtualizationResult(
+	                		editContext,
+					        modelModifier,
+					        viewModelModifier,
+					        CancellationToken.None);
+		                return Task.CompletedTask;
+		            });
 
-				return;
+				return Task.CompletedTask;
 			});
 		return Task.CompletedTask;
 	}

@@ -37,44 +37,42 @@ public interface ITextEditorViewModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public TextEditorEdit WithValueFactory(
-        Key<TextEditorViewModel> viewModelKey,
-        Func<TextEditorViewModel, TextEditorViewModel> withFunc);
-
-    public TextEditorEdit WithTaskFactory(
-        Key<TextEditorViewModel> viewModelKey,
-        Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
-
     /// <summary>
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>
-    public TextEditorEdit SetScrollPositionFactory(
-        Key<TextEditorViewModel> viewModelKey,
+    public void SetScrollPosition(
+        IEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
         double? scrollLeftInPixels,
         double? scrollTopInPixels);
 
-    public TextEditorEdit ScrollIntoViewFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+    public void ScrollIntoView(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
         TextEditorTextSpan textSpan);
 
-    public TextEditorEdit MutateScrollVerticalPositionFactory(
-        Key<TextEditorViewModel> viewModelKey,
+    public void MutateScrollVerticalPosition(
+        IEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
         double pixels);
 
-    public TextEditorEdit MutateScrollHorizontalPositionFactory(
-        Key<TextEditorViewModel> viewModelKey,
+    public void MutateScrollHorizontalPosition(
+        IEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
         double pixels);
 
-    public TextEditorEdit FocusPrimaryCursorFactory(string primaryCursorContentId);
+    public Task FocusPrimaryCursorAsync(string primaryCursorContentId);
 
-    public TextEditorEdit MoveCursorFactory(
-        KeyboardEventArgs keyboardEventArgs,
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey);
+    public void MoveCursor(
+    	KeyboardEventArgs keyboardEventArgs,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag);
 
     /// <summary>
-    /// If one wants to guarantee that the state is up to date use <see cref="MoveCursorFactory"/>
+    /// If one wants to guarantee that the state is up to date use <see cref="MoveCursor"/>
     /// instead of this method. This is because, the <see cref="ITextEditorService"/> will provide
     /// you the latest instance of the given <see cref="TextEditorCursor"/>. As opposed to whatever
     /// instance of the <see cref="TextEditorCursorModifier"/> you have at time of enqueueing.
@@ -83,15 +81,18 @@ public interface ITextEditorViewModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorEdit MoveCursorUnsafeFactory(
-        KeyboardEventArgs keyboardEventArgs,
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+    public void MoveCursorUnsafe(
+    	KeyboardEventArgs keyboardEventArgs,
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor);
 
-    public TextEditorEdit CursorMovePageTopFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey);
+    public void CursorMovePageTop(
+        IEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="CursorMovePageTopFactory"/>
@@ -103,14 +104,17 @@ public interface ITextEditorViewModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorEdit CursorMovePageTopUnsafeFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+    public void CursorMovePageTopUnsafe(
+    	IEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
+		CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor);
 
-    public TextEditorEdit CursorMovePageBottomFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey);
+    public void CursorMovePageBottom(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag);
 
     /// <summary>
     /// If one wants to guarantee that the state is up to date use <see cref="CursorMovePageBottomFactory"/>
@@ -122,25 +126,29 @@ public interface ITextEditorViewModelApi
     /// map to the view model's cursors, then one would use this method. Since an attempt to map
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
-    public TextEditorEdit CursorMovePageBottomUnsafeFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+    public void CursorMovePageBottomUnsafe(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier);
 
-    public TextEditorEdit CalculateVirtualizationResultFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+    public void CalculateVirtualizationResult(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken);
 
-    public TextEditorEdit RemeasureFactory(
-        ResourceUri modelResourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+    public Task RemeasureAsync(
+        IEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken);
 
-    public TextEditorEdit ForceRenderFactory(
-        Key<TextEditorViewModel> viewModelKey,
+    public void ForceRender(
+        IEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken);
     #endregion
 

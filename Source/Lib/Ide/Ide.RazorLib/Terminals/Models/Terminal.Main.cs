@@ -176,7 +176,7 @@ public partial class Terminal
 			var outputOffset = 0;
 
 			await command.Observe(_commandCancellationTokenSource.Token)
-				.ForEachAsync(async cmdEvent =>
+				.ForEachAsync(cmdEvent =>
 				{
 					var output = (string?)null;
 
@@ -231,7 +231,7 @@ public partial class Terminal
 					}
 
 					DispatchNewStateKey();
-				}).ConfigureAwait(false);
+                }).ConfigureAwait(false);
 		}
 		catch (Exception e)
 		{

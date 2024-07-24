@@ -89,8 +89,7 @@ public class TestExplorerTreeViewMouseEventHandler : TreeViewMouseEventHandler
 				_dispatcher,
 				_compilerServiceRegistry,
 				_textEditorService,
-				_serviceProvider),
-			null);
+				_serviceProvider));
 
 		return Task.CompletedTask;
 	}

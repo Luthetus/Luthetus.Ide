@@ -55,13 +55,11 @@ public class FindAllTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 		if (activeNode is not TreeViewFindAllTextSpan treeViewFindAllTextSpan)
 			return Task.CompletedTask;
 
-		TreeViewFindAllTextSpanHelper.OpenInEditorOnClick(
+		return TreeViewFindAllTextSpanHelper.OpenInEditorOnClick(
 			treeViewFindAllTextSpan,
 			shouldSetFocusToEditor,
 			_textEditorService,
 			_textEditorConfig,
 			_serviceProvider);
-
-		return Task.CompletedTask;
 	}
 }

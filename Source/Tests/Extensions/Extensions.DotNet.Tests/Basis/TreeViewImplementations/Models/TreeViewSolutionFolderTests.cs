@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
 namespace Luthetus.Extensions.DotNet.Tests.Basis.TreeViewImplementations.Models;
 

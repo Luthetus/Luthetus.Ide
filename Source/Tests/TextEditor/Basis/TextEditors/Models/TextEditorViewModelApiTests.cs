@@ -34,46 +34,46 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.CalculateVirtualizationResultFactory(ResourceUri, Key{TextEditorViewModel}, CancellationToken)"/>
+    /// <see cref="TextEditorViewModelApi.CalculateVirtualizationResult(ResourceUri, Key{TextEditorViewModel}, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public void CalculateVirtualizationResultFactory()
+    public void CalculateVirtualizationResult()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.CursorMovePageTopFactory(ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.CursorMovePageTop(ResourceUri, Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
-    public void CursorMovePageTopFactory()
+    public void CursorMovePageTop()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.CursorMovePageTopUnsafeFactory(ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
+    /// <see cref="TextEditorViewModelApi.CursorMovePageTopUnsafe(ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
     /// </summary>
     [Fact]
-    public void CursorMovePageTopUnsafeFactory()
+    public void CursorMovePageTopUnsafe()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.CursorMovePageBottomFactory(ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.CursorMovePageBottom(ResourceUri, Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
-    public void CursorMovePageBottomFactory()
+    public void CursorMovePageBottom()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.CursorMovePageBottomUnsafeFactory(ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
+    /// <see cref="TextEditorViewModelApi.CursorMovePageBottomUnsafe(ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
     /// </summary>
     [Fact]
-    public void CursorMovePageBottomUnsafeFactory()
+    public void CursorMovePageBottomUnsafe()
     {
         throw new NotImplementedException();
     }
@@ -98,10 +98,10 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.FocusPrimaryCursorFactory(string)"/>
+    /// <see cref="TextEditorViewModelApi.FocusPrimaryCursor(string)"/>
     /// </summary>
     [Fact]
-    public void FocusPrimaryCursorFactory()
+    public void FocusPrimaryCursor()
     {
         throw new NotImplementedException();
     }
@@ -180,19 +180,19 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MutateScrollVerticalPositionFactory(string, string, double)"/>
+    /// <see cref="TextEditorViewModelApi.MutateScrollVerticalPosition(string, string, double)"/>
     /// </summary>
     [Fact]
-    public void MutateScrollVerticalPositionFactory()
+    public void MutateScrollVerticalPosition()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MutateScrollHorizontalPositionFactory(string, string, double)"/>
+    /// <see cref="TextEditorViewModelApi.MutateScrollHorizontalPosition(string, string, double)"/>
     /// </summary>
     [Fact]
-    public void MutateScrollHorizontalPositionFactory()
+    public void MutateScrollHorizontalPosition()
     {
         throw new NotImplementedException();
     }
@@ -207,25 +207,25 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
-    public void MoveCursorFactory()
+    public void MoveCursor()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText()
+    public void MoveCursor_SelectText()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         textEditorService.PostUnique(
-            nameof(MoveCursorFactory_SelectText),
+            nameof(MoveCursor_SelectText),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -243,15 +243,16 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 Assert.Equal(0, primaryCursorModifier.SelectionEndingPositionIndex);
 
                 // Select 1 character
-                await textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                            ShiftKey = true,
-                        },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
+                textEditorService.ViewModelApi.MoveCursor(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                        ShiftKey = true,
+                    },
+                    editContext,
+                    modelModifier,
+                    viewModelModifier,
+                    cursorModifierBag);
 
                 // Assert cursor's ending state
                 Assert.Equal(1, primaryCursorModifier.LineIndex);
@@ -262,18 +263,18 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveLeft()
+    public void MoveCursor_SelectText_SmallSelectionAnchorPosition_Then_MoveLeft()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         textEditorService.PostUnique(
-            nameof(MoveCursorFactory_SelectText),
+            nameof(MoveCursor_SelectText),
 			async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -292,33 +293,36 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Select 3 characters
                 {
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
+                    textEditorService.ViewModelApi.MoveCursor(
                         new KeyboardEventArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
                         },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
-                            new KeyboardEventArgs
-                            {
-                                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                ShiftKey = true,
-                            },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
-                            new KeyboardEventArgs
-                            {
-                                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                ShiftKey = true,
-                            },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
+                        editContext,
+                        modelModifier,
+                        viewModelModifier,
+                        cursorModifierBag);
+                    textEditorService.ViewModelApi.MoveCursor(
+                        new KeyboardEventArgs
+                        {
+                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                            ShiftKey = true,
+                        },
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
+                    textEditorService.ViewModelApi.MoveCursor(
+                        new KeyboardEventArgs
+                        {
+                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                            ShiftKey = true,
+                        },
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
                 }
 
                 // Assert cursor's state
@@ -328,14 +332,15 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 Assert.Equal(3, primaryCursorModifier.SelectionEndingPositionIndex);
 
                 // Move left, no shift key.
-                await textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                        },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
+                textEditorService.ViewModelApi.MoveCursor(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                    },
+					editContext,
+					modelModifier,
+					viewModelModifier,
+					cursorModifierBag);
 
                 // Assert cursor's ending state
                 Assert.Equal(0, primaryCursorModifier.LineIndex);
@@ -346,18 +351,18 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveLeft()
+    public void MoveCursor_SelectText_SmallSelectionEndingPosition_Then_MoveLeft()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         textEditorService.PostUnique(
-            nameof(MoveCursorFactory_SelectText),
+            nameof(MoveCursor_SelectText),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -380,30 +385,33 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // This test case calls for a small selection ending position.
                     // If one has the cursor start at (lineIndex 0, columnIndex 0), this isn't possible.
                     {
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+							editContext,
+					        modelModifier,
+					        viewModelModifier,
+					        cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+                            editContext,
+                            modelModifier,
+                            viewModelModifier,
+                            cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
+                            editContext,
+                            modelModifier,
+                            viewModelModifier,
+                            cursorModifierBag);
                     }
 
                     // Assert cursor's state
@@ -414,33 +422,36 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                     // Now one can select left, to get a small selection ending position.
                     {
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
-                                new KeyboardEventArgs
-                                {
-                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                    ShiftKey = true,
-                                },
-                                resourceUri,
-                                viewModelKey)
-                            .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
-                                new KeyboardEventArgs
-                                {
-                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                    ShiftKey = true,
-                                },
-                                resourceUri,
-                                viewModelKey)
-                            .Invoke(editContext);
+                            editContext,
+                            modelModifier,
+                            viewModelModifier,
+                            cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
+                            new KeyboardEventArgs
+                            {
+                                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                                ShiftKey = true,
+                            },
+                            editContext,
+                            modelModifier,
+                            viewModelModifier,
+                            cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
+                            new KeyboardEventArgs
+                            {
+                                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                                ShiftKey = true,
+                            },
+                            editContext,
+                            modelModifier,
+                            viewModelModifier,
+                            cursorModifierBag);
                     }
                 }
 
@@ -451,14 +462,15 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 Assert.Equal(0, primaryCursorModifier.SelectionEndingPositionIndex);
 
                 // Move left, no shift key.
-                await textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                        },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
+                textEditorService.ViewModelApi.MoveCursor(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                    },
+					editContext,
+					modelModifier,
+					viewModelModifier,
+					cursorModifierBag);
 
                 // Assert cursor's ending state
                 Assert.Equal(0, primaryCursorModifier.LineIndex);
@@ -469,18 +481,18 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveDown()
+    public void MoveCursor_SelectText_SmallSelectionAnchorPosition_Then_MoveDown()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         textEditorService.PostUnique(
-            nameof(MoveCursorFactory_SelectText),
+            nameof(MoveCursor_SelectText),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -499,33 +511,36 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Select 3 characters
                 {
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
+                    textEditorService.ViewModelApi.MoveCursor(
                         new KeyboardEventArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
                         },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
-                            new KeyboardEventArgs
-                            {
-                                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                ShiftKey = true,
-                            },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
-                            new KeyboardEventArgs
-                            {
-                                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                ShiftKey = true,
-                            },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
+                    textEditorService.ViewModelApi.MoveCursor(
+                        new KeyboardEventArgs
+                        {
+                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                            ShiftKey = true,
+                        },
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
+                    textEditorService.ViewModelApi.MoveCursor(
+                        new KeyboardEventArgs
+                        {
+                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                            ShiftKey = true,
+                        },
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
                 }
 
                 // Assert cursor's state
@@ -535,14 +550,15 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 Assert.Equal(3, primaryCursorModifier.SelectionEndingPositionIndex);
 
                 // Move left, no shift key.
-                await textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
-                        },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
+                textEditorService.ViewModelApi.MoveCursor(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
+                    },
+					editContext,
+					modelModifier,
+					viewModelModifier,
+					cursorModifierBag);
 
                 // Assert cursor's ending state
                 Assert.Equal(2, primaryCursorModifier.LineIndex);
@@ -553,18 +569,18 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveDown()
+    public void MoveCursor_SelectText_SmallSelectionEndingPosition_Then_MoveDown()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         textEditorService.PostUnique(
-            nameof(MoveCursorFactory_SelectText),
+            nameof(MoveCursor_SelectText),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -587,30 +603,33 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // This test case calls for a small selection ending position.
                     // If one has the cursor start at (lineIndex 0, columnIndex 0), this isn't possible.
                     {
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
                     }
 
                     // Assert cursor's state
@@ -621,33 +640,36 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                     // Now one can select left, to get a small selection ending position.
                     {
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
-                                new KeyboardEventArgs
-                                {
-                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                    ShiftKey = true,
-                                },
-                                resourceUri,
-                                viewModelKey)
-                            .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
-                                new KeyboardEventArgs
-                                {
-                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                    ShiftKey = true,
-                                },
-                                resourceUri,
-                                viewModelKey)
-                            .Invoke(editContext);
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
+                            new KeyboardEventArgs
+                            {
+                                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                                ShiftKey = true,
+                            },
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
+                            new KeyboardEventArgs
+                            {
+                                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                                ShiftKey = true,
+                            },
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
                     }
                 }
 
@@ -658,14 +680,15 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 Assert.Equal(0, primaryCursorModifier.SelectionEndingPositionIndex);
 
                 // Move left, no shift key.
-                await textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
-                        },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
+                textEditorService.ViewModelApi.MoveCursor(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
+                    },
+					editContext,
+					modelModifier,
+					viewModelModifier,
+					cursorModifierBag);
 
                 // Assert cursor's ending state
                 Assert.Equal(1, primaryCursorModifier.LineIndex);
@@ -676,18 +699,18 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveUp()
+    public void MoveCursor_SelectText_SmallSelectionAnchorPosition_Then_MoveUp()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         textEditorService.PostUnique(
-            nameof(MoveCursorFactory_SelectText),
+            nameof(MoveCursor_SelectText),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -706,33 +729,36 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Select 3 characters
                 {
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
+                    textEditorService.ViewModelApi.MoveCursor(
                         new KeyboardEventArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
                         },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
-                            new KeyboardEventArgs
-                            {
-                                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                ShiftKey = true,
-                            },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
-                            new KeyboardEventArgs
-                            {
-                                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                ShiftKey = true,
-                            },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
+                    textEditorService.ViewModelApi.MoveCursor(
+                        new KeyboardEventArgs
+                        {
+                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                            ShiftKey = true,
+                        },
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
+                    textEditorService.ViewModelApi.MoveCursor(
+                        new KeyboardEventArgs
+                        {
+                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                            ShiftKey = true,
+                        },
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
                 }
 
                 // Assert cursor's state
@@ -742,14 +768,15 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 Assert.Equal(3, primaryCursorModifier.SelectionEndingPositionIndex);
 
                 // Move left, no shift key.
-                await textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
-                        },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
+                textEditorService.ViewModelApi.MoveCursor(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
+                    },
+					editContext,
+					modelModifier,
+					viewModelModifier,
+					cursorModifierBag);
 
                 // Assert cursor's ending state
                 //
@@ -763,18 +790,18 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveUp()
+    public void MoveCursor_SelectText_SmallSelectionEndingPosition_Then_MoveUp()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         textEditorService.PostUnique(
-            nameof(MoveCursorFactory_SelectText),
+            nameof(MoveCursor_SelectText),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -797,30 +824,33 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // This test case calls for a small selection ending position.
                     // If one has the cursor start at (lineIndex 0, columnIndex 0), this isn't possible.
                     {
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
                     }
 
                     // Assert cursor's state
@@ -831,33 +861,36 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                     // Now one can select left, to get a small selection ending position.
                     {
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
-                                new KeyboardEventArgs
-                                {
-                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                    ShiftKey = true,
-                                },
-                                resourceUri,
-                                viewModelKey)
-                            .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
-                                new KeyboardEventArgs
-                                {
-                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                    ShiftKey = true,
-                                },
-                                resourceUri,
-                                viewModelKey)
-                            .Invoke(editContext);
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
+                            new KeyboardEventArgs
+                            {
+                                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                                ShiftKey = true,
+                            },
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
+                            new KeyboardEventArgs
+                            {
+                                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                                ShiftKey = true,
+                            },
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
                     }
                 }
 
@@ -868,14 +901,15 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 Assert.Equal(0, primaryCursorModifier.SelectionEndingPositionIndex);
 
                 // Move left, no shift key.
-                await textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
-                        },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
+                textEditorService.ViewModelApi.MoveCursor(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
+                    },
+					editContext,
+					modelModifier,
+					viewModelModifier,
+					cursorModifierBag);
 
                 // Assert cursor's ending state
                 Assert.Equal(0, primaryCursorModifier.LineIndex);
@@ -886,18 +920,18 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionAnchorPosition_Then_MoveRight()
+    public void MoveCursor_SelectText_SmallSelectionAnchorPosition_Then_MoveRight()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         textEditorService.PostUnique(
-            nameof(MoveCursorFactory_SelectText),
+            nameof(MoveCursor_SelectText),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -916,33 +950,36 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Select 3 characters
                 {
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
+                    textEditorService.ViewModelApi.MoveCursor(
                         new KeyboardEventArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
                         },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
-                            new KeyboardEventArgs
-                            {
-                                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                ShiftKey = true,
-                            },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                    await textEditorService.ViewModelApi.MoveCursorFactory(
-                            new KeyboardEventArgs
-                            {
-                                Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                ShiftKey = true,
-                            },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
+                    textEditorService.ViewModelApi.MoveCursor(
+                        new KeyboardEventArgs
+                        {
+                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                            ShiftKey = true,
+                        },
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
+                    textEditorService.ViewModelApi.MoveCursor(
+                        new KeyboardEventArgs
+                        {
+                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                            ShiftKey = true,
+                        },
+						editContext,
+						modelModifier,
+						viewModelModifier,
+						cursorModifierBag);
                 }
 
                 // Assert cursor's state
@@ -952,14 +989,15 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 Assert.Equal(3, primaryCursorModifier.SelectionEndingPositionIndex);
 
                 // Move right, no shift key.
-                await textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                        },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
+                textEditorService.ViewModelApi.MoveCursor(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                    },
+					editContext,
+					modelModifier,
+					viewModelModifier,
+					cursorModifierBag);
 
                 // Assert cursor's ending state
                 Assert.Equal(1, primaryCursorModifier.LineIndex);
@@ -970,18 +1008,18 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
     [Fact]
-    public void MoveCursorFactory_SelectText_SmallSelectionEndingPosition_Then_MoveRight()
+    public void MoveCursor_SelectText_SmallSelectionEndingPosition_Then_MoveRight()
     {
         InitializeTextEditorViewModelApiTests(
             out var resourceUri, out var viewModelKey, out var textEditorService, out var serviceProvider);
 
         textEditorService.PostUnique(
-            nameof(MoveCursorFactory_SelectText),
+            nameof(MoveCursor_SelectText),
             async editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(resourceUri);
@@ -1004,30 +1042,33 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // This test case calls for a small selection ending position.
                     // If one has the cursor start at (lineIndex 0, columnIndex 0), this isn't possible.
                     {
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
                     }
 
                     // Assert cursor's state
@@ -1038,33 +1079,36 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                     // Now one can select left, to get a small selection ending position.
                     {
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
+                        textEditorService.ViewModelApi.MoveCursor(
                             new KeyboardEventArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
                             },
-                            resourceUri,
-                            viewModelKey)
-                        .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
-                                new KeyboardEventArgs
-                                {
-                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                    ShiftKey = true,
-                                },
-                                resourceUri,
-                                viewModelKey)
-                            .Invoke(editContext);
-                        await textEditorService.ViewModelApi.MoveCursorFactory(
-                                new KeyboardEventArgs
-                                {
-                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                                    ShiftKey = true,
-                                },
-                                resourceUri,
-                                viewModelKey)
-                            .Invoke(editContext);
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
+                            new KeyboardEventArgs
+                            {
+                                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                                ShiftKey = true,
+                            },
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
+                        textEditorService.ViewModelApi.MoveCursor(
+                            new KeyboardEventArgs
+                            {
+                                Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                                ShiftKey = true,
+                            },
+							editContext,
+							modelModifier,
+							viewModelModifier,
+							cursorModifierBag);
                     }
                 }
 
@@ -1075,14 +1119,15 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 Assert.Equal(0, primaryCursorModifier.SelectionEndingPositionIndex);
 
                 // Move right, no shift key.
-                await textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                        },
-                        resourceUri,
-                        viewModelKey)
-                    .Invoke(editContext);
+                textEditorService.ViewModelApi.MoveCursor(
+                    new KeyboardEventArgs
+                    {
+                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                    },
+					editContext,
+					modelModifier,
+					viewModelModifier,
+					cursorModifierBag);
 
                 // Assert cursor's ending state
                 Assert.Equal(1, primaryCursorModifier.LineIndex);
@@ -1093,10 +1138,10 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorUnsafeFactory(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursorUnsafe(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
     /// </summary>
     [Fact]
-    public void MoveCursorUnsafeFactory()
+    public void MoveCursorUnsafe()
     {
         throw new NotImplementedException();
     }
@@ -1124,55 +1169,55 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.RemeasureFactory(ResourceUri, Key{TextEditorViewModel}, string, int, CancellationToken)"/>
+    /// <see cref="TextEditorViewModelApi.Remeasure(ResourceUri, Key{TextEditorViewModel}, string, int, CancellationToken)"/>
     /// </summary>
     [Fact]
-    public void RemeasureFactory()
+    public void Remeasure()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.ScrollIntoViewFactory(string, string, int?, int?)"/>
+    /// <see cref="TextEditorViewModelApi.ScrollIntoView(string, string, int?, int?)"/>
     /// </summary>
     [Fact]
-    public void ScrollIntoViewFactory_LineIndex_ColumnIndex()
+    public void ScrollIntoView_LineIndex_ColumnIndex()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.ScrollIntoViewFactory(string, string, int)"/>
+    /// <see cref="TextEditorViewModelApi.ScrollIntoView(string, string, int)"/>
     /// </summary>
     [Fact]
-    public void ScrollIntoViewFactory_PositionIndex()
+    public void ScrollIntoView_PositionIndex()
     {
         throw new NotImplementedException();
     }
     
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.ScrollIntoViewFactory(ResourceUri, Key{TextEditorViewModel}, TextEditorTextSpan)"/>
+    /// <see cref="TextEditorViewModelApi.ScrollIntoView(ResourceUri, Key{TextEditorViewModel}, TextEditorTextSpan)"/>
     /// </summary>
     [Fact]
-    public void ScrollIntoViewFactory_TextSpan()
+    public void ScrollIntoView_TextSpan()
     {
         throw new NotImplementedException();
     }
     
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.SetScrollPositionFactory(string, string, double?, double?)"/>
+    /// <see cref="TextEditorViewModelApi.SetScrollPosition(string, string, double?, double?)"/>
     /// </summary>
     [Fact]
-    public void SetScrollPositionFactory()
+    public void SetScrollPosition()
     {
         throw new NotImplementedException();
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.SetGutterScrollTopFactory(string, double)"/>
+    /// <see cref="TextEditorViewModelApi.SetGutterScrollTop(string, double)"/>
     /// </summary>
     [Fact]
-    public void SetGutterScrollTopFactory()
+    public void SetGutterScrollTop()
     {
         throw new NotImplementedException();
     }
@@ -1230,10 +1275,10 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.WithValueFactory(Key{TextEditorViewModel}, Func{TextEditorViewModel, TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.WithValue(Key{TextEditorViewModel}, Func{TextEditorViewModel, TextEditorViewModel})"/>
     /// </summary>
     [Fact]
-    public void WithValueFactory()
+    public void WithValue()
     {
         TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
@@ -1248,14 +1293,24 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             inViewModel.UnsafeState.ShouldSetFocusAfterNextRender);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ViewModelApi.WithValueFactory),
-            textEditorService.ViewModelApi.WithValueFactory(
-                inViewModel.ViewModelKey,
-                inState =>
-                {
-                    inState.UnsafeState.ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender;
-                    return inState with { };
-                }));
+            nameof(textEditorService.ViewModelApi.WithValue),
+            editContext =>
+            {
+				var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
+
+				if (viewModelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ViewModelApi.WithValue(
+                    editContext,
+					viewModelModifier,
+                    inState =>
+                    {
+                        inState.UnsafeState.ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender;
+                        return inState with { };
+                    });
+                return Task.CompletedTask;
+			});
 
         var modifiedViewModel = textEditorService.ViewModelApi.GetOrDefault(inViewModel.ViewModelKey);
 
@@ -1265,10 +1320,10 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.WithTaskFactory(Key{TextEditorViewModel}, Func{TextEditorViewModel, Task{Func{TextEditorViewModel, TextEditorViewModel}}})"/>
+    /// <see cref="TextEditorViewModelApi.WithTask(Key{TextEditorViewModel}, Func{TextEditorViewModel, Task{Func{TextEditorViewModel, TextEditorViewModel}}})"/>
     /// </summary>
     [Fact]
-    public void WithTaskFactory()
+    public void WithTask()
     {
         throw new NotImplementedException();
     }

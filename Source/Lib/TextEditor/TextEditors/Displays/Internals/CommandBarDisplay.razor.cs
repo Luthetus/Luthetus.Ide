@@ -54,13 +54,24 @@ public partial class CommandBarDisplay : FluxorComponent
                 nameof(HandleOnKeyDown),
                 RenderBatch.ViewModel.ResourceUri,
                 RenderBatch.ViewModel.ViewModelKey,
-                TextEditorService.ViewModelApi.WithValueFactory(
-                    RenderBatch.ViewModel.ViewModelKey,
-                    previousViewModel => previousViewModel with
+                editContext =>
+                {
+                	var modelModifier = editContext.GetModelModifier(RenderBatch.ViewModel.ResourceUri);
+		            var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		
+		            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+		                return Task.CompletedTask;
+
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                     {
                         CommandBarValue = string.Empty,
                         ShowCommandBar = false
-                    }));
+                    };
+
+                    return Task.CompletedTask;
+                });
         }
     }
 }

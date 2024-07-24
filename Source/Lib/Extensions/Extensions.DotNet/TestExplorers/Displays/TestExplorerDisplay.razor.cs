@@ -5,6 +5,7 @@ using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.TreeViews.States;
 using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -27,6 +28,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<TreeViewState> TreeViewStateWrap { get; set; } = null!;
+    [Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 	[Inject]
 	private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
@@ -133,26 +136,25 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private void RegisterDetailsTextEditor(TextEditorModel model)
 	{
 		TextEditorService.PostUnique(
-			nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-			async editContext =>
+			nameof(TextEditorService.ModelApi.AddPresentationModel),
+			editContext =>
 			{
-				await TextEditorService.ModelApi.AddPresentationModelFactory(
-						model.ResourceUri,
-						TerminalPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+			
+				TextEditorService.ModelApi.AddPresentationModel(
+					editContext,
+					modelModifier,
+					TerminalPresentationFacts.EmptyPresentationModel);
 
-				await TextEditorService.ModelApi.AddPresentationModelFactory(
-						model.ResourceUri,
-						CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				TextEditorService.ModelApi.AddPresentationModel(
+					editContext,
+					modelModifier,
+					CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-				await TextEditorService.ModelApi.AddPresentationModelFactory(
-						model.ResourceUri,
-						FindOverlayPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				TextEditorService.ModelApi.AddPresentationModel(
+					editContext,
+					modelModifier,
+					FindOverlayPresentationFacts.EmptyPresentationModel);
 
 				model.CompilerService.RegisterResource(model.ResourceUri);
 
@@ -172,6 +174,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 				{
 					FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
 				};
+				
+				return Task.CompletedTask;
 			});
 	}
 }

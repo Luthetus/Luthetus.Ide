@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 
@@ -16,7 +16,8 @@ public partial record AppOptionsState(CommonOptions Options)
         DEFAULT_FONT_SIZE_IN_PIXELS,
         DEFAULT_ICON_SIZE_IN_PIXELS,
         ThemeFacts.VisualStudioDarkThemeClone.Key,
-        null);
+        FontFamily: null,
+        ShowPanelTitles: false);
 
     public AppOptionsState() : this(DefaultCommonOptions)
     {

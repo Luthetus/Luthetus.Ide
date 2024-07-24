@@ -13,6 +13,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
@@ -38,6 +39,8 @@ public partial class GitDisplay : FluxorComponent
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
 	private const string _dropdownMenuHtmlElementId = "luth_ide_git-display-dropdown-menu";
 

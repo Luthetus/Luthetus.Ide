@@ -410,7 +410,18 @@ public partial class AdhocTest
 
         textEditorService.PostUnique(
             nameof(ContentList_Change),
-            textEditorService.ModelApi.ApplySyntaxHighlightingFactory(refModel.ResourceUri));
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(refModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.ApplySyntaxHighlighting(
+                    editContext,
+					modelModifier);
+                return Task.CompletedTask;
+            });
 
         // ContentList
         {

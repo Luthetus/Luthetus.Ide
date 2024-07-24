@@ -14,7 +14,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnKeyDownLateBatching : ITextEditorTask
+public class OnKeyDownLateBatching : ITextEditorWork
 {
     public OnKeyDownLateBatching(
 			TextEditorComponentData componentData,
@@ -103,24 +103,12 @@ public class OnKeyDownLateBatching : ITextEditorTask
                             viewModelModifier.ViewModel.ViewModelKey,
 							ComponentData,
 							EditContext.TextEditorService,
-							ComponentData.ServiceProvider);
+							ComponentData.ServiceProvider,
+							EditContext);
 
-                        if (command is TextEditorCommand textEditorCommand &&
-                            textEditorCommand.TextEditorEditFactory is not null)
-                        {
-							// Avoid invoking ITextEditorService.Post(...) since we already have an IEditContext.
-                            await textEditorCommand.TextEditorEditFactory
-                                .Invoke(commandArgs)
-                                .Invoke(EditContext)
-                                .ConfigureAwait(false);
-                        }
-                        else
-                        {
-							// This isn't desirable, it will re-post using 'ITextEditorService.Post(...)'
-                            await command.CommandFunc
-                                .Invoke(commandArgs)
-                                .ConfigureAwait(false);
-                        }
+                        await command.CommandFunc
+                            .Invoke(commandArgs)
+                            .ConfigureAwait(false);
 	                    break;
 	                case KeyboardEventArgsKind.Movement:
 	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
@@ -134,12 +122,12 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                    }
 	                    else
 	                    {
-	                        await EditContext.TextEditorService.ViewModelApi.MoveCursorFactory(
-	                                keyboardEventArgs,
-	                                modelModifier.ResourceUri,
-	                                viewModelModifier.ViewModel.ViewModelKey)
-	                            .Invoke(EditContext)
-	                            .ConfigureAwait(false);
+	                        EditContext.TextEditorService.ViewModelApi.MoveCursor(
+                        		keyboardEventArgs,
+						        EditContext,
+						        modelModifier,
+						        viewModelModifier,
+						        cursorModifierBag);
 	
 							viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 							{
@@ -266,13 +254,12 @@ public class OnKeyDownLateBatching : ITextEditorTask
 			                }
 							else
 							{
-								await EditContext.TextEditorService.ModelApi.HandleKeyboardEventFactory(
-				                        ResourceUri,
-				                        ViewModelKey,
-				                        keyboardEventArgs,
-				                        CancellationToken.None)
-				                    .Invoke(EditContext)
-				                    .ConfigureAwait(false);
+								EditContext.TextEditorService.ModelApi.HandleKeyboardEvent(
+									EditContext,
+							        modelModifier,
+							        cursorModifierBag,
+							        keyboardEventArgs,
+							        CancellationToken.None);
 							}
 						}
 	                    break;
@@ -286,23 +273,26 @@ public class OnKeyDownLateBatching : ITextEditorTask
 	                    viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 	                }
 	
-					if (ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory is not null)
+					if (ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync is not null)
 			        {
-			            await ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsyncFactory.Invoke(
-				                ResourceUri,
-				                ViewModelKey,
-				                keyboardEventArgs)
-							.Invoke(EditContext)
+			            await ComponentData.ViewModelDisplayOptions.AfterOnKeyDownAsync.Invoke(
+				                EditContext,
+						        modelModifier,
+						        viewModelModifier,
+						        cursorModifierBag,
+						        keyboardEventArgs,
+								ComponentData)
 	                        .ConfigureAwait(false);
 			        }
 					else
 					{
-						await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsyncFactory(
-	                            modelModifier.ResourceUri,
-	                            viewModelModifier.ViewModel.ViewModelKey,
-	                            keyboardEventArgs,
+						await TextEditorCommandDefaultFunctions.HandleAfterOnKeyDownAsync(
+								EditContext,
+						        modelModifier,
+						        viewModelModifier,
+						        cursorModifierBag,
+						        keyboardEventArgs,
 								ComponentData)
-	                        .Invoke(EditContext)
 	                        .ConfigureAwait(false);
 					}
 	            }

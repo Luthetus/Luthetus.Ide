@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnWheelBatch : ITextEditorTask
+public class OnWheelBatch : ITextEditorWork
 {
     public OnWheelBatch(
         List<WheelEventArgs> wheelEventArgsList,
@@ -67,20 +67,18 @@ public class OnWheelBatch : ITextEditorTask
 
             if (horizontalMutateScrollPositionByPixels is not null)
             {
-                await EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPositionFactory(
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        horizontalMutateScrollPositionByPixels.Value)
-                    .Invoke(EditContext)
-                    .ConfigureAwait(false);
+                EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+                    EditContext,
+			        viewModelModifier,
+			        horizontalMutateScrollPositionByPixels.Value);
             }
 
             if (verticalMutateScrollPositionByPixels is not null)
             {
-                await EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPositionFactory(
-                        viewModelModifier.ViewModel.ViewModelKey,
-                        verticalMutateScrollPositionByPixels.Value)
-                    .Invoke(EditContext)
-                    .ConfigureAwait(false);
+                EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+                    EditContext,
+			        viewModelModifier,
+			        verticalMutateScrollPositionByPixels.Value);
             }
 		}
 		finally

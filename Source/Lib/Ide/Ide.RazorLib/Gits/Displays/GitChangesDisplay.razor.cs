@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -13,6 +14,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     private static readonly Key<TextEditorDiffModel> DiffModelKey = Key<TextEditorDiffModel>.NewKey();
 
@@ -41,25 +44,25 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     new Category(nameof(GitChangesDisplay)));
 
                 TextEditorService.PostUnique(
-                    nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-                    async editContext =>
+                    nameof(TextEditorService.ModelApi.AddPresentationModel),
+                    editContext =>
                     {
-                        await TextEditorService.ModelApi.AddPresentationModelFactory(
-                                InResourceUri,
-                                DiffPresentationFacts.EmptyInPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                    	var modelModifier = editContext.GetModelModifier(InResourceUri);
+                    
+                        TextEditorService.ModelApi.AddPresentationModel(
+                        	editContext,
+                            modelModifier,
+                            DiffPresentationFacts.EmptyInPresentationModel);
 
-                        await TextEditorService.ModelApi.AddPresentationModelFactory(
-                                InResourceUri,
-                                DiffPresentationFacts.EmptyOutPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                        TextEditorService.ModelApi.AddPresentationModel(
+                        	editContext,
+                            modelModifier,
+                            DiffPresentationFacts.EmptyOutPresentationModel);
 
                         var viewModelModifier = editContext.GetViewModelModifier(InViewModelKey);
 
                         if (viewModelModifier is null)
-                            return;
+                            return Task.CompletedTask;
 
                         var presentationKeys = new[]
                         {
@@ -70,6 +73,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         {
                             FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
                         };
+                        
+                        return Task.CompletedTask;
                     });
             }
             
@@ -88,25 +93,25 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     new Category(nameof(GitChangesDisplay)));
 
                 TextEditorService.PostUnique(
-                    nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-                    async editContext =>
+                    nameof(TextEditorService.ModelApi.AddPresentationModel),
+                    editContext =>
                     {
-                        await TextEditorService.ModelApi.AddPresentationModelFactory(
-                                OutResourceUri,
-                                DiffPresentationFacts.EmptyInPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                    	var modelModifier = editContext.GetModelModifier(OutResourceUri);
+                    
+                        TextEditorService.ModelApi.AddPresentationModel(
+                    		editContext,
+                            modelModifier,
+                            DiffPresentationFacts.EmptyInPresentationModel);
 
-                        await TextEditorService.ModelApi.AddPresentationModelFactory(
-                                OutResourceUri,
-                                DiffPresentationFacts.EmptyOutPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                        TextEditorService.ModelApi.AddPresentationModel(
+                    		editContext,
+                            modelModifier,
+                            DiffPresentationFacts.EmptyOutPresentationModel);
 
                         var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
 
                         if (viewModelModifier is null)
-                            return;
+                            return Task.CompletedTask;
 
                         var presentationKeys = new[]
                         {
@@ -117,6 +122,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         {
                             FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
                         };
+
+                        return Task.CompletedTask;
                     });
             }
 

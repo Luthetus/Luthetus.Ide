@@ -90,361 +90,204 @@ public class TextEditorModelApi : ITextEditorModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public TextEditorEdit UndoEditFactory(ResourceUri resourceUri)
+    public void UndoEdit(
+	    IEditContext editContext,
+        TextEditorModelModifier modelModifier)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.UndoEdit();
-            return Task.CompletedTask;
-        };
+        modelModifier.UndoEdit();
     }
 
-    public TextEditorEdit SetUsingLineEndKindFactory(
-        ResourceUri resourceUri,
+    public void SetUsingLineEndKind(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         LineEndKind lineEndKind)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.SetLineEndKindPreference(lineEndKind);
-            return Task.CompletedTask;
-        };
+        modelModifier.SetLineEndKindPreference(lineEndKind);
     }
 
-    public TextEditorEdit SetResourceDataFactory(
-        ResourceUri resourceUri,
+    public void SetResourceData(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         DateTime resourceLastWriteTime)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.SetResourceData(resourceUri, resourceLastWriteTime);
-            return Task.CompletedTask;
-        };
+        modelModifier.SetResourceData(modelModifier.ResourceUri, resourceLastWriteTime);
     }
 
-    public TextEditorEdit ReloadFactory(
-        ResourceUri resourceUri,
+    public void Reload(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         string content,
         DateTime resourceLastWriteTime)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.SetContent(content);
-            modelModifier.SetResourceData(resourceUri, resourceLastWriteTime);
-            return Task.CompletedTask;
-        };
+        modelModifier.SetContent(content);
+        modelModifier.SetResourceData(modelModifier.ResourceUri, resourceLastWriteTime);
     }
 
-    public TextEditorEdit RedoEditFactory(ResourceUri resourceUri)
+    public void RedoEdit(
+    	IEditContext editContext,
+        TextEditorModelModifier modelModifier)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.RedoEdit();
-            return Task.CompletedTask;
-        };
+        modelModifier.RedoEdit();
     }
 
-    public TextEditorEdit InsertTextFactory(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        string content,
-        CancellationToken cancellationToken)
-    {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
-            return Task.CompletedTask;
-        };
-    }
-
-    public TextEditorEdit InsertTextUnsafeFactory(
-        ResourceUri resourceUri,
+    public void InsertText(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
-            return Task.CompletedTask;
-        };
+        modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
     }
 
-    public TextEditorEdit HandleKeyboardEventFactory(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+    public void InsertTextUnsafe(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        string content,
+        CancellationToken cancellationToken)
+    {
+        modelModifier.Insert(content, cursorModifierBag, cancellationToken: cancellationToken);
+    }
+
+    public void HandleKeyboardEvent(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         KeyboardEventArgs keyboardEventArgs,
         CancellationToken cancellationToken)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.HandleKeyboardEvent(keyboardEventArgs, cursorModifierBag, cancellationToken);
-            return Task.CompletedTask;
-        };
+        modelModifier.HandleKeyboardEvent(keyboardEventArgs, cursorModifierBag, cancellationToken);
     }
 
-    public TextEditorEdit HandleKeyboardEventUnsafeFactory(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
+    public void HandleKeyboardEventUnsafe(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
         KeyboardEventArgs keyboardEventArgs,
-        CancellationToken cancellationToken,
-        CursorModifierBagTextEditor cursorModifierBag)
-    {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.HandleKeyboardEvent(keyboardEventArgs, cursorModifierBag, cancellationToken);
-            return Task.CompletedTask;
-        };
-    }
-
-    public TextEditorEdit DeleteTextByRangeFactory(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        int count,
         CancellationToken cancellationToken)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
-            return Task.CompletedTask;
-        };
+        modelModifier.HandleKeyboardEvent(keyboardEventArgs, cursorModifierBag, cancellationToken);
     }
 
-    public TextEditorEdit DeleteTextByRangeUnsafeFactory(
-        ResourceUri resourceUri,
+    public void DeleteTextByRange(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
-            return Task.CompletedTask;
-        };
+        modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
     }
 
-    public TextEditorEdit DeleteTextByMotionFactory(
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey,
-        MotionKind motionKind,
+    public void DeleteTextByRangeUnsafe(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        int count,
         CancellationToken cancellationToken)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifierByViewModelKey(viewModelKey);
-            var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
-            return Task.CompletedTask;
-        };
+        modelModifier.DeleteByRange(count, cursorModifierBag, cancellationToken);
     }
 
-    public TextEditorEdit DeleteTextByMotionUnsafeFactory(
-        ResourceUri resourceUri,
+    public void DeleteTextByMotion(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
-            return Task.CompletedTask;
-        };
+        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
     }
 
-    public TextEditorEdit AddPresentationModelFactory(
-        ResourceUri resourceUri,
+    public void DeleteTextByMotionUnsafe(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        MotionKind motionKind,
+        CancellationToken cancellationToken)
+    {
+        modelModifier.DeleteTextByMotion(motionKind, cursorModifierBag, cancellationToken);
+    }
+
+    public void AddPresentationModel(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         TextEditorPresentationModel emptyPresentationModel)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.PerformRegisterPresentationModelAction(emptyPresentationModel);
-            return Task.CompletedTask;
-        };
+        modelModifier.PerformRegisterPresentationModelAction(emptyPresentationModel);
     }
 
-    public TextEditorEdit StartPendingCalculatePresentationModelFactory(
-        ResourceUri resourceUri,
+    public void StartPendingCalculatePresentationModel(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.StartPendingCalculatePresentationModel(presentationKey, emptyPresentationModel);
-            return Task.CompletedTask;
-        };
+        modelModifier.StartPendingCalculatePresentationModel(presentationKey, emptyPresentationModel);
     }
 
-    public TextEditorEdit CompletePendingCalculatePresentationModel(
-        ResourceUri resourceUri,
+    public void CompletePendingCalculatePresentationModel(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
         ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
     {
-        return editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            modelModifier.CompletePendingCalculatePresentationModel(
-                presentationKey,
-                emptyPresentationModel,
-                calculatedTextSpans);
-
-            return Task.CompletedTask;
-        };
+        modelModifier.CompletePendingCalculatePresentationModel(
+            presentationKey,
+            emptyPresentationModel,
+            calculatedTextSpans);
     }
 
-    public TextEditorEdit ApplyDecorationRangeFactory(
-        ResourceUri resourceUri,
+    public void ApplyDecorationRange(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier,
         IEnumerable<TextEditorTextSpan> textSpans)
     {
-        return editContext =>
+        var localRichCharacterList = modelModifier.RichCharacterList;
+
+        var positionsPainted = new HashSet<int>();
+
+        foreach (var textEditorTextSpan in textSpans)
         {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
-
-            if (modelModifier is null)
-                return Task.CompletedTask;
-
-            var localRichCharacterList = modelModifier.RichCharacterList;
-
-            var positionsPainted = new HashSet<int>();
-
-            foreach (var textEditorTextSpan in textSpans)
+            for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
             {
-                for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
-                {
-                    if (i < 0 || i >= localRichCharacterList.Count)
-                        continue;
+                if (i < 0 || i >= localRichCharacterList.Count)
+                    continue;
 
-                    modelModifier.__SetDecorationByte(i, textEditorTextSpan.DecorationByte);
-                    positionsPainted.Add(i);
-                }
+                modelModifier.__SetDecorationByte(i, textEditorTextSpan.DecorationByte);
+                positionsPainted.Add(i);
             }
+        }
 
-            for (var i = 0; i < localRichCharacterList.Count - 1; i++)
+        for (var i = 0; i < localRichCharacterList.Count - 1; i++)
+        {
+            if (!positionsPainted.Contains(i))
             {
-                if (!positionsPainted.Contains(i))
-                {
-                    // DecorationByte of 0 is to be 'None'
-                    modelModifier.__SetDecorationByte(i, 0);
-                }
+                // DecorationByte of 0 is to be 'None'
+                modelModifier.__SetDecorationByte(i, 0);
             }
-
-            return Task.CompletedTask;
-        };
+        }
     }
 
-    public TextEditorEdit ApplySyntaxHighlightingFactory(
-        ResourceUri resourceUri)
+    public void ApplySyntaxHighlighting(
+        IEditContext editContext,
+        TextEditorModelModifier modelModifier)
     {
-        return async editContext =>
-        {
-            var modelModifier = editContext.GetModelModifier(resourceUri);
+        var syntacticTextSpansList = modelModifier.CompilerService.GetTokenTextSpansFor(modelModifier.ResourceUri);
+        var symbolsList = modelModifier.CompilerService.GetSymbolsFor(modelModifier.ResourceUri);
 
-            if (modelModifier is null)
-                return;
+        var symbolTextSpansList = symbolsList.Select(s => s.TextSpan);
 
-            var syntacticTextSpansList = modelModifier.CompilerService.GetTokenTextSpansFor(modelModifier.ResourceUri);
-            var symbolsList = modelModifier.CompilerService.GetSymbolsFor(modelModifier.ResourceUri);
+        var textSpanList = new List<TextEditorTextSpan>();
+        textSpanList.AddRange(syntacticTextSpansList);
+        textSpanList.AddRange(symbolTextSpansList);
 
-            var symbolTextSpansList = symbolsList.Select(s => s.TextSpan);
-
-            var textSpanList = new List<TextEditorTextSpan>();
-            textSpanList.AddRange(syntacticTextSpansList);
-            textSpanList.AddRange(symbolTextSpansList);
-
-            await ApplyDecorationRangeFactory(
-                    resourceUri,
-                    textSpanList)
-                .Invoke(editContext)
-                .ConfigureAwait(false);
-        };
+        ApplyDecorationRange(
+        	editContext,
+            modelModifier,
+            textSpanList);
     }
     #endregion
 

@@ -50,8 +50,10 @@ public static class SyntaxTextObjectVim
         return false;
     }
 
-    public static TextEditorEdit MoveCursorOneColumnLeftFactory(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    public static Func<IEditContext, Task> MoveCursorOneColumnLeftFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
         {
@@ -63,22 +65,24 @@ public static class SyntaxTextObjectVim
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
-                    new KeyboardEventArgs
-                    {
-                        Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
-                        ShiftKey = commandArgs.ShiftKey
-                    },
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey)
-                .Invoke(editContext);
-
+            commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+        		new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+		        editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag);
             return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEdit MoveCursorOneRowDownFactory(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    public static Func<IEditContext, Task> MoveCursorOneRowDownFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
         {
@@ -90,20 +94,24 @@ public static class SyntaxTextObjectVim
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
-                    new KeyboardEventArgs
-                    {
-                        Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
-                        ShiftKey = commandArgs.ShiftKey
-                    },
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey)
-                .Invoke(editContext);
+            commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+            	new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+		        editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag);
+		    return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEdit MoveCursorOneRowUpFactory(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    public static Func<IEditContext, Task> MoveCursorOneRowUpFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
         {
@@ -115,20 +123,24 @@ public static class SyntaxTextObjectVim
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
-                    new KeyboardEventArgs
-                    {
-                        Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
-                        ShiftKey = commandArgs.ShiftKey
-                    },
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey)
-                .Invoke(editContext);
+            commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+		        editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag);
+		    return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEdit MoveCursorOneColumnRightFactory(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    public static Func<IEditContext, Task> MoveCursorOneColumnRightFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
         {
@@ -140,20 +152,24 @@ public static class SyntaxTextObjectVim
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
-                    new KeyboardEventArgs
-                    {
-                        Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                        ShiftKey = commandArgs.ShiftKey
-                    },
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey)
-                .Invoke(editContext);
+            commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+		        editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag);
+		    return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEdit MoveCursorEndCurrentLineFactory(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    public static Func<IEditContext, Task> MoveCursorEndCurrentLineFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
         {
@@ -165,20 +181,24 @@ public static class SyntaxTextObjectVim
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
-                    new KeyboardEventArgs
-                    {
-                        Key = KeyboardKeyFacts.MovementKeys.END,
-                        ShiftKey = commandArgs.ShiftKey
-                    },
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey)
-                .Invoke(editContext);
+            commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.END,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+		        editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag);
+		    return Task.CompletedTask;
         };
     }
 
-    public static TextEditorEdit MoveCursorStartCurrentLineFactory(
-        ResourceUri modelResourceUri, Key<TextEditorViewModel> viewModelKey, TextEditorCommandArgs commandArgs)
+    public static Func<IEditContext, Task> MoveCursorStartCurrentLineFactory(
+        ResourceUri modelResourceUri,
+        Key<TextEditorViewModel> viewModelKey,
+        TextEditorCommandArgs commandArgs)
     {
         return (IEditContext editContext) =>
         {
@@ -190,15 +210,17 @@ public static class SyntaxTextObjectVim
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
 
-            return commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
-                    new KeyboardEventArgs
-                    {
-                        Key = KeyboardKeyFacts.MovementKeys.HOME,
-                        ShiftKey = commandArgs.ShiftKey
-                    },
-                    modelModifier.ResourceUri,
-                    viewModelModifier.ViewModel.ViewModelKey)
-                .Invoke(editContext);
+            commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+                new KeyboardEventArgs
+                {
+                    Key = KeyboardKeyFacts.MovementKeys.HOME,
+                    ShiftKey = commandArgs.ShiftKey
+                },
+		        editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag);
+		    return Task.CompletedTask;
         };
     }
 
@@ -219,13 +241,13 @@ public static class SyntaxTextObjectVim
             switch (currentToken.KeymapArgument.Code)
             {
                 case "KeyW":
-                    textEditorCommand = TextEditorCommandVimFacts.Motions.Word;
+                    textEditorCommand = TextEditorCommandVimFacts.Motions.WordCommand;
                     return true;
                 case "KeyE":
-                    textEditorCommand = TextEditorCommandVimFacts.Motions.End;
+                    textEditorCommand = TextEditorCommandVimFacts.Motions.EndCommand;
                     return true;
                 case "KeyB":
-                    textEditorCommand = TextEditorCommandVimFacts.Motions.Back;
+                    textEditorCommand = TextEditorCommandVimFacts.Motions.BackCommand;
                     return true;
                 case "KeyH":
                     {
@@ -244,19 +266,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ViewModelKey,
                                         commandArgs));
 								return Task.CompletedTask;
-                            })
-                        {
-                            TextEditorEditFactory = interfaceCommandArgs =>
-                            {
-                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                                commandArgs.ShiftKey = shiftKey;
-
-                                return MoveCursorOneColumnLeftFactory(
-                                    commandArgs.ModelResourceUri,
-                                    commandArgs.ViewModelKey,
-                                    commandArgs);
-                            }
-                        };
+                            });
 
                         return true;
                     }
@@ -277,19 +287,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ViewModelKey,
                                         commandArgs));
 								return Task.CompletedTask;
-                            })
-                        {
-                            TextEditorEditFactory = interfaceCommandArgs =>
-                            {
-                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                                commandArgs.ShiftKey = shiftKey;
-
-                                return MoveCursorOneRowDownFactory(
-                                    commandArgs.ModelResourceUri,
-                                    commandArgs.ViewModelKey,
-                                    commandArgs);
-                            }
-                        };
+                            });
 
                         return true;
                     }
@@ -310,19 +308,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ViewModelKey,
                                         commandArgs));
 								return Task.CompletedTask;
-                            })
-                        {
-                            TextEditorEditFactory = interfaceCommandArgs =>
-                            {
-                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                                commandArgs.ShiftKey = shiftKey;
-
-                                return MoveCursorOneRowUpFactory(
-                                    commandArgs.ModelResourceUri,
-                                    commandArgs.ViewModelKey,
-                                    commandArgs);
-                            }
-                        };
+                            });
 
                         return true;
                     }
@@ -343,19 +329,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ViewModelKey,
                                         commandArgs));
 								return Task.CompletedTask;
-                            })
-                        {
-                            TextEditorEditFactory = interfaceCommandArgs =>
-                            {
-                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                                commandArgs.ShiftKey = shiftKey;
-
-                                return MoveCursorOneColumnRightFactory(
-                                    commandArgs.ModelResourceUri,
-                                    commandArgs.ViewModelKey,
-                                    commandArgs);
-                            }
-                        };
+                            });
 
                         return true;
                     }
@@ -382,19 +356,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ViewModelKey,
                                         commandArgs));
 								return Task.CompletedTask;
-                            })
-                        {
-                            TextEditorEditFactory = interfaceCommandArgs =>
-                            {
-                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                                commandArgs.ShiftKey = shiftKey;
-
-                                return MoveCursorEndCurrentLineFactory(
-                                    commandArgs.ModelResourceUri,
-                                    commandArgs.ViewModelKey,
-                                    commandArgs);
-                            }
-                        };
+                            });
 
                         return true;
                     }
@@ -415,19 +377,7 @@ public static class SyntaxTextObjectVim
                                         commandArgs.ViewModelKey,
                                         commandArgs));
 								return Task.CompletedTask;
-                            })
-                        {
-                            TextEditorEditFactory = interfaceCommandArgs =>
-                            {
-                                var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-                                commandArgs.ShiftKey = shiftKey;
-
-                                return MoveCursorStartCurrentLineFactory(
-                                    commandArgs.ModelResourceUri,
-                                    commandArgs.ViewModelKey,
-                                    commandArgs);
-                            }
-                        };
+                            });
 
                         return true;
                     }
