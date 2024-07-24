@@ -182,7 +182,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             withFunc));
     }
 
-    public async Task WithTask(
+    public async Task WithTaskAsync(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
@@ -953,7 +953,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 		}
     }
 
-    public async Task Remeasure(
+    public async Task RemeasureAsync(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,
@@ -967,11 +967,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				countOfTestCharacters)
 			.ConfigureAwait(false);
 
-		// throw new NotImplementedException("Goal: Rewrite TextEditorMeasurements. (2024-05-09)");
-		//
-		// This line of code was not removed from 'CalculateVirtualizationResultFactory(...)'
-		// in order to keep the development website working and just make small incremental changes.
-		// Therefore, do not forget to th remove this line from 'CalculateVirtualizationResultFactory(...)'.
 		var textEditorMeasurements = await _textEditorService.ViewModelApi
 			.GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
 			.ConfigureAwait(false);

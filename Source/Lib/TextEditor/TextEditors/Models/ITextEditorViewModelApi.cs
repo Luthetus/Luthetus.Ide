@@ -42,7 +42,7 @@ public interface ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         Func<TextEditorViewModel, TextEditorViewModel> withFunc);
 
-    public Task WithTask(
+    public Task WithTaskAsync(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
@@ -149,7 +149,7 @@ public interface ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken);
 
-    public Task Remeasure(
+    public Task RemeasureAsync(
         IEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,

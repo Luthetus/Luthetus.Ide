@@ -217,14 +217,19 @@ public partial class IdeHeader : ComponentBase
                     if (activeViewModel is null)
 						return Task.CompletedTask;
 
-					TextEditorCommandDefaultFacts.ShowFindOverlay.CommandFunc.Invoke(
-						new TextEditorCommandArgs(
-							ResourceUri.Empty,
-					        activeViewModel.ViewModelKey,
-							null,
-							TextEditorService,
-					        ServiceProvider,
-					        null));
+					TextEditorService.PostUnique(
+						nameof(TextEditorCommandDefaultFacts.ShowFindOverlay),
+						editContext =>
+						{
+                            return TextEditorCommandDefaultFacts.ShowFindOverlay.CommandFunc.Invoke(
+								new TextEditorCommandArgs(
+									ResourceUri.Empty,
+									activeViewModel.ViewModelKey,
+									null,
+									TextEditorService,
+									ServiceProvider,
+									editContext));
+                        });
 
 					return Task.CompletedTask;
 				});

@@ -168,27 +168,48 @@ public partial class ContextMenu : ComponentBase
         return Task.CompletedTask;
     }
 
-    private async Task CutMenuOption()
+    private Task CutMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Cut.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.Cut),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.Cut.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
-    private async Task CopyMenuOption()
+    private Task CopyMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.Copy.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.Copy),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.Copy.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
-    private async Task PasteMenuOption()
+    private Task PasteMenuOption()
     {
         var commandArgs = ConstructCommandArgs();
-        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.PasteCommand),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 }

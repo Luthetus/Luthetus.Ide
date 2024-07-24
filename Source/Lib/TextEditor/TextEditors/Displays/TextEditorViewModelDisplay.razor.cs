@@ -588,13 +588,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 				if (viewModelModifier is null)
 					return Task.CompletedTask;
 
-            	TextEditorService.ViewModelApi.Remeasure(
+            	return TextEditorService.ViewModelApi.RemeasureAsync(
             		editContext,
 			        viewModelModifier,
 			        localMeasureCharacterWidthAndRowHeightElementId,
 	                countOfTestCharacters,
-			        CancellationToken.None);
-				return Task.CompletedTask;	                
+			        CancellationToken.None);                
 	        });
     }
 
