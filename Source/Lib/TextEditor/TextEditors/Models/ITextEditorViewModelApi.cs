@@ -37,16 +37,6 @@ public interface ITextEditorViewModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public void WithValue(
-        IEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
-        Func<TextEditorViewModel, TextEditorViewModel> withFunc);
-
-    public Task WithTaskAsync(
-        IEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
-        Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap);
-
     /// <summary>
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>

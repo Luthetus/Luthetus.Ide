@@ -89,14 +89,11 @@ public partial class Terminal
             	var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
             	if (viewModelModifier is null)
             		return Task.CompletedTask;
-            	
-	            _textEditorService.ViewModelApi.WithValue(
-	            	editContext,
-	                viewModelModifier,
-	                textEditorViewModel => textEditorViewModel with
-	                {
-	                    FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
-	                });
+
+                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                {
+                    FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
+                };
                 return Task.CompletedTask;
             });
 

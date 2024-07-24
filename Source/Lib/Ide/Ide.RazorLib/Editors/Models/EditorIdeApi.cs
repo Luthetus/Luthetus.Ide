@@ -209,21 +209,16 @@ public class EditorIdeApi
 				
 				if (viewModelModifier is null)
 					return Task.CompletedTask;
-            
-            	_textEditorService.ViewModelApi.WithValue(
-            		editContext,
-	                viewModelModifier,
-	                textEditorViewModel =>
-	                {
-	                    textEditorViewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
-	
-	                    return textEditorViewModel with
-	                    {
-	                        OnSaveRequested = HandleOnSaveRequested,
-	                        GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-	                        LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
-	                    };
-	                });
+
+                viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+
+                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                {
+                    OnSaveRequested = HandleOnSaveRequested,
+                    GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
+                    LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
+                };
+
                 return Task.CompletedTask;
             });
 

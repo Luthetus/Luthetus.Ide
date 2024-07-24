@@ -170,30 +170,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     #endregion
 
     #region UPDATE_METHODS
-    public void WithValue(
-        IEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
-        Func<TextEditorViewModel, TextEditorViewModel> withFunc)
-    {
-        _dispatcher.Dispatch(new TextEditorState.SetViewModelWithAction(
-            TextEditorService.AuthenticatedActionKey,
-            editContext,
-            viewModelModifier.ViewModel.ViewModelKey,
-            withFunc));
-    }
-
-    public async Task WithTaskAsync(
-        IEditContext editContext,
-        TextEditorViewModelModifier viewModelModifier,
-        Func<TextEditorViewModel, Task<Func<TextEditorViewModel, TextEditorViewModel>>> withFuncWrap)
-    {
-        _dispatcher.Dispatch(new TextEditorState.SetViewModelWithAction(
-            TextEditorService.AuthenticatedActionKey,
-            editContext,
-            viewModelModifier.ViewModel.ViewModelKey,
-            await withFuncWrap.Invoke(viewModelModifier.ViewModel).ConfigureAwait(false)));
-    }
-
     /// <summary>
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>

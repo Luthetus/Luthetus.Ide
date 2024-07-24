@@ -252,13 +252,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return Task.CompletedTask;
 
-                            editContext.TextEditorService.ViewModelApi.WithValue(
-                            	editContext,
-                                viewModelModifier,
-                                previousViewModel => previousViewModel with
-                                {
-                                    ShowCommandBar = true
-                                });
+                            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                            {
+                                ShowCommandBar = true
+                            };
 
                             return Task.CompletedTask;
                         });

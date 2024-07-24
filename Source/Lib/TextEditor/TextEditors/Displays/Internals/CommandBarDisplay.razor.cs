@@ -63,16 +63,14 @@ public partial class CommandBarDisplay : FluxorComponent
 		
 		            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 		                return Task.CompletedTask;
-                
-                	TextEditorService.ViewModelApi.WithValue(
-                		editContext,
-	                    viewModelModifier,
-	                    previousViewModel => previousViewModel with
-	                    {
-	                        CommandBarValue = string.Empty,
-	                        ShowCommandBar = false
-	                    });
-	                return Task.CompletedTask;
+
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                    {
+                        CommandBarValue = string.Empty,
+                        ShowCommandBar = false
+                    };
+
+                    return Task.CompletedTask;
                 });
         }
     }
