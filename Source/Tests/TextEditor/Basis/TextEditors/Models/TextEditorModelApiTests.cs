@@ -42,7 +42,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.UndoEditFactory(ResourceUri)"/>
+    /// <see cref="TextEditorModelApi.UndoEdit(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void UndoEdit()
@@ -63,12 +63,22 @@ public class TextEditorModelApiTests
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
-            textEditorService.ModelApi.InsertTextUnsafeFactory(
-                inModel.ResourceUri,
-                cursorModifierBag,
-                insertedText,
-                CancellationToken.None));
+            nameof(textEditorService.ModelApi.InsertTextUnsafe),
+            editContext =>
+            {
+                var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+                if (modelModifier is null)
+                    return Task.CompletedTask;
+
+                textEditorService.ModelApi.InsertTextUnsafe(
+                    editContext,
+					modelModifier,
+                    cursorModifierBag,
+                    insertedText,
+                    CancellationToken.None);
+				return Task.CompletedTask;
+			});
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(
@@ -76,9 +86,19 @@ public class TextEditorModelApiTests
             outModel.GetAllText());
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.UndoEditFactory),
-            textEditorService.ModelApi.UndoEditFactory(
-                inModel.ResourceUri));
+            nameof(textEditorService.ModelApi.UndoEdit),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+                textEditorService.ModelApi.UndoEdit(
+                    editContext,
+                    modelModifier);
+				return Task.CompletedTask;
+			});
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
@@ -87,7 +107,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.SetUsingLineEndKindFactory(ResourceUri, LineEndKind)"/>
+    /// <see cref="TextEditorModelApi.SetUsingLineEndKind(ResourceUri, LineEndKind)"/>
     /// </summary>
     [Fact]
     public void SetUsingRowEndingKind()
@@ -106,9 +126,20 @@ public class TextEditorModelApiTests
         Assert.NotEqual(rowEndingKind, inModel.LineEndKindPreference);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.SetUsingLineEndKindFactory),
-            textEditorService.ModelApi.SetUsingLineEndKindFactory(
-                inModel.ResourceUri, rowEndingKind));
+            nameof(textEditorService.ModelApi.SetUsingLineEndKind),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.SetUsingLineEndKind(
+                    editContext,
+					modelModifier,
+                    rowEndingKind);
+				return Task.CompletedTask;
+			});
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
@@ -117,7 +148,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.SetResourceDataFactory(ResourceUri, DateTime)"/>
+    /// <see cref="TextEditorModelApi.SetResourceData(ResourceUri, DateTime)"/>
     /// </summary>
     [Fact]
     public void SetResourceData()
@@ -136,9 +167,20 @@ public class TextEditorModelApiTests
         Assert.NotEqual(newResourceLastWriteTime, inModel.ResourceLastWriteTime);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.SetResourceDataFactory),
-            textEditorService.ModelApi.SetResourceDataFactory(
-                inModel.ResourceUri, newResourceLastWriteTime));
+            nameof(textEditorService.ModelApi.SetResourceData),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+                textEditorService.ModelApi.SetResourceData(
+                    editContext,
+                    modelModifier,
+                    newResourceLastWriteTime);
+				return Task.CompletedTask;
+			});
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
@@ -147,7 +189,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.ReloadFactory(ResourceUri, string, DateTime)"/>
+    /// <see cref="TextEditorModelApi.Reload(ResourceUri, string, DateTime)"/>
     /// </summary>
     [Fact]
     public void Reload()
@@ -166,9 +208,21 @@ public class TextEditorModelApiTests
         Assert.NotEqual(newContent, inModel.GetAllText());
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.ReloadFactory),
-            textEditorService.ModelApi.ReloadFactory(
-                inModel.ResourceUri, newContent, DateTime.UtcNow));
+            nameof(textEditorService.ModelApi.Reload),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+                textEditorService.ModelApi.Reload(
+                    editContext,
+                    modelModifier,
+                    newContent,
+                    DateTime.UtcNow);
+				return Task.CompletedTask;
+			});
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
 
@@ -255,7 +309,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.RedoEditFactory(ResourceUri)"/>
+    /// <see cref="TextEditorModelApi.RedoEdit(ResourceUri)"/>
     /// </summary>
     [Fact]
     public void RedoEditEnqueue()
@@ -276,35 +330,65 @@ public class TextEditorModelApiTests
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
-            textEditorService.ModelApi.InsertTextUnsafeFactory(
-                inModel.ResourceUri,
-                cursorModifierBag,
-                insertedText,
-                CancellationToken.None));
+            nameof(textEditorService.ModelApi.InsertTextUnsafe),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.InsertTextUnsafe(
+                    editContext,
+					modelModifier,
+					cursorModifierBag,
+                    insertedText,
+                    CancellationToken.None);
+                return Task.CompletedTask;
+            });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.UndoEditFactory),
-            textEditorService.ModelApi.UndoEditFactory(
-                inModel.ResourceUri));
+            nameof(textEditorService.ModelApi.UndoEdit),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.UndoEdit(
+					editContext,
+					modelModifier);
+                return Task.CompletedTask;
+            });
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(inModel.GetAllText(), outModel.GetAllText());
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.RedoEditFactory),
-            textEditorService.ModelApi.RedoEditFactory(
-                inModel.ResourceUri));
+            nameof(textEditorService.ModelApi.RedoEdit),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.RedoEdit(
+                    editContext,
+					modelModifier);
+                return Task.CompletedTask;
+            });
 
         outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.InsertTextFactory(ResourceUri, Key{TextEditorViewModel}, string, CancellationToken)"/>
+    /// <see cref="TextEditorModelApi.InsertText(ResourceUri, Key{TextEditorViewModel}, string, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void InsertTextEnqueue()
@@ -325,19 +409,29 @@ public class TextEditorModelApiTests
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.InsertTextUnsafeFactory),
-            textEditorService.ModelApi.InsertTextUnsafeFactory(
-                inModel.ResourceUri,
-                cursorModifierBag,
-                insertedText,
-                CancellationToken.None));
+            nameof(textEditorService.ModelApi.InsertTextUnsafe),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.InsertTextUnsafe(
+                    editContext,
+					modelModifier,
+                    cursorModifierBag,
+                    insertedText,
+                    CancellationToken.None);
+                return Task.CompletedTask;
+            });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(insertedText + inModel.GetAllText(), outModel.GetAllText());
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.HandleKeyboardEventFactory(ResourceUri, Key{TextEditorViewModel}, KeyboardEventArgs, CancellationToken)"/>
+    /// <see cref="TextEditorModelApi.HandleKeyboardEvent(ResourceUri, Key{TextEditorViewModel}, KeyboardEventArgs, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void HandleKeyboardEventEnqueue()
@@ -363,13 +457,22 @@ public class TextEditorModelApiTests
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory),
-            textEditorService.ModelApi.HandleKeyboardEventUnsafeFactory(
-                inModel.ResourceUri,
-                Key<TextEditorViewModel>.Empty,
-                keyboardEventArgs,
-                CancellationToken.None,
-                cursorModifierBag));
+            nameof(textEditorService.ModelApi.HandleKeyboardEventUnsafe),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.HandleKeyboardEventUnsafe(
+                    editContext,
+					modelModifier,
+					cursorModifierBag,
+                    keyboardEventArgs,
+                    CancellationToken.None);
+                return Task.CompletedTask;
+            });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(key + inModel.GetAllText(), outModel.GetAllText());
@@ -463,7 +566,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.DeleteTextByRangeFactory(ResourceUri, Key{TextEditorViewModel}, int, CancellationToken)"/>
+    /// <see cref="TextEditorModelApi.DeleteTextByRange(ResourceUri, Key{TextEditorViewModel}, int, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void DeleteTextByRangeEnqueue()
@@ -485,19 +588,29 @@ public class TextEditorModelApiTests
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory),
-            textEditorService.ModelApi.DeleteTextByRangeUnsafeFactory(
-                inModel.ResourceUri,
-                cursorModifierBag,
-                textToDelete.Length,
-                CancellationToken.None));
+            nameof(textEditorService.ModelApi.DeleteTextByRangeUnsafe),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.DeleteTextByRangeUnsafe(
+                    editContext,
+					modelModifier,
+					cursorModifierBag,
+                    textToDelete.Length,
+                    CancellationToken.None);
+                return Task.CompletedTask;
+            });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(expectedContent, outModel!.GetAllText());
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.DeleteTextByMotionFactory(ResourceUri, Key{TextEditorViewModel}, MotionKind, CancellationToken)"/>
+    /// <see cref="TextEditorModelApi.DeleteTextByMotion(ResourceUri, Key{TextEditorViewModel}, MotionKind, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void DeleteTextByMotionEnqueue_Backspace()
@@ -520,19 +633,29 @@ public class TextEditorModelApiTests
         var cursorModifierBag = new CursorModifierBagTextEditor(Key<TextEditorViewModel>.Empty, cursorList);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory),
-            textEditorService.ModelApi.DeleteTextByMotionUnsafeFactory(
-                inModel.ResourceUri,
-                cursorModifierBag,
-                MotionKind.Backspace,
-                CancellationToken.None));
+            nameof(textEditorService.ModelApi.DeleteTextByMotionUnsafe),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.DeleteTextByMotionUnsafe(
+                    editContext,
+					modelModifier,
+					cursorModifierBag,
+                    MotionKind.Backspace,
+                    CancellationToken.None);
+                return Task.CompletedTask;
+            });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.Equal(expectedContent, outModel!.GetAllText());
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.AddPresentationModelFactory(ResourceUri, TextEditorPresentationModel)"/>
+    /// <see cref="TextEditorModelApi.AddPresentationModel(ResourceUri, TextEditorPresentationModel)"/>
     /// </summary>
     [Fact]
     public void RegisterPresentationModel()
@@ -546,8 +669,20 @@ public class TextEditorModelApiTests
         Assert.Empty(inModel!.PresentationModelList);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ModelApi.AddPresentationModelFactory),
-            textEditorService.ModelApi.AddPresentationModelFactory(inModel.ResourceUri, DiffPresentationFacts.EmptyOutPresentationModel));
+            nameof(textEditorService.ModelApi.AddPresentationModel),
+            editContext =>
+            {
+				var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+				if (modelModifier is null)
+					return Task.CompletedTask;
+
+				textEditorService.ModelApi.AddPresentationModel(
+                    editContext,
+					modelModifier,
+                    DiffPresentationFacts.EmptyOutPresentationModel);
+                return Task.CompletedTask;
+            });
 
         var outModel = textEditorService.ModelApi.GetOrDefault(inModel.ResourceUri);
         Assert.NotEmpty(outModel!.PresentationModelList);

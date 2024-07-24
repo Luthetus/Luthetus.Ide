@@ -51,13 +51,11 @@ public class CodeSearchTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandl
 		if (activeNode is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan)
 			return Task.CompletedTask;
 
-		TreeViewCodeSearchTextSpanHelper.OpenInEditorOnClick(
+		return TreeViewCodeSearchTextSpanHelper.OpenInEditorOnClick(
 			treeViewCodeSearchTextSpan,
 			shouldSetFocusToEditor,
 			_textEditorService,
 			_textEditorConfig,
 			_serviceProvider);
-
-		return Task.CompletedTask;
 	}
 }

@@ -136,26 +136,25 @@ public partial class TestExplorerDisplay : FluxorComponent
 	private void RegisterDetailsTextEditor(TextEditorModel model)
 	{
 		TextEditorService.PostUnique(
-			nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-			async editContext =>
+			nameof(TextEditorService.ModelApi.AddPresentationModel),
+			editContext =>
 			{
-				await TextEditorService.ModelApi.AddPresentationModelFactory(
-						model.ResourceUri,
-						TerminalPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+			
+				TextEditorService.ModelApi.AddPresentationModel(
+					editContext,
+					modelModifier,
+					TerminalPresentationFacts.EmptyPresentationModel);
 
-				await TextEditorService.ModelApi.AddPresentationModelFactory(
-						model.ResourceUri,
-						CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				TextEditorService.ModelApi.AddPresentationModel(
+					editContext,
+					modelModifier,
+					CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-				await TextEditorService.ModelApi.AddPresentationModelFactory(
-						model.ResourceUri,
-						FindOverlayPresentationFacts.EmptyPresentationModel)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				TextEditorService.ModelApi.AddPresentationModel(
+					editContext,
+					modelModifier,
+					FindOverlayPresentationFacts.EmptyPresentationModel);
 
 				model.CompilerService.RegisterResource(model.ResourceUri);
 
@@ -175,6 +174,8 @@ public partial class TestExplorerDisplay : FluxorComponent
 				{
 					FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
 				};
+				
+				return Task.CompletedTask;
 			});
 	}
 }

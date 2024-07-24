@@ -122,9 +122,9 @@ public partial class TextEditorService : ITextEditorService
 
     public void PostUnique(
         string name,
-        TextEditorFunc textEditorFunc)
+        Func<IEditContext, Task> textEditorFunc)
     {
-        Post(new UniqueTextEditorTask(
+        Post(new UniqueTextEditorWork(
             name,
             textEditorFunc));
     }
@@ -133,22 +133,22 @@ public partial class TextEditorService : ITextEditorService
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        TextEditorFunc textEditorFunc)
+        Func<IEditContext, Task> textEditorFunc)
     {
-        Post(new RedundantTextEditorTask(
+        Post(new RedundantTextEditorWork(
             name,
 			resourceUri,
             viewModelKey,
             textEditorFunc));
     }
 
-    public void Post(ITextEditorTask task)
+    public void Post(ITextEditorWork work)
     {
-        task.EditContext = new TextEditorEditContext(
+        work.EditContext = new TextEditorEditContext(
             this,
             AuthenticatedActionKey);
 
-        _backgroundTaskService.Enqueue(task);
+        _backgroundTaskService.Enqueue(work);
     }
 
 	public async Task FinalizePost(IEditContext editContext)
@@ -218,10 +218,11 @@ public partial class TextEditorService : ITextEditorService
 			if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
 				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
-	            await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-	                    viewModelModifier.ViewModel.ResourceUri, viewModelModifier.ViewModel.ViewModelKey, CancellationToken.None)
-	                .Invoke(editContext)
-	                .ConfigureAwait(false);
+	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
+	            	editContext,
+	            	editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri),
+			        viewModelModifier,
+			        CancellationToken.None);
 			}
             
 			_dispatcher.Dispatch(new TextEditorState.SetModelAndViewModelRangeAction(

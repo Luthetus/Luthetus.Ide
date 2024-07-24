@@ -252,12 +252,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return Task.CompletedTask;
 
-                            editContext.TextEditorService.ViewModelApi.WithValueFactory(
-                                viewModelModifier.ViewModel.ViewModelKey,
-                                previousViewModel => previousViewModel with
-                                {
-                                    ShowCommandBar = true
-                                }).Invoke(editContext);
+                            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                            {
+                                ShowCommandBar = true
+                            };
 
                             return Task.CompletedTask;
                         });
@@ -283,7 +281,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     commandArgs.TextEditorService.PostUnique(
                         nameof(commandDisplayName),
-                        async editContext =>
+                        editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -291,17 +289,16 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                                return;
+                                return Task.CompletedTask;
 
-                            await commandArgs.TextEditorService.ModelApi
-                                .UndoEditFactory(commandArgs.ModelResourceUri)
-                                .Invoke(editContext)
-								.ConfigureAwait(false);
+                            commandArgs.TextEditorService.ModelApi.UndoEdit(
+                            	editContext,
+                            	modelModifier);
 
-                            await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
-                                    commandArgs.ModelResourceUri)
-                                .Invoke(editContext)
-                                .ConfigureAwait(false);
+                            editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+                                editContext,
+                            	modelModifier);
+                            return Task.CompletedTask;
                         });
 					return Task.CompletedTask;
                 });
@@ -324,7 +321,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                     commandArgs.TextEditorService.PostUnique(
                         nameof(commandDisplayName),
-                        async editContext =>
+                        editContext =>
                         {
                             var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
                             var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
@@ -332,17 +329,16 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                                return;
+                                return Task.CompletedTask;
 
-                            await commandArgs.TextEditorService.ModelApi
-                                .RedoEditFactory(commandArgs.ModelResourceUri)
-                                .Invoke(editContext)
-								.ConfigureAwait(false);
+                            commandArgs.TextEditorService.ModelApi.RedoEdit(
+                            	editContext,
+                            	modelModifier);
 
-                            await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
-                                    commandArgs.ModelResourceUri)
-                                .Invoke(editContext)
-                                .ConfigureAwait(false);
+                            editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+                                editContext,
+                            	modelModifier);
+                            return Task.CompletedTask;
                         });
 					return Task.CompletedTask;
                 });
@@ -890,13 +886,21 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                                 interfaceCommandArgs =>
                                 {
                                     var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+                                    
+                                    var modelModifier = editContext.GetModelModifier(commandArgs.ModelResourceUri);
+						            var viewModelModifier = editContext.GetViewModelModifier(commandArgs.ViewModelKey);
+						            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+						            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+						
+						            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+						                return Task.CompletedTask;
 
-                                    commandArgs.TextEditorService.ViewModelApi.MoveCursorFactory(
-                                            keyboardEventArgs,
-                                            commandArgs.ModelResourceUri,
-                                            commandArgs.ViewModelKey)
-                                        .Invoke(editContext);
-
+                                    commandArgs.TextEditorService.ViewModelApi.MoveCursor(
+                                    	keyboardEventArgs,
+								        editContext,
+								        modelModifier,
+								        viewModelModifier,
+								        cursorModifierBag);
                                     return Task.CompletedTask;
                                 });
 

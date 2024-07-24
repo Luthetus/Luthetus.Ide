@@ -20,7 +20,7 @@ public class TextEditorCommandVimFactsMotionsTests
             out var textEditorService, out var inModel, out var inViewModel,
             out var textEditorCommandArgs, out var serviceProvider);
 
-        await TextEditorCommandVimFacts.Motions.Word.CommandFunc.Invoke(textEditorCommandArgs);
+        await TextEditorCommandVimFacts.Motions.WordCommand.CommandFunc.Invoke(textEditorCommandArgs);
 
         throw new NotImplementedException();
 	}

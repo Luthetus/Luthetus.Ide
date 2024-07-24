@@ -76,21 +76,7 @@ public static class SyntaxRepeatVim
                     {
                         await innerTextEditorCommand.CommandFunc.Invoke(textEditorCommandArgs).ConfigureAwait(false);
                     }
-                })
-            {
-                TextEditorFuncFactory = interfaceCommandArgs =>
-                {
-                    var textEditorCommandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
-
-                    return async editContext  =>
-                    {
-                        for (int index = 0; index < intValue; index++)
-                        {
-                            await innerTextEditorCommand.CommandFunc.Invoke(textEditorCommandArgs).ConfigureAwait(false);
-                        }
-                    };
-                }
-            };
+                });
         }
         else
         {

@@ -2,13 +2,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Extensions.DotNet.TestExplorers.Models;
 
-namespace Luthetus.Ide.Tests.Basis.TreeViewImplementations.Models;
+namespace Luthetus.Extensions.DotNet.Tests.Basis.TreeViewImplementations.Models;
 
 /// <summary>
 /// <see cref="TreeViewStringFragment"/>
 /// </summary>
-public class TreeViewStringFragmentTests : IdeTestBase
+public class TreeViewStringFragmentTests : ExtensionsDotNetTestBase
 {
     /// <summary>
     /// <see cref="TreeViewStringFragment(StringFragment, ILuthetusCommonComponentRenderers, bool, bool)"/>

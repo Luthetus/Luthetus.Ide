@@ -130,34 +130,36 @@ public class EditorIdeApi
             _textEditorService.ModelApi.RegisterCustom(model);
 
             _textEditorService.PostUnique(
-                nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-                async editContext =>
+                nameof(_textEditorService.ModelApi.AddPresentationModel),
+                editContext =>
                 {
-                    await _textEditorService.ModelApi.AddPresentationModelFactory(
-                            model.ResourceUri,
-                            CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                	var modelModifier = editContext.GetModelModifier(model.ResourceUri);
 
-                    await _textEditorService.ModelApi.AddPresentationModelFactory(
-                            model.ResourceUri,
-                            FindOverlayPresentationFacts.EmptyPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+					if (modelModifier is null)
+						return Task.CompletedTask;
+                
+                    _textEditorService.ModelApi.AddPresentationModel(
+                    	editContext,
+                        modelModifier,
+                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-                    await _textEditorService.ModelApi.AddPresentationModelFactory(
-                            model.ResourceUri,
-                            DiffPresentationFacts.EmptyInPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                    _textEditorService.ModelApi.AddPresentationModel(
+                    	editContext,
+                        modelModifier,
+                        FindOverlayPresentationFacts.EmptyPresentationModel);
 
-                    await _textEditorService.ModelApi.AddPresentationModelFactory(
-                            model.ResourceUri,
-                            DiffPresentationFacts.EmptyOutPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                    _textEditorService.ModelApi.AddPresentationModel(
+                    	editContext,
+                        modelModifier,
+                        DiffPresentationFacts.EmptyInPresentationModel);
+
+                    _textEditorService.ModelApi.AddPresentationModel(
+                    	editContext,
+                        modelModifier,
+                        DiffPresentationFacts.EmptyOutPresentationModel);
 
                     model.CompilerService.RegisterResource(model.ResourceUri);
+                    return Task.CompletedTask;
                 });
         }
 
@@ -201,19 +203,24 @@ public class EditorIdeApi
 
         _textEditorService.PostUnique(
             nameof(TryRegisterViewModelFunc),
-            _textEditorService.ViewModelApi.WithValueFactory(
-                viewModelKey,
-                textEditorViewModel =>
-                {
-                    textEditorViewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+            editContext =>
+            {
+				var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+				
+				if (viewModelModifier is null)
+					return Task.CompletedTask;
 
-                    return textEditorViewModel with
-                    {
-                        OnSaveRequested = HandleOnSaveRequested,
-                        GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                        LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
-                    };
-                }));
+                viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+
+                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                {
+                    OnSaveRequested = HandleOnSaveRequested,
+                    GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
+                    LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
+                };
+
+                return Task.CompletedTask;
+            });
 
         return Task.FromResult(viewModelKey);
 
@@ -232,9 +239,18 @@ public class EditorIdeApi
                     {
                         _textEditorService.PostUnique(
                             nameof(HandleOnSaveRequested),
-                            _textEditorService.ModelApi.SetResourceDataFactory(
-                                innerTextEditor.ResourceUri,
-                                writtenDateTime.Value));
+                            editContext =>
+                            {
+                            	var modelModifier = editContext.GetModelModifier(innerTextEditor.ResourceUri);
+                            	if (modelModifier is null)
+                            		return Task.CompletedTask;
+                            
+                            	_textEditorService.ModelApi.SetResourceData(
+                            		editContext,
+	                                modelModifier,
+	                                writtenDateTime.Value);
+                                return Task.CompletedTask;
+                            });
                     }
 
                     return Task.CompletedTask;
@@ -361,20 +377,22 @@ public class EditorIdeApi
 
                                             _textEditorService.PostUnique(
                                                 nameof(CheckIfContentsWereModifiedAsync),
-                                                async editContext =>
+                                                editContext =>
                                                 {
-                                                    await _textEditorService.ModelApi
-                                                        .ReloadFactory(
-                                                            textEditorModel.ResourceUri,
-                                                            content,
-                                                            fileLastWriteTime)
-                                                        .Invoke(editContext)
-                                                        .ConfigureAwait(false);
+                                                	var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
+                                                	if (modelModifier is null)
+                                                		return Task.CompletedTask;
+                                                
+                                                    _textEditorService.ModelApi.Reload(
+                                                    	editContext,
+                                                        modelModifier,
+                                                        content,
+                                                        fileLastWriteTime);
 
-                                                    await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
-                                                            textEditorModel.ResourceUri)
-                                                        .Invoke(editContext)
-                                                        .ConfigureAwait(false);
+                                                    editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+                                                    	editContext,
+                                                        modelModifier);
+                                                	return Task.CompletedTask;
                                                 });
                                         });
 								return Task.CompletedTask;

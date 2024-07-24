@@ -2,21 +2,21 @@
 @using Luthetus.TextEditor.RazorLib.Lexers.Models
 
 <div class="luth_te_text-selection-group">
-    @if (TextEditorSelectionHelper.HasSelectedText(PrimaryCursor.Selection))
+    @if (TextEditorSelectionHelper.HasSelectedText(PrimaryCursor.Selection) &&
+         RenderBatch.ViewModel!.VirtualizationResult.EntryList.Length > 0)
     {
         var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
             PrimaryCursor.Selection);
 
         var selectionBoundsInRowIndexUnits = GetSelectionBoundsInRowIndexUnits(selectionBoundsInPositionIndexUnits);
 
-        @* TODO: Unhandled exception. System.InvalidOperationException: Sequence contains no elements (2024-04-28) *@
         var virtualLowerBoundInclusiveRowIndex = RenderBatch.ViewModel!.VirtualizationResult.EntryList.First().Index;
         var virtualUpperBoundExclusiveRowIndex = 1 + RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
 
         int useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.lowerRowIndexInclusive
             ? virtualLowerBoundInclusiveRowIndex
             : selectionBoundsInRowIndexUnits.lowerRowIndexInclusive;
-            
+
         int useUpperBoundExclusiveRowIndex = virtualUpperBoundExclusiveRowIndex <= selectionBoundsInRowIndexUnits.upperRowIndexExclusive
             ? virtualUpperBoundExclusiveRowIndex
             : selectionBoundsInRowIndexUnits.upperRowIndexExclusive;
@@ -33,7 +33,7 @@
                     selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive,
                     rowIndex);
             }
-            
+
             <TextSelectionRow TextSelectionStyleCss="@textSelectionStyleCss"
                               LowerPositionIndexInclusive="selectionBoundsInPositionIndexUnits.lowerPositionIndexInclusive"
                               UpperPositionIndexExclusive="selectionBoundsInPositionIndexUnits.upperPositionIndexExclusive"

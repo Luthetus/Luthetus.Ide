@@ -61,11 +61,7 @@ public class BackgroundTaskTests
                 return Task.CompletedTask;
             });
 
-        Assert.Null(backgroundTask.WorkProgress);
-
         await backgroundTask.HandleEvent(CancellationToken.None);
-
-        Assert.NotNull(backgroundTask.WorkProgress);
 
         Assert.Equal(1, number);
     }

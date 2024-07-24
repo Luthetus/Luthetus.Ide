@@ -69,7 +69,7 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
         {
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
-        }, TextEditorCommandDefaultFacts.Save);
+        }, TextEditorCommandDefaultFacts.TriggerSave);
 
         Map.Add(new KeymapArgument("KeyA")
         {

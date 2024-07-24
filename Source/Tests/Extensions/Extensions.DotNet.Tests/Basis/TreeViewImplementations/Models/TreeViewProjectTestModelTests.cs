@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 namespace Luthetus.Extensions.DotNet.Tests.Basis.TreeViewImplementations.Models;
 

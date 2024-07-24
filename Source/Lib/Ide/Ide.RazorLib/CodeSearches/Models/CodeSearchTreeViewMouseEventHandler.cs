@@ -32,13 +32,11 @@ public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan)
 			return Task.CompletedTask;
 
-		TreeViewCodeSearchTextSpanHelper.OpenInEditorOnClick(
+		return TreeViewCodeSearchTextSpanHelper.OpenInEditorOnClick(
 			treeViewCodeSearchTextSpan,
 			true,
 			_textEditorService,
 			_textEditorConfig,
 			_serviceProvider);
-
-		return Task.CompletedTask;
 	}
 }

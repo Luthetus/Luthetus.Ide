@@ -87,14 +87,15 @@ public partial class IdeHeader : ComponentBase
 			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
 			nameof(IdeHeader),
-			async () =>
+			() =>
 			{
 				InitializeMenuFile();
 				InitializeMenuTools();
 				InitializeMenuView();
 				
 				AddAltKeymap();
-			});
+                return Task.CompletedTask;
+            });
 
         base.OnInitialized();
 	}
@@ -217,13 +218,19 @@ public partial class IdeHeader : ComponentBase
                     if (activeViewModel is null)
 						return Task.CompletedTask;
 
-					TextEditorCommandDefaultFacts.ShowFindOverlay.CommandFunc.Invoke(
-						new TextEditorCommandArgs(
-							ResourceUri.Empty,
-					        activeViewModel.ViewModelKey,
-							null,
-							TextEditorService,
-					        ServiceProvider));
+					TextEditorService.PostUnique(
+						nameof(TextEditorCommandDefaultFacts.ShowFindOverlay),
+						editContext =>
+						{
+                            return TextEditorCommandDefaultFacts.ShowFindOverlay.CommandFunc.Invoke(
+								new TextEditorCommandArgs(
+									ResourceUri.Empty,
+									activeViewModel.ViewModelKey,
+									null,
+									TextEditorService,
+									ServiceProvider,
+									editContext));
+                        });
 
 					return Task.CompletedTask;
 				});

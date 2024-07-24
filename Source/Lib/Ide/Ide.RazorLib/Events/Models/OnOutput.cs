@@ -20,7 +20,7 @@ namespace Luthetus.Ide.RazorLib.Events.Models;
 /// one could furthermore invoke this event to write to the text editor
 /// in a batched manner.
 /// </summary>
-public class OnOutput : ITextEditorTask
+public class OnOutput : ITextEditorWork
 {
     private readonly TerminalCommandBoundary _terminalCommandBoundary;
 
@@ -49,7 +49,6 @@ public class OnOutput : ITextEditorTask
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnOutput);
-    public Task? WorkProgress { get; }
     public int OutputOffset { get; }
     public string Output { get; }
     public ResourceUri ResourceUri { get; }
@@ -58,8 +57,6 @@ public class OnOutput : ITextEditorTask
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 
 	public IEditContext EditContext { get; set; }
-
-    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -122,13 +119,12 @@ public class OnOutput : ITextEditorTask
             var entryPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
             _terminalCommandBoundary.StartPositionIndexInclusive ??= entryPositionIndex;
 
-            await TextEditorService.ModelApi.InsertTextFactory(
-                    ResourceUri,
-                    ViewModelKey,
-                    Output,
-                    CancellationToken.None)
-                .Invoke(EditContext)
-                .ConfigureAwait(false);
+            TextEditorService.ModelApi.InsertText(
+            	EditContext,
+                modelModifier,
+                cursorModifierBag,
+                Output,
+                CancellationToken.None);
 
             var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
             if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
@@ -145,11 +141,10 @@ public class OnOutput : ITextEditorTask
             terminalResource.ManualDecorationTextSpanList.AddRange(_outputTextSpanList);
             terminalResource.ManualSymbolList.AddRange(_outputTextSpanList.Select(x => new SourceFileSymbol(x)));
 
-            await EditContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
-                    modelModifier.ResourceUri,
-                    terminalResource.GetTokenTextSpans())
-                .Invoke(EditContext)
-                .ConfigureAwait(false);
+            EditContext.TextEditorService.ModelApi.ApplyDecorationRange(
+            	EditContext,
+                modelModifier,
+                terminalResource.GetTokenTextSpans());
 
             _terminalCommandBoundary.EndPositionIndexExclusive = modelModifier.GetPositionIndex(primaryCursorModifier);
 

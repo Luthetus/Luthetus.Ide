@@ -21,18 +21,18 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// data, and will entirely overwrite the upstream event's result.
 /// </summary>
 /// <remarks>
-/// For further control over the batching, one needs to implement <see cref="ITextEditorTask"/>
+/// For further control over the batching, one needs to implement <see cref="ITextEditorWork"/>
 /// and implement the method: <see cref="IBackgroundTask.BatchOrDefault"/>.
 /// </remarks>
-public sealed class RedundantTextEditorTask : ITextEditorTask
+public sealed class RedundantTextEditorWork : ITextEditorWork
 {
-    private readonly TextEditorFunc _textEditorFunc;
+    private readonly Func<IEditContext, Task> _textEditorFunc;
 
-    public RedundantTextEditorTask(
+    public RedundantTextEditorWork(
         string name,
         ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        TextEditorFunc textEditorFunc)
+        Func<IEditContext, Task> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
 
@@ -46,22 +46,20 @@ public sealed class RedundantTextEditorTask : ITextEditorTask
     public Key<TextEditorViewModel> ViewModelKey { get; set; }
     public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public TimeSpan ThrottleTimeSpan { get; set; } = TextEditorComponentData.ThrottleDelayDefault;
-    public Task? WorkProgress { get; set; }
 
 	public IEditContext EditContext { get; set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
-        if (oldEvent is not RedundantTextEditorTask oldRedundantTextEditorTask)
+        if (oldEvent is not RedundantTextEditorWork oldRedundantTextEditorWork)
         {
             // Keep both events
             return null;
         }
 
-        if (oldRedundantTextEditorTask.Name == Name &&
-		    oldRedundantTextEditorTask.ResourceUri == ResourceUri &&
-            oldRedundantTextEditorTask.ViewModelKey == ViewModelKey)
+        if (oldRedundantTextEditorWork.Name == Name &&
+		    oldRedundantTextEditorWork.ResourceUri == ResourceUri &&
+            oldRedundantTextEditorWork.ViewModelKey == ViewModelKey)
         {
             // Keep this event (via replacement)
             return this;
