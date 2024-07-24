@@ -122,7 +122,7 @@ public partial class TextEditorService : ITextEditorService
 
     public void PostUnique(
         string name,
-        TextEditorFunc textEditorFunc)
+        Func<IEditContext, Task> textEditorFunc)
     {
         Post(new UniqueTextEditorWork(
             name,
@@ -133,7 +133,7 @@ public partial class TextEditorService : ITextEditorService
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        TextEditorFunc textEditorFunc)
+        Func<IEditContext, Task> textEditorFunc)
     {
         Post(new RedundantTextEditorWork(
             name,

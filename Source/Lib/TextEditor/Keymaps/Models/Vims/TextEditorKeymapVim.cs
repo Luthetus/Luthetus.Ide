@@ -252,8 +252,9 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return Task.CompletedTask;
 
-                            editContext.TextEditorService.ViewModelApi.WithValueFactory(
-                                viewModelModifier.ViewModel.ViewModelKey,
+                            editContext.TextEditorService.ViewModelApi.WithValue(
+                            	editContext,
+                                viewModelModifier,
                                 previousViewModel => previousViewModel with
                                 {
                                     ShowCommandBar = true
@@ -293,15 +294,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return;
 
-                            await commandArgs.TextEditorService.ModelApi
-                                .UndoEditFactory(commandArgs.ModelResourceUri)
-                                .Invoke(editContext)
-								.ConfigureAwait(false);
+                            commandArgs.TextEditorService.ModelApi
+                                .UndoEdit(commandArgs.ModelResourceUri);
 
-                            await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
-                                    commandArgs.ModelResourceUri)
-                                .Invoke(editContext)
-                                .ConfigureAwait(false);
+                            editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+                                commandArgs.ModelResourceUri);
                         });
 					return Task.CompletedTask;
                 });
@@ -334,15 +331,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                                 return;
 
-                            await commandArgs.TextEditorService.ModelApi
-                                .RedoEditFactory(commandArgs.ModelResourceUri)
-                                .Invoke(editContext)
-								.ConfigureAwait(false);
+                            commandArgs.TextEditorService.ModelApi.RedoEdit(
+                            	commandArgs.ModelResourceUri);
 
-                            await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
-                                    commandArgs.ModelResourceUri)
-                                .Invoke(editContext)
-                                .ConfigureAwait(false);
+                            editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+                                commandArgs.ModelResourceUri);
                         });
 					return Task.CompletedTask;
                 });

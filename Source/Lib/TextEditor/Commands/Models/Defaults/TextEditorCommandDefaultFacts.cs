@@ -189,9 +189,7 @@ public static class TextEditorCommandDefaultFacts
                 
             TextEditorCommandDefaultFunctions.TriggerRemeasure(
             	commandArgs.EditContext,
-		        modelModifier,
 		        viewModelModifier,
-		        cursorModifierBag,
 		        commandArgs);
 		    return Task.CompletedTask;
         });

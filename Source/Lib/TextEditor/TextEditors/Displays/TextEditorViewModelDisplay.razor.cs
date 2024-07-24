@@ -402,13 +402,26 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                     await _componentData.ContinueRenderingTooltipAsync().ConfigureAwait(false);
 
                     TextEditorService.PostUnique(
-						nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory),
-						TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsyncFactory(
-							mouseEventArgs,
-							_componentData,
-							TextEditorComponentRenderers,
-					        modelResourceUri,
-					        viewModelKey.Value));
+						nameof(TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync),
+						editContext =>
+						{
+							var modelModifier = commandArgs.EditContext.GetModelModifier(modelResourceUri);
+			                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(viewModelKey);
+			                var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			                var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+			
+			                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+			                    return Task.CompletedTask;
+						
+							return TextEditorCommandDefaultFunctions.HandleMouseStoppedMovingEventAsync(
+								editContext,
+								modelModifier,
+								viewModelModifier,
+								mouseEventArgs,		
+								_componentData,
+								TextEditorComponentRenderers,
+						        modelResourceUri);
+						});
                 }
             });
         }

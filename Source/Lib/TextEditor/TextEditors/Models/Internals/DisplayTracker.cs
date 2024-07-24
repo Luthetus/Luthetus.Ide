@@ -153,12 +153,11 @@ public class DisplayTracker : IDisposable
 	
 				viewModelModifier.ScrollWasModified = true;
 				
-				await TextEditorCommandDefaultFunctions.RemeasureFactory(
-		                model.ResourceUri,
-		                viewModel.ViewModelKey,
-		                commandArgs)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				TextEditorCommandDefaultFunctions.TriggerRemeasure(
+	                editContext,
+	                model.ResourceUri,
+	                viewModel.ViewModelKey,
+	                commandArgs);
 
 				// This virtualization result calculation is intentionally posted from within a post,
 				// in order to ensure that the preceeding remeasure is executed and the state is updated first

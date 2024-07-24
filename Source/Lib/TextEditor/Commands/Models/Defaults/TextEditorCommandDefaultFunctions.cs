@@ -47,7 +47,7 @@ public class TextEditorCommandDefaultFunctions
         selectedText ??= modelModifier.GetLineTextRange(primaryCursorModifier.LineIndex, 1);
 
         await clipboardService.SetClipboard(selectedText).ConfigureAwait(false);
-        await viewModelModifier.ViewModel.Focus().Invoke(editContext).ConfigureAwait(false);
+        await viewModelModifier.ViewModel.FocusAsync().ConfigureAwait(false);
     }
 
     public static async Task CutAsync(
@@ -71,7 +71,7 @@ public class TextEditorCommandDefaultFunctions
         var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier) ?? string.Empty;
         await clipboardService.SetClipboard(selectedText).ConfigureAwait(false);
 
-        await viewModelModifier.ViewModel.Focus().Invoke(editContext).ConfigureAwait(false);
+        await viewModelModifier.ViewModel.FocusAsync().ConfigureAwait(false);
 
         modelModifier.HandleKeyboardEvent(
             new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
@@ -140,9 +140,7 @@ public class TextEditorCommandDefaultFunctions
 
     public static void TriggerRemeasure(
         IEditContext editContext,
-        TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
         editContext.TextEditorService.OptionsApi.SetRenderStateKey(Key<RenderState>.NewKey());
@@ -863,10 +861,10 @@ public class TextEditorCommandDefaultFunctions
 					var activeViewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
 
 					if (activeViewModel is not null)
-						return activeViewModel.Focus().Invoke(editContext);
+						return activeViewModel.FocusAsync();
 				}
 				
-				return viewModelModifier.ViewModel.Focus().Invoke(editContext);
+				return viewModelModifier.ViewModel.FocusAsync();
 			});
 
 		var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();

@@ -994,7 +994,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         // (or more non-sense than it previously did)
         // Because we get a viewModelModifier passed in to this method as an argument.
         // So this seems quite silly.
-		var viewModelModifier = editContext.GetViewModelModifier(viewModelModifier.ViewModel.ViewModelKey);
+		_ = editContext.GetViewModelModifier(viewModelModifier.ViewModel.ViewModelKey);
     }
     #endregion
 
