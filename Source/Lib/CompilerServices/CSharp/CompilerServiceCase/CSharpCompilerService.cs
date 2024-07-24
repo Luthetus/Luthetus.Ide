@@ -113,12 +113,12 @@ public sealed class CSharpCompilerService : CompilerService
 
                         _textEditorService.PostUnique(
                             "Add using statement",
-                            async editContext =>
+                            editContext =>
                             {
                                 var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
 
                                 if (modelModifier is null)
-                                    return;
+                                    return Task.CompletedTask;
 
                                 var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
 
@@ -146,23 +146,24 @@ public sealed class CSharpCompilerService : CompilerService
                                     {
                                         for (int i = 0; i < textToInsert.Length; i++)
                                         {
-                                            await _textEditorService.ViewModelApi.MoveCursorFactory(
-                                                new KeyboardEventArgs
+                                            _textEditorService.ViewModelApi.MoveCursor(
+                                            	new KeyboardEventArgs
                                                 {
                                                     Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                                                 },
-                                                textSpan.ResourceUri,
-                                                viewModelModifier.ViewModel.ViewModelKey)
-                                            .Invoke(editContext)
-											.ConfigureAwait(false);
+										        editContext,
+										        modelModifier,
+										        viewModelModifier,
+										        viewModelCursorModifierBag);
                                         }
                                     }
 
-                                    await editContext.TextEditorService.ModelApi.ApplySyntaxHighlightingFactory(
-                                            modelModifier.ResourceUri)
-                                        .Invoke(editContext)
-                                        .ConfigureAwait(false);
+                                    editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+                                        editContext,
+                                        modelModifier);
                                 }
+
+                                return Task.CompletedTask;
                             });
 						return Task.CompletedTask;
                     });

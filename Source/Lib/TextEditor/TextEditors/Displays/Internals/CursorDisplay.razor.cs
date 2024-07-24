@@ -134,10 +134,16 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                     // i.e. holding down ArrowRight
                     TextEditorService.PostUnique(
                         nameof(_throttleShouldRevealCursor),
-                        async editContext =>
+                        editContext =>
                         {
 							try
 							{
+								var modelModifier = editContext.GetModelModifier(localRenderBatch.Model.ResourceUri);
+				            	var viewModelModifier = editContext.GetViewModelModifier(localRenderBatch.ViewModel.ViewModelKey);
+				
+								if (modelModifier is null || viewModelModifier is null)
+									return Task.CompletedTask;
+							
 	                            var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
 	
 	                            var cursorTextSpan = new TextEditorTextSpan(
@@ -147,17 +153,18 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 	                                localRenderBatch.Model.ResourceUri,
 	                                localRenderBatch.Model.GetAllText());
 	
-	                            await TextEditorService.ViewModelApi.ScrollIntoViewFactory(
-	                                    localRenderBatch.Model.ResourceUri,
-	                                    localRenderBatch.ViewModel.ViewModelKey,
-	                                    cursorTextSpan)
-	                                .Invoke(editContext)
-									.ConfigureAwait(false);
+	                            TextEditorService.ViewModelApi.ScrollIntoView(
+                            		editContext,
+							        modelModifier,
+							        viewModelModifier,
+							        cursorTextSpan);
 							 }
 							 catch (LuthetusTextEditorException)
 							 {
 							     // Eat this specific exception
 							 }
+                        
+                        	return Task.CompletedTask;
                         });
 					return Task.CompletedTask;
                 }).ConfigureAwait(false);

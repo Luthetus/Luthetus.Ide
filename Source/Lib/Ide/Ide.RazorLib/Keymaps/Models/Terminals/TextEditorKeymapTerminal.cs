@@ -179,13 +179,12 @@ public class TextEditorKeymapTerminal : Keymap, ITextEditorKeymap
 
 										terminalResource.ManualDecorationTextSpanList.Add(terminalResource.TargetFilePathTextSpan);
 
-                                        await editContext.TextEditorService.ModelApi.InsertTextFactory(
-                                                modelModifier.ResourceUri,
-												viewModelModifier.ViewModel.ViewModelKey,
-												"\n",
-												CancellationToken.None)
-											.Invoke(editContext)
-											.ConfigureAwait(false);
+                                        editContext.TextEditorService.ModelApi.InsertText(
+                                            editContext,
+                                            modelModifier,
+											cursorModifierBag,
+											"\n",
+											CancellationToken.None);
 
                                         generalTerminal.EnqueueCommand(terminalCommand);
                                     }

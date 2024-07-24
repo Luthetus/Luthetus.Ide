@@ -3,6 +3,8 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.Extensions.DotNet.CompilerServices.Models;
 
 namespace Luthetus.Extensions.DotNet.Tests.Basis.TreeViewImplementations.Models;
 

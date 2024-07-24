@@ -73,7 +73,7 @@ public class TextEditorKeymapReadOnly : Keymap, ITextEditorKeymap
         {
             CtrlKey = true,
             LayerKey = TextEditorKeymapReadOnlyFacts.DefaultLayer.Key
-        }, TextEditorCommandDefaultFacts.Save);
+        }, TextEditorCommandDefaultFacts.TriggerSave);
 
         Map.Add(new KeymapArgument("KeyA")
         {

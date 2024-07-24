@@ -58,10 +58,11 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
 			nameof(LuthetusExtensionsDotNetInitializer),
-			async () =>
+			() =>
 			{
 				InitializePanelTabs();
-			});
+                return Task.CompletedTask;
+            });
 			
 		base.OnInitialized();
 	}
@@ -74,7 +75,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 				Key<IBackgroundTask>.NewKey(),
 				ContinuousBackgroundTaskWorker.GetQueueKey(),
 				nameof(LuthetusExtensionsDotNetInitializer),
-				async () =>
+				() =>
 				{
 					var menuOptionOpenDotNetSolution = new MenuOptionRecord(
 		                ".NET Solution",
@@ -134,7 +135,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 					InitializeMenuRun();
 					
 					Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(_leftPanelGroupKey, _solutionExplorerPanelKey));
-				});
+                    return Task.CompletedTask;
+                });
 		}
 	}
 

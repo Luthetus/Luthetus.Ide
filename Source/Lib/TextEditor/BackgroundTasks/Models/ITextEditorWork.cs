@@ -11,13 +11,13 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// massive flaws that existed as a result. The goal being,
 /// if I ever revisit this topic, I don't just repeat the same mistake.
 ///
-/// Every <see cref="ITextEditorTask"/> when finished executing,
+/// Every <see cref="ITextEditorWork"/> when finished executing,
 /// will cause the text editor to render.
 ///
-/// So, I started writing code to permit batching of <see cref="ITextEditorTask"/>,
+/// So, I started writing code to permit batching of <see cref="ITextEditorWork"/>,
 /// in order to reduce the amount of rendering.
 ///
-/// I started by having specific implementations of <see cref="ITextEditorTask"/>
+/// I started by having specific implementations of <see cref="ITextEditorWork"/>
 /// be batchable amongst themselves.
 ///
 /// For example, if the user types into the text editor, this results in
@@ -54,7 +54,7 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// and start the batch over again with the next event.
 /// Instead of eternally batching under high load.
 ///
-/// After I made an implementation of <see cref="ITextEditorTask"/>
+/// After I made an implementation of <see cref="ITextEditorWork"/>
 /// for each of the UI events, I thought I would create an implementation
 /// for general use.
 ///
@@ -158,7 +158,7 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// In my head it feels as though a 'Timer' class is if I were to start and stop
 /// every 60 milliseconds. As opposed to asking someone else to do it for me.
 /// </summary>
-public interface ITextEditorTask : IBackgroundTask
+public interface ITextEditorWork : IBackgroundTask
 {
 	public IEditContext EditContext { get; set; }
 }

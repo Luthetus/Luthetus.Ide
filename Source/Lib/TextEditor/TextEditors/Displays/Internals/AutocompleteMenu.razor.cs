@@ -209,11 +209,24 @@ public partial class AutocompleteMenu : ComponentBase
     {
         TextEditorService.PostUnique(
             nameof(InsertAutocompleteMenuOption),
-            TextEditorService.ModelApi.InsertTextFactory(
-                viewModel.ResourceUri,
-                viewModel.ViewModelKey,
-                autocompleteEntry.DisplayName.Substring(word.Length),
-                CancellationToken.None));
+            editContext =>
+            {
+            	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+                var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+                if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                    return Task.CompletedTask;
+            
+            	TextEditorService.ModelApi.InsertText(
+            		editContext,
+			        modelModifier,
+			        cursorModifierBag,
+			        autocompleteEntry.DisplayName.Substring(word.Length),
+			        CancellationToken.None);
+	            return Task.CompletedTask;
+            });
 		return Task.CompletedTask;
     }
 }

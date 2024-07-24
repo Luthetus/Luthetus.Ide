@@ -26,11 +26,14 @@ public class ViewModelDisplayOptions
     /// If left null, the default <see cref="HandleAfterOnKeyDownAsync"/> will be used.
     /// </summary>
     public Func<
-        ResourceUri,
-        Key<TextEditorViewModel>,
+    	IEditContext,
+        TextEditorModelModifier,
+        TextEditorViewModelModifier,
+        CursorModifierBagTextEditor,
         KeyboardEventArgs,
-        TextEditorFunc>?
-        AfterOnKeyDownAsyncFactory { get; set; }
+		TextEditorComponentData,
+        Task>?
+        AfterOnKeyDownAsync { get; set; }
 
     /// <summary>
     /// If left null, the default <see cref="HandleAfterOnKeyDownRangeAsync"/> will be used.
@@ -41,11 +44,14 @@ public class ViewModelDisplayOptions
     /// event fired.
     /// </summary>
     public Func<
-        ResourceUri,
-        Key<TextEditorViewModel>,
+    	IEditContext,
+        TextEditorModelModifier,
+        TextEditorViewModelModifier,
+        CursorModifierBagTextEditor,
         List<KeyboardEventArgs>,
-        TextEditorFunc>?
-        AfterOnKeyDownRangeAsyncFactory { get; set; }
+		TextEditorComponentData,
+        Task>?
+        AfterOnKeyDownRangeAsync { get; set; }
 
     /// <summary>
     /// If set to false the <see cref="Displays.Internals.Header"/> will NOT render above the text editor.

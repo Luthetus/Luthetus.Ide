@@ -59,11 +59,11 @@
 		        cancellationToken: CancellationToken.None,
 				shouldCreateEditHistory: true);
 
-			await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-			        testData.InModel.ResourceUri,
-			        testData.ViewModelKey,
-			        CancellationToken.None)
-				.Invoke(editContext);
+			editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
+				editContext,
+			    modelModifier,
+			    viewModelModifier,
+			    CancellationToken.None);
 
 			ConsoleWriteVirtualizationResultToString(viewModelModifier.ViewModel.VirtualizationResult);
 		});
@@ -162,7 +162,7 @@
 			return Task.CompletedTask;
 		});
 
-		await DONT_START_NOR_STOP_BTS_RunTextEditorBackgroundTaskTest(async editContext =>
+		await DONT_START_NOR_STOP_BTS_RunTextEditorBackgroundTaskTest(editContext =>
 		{
 			Console.WriteLine($"SECOND");
 
@@ -172,13 +172,13 @@
 			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
 			if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-				return;
+				return Task.CompletedTask;
 
-			await editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResultFactory(
-			        testData.InModel.ResourceUri,
-			        testData.ViewModelKey,
-			        CancellationToken.None)
-				.Invoke(editContext);
+			editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
+				editContext,
+			    modelModifier,
+			    viewModelModifier,
+			    CancellationToken.None);
 
 			// Left virtualization boundary assertion(s)
 			{
@@ -288,7 +288,7 @@
 
 			WriteViewModelToConsole(viewModelModifier.ViewModel);
 			ConsoleWriteVirtualizationResultToString(viewModelModifier.ViewModel.VirtualizationResult);
-			return;
+			return Task.CompletedTask;
 		});
 
 		return (testData, backgroundTaskHandle);

@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnScrollVertical : ITextEditorTask
+public class OnScrollVertical : ITextEditorWork
 {
     public OnScrollVertical(
         double scrollTop,
@@ -52,9 +52,11 @@ public class OnScrollVertical : ITextEditorTask
             if (viewModelModifier is null)
                 return;
 
-            await EditContext.TextEditorService.ViewModelApi
-                .SetScrollPositionFactory(ViewModelKey, null, ScrollTop)
-                .Invoke(EditContext);
+            EditContext.TextEditorService.ViewModelApi.SetScrollPosition(
+            	EditContext,
+        		viewModelModifier,
+            	null,
+            	ScrollTop);
 		}
 		finally
 		{

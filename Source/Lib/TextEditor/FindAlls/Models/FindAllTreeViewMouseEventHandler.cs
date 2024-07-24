@@ -32,13 +32,11 @@ public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewFindAllTextSpan treeViewFindAllTextSpan)
 			return Task.CompletedTask;
 
-		TreeViewFindAllTextSpanHelper.OpenInEditorOnClick(
+		return TreeViewFindAllTextSpanHelper.OpenInEditorOnClick(
 			treeViewFindAllTextSpan,
 			true,
 			_textEditorService,
 			_textEditorConfig,
 			_serviceProvider);
-
-		return Task.CompletedTask;
 	}
 }

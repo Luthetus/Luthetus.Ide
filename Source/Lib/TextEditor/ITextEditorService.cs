@@ -47,33 +47,33 @@ public partial interface ITextEditorService
         
     /// <summary>
     /// This method will create an instance of <see cref="UniqueTextEditorTask"/>,
-    /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
+    /// and then invoke <see cref="Post(ITextEditorWork)"/><br/><br/>
     /// </summary>
     public void PostUnique(
         string name,
-        TextEditorFunc textEditorFunc);
+        Func<IEditContext, Task> textEditorFunc);
         
     /// <summary>
     /// This method will create an instance of <see cref="RedundantTextEditorTask"/>,
-    /// and then invoke <see cref="Post(ITextEditorTask)"/><br/><br/>
+    /// and then invoke <see cref="Post(ITextEditorWork)"/><br/><br/>
     /// </summary>
     public void PostRedundant(
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        TextEditorFunc textEditorFunc);
+        Func<IEditContext, Task> textEditorFunc);
 
     /// <summary>
-    /// This method will set the <see cref="ITextEditorTask.EditContext"/> property.
+    /// This method will set the <see cref="ITextEditorWork.EditContext"/> property.
     ///
     /// Within the method
     /// <see cref="Luthetus.Common.RazorLib.BackgroundTasks.Models.IBackgroundTask.HandleEvent"/>,
     /// invoke <see cref="FinalizePost"/> to finalize any changes.
     /// </summary>
-    public void Post(ITextEditorTask textEditorTask);
+    public void Post(ITextEditorWork textEditorWork);
 
 	/// <summmary>
-	/// This method writes any mutated data within the <see cref="ITextEditorTask.EditContext"/>
+	/// This method writes any mutated data within the <see cref="ITextEditorWork.EditContext"/>
 	/// to the <see cref="TextEditorState"/>, and afterwards causes a UI render.
 	/// </summary>
 	public Task FinalizePost(IEditContext editContext);

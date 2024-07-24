@@ -43,28 +43,31 @@ public partial class Terminal
         _textEditorService.ModelApi.RegisterCustom(model);
 
         _textEditorService.PostUnique(
-            nameof(_textEditorService.ModelApi.AddPresentationModelFactory),
-            async editContext =>
+            nameof(_textEditorService.ModelApi.AddPresentationModel),
+            editContext =>
             {
-                await _textEditorService.ModelApi.AddPresentationModelFactory(
-                        model.ResourceUri,
-                        TerminalPresentationFacts.EmptyPresentationModel)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+	            var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+				
+				if (modelModifier is null)
+					return Task.CompletedTask;
+            
+                _textEditorService.ModelApi.AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    TerminalPresentationFacts.EmptyPresentationModel);
 
-                await _textEditorService.ModelApi.AddPresentationModelFactory(
-                        model.ResourceUri,
-                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                _textEditorService.ModelApi.AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
 
-                await _textEditorService.ModelApi.AddPresentationModelFactory(
-                        model.ResourceUri,
-                        FindOverlayPresentationFacts.EmptyPresentationModel)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                _textEditorService.ModelApi.AddPresentationModel(
+                    editContext,
+                    modelModifier,
+                    FindOverlayPresentationFacts.EmptyPresentationModel);
 
                 model.CompilerService.RegisterResource(model.ResourceUri);
+                return Task.CompletedTask;
             });
 
         _textEditorService.ViewModelApi.Register(
@@ -81,16 +84,22 @@ public partial class Terminal
 
         _textEditorService.PostUnique(
             nameof(Terminal),
-            _textEditorService.ViewModelApi.WithValueFactory(
-                TextEditorViewModelKey,
-                textEditorViewModel => textEditorViewModel with
-                    {
-                        FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
-                    }));
+            editContext =>
+            {
+            	var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+            	if (viewModelModifier is null)
+            		return Task.CompletedTask;
+
+                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                {
+                    FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
+                };
+                return Task.CompletedTask;
+            });
 
         _textEditorService.PostUnique(
-            nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            async editContext =>
+            nameof(_textEditorService.ViewModelApi.MoveCursor),
+            editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
@@ -98,23 +107,23 @@ public partial class Terminal
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
+                    return Task.CompletedTask;
 
-                await _textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Code = KeyboardKeyFacts.MovementKeys.END,
-                            Key = KeyboardKeyFacts.MovementKeys.END,
-                            CtrlKey = true,
-                        },
-                        ResourceUri,
-                        TextEditorViewModelKey)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                _textEditorService.ViewModelApi.MoveCursor(
+                	new KeyboardEventArgs
+                    {
+                        Code = KeyboardKeyFacts.MovementKeys.END,
+                        Key = KeyboardKeyFacts.MovementKeys.END,
+                        CtrlKey = true,
+                    },
+			        editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag);
 
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                    return;
+                    return Task.CompletedTask;
 
                 terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
                     0,
@@ -123,19 +132,19 @@ public partial class Terminal
                     ResourceUri,
                     modelModifier.GetAllText()));
 
-                await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
-                        modelModifier.ResourceUri,
-                        terminalResource.GetTokenTextSpans())
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+                	editContext,
+                    modelModifier,
+                    terminalResource.GetTokenTextSpans());
+                return Task.CompletedTask;
             });
     }
 
     public void WriteWorkingDirectory(bool prependNewLine = false)
     {
         _textEditorService.PostUnique(
-            nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            async editContext =>
+            nameof(_textEditorService.ViewModelApi.MoveCursor),
+            editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
@@ -143,7 +152,7 @@ public partial class Terminal
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
+                    return Task.CompletedTask;
 
                 var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
@@ -151,17 +160,16 @@ public partial class Terminal
 				if (prependNewLine)
 					content = '\n' + content;
 
-                await _textEditorService.ModelApi.InsertTextFactory(
-                        ResourceUri,
-                        TextEditorViewModelKey,
-                        content,
-                        CancellationToken.None)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                _textEditorService.ModelApi.InsertText(
+                	editContext,
+                    modelModifier,
+                    cursorModifierBag,
+                    content,
+                    CancellationToken.None);
 
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is not TerminalResource terminalResource)
-                    return;
+                    return Task.CompletedTask;
 
                 terminalResource.ManualDecorationTextSpanList.Add(new TextEditorTextSpan(
                     startingPositionIndex,
@@ -170,19 +178,19 @@ public partial class Terminal
                     ResourceUri,
                     modelModifier.GetAllText()));
 
-                await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
-                        modelModifier.ResourceUri,
-                        terminalResource.GetTokenTextSpans())
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+                	editContext,
+                    modelModifier,
+                    terminalResource.GetTokenTextSpans());
+                return Task.CompletedTask;
             });
     }
     
     public void MoveCursorToEnd()
     {
         _textEditorService.PostUnique(
-            nameof(_textEditorService.ViewModelApi.MoveCursorFactory),
-            async editContext =>
+            nameof(_textEditorService.ViewModelApi.MoveCursor),
+            editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
@@ -190,19 +198,20 @@ public partial class Terminal
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
+                    return Task.CompletedTask;
 
-                await _textEditorService.ViewModelApi.MoveCursorFactory(
-                        new KeyboardEventArgs
-                        {
-                            Code = KeyboardKeyFacts.MovementKeys.END,
-                            Key = KeyboardKeyFacts.MovementKeys.END,
-                            CtrlKey = true,
-                        },
-                        ResourceUri,
-                        TextEditorViewModelKey)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                _textEditorService.ViewModelApi.MoveCursor(
+                	new KeyboardEventArgs
+                    {
+                        Code = KeyboardKeyFacts.MovementKeys.END,
+                        Key = KeyboardKeyFacts.MovementKeys.END,
+                        CtrlKey = true,
+                    },
+			        editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag);
+                return Task.CompletedTask;
             });
     }
 
@@ -210,7 +219,7 @@ public partial class Terminal
     {
         _textEditorService.PostUnique(
             nameof(ClearTerminal),
-            async editContext =>
+            editContext =>
             {
                 var modelModifier = editContext.GetModelModifier(ResourceUri);
                 var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
@@ -218,8 +227,8 @@ public partial class Terminal
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
                 if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                    return;
-                    
+                    return Task.CompletedTask;
+
                 var terminalCompilerService = (TerminalCompilerService)modelModifier.CompilerService;
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is TerminalResource firstTerminalResource)
                 {
@@ -228,29 +237,29 @@ public partial class Terminal
                 }
 
 				modelModifier.SetContent(string.Empty);
-				await _textEditorService.ViewModelApi.MoveCursorFactory(
-	                    new KeyboardEventArgs
-	                    {
-	                        Code = KeyboardKeyFacts.MovementKeys.END,
-	                        Key = KeyboardKeyFacts.MovementKeys.END,
-	                        CtrlKey = true,
-	                    },
-	                    ResourceUri,
-	                    TextEditorViewModelKey)
-	                .Invoke(editContext)
-	                .ConfigureAwait(false);
+				
+				_textEditorService.ViewModelApi.MoveCursor(
+					new KeyboardEventArgs
+                    {
+                        Code = KeyboardKeyFacts.MovementKeys.END,
+                        Key = KeyboardKeyFacts.MovementKeys.END,
+                        CtrlKey = true,
+                    },
+			        editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        cursorModifierBag);
 	                
 	            var startingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 
 				var content = (WorkingDirectoryAbsolutePathString ?? "null") + '>';
 
-                await _textEditorService.ModelApi.InsertTextFactory(
-                        ResourceUri,
-                        TextEditorViewModelKey,
-                        content,
-                        CancellationToken.None)
-                    .Invoke(editContext)
-                    .ConfigureAwait(false);
+                _textEditorService.ModelApi.InsertText(
+                	editContext,
+                    modelModifier,
+                    cursorModifierBag,
+                    content,
+                    CancellationToken.None);
 
                 if (terminalCompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri) is TerminalResource secondTerminalResource)
                 {
@@ -261,12 +270,13 @@ public partial class Terminal
 	                    ResourceUri,
 	                    modelModifier.GetAllText()));
 	
-	                await editContext.TextEditorService.ModelApi.ApplyDecorationRangeFactory(
-	                        modelModifier.ResourceUri,
-	                        secondTerminalResource.GetTokenTextSpans())
-	                    .Invoke(editContext)
-	                    .ConfigureAwait(false);
+	                editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+	                	editContext,
+                        modelModifier,
+                        secondTerminalResource.GetTokenTextSpans());
                 }
+
+                return Task.CompletedTask;
             });
     }
     

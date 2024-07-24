@@ -52,7 +52,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 
 		TextEditorService.PostUnique(
 			nameof(SyntaxTextSpanDisplay),
-			async editContext =>
+			editContext =>
 			{
 				var modelModifier = editContext.GetModelModifier(
 					localTextSpanTuple.TextEditorTextSpan.ResourceUri);
@@ -60,8 +60,8 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 				if (modelModifier is null ||
 					modelModifier.GetAllText() != modelText)
 				{
-					return;
-				}
+                    return Task.CompletedTask;
+                }
 
 				var rowInfo = modelModifier.GetLineInformationFromPositionIndex(
 					localTextSpanTuple.TextEditorTextSpan.StartingIndexInclusive);
@@ -82,17 +82,17 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 					Key<TextEditorViewModel>.Empty,
 					new List<TextEditorCursorModifier> { new(cursor) });
 
-				await TextEditorService.ModelApi.InsertTextUnsafeFactory(
-						_textSpanTuple.TextEditorTextSpan.ResourceUri,
-						cursorModifierBag,
-						localInputValue,
-						CancellationToken.None)
-					.Invoke(editContext)
-					.ConfigureAwait(false);
+				TextEditorService.ModelApi.InsertTextUnsafe(
+					editContext,
+			        modelModifier,
+			        cursorModifierBag,
+			        localInputValue,
+			        CancellationToken.None);
 
 				modelModifier.CompilerService.ResourceWasModified(
 					_textSpanTuple.TextEditorTextSpan.ResourceUri,
 					ImmutableArray<TextEditorTextSpan>.Empty);
-			});
+                return Task.CompletedTask;
+            });
 	}
 }

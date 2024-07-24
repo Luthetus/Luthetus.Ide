@@ -48,12 +48,12 @@ public partial class FindOverlayDisplay : ComponentBase
                 {
                     TextEditorService.PostUnique(
                         nameof(FindOverlayDisplay),
-                        async editContext =>
+                        editContext =>
                         {
                             var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
 
                             if (viewModelModifier is null)
-                                return;
+                                return Task.CompletedTask;
 
                             var localInputValue = _inputValue;
 
@@ -65,19 +65,18 @@ public partial class FindOverlayDisplay : ComponentBase
                             var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
 
                             if (modelModifier is null)
-                                return;
+                                return Task.CompletedTask;
 
                             ImmutableArray<TextEditorTextSpan> textSpanMatches = ImmutableArray<TextEditorTextSpan>.Empty;
 
                             if (!string.IsNullOrWhiteSpace(localInputValue))
                                 textSpanMatches = modelModifier.FindMatches(localInputValue);
 
-                            await TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
-                                    modelModifier.ResourceUri,
-                                    FindOverlayPresentationFacts.PresentationKey,
-                                    FindOverlayPresentationFacts.EmptyPresentationModel)
-                                .Invoke(editContext)
-                                .ConfigureAwait(false);
+                            TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+                            	editContext,
+                                modelModifier,
+                                FindOverlayPresentationFacts.PresentationKey,
+                                FindOverlayPresentationFacts.EmptyPresentationModel);
 
                             var presentationModel = modelModifier.PresentationModelList.First(
                                 x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
@@ -92,6 +91,7 @@ public partial class FindOverlayDisplay : ComponentBase
 
                             _activeIndexMatchedTextSpan = null;
                             _decorationByteChangedTargetTextSpan = null;
+                            return Task.CompletedTask;
                         });
 					return Task.CompletedTask;
                 }).ConfigureAwait(false);
@@ -139,12 +139,12 @@ public partial class FindOverlayDisplay : ComponentBase
                 nameof(FindOverlayDisplay),
 				RenderBatch.ViewModel.ResourceUri,
                 RenderBatch.ViewModel.ViewModelKey,
-                async editContext =>
+                editContext =>
                 {
                     var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
 
                     if (viewModelModifier is null)
-                        return;
+                        return Task.CompletedTask;
 
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                     {
@@ -154,14 +154,13 @@ public partial class FindOverlayDisplay : ComponentBase
                     var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
 
                     if (modelModifier is null)
-                        return;
+                        return Task.CompletedTask;
 
-                    await TextEditorService.ModelApi.StartPendingCalculatePresentationModelFactory(
-                                modelModifier.ResourceUri,
-                                FindOverlayPresentationFacts.PresentationKey,
-                                FindOverlayPresentationFacts.EmptyPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                    TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+                		editContext,
+                        modelModifier,
+                        FindOverlayPresentationFacts.PresentationKey,
+                        FindOverlayPresentationFacts.EmptyPresentationModel);
 
                     var presentationModel = modelModifier.PresentationModelList.First(
                         x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
@@ -173,6 +172,7 @@ public partial class FindOverlayDisplay : ComponentBase
                         FindOverlayPresentationFacts.PresentationKey,
                         FindOverlayPresentationFacts.EmptyPresentationModel,
                         ImmutableArray<TextEditorTextSpan>.Empty);
+                    return Task.CompletedTask;
                 });
         }
     }
@@ -249,22 +249,22 @@ public partial class FindOverlayDisplay : ComponentBase
     {
         TextEditorService.PostUnique(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
-            async editContext =>
+            editContext =>
             {
                 var localActiveIndexMatchedTextSpan = _activeIndexMatchedTextSpan;
 
                 if (localActiveIndexMatchedTextSpan is null)
-                    return;
+                    return Task.CompletedTask;
 
                 var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
 
                 if (viewModelModifier is null)
-                    return;
+                    return Task.CompletedTask;
                 
                 var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
 
                 if (modelModifier is null)
-                    return;
+                    return Task.CompletedTask;
 
                 var presentationModel = modelModifier.PresentationModelList.FirstOrDefault(x =>
                     x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
@@ -298,12 +298,12 @@ public partial class FindOverlayDisplay : ComponentBase
                         });
                 }
 
-				await TextEditorService.ViewModelApi.ScrollIntoViewFactory(
-						RenderBatch.Model.ResourceUri,						
-						RenderBatch.ViewModel.ViewModelKey,
-						_decorationByteChangedTargetTextSpan)
-	                .Invoke(editContext)
-                    .ConfigureAwait(false);
+				TextEditorService.ViewModelApi.ScrollIntoView(
+					editContext,
+					modelModifier,						
+					viewModelModifier,
+					_decorationByteChangedTargetTextSpan);
+                return Task.CompletedTask;
             });
 		return Task.CompletedTask;
     }

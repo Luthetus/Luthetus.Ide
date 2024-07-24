@@ -50,119 +50,176 @@ public partial class Header : ComponentBase
             viewModel.ViewModelKey,
             RenderBatch.ComponentData,
 			TextEditorService,
-            ServiceProvider);
+            ServiceProvider,
+            null);
     }
 
-    private async Task DoCopyOnClick(MouseEventArgs arg)
+    private Task DoCopyOnClick(MouseEventArgs arg)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Copy.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.Copy),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.Copy.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
-    private async Task DoCutOnClick(MouseEventArgs arg)
+    private Task DoCutOnClick(MouseEventArgs arg)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Cut.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.Cut),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.Cut.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
-    private async Task DoPasteOnClick(MouseEventArgs arg)
+    private Task DoPasteOnClick(MouseEventArgs arg)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.PasteCommand),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
-    private async Task DoRedoOnClick(MouseEventArgs arg)
+    private Task DoRedoOnClick(MouseEventArgs arg)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Redo.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.Redo),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.Redo.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
-    private async Task DoSaveOnClick(MouseEventArgs arg)
+    private Task DoSaveOnClick(MouseEventArgs arg)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Save.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.TriggerSave),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.TriggerSave.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
-    private async Task DoUndoOnClick(MouseEventArgs arg)
+    private Task DoUndoOnClick(MouseEventArgs arg)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Undo.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.Undo),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.Undo.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
-    private async Task DoSelectAllOnClick(MouseEventArgs arg)
+    private Task DoSelectAllOnClick(MouseEventArgs arg)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.SelectAll.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.SelectAll),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.SelectAll.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
-    private async Task DoRemeasureOnClick(MouseEventArgs arg)
+    private Task DoRemeasureOnClick(MouseEventArgs arg)
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Remeasure.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.Remeasure),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.Remeasure.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
     private void ShowWatchWindowDisplayDialogOnClick()
@@ -196,18 +253,25 @@ public partial class Header : ComponentBase
         DialogService.RegisterDialogRecord(dialogRecord);
     }
 
-    private async Task DoRefreshOnClick()
+    private Task DoRefreshOnClick()
     {
         var model = RenderBatch.Model;
         var viewModel = RenderBatch.ViewModel;
 
         if (model is null || viewModel is null)
-            return;
+            return Task.CompletedTask;
 
         var commandArgs = ConstructCommandArgs(model, viewModel);
-        await TextEditorCommandDefaultFacts.Remeasure.CommandFunc
-            .Invoke(commandArgs)
-            .ConfigureAwait(false);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.Remeasure),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.Remeasure.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
     }
 
     /// <summary>

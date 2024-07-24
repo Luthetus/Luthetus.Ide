@@ -303,7 +303,7 @@ public class TextEditorCommandDefaultFactsTests
                     return Task.CompletedTask;
                 });
 
-            await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
+            await TextEditorCommandDefaultFacts.TriggerSave.CommandFunc.Invoke(textEditorCommandArgs);
 
             textEditorService.PostUnique(
                 nameof(TextEditorCommandDefaultFactsTests),
@@ -323,7 +323,7 @@ public class TextEditorCommandDefaultFactsTests
                 var savedContent = (string?)null;
 
                 Assert.Null(savedContent);
-                await TextEditorCommandDefaultFacts.Save.CommandFunc.Invoke(textEditorCommandArgs);
+                await TextEditorCommandDefaultFacts.TriggerSave.CommandFunc.Invoke(textEditorCommandArgs);
 
             textEditorService.PostUnique(
                     nameof(TextEditorCommandDefaultFactsTests),
@@ -426,11 +426,18 @@ public class TextEditorCommandDefaultFactsTests
 
                 textEditorService.PostUnique(
                     nameof(TextEditorCommandDefaultFactsTests),
-                    textEditorService.ModelApi.InsertTextUnsafeFactory(
-                        inModel.ResourceUri,
-                        cursorModificationBag,
-                        "zyx",
-                        CancellationToken.None));
+                    editContext =>
+                    {
+                        var modelModifier = editContext.GetModelModifier(inModel.ResourceUri);
+
+                        textEditorService.ModelApi.InsertTextUnsafe(
+                            editContext,
+							modelModifier,
+							cursorModificationBag,
+                            "zyx",
+                            CancellationToken.None);
+                        return Task.CompletedTask;
+                    });
             }
 
 
@@ -509,7 +516,7 @@ public class TextEditorCommandDefaultFactsTests
 
         //        textEditorService.Post(
         //            nameof(TextEditorCommandDefaultFactsTests),
-        //            textEditorService.ModelApi.InsertTextUnsafeFactory(
+        //            textEditorService.ModelApi.InsertTextUnsafe(
         //                inModel.ResourceUri,
         //                cursorModificationBag,
         //                "zyx",
@@ -1003,12 +1010,12 @@ public class TextEditorCommandDefaultFactsTests
                             Key<TextEditorViewModel>.Empty,
                             new List<TextEditorCursorModifier> { cursorModifier });
 
-                        await textEditorService.ModelApi.InsertTextUnsafeFactory(
-                                modelModifier.ResourceUri,
-                                insertionCursorModifierBag,
-                                "\t",
-                                CancellationToken.None)
-                            .Invoke(editContext);
+                        textEditorService.ModelApi.InsertTextUnsafe(
+                            editContext,
+                            modelModifier,
+                            insertionCursorModifierBag,
+                            "\t",
+                            CancellationToken.None);
 
                         var rowText = new string(
                             modelModifier.GetLineRichCharacterRange(1, 1).Single().Select(x => x.Value).ToArray());
@@ -1072,12 +1079,12 @@ public class TextEditorCommandDefaultFactsTests
                             Key<TextEditorViewModel>.Empty,
                             new List<TextEditorCursorModifier> { cursorModifier });
 
-                        textEditorService.ModelApi.InsertTextUnsafeFactory(
-                                modelModifier.ResourceUri,
-                                insertionCursorModifierBag,
-                                "    ",
-                                CancellationToken.None)
-                            .Invoke(editContext);
+                        textEditorService.ModelApi.InsertTextUnsafe(
+                            editContext,
+                            modelModifier,
+                            insertionCursorModifierBag,
+                            "    ",
+                            CancellationToken.None);
 
                         var rowText = new string(
                             modelModifier.GetLineRichCharacterRange(1, 1).Single().Select(x => x.Value).ToArray());
@@ -1141,12 +1148,12 @@ public class TextEditorCommandDefaultFactsTests
                             Key<TextEditorViewModel>.Empty,
                             new List<TextEditorCursorModifier> { cursorModifier });
 
-                        textEditorService.ModelApi.InsertTextUnsafeFactory(
-                                modelModifier.ResourceUri,
-                                insertionCursorModifierBag,
-                                "\t",
-                                CancellationToken.None)
-                            .Invoke(editContext);
+                        textEditorService.ModelApi.InsertTextUnsafe(
+                            editContext,
+                            modelModifier,
+                            insertionCursorModifierBag,
+                            "\t",
+                            CancellationToken.None);
 
                         var rowText = new string(
                             modelModifier.GetLineRichCharacterRange(1, 1).Single().Select(x => x.Value).ToArray());
@@ -1465,10 +1472,10 @@ public class TextEditorCommandDefaultFactsTests
     }
 
 	/// <summary>
-	/// <see cref="TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(bool)"/>
+	/// <see cref="TextEditorCommandDefaultFacts.GoToMatchingCharacter(bool)"/>
 	/// </summary>
 	[Fact]
-	public async Task GoToMatchingCharacterFactory()
+	public async Task GoToMatchingCharacter()
 	{
         // No shift key
         {
