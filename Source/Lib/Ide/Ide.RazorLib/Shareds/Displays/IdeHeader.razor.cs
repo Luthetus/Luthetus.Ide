@@ -223,7 +223,8 @@ public partial class IdeHeader : ComponentBase
 					        activeViewModel.ViewModelKey,
 							null,
 							TextEditorService,
-					        ServiceProvider));
+					        ServiceProvider,
+					        null));
 
 					return Task.CompletedTask;
 				});

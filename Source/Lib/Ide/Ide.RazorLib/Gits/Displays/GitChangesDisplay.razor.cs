@@ -44,25 +44,25 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     new Category(nameof(GitChangesDisplay)));
 
                 TextEditorService.PostUnique(
-                    nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
-                    async editContext =>
+                    nameof(TextEditorService.ModelApi.AddPresentationModel),
+                    editContext =>
                     {
-                        await TextEditorService.ModelApi.AddPresentationModelFactory(
-                                InResourceUri,
-                                DiffPresentationFacts.EmptyInPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                    	var modelModifier = editContext.GetModelModifier(InResourceUri);
+                    
+                        TextEditorService.ModelApi.AddPresentationModel(
+                        	editContext,
+                            modelModifier,
+                            DiffPresentationFacts.EmptyInPresentationModel);
 
-                        await TextEditorService.ModelApi.AddPresentationModelFactory(
-                                InResourceUri,
-                                DiffPresentationFacts.EmptyOutPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                        TextEditorService.ModelApi.AddPresentationModel(
+                        	editContext,
+                            modelModifier,
+                            DiffPresentationFacts.EmptyOutPresentationModel);
 
                         var viewModelModifier = editContext.GetViewModelModifier(InViewModelKey);
 
                         if (viewModelModifier is null)
-                            return;
+                            return Task.CompletedTask;
 
                         var presentationKeys = new[]
                         {
@@ -73,6 +73,8 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                         {
                             FirstPresentationLayerKeysList = presentationKeys.ToImmutableList()
                         };
+                        
+                        return Task.CompletedTask;
                     });
             }
             
@@ -91,20 +93,20 @@ public partial class GitChangesDisplay : ComponentBase, IGitDisplayRendererType
                     new Category(nameof(GitChangesDisplay)));
 
                 TextEditorService.PostUnique(
-                    nameof(TextEditorService.ModelApi.AddPresentationModelFactory),
+                    nameof(TextEditorService.ModelApi.AddPresentationModel),
                     async editContext =>
                     {
-                        await TextEditorService.ModelApi.AddPresentationModelFactory(
-                                OutResourceUri,
-                                DiffPresentationFacts.EmptyInPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                    	var modelModifier = editContext.GetModelModifier(OutResourceUri);
+                    
+                        TextEditorService.ModelApi.AddPresentationModel(
+                    		editContext,
+                            modelModifier,
+                            DiffPresentationFacts.EmptyInPresentationModel);
 
-                        await TextEditorService.ModelApi.AddPresentationModelFactory(
-                                OutResourceUri,
-                                DiffPresentationFacts.EmptyOutPresentationModel)
-                            .Invoke(editContext)
-                            .ConfigureAwait(false);
+                        TextEditorService.ModelApi.AddPresentationModel(
+                    		editContext,
+                            modelModifier,
+                            DiffPresentationFacts.EmptyOutPresentationModel);
 
                         var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
 
