@@ -201,34 +201,36 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
 
             TextEditorService.PostUnique(
                 nameof(TextEditorService.ModelApi.AddPresentationModel),
-                async editContext =>
+                editContext =>
                 {
-                    await TextEditorService.ModelApi.AddPresentationModel(
-                            textEditorModel.ResourceUri,
-                            CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+					var modelModifier = editContext.GetModelModifier(textEditorModel.ResourceUri);
+
+					if (modelModifier is null)
+						return Task.CompletedTask;
+
+					TextEditorService.ModelApi.AddPresentationModel(
+                        editContext,
+						modelModifier,
+                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
                     
-                    await TextEditorService.ModelApi.AddPresentationModel(
-                            textEditorModel.ResourceUri,
-                            FindOverlayPresentationFacts.EmptyPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                    TextEditorService.ModelApi.AddPresentationModel(
+						editContext,
+						modelModifier,
+                        FindOverlayPresentationFacts.EmptyPresentationModel);
 
-                    await TextEditorService.ModelApi.AddPresentationModel(
-                            textEditorModel.ResourceUri,
-                            DiffPresentationFacts.EmptyInPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                    TextEditorService.ModelApi.AddPresentationModel(
+						editContext,
+						modelModifier,
+                        DiffPresentationFacts.EmptyInPresentationModel);
 
-                    await TextEditorService.ModelApi.AddPresentationModel(
-                            textEditorModel.ResourceUri,
-                            DiffPresentationFacts.EmptyOutPresentationModel)
-                        .Invoke(editContext)
-                        .ConfigureAwait(false);
+                    TextEditorService.ModelApi.AddPresentationModel(
+                        editContext,
+                        modelModifier,
+                        DiffPresentationFacts.EmptyOutPresentationModel);
 
                     textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
-                });
+					return Task.CompletedTask;
+				});
         }
     }
 }
