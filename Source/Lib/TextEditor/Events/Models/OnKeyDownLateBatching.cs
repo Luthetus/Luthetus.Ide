@@ -46,7 +46,7 @@ public class OnKeyDownLateBatching : ITextEditorWork
     public List<KeyboardEventArgs> KeyboardEventArgsList { get; }
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
-	public IEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; set; }
 	public TextEditorComponentData ComponentData { get; set; }
 
 	/// <summary>
@@ -114,7 +114,7 @@ public class OnKeyDownLateBatching : ITextEditorWork
 	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
 	                        viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
 	                    {
-							// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+							// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 							// Reason being, these are likely to be huge optimizations (2024-05-29).
 							//
 							// TODO: Uncomment and deal with this line of code (2024-06-08).

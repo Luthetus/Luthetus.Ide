@@ -15,11 +15,11 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </remarks>
 public sealed class UniqueTextEditorWork : ITextEditorWork
 {
-    private readonly Func<IEditContext, Task> _textEditorFunc;
+    private readonly Func<ITextEditorEditContext, Task> _textEditorFunc;
 
     public UniqueTextEditorWork(
         string name,
-        Func<IEditContext, Task> textEditorFunc)
+        Func<ITextEditorEditContext, Task> textEditorFunc)
     {
         _textEditorFunc = textEditorFunc;
         Name = name;
@@ -29,7 +29,7 @@ public sealed class UniqueTextEditorWork : ITextEditorWork
     public Key<IBackgroundTask> BackgroundTaskKey { get; set; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; set; } = ContinuousBackgroundTaskWorker.GetQueueKey();
 
-	public IEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; set; }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {

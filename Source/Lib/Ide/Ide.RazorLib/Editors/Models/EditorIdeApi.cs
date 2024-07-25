@@ -254,8 +254,6 @@ public class EditorIdeApi
 
 	        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
 	        {
-	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => innerTextEditor.ResourceUri.Value, _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(6));
-	        
 	            var innerContent = innerTextEditor.GetAllText();
 	
 	            var cancellationToken = model.TextEditorSaveFileHelper.GetCancellationToken();

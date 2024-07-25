@@ -122,7 +122,7 @@ public partial class TextEditorService : ITextEditorService
 
     public void PostUnique(
         string name,
-        Func<IEditContext, Task> textEditorFunc)
+        Func<ITextEditorEditContext, Task> textEditorFunc)
     {
         Post(new UniqueTextEditorWork(
             name,
@@ -133,7 +133,7 @@ public partial class TextEditorService : ITextEditorService
         string name,
 		ResourceUri resourceUri,
         Key<TextEditorViewModel> viewModelKey,
-        Func<IEditContext, Task> textEditorFunc)
+        Func<ITextEditorEditContext, Task> textEditorFunc)
     {
         Post(new RedundantTextEditorWork(
             name,
@@ -151,7 +151,7 @@ public partial class TextEditorService : ITextEditorService
         _backgroundTaskService.Enqueue(work);
     }
 
-	public async Task FinalizePost(IEditContext editContext)
+	public async Task FinalizePost(ITextEditorEditContext editContext)
 	{
 		var modelModifierNeedRenderList = new List<TextEditorModelModifier>();
 		var viewModelModifierNeedRenderList = new List<TextEditorViewModelModifier>();

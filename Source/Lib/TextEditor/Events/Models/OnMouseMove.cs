@@ -32,7 +32,7 @@ public class OnMouseMove : ITextEditorWork
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public TextEditorComponentData ComponentData { get; }
 
-	public IEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; set; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
@@ -61,7 +61,7 @@ public class OnMouseMove : ITextEditorWork
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return;
 
-			// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+			// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 			// Reason being, these are likely to be huge optimizations (2024-05-29).
             var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
 					ResourceUri,

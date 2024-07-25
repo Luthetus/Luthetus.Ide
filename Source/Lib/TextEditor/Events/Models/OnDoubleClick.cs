@@ -33,7 +33,7 @@ public class OnDoubleClick : ITextEditorWork
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public IEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; set; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
@@ -70,7 +70,7 @@ public class OnDoubleClick : ITextEditorWork
             if (MouseEventArgs.ShiftKey)
                 return; // Do not expand selection if user is holding shift
 
-			// Labeling any IEditContext -> JavaScript interop or Blazor StateHasChanged.
+			// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
 			// Reason being, these are likely to be huge optimizations (2024-05-29).
             var rowAndColumnIndex = await EventUtils.CalculateRowAndColumnIndex(
 					ResourceUri,

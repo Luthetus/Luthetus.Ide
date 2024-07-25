@@ -39,7 +39,7 @@ public class TextEditorDiffApi : ITextEditorDiffApi
         _dispatcher.Dispatch(new TextEditorDiffState.DisposeAction(diffModelKey));
     }
 
-    public Func<IEditContext, Task> CalculateFactory(
+    public Func<ITextEditorEditContext, Task> CalculateFactory(
         Key<TextEditorDiffModel> diffModelKey,
         CancellationToken cancellationToken)
     {

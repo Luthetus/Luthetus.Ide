@@ -51,7 +51,7 @@ public class OnOutputBatch : ITextEditorWork
 	public TerminalCommand TerminalCommand { get; }
 	public Key<TextEditorViewModel> ViewModelKey { get; }
 
-	public IEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; set; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 

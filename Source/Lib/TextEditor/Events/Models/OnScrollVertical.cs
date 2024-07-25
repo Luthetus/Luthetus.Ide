@@ -27,7 +27,7 @@ public class OnScrollVertical : ITextEditorWork
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public IEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; set; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 

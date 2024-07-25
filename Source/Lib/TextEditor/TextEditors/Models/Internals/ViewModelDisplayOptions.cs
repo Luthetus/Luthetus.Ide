@@ -26,7 +26,7 @@ public class ViewModelDisplayOptions
     /// If left null, the default <see cref="HandleAfterOnKeyDownAsync"/> will be used.
     /// </summary>
     public Func<
-    	IEditContext,
+    	ITextEditorEditContext,
         TextEditorModelModifier,
         TextEditorViewModelModifier,
         CursorModifierBagTextEditor,
@@ -44,7 +44,7 @@ public class ViewModelDisplayOptions
     /// event fired.
     /// </summary>
     public Func<
-    	IEditContext,
+    	ITextEditorEditContext,
         TextEditorModelModifier,
         TextEditorViewModelModifier,
         CursorModifierBagTextEditor,

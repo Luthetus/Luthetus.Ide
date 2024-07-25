@@ -7,9 +7,9 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 /// <summary>
 /// This type will replace what was 'TextEditorModelState' and 'TextEditorViewModelState'.
 ///
-/// Edits to a text editor are done via the <see cref="IEditContext"/>.
+/// Edits to a text editor are done via the <see cref="ITextEditorEditContext"/>.
 /// And prior to making this change, both 'TextEditorModelState' and 'TextEditorViewModelState'
-/// needed to be dispatched to, once the <see cref="IEditContext"/> was finalized.
+/// needed to be dispatched to, once the <see cref="ITextEditorEditContext"/> was finalized.
 ///
 /// The result of this double dispatching is that the text editor UI is told to re-render
 /// twice.
