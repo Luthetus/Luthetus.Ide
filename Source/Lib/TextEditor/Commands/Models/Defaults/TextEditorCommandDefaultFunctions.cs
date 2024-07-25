@@ -15,6 +15,8 @@ using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -101,8 +103,20 @@ public class TextEditorCommandDefaultFunctions
     {
     	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
     	
-    	viewModelModifier.ViewModel.OnSaveRequested?.Invoke(modelModifier);
-        modelModifier.SetIsDirtyFalse();
+    	if (viewModelModifier.ViewModel.OnSaveRequested is null)
+    	{
+    		NotificationHelper.DispatchError(
+		        nameof(TriggerSave),
+		        $"{nameof(TriggerSave)} was null",
+		        commandArgs.ServiceProvider.GetRequiredService<ICommonComponentRenderers>(),
+				commandArgs.ServiceProvider.GetRequiredService<IDispatcher>(),
+		        TimeSpan.FromSeconds(7));
+    	}
+    	else
+    	{
+    		viewModelModifier.ViewModel.OnSaveRequested.Invoke(modelModifier);
+        	modelModifier.SetIsDirtyFalse();
+    	}
     }
 
     public static void SelectAll(
