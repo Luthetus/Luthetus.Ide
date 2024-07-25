@@ -225,10 +225,14 @@ public class OnWheel : ITextEditorWork
 			        viewModelModifier,
                 	WheelEventArgs.DeltaY);
             }
+            
+            await EditContext.TextEditorService
+            	.FinalizePost(EditContext)
+            	.ConfigureAwait(false);
 		}
-		finally
+		catch (Exception e)
 		{
-			await EditContext.TextEditorService.FinalizePost(EditContext);
+			Console.WriteLine(e);
 		}
     }
 }

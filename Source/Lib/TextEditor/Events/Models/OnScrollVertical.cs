@@ -57,10 +57,14 @@ public class OnScrollVertical : ITextEditorWork
         		viewModelModifier,
             	null,
             	ScrollTop);
+            	
+            await EditContext.TextEditorService
+            	.FinalizePost(EditContext)
+            	.ConfigureAwait(false);
 		}
-		finally
+		catch (Exception e)
 		{
-			await EditContext.TextEditorService.FinalizePost(EditContext);
+			Console.WriteLine(e);
 		}
     }
 }

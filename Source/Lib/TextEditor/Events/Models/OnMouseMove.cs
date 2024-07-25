@@ -78,10 +78,14 @@ public class OnMouseMove : ITextEditorWork
 			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 
             primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+		
+			await EditContext.TextEditorService
+				.FinalizePost(EditContext)
+				.ConfigureAwait(false);
 		}
-		finally
+		catch (Exception e)
 		{
-			await EditContext.TextEditorService.FinalizePost(EditContext);
+			Console.WriteLine(e);
 		}
     }
 }

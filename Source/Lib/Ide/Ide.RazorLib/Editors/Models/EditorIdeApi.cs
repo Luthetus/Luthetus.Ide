@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
@@ -19,6 +20,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.Exceptions;
 
 namespace Luthetus.Ide.RazorLib.Editors.Models;
 
@@ -29,6 +31,7 @@ public class EditorIdeApi
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
     private readonly IBackgroundTaskService _backgroundTaskService;
     private readonly ITextEditorService _textEditorService;
+    private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly IIdeComponentRenderers _ideComponentRenderers;
     private readonly IFileSystemProvider _fileSystemProvider;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -41,6 +44,7 @@ public class EditorIdeApi
         IdeBackgroundTaskApi ideBackgroundTaskApi,
         IBackgroundTaskService backgroundTaskService,
         ITextEditorService textEditorService,
+        ICommonComponentRenderers commonComponentRenderers,
         IIdeComponentRenderers ideComponentRenderers,
         IFileSystemProvider fileSystemProvider,
         IEnvironmentProvider environmentProvider,
@@ -52,6 +56,7 @@ public class EditorIdeApi
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
         _backgroundTaskService = backgroundTaskService;
         _textEditorService = textEditorService;
+        _commonComponentRenderers = commonComponentRenderers;
         _ideComponentRenderers = ideComponentRenderers;
         _fileSystemProvider = fileSystemProvider;
         _environmentProvider = environmentProvider;
@@ -172,90 +177,126 @@ public class EditorIdeApi
 
     public Task<Key<TextEditorViewModel>> TryRegisterViewModelFunc(TryRegisterViewModelArgs registerViewModelArgs)
     {
-        var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
+    	try
+    	{
+    		// NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(4));
+    	
+	        var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
+	
+	        if (model is null)
+	        {
+	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => "model is null: " + registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(4));
+	            return Task.FromResult(Key<TextEditorViewModel>.Empty);
+	        }
+	
+	        var viewModel = _textEditorService.ModelApi
+	            .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
+	            .FirstOrDefault(x => x.Category == registerViewModelArgs.Category);
+	
+	        if (viewModel is not null)
+	        {
+	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => "if (viewModel is not null)", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(6));
+			    return Task.FromResult(viewModel.ViewModelKey);
+	        }
+	
+	        var viewModelKey = Key<TextEditorViewModel>.NewKey();
+	
+	        _textEditorService.ViewModelApi.Register(
+	            viewModelKey,
+	            registerViewModelArgs.ResourceUri,
+	            registerViewModelArgs.Category);
+	
+	        var layerLastPresentationKeys = new[]
+	        {
+	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+	            FindOverlayPresentationFacts.PresentationKey,
+	        }.ToImmutableArray();
+	
+	        var absolutePath = _environmentProvider.AbsolutePathFactory(
+	            registerViewModelArgs.ResourceUri.Value,
+	            false);
+	
+	        _textEditorService.PostUnique(
+	            nameof(TryRegisterViewModelFunc),
+	            editContext =>
+	            {
+	            	try
+	            	{
+	            		var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
+					
+						if (viewModelModifier is null)
+							throw new LuthetusIdeException("View model modifier not found");
+		
+		                viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
+		
+		                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		                {
+		                    OnSaveRequested = HandleOnSaveRequested,
+		                    GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
+		                    LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
+		                };
+		
+		                return Task.CompletedTask;
+	            	}
+	            	catch (Exception e)
+	            	{
+	            		NotificationHelper.DispatchError(
+					        nameof(TryRegisterViewModelFunc),
+					        e.ToString(),
+					        _commonComponentRenderers,
+					        _dispatcher,
+					        TimeSpan.FromSeconds(6));
+					    return Task.CompletedTask;
+	            	}
+	            });
+	
+	        return Task.FromResult(viewModelKey);
 
-        if (model is null)
-            return Task.FromResult(Key<TextEditorViewModel>.Empty);
-
-        var viewModel = _textEditorService.ModelApi
-            .GetViewModelsOrEmpty(registerViewModelArgs.ResourceUri)
-            .FirstOrDefault(x => x.Category == registerViewModelArgs.Category);
-
-        if (viewModel is not null)
-            return Task.FromResult(viewModel.ViewModelKey);
-
-        var viewModelKey = Key<TextEditorViewModel>.NewKey();
-
-        _textEditorService.ViewModelApi.Register(
-            viewModelKey,
-            registerViewModelArgs.ResourceUri,
-            registerViewModelArgs.Category);
-
-        var layerLastPresentationKeys = new[]
+	        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
+	        {
+	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => innerTextEditor.ResourceUri.Value, _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(6));
+	        
+	            var innerContent = innerTextEditor.GetAllText();
+	
+	            var cancellationToken = model.TextEditorSaveFileHelper.GetCancellationToken();
+	
+	            _ideBackgroundTaskApi.FileSystem.SaveFile(
+	                absolutePath,
+	                innerContent,
+	                writtenDateTime =>
+	                {
+	                    if (writtenDateTime is not null)
+	                    {
+	                        _textEditorService.PostUnique(
+	                            nameof(HandleOnSaveRequested),
+	                            editContext =>
+	                            {
+	                            	var modelModifier = editContext.GetModelModifier(innerTextEditor.ResourceUri);
+	                            	if (modelModifier is null)
+	                            		return Task.CompletedTask;
+	                            
+	                            	_textEditorService.ModelApi.SetResourceData(
+	                            		editContext,
+		                                modelModifier,
+		                                writtenDateTime.Value);
+	                                return Task.CompletedTask;
+	                            });
+	                    }
+	
+	                    return Task.CompletedTask;
+	                },
+	                cancellationToken);
+	        }
+        }
+        catch (Exception e)
         {
-            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-            FindOverlayPresentationFacts.PresentationKey,
-        }.ToImmutableArray();
-
-        var absolutePath = _environmentProvider.AbsolutePathFactory(
-            registerViewModelArgs.ResourceUri.Value,
-            false);
-
-        _textEditorService.PostUnique(
-            nameof(TryRegisterViewModelFunc),
-            editContext =>
-            {
-				var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-				
-				if (viewModelModifier is null)
-					return Task.CompletedTask;
-
-                viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
-
-                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                {
-                    OnSaveRequested = HandleOnSaveRequested,
-                    GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-                    LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
-                };
-
-                return Task.CompletedTask;
-            });
-
-        return Task.FromResult(viewModelKey);
-
-        void HandleOnSaveRequested(ITextEditorModel innerTextEditor)
-        {
-            var innerContent = innerTextEditor.GetAllText();
-
-            var cancellationToken = model.TextEditorSaveFileHelper.GetCancellationToken();
-
-            _ideBackgroundTaskApi.FileSystem.SaveFile(
-                absolutePath,
-                innerContent,
-                writtenDateTime =>
-                {
-                    if (writtenDateTime is not null)
-                    {
-                        _textEditorService.PostUnique(
-                            nameof(HandleOnSaveRequested),
-                            editContext =>
-                            {
-                            	var modelModifier = editContext.GetModelModifier(innerTextEditor.ResourceUri);
-                            	if (modelModifier is null)
-                            		return Task.CompletedTask;
-                            
-                            	_textEditorService.ModelApi.SetResourceData(
-                            		editContext,
-	                                modelModifier,
-	                                writtenDateTime.Value);
-                                return Task.CompletedTask;
-                            });
-                    }
-
-                    return Task.CompletedTask;
-                },
-                cancellationToken);
+        	NotificationHelper.DispatchError(
+		        nameof(TryRegisterViewModelFunc),
+		        e.ToString(),
+		        _commonComponentRenderers,
+		        _dispatcher,
+		        TimeSpan.FromSeconds(6));
+		    return Task.FromResult(Key<TextEditorViewModel>.Empty);
         }
     }
 

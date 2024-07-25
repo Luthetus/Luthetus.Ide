@@ -118,10 +118,14 @@ public class OnMouseDown : ITextEditorWork
             }
 
             primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
+            
+            await EditContext.TextEditorService
+            	.FinalizePost(EditContext)
+            	.ConfigureAwait(false);
 		}
-		finally
+		catch (Exception e)
 		{
-			await EditContext.TextEditorService.FinalizePost(EditContext);
+			Console.WriteLine(e);
 		}
     }
 }

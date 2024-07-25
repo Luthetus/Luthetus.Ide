@@ -57,10 +57,14 @@ public class OnScrollHorizontal : ITextEditorWork
         		viewModelModifier,
             	ScrollLeft,
             	null);
+            	
+            await EditContext.TextEditorService
+            	.FinalizePost(EditContext)
+            	.ConfigureAwait(false);
 		}
-		finally
+		catch (Exception e)
 		{
-			await EditContext.TextEditorService.FinalizePost(EditContext);
+			Console.WriteLine(e);
 		}
     }
 }

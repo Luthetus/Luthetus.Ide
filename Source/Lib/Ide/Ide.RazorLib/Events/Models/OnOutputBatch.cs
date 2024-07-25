@@ -62,8 +62,8 @@ public class OnOutputBatch : ITextEditorWork
 
     public Task HandleEvent(CancellationToken cancellationToken)
     {
-		//try
-		//{
+		try
+		{
             Name = Name + $"_{OutputList.Count}";
 
             // Flatten 'OutputTextSpanAndOffsetTupleList'
@@ -90,12 +90,15 @@ public class OnOutputBatch : ITextEditorWork
                 EditContext = EditContext
             };
 
+			// The 'await EditContext.TextEditorService.FinalizePost(EditContext);'
+			//     invocation occurs within the handle event of the following 'onOutput'
             return onOutput.HandleEvent(cancellationToken);
-		//}
-		//finally
-		//{
-		//	await EditContext.TextEditorService.FinalizePost(EditContext);
-		//}
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			return Task.CompletedTask;
+		}
     }
 }
 

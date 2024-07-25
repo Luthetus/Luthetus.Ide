@@ -155,11 +155,17 @@ public class OnOutput : ITextEditorWork
                 ResourceUri,
                 modelModifier.GetAllText() ?? string.Empty);
 
-            await TerminalCommand.InvokeStateChangedCallbackFunc();
+            await TerminalCommand
+            	.InvokeStateChangedCallbackFunc()
+            	.ConfigureAwait(false);
+            
+            await EditContext.TextEditorService
+            	.FinalizePost(EditContext)
+            	.ConfigureAwait(false);
 		}
-		finally
+		catch (Exception e)
 		{
-			await EditContext.TextEditorService.FinalizePost(EditContext);
+			Console.WriteLine(e);
 		}
     }
 }
