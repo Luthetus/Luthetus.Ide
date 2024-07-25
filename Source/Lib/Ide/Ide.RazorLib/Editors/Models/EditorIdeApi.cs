@@ -179,8 +179,6 @@ public class EditorIdeApi
     {
     	try
     	{
-    		// NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => registerViewModelArgs.ResourceUri.Value, _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(4));
-    	
 	        var model = _textEditorService.ModelApi.GetOrDefault(registerViewModelArgs.ResourceUri);
 	
 	        if (model is null)
@@ -194,10 +192,7 @@ public class EditorIdeApi
 	            .FirstOrDefault(x => x.Category == registerViewModelArgs.Category);
 	
 	        if (viewModel is not null)
-	        {
-	        	NotificationHelper.DispatchDebugMessage(nameof(TryRegisterViewModelFunc), () => "if (viewModel is not null)", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(6));
 			    return Task.FromResult(viewModel.ViewModelKey);
-	        }
 	
 	        var viewModelKey = Key<TextEditorViewModel>.NewKey();
 	
