@@ -1,0 +1,102 @@
+
+It is all about the test explorer. No other feature matters.
+I believe strongly in unit tests.
+
+There more and more becomes too much code in the Luthetus.Ide for me to keep track of.
+This isn't something I believe to be a fault with myself. I believe it is the reality of
+programming.
+
+Humans are intelligent, but imperfect; while computers are stupid, but precise.
+
+The cooperation of humans and computers is what creates value.
+Either side is useless without the other.
+
+One can put in all the effort they want into a programming project,
+but if the individual is a firehose of spaghetti code,
+the individual will just strangle themselves with their own spaghetti code,
+and then decide the project is no longer maintainable, and delete the repository.
+
+I don't think unit testing results in good code.
+I think it helps in avoiding regression in a code base.
+
+Regression may or may not indicate that the "new code"
+is spaghetti code, relative to the system as a whole.
+And that the "new code" was not well thought out enough
+in order to integrate with the existing features.
+
+Without unit testing, if one relies on a human to find these
+regressions, it will NOT go well in the long run.
+
+They are bound to make a mistake, and let a regression slip by.
+
+And as more and more regressions slip by, the interconnections
+between various parts of the application degrade
+into nonsensical spaghetti code.
+
+I have a tendency to write a lot code that some would look at
+as "spaghetti code".
+
+I stand firm that every line I've written up to this point
+has been intentional.
+
+If you want to program something you don't understand,
+you need to create black box implementations
+of the various sections of the app.
+
+The actual code inside that black box is irrelevant,
+these sections just need to have well defined inputs
+and outputs.
+
+Keep the implementation details malleable and
+write out the app. All the while improving
+the abstractions that permit communication
+between various "black box" sections of the app.
+
+If you are writing a CRUD application for the 100th
+time you probably could, and probably should,
+plan ahead 100% of the application and not write any code
+until you've thought it through.
+
+But, learning a topic that you are clueless about is
+more like fighting an "enemy".
+
+You need to grapple with the problem.
+And as you build intuition for the individual
+problem, you revisit your intellectual toolkit
+for ways to solve a problem and decide what
+path to take next.
+
+Any change you make, will break everything you've done.
+There is no other way to write code than to hold this mentallity.
+
+Programming is a horror movie, all code is bad, and everything is broken.
+The only thing that matters is the ability to justify code.
+
+No matter what intellectual snakeoil salesman you buy into your code is bad.
+The only saving grace we have is whether we can justify our bad code,
+and write tests to ensure it continues working in the future.
+
+I have a massive headache right now. I need to go touch grass.
+
+[ ] Add ability to reload a text editor model / view model.
+	[ ] This is needed because when I am running the unit tests, it takes awhile
+		and if a text editor model or view model I'm working with breaks,
+		I would otherwise have to close and re-open the IDE, thus stopping the unit tests
+		and its super annoying.
+[ ] Improve speed when executing multiple unit tests
+[ ] When setting text editor content
+	[ ] reset the scroll position?
+		[ ] The occuring is with the test explorer details display
+			[ ] Each time I run the test a second time I'm usually scrolled to the
+				bottom of the previous run's results. And then I am
+				at some massive scroll top meanwhile only the first line of text exists
+				now.
+[] Jump stack
+
+Common.Tests.csproj:
+	12:45 start; 1:04 end; 19 minutes total;
+	350 total; 194 passed; 156 failed;
+	
+TextEditor.Tests.csproj:
+	??:?? start; ??:?? end; ?? minutes total;
+	?? total; ?? passed; ?? failed;
