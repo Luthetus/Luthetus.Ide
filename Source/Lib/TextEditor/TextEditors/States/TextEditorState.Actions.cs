@@ -21,7 +21,7 @@ public partial record TextEditorState
 
     public record SetModelAction(
             Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
-            IEditContext EditContext,
+            ITextEditorEditContext EditContext,
             TextEditorModelModifier ModelModifier)
         : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
@@ -38,14 +38,14 @@ public partial record TextEditorState
 
     public record SetViewModelWithAction(
         	Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
-            IEditContext EditContext,
+            ITextEditorEditContext EditContext,
             Key<TextEditorViewModel> ViewModelKey,
             Func<TextEditorViewModel, TextEditorViewModel> WithFunc)
         : TextEditorAuthenticatedAction(AuthenticatedActionKey);
 
 	public record SetModelAndViewModelRangeAction(
             Key<TextEditorAuthenticatedAction> AuthenticatedActionKey,
-            IEditContext EditContext,
+            ITextEditorEditContext EditContext,
             List<TextEditorModelModifier> ModelModifierList,
 			List<TextEditorViewModelModifier> ViewModelModifierList)
         : TextEditorAuthenticatedAction(AuthenticatedActionKey);

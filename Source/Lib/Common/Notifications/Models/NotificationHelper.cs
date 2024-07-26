@@ -101,7 +101,7 @@ public static class NotificationHelper
             commonComponentRenderers.ErrorNotificationRendererType,
             new Dictionary<string, object?>
             {
-                { nameof(IErrorNotificationRendererType.Message), $"ERROR: {messageFunc.Invoke()}" },
+                { nameof(IErrorNotificationRendererType.Message), $"DEBUG: {messageFunc.Invoke()}" },
             },
             notificationOverlayLifespan,
             true,

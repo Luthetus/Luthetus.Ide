@@ -1,5 +1,7 @@
 # Install Luthetus.Ide
 
+### If using Linux or Mac and the publishing doesn't work, try "dotnet run -c Release" from the "/Source/Lib/Ide/Host.Photino/" directory.
+
 - Clone the source code
 - Open the path "/Source/Lib/Ide/Host.Photino/" in the terminal
 

@@ -41,24 +41,24 @@ public interface ITextEditorViewModelApi
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>
     public void SetScrollPosition(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         double? scrollLeftInPixels,
         double? scrollTopInPixels);
 
     public void ScrollIntoView(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         TextEditorTextSpan textSpan);
 
     public void MutateScrollVerticalPosition(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         double pixels);
 
     public void MutateScrollHorizontalPosition(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         double pixels);
 
@@ -66,7 +66,7 @@ public interface ITextEditorViewModelApi
 
     public void MoveCursor(
     	KeyboardEventArgs keyboardEventArgs,
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
@@ -83,14 +83,14 @@ public interface ITextEditorViewModelApi
     /// </summary>
     public void MoveCursorUnsafe(
     	KeyboardEventArgs keyboardEventArgs,
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor);
 
     public void CursorMovePageTop(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
 
@@ -105,13 +105,13 @@ public interface ITextEditorViewModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void CursorMovePageTopUnsafe(
-    	IEditContext editContext,
+    	ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
 		CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor);
 
     public void CursorMovePageBottom(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag);
@@ -127,27 +127,27 @@ public interface ITextEditorViewModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void CursorMovePageBottomUnsafe(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier);
 
     public void CalculateVirtualizationResult(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken);
 
     public Task RemeasureAsync(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
         CancellationToken cancellationToken);
 
     public void ForceRender(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken);
     #endregion

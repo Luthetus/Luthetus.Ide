@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ApplicationIcon>favicon.ico</ApplicationIcon>
     </PropertyGroup>
 
@@ -19,7 +19,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+        <PackageReference Include="Photino.Blazor" Version="2.6.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -41,7 +42,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Extensions\Extensions.Config\Luthetus.Extensions.Config.csproj" />
       <ProjectReference Include="..\Ide.RazorLib\Luthetus.Ide.RazorLib.csproj" />
-      <ProjectReference Include="..\..\..\..\External\photino.Blazor-2.6.0_fork\Photino.Blazor\Photino.Blazor.csproj" />
     </ItemGroup>
 
 </Project>

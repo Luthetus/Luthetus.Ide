@@ -130,6 +130,45 @@
         Recent Changes:
 		<div>
 			<div>
+                <div>v <em class="luth_em">0.9.2.0 </em> (WIP_DATE)</div>
+                <ul>
+                    <li>
+                        If a file does not save properly, make it obvious to the user
+                    </li>
+                    <li>
+                        Only invoke 'FinalizePost' in the events if there were no unhandled exceptions.
+                    </li>
+                    <li>
+                        Rename 'IEditContext.cs' to 'ITextEditorEditContext.cs'
+                    </li>
+                    <li>
+                        Change Luthetus libraries to net8.0
+                    </li>
+                    <li>
+                        Reference Fluxor v6 NuGet package
+                    </li>
+                    <li>
+                        <a href="https://github.com/tryphotino/photino.Blazor/issues/124"
+                           target="_blank">
+                           Having issues with upgrading Photino.Blazor from v2.6 to a higher version
+                        </a>
+
+                        For me, I can run 'dotnet run -c Release' on v2.6
+                        But if I try to 'dotnet publish -c Release' then 
+                        'cd bin/Release/net8.0/publish/' then 'dotnet ./Luthetus.Ide.Photino.dll'
+                        I get 'Unhandled exception. System.MissingMethodException: Method not found: 'PhotinoNET.PhotinoWindow Photino.Blazor.PhotinoBlazorApp.get_MainWindow()'.
+Aborted (core dumped)'
+                        If I use v3 something then I get Load("/") "/" not found
+                        or something.
+
+                        I hate writing notes to myself right before I go to bed but hopefully
+                        this is enough to jog my memory after getting some sleep.
+
+                        (it worked on Windows, but not on Ubuntu when using v3)
+                    </li>
+                </ul>
+            </div>
+			<div>
                 <div>v <em class="luth_em">0.9.1.0 </em> (2024-07-24)</div>
                 <ul>
                 	<li>

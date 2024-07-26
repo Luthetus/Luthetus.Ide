@@ -11,7 +11,7 @@ public static partial class TextEditorCommandVimFacts
     public static partial class Motions
     {
         public static void Word(
-        	IEditContext editContext,
+        	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -55,7 +55,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static void End(
-        	IEditContext editContext,
+        	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -70,7 +70,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         private static void PerformEnd(
-            IEditContext editContext,
+            ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -150,7 +150,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static void Back(
-        	IEditContext editContext,
+        	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -193,7 +193,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static async Task Visual(
-        	IEditContext editContext,
+        	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,
@@ -233,7 +233,7 @@ public static partial class TextEditorCommandVimFacts
         }
 
         public static async Task VisualLine(
-        	IEditContext editContext,
+        	ITextEditorEditContext editContext,
 	        TextEditorModelModifier modelModifier,
 	        TextEditorViewModelModifier viewModelModifier,
 	        CursorModifierBagTextEditor cursorModifierBag,

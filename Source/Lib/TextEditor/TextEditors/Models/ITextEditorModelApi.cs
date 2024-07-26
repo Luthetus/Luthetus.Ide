@@ -42,31 +42,31 @@ public interface ITextEditorModelApi
 
     #region UPDATE_METHODS
     public void UndoEdit(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier);
 
     public void SetUsingLineEndKind(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         LineEndKind lineEndKind);
 
     public void SetResourceData(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         DateTime resourceLastWriteTime);
 
     public void Reload(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         string content,
         DateTime resourceLastWriteTime);
 
     public void RedoEdit(
-    	IEditContext editContext,
+    	ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier);
 
     public void InsertText(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
@@ -83,14 +83,14 @@ public interface ITextEditorModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void InsertTextUnsafe(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         string content,
         CancellationToken cancellationToken);
 
     public void HandleKeyboardEvent(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         KeyboardEventArgs keyboardEventArgs,
@@ -107,14 +107,14 @@ public interface ITextEditorModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void HandleKeyboardEventUnsafe(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         KeyboardEventArgs keyboardEventArgs,
         CancellationToken cancellationToken);
 
     public void DeleteTextByRange(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
@@ -131,14 +131,14 @@ public interface ITextEditorModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void DeleteTextByRangeUnsafe(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         int count,
         CancellationToken cancellationToken);
 
     public void DeleteTextByMotion(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
@@ -155,14 +155,14 @@ public interface ITextEditorModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void DeleteTextByMotionUnsafe(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         MotionKind motionKind,
         CancellationToken cancellationToken);
 
     public void AddPresentationModel(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorPresentationModel emptyPresentationModel);
 
@@ -170,7 +170,7 @@ public interface ITextEditorModelApi
     /// If the presentation model was not found, the empty presentation model will be registered.
     /// </param>
     public void StartPendingCalculatePresentationModel(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel);
@@ -179,7 +179,7 @@ public interface ITextEditorModelApi
     /// If the presentation model was not found, the empty presentation model will be registered.
     /// </param>
     public void CompletePendingCalculatePresentationModel(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
@@ -190,12 +190,12 @@ public interface ITextEditorModelApi
     /// It is effectively just invoking the lexer and then <see cref="ApplyDecorationRange" />
     /// </summary>
     public void ApplyDecorationRange(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         IEnumerable<TextEditorTextSpan> textSpans);
 
     public void ApplySyntaxHighlighting(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier);
     #endregion
 

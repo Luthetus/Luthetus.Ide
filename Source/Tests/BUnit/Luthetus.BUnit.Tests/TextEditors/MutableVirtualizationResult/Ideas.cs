@@ -38,7 +38,7 @@ It is vital that there never be any 'desync'.
 Considering that there exists code to track the 'EditList'.
 
 Perhaps one could track the starting EditIndex, and the ending EditIndex,
-when finalizing an IEditContext.
+when finalizing an ITextEditorEditContext.
 
 Then, if the 'EditList' entries are seen to be in bounds of the
 'virtualization result' then just insert directly to the 'virtualization result' those edits too.

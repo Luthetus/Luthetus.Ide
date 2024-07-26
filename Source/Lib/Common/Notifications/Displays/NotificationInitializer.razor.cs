@@ -14,7 +14,7 @@ public partial class NotificationInitializer : FluxorComponent
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    private bool _disposed;
+    private bool _disposedValue;
     private ContextBoundary? _notificationContextBoundary;
     
     private Task HandleOnFocusIn(INotification notification)
@@ -31,26 +31,24 @@ public partial class NotificationInitializer : FluxorComponent
     {
     	return Task.CompletedTask;
     }
-
-    protected override void Dispose(bool disposing)
-    {
-        if (_disposed)
+    
+    protected override ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (!_disposedValue)
         {
-            return;
-        }
-
-        if (disposing)
-        {
-            _disposed = true;
-
-            var notificationState = NotificationStateWrap.Value;
-
-            foreach (var notification in notificationState.DefaultList)
+            if (disposing)
             {
-                Dispatcher.Dispatch(new NotificationState.DisposeAction(notification.DynamicViewModelKey));
+                var notificationState = NotificationStateWrap.Value;
+
+	            foreach (var notification in notificationState.DefaultList)
+	            {
+	                Dispatcher.Dispatch(new NotificationState.DisposeAction(notification.DynamicViewModelKey));
+	            }
             }
+
+            _disposedValue = true;
         }
 
-        base.Dispose(disposing);
-    }
+        return base.DisposeAsyncCore(disposing);
+	}
 }

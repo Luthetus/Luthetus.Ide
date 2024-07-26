@@ -17,8 +17,6 @@
                     localHeaderButtonKindsList = Enum
                         .GetValues(typeof(HeaderButtonKind))
                         .Cast<HeaderButtonKind>()
-                        //.Where(x =>
-                        //    x != TextEditorHeaderButtonKind.PeekWindowDisplay)
                         .ToImmutableArray();
                 }
 
@@ -30,21 +28,21 @@
                             case HeaderButtonKind.Cut:
                                 <button title="@headerButtonKind.ToString()"
                                         class="luth_button"
-                                @onclick="DoCutOnClick">
+                                		@onclick="DoCutOnClick">
                                     <IconNote />
                                 </button>
                                 break;
                             case HeaderButtonKind.Copy:
                                 <button title="@headerButtonKind.ToString()"
                                         class="luth_button"
-                                @onclick="DoCopyOnClick">
+                                		@onclick="DoCopyOnClick">
                                     <IconCopy />
                                 </button>
                                 break;
                             case HeaderButtonKind.Paste:
                                 <button title="@headerButtonKind.ToString()"
                                         class="luth_button"
-                                @onclick="DoPasteOnClick">
+                                		@onclick="DoPasteOnClick">
                                     <IconClippy />
                                 </button>
                                 break;
@@ -52,7 +50,7 @@
                                 <button title="@headerButtonKind.ToString()"
                                         class="luth_button"
                                         disabled=@GetUndoDisabledAttribute()
-                                @onclick="DoUndoOnClick">
+                                		@onclick="DoUndoOnClick">
                                     <IconArrowLeft />
                                 </button>
                                 break;
@@ -60,28 +58,28 @@
                                 <button title="@headerButtonKind.ToString()"
                                         class="luth_button"
                                         disabled=@GetRedoDisabledAttribute()
-                                @onclick="DoRedoOnClick">
+                                		@onclick="DoRedoOnClick">
                                     <IconArrowRight />
                                 </button>
                                 break;
                             case HeaderButtonKind.Save:
                                 <button title="@headerButtonKind.ToString()"
                                         class="luth_button"
-                                @onclick="DoSaveOnClick">
+                                		@onclick="DoSaveOnClick">
                                     <IconSave />
                                 </button>
                                 break;
                             case HeaderButtonKind.SelectAll:
                                 <button title="@headerButtonKind.ToString()"
                                         class="luth_button"
-                                @onclick="DoSelectAllOnClick">
+                                		@onclick="DoSelectAllOnClick">
                                     <IconListSelection />
                                 </button>
                                 break;
                             case HeaderButtonKind.PeekWindowDisplay:
                                 <button title="@headerButtonKind.ToString()"
                                         class="luth_button"
-                                @onclick="ShowWatchWindowDisplayDialogOnClick">
+                                		@onclick="ShowWatchWindowDisplayDialogOnClick">
                                     <IconProjectDependencies />
                                 </button>
                                 break;
@@ -92,9 +90,17 @@
                 <div class="luth_te_text-editor-header-entry">
                     <button title="Measure editor size"
                             class="luth_button"
-                    @onclick="DoRemeasureOnClick">
-
+                    		@onclick="DoRemeasureOnClick">
                         <IconSymbolRuler />
+                    </button>
+                </div>
+                
+                <div class="luth_te_text-editor-header-entry">
+                    <button title="Reload"
+                            class="luth_button"
+                            id="@_reloadButtonHtmlElementId"
+                    		@onclick="DoReloadOnClick">
+                        <IconRefresh />
                     </button>
                 </div>
             }
