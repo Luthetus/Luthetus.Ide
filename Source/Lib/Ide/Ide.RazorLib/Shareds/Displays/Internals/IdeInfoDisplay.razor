@@ -148,7 +148,23 @@
                         Reference Fluxor v6 NuGet package
                     </li>
                     <li>
-                        Reference Photino v3 NuGet package
+                        <a href="https://github.com/tryphotino/photino.Blazor/issues/124"
+                           target="_blank">
+                           Having issues with upgrading Photino.Blazor from v2.6 to a higher version
+                        </a>
+
+                        For me, I can run 'dotnet run -c Release' on v2.6
+                        But if I try to 'dotnet publish -c Release' then 
+                        'cd bin/Release/net8.0/publish/' then 'dotnet ./Luthetus.Ide.Photino.dll'
+                        I get 'Unhandled exception. System.MissingMethodException: Method not found: 'PhotinoNET.PhotinoWindow Photino.Blazor.PhotinoBlazorApp.get_MainWindow()'.
+Aborted (core dumped)'
+                        If I use v3 something then I get Load("/") "/" not found
+                        or something.
+
+                        I hate writing notes to myself right before I go to bed but hopefully
+                        this is enough to jog my memory after getting some sleep.
+
+                        (it worked on Windows, but not on Ubuntu when using v3)
                     </li>
                 </ul>
             </div>
