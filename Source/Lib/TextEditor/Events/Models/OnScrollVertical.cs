@@ -27,7 +27,7 @@ public class OnScrollVertical : ITextEditorWork
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
-	public IEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; set; }
 
     public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
@@ -57,10 +57,14 @@ public class OnScrollVertical : ITextEditorWork
         		viewModelModifier,
             	null,
             	ScrollTop);
+            	
+            await EditContext.TextEditorService
+            	.FinalizePost(EditContext)
+            	.ConfigureAwait(false);
 		}
-		finally
+		catch (Exception e)
 		{
-			await EditContext.TextEditorService.FinalizePost(EditContext);
+			Console.WriteLine(e);
 		}
     }
 }

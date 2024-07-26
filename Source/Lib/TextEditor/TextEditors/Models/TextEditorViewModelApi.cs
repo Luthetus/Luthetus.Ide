@@ -174,7 +174,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     /// If a parameter is null the JavaScript will not modify that value
     /// </summary>
     public void SetScrollPosition(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         double? scrollLeftInPixels,
         double? scrollTopInPixels)
@@ -201,7 +201,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void MutateScrollVerticalPosition(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         double pixels)
     {
@@ -215,7 +215,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void MutateScrollHorizontalPosition(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         double pixels)
     {
@@ -229,7 +229,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void ScrollIntoView(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         TextEditorTextSpan textSpan)
@@ -292,7 +292,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void MoveCursor(
         KeyboardEventArgs keyboardEventArgs,
-		IEditContext editContext,
+		ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
@@ -310,7 +310,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
     public void MoveCursorUnsafe(
         KeyboardEventArgs keyboardEventArgs,
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -598,7 +598,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CursorMovePageTop(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
@@ -610,7 +610,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CursorMovePageTopUnsafe(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
@@ -625,7 +625,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CursorMovePageBottom(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
@@ -639,7 +639,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CursorMovePageBottomUnsafe(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
@@ -656,7 +656,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void CalculateVirtualizationResult(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken)
@@ -930,7 +930,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public async Task RemeasureAsync(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         string measureCharacterWidthAndLineHeightElementId,
         int countOfTestCharacters,
@@ -955,7 +955,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void ForceRender(
-        IEditContext editContext,
+        ITextEditorEditContext editContext,
         TextEditorViewModelModifier viewModelModifier,
         CancellationToken cancellationToken)
     {

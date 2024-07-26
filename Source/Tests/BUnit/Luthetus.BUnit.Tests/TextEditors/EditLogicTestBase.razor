@@ -25,7 +25,7 @@
 	/// So, this method will fix tests which fail an assertion, erroneously being marked as having passed.
 	/// That being said, the stacktrace is a bit of a pain with this work around.
 	/// </summary>
-	protected async Task RunTextEditorBackgroundTaskTest(Func<IEditContext, Task> testFunc)
+	protected async Task RunTextEditorBackgroundTaskTest(Func<ITextEditorEditContext, Task> testFunc)
 	{
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());
@@ -59,7 +59,7 @@
 		}
 	}
 
-	protected async Task DONT_START_NOR_STOP_BTS_RunTextEditorBackgroundTaskTest(Func<IEditContext, Task> testFunc)
+	protected async Task DONT_START_NOR_STOP_BTS_RunTextEditorBackgroundTaskTest(Func<ITextEditorEditContext, Task> testFunc)
 	{
 		var backgroundTaskService = Services.GetService<IBackgroundTaskService>();
 		var queue = backgroundTaskService.GetQueue(ContinuousBackgroundTaskWorker.GetQueueKey());

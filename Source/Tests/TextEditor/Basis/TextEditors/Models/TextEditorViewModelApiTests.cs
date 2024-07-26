@@ -1293,22 +1293,15 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
             inViewModel.UnsafeState.ShouldSetFocusAfterNextRender);
 
         textEditorService.PostUnique(
-            nameof(textEditorService.ViewModelApi.WithValue),
+            nameof(WithValue),
             editContext =>
             {
 				var viewModelModifier = editContext.GetViewModelModifier(inViewModel.ViewModelKey);
 
 				if (viewModelModifier is null)
 					return Task.CompletedTask;
-
-				textEditorService.ViewModelApi.WithValue(
-                    editContext,
-					viewModelModifier,
-                    inState =>
-                    {
-                        inState.UnsafeState.ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender;
-                        return inState with { };
-                    });
+					
+				viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = oppositeShouldSetFocusAfterNextRender;
                 return Task.CompletedTask;
 			});
 
