@@ -17,11 +17,11 @@ jobs:
         # uses GitHub's checkout action to checkout code form the main branch
         - uses: actions/checkout@v2
         
-        # sets up .NET Core SDK 6.0.x
+        # sets up .NET Core SDK 8.0.x
         - name: Setup .NET Core SDK
           uses: actions/setup-dotnet@v1
           with:
-            dotnet-version: 6.0.x
+            dotnet-version: 8.0.x
         # Install dotnet wasm buildtools workload
         - name: Install .NET WASM Build Tools
           run: dotnet workload install wasm-tools
