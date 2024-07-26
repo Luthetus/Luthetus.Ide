@@ -14,7 +14,7 @@ public class TextEditorCommandArgs : ICommandArgs
 		TextEditorComponentData componentData,
 		ITextEditorService textEditorService,
         IServiceProvider serviceProvider,
-        IEditContext editContext)
+        ITextEditorEditContext editContext)
     {
         ModelResourceUri = modelResourceUri;
         ViewModelKey = viewModelKey;
@@ -29,7 +29,7 @@ public class TextEditorCommandArgs : ICommandArgs
     public TextEditorComponentData ComponentData { get; }
     public ITextEditorService TextEditorService { get; }
     public IServiceProvider ServiceProvider { get; }
-    public IEditContext EditContext { get; set; }
+    public ITextEditorEditContext EditContext { get; set; }
 
     /// <summary>
     /// Hack for <see cref="Defaults.TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(bool)"/>

@@ -57,8 +57,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
 	protected override void OnInitialized()
 	{
-		DotNetSolutionStateWrap.StateChanged += DotNetSolutionStateWrapOnStateChanged;
-
 		_solutionExplorerTreeViewKeymap = new SolutionExplorerTreeViewKeyboardEventHandler(
 			IdeBackgroundTaskApi,
 			MenuOptionsFactory,
@@ -74,11 +72,6 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 			BackgroundTaskService);
 
 		base.OnInitialized();
-	}
-
-	private async void DotNetSolutionStateWrapOnStateChanged(object? sender, EventArgs e)
-	{
-		await InvokeAsync(StateHasChanged);
 	}
 
 	private Task OnTreeViewContextMenuFunc(TreeViewCommandArgs treeViewCommandArgs)
@@ -114,22 +107,5 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
 		Dispatcher.Dispatch(new DialogState.RegisterAction(
 			dialogRecord));
-	}
-
-	protected override void Dispose(bool disposing)
-	{
-		if (_disposed)
-		{
-			return;
-		}
-
-		if (disposing)
-		{
-			_disposed = true;
-
-			DotNetSolutionStateWrap.StateChanged -= DotNetSolutionStateWrapOnStateChanged;
-		}
-
-		base.Dispose(disposing);
 	}
 }

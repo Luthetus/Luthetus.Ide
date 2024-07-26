@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib;
 
 public partial class TextEditorService : ITextEditorService
 {
-    private record TextEditorEditContext : IEditContext
+    private record TextEditorEditContext : ITextEditorEditContext
     {
         public Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache { get; } = new();
         public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; } = new();

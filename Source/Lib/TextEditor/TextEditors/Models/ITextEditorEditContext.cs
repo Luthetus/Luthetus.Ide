@@ -15,7 +15,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// The main reason for making this comment, is that I sometimes assign the result of 'GetViewModelModifier' to discard.<br/>
 /// When I do this it feels especially hacky, so I want to leave a paper trail of what I mean by that statement.<br/>
 /// </summary>
-public interface IEditContext
+public interface ITextEditorEditContext
 {
 	public Dictionary<ResourceUri, TextEditorModelModifier?> ModelCache { get; }
     public Dictionary<Key<TextEditorViewModel>, ResourceUri?> ViewModelToModelResourceUriCache { get; }
@@ -25,25 +25,25 @@ public interface IEditContext
     public ITextEditorService TextEditorService { get; }
     public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 
-    /// <inheritdoc cref="IEditContext"/>
+    /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorModelModifier? GetModelModifier(ResourceUri? modelResourceUri, bool isReadonly = false);
 
-    /// <inheritdoc cref="IEditContext"/>
+    /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorModelModifier? GetModelModifierByViewModelKey(Key<TextEditorViewModel> viewModelKey, bool isReadonly = false);
 
-    /// <inheritdoc cref="IEditContext"/>
+    /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorViewModelModifier? GetViewModelModifier(Key<TextEditorViewModel> viewModelKey, bool isReadonly = false);
 
-    /// <inheritdoc cref="IEditContext"/>
+    /// <inheritdoc cref="ITextEditorEditContext"/>
     public CursorModifierBagTextEditor? GetCursorModifierBag(TextEditorViewModel? viewModel);
 
     /// <summary>
     /// TODO: Caching for this method?<br/>
-    /// <inheritdoc cref="IEditContext"/>
+    /// <inheritdoc cref="ITextEditorEditContext"/>
     /// </summary>
     public TextEditorCursorModifier? GetPrimaryCursorModifier(CursorModifierBagTextEditor? cursorModifierBag);
 
-    /// <inheritdoc cref="IEditContext"/>
+    /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorDiffModelModifier? GetDiffModelModifier(Key<TextEditorDiffModel> diffModelKey, bool isReadonly = false);
 }
 

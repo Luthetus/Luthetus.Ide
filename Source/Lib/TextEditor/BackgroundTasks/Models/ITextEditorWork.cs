@@ -160,5 +160,5 @@ namespace Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 /// </summary>
 public interface ITextEditorWork : IBackgroundTask
 {
-	public IEditContext EditContext { get; set; }
+	public ITextEditorEditContext EditContext { get; set; }
 }

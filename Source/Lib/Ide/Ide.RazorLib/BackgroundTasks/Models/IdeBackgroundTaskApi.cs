@@ -71,6 +71,7 @@ public class IdeBackgroundTaskApi
             this,
             _backgroundTaskService,
             _textEditorService,
+            _commonComponentRenderers,
             _ideComponentRenderers,
             _fileSystemProvider,
             _environmentProvider,

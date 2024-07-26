@@ -37,7 +37,7 @@ public partial class WatchWindowDisplay : FluxorComponent
 
     private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
     private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-    private bool _disposed;
+    private bool _disposedValue;
 
     protected override void OnInitialized()
     {
@@ -87,21 +87,19 @@ public partial class WatchWindowDisplay : FluxorComponent
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
         return Task.CompletedTask;
     }
-
-    protected override void Dispose(bool disposing)
-    {
-        if (_disposed)
+    
+    protected override ValueTask DisposeAsyncCore(bool disposing)
+	{
+		if (!_disposedValue)
         {
-            return;
+            if (disposing)
+            {
+                TreeViewService.DisposeTreeViewContainer(TreeViewContainerKey);
+            }
+
+            _disposedValue = true;
         }
 
-        if (disposing)
-        {
-            _disposed = true;
-
-            TreeViewService.DisposeTreeViewContainer(TreeViewContainerKey);
-        }
-
-        base.Dispose(disposing);
-    }
+        return base.DisposeAsyncCore(disposing);
+	}
 }
