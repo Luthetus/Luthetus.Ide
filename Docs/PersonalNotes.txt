@@ -1,3 +1,257 @@
+# Common
+[] Dialogs
+	[] Minimum resize is solved easily by changing resize code from adding the difference in position,
+	   	to capturing the initial position and only ever checking those two points for the duration of the resizing dragging.
+	[] Enter key isn't closing the dialog when done with focus on the 'x' button
+	[] Add ability to dock any dialog onto a panel group.
+[] Count the amount of times the onfocusin events for ContextBoundary components are occurring.
+[] TreeView
+	[] Does tree view shift click select break for nodes that I've clicked on?
+	[] Auto expand tree view nodes
+	[] Auto collapse tree view nodes
+	[] Solution Explorer
+		[] Shift + Ctrl + Alt + 's' => recursively reveal the currently active text editor file.
+		[] Add buttons to the solution explorer that map to the keybinds.
+		[] Where does focus go after I delete a file?
+[] Keybinds
+	[] Any buttons which make to a command which has a keybind should have text that shows the keybind on the button (or on hover).
+[] Panels
+	[] Need intuitive keybind to unset the active panel tab
+[] Why is the background task service not started from within the 'AddLuthetusCommonServices(...)' method?
+[] Rename 'luth_ide_section-body' from using the wording "section" to "panel"
+[] Fix anywhere a Key.cs is interpolated but it was implicitly ToString()'d instead of using the '.Guid' property.
+[] Why are error notifications/dialogs no longer red?
+
+# Text Editor
+[] On mouse down cancel tooltip
+[] If a text editor Model/ViewModel does initialize properly, make it obvious to the user
+[] Protect against opening non text files. I opened a gif accidentally (or maybe it was markdown with a gif in it?). But it froze the IDE.
+[] Drag and drop change order of tabs.
+[] Do a better job of matching visual studio's keymap
+[] If longest line contains a tab key, then the horizontal scrollbar will not render correctly.
+[] Using 'Escape' key to exit the find overlay, does a javascript scroll to breaking virtualization.
+[] Jump stack
+[] Collapsible lines
+[] Ctrl + mouse over draws underline, then onclick goto definition (where there exists an onclick).
+[] Up and down arrow keymap should account for the width of a tab character,
+   	when determining the column on the next line that the cursor will move to.
+[] "Find All"
+	[] Add 'Word' boolean search option
+	[] Add 'Match Case' boolean search option
+	[] Tool should be autopopulated with the active selection (if there is one)
+	[] Enter key should submit the form
+[] When you delete text while the end of the document is in view,
+   	the height of the document is modified, and yet the scrollbar is not updated to reflect the changes.
+[] Tree view enter key should set focus to the editor (it doesn't do it if the file is already part of the group)
+[] Tree view enter key does the set focus bug, use preventScroll
+[] Context menu crashes when trying to close it
+[] Find (in text editor) does not work (when clicking the button in the ide header "Tools" dropdown)
+[] When right clicking to get context menu, if the context menu is offscreen, a scroll into view on focus ends up breaking virtualization.
+[] Showing dots for warnings/errors on scrollbar is super useful.
+[] Finish the edit logic (undo for the other limit of history)
+[] Fix dispatch text editor state cause re-render of all displayed editors, when it should just be the one that changed.
+[] Horizontally if deleting line gets less long then bug virtualization
+[] Two resource uri's as tabs in same group are not able to be told apart (without hovering for the full path)
+[] Global find and replace
+[] Find and replace in text editor
+[] Is the context menu re-rendering whenever a file gets parsed by the initial solution wide parse?
+[] Ctrl + Alt + DoubleClick => ExpandSelectionByCamelCase
+[] Shift tab when \t\s\s where '\s' denotes 'space' what would happen (cursor is after the final '\s')
+[] Keybinds
+	[] Finish these
+		[] Alt + Up => move line up
+		[] Alt + Down => move line down
+		[] Ctrl + Alt + (ArrowLeft | ArrowRight) => move camel case
+		[] F7 => Related Files quickpick
+		[] Ctrl + Tab => Quick Pick file or context/tool
+	[] Start these
+		[] Home keybind
+		[] No selection + { Shift + Tab } + Cursor positioned at or in the starting indentation should => IndentLess
+		[] Ctrl + u and Ctrl + shift + u (to lowercase / to uppercase... verify that these are respectively correct)
+	[] Fix these
+		[] When inside a verbatim string and new line is pressed don't match indentation.
+		[] Shift + Enter is putting the line ending in wrong spot see a mixture of LF and /r/n to see this
+
+# CompilerServices
+[] LSP (language server protocal)
+[] Erroneously: The C# parser cannot parse a property identifier if the type does not match to an existing type in the binder.
+[] Erroneously: The C# parser cannot goto definition on a type if there is a property with the same name
+[] Move any .NET specific code to a .NET compiler service.
+[] ICompilerService / the IBinder and etc... are not robust enough
+	[] I cannot search for a type by name, it frustratingly MUST be done by providing a textspan from a text editor model.
+		[] The frustration comes from the CSharpBinder internally tracking all the types
+		   	(I think by their fully qualified name). I feel like the interface could easily support this considering
+		   	the CSharpBinder (I think supports it already).
+
+# Ide
+[] StartupControl UI ViewTerminal dropdown menu option should set the active terminal to execution
+[] Cut a project child directory paste did not delete source.
+[] If I add another project, the solution wide parse task will be started again, while the previous one is still not finished, and going.
+[] "Code Search" tool
+	[] Should be autopopulated with the active text editor selection
+	   	(if the active context upon keybind press is the text editor, and the text editor has a selection)
+	[] Do not infinitely update contents, only do so if the text editor view model key changes.
+[] On Windows the webview handles the keymap { Ctrl + r } by refreshing the "website". This is bad
+[] The initial parsing of the solution, should not invoke 'ApplySyntaxHighlighting...spelling is probably wrong here'
+[] Opening a file for the first time should invoke 'ApplySyntaxHighlighting...spelling is probably wrong here'
+[] When changing the solution, clear the startup project.
+[] Cannot move a project out of a solution folder.
+[] Would it be best to have the terminal command itself write out,
+   	and then ctrl shows that there is a link to click, which then shows the output of the command?
+[] Rename 'TreeViewCSharpProjectNugetPackageReferences' to 'TreeViewCSharpProjectNugetPackageReferenceList'
+[] Rename 'TreeViewCSharpProjectToProjectReferences' to 'TreeViewCSharpProjectToProjectReferenceList'
+[] Erroneously: If have a codebehind but no markup. To create a markup with 'create codebehind checkbox checked'
+   	will overwrite the existing codebehind.
+[] If copy and paste file but file already exists at destination, the source still gets (erroneously) deleted.
+	[] Followup: maybe it was because the file was the same name, and the TextEditorModel was out of date,
+	and yet for some reason it wasn't prompting me to reload the file? I closed and re-opened the IDE and the file looks fine now.
+[] SolutionExplorer search bar?
+	[] Maybe make a generic search bar for the tree view themselves?
+[] If close SolutionExplorer tab, one cannot bring it back with the View dropdown
+[] Output panel
+	[] Sort by file path?
+		[] Make sure the sort includes directory
+	[] On click goto file, line, and column.
+	[] Thread safety is lacking, (The array size)
+[] Test Explorer
+	[] Distinguish between test discovery that had a build error, versus discovery that returned no results.
+		[] Distinguish between no results due to not being xunit and no results (the output is different)
+	[] Ability to stop a test
+[] Move Git folder out into its own Extensions project.
+[] Terminal
+	[] Be 2 text editors
+		[] A readonly text editor for the output
+		[] A block text editor widget that renders a 1 line text editor at the final line of the readonly editor.
+	[] Allow Ctrl + C to copy in terminal (or some other keybind but not exist current)
+
+ERRORS ###########################################################
+   
+   Destination array was not long enough. Check the destination index, length, and the array's lower bounds. (Parameter 'destinationArray')
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length)
+   at System.Collections.Immutable.ImmutableExtensions.TryCopyTo[T](IEnumerable`1 sequence, T[] array, Int32 arrayIndex)
+   at System.Collections.Immutable.ImmutableExtensions.ToArray[T](IEnumerable`1 sequence, Int32 count)
+   at System.Collections.Immutable.ImmutableArray.CreateRange[T](IEnumerable`1 items)
+   at Luthetus.Extensions.DotNet.Outputs.Displays.Internals.OutputDisplay.BuildRenderTree(RenderTreeBuilder __builder) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Extensions\Extensions.DotNet\Outputs\Displays\Internals\OutputDisplay.razor:line 0
+   at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
+   
+   
+   
+   
+Object reference not set to an instance of an object.
+   at Luthetus.Common.RazorLib.Menus.Displays.MenuDisplay.HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\Menus\Displays\MenuDisplay.razor.cs:line 164
+   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)
+   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)
+   
+blazor.webview.js:1  Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')
+   at Luthetus.Common.RazorLib.TreeViews.States.TreeViewState.Reducer.PerformMoveDown(TreeViewContainer inContainer, MoveDownAction moveDownAction) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\TreeViews\States\TreeViewState.Reducer.cs:line 505
+   at Luthetus.Common.RazorLib.TreeViews.States.TreeViewState.Reducer.ReduceMoveDownAction(TreeViewState inState, MoveDownAction moveDownAction) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\TreeViews\States\TreeViewState.Reducer.cs:line 174
+   at Fluxor.Feature`1.ReceiveDispatchNotificationFromStore(Object action) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\External\Fluxor_fork\Source\Lib\Fluxor\Feature.cs:line 127
+   at Fluxor.Store.DequeueActions() in C:\Users\hunte\Repos\Luthetus.Ide_Fork\External\Fluxor_fork\Source\Lib\Fluxor\Store.cs:line 290
+   at Fluxor.Store.ActionDispatched(Object sender, ActionDispatchedEventArgs e) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\External\Fluxor_fork\Source\Lib\Fluxor\Store.cs:line 176
+   at Fluxor.Dispatcher.Dispatch(Object action) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\External\Fluxor_fork\Source\Lib\Fluxor\Dispatcher.cs:line 52
+   at Luthetus.Common.RazorLib.TreeViews.Models.TreeViewKeyboardEventHandler.OnKeyDown(TreeViewCommandArgs commandArgs) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\TreeViews\Models\TreeViewKeyboardEventHandler.cs:line 84
+   at Luthetus.Ide.RazorLib.DotNetSolutions.Models.SolutionExplorerTreeViewKeyboardEventHandler.OnKeyDownAsync(TreeViewCommandArgs commandArgs) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Ide.RazorLib\DotNetSolutions\Models\SolutionExplorerTreeViewKeyboardEventHandler.cs:line 63
+   at Luthetus.Common.RazorLib.TreeViews.Displays.TreeViewContainerDisplay.HandleTreeViewOnKeyDownWithPreventScroll(KeyboardEventArgs keyboardEventArgs, TreeViewContainer treeViewContainer) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\TreeViews\Displays\TreeViewContainerDisplay.razor.cs:line 109
+   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)
+   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)
+   
+   
+   
+   
+   
+   
+   
+ at Luthetus.Ide.RazorLib.Events.Models.OnOutput.HandleEvent(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Ide.RazorLib\Events\Models\OnOutput.cs:line 170
+   at Luthetus.Ide.RazorLib.Events.Models.OnOutput.HandleEvent(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Ide.RazorLib\Events\Models\OnOutput.cs:line 170
+   at Luthetus.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\BackgroundTaskWorker.cs:line 52
+ERROR on OnOutput: Luthetus.TextEditor.RazorLib.Exceptions.LuthetusTextEditorException: 'positionIndex:132933' > model.CharCount:132570
+   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelExtensionMethods.AssertPositionIndex(ITextEditorModel model, Int32 positionIndex) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelExtensionMethods.cs:line 574
+   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelModifier.InsertMetadata(String value, TextEditorCursorModifier cursorModifier, Boolean useLineEndKindPreference, CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelModifier.InProgress.cs:line 136
+   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelModifier.Insert(String value, CursorModifierBagTextEditor cursorModifierBag, Boolean useLineEndKindPreference, CancellationToken cancellationToken, Boolean shouldCreateEditHistory) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelModifier.InProgress.cs:line 83
+   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelApi.<>c__DisplayClass17_0.<InsertTextFactory>b__0(IEditContext editContext) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelApi.cs:line 188
+   at Luthetus.Ide.RazorLib.Events.Models.OnOutput.HandleEvent(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Ide.RazorLib\Events\Models\OnOutput.cs:line 170
+   at Luthetus.Ide.RazorLib.Events.Models.OnOutput.HandleEvent(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Ide.RazorLib\Events\Models\OnOutput.cs:line 170
+   at Luthetus.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\BackgroundTaskWorker.cs:line 52
+ERROR on MoveCursorFactory: Luthetus.TextEditor.RazorLib.Exceptions.LuthetusTextEditorException: 'positionIndex:132933' > model.CharCount:132570
+   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelExtensionMethods.AssertPositionIndex(ITextEditorModel model, Int32 positionIndex) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelExtensionMethods.cs:line 574
+   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelModifier.InsertMetadata(String value, TextEditorCursorModifier cursorModifier, Boolean useLineEndKindPreference, CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelModifier.InProgress.cs:line 136
+   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelModifier.Insert(String value, CursorModifierBagTextEditor cursorModifierBag, Boolean useLineEndKindPreference, CancellationToken cancellationToken, Boolean shouldCreateEditHistory) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelModifier.InProgress.cs:line 83
+   at Luthetus.TextEditor.RazorLib.TextEditors.Models.TextEditorModelApi.<>c__DisplayClass17_0.<InsertTextFactory>b__0(IEditContext editContext) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\TextEditors\Models\TextEditorModelApi.cs:line 188
+   at Luthetus.Ide.RazorLib.Terminals.Models.Terminal.<>c__DisplayClass47_0.<<WriteWorkingDirectory>b__0>d.MoveNext() in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Ide.RazorLib\Terminals\Models\Terminal.TextEditor.cs:line 155
+--- End of stack trace from previous location ---
+   at Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.SimpleBatchTextEditorTask.HandleEvent(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\BackgroundTasks\Models\SimpleBatchTextEditorTask.cs:line 92
+   at Luthetus.TextEditor.RazorLib.BackgroundTasks.Models.SimpleBatchTextEditorTask.HandleEvent(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\TextEditor\BackgroundTasks\Models\SimpleBatchTextEditorTask.cs:line 99
+   at Luthetus.Common.RazorLib.BackgroundTasks.Models.BackgroundTaskWorker.ExecuteAsync(CancellationToken cancellationToken) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Common\BackgroundTasks\Models\BackgroundTaskWorker.cs:line 52
+   
+   
+   
+   
+   
+   
+   
+   https://github.com/dotnet/aspnetcore/issues/18919#issuecomment-815019336
+   @daniel-p-tech Don't use anonymous lambda's that capture variables inside a loop as event handlers in components.
+e.g.
+@onclick="@((e) => OnRowClick(e, item))"
+item is captured by the lambda and will instantiate a new instance of an anonymous inner class inside the foreach loop, which gets its own ID and causes every row to rerender on every paint of the component. See this issue for the explanation:
+#17886
+Instead, add the event handler to the item, so that the code will read:
+@onclick="item.OnRowClick"
+That way no lambda needs to be created on an inner class and no repaints for all rows happen.
+I know that the docs state that it can be done, but performance will suffer.
+
+
+
+	/// <summary>
+	/// (2024-07-15)
+	/// If an instance of this class has this property as non-null,
+	/// then it is to mean that any terminal output be appended to this StringBuilder.
+	///
+	/// If an instance of this class has this property as null,
+	/// then it is to mean that the terminal's text should be cleared,
+	/// and then set write out this instance's FormattedCommand
+	/// as a string, and any output.
+	///
+	/// Idea: Should one always output to the 'OutputBuilder',
+	///       and then consider a 'ReadOnlyTextEditor'
+	///       which accepts as input a stream?
+	///
+	/// I really like the idea of the 'ReadOnlyTextEditor' accepting
+	/// a stream.
+	///
+	/// I also have a very hacky 'TextEditorKeymapTerminal.cs' class
+	/// at the moment. And I can get rid of it if I use the
+	/// 'WidgetBlock.cs' in the namespace
+	/// 'Luthetus.TextEditor.RazorLib.TextEditors.Models;'
+	///
+	/// The 'WidgetBlock.cs' could be a text in and of itself,
+	/// but its sort of embedded as a widget within a readonly text editor.
+	///
+	/// So, the integrated terminal would be two text editor models,
+	/// the readonly one, and then the final line is a widget for
+	/// the input.
+	/// </summary>
+	
+	
+	
+	blazor.webview.js:1  Destination array was not long enough. Check the destination index, length, and the array's lower bounds. (Parameter 'destinationArray')
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length)
+   at System.Collections.Immutable.ImmutableExtensions.TryCopyTo[T](IEnumerable`1 sequence, T[] array, Int32 arrayIndex)
+   at System.Collections.Immutable.ImmutableExtensions.ToArray[T](IEnumerable`1 sequence, Int32 count)
+   at System.Collections.Immutable.ImmutableArray.CreateRange[T](IEnumerable`1 items)
+   at Luthetus.Ide.RazorLib.Outputs.Displays.Internals.OutputDisplay.BuildRenderTree(RenderTreeBuilder __builder) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Ide\Ide.RazorLib\Outputs\Displays\Internals\OutputDisplay.razor:line 0
+   at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
+   
+Destination array was not long enough. Check the destination index, length, and the array's lower bounds. (Parameter 'destinationArray')
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length, Boolean reliable)
+   at System.Array.Copy(Array sourceArray, Int32 sourceIndex, Array destinationArray, Int32 destinationIndex, Int32 length)
+   at System.Collections.Immutable.ImmutableExtensions.TryCopyTo[T](IEnumerable`1 sequence, T[] array, Int32 arrayIndex)
+   at System.Collections.Immutable.ImmutableExtensions.ToArray[T](IEnumerable`1 sequence, Int32 count)
+   at System.Collections.Immutable.ImmutableArray.CreateRange[T](IEnumerable`1 items)
+   at Luthetus.Extensions.DotNet.Outputs.Displays.Internals.OutputDisplay.BuildRenderTree(RenderTreeBuilder __builder) in C:\Users\hunte\Repos\Luthetus.Ide_Fork\Source\Lib\Extensions\Extensions.DotNet\Outputs\Displays\Internals\OutputDisplay.razor:line 0
+   at Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, Exception& renderFragmentException)
 
 It is all about the test explorer. No other feature matters.
 I believe strongly in unit tests.
