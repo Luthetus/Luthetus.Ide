@@ -1,5 +1,33 @@
-<h3>TerminalOutputTextEditorDisplay</h3>
-
-@code {
+@{
+	var localTerminal = _terminal;
 	
+	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectory
+		?? "null";
+	
+	var paddingForWorkingDirectoryText = 2;	
+	var workingDirectoryTextWidth = workingDirectory.Length + paddingForWorkingDirectoryText;
 }
+
+<div class="luth_ide_new-terminal-panel">
+
+	<textarea value="@localTerminal.TerminalOutput.OutputRaw"
+		      style="resize: none; height: calc(100% - 2em);"
+		      title="Output"
+		      readonly/>
+	
+	<div style="height: 2em; display: flex;">
+		<input type="text"
+			   style="width: @(workingDirectoryTextWidth)ch; height: 100%;"
+			   title="Working directory"
+			   readonly
+			   value="@workingDirectory" />
+			   
+		<input @bind="_command"
+		       @bind:event="oninput"
+			   @onkeydown="HandleOnKeyDown"
+			   type="text"
+			   style="width: calc(100% - @(workingDirectoryTextWidth)ch); height: 100%;"
+			   title="Command" />
+	</div>
+
+</div>
