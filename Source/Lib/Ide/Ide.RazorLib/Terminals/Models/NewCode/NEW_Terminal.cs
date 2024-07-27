@@ -17,11 +17,11 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 /// <summary>
 /// This implementation of <see cref="ITerminal"/> is a "blank slate".
 /// </summary>
-public class Terminal : ITerminal
+public class NEW_Terminal : ITerminal
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
 
-	public Terminal(
+	public NEW_Terminal(
 		string displayName,
 		ITerminalInteractive terminalInteractive,
 		ITerminalInput terminalInput,
@@ -43,7 +43,7 @@ public class Terminal : ITerminal
 
 	private CancellationTokenSource _commandCancellationTokenSource = new();
 
-    public Key<Terminal> Key { get; init; } = Key<Terminal>.NewKey();
+    public Key<ITerminal> Key { get; init; } = Key<ITerminal>.NewKey();
     public TerminalCommand? ActiveTerminalCommand { get; private set; }
 
 	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>

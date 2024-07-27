@@ -1,11 +1,11 @@
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 /// <summary>Aaa</summary>
-public class TerminalInteractiveBase : ITerminalInteractive
+public class TerminalInteractive : ITerminalInteractive
 {
 	private readonly ITerminal _terminal;
 
-	public TerminalInteractiveBase(ITerminal terminal)
+	public TerminalInteractive(ITerminal terminal)
 	{
 		_terminal = terminal;
 	}

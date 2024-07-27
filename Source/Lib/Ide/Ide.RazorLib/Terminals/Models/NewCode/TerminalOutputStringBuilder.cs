@@ -1,15 +1,19 @@
+using CliWrap.EventStream;
+
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 public class TerminalOutputStringBuilder : ITerminalOutput
 {
 	private readonly ITerminal _terminal;
 
-	public TerminalInputTextEditor(ITerminal terminal)
+	public TerminalOutputStringBuilder(ITerminal terminal)
 	{
 		_terminal = terminal;
+		
+		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
 	}
 
-	public void OnAfterWorkingDirectoryChanged(string workingDirectoryAbsolutePathString)
+	public void OnWorkingDirectoryChanged()
 	{
 	}
 	
@@ -70,5 +74,10 @@ public class TerminalOutputStringBuilder : ITerminalOutput
 				terminalCommand.TextSpanList = outputTextSpanList;
 			}
 		}
+	}
+	
+	public void Dispose()
+	{
+		_terminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
 	}
 }

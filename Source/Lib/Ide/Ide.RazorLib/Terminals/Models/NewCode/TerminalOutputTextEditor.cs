@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components.Web;
+using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -16,11 +17,13 @@ public class TerminalOutputTextEditor : ITerminalOutput
 {
 	private readonly ITerminal _terminal;
 
-	public TerminalInputTextEditor(ITerminal terminal)
+	public TerminalOutputTextEditor(ITerminal terminal)
 	{
 		_terminal = terminal;
-		ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Key.Guid.ToString());
+		ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + _terminal.Key.Guid.ToString());
 		CreateTextEditor();
+		
+		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
 	}
 	
 	private readonly ITextEditorService _textEditorService;
@@ -31,7 +34,7 @@ public class TerminalOutputTextEditor : ITerminalOutput
 	public ResourceUri ResourceUri { get; init; }
 	public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
 
-	public void OnAfterWorkingDirectoryChanged(string workingDirectoryAbsolutePathString)
+	public void OnWorkingDirectoryChanged()
 	{
 	}
 	
@@ -368,5 +371,10 @@ public class TerminalOutputTextEditor : ITerminalOutput
 			terminalCommand,
 			terminalCommandBoundary,
 		    TextEditorViewModelKey));
+	}
+	
+	public void Dispose()
+	{
+		_terminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
 	}
 }

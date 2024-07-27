@@ -22,6 +22,39 @@ public partial class Terminal
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly List<TerminalCommand> _terminalCommandsHistory = new();
 
+	/// <summary>
+	/// This factory method exists because the terminal has async methods
+	/// it invokes immediately after being constructed.
+	/// </summary>
+	public static Task<Terminal> Factory(
+        string displayName,
+        string? workingDirectoryAbsolutePathString,
+        IDispatcher dispatcher,
+        IBackgroundTaskService backgroundTaskService,
+        ITextEditorService textEditorService,
+        ICommonComponentRenderers commonComponentRenderers,
+        ICompilerServiceRegistry compilerServiceRegistry,
+		Key<Terminal> terminalKey)
+	{
+		var terminal = new Terminal(
+			displayName,
+	        dispatcher,
+	        backgroundTaskService,
+	        textEditorService,
+	        commonComponentRenderers,
+	        compilerServiceRegistry)
+			{
+				Key = terminalKey
+			};
+
+		terminal.CreateTextEditor();
+		terminal.SetWorkingDirectoryAbsolutePathString(workingDirectoryAbsolutePathString);
+		return Task.FromResult(terminal);
+	}
+
+    /// <summary>
+    /// One should use the <see cref="Factory"/> method.
+    /// </summary>
     private Terminal(
         string displayName,
         IDispatcher dispatcher,
@@ -38,26 +71,11 @@ public partial class Terminal
 
         DisplayName = displayName;
         ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Key.Guid.ToString());
-        
-        var terminal = new Terminal(
-			displayName,
-	        dispatcher,
-	        backgroundTaskService,
-	        textEditorService,
-	        commonComponentRenderers,
-	        compilerServiceRegistry)
-			{
-				Key = terminalKey
-			};
-
-		terminal.CreateTextEditor();
-		terminal.SetWorkingDirectoryAbsolutePathString(workingDirectoryAbsolutePathString);
-		return Task.FromResult(terminal);
     }
 
 	private CancellationTokenSource _commandCancellationTokenSource = new();
     private string? _previousWorkingDirectoryAbsolutePathString;
-    
+    private string? _workingDirectoryAbsolutePathString;
 
     public Key<Terminal> Key { get; init; } = Key<Terminal>.NewKey();
     public TerminalCommand? ActiveTerminalCommand { get; private set; }
@@ -67,7 +85,7 @@ public partial class Terminal
 
     public string DisplayName { get; }
 
-    
+    public string? WorkingDirectoryAbsolutePathString => _workingDirectoryAbsolutePathString;
 
     public ImmutableArray<TerminalCommand> TerminalCommandsHistory => _terminalCommandsHistory.ToImmutableArray();
 
@@ -78,7 +96,6 @@ public partial class Terminal
 
         if (_previousWorkingDirectoryAbsolutePathString != _workingDirectoryAbsolutePathString)
             WriteWorkingDirectory(true);
-            // ITerminalOutputPipe.OnAfterWorkingDirectoryChanged(_workingDirectoryAbsolutePathString);
 	}
 
     public void EnqueueCommand(TerminalCommand terminalCommand)
@@ -94,7 +111,6 @@ public partial class Terminal
     {
     	if (terminalCommand.OutputBuilder is null)
 			ClearTerminal();
-			// ITerminalOutputPipe.OnHandleCommandStarting(...)
 
 		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
 			SetWorkingDirectoryAbsolutePathString(terminalCommand.ChangeWorkingDirectoryTo);
