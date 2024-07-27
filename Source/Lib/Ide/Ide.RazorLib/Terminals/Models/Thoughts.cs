@@ -44,3 +44,29 @@ The goal is:
   	of the program.
 - 
 */
+
+// Terminal                # Take string, invoke CliWrap, ???
+//                               Aaa
+//     TerminalInteractive # Maintain state (i.e.: the working directory)
+//                               Is one to emulate shells or somehow run the
+//                                   corresponding shell and somehow render the UI in the IDE?
+//     TerminalInput       # Is this necessary? (I'm thinking of the ICompilerService)
+//                               I think the best implementation will result
+//                                   from me creating a <textarea/> and <input type="text"/>
+//                                   implementation of a terminal in addition to the
+//                                   readonly text editor model, and single line modifiable text editor model.
+//     TerminalOutput      # Store the output
+//                               Aaa
+
+// I'm thinking and, it seems that TerminalInput and TerminalOutput perfectly map to the
+// new idea I have of two text editor models.
+//
+// The editable single line model would be the TerminalInput and the TerminalOutput
+// would be the readonly model.
+//
+// And, I could just the same create a different implementation where
+// an <input type="text"/> is the TerminalInput, and a <textarea/> is the TerminalOutput.
+//
+// The 'TerminalInteractive' could be an emulator for 'bash' or 'cmd', etc...
+// But, I also wonder, do other integrated terminals emulate these shells,
+// or are they somehow rendering the direct output of the shell running in the background.
