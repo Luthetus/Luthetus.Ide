@@ -51,22 +51,22 @@ public class NEW_Terminal : ITerminal
 
     public void EnqueueCommand(string commandText)
     {
-    	/*
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BlockingBackgroundTaskWorker.GetQueueKey(),
 			"Enqueue Command",
-			() => HandleCommand(terminalCommand));
-		*/
+			() => HandleCommand(commandText));
     }
 
     private async Task HandleCommand(string commandText)
     {
+    	_ = TerminalInteractive.TryHandleCommand(commandText);
+    	
     	// ITerminalOutputPipe.OnHandleCommandStarting(...)
     	
     
     	/*
-    	var wasInteractiveCommand = TerminalInteractive.TryHandleCommand(commandText);
+    	
 
 		_terminalCommandsHistory.Add(terminalCommand);
 		ActiveTerminalCommand = terminalCommand;

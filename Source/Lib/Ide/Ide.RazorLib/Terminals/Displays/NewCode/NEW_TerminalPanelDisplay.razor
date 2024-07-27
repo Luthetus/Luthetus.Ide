@@ -19,9 +19,12 @@
 			   readonly
 			   value="@workingDirectory" />
 			   
-		<input type="text"
+		<input @bind="_command"
+		       @bind:event="oninput"
+			   @onkeydown="HandleOnKeyDown"
+			   type="text"
 			   style="width: calc(100% - @(workingDirectory.Length)ch); height: 100%;"
 			   title="Command" />
-	</div>	      
+	</div>
 
 </div>

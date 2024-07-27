@@ -10,4 +10,6 @@ public interface ITerminal : IDisposable
 	public ITerminalInteractive TerminalInteractive { get; }
 	public ITerminalInput TerminalInput { get; }
 	public ITerminalOutput TerminalOutput { get; }
+	
+	public void EnqueueCommand(string commandText);
 }

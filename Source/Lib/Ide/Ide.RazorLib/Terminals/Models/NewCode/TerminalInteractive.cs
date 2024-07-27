@@ -1,3 +1,8 @@
+using System.Text;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 /// <summary>Aaa</summary>
@@ -17,37 +22,23 @@ public class TerminalInteractive : ITerminalInteractive
 
 	public event Action? WorkingDirectoryChanged;
 	
-	/// <summary>
-	/// Some terminal commands will map to "interactive" commands
-	/// that are meant to modify the shell session rather
-	/// than to start a process.
-	///
-	/// Ex: 'cd ../..' is an "interactive" command,
-	///     where as 'dotnet run' will start a process.
-	///
-	/// This method gives the <see cref="ITerminalInteractive"/> an
-	/// opportunity to handle the command, before it is executed
-	/// at a more general level.
-	///
-	/// Presumably, 'dotnet run ../MyProject.csproj' where there is a
-	/// ".." in a path, would need to be taken by the
-	/// <see cref="ITerminalInteractive"/>, and then modified
-	/// to replace "../MyProject.csproj" with the result of traversing
-	/// this relative path from the working directory path.
-	///
-	/// The final result would then be returned for the <see cref="ITerminal"/>
-	/// to execute, "dotnet run C:/User/MyProject/MyProject.cs"
-	/// if the working directory were to be "C:/User/MyProject/wwwroot/".
-	///
-	/// If null is returned, then the <see cref="ITerminal"/>
-	/// should return (do nothing more).
-	/// </summary>
 	public string? TryHandleCommand(string commandText)
 	{
-		return null;
+		var parsedCommand = Parse(commandText);
+		
+		Console.WriteLine($"TargetFileName: {parsedCommand.TargetFileName}");
+		Console.WriteLine($"Arguments: {parsedCommand.Arguments}");
+		
+		if (parsedCommand.TargetFileName == "cd")
+		{
+			SetWorkingDirectory(parsedCommand.Arguments);
+			return null;
+		}
+	
+		return commandText;
 		/*
 		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-			TerminalInteractive.SetWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
+			TerminalInteractive.
 
 		if (terminalCommand.FormattedCommand.TargetFileName == "cd")
 		{
@@ -76,6 +67,47 @@ public class TerminalInteractive : ITerminalInteractive
 
         if (_previousWorkingDirectoryAbsolutePathString != _workingDirectoryAbsolutePathString)
             WorkingDirectoryChanged?.Invoke();
+	}
+	
+	public TerminalCommandParsed Parse(string commandText)
+	{
+		try
+		{
+			var stringWalker = new StringWalker(ResourceUri.Empty, commandText);
+			
+			// Get target file name
+			string targetFileName;
+			{
+				var targetFileNameBuilder = new StringBuilder();
+				var startPositionIndex = stringWalker.PositionIndex;
+		
+				while (!stringWalker.IsEof)
+				{
+					if (WhitespaceFacts.ALL_LIST.Contains(stringWalker.CurrentCharacter))
+						break;
+					else
+						targetFileNameBuilder.Append(stringWalker.CurrentCharacter);
+				
+					_ = stringWalker.ReadCharacter();
+				}
+				
+				targetFileName = targetFileNameBuilder.ToString();
+			}
+			
+			// Get arguments
+			stringWalker.ReadWhitespace();
+			var arguments = stringWalker.RemainingText;
+		
+		
+			return new TerminalCommandParsed(
+				targetFileName,
+				arguments);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.ToString());
+			throw;
+		}
 	}
 	
 	public void Dispose()
