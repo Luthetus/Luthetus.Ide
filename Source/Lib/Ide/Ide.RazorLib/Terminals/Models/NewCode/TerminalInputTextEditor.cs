@@ -7,8 +7,8 @@ public class TerminalInputTextEditor : ITerminalInput
 	public TerminalInputTextEditor(ITerminal terminal)
 	{
 		_terminal = terminal;
-		ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Key.Guid.ToString());
-		CreateTextEditor();
+		//ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Key.Guid.ToString());
+		//CreateTextEditor();
 		
 		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
 	}
@@ -23,7 +23,7 @@ public class TerminalInputTextEditor : ITerminalInput
 	
 	public void SendCommand(string commandText)
 	{
-		_terminal.EnqueueCommand(commandText);
+		//_terminal.EnqueueCommand(commandText);
 	}
 	
 	public void Dispose()

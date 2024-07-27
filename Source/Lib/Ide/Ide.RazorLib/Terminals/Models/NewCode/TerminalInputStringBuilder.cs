@@ -21,7 +21,7 @@ public class TerminalInputStringBuilder : ITerminalInput
 	
 	public void SendCommand(string commandText)
 	{
-		_terminal.EnqueueCommand(commandText);
+		//_terminal.EnqueueCommand(commandText);
 	}
 	
 	public void Dispose()

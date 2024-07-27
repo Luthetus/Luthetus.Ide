@@ -57,6 +57,8 @@
 [] Is the context menu re-rendering whenever a file gets parsed by the initial solution wide parse?
 [] Ctrl + Alt + DoubleClick => ExpandSelectionByCamelCase
 [] Shift tab when \t\s\s where '\s' denotes 'space' what would happen (cursor is after the final '\s')
+[] Goto related files 'F7' keybind isn't working
+[] Cannot type non-letter text at the start of a file?
 [] Keybinds
 	[] Finish these
 		[] Alt + Up => move line up

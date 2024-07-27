@@ -44,6 +44,8 @@ public class TerminalInteractive : ITerminalInteractive
 	/// </summary>
 	public string? TryHandleCommand(string commandText)
 	{
+		return null;
+		/*
 		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
 			TerminalInteractive.SetWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
 
@@ -64,6 +66,7 @@ public class TerminalInteractive : ITerminalInteractive
 			WriteWorkingDirectory();
 			return;
 		}
+		*/
 	}
 	
 	public void SetWorkingDirectory(string workingDirectoryAbsolutePathString)

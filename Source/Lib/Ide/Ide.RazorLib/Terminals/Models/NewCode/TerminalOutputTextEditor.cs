@@ -54,7 +54,7 @@ public class TerminalOutputTextEditor : ITerminalOutput
 				//       |
 				//       This is here for when the command was started programmatically
 				//       without a user typing into the terminal.
-				output = $"{terminalCommand.FormattedCommand.Value}\n";
+				///////output = $"{terminalCommand.FormattedCommand.Value}\n";
 				break;
 			case StandardOutputCommandEvent stdOut:
 				output = $"{stdOut.Text}\n";
@@ -67,6 +67,7 @@ public class TerminalOutputTextEditor : ITerminalOutput
 				break;
 		}
 
+		/*
 		if (output is not null)
 		{
 			var outputTextSpanList = new List<TextEditorTextSpan>();
@@ -95,10 +96,12 @@ public class TerminalOutputTextEditor : ITerminalOutput
 				terminalCommand.TextSpanList = outputTextSpanList;
 			}
 		}
+		*/
 	}
 
     private void CreateTextEditor()
     {
+    	/*
         var line1 = "Integrated-Terminal";
         var line2 = "Try: cmd /c \"dir\"";
 
@@ -259,8 +262,10 @@ public class TerminalOutputTextEditor : ITerminalOutput
                     terminalResource.GetTokenTextSpans());
                 return Task.CompletedTask;
             });
+		*/
     }
     
+    /*
     public void MoveCursorToEnd()
     {
         _textEditorService.PostUnique(
@@ -289,7 +294,9 @@ public class TerminalOutputTextEditor : ITerminalOutput
                 return Task.CompletedTask;
             });
     }
+    */
 
+	/*
     public void ClearTerminal()
     {
         _textEditorService.PostUnique(
@@ -354,7 +361,9 @@ public class TerminalOutputTextEditor : ITerminalOutput
                 return Task.CompletedTask;
             });
     }
+    */
     
+    /*
     private void TerminalOnOutput(
 		int outputOffset,
 		string output,
@@ -372,6 +381,7 @@ public class TerminalOutputTextEditor : ITerminalOutput
 			terminalCommandBoundary,
 		    TextEditorViewModelKey));
 	}
+	*/
 	
 	public void Dispose()
 	{

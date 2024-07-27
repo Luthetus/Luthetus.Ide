@@ -33,7 +33,7 @@ public class TerminalOutputStringBuilder : ITerminalOutput
 				//       |
 				//       This is here for when the command was started programmatically
 				//       without a user typing into the terminal.
-				output = $"{terminalCommand.FormattedCommand.Value}\n";
+				///////output = $"{terminalCommand.FormattedCommand.Value}\n";
 				break;
 			case StandardOutputCommandEvent stdOut:
 				output = $"{stdOut.Text}\n";
@@ -46,6 +46,7 @@ public class TerminalOutputStringBuilder : ITerminalOutput
 				break;
 		}
 
+		/*
 		if (output is not null)
 		{
 			var outputTextSpanList = new List<TextEditorTextSpan>();
@@ -74,6 +75,7 @@ public class TerminalOutputStringBuilder : ITerminalOutput
 				terminalCommand.TextSpanList = outputTextSpanList;
 			}
 		}
+		*/
 	}
 	
 	public void Dispose()

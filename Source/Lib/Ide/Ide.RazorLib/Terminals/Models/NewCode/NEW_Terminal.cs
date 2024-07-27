@@ -23,15 +23,15 @@ public class NEW_Terminal : ITerminal
 
 	public NEW_Terminal(
 		string displayName,
-		ITerminalInteractive terminalInteractive,
-		ITerminalInput terminalInput,
-		ITerminalOutput terminalOutput,
+		Func<NEW_Terminal, ITerminalInteractive> terminalInteractiveFactory,
+		Func<NEW_Terminal, ITerminalInput> terminalInputFactory,
+		Func<NEW_Terminal, ITerminalOutput> terminalOutputFactory,
 		IBackgroundTaskService backgroundTaskService)
 	{
 		DisplayName = displayName;
-		TerminalInteractive = terminalInteractive;
-		TerminalInput = terminalInput;
-		TerminalOutput = terminalOutput;
+		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
+		TerminalInput = terminalInputFactory.Invoke(this);
+		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
 		_backgroundTaskService = backgroundTaskService;
 	}
@@ -51,17 +51,21 @@ public class NEW_Terminal : ITerminal
 
     public void EnqueueCommand(string commandText)
     {
+    	/*
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BlockingBackgroundTaskWorker.GetQueueKey(),
 			"Enqueue Command",
 			() => HandleCommand(terminalCommand));
+		*/
     }
 
     private async Task HandleCommand(string commandText)
     {
     	// ITerminalOutputPipe.OnHandleCommandStarting(...)
     	
+    
+    	/*
     	var wasInteractiveCommand = TerminalInteractive.TryHandleCommand(commandText);
 
 		_terminalCommandsHistory.Add(terminalCommand);
@@ -142,6 +146,7 @@ public class NEW_Terminal : ITerminal
 					.ConfigureAwait(false);
 			}
 		}
+		*/
 	}
 
 	public void KillProcess()
@@ -153,7 +158,7 @@ public class NEW_Terminal : ITerminal
 
 	private void DispatchNewStateKey()
     {
-        _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
+        // _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
     }
     
     public void Dispose()

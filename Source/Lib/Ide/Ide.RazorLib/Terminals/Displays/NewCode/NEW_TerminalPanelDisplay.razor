@@ -1,0 +1,27 @@
+@{
+	var localTerminal = _terminal;
+	
+	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectoryAbsolutePathString
+		?? "null";
+}
+
+<div class="luth_ide_new-terminal-panel">
+
+	<textarea @bind="_textArea"
+		      style="resize: none; height: calc(100% - 2em);"
+		      title="Output"
+		      readonly/>
+	
+	<div style="height: 2em; display: flex;">
+		<input type="text"
+			   style="width: @(workingDirectory.Length)ch; height: 100%;"
+			   title="Working directory"
+			   readonly
+			   value="@workingDirectory" />
+			   
+		<input type="text"
+			   style="width: calc(100% - @(workingDirectory.Length)ch); height: 100%;"
+			   title="Command" />
+	</div>	      
+
+</div>

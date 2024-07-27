@@ -18,6 +18,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
+using Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.Gits.Displays;
@@ -167,6 +168,20 @@ public partial class LuthetusIdeInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(terminalGroupPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false));
+        
+        // newTerminalGroupPanel
+        var newTerminalGroupPanel = new Panel(
+			"NEW_Terminal",
+            Key<Panel>.NewKey(),
+            Key<IDynamicViewModel>.NewKey(),
+			ContextFacts.TerminalContext.ContextKey,
+            typeof(NEW_TerminalPanelDisplay),
+            null,
+            Dispatcher,
+            DialogService,
+            JsRuntime);
+        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(newTerminalGroupPanel));
+        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, newTerminalGroupPanel, false));
 
 		// activeContextsPanel
         var activeContextsPanel = new Panel(
