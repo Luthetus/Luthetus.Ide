@@ -7,6 +7,8 @@ public class TerminalInputTextEditor : ITerminalInput
 	public TerminalInputTextEditor(ITerminal terminal)
 	{
 		_terminal = terminal;
+		ResourceUri = new(ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + Key.Guid.ToString());
+		CreateTextEditor();
 	}
 
 	public void OnAfterWorkingDirectoryChanged(string workingDirectoryAbsolutePathString)

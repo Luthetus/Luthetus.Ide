@@ -16,4 +16,9 @@ public class TerminalInputStringBuilder : ITerminalInput
 	public void OnHandleCommandStarting()
 	{
 	}
+	
+	public void SendCommand(string commandText)
+	{
+		_terminal.EnqueueCommand(commandText);
+	}
 }
