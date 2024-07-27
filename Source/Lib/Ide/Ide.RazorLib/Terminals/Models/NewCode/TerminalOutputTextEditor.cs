@@ -34,6 +34,8 @@ public class TerminalOutputTextEditor : ITerminalOutput
 	public ResourceUri ResourceUri { get; init; }
 	public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
 
+	public string Output { get; private set; }
+
 	public event Action? OnWriteOutput;
 
 	public void OnWorkingDirectoryChanged()

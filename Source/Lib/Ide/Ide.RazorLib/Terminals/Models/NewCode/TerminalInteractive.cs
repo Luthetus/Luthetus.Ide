@@ -1,4 +1,5 @@
 using System.Text;
+using CliWrap.EventStream;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
@@ -40,7 +41,15 @@ public class TerminalInteractive : ITerminalInteractive
 		switch (parsedCommand.TargetFileName)
 		{
 			case "cd":
+				_terminal.TerminalOutput.WriteOutput(
+					parsedCommand,
+					new StartedCommandEvent(-1));
+			
 				SetWorkingDirectory(parsedCommand.Arguments);
+				
+				_terminal.TerminalOutput.WriteOutput(
+					parsedCommand,
+					new StandardOutputCommandEvent("\n"));
 				return null;
 			case "clear":
 				// ClearTerminal();

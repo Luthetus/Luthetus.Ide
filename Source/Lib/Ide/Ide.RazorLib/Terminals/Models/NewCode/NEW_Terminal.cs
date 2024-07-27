@@ -20,13 +20,17 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 public class NEW_Terminal : ITerminal
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
+	private readonly ICommonComponentRenderers _commonComponentRenderers;
+	private readonly IDispatcher _dispatcher;
 
 	public NEW_Terminal(
 		string displayName,
 		Func<NEW_Terminal, ITerminalInteractive> terminalInteractiveFactory,
 		Func<NEW_Terminal, ITerminalInput> terminalInputFactory,
 		Func<NEW_Terminal, ITerminalOutput> terminalOutputFactory,
-		IBackgroundTaskService backgroundTaskService)
+		IBackgroundTaskService backgroundTaskService,
+		ICommonComponentRenderers commonComponentRenderers,
+		IDispatcher dispatcher)
 	{
 		DisplayName = displayName;
 		TerminalInteractive = terminalInteractiveFactory.Invoke(this);
@@ -34,6 +38,8 @@ public class NEW_Terminal : ITerminal
 		TerminalOutput = terminalOutputFactory.Invoke(this);
 		
 		_backgroundTaskService = backgroundTaskService;
+		_commonComponentRenderers = commonComponentRenderers;
+		_dispatcher = dispatcher;
 	}
 
 	public string DisplayName { get; }
@@ -44,7 +50,7 @@ public class NEW_Terminal : ITerminal
 	private CancellationTokenSource _commandCancellationTokenSource = new();
 
     public Key<ITerminal> Key { get; init; } = Key<ITerminal>.NewKey();
-    public TerminalCommand? ActiveTerminalCommand { get; private set; }
+    public TerminalCommandParsed? ActiveTerminalCommandParsed { get; private set; }
 
 	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
     public bool HasExecutingProcess { get; private set; }
@@ -61,6 +67,10 @@ public class NEW_Terminal : ITerminal
     private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
     	var parsedCommand = TerminalInteractive.TryHandleCommand(terminalCommandRequest);
+    	ActiveTerminalCommandParsed = parsedCommand;
+
+		if (parsedCommand is null)
+			return;
     	
     	var command = Cli.Wrap(parsedCommand.TargetFileName);
 
@@ -69,80 +79,22 @@ public class NEW_Terminal : ITerminal
 		if (!string.IsNullOrWhiteSpace(parsedCommand.Arguments))
 			command = command.WithArguments(parsedCommand.Arguments);
 		
-
-    	
-    	// ITerminalOutputPipe.OnHandleCommandStarting(...)
-    
-    	/*
-		_terminalCommandsHistory.Add(terminalCommand);
-		ActiveTerminalCommand = terminalCommand;
-
-		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-			command = command.WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
-		else if (WorkingDirectoryAbsolutePathString is not null)
-			command = command.WithWorkingDirectory(WorkingDirectoryAbsolutePathString);
-
 		try
 		{
-			var terminalCommandKey = terminalCommand.TerminalCommandKey;
-			terminalCommand.TextSpan = null;
-			terminalCommand.WasStarted = true;
-			await terminalCommand.InvokeStateChangedCallbackFunc();
-
-			HasExecutingProcess = true;
-			DispatchNewStateKey();
-
-			if (terminalCommand.BeginWith is not null)
-				await terminalCommand.BeginWith.Invoke().ConfigureAwait(false);
-
-			// It is important to invoke 'OnAfterCommandStarted' after 'terminalCommand.BeginWith'
-			if (terminalCommand.OutputParser is not null)
-			{
-				await terminalCommand.OutputParser
-					.OnAfterCommandStarted(terminalCommand)
-					.ConfigureAwait(false);
-			}
-
-			var terminalCommandBoundary = new TerminalCommandBoundary();
-			var outputOffset = 0;
-
 			await command
 				.Observe(_commandCancellationTokenSource.Token)
-				.ForEachAsync(TerminalOutput.OnOutput)
+				.ForEachAsync(HandleOutput)
 				.ConfigureAwait(false);
 		}
 		catch (Exception e)
 		{
 			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
 		}
-		finally
-		{
-			terminalCommand.IsCompleted = true;
-			await terminalCommand.InvokeStateChangedCallbackFunc();
-			HasExecutingProcess = false;
-			WriteWorkingDirectory();
-			DispatchNewStateKey();
-
-			// It is important to invoke 'OnAfterCommandFinished' prior to 'terminalCommand.ContinueWith'
-			if (terminalCommand.OutputParser is not null)
-			{
-				// TODO: If one's 'OutputParser' throws an exception here, then the 'ContinueWith'...
-				//       ...will not run.
-				//       |
-				//       So, what is the desired behavior? Should a try block be used here?
-				await terminalCommand.OutputParser
-					.OnAfterCommandFinished(terminalCommand)
-					.ConfigureAwait(false);
-			}
-
-			if (terminalCommand.ContinueWith is not null)
-			{
-				await terminalCommand.ContinueWith
-					.Invoke()
-					.ConfigureAwait(false);
-			}
-		}
-		*/
+	}
+	
+	private void HandleOutput(CommandEvent commandEvent)
+	{
+		TerminalOutput.WriteOutput(ActiveTerminalCommandParsed, commandEvent);
 	}
 
 	public void KillProcess()
