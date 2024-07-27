@@ -15,65 +15,56 @@ public class TerminalInteractive : ITerminalInteractive
 		_terminal = terminal;
 	}
 
-	private string? _previousWorkingDirectoryAbsolutePathString;
-	private string? _workingDirectoryAbsolutePathString;
+	private string? _previousWorkingDirectory;
+	private string? _workingDirectory;
 	
-	public string? WorkingDirectoryAbsolutePathString => _workingDirectoryAbsolutePathString;
+	public string? WorkingDirectory => _workingDirectory;
 
 	public event Action? WorkingDirectoryChanged;
 	
-	public string? TryHandleCommand(string commandText)
+	public TerminalCommandParsed? TryHandleCommand(TerminalCommandRequest terminalCommandRequest)
 	{
-		var parsedCommand = Parse(commandText);
+		var parsedCommand = Parse(terminalCommandRequest);
 		
 		Console.WriteLine($"TargetFileName: {parsedCommand.TargetFileName}");
 		Console.WriteLine($"Arguments: {parsedCommand.Arguments}");
 		
-		if (parsedCommand.TargetFileName == "cd")
+		// To set the working directory, is not mutually exclusive
+		// to the "cd" command. Do not combine these.
+		if (terminalCommandRequest.WorkingDirectory is not null &&
+			terminalCommandRequest.WorkingDirectory != WorkingDirectory)
 		{
 			SetWorkingDirectory(parsedCommand.Arguments);
-			return null;
 		}
-	
-		return commandText;
-		/*
-		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
-			TerminalInteractive.
-
-		if (terminalCommand.FormattedCommand.TargetFileName == "cd")
+		
+		switch (parsedCommand.TargetFileName)
 		{
-			// TODO: Don't keep this logic as it is hacky. I'm trying to set myself up to be able to run "gcc" to compile ".c" files. Then I can work on adding symbol related logic like "go to definition" or etc.
-			if (terminalCommand.FormattedCommand.HACK_ArgumentsString is not null)
-				SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.HACK_ArgumentsString);
-			else if (terminalCommand.FormattedCommand.ArgumentsList.Any())
-				SetWorkingDirectoryAbsolutePathString(terminalCommand.FormattedCommand.ArgumentsList.ElementAt(0));
-
-			return;
+			case "cd":
+				SetWorkingDirectory(parsedCommand.Arguments);
+				return null;
+			case "clear":
+				// ClearTerminal();
+				// WriteWorkingDirectory();
+				return null;
+			default:
+				return parsedCommand;
 		}
-
-		if (terminalCommand.FormattedCommand.TargetFileName == "clear")
-		{
-			ClearTerminal();
-			WriteWorkingDirectory();
-			return;
-		}
-		*/
 	}
 	
-	public void SetWorkingDirectory(string workingDirectoryAbsolutePathString)
+	public void SetWorkingDirectory(string workingDirectory)
 	{
-		_previousWorkingDirectoryAbsolutePathString = _workingDirectoryAbsolutePathString;
-        _workingDirectoryAbsolutePathString = workingDirectoryAbsolutePathString;
+		_previousWorkingDirectory = _workingDirectory;
+        _workingDirectory = workingDirectory;
 
-        if (_previousWorkingDirectoryAbsolutePathString != _workingDirectoryAbsolutePathString)
+        if (_previousWorkingDirectory != _workingDirectory)
             WorkingDirectoryChanged?.Invoke();
 	}
 	
-	public TerminalCommandParsed Parse(string commandText)
+	public TerminalCommandParsed Parse(TerminalCommandRequest terminalCommandRequest)
 	{
 		try
 		{
-			var stringWalker = new StringWalker(ResourceUri.Empty, commandText);
+			var stringWalker = new StringWalker(ResourceUri.Empty, terminalCommandRequest.CommandText);
 			
 			// Get target file name
 			string targetFileName;
@@ -98,10 +89,10 @@ public class TerminalInteractive : ITerminalInteractive
 			stringWalker.ReadWhitespace();
 			var arguments = stringWalker.RemainingText;
 		
-		
 			return new TerminalCommandParsed(
 				targetFileName,
-				arguments);
+				arguments,
+				terminalCommandRequest);
 		}
 		catch (Exception e)
 		{

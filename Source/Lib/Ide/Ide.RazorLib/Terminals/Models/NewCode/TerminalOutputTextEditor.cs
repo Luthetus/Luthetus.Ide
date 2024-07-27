@@ -34,6 +34,8 @@ public class TerminalOutputTextEditor : ITerminalOutput
 	public ResourceUri ResourceUri { get; init; }
 	public Key<TextEditorViewModel> TextEditorViewModelKey { get; init; } = Key<TextEditorViewModel>.NewKey();
 
+	public event Action? OnWriteOutput;
+
 	public void OnWorkingDirectoryChanged()
 	{
 	}
@@ -42,11 +44,13 @@ public class TerminalOutputTextEditor : ITerminalOutput
 	{
 	}
 	
-	public void OnOutput(CommandEvent cmdEvent)
+	public void WriteOutput(TerminalCommandParsed terminalCommandParsed, CommandEvent commandEvent)
 	{
+		OnWriteOutput?.Invoke();
+		
 		var output = (string?)null;
 
-		switch (cmdEvent)
+		switch (commandEvent)
 		{
 			case StartedCommandEvent started:
 				// TODO: If the source of the terminal command is a user having...

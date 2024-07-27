@@ -12,6 +12,8 @@ public class TerminalOutputStringBuilder : ITerminalOutput
 		
 		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
 	}
+	
+	public event Action? OnWriteOutput;
 
 	public void OnWorkingDirectoryChanged()
 	{
@@ -21,11 +23,13 @@ public class TerminalOutputStringBuilder : ITerminalOutput
 	{
 	}
 	
-	public void OnOutput(CommandEvent cmdEvent)
+	public void WriteOutput(TerminalCommandParsed terminalCommandParsed, CommandEvent commandEvent)
 	{
+		OnWriteOutput?.Invoke();
+	
 		var output = (string?)null;
 
-		switch (cmdEvent)
+		switch (commandEvent)
 		{
 			case StartedCommandEvent started:
 				// TODO: If the source of the terminal command is a user having...

@@ -32,7 +32,9 @@ public partial class NEW_TerminalPanelDisplay : ComponentBase, IDisposable
 	{
 		if (keyboardEventArgs.Code == "Enter")
 		{
-			_terminal.EnqueueCommand(_command);
+			_terminal.EnqueueCommand(new TerminalCommandRequest(
+				commandText: _command,
+				workingDirectory: null));
 		}
 	}
 	

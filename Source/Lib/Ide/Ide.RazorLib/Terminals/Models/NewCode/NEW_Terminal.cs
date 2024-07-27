@@ -49,37 +49,33 @@ public class NEW_Terminal : ITerminal
 	/// <summary>NOTE: the following did not work => _process?.HasExited ?? false;</summary>
     public bool HasExecutingProcess { get; private set; }
 
-    public void EnqueueCommand(string commandText)
+    public void EnqueueCommand(TerminalCommandRequest terminalCommandRequest)
     {
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			BlockingBackgroundTaskWorker.GetQueueKey(),
 			"Enqueue Command",
-			() => HandleCommand(commandText));
+			() => HandleCommand(terminalCommandRequest));
     }
 
-    private async Task HandleCommand(string commandText)
+    private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
-    	_ = TerminalInteractive.TryHandleCommand(commandText);
+    	var parsedCommand = TerminalInteractive.TryHandleCommand(terminalCommandRequest);
+    	
+    	var command = Cli.Wrap(parsedCommand.TargetFileName);
+
+		command = command.WithWorkingDirectory(TerminalInteractive.WorkingDirectory);
+
+		if (!string.IsNullOrWhiteSpace(parsedCommand.Arguments))
+			command = command.WithArguments(parsedCommand.Arguments);
+		
+
     	
     	// ITerminalOutputPipe.OnHandleCommandStarting(...)
-    	
     
     	/*
-    	
-
 		_terminalCommandsHistory.Add(terminalCommand);
 		ActiveTerminalCommand = terminalCommand;
-
-		var command = Cli.Wrap(terminalCommand.FormattedCommand.TargetFileName);
-
-		if (terminalCommand.FormattedCommand.ArgumentsList.Any())
-		{
-			if (terminalCommand.FormattedCommand.HACK_ArgumentsString is null)
-				command = command.WithArguments(terminalCommand.FormattedCommand.ArgumentsList);
-			else
-				command = command.WithArguments(terminalCommand.FormattedCommand.HACK_ArgumentsString);
-		}
 
 		if (terminalCommand.ChangeWorkingDirectoryTo is not null)
 			command = command.WithWorkingDirectory(terminalCommand.ChangeWorkingDirectoryTo);
