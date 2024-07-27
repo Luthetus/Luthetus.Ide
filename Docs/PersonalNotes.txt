@@ -119,6 +119,9 @@
 	[] Distinguish between test discovery that had a build error, versus discovery that returned no results.
 		[] Distinguish between no results due to not being xunit and no results (the output is different)
 	[] Ability to stop a test
+	[] If one re-discovers the unit tests in a project with the context menu option,
+	   	but the count of tests changes from 0 to non-zero or vice versa then the node isn't
+	   	properly moved to the other pile "Found" vs "Empty".
 [] Move Git folder out into its own Extensions project.
 [] Terminal
 	[] Be 2 text editors

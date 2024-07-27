@@ -3,6 +3,9 @@
 	
 	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectoryAbsolutePathString
 		?? "null";
+	
+	var paddingForWorkingDirectoryText = 2;	
+	var workingDirectoryTextWidth = workingDirectory.Length + paddingForWorkingDirectoryText;
 }
 
 <div class="luth_ide_new-terminal-panel">
@@ -14,7 +17,7 @@
 	
 	<div style="height: 2em; display: flex;">
 		<input type="text"
-			   style="width: @(workingDirectory.Length)ch; height: 100%;"
+			   style="width: @(workingDirectoryTextWidth)ch; height: 100%;"
 			   title="Working directory"
 			   readonly
 			   value="@workingDirectory" />
@@ -23,7 +26,7 @@
 		       @bind:event="oninput"
 			   @onkeydown="HandleOnKeyDown"
 			   type="text"
-			   style="width: calc(100% - @(workingDirectory.Length)ch); height: 100%;"
+			   style="width: calc(100% - @(workingDirectoryTextWidth)ch); height: 100%;"
 			   title="Command" />
 	</div>
 

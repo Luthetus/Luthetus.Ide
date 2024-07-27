@@ -22,6 +22,9 @@ public partial class NEW_TerminalPanelDisplay : ComponentBase, IDisposable
 			terminal => new TerminalInputStringBuilder(terminal),
 			terminal => new TerminalOutputStringBuilder(terminal),
 			BackgroundTaskService);
+			
+		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
+			
 		base.OnInitialized();
 	}
 	
@@ -33,8 +36,14 @@ public partial class NEW_TerminalPanelDisplay : ComponentBase, IDisposable
 		}
 	}
 	
+	private async void OnWorkingDirectoryChanged()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
 	public void Dispose()
 	{
+		_terminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
 		_terminal?.Dispose();
 	}
 }
