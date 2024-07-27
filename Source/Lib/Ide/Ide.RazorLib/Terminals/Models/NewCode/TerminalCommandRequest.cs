@@ -1,28 +1,41 @@
+using Luthetus.Common.RazorLib.Keys.Models;
+
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
+/// <summary>
+/// 'workingDirectory' is intended to be an absolute path in string form.
+///
+/// If 'workingDirectory' is null, then the WorkingDirectory of the terminal
+/// will not be changed.
+/// </summary>
 public class TerminalCommandRequest
 {
-	/// <summary>
-	/// 'workingDirectory' is intended to be an absolute path in string form.
-	///
-	/// If 'workingDirectory' is null, then the WorkingDirectory of the terminal
-	/// will not be changed.
-	/// </summary>
+	/// <inheritdoc cref="TerminalCommandRequest"/>
+	public TerminalCommandRequest(
+			string commandText,
+			string? workingDirectory)
+		: this(
+			commandText,
+			workingDirectory,
+			Key<TerminalCommandRequest>.NewKey())
+	{
+	}
+
+	/// <inheritdoc cref="TerminalCommandRequest"/>
 	public TerminalCommandRequest(
 		string commandText,
-		string? workingDirectory)
+		string? workingDirectory,
+		Key<TerminalCommandRequest> key)
 	{
 		CommandText = commandText;
 		WorkingDirectory = workingDirectory;
+		Key = key;
 	}
 	
-	public string CommandText { get; set; }
+	public Key<TerminalCommandRequest> Key { get; }
 	
-	/// <summary>
-	/// This property is intended to be an absolute path in string form.
-	///
-	/// If this property is null, then the WorkingDirectory of the terminal
-	/// will not be changed.
-	/// </summary>
-	public string? WorkingDirectory { get; set; }
+	public string CommandText { get; }
+	
+	/// <inheritdoc cref="TerminalCommandRequest"/>
+	public string? WorkingDirectory { get; }
 }

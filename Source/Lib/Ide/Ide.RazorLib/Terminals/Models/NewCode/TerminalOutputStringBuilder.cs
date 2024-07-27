@@ -16,7 +16,7 @@ public class TerminalOutputStringBuilder : ITerminalOutput
 	
 	private string _output = string.Empty;
 	
-	public string Output
+	public string OutputRaw
 	{
 		get => _output;
 		private set
@@ -58,7 +58,7 @@ public class TerminalOutputStringBuilder : ITerminalOutput
 				break;
 		}
 		
-		Output = OutputBuilder.ToString();
+		OutputRaw = OutputBuilder.ToString();
 	}
 	
 	public void Dispose()
