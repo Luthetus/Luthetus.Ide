@@ -1,33 +1,33 @@
-@{
-	var localTerminal = _terminal;
-	
-	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectory
-		?? "null";
-	
-	var paddingForWorkingDirectoryText = 2;	
-	var workingDirectoryTextWidth = workingDirectory.Length + paddingForWorkingDirectoryText;
-}
-
 <div class="luth_ide_new-terminal-panel">
 
-	<textarea value="@localTerminal.TerminalOutput.Output"
-		      style="resize: none; height: calc(100% - 2em);"
-		      title="Output"
-		      readonly/>
-	
-	<div style="height: 2em; display: flex;">
-		<input type="text"
-			   style="width: @(workingDirectoryTextWidth)ch; height: 100%;"
-			   title="Working directory"
-			   readonly
-			   value="@workingDirectory" />
-			   
-		<input @bind="_command"
-		       @bind:event="oninput"
-			   @onkeydown="HandleOnKeyDown"
-			   type="text"
-			   style="width: calc(100% - @(workingDirectoryTextWidth)ch); height: 100%;"
-			   title="Command" />
+	@{ var localTerminalOutputSelection = _terminalOutputSelection; }
+
+	<div style="height: 1.5em">
+		<select @bind="_terminalOutputSelection">
+			<option>TerminalOutputStringBuilder</option>
+			<option>TerminalOutputExpand</option>
+			<option>TerminalOutputTextEditor</option>
+		</select>
 	</div>
 
+	<div style="height: calc(100% - 1.5em);">
+		
+		@switch (localTerminalOutputSelection)
+		{
+			case "TerminalOutputStringBuilder":
+				<TerminalOutputStringBuilderDisplay/>
+				break;
+			case "TerminalOutputExpand":
+				<TerminalOutputExpandDisplay/>
+				break;
+			case "TerminalOutputTextEditor":
+				<TerminalOutputTextEditorDisplay/>
+				break;
+			default:
+				<text>@localTerminalOutputSelection was not recognized</text>
+				break;
+		}
+		
+	</div>
+	
 </div>

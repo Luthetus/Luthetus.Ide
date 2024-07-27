@@ -7,7 +7,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 
-public partial class NEW_TerminalPanelDisplay : ComponentBase, IDisposable
+public partial class TerminalOutputStringBuilderDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
@@ -18,7 +18,6 @@ public partial class NEW_TerminalPanelDisplay : ComponentBase, IDisposable
 
 	private NEW_Terminal? _terminal;
 	private string _command;
-	private string _terminalOutputSelection = "TerminalOutputStringBuilder";
 	
 	protected override void OnInitialized()
 	{
