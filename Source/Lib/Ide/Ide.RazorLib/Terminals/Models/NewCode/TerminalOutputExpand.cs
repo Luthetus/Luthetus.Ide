@@ -9,13 +9,12 @@ public class TerminalOutputExpand : ITerminalOutput
 {
 	private readonly ITerminal _terminal;
 	
-	// TODO: This property is horrific to look at its defined over 4 lines? Don't do this?
-	private readonly Dictionary<
-			Key<TerminalCommandRequest>,
-			(TerminalCommandParsed terminalCommandParsed, StringBuilder outputBuilder)>
-		_commandOutputMap = new(); 
+	// TODO: This property is horrific to look at its defined over 3 lines? Don't do this?
+	private readonly 
+		List<(TerminalCommandParsed terminalCommandParsed, StringBuilder outputBuilder)>
+		_commandOutputList = new(); 
 		
-	private readonly object _commandOutputMapLock = new();
+	private readonly object _commandOutputListLock = new();
 
 	public TerminalOutputExpand(ITerminal terminal)
 	{
@@ -28,11 +27,11 @@ public class TerminalOutputExpand : ITerminalOutput
 	
 	public event Action? OnWriteOutput;
 	
-	public ImmutableDictionary<Key<TerminalCommandRequest>, (TerminalCommandParsed terminalCommandParsed, StringBuilder outputBuilder)> GetCommandOutputMap()
+	public ImmutableList<(TerminalCommandParsed terminalCommandParsed, StringBuilder outputBuilder)> GetCommandOutputList()
 	{
-		lock (_commandOutputMapLock)
+		lock (_commandOutputListLock)
 		{
-			return _commandOutputMap.ToImmutableDictionary();
+			return _commandOutputList.ToImmutableList();
 		}
 	}
 
@@ -52,11 +51,15 @@ public class TerminalOutputExpand : ITerminalOutput
 		{
 			case StartedCommandEvent started:
 			
-				lock (_commandOutputMapLock)
+				// Delete any output of the previous invocation.
+				lock (_commandOutputListLock)
 				{
-					// Delete any output of the previous invocation.
-					if (_commandOutputMap.ContainsKey(terminalCommandParsed.SourceTerminalCommandRequest.Key))
-						_commandOutputMap.Remove(terminalCommandParsed.SourceTerminalCommandRequest.Key);
+					var indexPreviousOutput = _commandOutputList.FindIndex(x =>
+						x.terminalCommandParsed.SourceTerminalCommandRequest.Key ==
+							terminalCommandParsed.SourceTerminalCommandRequest.Key);
+							
+					if (indexPreviousOutput != -1)
+						_commandOutputList.RemoveAt(indexPreviousOutput);
 				}
 				
 				output = $"{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}\n";
@@ -72,22 +75,25 @@ public class TerminalOutputExpand : ITerminalOutput
 				break;
 		}
 		
-		lock (_commandOutputMapLock)
+		lock (_commandOutputListLock)
 		{
-			if (_commandOutputMap.TryGetValue(
-					terminalCommandParsed.SourceTerminalCommandRequest.Key,
-					out var commandTuple))
+			var indexPreviousOutput = _commandOutputList.FindIndex(x =>
+				x.terminalCommandParsed.SourceTerminalCommandRequest.Key ==
+					terminalCommandParsed.SourceTerminalCommandRequest.Key);
+		
+			if (indexPreviousOutput == -1)
 			{
-				if (commandTuple.outputBuilder is null)
-					commandTuple.outputBuilder = new();
-					
-				commandTuple.outputBuilder.Append(output);
+				_commandOutputList.Add(
+					(terminalCommandParsed, new StringBuilder(output)));
 			}
 			else
 			{
-				_commandOutputMap.Add(
-					terminalCommandParsed.SourceTerminalCommandRequest.Key,
-					(terminalCommandParsed, new StringBuilder(output)));
+				var commandTuple = _commandOutputList[indexPreviousOutput];
+				
+				if (commandTuple.outputBuilder is null)
+					commandTuple.outputBuilder = new(output);
+					
+				commandTuple.outputBuilder.Append(output);
 			}
 		}
 		

@@ -2,7 +2,7 @@
 
 @{
 	var localTerminal = _terminal;
-	var commandOutputMap = ((TerminalOutputExpand)localTerminal.TerminalOutput).GetCommandOutputMap();
+	var commandOutputList = ((TerminalOutputExpand)localTerminal.TerminalOutput).GetCommandOutputList();
 	
 	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectory
 		?? "null";
@@ -14,7 +14,7 @@
 <div class="luth_ide_new-terminal-panel">
 
 	<div style="height: calc(100% - 2em);">
-		@foreach (var commandTuple in commandOutputMap.Values)
+		@foreach (var commandTuple in commandOutputList)
 		{
 			<TerminalCommandParsedExpandDisplay @key="commandTuple.terminalCommandParsed.SourceTerminalCommandRequest.Key"
 												TerminalCommandParsed="commandTuple.terminalCommandParsed"
