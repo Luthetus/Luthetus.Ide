@@ -19,11 +19,10 @@ public class TerminalOutputStringBuilderExpand : ITerminalOutput
 	public TerminalOutputStringBuilderExpand(ITerminal terminal)
 	{
 		_terminal = terminal;
-		
 		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
 	}
 	
-	public string OutputRaw { get; } = null!;
+	public string OutputRaw { get; } = string.Empty;
 	
 	public event Action? OnWriteOutput;
 	

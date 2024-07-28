@@ -35,7 +35,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 			"test?",
 			terminal => new TerminalInteractive(terminal),
 			terminal => new TerminalInputStringBuilder(terminal),
-			terminal => new TerminalOutputTextEditorExpand(terminal, TextEditorService, CompilerServiceRegistry),
+			terminal => new TerminalOutputTextEditorExpand(terminal, TextEditorService, CompilerServiceRegistry, Dispatcher),
 			BackgroundTaskService,
 			CommonComponentRenderers,
 			Dispatcher);
@@ -45,25 +45,6 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 			
 		base.OnInitialized();
 	}
-	
-    protected override void OnAfterRender(bool firstRender)
-    {
-		if (firstRender)
-		{
-            _throttle.Run(_ =>
-            {
-                var textEditorViewModel = TextEditorService.ViewModelApi.GetOrDefault(
-                    TerminalOutputTextEditorExpand.TextEditorViewModelKey);
-
-                if (textEditorViewModel is null)
-                    return Task.CompletedTask;
-
-                return Task.CompletedTask;
-            });
-        }
-
-        base.OnAfterRender(firstRender);
-    }
 	
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
@@ -121,6 +102,11 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 							editContext,
 							modelModifier,
 							terminalResource.GetTokenTextSpans());
+						
+						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+							editContext,
+							modelModifier,
+							((TerminalOutputTextEditorExpand)localTerminal.TerminalOutput).TextEditorTextSpanList);	
 					}
 					
 					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;

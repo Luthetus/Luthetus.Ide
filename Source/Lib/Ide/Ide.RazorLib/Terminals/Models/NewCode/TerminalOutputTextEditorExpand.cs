@@ -1,9 +1,13 @@
 using System.Collections.Immutable;
 using System.Text;
 using Microsoft.AspNetCore.Components.Web;
+using Fluxor;
 using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -21,22 +25,35 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 
     public static Key<TextEditorViewModel> TextEditorViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
 
+	// TODO: This property is horrific to look at its defined over 3 lines? Don't do this?
+	private readonly 
+		List<(TerminalCommandParsed terminalCommandParsed, StringBuilder outputBuilder)>
+		_commandOutputList = new(); 
+		
+	private readonly StringBuilder _inputBuilder = new();
+		
+	private readonly object _commandOutputListLock = new();
+
     private readonly ITerminal _terminal;
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
+	private readonly IDispatcher _dispatcher;
 	
 	private readonly List<ITextEditorSymbol> _textEditorSymbolList = new();
+	private readonly List<TextEditorTextSpan> _textEditorTextSpanList = new();
 
 	public TerminalOutputTextEditorExpand(
 		ITerminal terminal,
 		ITextEditorService textEditorService,
-		ICompilerServiceRegistry compilerServiceRegistry)
+		ICompilerServiceRegistry compilerServiceRegistry,
+		IDispatcher dispatcher)
 	{
 		_terminal = terminal;
 		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
 		
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
+		_dispatcher = dispatcher;
 		
 		CreateTextEditor();
 	}
@@ -49,15 +66,23 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 		private set
 		{
 			_output = value;
-			OnWriteOutput?.Invoke();
 		}
 	}
-	
+
+	public List<TextEditorTextSpan> TextEditorTextSpanList => _textEditorTextSpanList;	
 	public List<ITextEditorSymbol> TextEditorSymbolList => _textEditorSymbolList;
 	
 	public StringBuilder OutputBuilder { get; } = new();
 	
 	public event Action? OnWriteOutput;
+	
+	public ImmutableList<(TerminalCommandParsed terminalCommandParsed, StringBuilder outputBuilder)> GetCommandOutputList()
+	{
+		lock (_commandOutputListLock)
+		{
+			return _commandOutputList.ToImmutableList();
+		}
+	}
 
 	public void OnWorkingDirectoryChanged()
 	{
@@ -75,31 +100,88 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 		{
 			case StartedCommandEvent started:
 				
-				var textSpan = new TextEditorTextSpan(
+				// Delete any output of the previous invocation.
+				lock (_commandOutputListLock)
+				{
+					var indexPreviousOutput = _commandOutputList.FindIndex(x =>
+						x.terminalCommandParsed.SourceTerminalCommandRequest.Key ==
+							terminalCommandParsed.SourceTerminalCommandRequest.Key);
+							
+					if (indexPreviousOutput != -1)
+						_commandOutputList.RemoveAt(indexPreviousOutput);
+				}
+				
+				var commandTextTextSpan = new TextEditorTextSpan(
+					OutputRaw.Length,
+			        OutputRaw.Length + terminalCommandParsed.SourceTerminalCommandRequest.CommandText.Length,
+			        (byte)0,
+			        ResourceUri.Empty,
+			        string.Empty,
+			        terminalCommandParsed.SourceTerminalCommandRequest.CommandText);
+			        
+				var commandTextSymbol = new OnClickSymbol(
+					commandTextTextSpan,
+					"View Output",
+					() => OpenInEditor(terminalCommandParsed));
+					
+				_textEditorSymbolList.Add(commandTextSymbol);
+				
+				var targetFileNameTextSpan = new TextEditorTextSpan(
 					OutputRaw.Length,
 			        OutputRaw.Length + terminalCommandParsed.TargetFileName.Length,
 			        (byte)TerminalDecorationKind.TargetFilePath,
 			        ResourceUri.Empty,
 			        string.Empty,
 			        terminalCommandParsed.TargetFileName);
-			        
-				var sourceFileSymbol = new SourceFileSymbol(textSpan);
-				_textEditorSymbolList.Add(sourceFileSymbol);
-			
-				OutputBuilder.Append($"{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}\n");
+			    _textEditorTextSpanList.Add(targetFileNameTextSpan);
+				
+				_inputBuilder.Append($"{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}\n");
+				
 				break;
 			case StandardOutputCommandEvent stdOut:
-				OutputBuilder.Append($"{stdOut.Text}\n");
+				output = $"{stdOut.Text}\n";
 				break;
 			case StandardErrorCommandEvent stdErr:
-				OutputBuilder.Append($"{stdErr.Text}\n");
+				output = $"{stdErr.Text}\n";
 				break;
 			case ExitedCommandEvent exited:
-				OutputBuilder.Append($"Process exited; Code: {exited.ExitCode}\n");
+				output = $"Process exited; Code: {exited.ExitCode}\n";
 				break;
 		}
 		
-		OutputRaw = OutputBuilder.ToString();
+		if (output is null)
+		{
+			lock (_commandOutputListLock)
+			{
+				OutputRaw = _inputBuilder.ToString();
+			}
+		}
+		else
+		{
+			lock (_commandOutputListLock)
+			{
+				var indexPreviousOutput = _commandOutputList.FindIndex(x =>
+					x.terminalCommandParsed.SourceTerminalCommandRequest.Key ==
+						terminalCommandParsed.SourceTerminalCommandRequest.Key);
+			
+				if (indexPreviousOutput == -1)
+				{
+					_commandOutputList.Add(
+						(terminalCommandParsed, new StringBuilder(output)));
+				}
+				else
+				{
+					var commandTuple = _commandOutputList[indexPreviousOutput];
+					
+					if (commandTuple.outputBuilder is null)
+						commandTuple.outputBuilder = new StringBuilder(output);
+						
+					commandTuple.outputBuilder.Append(output);
+				}
+			}
+		}
+		
+		OnWriteOutput?.Invoke();
 	}
 	
 	private void CreateTextEditor()
@@ -206,6 +288,25 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 
                 return Task.CompletedTask;
             });
+    }
+    
+    /// <summary>
+    /// TODO: Do not forget that when clearing the terminal output...
+    ///       ...any corresponding text editor data needs to be disposed.
+    /// </summary>
+    private Task OpenInEditor(TerminalCommandParsed terminalCommandParsed)
+    {
+    	var dialogRecord = new DialogViewModel(
+            new Key<IDynamicViewModel>(terminalCommandParsed.SourceTerminalCommandRequest.Key.Guid),
+            nameof(TerminalOutputTextEditorExpand),
+            typeof(Luthetus.Ide.RazorLib.Terminals.Displays.NewCode.TerminalOutputViewOutputDisplay),
+            null,
+            null,
+			true,
+			null);
+
+        _dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+    	return Task.CompletedTask;
     }
 	
 	public void Dispose()
