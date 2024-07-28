@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
@@ -82,6 +83,26 @@ public partial class TerminalOutputTextEditorAllDisplay : ComponentBase, IDispos
 					
 					primaryCursorModifier.LineIndex = 0;
 					primaryCursorModifier.SetColumnIndexAndPreferred(0);
+					
+					var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(
+						TerminalOutputTextEditorAll.TextEditorModelResourceUri);
+
+					if (compilerServiceResource is TerminalResource terminalResource)
+					{
+						terminalResource.ManualDecorationTextSpanList.Clear();
+						terminalResource.ManualDecorationTextSpanList.AddRange(
+							((TerminalOutputTextEditorAll)localTerminal.TerminalOutput).TextEditorSymbolList.Select(
+								x => x.TextSpan));
+								
+						terminalResource.ManualSymbolList.Clear();
+						terminalResource.ManualSymbolList.AddRange(
+							((TerminalOutputTextEditorAll)localTerminal.TerminalOutput).TextEditorSymbolList);
+
+						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+							editContext,
+							modelModifier,
+							terminalResource.GetTokenTextSpans());
+					}
 					
 					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 					return Task.CompletedTask;

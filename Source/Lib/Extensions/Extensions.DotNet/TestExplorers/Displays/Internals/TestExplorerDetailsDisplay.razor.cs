@@ -140,6 +140,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 							terminalResource.GetTokenTextSpans());
 					}
 
+					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 					return Task.CompletedTask;
 				});
 		}

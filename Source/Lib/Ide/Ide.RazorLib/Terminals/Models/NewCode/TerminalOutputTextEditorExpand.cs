@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
@@ -23,6 +24,8 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
     private readonly ITerminal _terminal;
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
+	
+	private readonly List<ITextEditorSymbol> _textEditorSymbolList = new();
 
 	public TerminalOutputTextEditorExpand(
 		ITerminal terminal,
@@ -50,6 +53,8 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 		}
 	}
 	
+	public List<ITextEditorSymbol> TextEditorSymbolList => _textEditorSymbolList;
+	
 	public StringBuilder OutputBuilder { get; } = new();
 	
 	public event Action? OnWriteOutput;
@@ -69,6 +74,18 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 		switch (commandEvent)
 		{
 			case StartedCommandEvent started:
+				
+				var textSpan = new TextEditorTextSpan(
+					OutputRaw.Length,
+			        OutputRaw.Length + terminalCommandParsed.TargetFileName.Length,
+			        (byte)TerminalDecorationKind.TargetFilePath,
+			        ResourceUri.Empty,
+			        string.Empty,
+			        terminalCommandParsed.TargetFileName);
+			        
+				var sourceFileSymbol = new SourceFileSymbol(textSpan);
+				_textEditorSymbolList.Add(sourceFileSymbol);
+			
 				OutputBuilder.Append($"{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}\n");
 				break;
 			case StandardOutputCommandEvent stdOut:

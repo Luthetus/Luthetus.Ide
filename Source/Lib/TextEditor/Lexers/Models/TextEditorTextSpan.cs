@@ -2,6 +2,43 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.RazorLib.Lexers.Models;
 
+/// <summary>
+/// TODO: I have a suspicion that this type takes an absurd amount of memory...
+///       ... the initial way of implementing this type was to store the text
+///       at the time of constructing the text span.
+///       |
+///       But, it was thought that preferably one would only only
+///       create the substring when asked for it.
+///       |
+///       This means one has to store the entirety of the source text.
+///       Well, the source text is just a reference not a copy of the value.
+///       So this seemed fine enough.
+///       |
+///       But, because the text editor is immutable. The source text
+///       is constantly needing to be reconstructed as a string value.
+///       |
+///       As a result, the old string values that pertain to previous
+///       iterations of the text editor must be held in memory,
+///       because any TextEditorTextSpan that is not garbage collected,
+///       would have a reference to the old string value.
+///       |
+///       I'm thinking of using Span<char> or something along the lines.
+///       But, wouldn't Span<char> still need to maintain the previous string
+///       in its entirety?
+///       |
+///       If Span<T> will somehow track what section of the previous string I
+///       have a reference to, and only free the resources pertaining to the
+///       sections of the string that don't have a Span<T> referencing them
+///       then that would be amazing.
+///       |
+///       But then again, why am I not just letting the text span capture the
+///       substring upon construction?
+///       |
+///       I also wonder, what about a Func<string>? Does this somehow
+///       hide the previous string values of the text editor and
+///       permit the resources to be free'd?
+///       (2024-07-27)
+/// </summary>
 public record TextEditorTextSpan(
     int StartingIndexInclusive,
     int EndingIndexExclusive,
@@ -28,6 +65,35 @@ public record TextEditorTextSpan(
               stringWalker.SourceText)
     {
 
+    }
+    
+    /// <summary>
+    /// This constructor is being used to
+    /// experiment with not holding a reference
+    /// to the <see cref="SourceText"/> (2024-07-27)
+    ///
+    /// It is a bit clumsy since I'm still taking in
+    /// the source text as an argument.
+    ///
+    /// But the source text and the 'getTextPrecalculatedResult'
+    /// share the same datatype and position in the constructor
+    /// otherwise.
+    /// </summary>
+    public TextEditorTextSpan(
+            int startingIndexInclusive,
+		    int endingIndexExclusive,
+		    byte decorationByte,
+		    ResourceUri resourceUri,
+		    string sourceText,
+		    string getTextPrecalculatedResult)
+        : this(
+              startingIndexInclusive,
+              endingIndexExclusive,
+              decorationByte,
+              resourceUri,
+              sourceText)
+    {
+		_text = getTextPrecalculatedResult;
     }
 
     public int Length => EndingIndexExclusive - StartingIndexInclusive;
