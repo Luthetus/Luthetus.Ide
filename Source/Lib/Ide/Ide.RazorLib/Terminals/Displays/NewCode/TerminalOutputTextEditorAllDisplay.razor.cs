@@ -23,7 +23,7 @@ public partial class TerminalOutputTextEditorAllDisplay : ComponentBase, IDispos
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 
-	private readonly Throttle _throttle = new Throttle(TimeSpan.FromMilliseconds(700));
+	private readonly Throttle _throttle = new Throttle(TimeSpan.FromMilliseconds(1_000));
 	
 	private NEW_Terminal? _terminal;
 	private string _command;
@@ -45,25 +45,6 @@ public partial class TerminalOutputTextEditorAllDisplay : ComponentBase, IDispos
 		base.OnInitialized();
 	}
 	
-    protected override void OnAfterRender(bool firstRender)
-    {
-		if (firstRender)
-		{
-            _throttle.Run(_ =>
-            {
-                var textEditorViewModel = TextEditorService.ViewModelApi.GetOrDefault(
-                    TerminalOutputTextEditorAll.TextEditorViewModelKey);
-
-                if (textEditorViewModel is null)
-                    return Task.CompletedTask;
-
-                return Task.CompletedTask;
-            });
-        }
-
-        base.OnAfterRender(firstRender);
-    }
-	
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Code == "Enter")
@@ -81,7 +62,32 @@ public partial class TerminalOutputTextEditorAllDisplay : ComponentBase, IDispos
 	
 	private async void OnWriteOutput()
 	{
-		await InvokeAsync(StateHasChanged);
+		_throttle.Run(_ =>
+        {
+        	TextEditorService.PostUnique(
+				nameof(TerminalOutputTextEditorAllDisplay),
+				editContext =>
+				{
+					var modelModifier = editContext.GetModelModifier(TerminalOutputTextEditorAll.TextEditorModelResourceUri);
+					var viewModelModifier = editContext.GetViewModelModifier(TerminalOutputTextEditorAll.TextEditorViewModelKey);
+					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+						return Task.CompletedTask;
+
+					var localTerminal = _terminal;
+					
+					modelModifier.SetContent(localTerminal.TerminalOutput.OutputRaw ?? string.Empty);
+					
+					primaryCursorModifier.LineIndex = 0;
+					primaryCursorModifier.SetColumnIndexAndPreferred(0);
+					
+					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+					return Task.CompletedTask;
+				});
+			return Task.CompletedTask;
+        });
 	}
 	
 	public void Dispose()

@@ -69,7 +69,7 @@ public class TerminalOutputTextEditorAll : ITerminalOutput
 		switch (commandEvent)
 		{
 			case StartedCommandEvent started:
-				OutputBuilder.Append($"TEXTEDITOR{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}\n");
+				OutputBuilder.Append($"{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}\n");
 				break;
 			case StandardOutputCommandEvent stdOut:
 				OutputBuilder.Append($"{stdOut.Text}\n");
