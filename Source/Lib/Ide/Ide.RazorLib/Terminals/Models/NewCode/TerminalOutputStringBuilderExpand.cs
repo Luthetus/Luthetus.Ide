@@ -5,7 +5,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
-public class TerminalOutputExpand : ITerminalOutput
+public class TerminalOutputStringBuilderExpand : ITerminalOutput
 {
 	private readonly ITerminal _terminal;
 	
@@ -16,7 +16,7 @@ public class TerminalOutputExpand : ITerminalOutput
 		
 	private readonly object _commandOutputListLock = new();
 
-	public TerminalOutputExpand(ITerminal terminal)
+	public TerminalOutputStringBuilderExpand(ITerminal terminal)
 	{
 		_terminal = terminal;
 		

@@ -13,10 +13,10 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
-public class TerminalOutputTextEditor : ITerminalOutput
+public class TerminalOutputTextEditorAll : ITerminalOutput
 {
     public static ResourceUri TextEditorModelResourceUri { get; } = new(
-        ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + "static");
+        ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + nameof(TerminalOutputTextEditorAll));
 
     public static Key<TextEditorViewModel> TextEditorViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
 
@@ -24,7 +24,7 @@ public class TerminalOutputTextEditor : ITerminalOutput
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 
-	public TerminalOutputTextEditor(
+	public TerminalOutputTextEditorAll(
 		ITerminal terminal,
 		ITextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry)
@@ -88,7 +88,7 @@ public class TerminalOutputTextEditor : ITerminalOutput
 	private void CreateTextEditor()
     {
         _textEditorService.PostUnique(
-            nameof(TerminalOutputTextEditor),
+            nameof(TerminalOutputTextEditorAll),
             editContext =>
             {
 

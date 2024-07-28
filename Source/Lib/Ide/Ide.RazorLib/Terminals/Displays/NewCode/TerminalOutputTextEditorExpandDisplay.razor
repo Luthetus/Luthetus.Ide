@@ -1,7 +1,10 @@
 @using Luthetus.Common.RazorLib.Keys.Models
 @using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
+@using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
+@using Luthetus.Ide.RazorLib.Terminals.Models.NewCode
 @using Luthetus.Ide.RazorLib.Terminals.Models.NewCode
 @using Luthetus.Ide.RazorLib.Terminals.Models;
 @using Luthetus.Ide.RazorLib.Terminals.Displays;
@@ -18,8 +21,10 @@
 
 <div class="luth_ide_new-terminal-panel">
 
-	<div style="height: calc(100% - 2em);">
-		<TerminalOutputTextEditorInnerDisplay TerminalOutputTextEditor="(TerminalOutputTextEditor)localTerminal.TerminalOutput"/>
+	<div style="height: calc(100% - 2em);">		
+		<ShouldRenderBoundary>
+			<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="TerminalOutputTextEditorExpand.TextEditorViewModelKey" />
+		</ShouldRenderBoundary>
 	</div>
 
 	<div style="height: 2em; display: flex;">

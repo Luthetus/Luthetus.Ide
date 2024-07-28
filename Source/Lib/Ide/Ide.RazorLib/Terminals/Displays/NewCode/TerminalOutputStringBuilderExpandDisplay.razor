@@ -2,7 +2,7 @@
 
 @{
 	var localTerminal = _terminal;
-	var commandOutputList = ((TerminalOutputExpand)localTerminal.TerminalOutput).GetCommandOutputList();
+	var commandOutputList = ((TerminalOutputStringBuilderExpand)localTerminal.TerminalOutput).GetCommandOutputList();
 	
 	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectory
 		?? "null";

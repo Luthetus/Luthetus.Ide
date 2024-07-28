@@ -4,9 +4,10 @@
 
 	<div style="height: 1.5em">
 		<select @bind="_terminalOutputSelection">
-			<option>TerminalOutputStringBuilder</option>
-			<option>TerminalOutputExpand</option>
-			<option>TerminalOutputTextEditor</option>
+			<option>TerminalOutputStringBuilderAll</option>
+			<option>TerminalOutputStringBuilderExpand</option>
+			<option>TerminalOutputTextEditorAll</option>
+			<option>TerminalOutputTextEditorExpand</option>
 		</select>
 	</div>
 
@@ -14,14 +15,17 @@
 		
 		@switch (localTerminalOutputSelection)
 		{
-			case "TerminalOutputStringBuilder":
-				<TerminalOutputStringBuilderDisplay/>
+			case "TerminalOutputStringBuilderAll":
+				<TerminalOutputStringBuilderAllDisplay/>
 				break;
-			case "TerminalOutputExpand":
-				<TerminalOutputExpandDisplay/>
+			case "TerminalOutputStringBuilderExpand":
+				<TerminalOutputStringBuilderExpandDisplay/>
 				break;
-			case "TerminalOutputTextEditor":
-				<TerminalOutputTextEditorOuterDisplay/>
+			case "TerminalOutputTextEditorAll":
+				<TerminalOutputTextEditorAllDisplay/>
+				break;
+			case "TerminalOutputTextEditorExpand":
+				<TerminalOutputTextEditorExpandDisplay/>
 				break;
 			default:
 				<text>@localTerminalOutputSelection was not recognized</text>

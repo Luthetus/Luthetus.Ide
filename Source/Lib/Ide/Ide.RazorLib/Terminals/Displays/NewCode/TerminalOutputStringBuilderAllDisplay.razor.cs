@@ -7,7 +7,7 @@ using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 
-public partial class TerminalOutputStringBuilderDisplay : ComponentBase, IDisposable
+public partial class TerminalOutputStringBuilderAllDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
@@ -25,7 +25,7 @@ public partial class TerminalOutputStringBuilderDisplay : ComponentBase, IDispos
 			"test?",
 			terminal => new TerminalInteractive(terminal),
 			terminal => new TerminalInputStringBuilder(terminal),
-			terminal => new TerminalOutputStringBuilder(terminal),
+			terminal => new TerminalOutputStringBuilderAll(terminal),
 			BackgroundTaskService,
 			CommonComponentRenderers,
 			Dispatcher);

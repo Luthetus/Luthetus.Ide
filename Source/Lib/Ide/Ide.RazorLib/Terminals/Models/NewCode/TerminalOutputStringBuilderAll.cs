@@ -3,11 +3,11 @@ using CliWrap.EventStream;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
-public class TerminalOutputStringBuilder : ITerminalOutput
+public class TerminalOutputStringBuilderAll : ITerminalOutput
 {
 	private readonly ITerminal _terminal;
 
-	public TerminalOutputStringBuilder(ITerminal terminal)
+	public TerminalOutputStringBuilderAll(ITerminal terminal)
 	{
 		_terminal = terminal;
 		

@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 
-public partial class TerminalOutputTextEditorOuterDisplay : ComponentBase, IDisposable
+public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
@@ -21,6 +22,8 @@ public partial class TerminalOutputTextEditorOuterDisplay : ComponentBase, IDisp
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
+
+	private readonly Throttle _throttle = new Throttle(TimeSpan.FromMilliseconds(700));
 	
 	private NEW_Terminal? _terminal;
 	private string _command;
@@ -31,7 +34,7 @@ public partial class TerminalOutputTextEditorOuterDisplay : ComponentBase, IDisp
 			"test?",
 			terminal => new TerminalInteractive(terminal),
 			terminal => new TerminalInputStringBuilder(terminal),
-			terminal => new TerminalOutputTextEditor(terminal, TextEditorService, CompilerServiceRegistry),
+			terminal => new TerminalOutputTextEditorExpand(terminal, TextEditorService, CompilerServiceRegistry),
 			BackgroundTaskService,
 			CommonComponentRenderers,
 			Dispatcher);
@@ -41,6 +44,25 @@ public partial class TerminalOutputTextEditorOuterDisplay : ComponentBase, IDisp
 			
 		base.OnInitialized();
 	}
+	
+    protected override void OnAfterRender(bool firstRender)
+    {
+		if (firstRender)
+		{
+            _throttle.Run(_ =>
+            {
+                var textEditorViewModel = TextEditorService.ViewModelApi.GetOrDefault(
+                    TerminalOutputTextEditorExpand.TextEditorViewModelKey);
+
+                if (textEditorViewModel is null)
+                    return Task.CompletedTask;
+
+                return Task.CompletedTask;
+            });
+        }
+
+        base.OnAfterRender(firstRender);
+    }
 	
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
