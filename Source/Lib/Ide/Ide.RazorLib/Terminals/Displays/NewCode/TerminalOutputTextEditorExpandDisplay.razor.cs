@@ -79,9 +79,34 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 		await InvokeAsync(StateHasChanged);
 	}
 	
-	private async void OnWriteOutput()
+	private void OnWriteOutput()
 	{
-		await InvokeAsync(StateHasChanged);
+		_throttle.Run(_ =>
+        {
+        	TextEditorService.PostUnique(
+				nameof(TerminalOutputTextEditorExpandDisplay),
+				editContext =>
+				{
+					var modelModifier = editContext.GetModelModifier(TerminalOutputTextEditorExpand.TextEditorModelResourceUri);
+					var viewModelModifier = editContext.GetViewModelModifier(TerminalOutputTextEditorExpand.TextEditorViewModelKey);
+					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+						return Task.CompletedTask;
+
+					var localTerminal = _terminal;
+					
+					modelModifier.SetContent(localTerminal.TerminalOutput.OutputRaw ?? string.Empty);
+					
+					primaryCursorModifier.LineIndex = 0;
+					primaryCursorModifier.SetColumnIndexAndPreferred(0);
+					
+					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+					return Task.CompletedTask;
+				});
+			return Task.CompletedTask;
+        });
 	}
 	
 	public void Dispose()

@@ -60,7 +60,7 @@ public partial class TerminalOutputTextEditorAllDisplay : ComponentBase, IDispos
 		await InvokeAsync(StateHasChanged);
 	}
 	
-	private async void OnWriteOutput()
+	private void OnWriteOutput()
 	{
 		_throttle.Run(_ =>
         {
