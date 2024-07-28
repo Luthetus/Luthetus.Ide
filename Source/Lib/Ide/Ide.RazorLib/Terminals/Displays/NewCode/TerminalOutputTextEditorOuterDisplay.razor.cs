@@ -3,19 +3,25 @@ using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 
-public partial class TerminalOutputTextEditorDisplay : ComponentBase, IDisposable
+public partial class TerminalOutputTextEditorOuterDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
+	private ITextEditorService TextEditorService { get; set; } = null!;
+	[Inject]
+	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
+	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
-
+	
 	private NEW_Terminal? _terminal;
 	private string _command;
 	
@@ -25,7 +31,7 @@ public partial class TerminalOutputTextEditorDisplay : ComponentBase, IDisposabl
 			"test?",
 			terminal => new TerminalInteractive(terminal),
 			terminal => new TerminalInputStringBuilder(terminal),
-			terminal => new TerminalOutputTextEditor(terminal),
+			terminal => new TerminalOutputTextEditor(terminal, TextEditorService, CompilerServiceRegistry),
 			BackgroundTaskService,
 			CommonComponentRenderers,
 			Dispatcher);

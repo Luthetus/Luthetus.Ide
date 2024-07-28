@@ -1,3 +1,11 @@
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.Ide.RazorLib.Terminals.Models.NewCode
+@using Luthetus.Ide.RazorLib.Terminals.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Displays;
+
 @{
 	var localTerminal = _terminal;
 	
@@ -10,11 +18,10 @@
 
 <div class="luth_ide_new-terminal-panel">
 
-	<textarea value="@localTerminal.TerminalOutput.OutputRaw"
-		      style="resize: none; height: calc(100% - 2em);"
-		      title="Output"
-		      readonly/>
-	
+	<div style="height: calc(100% - 2em);">
+		<TerminalOutputTextEditorInnerDisplay TerminalOutputTextEditor="(TerminalOutputTextEditor)localTerminal.TerminalOutput"/>
+	</div>
+
 	<div style="height: 2em; display: flex;">
 		<input type="text"
 			   style="width: @(workingDirectoryTextWidth)ch; height: 100%;"
