@@ -15,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+using Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
@@ -299,8 +300,18 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
     	var dialogRecord = new DialogViewModel(
             new Key<IDynamicViewModel>(terminalCommandParsed.SourceTerminalCommandRequest.Key.Guid),
             nameof(TerminalOutputTextEditorExpand),
-            typeof(Luthetus.Ide.RazorLib.Terminals.Displays.NewCode.TerminalOutputViewOutputDisplay),
-            null,
+            typeof(TerminalOutputViewOutputDisplay),
+            new Dictionary<string, object?>
+            {
+            	{
+            		nameof(TerminalOutputViewOutputDisplay.TerminalOutputTextEditorExpand),
+            		this
+            	},
+            	{
+            		nameof(TerminalOutputViewOutputDisplay.TerminalCommandParsed),
+            		terminalCommandParsed
+            	},
+            },
             null,
 			true,
 			null);

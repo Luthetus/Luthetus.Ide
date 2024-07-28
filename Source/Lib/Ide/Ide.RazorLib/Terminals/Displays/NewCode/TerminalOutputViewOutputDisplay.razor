@@ -1,5 +1,29 @@
-<h3>TerminalOutputViewOutputDisplay</h3>
+<div class="luth_ide_terminal-output-view-output"
+	 style="height: 100%;">
+	@{
+		var localTerminalOutputTextEditorExpand = TerminalOutputTextEditorExpand;
+		var localTerminalCommandParsed = TerminalCommandParsed;
+		
+		var commandOutputList = localTerminalOutputTextEditorExpand.GetCommandOutputList();
+		
+		var outputTuple = commandOutputList.FirstOrDefault(x =>
+			x.terminalCommandParsed.SourceTerminalCommandRequest.Key ==
+				localTerminalCommandParsed.SourceTerminalCommandRequest.Key);
+		
+		var outputText = outputTuple.outputBuilder?.ToString() ?? "output was null";
+	}
 
-@code {
+	<div style="height: 2em;">
+		@(localTerminalCommandParsed.SourceTerminalCommandRequest.CommandText):
+	</div>
 	
-}
+	@* 
+		The height 'calc(100% - 2em - 20px);'
+		is just a nonsense, trial and error / thrown together setting.
+	*@
+	<div style="height: calc(100% - 2em - 20px);">
+		<textarea value="@outputText"
+				  style="resize: none; width: 100%; height: 100%;"
+			  	readonly/>
+	</div>
+</div>

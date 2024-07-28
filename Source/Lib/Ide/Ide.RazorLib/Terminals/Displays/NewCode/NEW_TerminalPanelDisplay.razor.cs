@@ -18,7 +18,7 @@ public partial class NEW_TerminalPanelDisplay : ComponentBase, IDisposable
 
 	private NEW_Terminal? _terminal;
 	private string _command;
-	private string _terminalOutputSelection = "TerminalOutputStringBuilderAll";
+	private string _terminalOutputSelection = "TerminalOutputTextEditorExpand";
 	
 	protected override void OnInitialized()
 	{
