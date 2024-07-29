@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 
@@ -22,24 +23,17 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	[Inject]
 	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 	[Inject]
+	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 
 	private readonly Throttle _throttle = new Throttle(TimeSpan.FromMilliseconds(700));
 	
-	private NEW_Terminal? _terminal;
+	private ITerminal? _terminal => TerminalStateWrap.Value.NEW_TERMINAL;
 	private string _command;
 	
 	protected override void OnInitialized()
 	{
-		_terminal = new NEW_Terminal(
-			"test?",
-			terminal => new TerminalInteractive(terminal),
-			terminal => new TerminalInputStringBuilder(terminal),
-			terminal => new TerminalOutputTextEditorExpand(terminal, TextEditorService, CompilerServiceRegistry, Dispatcher),
-			BackgroundTaskService,
-			CommonComponentRenderers,
-			Dispatcher);
-			
 		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
 		_terminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
 			

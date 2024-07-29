@@ -22,6 +22,7 @@ using Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.Gits.Displays;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -73,6 +74,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
                 foreach (var terminalKey in TerminalFacts.WELL_KNOWN_TERMINAL_KEYS)
                 {
+                	if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
+                	{
+                		NEW_TERMINAL_CODE();
+                	}
+                	
                     var displayName = $"BAD_WellKnownTerminalKey:{terminalKey.Guid}";
 
                     if (terminalKey == TerminalFacts.EXECUTION_TERMINAL_KEY)
@@ -185,5 +191,22 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         // SetActivePanelTabAction
         Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key));
+    }
+    
+    private void NEW_TERMINAL_CODE()
+    {
+    	Dispatcher.Dispatch(new TerminalState.NEW_TERMINAL_CODE_RegisterAction(
+	    	new NEW_Terminal(
+				"General",
+				terminal => new TerminalInteractive(terminal),
+				terminal => new TerminalInputStringBuilder(terminal),
+				terminal => new TerminalOutputTextEditorExpand(
+					terminal,
+					TextEditorService,
+					CompilerServiceRegistry,
+					Dispatcher),
+				BackgroundTaskService,
+				CommonComponentRenderers,
+				Dispatcher)));
     }
 }

@@ -49,5 +49,13 @@ public partial record TerminalState
             var nextMap = inState.TerminalMap.Remove(disposeAction.TerminalKey);
             return inState with { TerminalMap = nextMap };
         }
+
+        [ReducerMethod]
+        public static TerminalState ReduceNEW_TERMINAL_CODE_RegisterAction(
+            TerminalState inState,
+            NEW_TERMINAL_CODE_RegisterAction NEW_TERMINAL_CODE_RegisterAction)
+        {
+            return inState with { NEW_TERMINAL = NEW_TERMINAL_CODE_RegisterAction.NEW_TERMINAL };
+        }
     }
 }
