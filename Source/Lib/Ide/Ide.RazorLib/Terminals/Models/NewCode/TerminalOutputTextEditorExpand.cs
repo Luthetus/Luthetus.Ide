@@ -112,9 +112,22 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 						_commandOutputList.RemoveAt(indexPreviousOutput);
 				}
 				
+				var workingDirectoryText = _terminal.TerminalInteractive.WorkingDirectory + "> ";
+				
+				var workingDirectoryTextSpan = new TextEditorTextSpan(
+					_inputBuilder.Length,
+			        _inputBuilder.Length + workingDirectoryText.Length,
+			        (byte)TerminalDecorationKind.Keyword,
+			        ResourceUri.Empty,
+			        string.Empty,
+			        workingDirectoryText);
+			    _textEditorTextSpanList.Add(workingDirectoryTextSpan);
+				
+				_inputBuilder.Append(workingDirectoryText);
+				
 				var commandTextTextSpan = new TextEditorTextSpan(
-					OutputRaw.Length,
-			        OutputRaw.Length + terminalCommandParsed.SourceTerminalCommandRequest.CommandText.Length,
+					_inputBuilder.Length,
+			        _inputBuilder.Length + terminalCommandParsed.SourceTerminalCommandRequest.CommandText.Length,
 			        (byte)0,
 			        ResourceUri.Empty,
 			        string.Empty,
@@ -128,8 +141,8 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 				_textEditorSymbolList.Add(commandTextSymbol);
 				
 				var targetFileNameTextSpan = new TextEditorTextSpan(
-					OutputRaw.Length,
-			        OutputRaw.Length + terminalCommandParsed.TargetFileName.Length,
+					_inputBuilder.Length,
+			        _inputBuilder.Length + terminalCommandParsed.TargetFileName.Length,
 			        (byte)TerminalDecorationKind.TargetFilePath,
 			        ResourceUri.Empty,
 			        string.Empty,

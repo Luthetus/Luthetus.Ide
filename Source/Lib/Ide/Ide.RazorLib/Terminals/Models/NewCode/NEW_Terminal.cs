@@ -88,6 +88,8 @@ public class NEW_Terminal : ITerminal
 		}
 		catch (Exception e)
 		{
+			// TODO: This will erroneously write 'StartedCommandEvent' out twice...
+			//       ...unless a check is added to see WHEN the exception was thrown.
 			TerminalOutput.WriteOutput(
 				parsedCommand,
 				new StartedCommandEvent(-1));

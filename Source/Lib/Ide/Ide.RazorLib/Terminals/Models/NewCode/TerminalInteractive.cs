@@ -35,7 +35,7 @@ public class TerminalInteractive : ITerminalInteractive
 		if (terminalCommandRequest.WorkingDirectory is not null &&
 			terminalCommandRequest.WorkingDirectory != WorkingDirectory)
 		{
-			SetWorkingDirectory(parsedCommand.Arguments);
+			SetWorkingDirectory(terminalCommandRequest.WorkingDirectory);
 		}
 		
 		switch (parsedCommand.TargetFileName)
