@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public partial class WidgetInlineLayerDisplay : ComponentBase
+public partial class WidgetLayerDisplay : ComponentBase
 {
     [CascadingParameter]
     public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
