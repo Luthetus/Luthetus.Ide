@@ -19,4 +19,6 @@ builder.Services.AddLuthetusWebsiteServices(hostingInformation);
 
 var host = builder.Build();
 
+hostingInformation.StartBackgroundTaskWorkers(host.Services);
+
 await host.RunAsync();

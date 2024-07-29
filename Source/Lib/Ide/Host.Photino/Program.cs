@@ -102,40 +102,12 @@ class Program
                 app.MainWindow.SetLeft(1_100).SetTop(100).SetHeight(1900);
         }
 
-        var continuousStartCts = new CancellationTokenSource();
-        var blockingStartCts = new CancellationTokenSource();
-
-        var continuousStopCts = new CancellationTokenSource();
-        var blockingStopCts = new CancellationTokenSource();
-
-        var continuousBtw = app.Services.GetRequiredService<ContinuousBackgroundTaskWorker>();
-        var blockingBtw = app.Services.GetRequiredService<BlockingBackgroundTaskWorker>();
-
-        var continuousStartTask = continuousBtw.StartAsync(continuousStartCts.Token);
-        var blockingStartTask = blockingBtw.StartAsync(blockingStartCts.Token);
-
-        Task continuousStopTask;
-        Task blockingStopTask;
-
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {
             app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
-
-            continuousStartCts.Cancel();
-            blockingStartCts.Cancel();
-
-            continuousStopTask = continuousBtw.StopAsync(continuousStopCts.Token);
-            blockingStopTask = blockingBtw.StopAsync(blockingStopCts.Token);
         };
-
-        AppDomain.CurrentDomain.ProcessExit += (sender, error) =>
-        {
-            continuousStartCts.Cancel();
-            blockingStartCts.Cancel();
-
-            continuousStopCts.Cancel();
-            blockingStopCts.Cancel();
-        };  
+        
+        hostingInformation.StartBackgroundTaskWorkers(app.Services);
 
         app.Run();
     }
