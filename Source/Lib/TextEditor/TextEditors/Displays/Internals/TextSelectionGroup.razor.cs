@@ -1,16 +1,25 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Htmls.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class TextSelectionGroup : ComponentBase
 {
+	[Inject]
+    private IJSRuntime JsRuntime { get; set; } = null!;
+	[Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
+
     [CascadingParameter]
     public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
+    [CascadingParameter(Name = "ProportionalFontMeasurementsContainerElementId")]
+    public string ProportionalFontMeasurementsContainerElementId { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorCursor PrimaryCursor { get; set; } = null!;
