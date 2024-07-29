@@ -168,20 +168,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(terminalGroupPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false));
-        
-        // newTerminalGroupPanel
-        var newTerminalGroupPanel = new Panel(
-			"NEW_Terminal",
-            Key<Panel>.NewKey(),
-            Key<IDynamicViewModel>.NewKey(),
-			ContextFacts.TerminalContext.ContextKey,
-            typeof(NEW_TerminalPanelDisplay),
-            null,
-            Dispatcher,
-            DialogService,
-            JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(newTerminalGroupPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, newTerminalGroupPanel, false));
 
 		// activeContextsPanel
         var activeContextsPanel = new Panel(

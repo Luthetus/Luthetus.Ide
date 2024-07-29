@@ -2,6 +2,7 @@
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Common.RazorLib.Keys.Models
 @using Luthetus.Ide.RazorLib.Terminals.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Displays.NewCode
 @using System.Collections.Immutable
 
 <ContextBoundary ContextRecord="ContextFacts.TerminalContext"
@@ -35,7 +36,14 @@
             }
             else
             {
-                <TerminalDisplay TerminalKey="activeTerminal.Key"/>
+            	if (activeTerminal.Key == TerminalFacts.GENERAL_TERMINAL_KEY)
+            	{
+            		<TerminalOutputTextEditorExpandDisplay/>
+            	}
+            	else
+            	{
+            		<TerminalDisplay TerminalKey="activeTerminal.Key"/>
+            	}
             }
         </div>
 
