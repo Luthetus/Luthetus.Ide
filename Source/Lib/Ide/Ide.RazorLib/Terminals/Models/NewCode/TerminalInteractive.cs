@@ -49,7 +49,7 @@ public class TerminalInteractive : ITerminalInteractive
 				
 				_terminal.TerminalOutput.WriteOutput(
 					parsedCommand,
-					new StandardOutputCommandEvent("\n"));
+					new StandardOutputCommandEvent($"WorkingDirectory set to: '{parsedCommand.Arguments}'\n"));
 				return null;
 			case "clear":
 				// ClearTerminal();

@@ -88,7 +88,19 @@ public class NEW_Terminal : ITerminal
 		}
 		catch (Exception e)
 		{
+			TerminalOutput.WriteOutput(
+				parsedCommand,
+				new StartedCommandEvent(-1));
+		
+			TerminalOutput.WriteOutput(
+				parsedCommand,
+				new StandardErrorCommandEvent(
+					parsedCommand.SourceTerminalCommandRequest.CommandText +
+					" threw an exception" +
+					"\n"));
+		
 			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
+			
 		}
 	}
 	

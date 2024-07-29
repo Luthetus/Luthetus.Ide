@@ -13,8 +13,9 @@ using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Extensions.DotNet.CSharpProjects.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -128,8 +129,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
-			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
+			var generalTerminal = TerminalStateWrap.Value.NEW_TERMINAL;
 
+			// TODO: Delete the TerminalCommand instance here
 			var newCSharpProjectCommand = new TerminalCommand(
 				_viewModel.LoadProjectTemplatesTerminalCommandKey,
 				formattedCommand,
@@ -140,8 +142,13 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 					_viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
 					await InvokeAsync(StateHasChanged);
 				});
+				
+			var terminalCommandRequest = new TerminalCommandRequest(
+				formattedCommand.Value,
+				EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandKey.Guid));
 
-			generalTerminal.EnqueueCommand(newCSharpProjectCommand);
+			generalTerminal.EnqueueCommand(terminalCommandRequest);
 		}
 		finally
 		{
