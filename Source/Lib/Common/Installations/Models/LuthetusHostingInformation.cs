@@ -1,4 +1,6 @@
+using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Exceptions;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
@@ -29,4 +31,47 @@ public record LuthetusHostingInformation
 
     public LuthetusHostingKind LuthetusHostingKind { get; init; }
     public IBackgroundTaskService BackgroundTaskService { get; init; }
+    
+    public void StartBackgroundTaskWorkers(IServiceProvider serviceProvider)
+    {
+    	if (LuthetusHostingKind == LuthetusHostingKind.ServerSide)
+    	{
+    		throw new LuthetusFatalException(
+    			$"The '{nameof(LuthetusHostingKind)}' is '{nameof(LuthetusHostingKind.ServerSide)}';" +
+    			$"Therefore, do not invoke '{nameof(LuthetusHostingInformation)}.{nameof(StartBackgroundTaskWorkers)}(...)'," +
+    			$"because the background task workers will be started instead with" +
+    			" 'services.AddHostedService(sp => sp.GetRequiredService<ContinuousBackgroundTaskWorker>());' and etc...," +
+    			"within the '{nameof(AddLuthetusCommonServices)}' method, automatically.");
+    	}
+    
+		var continuousCtsUp = new CancellationTokenSource();
+        var continuousCtsDown = new CancellationTokenSource();
+        var continuousBtw = serviceProvider.GetRequiredService<ContinuousBackgroundTaskWorker>();
+        continuousBtw.ExecuteAsyncTask = continuousBtw.StartAsync(continuousCtsUp.Token);
+        Task continuousTaskDown;
+
+        var blockingCtsUp = new CancellationTokenSource();
+        var blockingCtsDown = new CancellationTokenSource();
+        var blockingBtw = serviceProvider.GetRequiredService<BlockingBackgroundTaskWorker>();
+        blockingBtw.ExecuteAsyncTask = blockingBtw.StartAsync(blockingCtsUp.Token);
+        Task blockingTaskDown;
+
+        AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
+        {
+            continuousCtsUp.Cancel();
+            blockingCtsUp.Cancel();
+
+            continuousTaskDown = continuousBtw.StopAsync(continuousCtsDown.Token);
+            blockingTaskDown = blockingBtw.StopAsync(blockingCtsDown.Token);
+        };
+
+        AppDomain.CurrentDomain.ProcessExit += (sender, error) =>
+        {
+            continuousCtsUp.Cancel();
+            blockingCtsUp.Cancel();
+
+            continuousCtsDown.Cancel();
+            blockingCtsDown.Cancel();
+        };
+    }
 }
