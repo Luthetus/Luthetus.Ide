@@ -310,26 +310,42 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
     /// </summary>
     private Task OpenInEditor(TerminalCommandParsed terminalCommandParsed)
     {
-    	var dialogRecord = new DialogViewModel(
-            new Key<IDynamicViewModel>(terminalCommandParsed.SourceTerminalCommandRequest.Key.Guid),
+    	_textEditorService.PostUnique(
             nameof(TerminalOutputTextEditorExpand),
-            typeof(TerminalOutputViewOutputDisplay),
-            new Dictionary<string, object?>
-            {
-            	{
-            		nameof(TerminalOutputViewOutputDisplay.TerminalOutputTextEditorExpand),
-            		this
-            	},
-            	{
-            		nameof(TerminalOutputViewOutputDisplay.TerminalCommandParsed),
-            		terminalCommandParsed
-            	},
-            },
-            null,
-			true,
-			null);
-
-        _dispatcher.Dispatch(new DialogState.RegisterAction(dialogRecord));
+            editContext =>
+	    	{
+	    		var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
+                if (viewModelModifier is null)
+                    return Task.CompletedTask;
+                    
+                var widgetKey = Key<WidgetBlock>.NewKey();
+	    	
+	    		var widget = new WidgetBlock(
+				    widgetKey,
+				    "title goes here",
+				    $"luth_ide_expand-widget_{widgetKey.Guid}",
+				    typeof(TerminalOutputViewOutputDisplay),
+				    new Dictionary<string, object?>
+		            {
+		            	{
+		            		nameof(TerminalOutputViewOutputDisplay.TerminalOutputTextEditorExpand),
+		            		this
+		            	},
+		            	{
+		            		nameof(TerminalOutputViewOutputDisplay.TerminalCommandParsed),
+		            		terminalCommandParsed
+		            	},
+		            });
+		            
+		        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		        {
+		        	WidgetBlockList = viewModelModifier.ViewModel.WidgetBlockList
+		        		.Add(widget)
+		        };
+		            
+		        return Task.CompletedTask;
+	    	});
+        
     	return Task.CompletedTask;
     }
 	

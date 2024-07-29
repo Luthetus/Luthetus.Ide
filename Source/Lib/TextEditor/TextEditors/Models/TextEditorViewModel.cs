@@ -184,7 +184,7 @@ public record TextEditorViewModel : IDisposable
 	/// one could inline the parameter's type. This inline hint wouldn't be actual text in the document.
 	/// </summary>
     public ImmutableArray<WidgetInline> WidgetInlineList { get; init; } = ImmutableArray<WidgetInline>.Empty;
-    public ImmutableArray<WidgetAbsolute> WidgetAbsoluteList { get; init; } = ImmutableArray<WidgetAbsolute>.Empty;
+    public ImmutableArray<WidgetOverlay> WidgetOverlayList { get; init; } = ImmutableArray<WidgetOverlay>.Empty;
 
 	public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
