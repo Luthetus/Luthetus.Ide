@@ -3,6 +3,21 @@
     background-color: var(--luth_te_secondary-background-color);
     color: var(--luth_te_secondary-foreground-color);
     z-index: 1;
+    cursor: default;
+}
+
+.luth_te_widget-toolbar {
+	height: 2em;
+	display: flex;
+    justify-content: space-between;
+    padding-top: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.luth_te_widget-body {
+	height: calc(100% - 2em);
+	padding: 5px;
 }
 
 .luth_te_widget-layer {

@@ -6,6 +6,7 @@
 		var blockWidth = GetBlockWidth(localRenderBatch);
 		
 		// https://learn.microsoft.com/en-us/aspnet/core/blazor/performance?view=aspnetcore-8.0&preserve-view=true
+		// TODO: Add an @key="..."?
 	    RenderFragment<WidgetBlock> WidgetBlockDisplay = widget =>
 	        @<div class="luth_te_widget luth_set-selectable"
 				  style="@blockWidth @GetBlockCssStyle(localRenderBatch, widget.LineIndex)"
@@ -22,9 +23,23 @@
 				  @ontouchend:stopPropagation="true"
 				  @ontouchcancel:stopPropagation="true"
 				  @ontouchleave:stopPropagation="true">
-				 
-			    <DynamicComponent Type="widget.ComponentType"
-			                      Parameters="widget.ComponentParameterMap" />
+				  
+				<div class="luth_te_widget-toolbar">
+					<div class="luth_te_widget-toolbar-left">
+						@widget.Title
+					</div>
+					<div class="luth_te_widget-toolbar-right">
+						<button class="luth_button"
+			                    @onclick="() => CloseWidgetOnClick(localRenderBatch, widget)">
+			                <IconClose/>
+			            </button>
+					</div>
+				</div>
+				
+				<div class="luth_te_widget-body">
+					<DynamicComponent Type="widget.ComponentType"
+				                      Parameters="widget.ComponentParameterMap" />
+				</div>
 			</div>;
 	}
 	

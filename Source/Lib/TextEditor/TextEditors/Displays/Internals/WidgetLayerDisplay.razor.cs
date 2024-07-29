@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class WidgetLayerDisplay : ComponentBase
 {
+	[Inject]
+	private ITextEditorService TextEditorService { get; set; } = null!;
+	
     [CascadingParameter]
     public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
     
@@ -39,5 +43,27 @@ public partial class WidgetLayerDisplay : ComponentBase
         var height = $"height: {heightInPixelsInvariantCulture}px;";
 
         return height + ' ' + top;
+    }
+    
+    /// <summary>
+    /// TODO: Anonymous lambda as an eventhandler warning...
+    ///       ...so long as the amount of widgets rendered isn't large
+    ///       this shouldn't be an issue.
+    /// </summary>
+    private void CloseWidgetOnClick(TextEditorRenderBatchValidated localRenderBatch, WidgetBlock widget)
+    {
+    	TextEditorService.PostUnique(
+    		nameof(CloseWidgetOnClick),
+    		editContext =>
+    		{
+    			var viewModelModifier = editContext.GetViewModelModifier(localRenderBatch.ViewModel.ViewModelKey);
+    			
+    			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+    			{
+    				WidgetBlockList = viewModelModifier.ViewModel.WidgetBlockList.Remove(widget)
+    			};
+    			
+    			return Task.CompletedTask;
+    		});
     }
 }

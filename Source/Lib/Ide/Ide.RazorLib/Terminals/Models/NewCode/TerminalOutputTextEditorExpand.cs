@@ -322,7 +322,7 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 	    	
 	    		var widget = new WidgetBlock(
 				    widgetKey,
-				    "title goes here",
+				    $"{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}:",
 				    $"luth_ide_expand-widget_{widgetKey.Guid}",
 				    1,
 				    typeof(TerminalOutputViewOutputDisplay),
