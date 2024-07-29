@@ -1,7 +1,31 @@
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+
 <div class="luth_te_widget-layer">
 	@{
 		var localRenderBatch = RenderBatch;
-		var widgetCssStyleBlock = GetWidgetCssStyleBlock(localRenderBatch);
+		var blockWidth = GetBlockWidth(localRenderBatch);
+		
+		// https://learn.microsoft.com/en-us/aspnet/core/blazor/performance?view=aspnetcore-8.0&preserve-view=true
+	    RenderFragment<WidgetBlock> WidgetBlockDisplay = widget =>
+	        @<div class="luth_te_widget luth_set-selectable"
+				  style="@blockWidth @GetBlockCssStyle(localRenderBatch, widget.LineIndex)"
+				  @onclick:stopPropagation="true"
+				  @onkeydown:stopPropagation="true"
+				  @oncontextmenu:stopPropagation="true"
+				  @onmousedown:stopPropagation="true"
+				  @onmousemove:stopPropagation="true"
+				  @onmouseout:stopPropagation="true"
+				  @ondblclick:stopPropagation="true"
+				  @onwheel:stopPropagation="true"
+				  @ontouchstart:stopPropagation="true"
+				  @ontouchmove:stopPropagation="true"
+				  @ontouchend:stopPropagation="true"
+				  @ontouchcancel:stopPropagation="true"
+				  @ontouchleave:stopPropagation="true">
+				 
+			    <DynamicComponent Type="widget.ComponentType"
+			                      Parameters="widget.ComponentParameterMap" />
+			</div>;
 	}
 	
 	@* 
@@ -18,25 +42,7 @@
 	<div class="luth_te_widget-block-layer">
 	    @foreach (var widget in RenderBatch.ViewModel!.WidgetBlockList)
 	    {
-	        <div class="luth_te_widget luth_set-selectable @widgetCssStyleBlock"
-	        	 style="@widgetCssStyleBlock"
-	        	 @onclick:stopPropagation="true"
-				 @onkeydown:stopPropagation="true"
-				 @oncontextmenu:stopPropagation="true"
-				 @onmousedown:stopPropagation="true"
-				 @onmousemove:stopPropagation="true"
-				 @onmouseout:stopPropagation="true"
-				 @ondblclick:stopPropagation="true"
-				 @onwheel:stopPropagation="true"
-				 @ontouchstart:stopPropagation="true"
-				 @ontouchmove:stopPropagation="true"
-				 @ontouchend:stopPropagation="true"
-				 @ontouchcancel:stopPropagation="true"
-				 @ontouchleave:stopPropagation="true">
-				 
-	            <DynamicComponent Type="widget.ComponentType"
-	                              Parameters="widget.ComponentParameterMap" />
-	        </div>
+	    	@WidgetBlockDisplay(widget)
 	    }
 	</div>
 	
@@ -44,7 +50,7 @@
 	    @foreach (var widget in RenderBatch.ViewModel!.WidgetInlineList)
 	    {
 	        <div class="luth_te_widget luth_set-selectable"
-	        	 @onclick:stopPropagation="true"
+				 @onclick:stopPropagation="true"
 				 @onkeydown:stopPropagation="true"
 				 @oncontextmenu:stopPropagation="true"
 				 @onmousedown:stopPropagation="true"
@@ -58,9 +64,9 @@
 				 @ontouchcancel:stopPropagation="true"
 				 @ontouchleave:stopPropagation="true">
 				 
-	            <DynamicComponent Type="widget.ComponentType"
-	                              Parameters="widget.ComponentParameterMap" />
-	        </div>
+			    <DynamicComponent Type="widget.ComponentType"
+			                      Parameters="widget.ComponentParameterMap" />
+			</div>
 	    }
 	</div>
 	
@@ -68,7 +74,7 @@
 	    @foreach (var widget in RenderBatch.ViewModel!.WidgetOverlayList)
 	    {
 	        <div class="luth_te_widget luth_set-selectable"
-	        	 @onclick:stopPropagation="true"
+				 @onclick:stopPropagation="true"
 				 @onkeydown:stopPropagation="true"
 				 @oncontextmenu:stopPropagation="true"
 				 @onmousedown:stopPropagation="true"
@@ -82,9 +88,9 @@
 				 @ontouchcancel:stopPropagation="true"
 				 @ontouchleave:stopPropagation="true">
 				 
-	            <DynamicComponent Type="widget.ComponentType"
-	                              Parameters="widget.ComponentParameterMap" />
-	        </div>
+			    <DynamicComponent Type="widget.ComponentType"
+			                      Parameters="widget.ComponentParameterMap" />
+			</div>
 	    }
 	</div>
 </div>
