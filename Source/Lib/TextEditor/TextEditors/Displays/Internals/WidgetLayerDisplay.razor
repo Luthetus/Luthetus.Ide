@@ -1,25 +1,91 @@
 <div class="luth_te_widget-layer">
-    @foreach (var widget in RenderBatch.ViewModel!.WidgetBlockList)
-    {
-        <div class="luth_te_widget">
-            <DynamicComponent Type="widget.ComponentType"
-                              Parameters="widget.ComponentParameterMap" />
-        </div>
-    }
-    
-    @foreach (var widget in RenderBatch.ViewModel!.WidgetInlineList)
-    {
-        <div class="luth_te_widget">
-            <DynamicComponent Type="widget.ComponentType"
-                              Parameters="widget.ComponentParameterMap" />
-        </div>
-    }
-    
-    @foreach (var widget in RenderBatch.ViewModel!.WidgetOverlayList)
-    {
-        <div class="luth_te_widget">
-            <DynamicComponent Type="widget.ComponentType"
-                              Parameters="widget.ComponentParameterMap" />
-        </div>
-    }
+	@{
+		var localRenderBatch = RenderBatch;
+		var widgetCssStyleBlock = GetWidgetCssStyleBlock(localRenderBatch);
+	}
+	
+	@* 
+		TODO: If we make the div with class 'luth_te_widget' into...
+			  ...a component, it would add overhead.
+			  |
+			  Its desired to make it into a component,
+			  but bad-"early optimization" anxiety is rampant at the moment.
+			  |
+			  If this is made into a component it would D.R.Y. the
+			  stopPropagation logic.
+	*@
+	
+	<div class="luth_te_widget-block-layer">
+	    @foreach (var widget in RenderBatch.ViewModel!.WidgetBlockList)
+	    {
+	        <div class="luth_te_widget luth_set-selectable @widgetCssStyleBlock"
+	        	 style="@widgetCssStyleBlock"
+	        	 @onclick:stopPropagation="true"
+				 @onkeydown:stopPropagation="true"
+				 @oncontextmenu:stopPropagation="true"
+				 @onmousedown:stopPropagation="true"
+				 @onmousemove:stopPropagation="true"
+				 @onmouseout:stopPropagation="true"
+				 @ondblclick:stopPropagation="true"
+				 @onwheel:stopPropagation="true"
+				 @ontouchstart:stopPropagation="true"
+				 @ontouchmove:stopPropagation="true"
+				 @ontouchend:stopPropagation="true"
+				 @ontouchcancel:stopPropagation="true"
+				 @ontouchleave:stopPropagation="true">
+				 
+	            <DynamicComponent Type="widget.ComponentType"
+	                              Parameters="widget.ComponentParameterMap" />
+	        </div>
+	    }
+	</div>
+	
+	<div class="luth_te_widget-inline-layer">
+	    @foreach (var widget in RenderBatch.ViewModel!.WidgetInlineList)
+	    {
+	        <div class="luth_te_widget luth_set-selectable"
+	        	 @onclick:stopPropagation="true"
+				 @onkeydown:stopPropagation="true"
+				 @oncontextmenu:stopPropagation="true"
+				 @onmousedown:stopPropagation="true"
+				 @onmousemove:stopPropagation="true"
+				 @onmouseout:stopPropagation="true"
+				 @ondblclick:stopPropagation="true"
+				 @onwheel:stopPropagation="true"
+				 @ontouchstart:stopPropagation="true"
+				 @ontouchmove:stopPropagation="true"
+				 @ontouchend:stopPropagation="true"
+				 @ontouchcancel:stopPropagation="true"
+				 @ontouchleave:stopPropagation="true">
+				 
+	            <DynamicComponent Type="widget.ComponentType"
+	                              Parameters="widget.ComponentParameterMap" />
+	        </div>
+	    }
+	</div>
+	
+	<div class="luth_te_widget-overlay-layer">
+	    @foreach (var widget in RenderBatch.ViewModel!.WidgetOverlayList)
+	    {
+	        <div class="luth_te_widget luth_set-selectable"
+	        	 @onclick:stopPropagation="true"
+				 @onkeydown:stopPropagation="true"
+				 @oncontextmenu:stopPropagation="true"
+				 @onmousedown:stopPropagation="true"
+				 @onmousemove:stopPropagation="true"
+				 @onmouseout:stopPropagation="true"
+				 @ondblclick:stopPropagation="true"
+				 @onwheel:stopPropagation="true"
+				 @ontouchstart:stopPropagation="true"
+				 @ontouchmove:stopPropagation="true"
+				 @ontouchend:stopPropagation="true"
+				 @ontouchcancel:stopPropagation="true"
+				 @ontouchleave:stopPropagation="true">
+				 
+	            <DynamicComponent Type="widget.ComponentType"
+	                              Parameters="widget.ComponentParameterMap" />
+	        </div>
+	    }
+	</div>
 </div>
+

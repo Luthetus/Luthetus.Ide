@@ -1,5 +1,27 @@
-.luth_te_widget-layer {
+.luth_te_widget {
     position: absolute;
-    background-color: red;
+    background-color: var(--luth_te_secondary-background-color);
+    color: var(--luth_te_secondary-foreground-color);
     z-index: 1;
+}
+
+.luth_te_widget-layer {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.luth_te_widget-block-layer > .luth_te_widget {
+	
+}
+
+.luth_te_widget-inline-layer > .luth_te_widget {
+    
+}
+
+.luth_te_widget-overlay-layer > .luth_te_widget {
+    
 }

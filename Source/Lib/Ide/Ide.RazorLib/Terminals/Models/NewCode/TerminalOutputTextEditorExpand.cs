@@ -324,6 +324,7 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 				    widgetKey,
 				    "title goes here",
 				    $"luth_ide_expand-widget_{widgetKey.Guid}",
+				    1,
 				    typeof(TerminalOutputViewOutputDisplay),
 				    new Dictionary<string, object?>
 		            {
