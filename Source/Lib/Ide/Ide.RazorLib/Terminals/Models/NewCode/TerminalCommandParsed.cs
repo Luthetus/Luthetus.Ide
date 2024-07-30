@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Reactives.Models;
+
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 public class TerminalCommandParsed
@@ -14,5 +16,6 @@ public class TerminalCommandParsed
 
 	public string TargetFileName { get; }
 	public string Arguments { get; }
+	public StringBuilderCache OutputCache { get; } = new();
 	public TerminalCommandRequest SourceTerminalCommandRequest { get; }
 }

@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -19,29 +20,21 @@ using Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
-public class TerminalOutputTextEditorExpand : ITerminalOutput
+public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 {
     public static ResourceUri TextEditorModelResourceUri { get; } = new(
         ResourceUriFacts.Terminal_ReservedResourceUri_Prefix + nameof(TerminalOutputTextEditorExpand));
 
     public static Key<TextEditorViewModel> TextEditorViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
 
-	// TODO: This property is horrific to look at its defined over 3 lines? Don't do this?
-	private readonly 
-		List<(TerminalCommandParsed terminalCommandParsed, StringBuilder outputBuilder)>
-		_commandOutputList = new(); 
-		
-	private readonly StringBuilder _inputBuilder = new();
-		
-	private readonly object _commandOutputListLock = new();
-
     private readonly ITerminal _terminal;
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDispatcher _dispatcher;
-	
-	private readonly List<ITextEditorSymbol> _textEditorSymbolList = new();
-	private readonly List<TextEditorTextSpan> _textEditorTextSpanList = new();
+	private readonly List<ITextEditorSymbol> _symbolList = new();
+	private readonly List<TextEditorTextSpan> _textSpanList = new();
+	private readonly List<TerminalCommandParsed> _commandList = new(); 
+	private readonly object _listLock = new();
 
 	public TerminalOutputTextEditorExpand(
 		ITerminal terminal,
@@ -50,7 +43,6 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 		IDispatcher dispatcher)
 	{
 		_terminal = terminal;
-		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
 		
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
@@ -59,38 +51,37 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
 		CreateTextEditor();
 	}
 	
-	private string _output = string.Empty;
-	
-	public string OutputRaw
-	{
-		get => _output;
-		private set
-		{
-			_output = value;
-		}
-	}
+	public string OutputRaw { get; }
 
-	public List<TextEditorTextSpan> TextEditorTextSpanList => _textEditorTextSpanList;	
-	public List<ITextEditorSymbol> TextEditorSymbolList => _textEditorSymbolList;
-	
-	public StringBuilder OutputBuilder { get; } = new();
-	
 	public event Action? OnWriteOutput;
 	
-	public ImmutableList<(TerminalCommandParsed terminalCommandParsed, StringBuilder outputBuilder)> GetCommandOutputList()
+	public string GetOutput(ITerminalOutputFormatter formatter)
 	{
-		lock (_commandOutputListLock)
+		
+	}
+	
+	public ImmutableList<TerminalCommandParsed terminalCommandParsed> GetCommandList()
+	{
+		lock (_listLock)
 		{
-			return _commandOutputList.ToImmutableList();
+			return _commandList.ToImmutableList();
+		}
+	}
+	
+	public ImmutableList<TextEditorTextSpan> GetTextSpanList()
+	{
+		lock (_listLock)
+		{
+			return _textSpanList.ToImmutableList();
 		}
 	}
 
-	public void OnWorkingDirectoryChanged()
+	public ImmutableList<TextEditorSymbolList> GetSymbolList()
 	{
-	}
-	
-	public void OnHandleCommandStarting()
-	{
+		lock (_listLock)
+		{
+			return _symbolList.ToImmutableList();
+		}
 	}
 	
 	public void WriteOutput(TerminalCommandParsed terminalCommandParsed, CommandEvent commandEvent)
@@ -349,9 +340,9 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput
         
     	return Task.CompletedTask;
     }
-	
-	public void Dispose()
-	{
-		_terminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
-	}
+    
+    public void Dispose()
+    {
+    	// TODO: Dispose of the text editor resources
+    }
 }

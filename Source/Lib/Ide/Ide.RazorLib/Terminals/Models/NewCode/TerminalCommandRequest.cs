@@ -38,4 +38,20 @@ public class TerminalCommandRequest
 	
 	/// <inheritdoc cref="TerminalCommandRequest"/>
 	public string? WorkingDirectory { get; }
+	
+	/// <summary>
+	/// Input: the parsed terminal command that is about to begin execution.
+	/// 
+	/// This Func will block the terminal from executing further terminal
+	/// commands in the queue until it has returned.
+	/// </summary>
+	public Func<TerminalCommandParsed, Task> BeginWith { get; init; }
+	
+	/// <summary>
+	/// Input: the parsed terminal command that just finished.
+	/// 
+	/// This Func will block the terminal from executing further terminal
+	/// commands in the queue until it has returned.
+	/// </summary>
+	public Func<TerminalCommandParsed, Task> ContinueWith { get; init; }
 }
