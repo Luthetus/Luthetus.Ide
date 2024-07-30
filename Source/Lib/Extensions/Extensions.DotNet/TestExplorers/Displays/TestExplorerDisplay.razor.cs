@@ -163,7 +163,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 				if (viewModelModifier is null)
 					throw new NullReferenceException();
 
-				var layerFirstPresentationKeys = new[]
+				var firstPresentationLayerKeys = new[]
 				{
 					TerminalPresentationFacts.PresentationKey,
 					CompilerServiceDiagnosticPresentationFacts.PresentationKey,
@@ -172,7 +172,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
-					FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
+					FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
 				};
 				
 				return Task.CompletedTask;

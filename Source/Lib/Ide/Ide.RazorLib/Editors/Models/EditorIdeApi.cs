@@ -201,7 +201,7 @@ public class EditorIdeApi
 	            registerViewModelArgs.ResourceUri,
 	            registerViewModelArgs.Category);
 	
-	        var layerLastPresentationKeys = new[]
+	        var firstPresentationLayerKeys = new[]
 	        {
 	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
 	            FindOverlayPresentationFacts.PresentationKey,
@@ -228,7 +228,7 @@ public class EditorIdeApi
 		                {
 		                    OnSaveRequested = HandleOnSaveRequested,
 		                    GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-		                    LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
+		                    FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
 		                };
 		
 		                return Task.CompletedTask;

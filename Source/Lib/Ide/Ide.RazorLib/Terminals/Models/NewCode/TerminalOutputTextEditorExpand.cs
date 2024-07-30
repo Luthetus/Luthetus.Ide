@@ -205,7 +205,7 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
                     TextEditorModelResourceUri,
                     new Category("terminal"));
 
-                var layerFirstPresentationKeys = new[]
+                var firstPresentationLayerKeys = new[]
                 {
                     TerminalPresentationFacts.PresentationKey,
                     CompilerServiceDiagnosticPresentationFacts.PresentationKey,
@@ -214,11 +214,13 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 
                 var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
                 if (viewModelModifier is null)
-                    return Task.CompletedTask;
+                {
+	                return Task.CompletedTask;
+                }
 
                 viewModelModifier.ViewModel = viewModelModifier.ViewModel with
                 {
-                    FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
+                    FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
                 };
 
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
