@@ -4,13 +4,11 @@
 		var localTerminalOutputTextEditorExpand = TerminalOutputTextEditorExpand;
 		var localTerminalCommandParsed = TerminalCommandParsed;
 		
-		var commandOutputList = localTerminalOutputTextEditorExpand.GetCommandOutputList();
-		
-		var outputTuple = commandOutputList.FirstOrDefault(x =>
-			x.terminalCommandParsed.SourceTerminalCommandRequest.Key ==
-				localTerminalCommandParsed.SourceTerminalCommandRequest.Key);
-		
-		var outputText = outputTuple.outputBuilder?.ToString() ?? "output was null";
+		var outputText = localTerminalOutputTextEditorExpand
+			.GetParsedCommandOrDefault(
+				localTerminalCommandParsed.SourceTerminalCommandRequest.Key)
+			.OutputCache.ToString()
+			?? "output was null";
 	}
 	
 	<textarea value="@outputText"

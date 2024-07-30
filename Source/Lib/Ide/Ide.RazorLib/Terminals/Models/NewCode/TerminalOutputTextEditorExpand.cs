@@ -31,9 +31,10 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDispatcher _dispatcher;
+	private readonly List<ITerminalOutputFormatter> _outputFormatterList;
 	private readonly List<ITextEditorSymbol> _symbolList = new();
 	private readonly List<TextEditorTextSpan> _textSpanList = new();
-	private readonly List<TerminalCommandParsed> _commandList = new(); 
+	private readonly List<TerminalCommandParsed> _commandList = new();
 	private readonly object _listLock = new();
 
 	public TerminalOutputTextEditorExpand(
@@ -48,6 +49,12 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 		_compilerServiceRegistry = compilerServiceRegistry;
 		_dispatcher = dispatcher;
 		
+		_outputFormatterList = new()
+		{
+			new TerminalOutputFormatterAll(),
+			new TerminalOutputFormatterExpand(),
+		};
+		
 		CreateTextEditor();
 	}
 	
@@ -55,12 +62,27 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 
 	public event Action? OnWriteOutput;
 	
-	public string GetOutput(ITerminalOutputFormatter formatter)
+	public string? GetOutput(string terminalOutputFormatterName)
 	{
-		
+		var outputFormatter = _outputFormatterList.FirstOrDefault(x =>
+			x.Name == terminalOutputFormatterName);
+			
+		if (outputFormatter is null)
+			return null;
+			
+		return outputFormatter.Format(_terminal);
 	}
 	
-	public ImmutableList<TerminalCommandParsed terminalCommandParsed> GetCommandList()
+	public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey)
+	{
+		lock (_listLock)
+		{
+			return _commandList.FirstOrDefault(x =>
+				x.SourceTerminalCommandRequest.Key == terminalCommandRequestKey);
+		}
+	}
+	
+	public ImmutableList<TerminalCommandParsed> GetCommandList()
 	{
 		lock (_listLock)
 		{
@@ -76,11 +98,19 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 		}
 	}
 
-	public ImmutableList<TextEditorSymbolList> GetSymbolList()
+	public ImmutableList<ITextEditorSymbol> GetSymbolList()
 	{
 		lock (_listLock)
 		{
 			return _symbolList.ToImmutableList();
+		}
+	}
+	
+	public void RegisterOutputFormatterCustom(ITerminalOutputFormatter outputFormatter)
+	{
+		lock (_listLock)
+		{
+			_outputFormatterList.Add(outputFormatter);
 		}
 	}
 	
@@ -93,102 +123,36 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 			case StartedCommandEvent started:
 				
 				// Delete any output of the previous invocation.
-				lock (_commandOutputListLock)
+				lock (_listLock)
 				{
-					var indexPreviousOutput = _commandOutputList.FindIndex(x =>
-						x.terminalCommandParsed.SourceTerminalCommandRequest.Key ==
+					var indexPreviousOutput = _commandList.FindIndex(x =>
+						x.SourceTerminalCommandRequest.Key ==
 							terminalCommandParsed.SourceTerminalCommandRequest.Key);
 							
 					if (indexPreviousOutput != -1)
-						_commandOutputList.RemoveAt(indexPreviousOutput);
+						_commandList.RemoveAt(indexPreviousOutput);
+						
+					_commandList.Add(terminalCommandParsed);
 				}
-				
-				var workingDirectoryText = _terminal.TerminalInteractive.WorkingDirectory + "> ";
-				
-				var workingDirectoryTextSpan = new TextEditorTextSpan(
-					_inputBuilder.Length,
-			        _inputBuilder.Length + workingDirectoryText.Length,
-			        (byte)TerminalDecorationKind.Keyword,
-			        ResourceUri.Empty,
-			        string.Empty,
-			        workingDirectoryText);
-			    _textEditorTextSpanList.Add(workingDirectoryTextSpan);
-				
-				_inputBuilder.Append(workingDirectoryText);
-				
-				var commandTextTextSpan = new TextEditorTextSpan(
-					_inputBuilder.Length,
-			        _inputBuilder.Length + terminalCommandParsed.SourceTerminalCommandRequest.CommandText.Length,
-			        (byte)0,
-			        ResourceUri.Empty,
-			        string.Empty,
-			        terminalCommandParsed.SourceTerminalCommandRequest.CommandText);
-			        
-				var commandTextSymbol = new OnClickSymbol(
-					commandTextTextSpan,
-					"View Output",
-					() => OpenInEditor(terminalCommandParsed));
-					
-				_textEditorSymbolList.Add(commandTextSymbol);
-				
-				var targetFileNameTextSpan = new TextEditorTextSpan(
-					_inputBuilder.Length,
-			        _inputBuilder.Length + terminalCommandParsed.TargetFileName.Length,
-			        (byte)TerminalDecorationKind.TargetFilePath,
-			        ResourceUri.Empty,
-			        string.Empty,
-			        terminalCommandParsed.TargetFileName);
-			    _textEditorTextSpanList.Add(targetFileNameTextSpan);
-				
-				_inputBuilder.Append($"{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}\n");
 				
 				break;
 			case StandardOutputCommandEvent stdOut:
-				output = $"{stdOut.Text}\n";
+				terminalCommandParsed.OutputCache.AppendTwo(stdOut.Text, "\n");
 				break;
 			case StandardErrorCommandEvent stdErr:
-				output = $"{stdErr.Text}\n";
+				terminalCommandParsed.OutputCache.AppendTwo(stdErr.Text, "\n");
 				break;
 			case ExitedCommandEvent exited:
-				output = $"Process exited; Code: {exited.ExitCode}\n";
 				break;
-		}
-		
-		if (output is null)
-		{
-			lock (_commandOutputListLock)
-			{
-				OutputRaw = _inputBuilder.ToString();
-			}
-		}
-		else
-		{
-			lock (_commandOutputListLock)
-			{
-				var indexPreviousOutput = _commandOutputList.FindIndex(x =>
-					x.terminalCommandParsed.SourceTerminalCommandRequest.Key ==
-						terminalCommandParsed.SourceTerminalCommandRequest.Key);
-			
-				if (indexPreviousOutput == -1)
-				{
-					_commandOutputList.Add(
-						(terminalCommandParsed, new StringBuilder(output)));
-				}
-				else
-				{
-					var commandTuple = _commandOutputList[indexPreviousOutput];
-					
-					if (commandTuple.outputBuilder is null)
-						commandTuple.outputBuilder = new StringBuilder(output);
-						
-					commandTuple.outputBuilder.Append(output);
-				}
-			}
 		}
 		
 		OnWriteOutput?.Invoke();
 	}
 	
+	/// <summary>
+	/// This method can be moved out of this class.
+	/// There is no need for this class to be concerned with the text editor.
+	/// </summary>
 	private void CreateTextEditor()
     {
         _textEditorService.PostUnique(

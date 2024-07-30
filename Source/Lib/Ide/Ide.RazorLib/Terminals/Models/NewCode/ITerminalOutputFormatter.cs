@@ -1,3 +1,5 @@
+using Luthetus.Ide.RazorLib.Exceptions;
+
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 /// <summary>
@@ -22,14 +24,19 @@ public interface ITerminalOutputFormatter
 	/// </summary>
 	public string Name { get; }
 	
+	public string Format(ITerminal terminal);
+	
 	public static ITerminalOutputFormatter ConstructDefaultFormatter(string name)
 	{
 		switch (name)
 		{
-			nameof(TerminalOutputFormatterExpand):
+			case nameof(TerminalOutputFormatterExpand):
 				return new TerminalOutputFormatterExpand();
-			nameof(TerminalOutputFormatterAll):
+			case nameof(TerminalOutputFormatterAll):
 				return new TerminalOutputFormatterAll();
+			default:
+				throw new LuthetusIdeException(
+					$"A {nameof(ITerminalOutputFormatter)} with name: '{name}' was not found.");
 		}
 	}
 }

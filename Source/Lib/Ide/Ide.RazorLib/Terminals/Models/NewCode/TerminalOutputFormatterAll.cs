@@ -8,5 +8,6 @@ public class TerminalOutputFormatterAll : ITerminalOutputFormatter
 	
 	public string Format(ITerminal terminal)
 	{
+		return $"TODO: {nameof(TerminalOutputFormatterAll)}";
 	}
 }

@@ -83,24 +83,26 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 
 					if (compilerServiceResource is TerminalResource terminalResource)
 					{
+						var symbolList = ((TerminalOutputTextEditorExpand)localTerminal.TerminalOutput).GetSymbolList();
+					
 						terminalResource.ManualDecorationTextSpanList.Clear();
 						terminalResource.ManualDecorationTextSpanList.AddRange(
-							((TerminalOutputTextEditorExpand)localTerminal.TerminalOutput).TextEditorSymbolList.Select(
-								x => x.TextSpan));
+							symbolList.Select(x => x.TextSpan));
 								
 						terminalResource.ManualSymbolList.Clear();
-						terminalResource.ManualSymbolList.AddRange(
-							((TerminalOutputTextEditorExpand)localTerminal.TerminalOutput).TextEditorSymbolList);
+						terminalResource.ManualSymbolList.AddRange(symbolList);
 
 						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
 							editContext,
 							modelModifier,
 							terminalResource.GetTokenTextSpans());
+							
+						var textSpanList = ((TerminalOutputTextEditorExpand)localTerminal.TerminalOutput).GetTextSpanList();
 						
 						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
 							editContext,
 							modelModifier,
-							((TerminalOutputTextEditorExpand)localTerminal.TerminalOutput).TextEditorTextSpanList);	
+							textSpanList);	
 					}
 					
 					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;

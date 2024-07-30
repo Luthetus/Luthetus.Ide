@@ -146,14 +146,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
 				EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
-				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandKey.Guid)
+				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandKey.Guid))
 			{
 				ContinueWith = async parsedTerminalCommand =>
 				{
 					_viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
 					await InvokeAsync(StateHasChanged);
 				}
-			});
+			};
 
 			generalTerminal.EnqueueCommand(terminalCommandRequest);
 		}
