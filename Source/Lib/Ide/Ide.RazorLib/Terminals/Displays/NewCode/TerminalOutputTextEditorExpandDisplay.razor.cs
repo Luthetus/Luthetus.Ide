@@ -73,7 +73,8 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 
 					var localTerminal = _terminal;
 					
-					modelModifier.SetContent(localTerminal.TerminalOutput.OutputRaw ?? string.Empty);
+					Console.WriteLine("Aaaaaaaa");
+					modelModifier.SetContent(localTerminal.TerminalOutput.GetOutput(nameof(TerminalOutputFormatterExpand)));
 					
 					primaryCursorModifier.LineIndex = 0;
 					primaryCursorModifier.SetColumnIndexAndPreferred(0);

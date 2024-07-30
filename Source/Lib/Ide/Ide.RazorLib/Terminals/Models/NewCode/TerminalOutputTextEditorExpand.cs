@@ -58,12 +58,12 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 		CreateTextEditor();
 	}
 	
-	public string OutputRaw { get; }
-
 	public event Action? OnWriteOutput;
 	
 	public string? GetOutput(string terminalOutputFormatterName)
 	{
+		Console.WriteLine("GetOutputGetOutputGetOutputGetOutput");
+	
 		var outputFormatter = _outputFormatterList.FirstOrDefault(x =>
 			x.Name == terminalOutputFormatterName);
 			

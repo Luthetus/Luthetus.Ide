@@ -4,7 +4,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 {
 	public const string NAME = nameof(TerminalOutputFormatterExpand);
 
-	public string Name { get; }
+	public string Name { get; } = NAME;
 	
 	public string Format(ITerminal terminal)
 	{
