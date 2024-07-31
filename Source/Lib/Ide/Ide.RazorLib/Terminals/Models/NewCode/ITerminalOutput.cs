@@ -25,4 +25,6 @@ public interface ITerminalOutput : ITerminalPipe
 	public ImmutableList<TerminalCommandParsed> GetParsedCommandList();	
 	public ImmutableList<TextEditorTextSpan> GetTextSpanList();
 	public ImmutableList<ITextEditorSymbol> GetSymbolList();
+	
+	public void SetSymbolList(List<ITextEditorSymbol> symbolList);
 }

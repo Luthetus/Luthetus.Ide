@@ -1,4 +1,6 @@
 using System.Text;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
@@ -10,32 +12,36 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	
 	public string Format(ITerminal terminal)
 	{
-		var symbolList = terminal.TerminalOutput.GetSymbolList();
-		var textSpanList = terminal.TerminalOutput.GetTextSpanList();
+		var outSymbolList = new List<ITextEditorSymbol>();
+		var outTextSpanList = new List<TextEditorTextSpan>();
+		
 		var parsedCommandList = terminal.TerminalOutput.GetParsedCommandList();
 		
 		var outputBuilder = new StringBuilder();
 		
 		foreach (var parsedCommand in parsedCommandList)
 		{
+			var workingDirectoryText = parsedCommand.SourceTerminalCommandRequest.WorkingDirectory + "> ";
+		
+			var workingDirectoryTextSpan = new TextEditorTextSpan(
+				outputBuilder.Length,
+		        outputBuilder.Length + workingDirectoryText.Length,
+		        (byte)TerminalDecorationKind.Keyword,
+		        ResourceUri.Empty,
+		        string.Empty,
+		        workingDirectoryText);
+		    outTextSpanList.Add(workingDirectoryTextSpan);
+			
 			outputBuilder
+				.Append(workingDirectoryText)
 				.Append(parsedCommand.SourceTerminalCommandRequest.CommandText)
 				.Append('\n')
 				.Append(parsedCommand.OutputCache.ToString());
 		}
 		
+		terminal.TerminalOutput.SetSymbolList(outSymbolList);
+		
 		/*
-		var workingDirectoryTextSpan = new TextEditorTextSpan(
-			_inputBuilder.Length,
-	        _inputBuilder.Length + workingDirectoryText.Length,
-	        (byte)TerminalDecorationKind.Keyword,
-	        ResourceUri.Empty,
-	        string.Empty,
-	        workingDirectoryText);
-	    _textEditorTextSpanList.Add(workingDirectoryTextSpan);
-		
-		_inputBuilder.Append(workingDirectoryText);
-		
 		var commandTextTextSpan = new TextEditorTextSpan(
 			_inputBuilder.Length,
 	        _inputBuilder.Length + terminalCommandParsed.SourceTerminalCommandRequest.CommandText.Length,

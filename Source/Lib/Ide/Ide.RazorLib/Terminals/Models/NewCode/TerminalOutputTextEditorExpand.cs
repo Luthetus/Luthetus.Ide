@@ -106,6 +106,15 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 		}
 	}
 	
+	public void SetSymbolList(List<ITextEditorSymbol> symbolList)
+	{
+		lock (_listLock)
+		{
+			_symbolList.Clear();
+			_symbolList.AddRange(symbolList);
+		}
+	}
+	
 	public void RegisterOutputFormatterCustom(ITerminalOutputFormatter outputFormatter)
 	{
 		lock (_listLock)
