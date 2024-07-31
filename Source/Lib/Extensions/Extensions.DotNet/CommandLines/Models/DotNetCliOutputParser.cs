@@ -231,6 +231,15 @@ public class DotNetCliOutputParser : IOutputParser
 		return textSpanList;
 	}
 
+	/// <summary>
+	/// The following output breaks because the 'Language' for template name of 'dotnet gitignore file'
+	/// is left empty.
+	///
+	/// Template Name                             Short Name                  Language    Tags                                                                         
+	/// ----------------------------------------  --------------------------  ----------  -----------------------------------------------------------------------------
+	/// Console App                               console                     [C#],F#,VB  Common/Console                                                               
+	/// dotnet gitignore file                     gitignore,.gitignore                    Config      
+	/// </summary>
 	public List<TextEditorTextSpan> ParseOutputLineDotNetNewList(string outputEntire)
 	{
 		Console.WriteLine("debug: ParseOutputLineDotNetNewList");
@@ -245,6 +254,8 @@ public class DotNetCliOutputParser : IOutputParser
 
 		while (!stringWalker.IsEof)
 		{
+			var whitespaceWasRead = false;
+		
 			if (NewListModelSession.ShouldLocateKeywordTags)
 			{
 				switch (stringWalker.CurrentCharacter)
@@ -310,9 +321,14 @@ public class DotNetCliOutputParser : IOutputParser
 				{
 					// TODO: What if a column starts with a lot of whitespace?
 					if (char.IsWhiteSpace(stringWalker.CurrentCharacter))
+					{
 						_ = stringWalker.ReadCharacter();
+						whitespaceWasRead = true;
+					}
 					else
+					{
 						break;
+					}
 				}
 
 				for (int i = 0; i < NewListModelSession.ColumnLength; i++)
@@ -363,7 +379,8 @@ public class DotNetCliOutputParser : IOutputParser
 				NewListModelSession.ColumnBuilder = new();
 			}
 
-			_ = stringWalker.ReadCharacter();
+			if (!whitespaceWasRead)
+				_ = stringWalker.ReadCharacter();
 		}
 
 		ProjectTemplateList = NewListModelSession.ProjectTemplateList;
