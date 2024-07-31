@@ -1,10 +1,10 @@
 <div class="luth_ide_terminal-output-view-output"
 	 style="height: 100%;">
 	@{
-		var localTerminalOutputTextEditorExpand = TerminalOutputTextEditorExpand;
+		var localTerminalOutput = TerminalOutput;
 		var localTerminalCommandParsed = TerminalCommandParsed;
 		
-		var outputText = localTerminalOutputTextEditorExpand
+		var outputText = localTerminalOutput
 			.GetParsedCommandOrDefault(
 				localTerminalCommandParsed.SourceTerminalCommandRequest.Key)
 			.OutputCache.ToString()

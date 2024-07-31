@@ -60,11 +60,17 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 		_throttle.Run(_ =>
         {
         	TextEditorService.PostUnique(
-				nameof(TerminalOutputTextEditorExpandDisplay),
+				nameof(TerminalOutput),
 				editContext =>
 				{
-					var modelModifier = editContext.GetModelModifier(TerminalOutputTextEditorExpand.TextEditorModelResourceUri);
-					var viewModelModifier = editContext.GetViewModelModifier(TerminalOutputTextEditorExpand.TextEditorViewModelKey);
+					var formatter = _terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
+						x => x.Name == nameof(TerminalOutputFormatterExpand));
+						
+					if (formatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
+						return Task.CompletedTask;
+					
+					var modelModifier = editContext.GetModelModifier(terminalOutputFormatterExpand.TextEditorModelResourceUri);
+					var viewModelModifier = editContext.GetViewModelModifier(terminalOutputFormatterExpand.TextEditorViewModelKey);
 					var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 					var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
@@ -72,25 +78,26 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 						return Task.CompletedTask;
 
 					var localTerminal = _terminal;
+
+					var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal.TerminalOutput
+						.GetOutputFormatted(nameof(TerminalOutputFormatterExpand));
 					
-					modelModifier.SetContent(localTerminal.TerminalOutput.GetOutput(nameof(TerminalOutputFormatterExpand)));
+					modelModifier.SetContent(outputFormatted.Text);
 					
 					primaryCursorModifier.LineIndex = 0;
 					primaryCursorModifier.SetColumnIndexAndPreferred(0);
 					
 					var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(
-						TerminalOutputTextEditorExpand.TextEditorModelResourceUri);
+						terminalOutputFormatterExpand.TextEditorModelResourceUri);
 
 					if (compilerServiceResource is TerminalResource terminalResource)
-					{
-						var symbolList = localTerminal.TerminalOutput.GetSymbolList();
-					
+					{					
 						terminalResource.ManualDecorationTextSpanList.Clear();
 						terminalResource.ManualDecorationTextSpanList.AddRange(
-							symbolList.Select(x => x.TextSpan));
+							outputFormatted.SymbolList.Select(x => x.TextSpan));
 								
 						terminalResource.ManualSymbolList.Clear();
-						terminalResource.ManualSymbolList.AddRange(symbolList);
+						terminalResource.ManualSymbolList.AddRange(outputFormatted.SymbolList);
 
 						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
 							editContext,
@@ -100,7 +107,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 							editContext.TextEditorService.ModelApi.ApplyDecorationRange(
 							editContext,
 							modelModifier,
-							localTerminal.TerminalOutput.GetTextSpanList());
+							outputFormatted.TextSpanList);
 					}
 					
 					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;

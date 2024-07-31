@@ -6,7 +6,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 public partial class TerminalOutputViewOutputDisplay : ComponentBase
 {
 	[Parameter, EditorRequired]
-	public TerminalOutputTextEditorExpand TerminalOutputTextEditorExpand { get; set; } = null!;
+	public TerminalOutput TerminalOutput { get; set; } = null!;
 	[Parameter, EditorRequired]
 	public TerminalCommandParsed TerminalCommandParsed { get; set; } = null!;
 }

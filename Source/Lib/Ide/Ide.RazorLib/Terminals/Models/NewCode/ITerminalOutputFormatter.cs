@@ -16,7 +16,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 ///
 /// i.e.: the string value associated with a <see cref="ITerminal"/> is lazily calculated.
 /// </summary>
-public interface ITerminalOutputFormatter
+public interface ITerminalOutputFormatter : IDisposable
 {
 	/// <summary>
 	/// This is used to find the respective formatter within a list
@@ -24,19 +24,5 @@ public interface ITerminalOutputFormatter
 	/// </summary>
 	public string Name { get; }
 	
-	public string Format(ITerminal terminal);
-	
-	public static ITerminalOutputFormatter ConstructDefaultFormatter(string name)
-	{
-		switch (name)
-		{
-			case nameof(TerminalOutputFormatterExpand):
-				return new TerminalOutputFormatterExpand();
-			case nameof(TerminalOutputFormatterAll):
-				return new TerminalOutputFormatterAll();
-			default:
-				throw new LuthetusIdeException(
-					$"A {nameof(ITerminalOutputFormatter)} with name: '{name}' was not found.");
-		}
-	}
+	public ITerminalOutputFormatted Format();
 }

@@ -200,11 +200,13 @@ public partial class LuthetusIdeInitializer : ComponentBase
 				"General",
 				terminal => new TerminalInteractive(terminal),
 				terminal => new TerminalInputStringBuilder(terminal),
-				terminal => new TerminalOutputTextEditorExpand(
+				terminal => new TerminalOutput(
 					terminal,
-					TextEditorService,
-					CompilerServiceRegistry,
-					Dispatcher),
+					new TerminalOutputFormatterExpand(
+						terminal,
+						TextEditorService,
+						CompilerServiceRegistry,
+						Dispatcher)),
 				BackgroundTaskService,
 				CommonComponentRenderers,
 				Dispatcher)));

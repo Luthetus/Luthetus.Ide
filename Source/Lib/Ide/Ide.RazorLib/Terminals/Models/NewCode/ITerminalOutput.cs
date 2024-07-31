@@ -8,8 +8,10 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 /// <summary>Output Data</summary>
-public interface ITerminalOutput : ITerminalPipe
+public interface ITerminalOutput : IDisposable
 {
+	public ImmutableList<ITerminalOutputFormatter> OutputFormatterList { get; }
+
 	/// <summary>
 	/// TODO: Make this 'Action<Key<TerminalCommandParsed>>?' so one can
 	///       track the output of a specific command as it is being executed?
@@ -17,14 +19,7 @@ public interface ITerminalOutput : ITerminalPipe
 	public event Action? OnWriteOutput;
 	
 	public void WriteOutput(TerminalCommandParsed terminalCommandParsed, CommandEvent commandEvent);
-	
-	public string GetOutput(string terminalOutputFormatterName);
-	
+	public ITerminalOutputFormatted GetOutputFormatted(string terminalOutputFormatterName);
 	public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey);
-	
-	public ImmutableList<TerminalCommandParsed> GetParsedCommandList();	
-	public ImmutableList<TextEditorTextSpan> GetTextSpanList();
-	public ImmutableList<ITextEditorSymbol> GetSymbolList();
-	
-	public void SetSymbolList(List<ITextEditorSymbol> symbolList);
+	public ImmutableList<TerminalCommandParsed> GetParsedCommandList();
 }

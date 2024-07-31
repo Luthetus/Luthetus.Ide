@@ -5,40 +5,48 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.Ide.RazorLib.Terminals.Models.NewCode
-@using Luthetus.Ide.RazorLib.Terminals.Models;
-@using Luthetus.Ide.RazorLib.Terminals.Displays;
+@using Luthetus.Ide.RazorLib.Terminals.Models
+@using Luthetus.Ide.RazorLib.Terminals.Displays
 
 @{
 	var localTerminal = _terminal;
 	
+	var localFormatter = _terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
+		x => x.Name == nameof(TerminalOutputFormatterExpand));
+	
 	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectory
 		?? "null";
 	
-	var paddingForWorkingDirectoryText = 2;	
+	var paddingForWorkingDirectoryText = 2;
 	var workingDirectoryTextWidth = workingDirectory.Length + paddingForWorkingDirectoryText;
 }
 
 <div class="luth_ide_new-terminal-panel">
-
-	<div style="height: calc(100% - 2em);">		
-		<ShouldRenderBoundary>
-			<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="TerminalOutputTextEditorExpand.TextEditorViewModelKey" />
-		</ShouldRenderBoundary>
-	</div>
-
-	<div style="height: 2em; display: flex;">
-		<input type="text"
-			   style="width: @(workingDirectoryTextWidth)ch; height: 100%;"
-			   title="Working directory"
-			   readonly
-			   value="@workingDirectory" />
-			   
-		<input @bind="_command"
-		       @bind:event="oninput"
-			   @onkeydown="HandleOnKeyDown"
-			   type="text"
-			   style="width: calc(100% - @(workingDirectoryTextWidth)ch); height: 100%;"
-			   title="Command" />
-	</div>
-
+	@if (localFormatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
+	{
+		<text>@nameof(ITerminalOutputFormatter) was not nameof(TerminalOutputFormatterExpand)</text>
+	}
+	else
+	{
+		<div style="height: calc(100% - 2em);">		
+			<ShouldRenderBoundary>
+				<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="terminalOutputFormatterExpand.TextEditorViewModelKey" />
+			</ShouldRenderBoundary>
+		</div>
+	
+		<div style="height: 2em; display: flex;">
+			<input type="text"
+				   style="width: @(workingDirectoryTextWidth)ch; height: 100%;"
+				   title="Working directory"
+				   readonly
+				   value="@workingDirectory" />
+				   
+			<input @bind="_command"
+			       @bind:event="oninput"
+				   @onkeydown="HandleOnKeyDown"
+				   type="text"
+				   style="width: calc(100% - @(workingDirectoryTextWidth)ch); height: 100%;"
+				   title="Command" />
+		</div>
+	}
 </div>
