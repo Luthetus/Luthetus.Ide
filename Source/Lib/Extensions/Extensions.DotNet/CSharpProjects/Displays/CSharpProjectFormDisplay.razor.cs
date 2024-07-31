@@ -148,8 +148,9 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 				EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
 				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandKey.Guid))
 			{
-				ContinueWith = parsedTerminalCommand =>
+				ContinueWithFunc = parsedTerminalCommand =>
 				{
+					DotNetCliOutputParser.ParseOutputLineDotNetNewList(parsedTerminalCommand.OutputCache.ToString());
 					_viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
 					return InvokeAsync(StateHasChanged);
 				}

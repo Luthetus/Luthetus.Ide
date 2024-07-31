@@ -40,8 +40,6 @@ public class DotNetCliOutputParser : IOutputParser
 	{
 		if (terminalCommand.FormattedCommand.Tag == TagConstants.Run)
 			return ParseOutputLineDotNetRun(terminalCommand, outputLine);
-		else if (terminalCommand.FormattedCommand.Tag == TagConstants.NewList)
-			return ParseOutputLineDotNetNewList(terminalCommand, outputLine);
 		else if (terminalCommand.FormattedCommand.Tag == TagConstants.Test)
 			return ParseOutputLineDotNetTestListTests(terminalCommand, outputLine);
 
@@ -233,13 +231,17 @@ public class DotNetCliOutputParser : IOutputParser
 		return textSpanList;
 	}
 
-	public List<TextEditorTextSpan> ParseOutputLineDotNetNewList(TerminalCommand terminalCommand, string outputLine)
+	public List<TextEditorTextSpan> ParseOutputLineDotNetNewList(string outputEntire)
 	{
+		Console.WriteLine("debug: ParseOutputLineDotNetNewList");
+	
+		NewListModelSession = new();
+	
 		// The columns are titled: { "Template Name", "Short Name", "Language", "Tags" }
 		var keywordTags = "Tags";
 
 		var resourceUri = ResourceUri.Empty;
-		var stringWalker = new StringWalker(resourceUri, outputLine);
+		var stringWalker = new StringWalker(resourceUri, outputEntire);
 
 		while (!stringWalker.IsEof)
 		{

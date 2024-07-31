@@ -45,7 +45,21 @@ public class TerminalCommandRequest
 	/// This Func will block the terminal from executing further terminal
 	/// commands in the queue until it has returned.
 	/// </summary>
-	public Func<TerminalCommandParsed, Task> BeginWith { get; init; }
+	public Func<TerminalCommandParsed, Task> BeginWithFunc { get; init; }
+	
+	/// <summary>
+	/// Input: the parsed terminal command that is being executed.
+	/// 
+	/// This Func will block the terminal from executing further terminal
+	/// commands in the queue until it has returned.
+	///
+	/// (
+	///     it is recommended to use <see cref="ContinueWithFunc"/>
+	///     as invoking this Func every line of output might
+	///     add an undesireable amount of overhead.
+	/// )
+	/// </summary>
+	public Func<TerminalCommandParsed, Task> OnOutputFunc { get; init; }
 	
 	/// <summary>
 	/// Input: the parsed terminal command that just finished.
@@ -53,5 +67,5 @@ public class TerminalCommandRequest
 	/// This Func will block the terminal from executing further terminal
 	/// commands in the queue until it has returned.
 	/// </summary>
-	public Func<TerminalCommandParsed, Task> ContinueWith { get; init; }
+	public Func<TerminalCommandParsed, Task> ContinueWithFunc { get; init; }
 }

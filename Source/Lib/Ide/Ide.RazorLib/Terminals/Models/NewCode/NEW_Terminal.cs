@@ -72,19 +72,33 @@ public class NEW_Terminal : ITerminal
 		if (parsedCommand is null)
 			return;
     	
-    	var command = Cli.Wrap(parsedCommand.TargetFileName);
+    	var cliWrapCommand = Cli.Wrap(parsedCommand.TargetFileName);
 
-		command = command.WithWorkingDirectory(TerminalInteractive.WorkingDirectory);
+		cliWrapCommand = cliWrapCommand.WithWorkingDirectory(TerminalInteractive.WorkingDirectory);
 
 		if (!string.IsNullOrWhiteSpace(parsedCommand.Arguments))
-			command = command.WithArguments(parsedCommand.Arguments);
+			cliWrapCommand = cliWrapCommand.WithArguments(parsedCommand.Arguments);
 		
 		try
 		{
-			await command
+			if (parsedCommand.SourceTerminalCommandRequest.BeginWithFunc is not null)
+			{
+				await parsedCommand.SourceTerminalCommandRequest.BeginWithFunc
+					.Invoke(parsedCommand)
+					.ConfigureAwait(false);
+			}
+			
+			await cliWrapCommand
 				.Observe(_commandCancellationTokenSource.Token)
 				.ForEachAsync(HandleOutput)
 				.ConfigureAwait(false);
+				
+			if (parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc is not null)
+			{
+				await parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc
+					.Invoke(parsedCommand)
+					.ConfigureAwait(false);
+			}
 		}
 		catch (Exception e)
 		{
