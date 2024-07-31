@@ -73,7 +73,6 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 
 					var localTerminal = _terminal;
 					
-					Console.WriteLine("Aaaaaaaa");
 					modelModifier.SetContent(localTerminal.TerminalOutput.GetOutput(nameof(TerminalOutputFormatterExpand)));
 					
 					primaryCursorModifier.LineIndex = 0;
@@ -84,7 +83,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 
 					if (compilerServiceResource is TerminalResource terminalResource)
 					{
-						var symbolList = ((TerminalOutputTextEditorExpand)localTerminal.TerminalOutput).GetSymbolList();
+						var symbolList = localTerminal.TerminalOutput.GetSymbolList();
 					
 						terminalResource.ManualDecorationTextSpanList.Clear();
 						terminalResource.ManualDecorationTextSpanList.AddRange(
@@ -98,12 +97,10 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 							modelModifier,
 							terminalResource.GetTokenTextSpans());
 							
-						var textSpanList = ((TerminalOutputTextEditorExpand)localTerminal.TerminalOutput).GetTextSpanList();
-						
-						editContext.TextEditorService.ModelApi.ApplyDecorationRange(
+							editContext.TextEditorService.ModelApi.ApplyDecorationRange(
 							editContext,
 							modelModifier,
-							textSpanList);	
+							localTerminal.TerminalOutput.GetTextSpanList());
 					}
 					
 					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;

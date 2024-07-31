@@ -12,10 +12,10 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
@@ -34,7 +34,7 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 	private readonly List<ITerminalOutputFormatter> _outputFormatterList;
 	private readonly List<ITextEditorSymbol> _symbolList = new();
 	private readonly List<TextEditorTextSpan> _textSpanList = new();
-	private readonly List<TerminalCommandParsed> _commandList = new();
+	private readonly List<TerminalCommandParsed> _parsedCommandList = new();
 	private readonly object _listLock = new();
 
 	public TerminalOutputTextEditorExpand(
@@ -77,16 +77,16 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 	{
 		lock (_listLock)
 		{
-			return _commandList.FirstOrDefault(x =>
+			return _parsedCommandList.FirstOrDefault(x =>
 				x.SourceTerminalCommandRequest.Key == terminalCommandRequestKey);
 		}
 	}
 	
-	public ImmutableList<TerminalCommandParsed> GetCommandList()
+	public ImmutableList<TerminalCommandParsed> GetParsedCommandList()
 	{
 		lock (_listLock)
 		{
-			return _commandList.ToImmutableList();
+			return _parsedCommandList.ToImmutableList();
 		}
 	}
 	
@@ -125,14 +125,14 @@ public class TerminalOutputTextEditorExpand : ITerminalOutput, IDisposable
 				// Delete any output of the previous invocation.
 				lock (_listLock)
 				{
-					var indexPreviousOutput = _commandList.FindIndex(x =>
+					var indexPreviousOutput = _parsedCommandList.FindIndex(x =>
 						x.SourceTerminalCommandRequest.Key ==
 							terminalCommandParsed.SourceTerminalCommandRequest.Key);
 							
 					if (indexPreviousOutput != -1)
-						_commandList.RemoveAt(indexPreviousOutput);
+						_parsedCommandList.RemoveAt(indexPreviousOutput);
 						
-					_commandList.Add(terminalCommandParsed);
+					_parsedCommandList.Add(terminalCommandParsed);
 				}
 				
 				break;
