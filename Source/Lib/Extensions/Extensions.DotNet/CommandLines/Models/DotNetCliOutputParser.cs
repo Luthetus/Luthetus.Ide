@@ -242,7 +242,10 @@ public class DotNetCliOutputParser : IOutputParser
 	/// </summary>
 	public List<TextEditorTextSpan> ParseOutputLineDotNetNewList(string outputEntire)
 	{
-		Console.WriteLine("debug: ParseOutputLineDotNetNewList");
+		// TODO: This seems to have provided the desired output...
+		//       ...the code is quite nasty but I'm not feeling well,
+		//       so I'm going to leave it like this for now.
+		//       Some edge case in the future will probably break this.
 	
 		NewListModelSession = new();
 	
@@ -252,9 +255,17 @@ public class DotNetCliOutputParser : IOutputParser
 		var resourceUri = ResourceUri.Empty;
 		var stringWalker = new StringWalker(resourceUri, outputEntire);
 
+		var shouldCountSpaceBetweenColumns = true;
+		var spaceBetweenColumnsCount = 0;
+	
+		var isFirstColumn = true;
+		
+		var firstLocateDashes = true;
+
 		while (!stringWalker.IsEof)
 		{
 			var whitespaceWasRead = false;
+
 		
 			if (NewListModelSession.ShouldLocateKeywordTags)
 			{
@@ -279,13 +290,22 @@ public class DotNetCliOutputParser : IOutputParser
 					while (!stringWalker.IsEof)
 					{
 						if (stringWalker.CurrentCharacter != '-')
+						{
 							_ = stringWalker.ReadCharacter();
+							
+							if (!firstLocateDashes && shouldCountSpaceBetweenColumns)
+								spaceBetweenColumnsCount++;
+						}
 						else
+						{
 							break;
+						}
 					}
 
 					NewListModelSession.ShouldLocateDashes = false;
 				}
+				
+				shouldCountSpaceBetweenColumns = false;
 
 				// Count the '-' (dashes) to know the character length of each column.
 				if (stringWalker.CurrentCharacter != '-')
@@ -316,6 +336,32 @@ public class DotNetCliOutputParser : IOutputParser
 			}
 			else
 			{
+				/*
+				var startPositionIndex = stringWalker.PositionIndex;
+				
+				var templateNameStartInclusiveIndex = 0;
+				var templateNameEndExclusiveIndex = templateNameStartInclusiveIndex + NewListModelSession.LengthOfTemplateNameColumn;
+				
+				var shortNameStartInclusiveIndex = templateNameEndExclusiveIndex + spaceBetweenColumnsCount;
+				var shortNameEndExclusiveIndex = shortNameStartInclusiveIndex + NewListModelSession.LengthOfShortNameColumn;
+				
+				var languageStartInclusiveIndex = shortNameEndExclusiveIndex + spaceBetweenColumnsCount;
+				var languageEndExclusiveIndex = languageStartInclusiveIndex + NewListModelSession.LengthOfLanguageColumn;
+				
+				var tagsStartInclusiveIndex = languageEndExclusiveIndex + spaceBetweenColumnsCount;
+				var tagsEndExclusiveIndex = tagsStartInclusiveIndex + NewListModelSession.LengthOfTagsColumn;
+				
+				var columnWasEmpty = false;
+				*/
+				
+				if (isFirstColumn)
+					isFirstColumn = false;
+				else
+					stringWalker.ReadRange(spaceBetweenColumnsCount);
+					
+				Console.WriteLine(spaceBetweenColumnsCount);
+
+				/*			
 				// Skip whitespace
 				while (!stringWalker.IsEof)
 				{
@@ -324,12 +370,16 @@ public class DotNetCliOutputParser : IOutputParser
 					{
 						_ = stringWalker.ReadCharacter();
 						whitespaceWasRead = true;
+						
+						if (startPositionIndex + NewListModelSession.ColumnLength < stringWalker.PositionIndex)
+							columnWasEmpty = true;
 					}
 					else
 					{
 						break;
 					}
 				}
+				*/
 
 				for (int i = 0; i < NewListModelSession.ColumnLength; i++)
 				{
@@ -374,6 +424,8 @@ public class DotNetCliOutputParser : IOutputParser
 
 					NewListModelSession.ProjectTemplate = new(null, null, null, null);
 					NewListModelSession.ColumnLength = NewListModelSession.LengthOfTemplateNameColumn;
+					
+					isFirstColumn = true;
 				}
 
 				NewListModelSession.ColumnBuilder = new();
