@@ -232,6 +232,8 @@ public class DotNetCliOutputParser : IOutputParser
 	}
 
 	/// <summary>
+	/// (NOTE: this has been fixed but the note is being left here as its a common issue with this code)
+	/// ================================================================================================
 	/// The following output breaks because the 'Language' for template name of 'dotnet gitignore file'
 	/// is left empty.
 	///
