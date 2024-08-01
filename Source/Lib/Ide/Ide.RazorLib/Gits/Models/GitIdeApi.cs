@@ -282,20 +282,16 @@ public class GitIdeApi
 		            HACK_ArgumentsString = terminalCommandArgs
 		        };
 		        
-		        var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-		            formattedCommand,
-		            localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: () =>
-					{
-						StatusEnqueue();
-						return Task.CompletedTask;
-					});
-					
 				var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value,
-                	Key<TerminalCommandRequest>.NewKey());
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		StatusEnqueue();
+                		return Task.CompletedTask;
+                	}
+                };
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
