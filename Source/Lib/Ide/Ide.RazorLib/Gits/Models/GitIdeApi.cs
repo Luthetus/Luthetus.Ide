@@ -320,28 +320,24 @@ public class GitIdeApi
                     HACK_ArgumentsString = argumentsString
                 };
 
-                var gitCommitCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: () =>
-					{
-						StatusEnqueue();
-
+                var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+	                	StatusEnqueue();
+	
 						NotificationHelper.DispatchInformative(
 							"Git: committed",
-                            commitSummary,
+	                        commitSummary,
 							_commonComponentRenderers,
 							_dispatcher,
 							TimeSpan.FromSeconds(5));
-
+	
 						return Task.CompletedTask;
-                    });
-                    
-                var terminalCommandRequest = new TerminalCommandRequest(
-                	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value,
-                	Key<TerminalCommandRequest>.NewKey());
+					}
+                };
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
