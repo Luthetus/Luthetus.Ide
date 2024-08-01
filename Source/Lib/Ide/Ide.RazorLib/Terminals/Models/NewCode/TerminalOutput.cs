@@ -27,8 +27,6 @@ public class TerminalOutput : ITerminalOutput
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDispatcher _dispatcher;
 	
-	private readonly List<ITextEditorSymbol> _symbolList = new();
-	private readonly List<TextEditorTextSpan> _textSpanList = new();
 	private readonly List<TerminalCommandParsed> _parsedCommandList = new();
 	private readonly object _listLock = new();
 
@@ -128,6 +126,16 @@ public class TerminalOutput : ITerminalOutput
 				break;
 		}
 		
+		OnWriteOutput?.Invoke();
+	}
+	
+	public void ClearOutput()
+	{
+		lock (_listLock)
+		{
+			_parsedCommandList.Clear();
+		}
+
 		OnWriteOutput?.Invoke();
 	}
 	

@@ -6,7 +6,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
-/// <summary>Aaa</summary>
 public class TerminalInteractive : ITerminalInteractive
 {
 	private readonly ITerminal _terminal;
@@ -26,9 +25,6 @@ public class TerminalInteractive : ITerminalInteractive
 	public TerminalCommandParsed? TryHandleCommand(TerminalCommandRequest terminalCommandRequest)
 	{
 		var parsedCommand = Parse(terminalCommandRequest);
-		
-		Console.WriteLine($"TargetFileName: {parsedCommand.TargetFileName}");
-		Console.WriteLine($"Arguments: {parsedCommand.Arguments}");
 		
 		// To set the working directory, is not mutually exclusive
 		// to the "cd" command. Do not combine these.
@@ -52,8 +48,7 @@ public class TerminalInteractive : ITerminalInteractive
 					new StandardOutputCommandEvent($"WorkingDirectory set to: '{parsedCommand.Arguments}'\n"));
 				return null;
 			case "clear":
-				// ClearTerminal();
-				// WriteWorkingDirectory();
+				_terminal.TerminalOutput.ClearOutput();
 				return null;
 			default:
 				return parsedCommand;

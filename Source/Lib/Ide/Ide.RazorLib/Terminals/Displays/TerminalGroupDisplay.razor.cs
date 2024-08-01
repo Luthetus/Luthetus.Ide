@@ -22,4 +22,10 @@ public partial class TerminalGroupDisplay : ComponentBase
     {
         Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalAction(terminalKey));
     }
+    
+    private void ClearTerminalOnClick(Key<Terminal> terminalKey)
+    {
+    	if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
+    		TerminalStateWrap.Value.NEW_TERMINAL?.EnqueueClear();
+    }
 }

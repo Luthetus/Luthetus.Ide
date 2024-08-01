@@ -81,6 +81,12 @@
                                 @onclick:stopPropagation="true">
                             Kill
                         </button>
+                        
+                        <button class="luth_button"
+                                @onclick="() => ClearTerminalOnClick(wellKnownTerminalKey)"
+                                @onclick:stopPropagation="true">
+                            Clear
+                        </button>
 
                         <div style="margin-left: 15px;">
                             @if (terminal.HasExecutingProcess)

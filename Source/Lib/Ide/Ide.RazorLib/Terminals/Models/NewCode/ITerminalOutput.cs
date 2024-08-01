@@ -19,6 +19,7 @@ public interface ITerminalOutput : IDisposable
 	public event Action? OnWriteOutput;
 	
 	public void WriteOutput(TerminalCommandParsed terminalCommandParsed, CommandEvent commandEvent);
+	public void ClearOutput();
 	public ITerminalOutputFormatted GetOutputFormatted(string terminalOutputFormatterName);
 	public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey);
 	public ImmutableList<TerminalCommandParsed> GetParsedCommandList();

@@ -12,4 +12,5 @@ public interface ITerminal : IDisposable
 	public ITerminalOutput TerminalOutput { get; }
 	
 	public void EnqueueCommand(TerminalCommandRequest terminalCommandRequest);
+	public void EnqueueClear();
 }

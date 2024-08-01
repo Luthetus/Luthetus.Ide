@@ -63,6 +63,11 @@ public class NEW_Terminal : ITerminal
 			"Enqueue Command",
 			() => HandleCommand(terminalCommandRequest));
     }
+    
+    public void EnqueueClear()
+    {
+    	EnqueueCommand(new TerminalCommandRequest("clear", null));
+    }
 
     private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
