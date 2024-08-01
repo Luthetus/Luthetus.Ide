@@ -147,6 +147,22 @@ public class GitCliOutputParser : IOutputParser
 			_behindByCommitCount ?? 0,
 			_aheadByCommitCount ?? 0));
 	}
+	
+	public void DispatchSetBranchAction()
+	{
+		var localRepo = _repo;
+		if (localRepo is null)
+			return;
+			
+		var localBranch = _branch;
+		
+		if (localBranch is not null)
+		{
+			_dispatcher.Dispatch(new GitState.SetBranchAction(
+				localRepo,
+				localBranch));
+		}
+	}
 
 	public List<TextEditorTextSpan> StatusParseLine(string output)
     {
@@ -857,25 +873,15 @@ public class GitCliOutputParser : IOutputParser
         return textSpanList;
     }
     
-    public List<TextEditorTextSpan> GetBranchParseLine(string output)
+    public List<TextEditorTextSpan> GetBranchParseLine(string outputEntire)
     {
 		var localRepo = _repo;
 		if (localRepo is null)
 			return new();
 
-		// TODO: Parsing branch line is super hacky, and should be re-written.
-		if (_count++ == 1)
-            _branch ??= output.Trim();
+		_branch ??= outputEntire.Trim();
 
-        var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
-        var textSpanList = new List<TextEditorTextSpan>();
-
-        while (!stringWalker.IsEof)
-        {
-            _ = stringWalker.ReadCharacter();
-        }
-
-        return textSpanList;
+        return new();
     }
     
     public List<TextEditorTextSpan> GetBranchListLine(string output)

@@ -69,12 +69,6 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.StatusEnqueue,
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser);
-
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value)
@@ -87,8 +81,6 @@ public class GitIdeApi
                 		_gitCliOutputParser.DispatchSetStatusAction();
                 			
                 		parsedCommand.TextSpanList = textSpanList;
-                			
-                		Console.WriteLine(textSpanList.Count);
                 		return Task.CompletedTask;
                 	}
                 };
@@ -136,8 +128,19 @@ public class GitIdeApi
 
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value,
-                	Key<TerminalCommandRequest>.NewKey());
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		Console.WriteLine(parsedCommand.OutputCache.ToString());
+                	
+                		_gitCliOutputParser.GetBranchParseLine(
+                			parsedCommand.OutputCache.ToString());
+                			
+                		_gitCliOutputParser.DispatchSetBranchAction();
+                		return Task.CompletedTask;
+                	}
+                };
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
