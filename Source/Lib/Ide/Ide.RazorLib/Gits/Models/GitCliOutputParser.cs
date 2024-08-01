@@ -445,6 +445,364 @@ public class GitCliOutputParser : IOutputParser
 
         return textSpanList;
     }
+    
+    public List<TextEditorTextSpan> StatusParseEntire(string outputEntire)
+    {
+    	_stageKind = StageKind.None;
+		_repo = _gitStateWrap.Value.Repo;
+		
+		UntrackedGitFileList.Clear();
+		StagedGitFileList.Clear();
+		UnstagedGitFileList.Clear();
+		_behindByCommitCount = null;
+		_aheadByCommitCount = null;
+    
+    	Console.WriteLine("itImmedRetrn");
+    
+		var localRepo = _repo;
+        if (localRepo is null)
+            return new();
+            
+		Console.WriteLine("nvm it do go down");
+
+		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), outputEntire);
+        var textSpanList = new List<TextEditorTextSpan>();
+        
+        while (!stringWalker.IsEof)
+        {
+        	Console.WriteLine("gitstatus");
+        
+        	if (stringWalker.CurrentCharacter == 'C' && stringWalker.PeekForSubstring("Changes not staged for commit:"))
+            {
+                // Found: "Changes not staged for commit:"
+                var startPositionInclusive = stringWalker.PositionIndex;
+
+                // Read: "Changes not staged for commit:" (literally)
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == ':')
+                    {
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusive,
+                            stringWalker,
+                            (byte)TerminalDecorationKind.StringLiteral));
+
+                        _stageKind = StageKind.IsReadingUnstagedFiles;
+                        break;
+                    }
+                }
+            }
+            
+            _ = stringWalker.ReadCharacter();
+        }
+        
+        return textSpanList;
+
+        while (!stringWalker.IsEof)
+        {
+            if (stringWalker.CurrentCharacter == 'U' && stringWalker.PeekForSubstring("Untracked files:"))
+            {
+                // Found: "Untracked files:"
+                var startPositionInclusive = stringWalker.PositionIndex;
+
+                // Read: "Untracked files:" (literally)
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == ':')
+                    {
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusive,
+                            stringWalker,
+                            (byte)TerminalDecorationKind.StringLiteral));
+
+                        _stageKind = StageKind.IsReadingUntrackedFiles;
+                        break;
+                    }
+                }
+            }
+            else if (stringWalker.CurrentCharacter == 'C' && stringWalker.PeekForSubstring("Changes to be committed:"))
+            {
+                // Found: "Changes to be committed:"
+                var startPositionInclusive = stringWalker.PositionIndex;
+
+                // Read: "Changes to be committed:" (literally)
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == ':')
+                    {
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusive,
+                            stringWalker,
+                            (byte)TerminalDecorationKind.StringLiteral));
+
+                        _stageKind = StageKind.IsReadingStagedFiles;
+                        break;
+                    }
+                }
+            }
+            else if (stringWalker.CurrentCharacter == 'C' && stringWalker.PeekForSubstring("Changes not staged for commit:"))
+            {
+                // Found: "Changes not staged for commit:"
+                var startPositionInclusive = stringWalker.PositionIndex;
+
+                // Read: "Changes not staged for commit:" (literally)
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == ':')
+                    {
+                        textSpanList.Add(new TextEditorTextSpan(
+                            startPositionInclusive,
+                            stringWalker,
+                            (byte)TerminalDecorationKind.StringLiteral));
+
+                        _stageKind = StageKind.IsReadingUnstagedFiles;
+                        break;
+                    }
+                }
+            }
+            else if (stringWalker.CurrentCharacter == 'Y' && stringWalker.PeekForSubstring("Your branch is behind "))
+            {
+                // Found: "Your branch is behind 'origin/master' by 1 commit, and can be fast-forwarded."
+                //
+                // Read: "Your branch is behind " (literally)
+                _ = stringWalker.ReadRange("Your branch is behind ".Length);
+
+                if (stringWalker.CurrentCharacter != '\'')
+                    return textSpanList;
+
+                // Skip opening single-quote
+                _ = stringWalker.ReadCharacter();
+
+                // Skip until and including the closing single-quote
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == '\'')
+                        break;
+                }
+
+                // Read: " by "
+                _ = stringWalker.ReadRange(" by ".Length);
+
+                // Read the unsigned-integer
+                var syntaxTokenList = new List<ISyntaxToken>();
+                LexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
+                var numberTextSpan = syntaxTokenList.Single().TextSpan;
+                var numberString = numberTextSpan.GetText();
+
+                if (int.TryParse(numberString, out var localBehindByCommitCount))
+                    _behindByCommitCount = localBehindByCommitCount;
+                else
+                    _behindByCommitCount = null;
+
+                textSpanList.Add(numberTextSpan with
+                {
+                    DecorationByte = (byte)TerminalDecorationKind.StringLiteral,
+                });
+
+                return textSpanList;
+            }
+            else if (stringWalker.CurrentCharacter == 'Y' && stringWalker.PeekForSubstring("Your branch is ahead of "))
+            {
+                // Found: "Your branch is ahead of 'origin/master' by 1 commit."
+                //
+                // Read: "Your branch is ahead of " (literally)
+                _ = stringWalker.ReadRange("Your branch is ahead of ".Length);
+
+                if (stringWalker.CurrentCharacter != '\'')
+                    return textSpanList;
+
+                // Skip opening single-quote
+                _ = stringWalker.ReadCharacter();
+
+                // Skip until and including the closing single-quote
+                while (!stringWalker.IsEof)
+                {
+                    var character = stringWalker.ReadCharacter();
+
+                    if (character == '\'')
+                        break;
+                }
+
+                // Read: " by "
+                _ = stringWalker.ReadRange(" by ".Length);
+
+                // Read the unsigned-integer
+                var syntaxTokenList = new List<ISyntaxToken>();
+                LexerUtils.LexNumericLiteralToken(stringWalker, syntaxTokenList);
+                var numberTextSpan = syntaxTokenList.Single().TextSpan;
+                var numberString = numberTextSpan.GetText();
+
+                if (int.TryParse(numberString, out var localBehindByCommitCount))
+                    _aheadByCommitCount = localBehindByCommitCount;
+                else
+                    _aheadByCommitCount = null;
+
+                textSpanList.Add(numberTextSpan with
+                {
+                    DecorationByte = (byte)TerminalDecorationKind.StringLiteral,
+                });
+
+                return textSpanList;
+            }
+
+            if (_stageKind == StageKind.IsReadingUntrackedFiles ||
+                _stageKind == StageKind.IsReadingStagedFiles ||
+                _stageKind == StageKind.IsReadingUnstagedFiles)
+            {
+                while (!stringWalker.IsEof)
+                {
+
+                    if (stringWalker.CurrentCharacter == ' ' && stringWalker.NextCharacter == ' ')
+                    {
+                        // Read comments line by line
+                        while (!stringWalker.IsEof)
+                        {
+                            if (stringWalker.CurrentCharacter != ' ' || stringWalker.NextCharacter != ' ')
+                                break;
+
+                            // Discard the leading whitespace on the line (two spaces)
+                            _ = stringWalker.ReadRange(2);
+
+                            var startPositionInclusive = stringWalker.PositionIndex;
+
+                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+                            {
+                                _ = stringWalker.ReadCharacter();
+                            }
+
+                            textSpanList.Add(new TextEditorTextSpan(
+                                startPositionInclusive,
+                                stringWalker,
+                                (byte)TerminalDecorationKind.Comment));
+                        }
+                    }
+                    else if (stringWalker.CurrentCharacter == WhitespaceFacts.TAB)
+                    {
+                        // Read untracked files line by line
+                        while (!stringWalker.IsEof)
+                        {
+                            if (stringWalker.CurrentCharacter != WhitespaceFacts.TAB)
+                                break;
+
+                            // Discard the leading whitespace on the line (one tab)
+                            _ = stringWalker.ReadCharacter();
+
+							var gitDirtyString = string.Empty;
+
+                            if (_stageKind == StageKind.IsReadingStagedFiles ||
+                                _stageKind == StageKind.IsReadingUnstagedFiles)
+                            {
+                                // Read the git description
+                                //
+                                // Example: "new file:   BlazorApp4NetCoreDbg/Persons/Abc.cs"
+                                //           ^^^^^^^^^^^^
+
+								var gitDirtyStartPositionInclusive = stringWalker.PositionIndex;
+
+                                while (!stringWalker.IsEof)
+                                {
+                                    if (stringWalker.CurrentCharacter == ':')
+                                    {
+										var gitDirtyTextSpan = new TextEditorTextSpan(
+			                                gitDirtyStartPositionInclusive,
+			                                stringWalker,
+			                                (byte)TerminalDecorationKind.None);
+
+										gitDirtyString = gitDirtyTextSpan.GetText();
+
+                                        // Read the ':'
+                                        _ = stringWalker.ReadCharacter();
+
+                                        // Read the 3 ' ' characters (space characters)
+                                        _ = stringWalker.ReadRange(3);
+
+                                        break;
+                                    }
+
+                                    _ = stringWalker.ReadCharacter();
+                                }
+                            }
+
+                            var startPositionInclusive = stringWalker.PositionIndex;
+
+                            while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+                            {
+                                _ = stringWalker.ReadCharacter();
+                            }
+
+                            var textSpan = new TextEditorTextSpan(
+                                startPositionInclusive,
+                                stringWalker,
+                                (byte)TerminalDecorationKind.Warning);
+                            textSpanList.Add(textSpan);
+
+                            var relativePathString = textSpan.GetText();
+
+							var absolutePathString = PathHelper.GetAbsoluteFromAbsoluteAndRelative(
+								localRepo.AbsolutePath,
+                                relativePathString,
+                                _environmentProvider);
+
+                            var isDirectory = relativePathString.EndsWith(_environmentProvider.DirectorySeparatorChar) ||
+                                relativePathString.EndsWith(_environmentProvider.AltDirectorySeparatorChar);
+
+                            var absolutePath = _environmentProvider.AbsolutePathFactory(absolutePathString, isDirectory);
+
+                            GitDirtyReason gitDirtyReason;
+
+							if (_stageKind == StageKind.IsReadingUntrackedFiles)
+							{
+								gitDirtyReason = GitDirtyReason.Untracked;
+							}
+							else
+							{
+								if (gitDirtyString == "modified")
+									gitDirtyReason = GitDirtyReason.Modified;
+								else if (gitDirtyString == "added") // There is no "added" its "new file" in the output.
+									gitDirtyReason = GitDirtyReason.Added;
+								else if (gitDirtyString == "new file")
+									gitDirtyReason = GitDirtyReason.Added;
+								else if (gitDirtyString == "deleted")
+									gitDirtyReason = GitDirtyReason.Deleted;
+								else
+									gitDirtyReason = GitDirtyReason.None;
+							}
+
+                            var gitFile = new GitFile(
+                                absolutePath,
+                                relativePathString,
+                                gitDirtyReason);
+
+                            if (_stageKind == StageKind.IsReadingUntrackedFiles)
+                                UntrackedGitFileList.Add(gitFile);
+                            else if (_stageKind == StageKind.IsReadingStagedFiles)
+                                StagedGitFileList.Add(gitFile);
+                            else if (_stageKind == StageKind.IsReadingUnstagedFiles)
+                                UnstagedGitFileList.Add(gitFile);
+                        }
+
+                        break;
+                    }
+
+                    _ = stringWalker.ReadCharacter();
+                }
+            }
+
+            _ = stringWalker.ReadCharacter();
+        }
+
+        return textSpanList;
+    }
 
     public List<TextEditorTextSpan> LogFileParseLine(string output)
     {

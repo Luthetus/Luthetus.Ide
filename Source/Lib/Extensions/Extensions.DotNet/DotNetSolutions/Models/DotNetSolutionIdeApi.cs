@@ -362,8 +362,7 @@ public class DotNetSolutionIdeApi
 		        		_terminalStateWrap.Value.NEW_TERMINAL.TerminalOutput.WriteOutput(
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'.
-Changing working directory to:
-	'{parentDirectory.Value}'"));
+Sln-Directory: '{parentDirectory.Value}'"));
 		        		return Task.CompletedTask;
 		        	}
 		        };

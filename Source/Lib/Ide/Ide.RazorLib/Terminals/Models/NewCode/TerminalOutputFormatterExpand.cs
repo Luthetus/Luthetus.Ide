@@ -69,12 +69,25 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 		        string.Empty,
 		        workingDirectoryText);
 		    outTextSpanList.Add(workingDirectoryTextSpan);
-			
+		    
 			outputBuilder
 				.Append(workingDirectoryText)
 				.Append(parsedCommand.SourceTerminalCommandRequest.CommandText)
-				.Append('\n')
-				.Append(parsedCommand.OutputCache.ToString());
+				.Append('\n');
+				
+			var parsedCommandTextSpanList = parsedCommand.TextSpanList;
+			
+			if (parsedCommandTextSpanList is not null)
+			{
+			    outTextSpanList.AddRange(parsedCommandTextSpanList.Select(
+			    	textSpan => textSpan with
+			    	{
+					    StartingIndexInclusive = textSpan.StartingIndexInclusive + outputBuilder.Length,
+					    EndingIndexExclusive = textSpan.EndingIndexExclusive + outputBuilder.Length,
+			    	}));
+			}
+			
+			outputBuilder.Append(parsedCommand.OutputCache.ToString());
 		}
 		
 		/*

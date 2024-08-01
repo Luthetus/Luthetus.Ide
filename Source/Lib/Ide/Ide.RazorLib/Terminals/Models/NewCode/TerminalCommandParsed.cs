@@ -1,4 +1,5 @@
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
@@ -18,4 +19,5 @@ public class TerminalCommandParsed
 	public string Arguments { get; }
 	public StringBuilderCache OutputCache { get; } = new();
 	public TerminalCommandRequest SourceTerminalCommandRequest { get; }
+	public List<TextEditorTextSpan> TextSpanList { get; set; }
 }

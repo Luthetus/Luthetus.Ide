@@ -77,8 +77,19 @@ public class GitIdeApi
 
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		var textSpanList = _gitCliOutputParser.StatusParseEntire(
+                			parsedCommand.OutputCache.ToString());
+                			
+                		parsedCommand.TextSpanList = textSpanList;
+                			
+                		Console.WriteLine(textSpanList.Count);
+                		return Task.CompletedTask;
+                	}
+                };
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -124,7 +135,7 @@ public class GitIdeApi
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -162,7 +173,7 @@ public class GitIdeApi
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -225,7 +236,7 @@ public class GitIdeApi
 				var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -288,7 +299,7 @@ public class GitIdeApi
 				var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -338,7 +349,7 @@ public class GitIdeApi
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -383,7 +394,7 @@ public class GitIdeApi
 				var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -422,7 +433,7 @@ public class GitIdeApi
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -466,7 +477,7 @@ public class GitIdeApi
 				var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -512,7 +523,7 @@ public class GitIdeApi
 				var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -556,7 +567,7 @@ public class GitIdeApi
 				var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -600,7 +611,7 @@ public class GitIdeApi
 			    var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -645,7 +656,7 @@ public class GitIdeApi
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value,
-                	new Key<TerminalCommandRequest>(GitTerminalCommandKey.Guid));
+                	Key<TerminalCommandRequest>.NewKey());
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
