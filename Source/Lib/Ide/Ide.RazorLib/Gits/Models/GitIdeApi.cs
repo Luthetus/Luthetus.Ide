@@ -84,6 +84,8 @@ public class GitIdeApi
                 		var textSpanList = _gitCliOutputParser.StatusParseEntire(
                 			parsedCommand.OutputCache.ToString());
                 			
+                		_gitCliOutputParser.DispatchSetStatusAction();
+                			
                 		parsedCommand.TextSpanList = textSpanList;
                 			
                 		Console.WriteLine(textSpanList.Count);

@@ -132,6 +132,21 @@ public class GitCliOutputParser : IOutputParser
 
 		return Task.CompletedTask;
 	}
+	
+	public void DispatchSetStatusAction()
+	{
+		var localRepo = _repo;
+		if (localRepo is null)
+			return;
+	
+		_dispatcher.Dispatch(new GitState.SetStatusAction(
+			localRepo,
+			UntrackedGitFileList.ToImmutableList(),
+			StagedGitFileList.ToImmutableList(),
+			UnstagedGitFileList.ToImmutableList(),
+			_behindByCommitCount ?? 0,
+			_aheadByCommitCount ?? 0));
+	}
 
 	public List<TextEditorTextSpan> StatusParseLine(string output)
     {
