@@ -189,7 +189,12 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 					await InvokeAsync(StateHasChanged);
 				});
 
-			generalTerminal.EnqueueCommand(newCSharpProjectCommand);
+			var terminalCommandRequest = new TerminalCommandRequest(
+	        	formattedCommand.Value,
+	        	EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
+	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandKey.Guid));
+	        	
+	        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 		}
 		finally
 		{
@@ -249,11 +254,21 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 							return Task.CompletedTask;
 						});
 
-					generalTerminal.EnqueueCommand(addExistingProjectToSolutionCommand);
+					var terminalCommandRequest = new TerminalCommandRequest(
+			        	immutableView.FormattedAddExistingProjectToSolutionCommand.Value,
+			        	immutableView.ParentDirectoryNameValue,
+			        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandKey.Guid));
+			        	
+			        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 					return Task.CompletedTask;
 				});
 
-			generalTerminal.EnqueueCommand(newCSharpProjectCommand);
+			var terminalCommandRequest = new TerminalCommandRequest(
+	        	immutableView.FormattedNewCSharpProjectCommand.Value,
+	        	immutableView.ParentDirectoryNameValue,
+	        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandKey.Guid));
+	        	
+	        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 		}
 		else
 		{

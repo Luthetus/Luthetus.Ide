@@ -13,6 +13,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
@@ -135,8 +136,12 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 					return Task.CompletedTask;
 				});
 
-			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-			generalTerminal.EnqueueCommand(newDotNetSolutionCommand);
+			var terminalCommandRequest = new TerminalCommandRequest(
+	        	localFormattedCommand.Value,
+	        	_parentDirectoryName,
+	        	new Key<TerminalCommandRequest>(NewDotNetSolutionTerminalCommandKey.Guid));
+	        	
+	        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 		}
 	}
 

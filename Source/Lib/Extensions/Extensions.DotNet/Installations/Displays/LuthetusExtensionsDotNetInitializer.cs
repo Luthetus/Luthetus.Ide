@@ -11,10 +11,12 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
@@ -36,6 +38,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
+	[Inject]
+	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     [Inject]
 	private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
@@ -319,28 +323,40 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private void BuildOnClick(string solutionAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
-        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
 
         var terminalCommand = new TerminalCommand(
             Key<TerminalCommand>.NewKey(),
             formattedCommand,
             null,
             CancellationToken.None);
-
-        generalTerminal.EnqueueCommand(terminalCommand);
+            
+        var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+		
+		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+		if (localParentDirectory is null)
+			return;
+        
+        var terminalCommandRequest = new TerminalCommandRequest(
+        	formattedCommand.Value,
+        	localParentDirectory.Value);
+        	
+        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanOnClick(string solutionAbsolutePathString)
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetClean(solutionAbsolutePathString);
-        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
-        var terminalCommand = new TerminalCommand(
-            Key<TerminalCommand>.NewKey(),
-            formattedCommand,
-            null,
-            CancellationToken.None);
-
-        generalTerminal.EnqueueCommand(terminalCommand);
+		
+		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
+		
+		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+		if (localParentDirectory is null)
+			return;
+			
+        var terminalCommandRequest = new TerminalCommandRequest(
+        	formattedCommand.Value,
+        	localParentDirectory.Value);
+        	
+        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 	}
 }

@@ -9,6 +9,7 @@ using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Extensions.DotNet.Nugets.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 
@@ -106,7 +107,11 @@ public partial class NugetPackageDisplay : FluxorComponent
 				return Task.CompletedTask;
 			});
 
-		var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-		generalTerminal.EnqueueCommand(addNugetPackageReferenceCommand);
+		var terminalCommandRequest = new TerminalCommandRequest(
+        	formattedCommand.Value,
+        	parentDirectory.Value,
+        	new Key<TerminalCommandRequest>(AddNugetPackageTerminalCommandKey.Guid));
+        	
+        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 	}
 }

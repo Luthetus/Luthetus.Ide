@@ -26,6 +26,7 @@ using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;
@@ -351,15 +352,17 @@ public class DotNetSolutionIdeApi
 
 			// Set 'generalTerminal' working directory
 			{
-				var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
 				var changeDirectoryCommand = new TerminalCommand(
 					Key<TerminalCommand>.NewKey(),
 					new FormattedCommand("cd", new string[] { }),
 					parentDirectory.Value,
 					CancellationToken.None);
 
-				generalTerminal.EnqueueCommand(changeDirectoryCommand);
+				var terminalCommandRequest = new TerminalCommandRequest(
+		        	string.Empty,
+		        	parentDirectory.Value);
+		        	
+		        _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 			}
 
 			// Set 'executionTerminal' working directory

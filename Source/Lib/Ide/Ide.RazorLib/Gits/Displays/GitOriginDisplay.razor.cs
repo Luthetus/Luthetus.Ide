@@ -8,6 +8,7 @@ using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Gits.Displays;
 
@@ -63,7 +64,11 @@ public partial class GitOriginDisplay : ComponentBase
             localGitState.Repo.AbsolutePath.Value,
             OutputParser: GitCliOutputParser);
 
-        var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-        generalTerminal.EnqueueCommand(gitStatusCommand);
+        var terminalCommandRequest = new TerminalCommandRequest(
+        	formattedCommand.Value,
+        	localGitState.Repo.AbsolutePath.Value,
+        	new Key<TerminalCommandRequest>(GitSetOriginTerminalCommandKey.Guid));
+        	
+        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
     }
 }
