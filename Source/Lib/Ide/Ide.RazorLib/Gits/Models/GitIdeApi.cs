@@ -120,20 +120,12 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.GetActiveBranchNameEnqueue
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser);
-
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
                 	localGitState.Repo.AbsolutePath.Value)
                 {
                 	ContinueWithFunc = parsedCommand =>
                 	{
-                		Console.WriteLine(parsedCommand.OutputCache.ToString());
-                	
                 		_gitCliOutputParser.GetBranchParseLine(
                 			parsedCommand.OutputCache.ToString());
                 			
@@ -168,17 +160,20 @@ public class GitIdeApi
                     HACK_ArgumentsString = terminalCommandArgs,
                     Tag = GitCliOutputParser.TagConstants.GetOriginNameEnqueue,
 				};
-
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser);
                     
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value,
-                	Key<TerminalCommandRequest>.NewKey());
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		_gitCliOutputParser.GetOriginParseLine(
+                			parsedCommand.OutputCache.ToString());
+                		
+                		_gitCliOutputParser.DispatchSetOriginAction();
+                		return Task.CompletedTask;
+                	}
+                };
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;

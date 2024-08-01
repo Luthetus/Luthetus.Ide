@@ -163,6 +163,22 @@ public class GitCliOutputParser : IOutputParser
 				localBranch));
 		}
 	}
+	
+	public void DispatchSetOriginAction()
+	{
+		var localRepo = _repo;
+		if (localRepo is null)
+			return;
+			
+		var localOrigin = _origin;
+		
+		if (localOrigin is not null)
+		{
+			_dispatcher.Dispatch(new GitState.SetOriginAction(
+				localRepo,
+				localOrigin));
+		}
+	}
 
 	public List<TextEditorTextSpan> StatusParseLine(string output)
     {
@@ -852,25 +868,15 @@ public class GitCliOutputParser : IOutputParser
         return textSpanList;
     }
     
-    public List<TextEditorTextSpan> GetOriginParseLine(string output)
+    public List<TextEditorTextSpan> GetOriginParseLine(string outputEntire)
     {
 		var localRepo = _repo;
         if (localRepo is null)
             return new();
 
-		// TODO: Parsing origin line is super hacky, and should be re-written.
-		if (_count++ == 1)
-            _origin ??= output;
-
-        var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), output);
-        var textSpanList = new List<TextEditorTextSpan>();
-
-        while (!stringWalker.IsEof)
-        {
-            _ = stringWalker.ReadCharacter();
-        }
-
-        return textSpanList;
+        _origin ??= outputEntire.Trim();
+        
+        return new();
     }
     
     public List<TextEditorTextSpan> GetBranchParseLine(string outputEntire)
