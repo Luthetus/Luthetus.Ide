@@ -71,7 +71,7 @@ public class NEW_Terminal : ITerminal
 
     private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
-    	var parsedCommand = TerminalInteractive.TryHandleCommand(terminalCommandRequest);
+    	var parsedCommand = await TerminalInteractive.TryHandleCommand(terminalCommandRequest);
     	ActiveTerminalCommandParsed = parsedCommand;
 
 		if (parsedCommand is null)

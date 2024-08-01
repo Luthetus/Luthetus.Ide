@@ -8,6 +8,8 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 public class TerminalInteractive : ITerminalInteractive
 {
+	public const string RESERVED_TARGET_FILENAME_PREFIX = "Luthetus_";
+
 	private readonly ITerminal _terminal;
 
 	public TerminalInteractive(ITerminal terminal)
@@ -22,7 +24,7 @@ public class TerminalInteractive : ITerminalInteractive
 
 	public event Action? WorkingDirectoryChanged;
 	
-	public TerminalCommandParsed? TryHandleCommand(TerminalCommandRequest terminalCommandRequest)
+	public async Task<TerminalCommandParsed?> TryHandleCommand(TerminalCommandRequest terminalCommandRequest)
 	{
 		var parsedCommand = Parse(terminalCommandRequest);
 		
@@ -32,6 +34,16 @@ public class TerminalInteractive : ITerminalInteractive
 			terminalCommandRequest.WorkingDirectory != WorkingDirectory)
 		{
 			SetWorkingDirectory(terminalCommandRequest.WorkingDirectory);
+		}
+		
+		if (parsedCommand.TargetFileName.StartsWith(RESERVED_TARGET_FILENAME_PREFIX))
+		{
+			_terminal.TerminalOutput.WriteOutput(
+				parsedCommand,
+				new StartedCommandEvent(-1));
+		
+			await parsedCommand.SourceTerminalCommandRequest.BeginWithFunc.Invoke(parsedCommand);
+			return null;
 		}
 		
 		switch (parsedCommand.TargetFileName)

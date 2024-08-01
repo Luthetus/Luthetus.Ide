@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using Fluxor;
+using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -352,15 +353,20 @@ public class DotNetSolutionIdeApi
 
 			// Set 'generalTerminal' working directory
 			{
-				var changeDirectoryCommand = new TerminalCommand(
-					Key<TerminalCommand>.NewKey(),
-					new FormattedCommand("cd", new string[] { }),
-					parentDirectory.Value,
-					CancellationToken.None);
-
 				var terminalCommandRequest = new TerminalCommandRequest(
-		        	string.Empty,
-		        	parentDirectory.Value);
+		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetSolutionIdeApi),
+		        	parentDirectory.Value)
+		        {
+		        	BeginWithFunc = parsedCommand =>
+		        	{
+		        		_terminalStateWrap.Value.NEW_TERMINAL.TerminalOutput.WriteOutput(
+							parsedCommand,
+							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'.
+Changing working directory to:
+	'{parentDirectory.Value}'"));
+		        		return Task.CompletedTask;
+		        	}
+		        };
 		        	
 		        _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 			}

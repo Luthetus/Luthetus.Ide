@@ -32,7 +32,7 @@ public interface ITerminalInteractive : IDisposable
 	/// If null is returned, then the <see cref="ITerminal"/>
 	/// should return (do nothing more).
 	/// </summary>
-	public TerminalCommandParsed? TryHandleCommand(TerminalCommandRequest terminalCommandRequest);
+	public Task<TerminalCommandParsed?> TryHandleCommand(TerminalCommandRequest terminalCommandRequest);
 }
 
 
