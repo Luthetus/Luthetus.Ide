@@ -44,7 +44,7 @@ public class GitIdeApi
         _dispatcher = dispatcher;
     }
 
-    public Key<TerminalCommand> GitTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommandRequest> GitTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 
     public void StatusEnqueue()
     {
@@ -125,7 +125,7 @@ public class GitIdeApi
                 {
                 	ContinueWithFunc = parsedCommand =>
                 	{
-                		_gitCliOutputParser.GetBranchParseLine(
+                		_gitCliOutputParser.GetBranchParse(
                 			parsedCommand.OutputCache.ToString());
                 			
                 		_gitCliOutputParser.DispatchSetBranchAction();
@@ -166,7 +166,7 @@ public class GitIdeApi
                 {
                 	ContinueWithFunc = parsedCommand =>
                 	{
-                		_gitCliOutputParser.GetOriginParseLine(
+                		_gitCliOutputParser.GetOriginParse(
                 			parsedCommand.OutputCache.ToString());
                 		
                 		_gitCliOutputParser.DispatchSetOriginAction();

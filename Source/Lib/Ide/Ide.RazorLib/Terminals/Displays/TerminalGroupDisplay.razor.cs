@@ -18,12 +18,12 @@ public partial class TerminalGroupDisplay : ComponentBase
     [Inject]
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
-    private void DispatchSetActiveTerminalAction(Key<Terminal> terminalKey)
+    private void DispatchSetActiveTerminalAction(Key<ITerminal> terminalKey)
     {
         Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalAction(terminalKey));
     }
     
-    private void ClearTerminalOnClick(Key<Terminal> terminalKey)
+    private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
     {
     	if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
     		TerminalStateWrap.Value.GeneralTerminal?.EnqueueClear();

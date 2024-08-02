@@ -55,7 +55,7 @@ public partial record TerminalState
             TerminalState inState,
             GeneralTerminalRegisterAction generalTerminalRegisterAction)
         {
-            return inState with { GeneralTerminalRegisterAction = generalTerminalRegisterAction.Terminal };
+            return inState with { GeneralTerminal = generalTerminalRegisterAction.Terminal };
         }
 
         [ReducerMethod]

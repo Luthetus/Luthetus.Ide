@@ -64,7 +64,7 @@
                 if (success && terminal is not null)
                 {
                     string isActiveCssClass = string.Empty;
-                    if ((activeTerminal?.Key ?? Key<Terminal>.Empty) == terminal.Key)
+                    if ((activeTerminal?.Key ?? Key<ITerminal>.Empty) == terminal.Key)
                         isActiveCssClass = "luth_active";
 
                     <button class="luth_button @isActiveCssClass"

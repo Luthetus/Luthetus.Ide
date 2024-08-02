@@ -133,7 +133,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
 				EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
-				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandKey.Guid))
+				new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 			{
 				ContinueWithFunc = parsedTerminalCommand =>
 				{
@@ -168,7 +168,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
 	        	EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
-	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandKey.Guid))
+	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandRequestKey.Guid))
 	        {
 	        	ContinueWithFunc = parsedCommand =>
 	        	{
@@ -220,14 +220,14 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	immutableView.FormattedNewCSharpProjectCommand.Value,
 	        	immutableView.ParentDirectoryNameValue,
-	        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandKey.Guid))
+	        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandRequestKey.Guid))
 	        {
 	        	ContinueWithFunc = parsedCommand =>
 	        	{
 					var terminalCommandRequest = new TerminalCommandRequest(
 			        	immutableView.FormattedAddExistingProjectToSolutionCommand.Value,
 			        	immutableView.ParentDirectoryNameValue,
-			        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandKey.Guid))
+			        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandRequestKey.Guid))
 			        {
 			        	ContinueWithFunc = parsedCommand =>
 			        	{

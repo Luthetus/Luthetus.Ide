@@ -323,12 +323,6 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	{
 		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
 
-        var terminalCommand = new TerminalCommand(
-            Key<TerminalCommand>.NewKey(),
-            formattedCommand,
-            null,
-            CancellationToken.None);
-            
         var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
 		
 		var localParentDirectory = solutionAbsolutePath.ParentDirectory;

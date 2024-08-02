@@ -414,6 +414,28 @@ public class GitCliOutputParser
         return textSpanList;
     }
     
+    public List<TextEditorTextSpan> GetOriginParse(string outputEntire)
+    {
+		var localRepo = _repo;
+        if (localRepo is null)
+            return new();
+
+        _origin ??= outputEntire.Trim();
+        
+        return new();
+    }
+    
+    public List<TextEditorTextSpan> GetBranchParse(string outputEntire)
+    {
+		var localRepo = _repo;
+		if (localRepo is null)
+			return new();
+
+		_branch ??= outputEntire.Trim();
+
+        return new();
+    }
+    
     public List<TextEditorTextSpan> GetBranchListEntire(string outputEntire)
 	{
 		var localRepo = _repo;

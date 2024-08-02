@@ -37,7 +37,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 	public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
 	public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
-	public static readonly Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey = Key<TerminalCommand>.NewKey();
+	public static readonly Key<TerminalCommandRequest> DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
 
 	// TODO: If one changes from 'OnInitializedAsync' an infinite loop is very likely to occur (2024-06-29)
 	private MenuRecord? _menuRecord = null;

@@ -5,9 +5,9 @@ namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 public partial record TerminalState
 {
-    public record RegisterAction(Terminal Terminal);
-    public record NotifyStateChangedAction(Key<Terminal> TerminalKey);
-    public record DisposeAction(Key<Terminal> TerminalKey);
+    public record RegisterAction(ITerminal Terminal);
+    public record NotifyStateChangedAction(Key<ITerminal> TerminalKey);
+    public record DisposeAction(Key<ITerminal> TerminalKey);
     
     public record GeneralTerminalRegisterAction(ITerminal Terminal);
     public record ExecutionTerminalRegisterAction(ITerminal Terminal);

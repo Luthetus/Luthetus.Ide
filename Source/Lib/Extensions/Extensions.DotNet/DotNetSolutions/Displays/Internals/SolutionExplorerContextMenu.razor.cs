@@ -525,23 +525,19 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 					return Task.CompletedTask;
 
 				var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
-						dotNetSolutionModel.NamespacePath.AbsolutePath.Value,
-						absolutePath.Value);
-
-				var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
-					Key<TerminalCommand>.NewKey(),
-					localFormattedAddExistingProjectToSolutionCommand,
-					null,
-					CancellationToken.None,
-					() =>
-					{
-						CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
-						return Task.CompletedTask;
-					});
+					dotNetSolutionModel.NamespacePath.AbsolutePath.Value,
+					absolutePath.Value);
 
 				var terminalCommandRequest = new TerminalCommandRequest(
 		        	localFormattedAddExistingProjectToSolutionCommand.Value,
-		        	null);
+		        	null)
+		        {
+		        	ContinueWithFunc = parsedCommand =>
+		        	{
+		        		CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
+						return Task.CompletedTask;
+		        	}
+		        };
 		        	
 		        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;

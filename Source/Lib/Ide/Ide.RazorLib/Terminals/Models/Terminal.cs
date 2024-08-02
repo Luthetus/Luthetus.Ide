@@ -86,6 +86,8 @@ public class Terminal : ITerminal
 		
 		try
 		{
+			HasExecutingProcess = true;
+		
 			if (parsedCommand.SourceTerminalCommandRequest.BeginWithFunc is not null)
 			{
 				await parsedCommand.SourceTerminalCommandRequest.BeginWithFunc
@@ -107,6 +109,8 @@ public class Terminal : ITerminal
 		}
 		catch (Exception e)
 		{
+			HasExecutingProcess = false;
+			
 			// TODO: This will erroneously write 'StartedCommandEvent' out twice...
 			//       ...unless a check is added to see WHEN the exception was thrown.
 			TerminalOutput.WriteOutput(

@@ -39,7 +39,7 @@ public partial class GitDiffDisplay : ComponentBase
     [Parameter, EditorRequired]
     public GitFile GitFile { get; set; } = null!;
 
-    public Key<TerminalCommand> GitLogTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommandRequest> GitLogTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 
     private Key<TextEditorDiffModel> _textEditorDiffModelKey = Key<TextEditorDiffModel>.NewKey();
     private Key<TextEditorViewModel> _gitTextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();

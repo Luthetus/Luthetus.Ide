@@ -10,6 +10,7 @@ public interface ITerminal : IDisposable
 	public ITerminalInteractive TerminalInteractive { get; }
 	public ITerminalInput TerminalInput { get; }
 	public ITerminalOutput TerminalOutput { get; }
+	public bool HasExecutingProcess { get; }
 	
 	public void EnqueueCommand(TerminalCommandRequest terminalCommandRequest);
 	public void EnqueueClear();

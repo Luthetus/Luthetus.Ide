@@ -90,34 +90,6 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 			outputBuilder.Append(parsedCommand.OutputCache.ToString());
 		}
 		
-		/*
-		var commandTextTextSpan = new TextEditorTextSpan(
-			_inputBuilder.Length,
-	        _inputBuilder.Length + terminalCommandParsed.SourceTerminalCommandRequest.CommandText.Length,
-	        (byte)0,
-	        ResourceUri.Empty,
-	        string.Empty,
-	        terminalCommandParsed.SourceTerminalCommandRequest.CommandText);
-	        
-		var commandTextSymbol = new OnClickSymbol(
-			commandTextTextSpan,
-			"View Output",
-			() => OpenInEditor(terminalCommandParsed));
-			
-		_textEditorSymbolList.Add(commandTextSymbol);
-		
-		var targetFileNameTextSpan = new TextEditorTextSpan(
-			_inputBuilder.Length,
-	        _inputBuilder.Length + terminalCommandParsed.TargetFileName.Length,
-	        (byte)TerminalDecorationKind.TargetFilePath,
-	        ResourceUri.Empty,
-	        string.Empty,
-	        terminalCommandParsed.TargetFileName);
-	    _textEditorTextSpanList.Add(targetFileNameTextSpan);
-		
-		_inputBuilder.Append($"{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}\n");
-		*/
-		
 		return new TerminalOutputFormattedTextEditor(
 			outputBuilder.ToString(),
 			parsedCommandList,
@@ -231,52 +203,6 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 
                 return Task.CompletedTask;
             });
-    }
-    
-    /// <summary>
-    /// TODO: Do not forget that when clearing the terminal output...
-    ///       ...any corresponding text editor data needs to be disposed.
-    /// </summary>
-    private Task OpenInEditor(TerminalCommandParsed terminalCommandParsed)
-    {
-    	_textEditorService.PostUnique(
-            nameof(TerminalOutput),
-            editContext =>
-	    	{
-	    		var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-                if (viewModelModifier is null)
-                    return Task.CompletedTask;
-                    
-                var widgetKey = Key<WidgetBlock>.NewKey();
-	    	
-	    		var widget = new WidgetBlock(
-				    widgetKey,
-				    $"{terminalCommandParsed.SourceTerminalCommandRequest.CommandText}:",
-				    $"luth_ide_expand-widget_{widgetKey.Guid}",
-				    1,
-				    typeof(TerminalOutputViewOutputDisplay),
-				    new Dictionary<string, object?>
-		            {
-		            	{
-		            		nameof(TerminalOutputViewOutputDisplay.TerminalOutput),
-		            		this
-		            	},
-		            	{
-		            		nameof(TerminalOutputViewOutputDisplay.TerminalCommandParsed),
-		            		terminalCommandParsed
-		            	},
-		            });
-		            
-		        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-		        {
-		        	WidgetBlockList = viewModelModifier.ViewModel.WidgetBlockList
-		        		.Add(widget)
-		        };
-		            
-		        return Task.CompletedTask;
-	    	});
-        
-    	return Task.CompletedTask;
     }
     
     public void Dispose()

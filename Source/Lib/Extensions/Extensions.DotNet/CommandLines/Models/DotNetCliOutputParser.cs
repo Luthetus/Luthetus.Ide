@@ -7,7 +7,7 @@ using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 
 namespace Luthetus.Extensions.DotNet.CommandLines.Models;
 
-public class DotNetCliOutputParser : IOutputParser
+public class DotNetCliOutputParser
 {
 	public List<List<TextEditorTextSpan>> ErrorList { get; private set; }
 
@@ -18,35 +18,7 @@ public class DotNetCliOutputParser : IOutputParser
 
 	public NewListModel NewListModelSession { get; private set; }
 
-	public Task OnAfterCommandStarted(TerminalCommand terminalCommand)
-	{
-		// Clear data
-		if (terminalCommand.FormattedCommand.Tag == TagConstants.Run)
-			ErrorList = new();
-		else if (terminalCommand.FormattedCommand.Tag == TagConstants.NewList)
-		{
-			NewListModelSession = new();
-		}
-		else if (terminalCommand.FormattedCommand.Tag == TagConstants.Test)
-		{
-			TheFollowingTestsAreAvailableList = new();
-			_hasSeenTextIndicatorForTheList = false;
-		}
-
-		return Task.CompletedTask;
-	}
-
-	public List<TextEditorTextSpan> OnAfterOutputLine(TerminalCommand terminalCommand, string outputLine)
-	{
-		if (terminalCommand.FormattedCommand.Tag == TagConstants.Run)
-			return ParseOutputLineDotNetRun(terminalCommand, outputLine);
-		else if (terminalCommand.FormattedCommand.Tag == TagConstants.Test)
-			return ParseOutputLineDotNetTestListTests(terminalCommand, outputLine);
-
-		return new();
-	}
-
-	public List<TextEditorTextSpan> ParseOutputLineDotNetRun(TerminalCommand terminalCommand, string outputLine)
+	public List<TextEditorTextSpan> ParseOutputLineDotNetRun(TerminalCommandParsed terminalCommandParsed, string outputLine)
 	{
 		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/DotNetRunOutputParser.txt"), outputLine);
 		var textSpanList = new List<TextEditorTextSpan>();
@@ -442,7 +414,7 @@ public class DotNetCliOutputParser : IOutputParser
 		return new();
 	}
 
-	public List<TextEditorTextSpan> ParseOutputLineDotNetTestListTests(TerminalCommand terminalCommand, string outputLine)
+	public List<TextEditorTextSpan> ParseOutputLineDotNetTestListTests(TerminalCommandParsed terminalCommandParsed, string outputLine)
 	{
 		if (!_hasSeenTextIndicatorForTheList)
 		{
@@ -459,18 +431,6 @@ public class DotNetCliOutputParser : IOutputParser
 			TheFollowingTestsAreAvailableList.Add(outputLine);
 
 		return new();
-	}
-
-	public Task OnAfterCommandFinished(TerminalCommand terminalCommand)
-	{
-		return Task.CompletedTask;
-	}
-
-	public static class TagConstants
-	{
-		public const string Test = "test";
-		public const string NewList = "info";
-		public const string Run = "run";
 	}
 
 	public class NewListModel

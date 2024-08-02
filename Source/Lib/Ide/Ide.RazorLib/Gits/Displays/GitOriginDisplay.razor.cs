@@ -30,7 +30,7 @@ public partial class GitOriginDisplay : ComponentBase
     
     private string CommandArgs => $"remote add origin \"{_gitOrigin}\"";
     
-    public Key<TerminalCommand> GitSetOriginTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommandRequest> GitSetOriginTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 
     private void GetOriginOnClick()
     {
@@ -57,16 +57,10 @@ public partial class GitOriginDisplay : ComponentBase
             Tag = GitCliOutputParser.TagConstants.SetGitOrigin,
         };
 
-        var gitStatusCommand = new TerminalCommand(
-            GitSetOriginTerminalCommandKey,
-            formattedCommand,
-            localGitState.Repo.AbsolutePath.Value,
-            OutputParser: GitCliOutputParser);
-
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
         	localGitState.Repo.AbsolutePath.Value,
-        	new Key<TerminalCommandRequest>(GitSetOriginTerminalCommandKey.Guid));
+        	GitSetOriginTerminalCommandRequestKey);
         	
         TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
     }
