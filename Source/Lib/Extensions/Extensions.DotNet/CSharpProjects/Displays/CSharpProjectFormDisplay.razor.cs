@@ -130,18 +130,6 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
 			var generalTerminal = TerminalStateWrap.Value.NEW_TERMINAL;
-
-			// TODO: Delete the TerminalCommand instance here
-			var newCSharpProjectCommand = new TerminalCommand(
-				_viewModel.LoadProjectTemplatesTerminalCommandKey,
-				formattedCommand,
-				EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
-				_viewModel.NewCSharpProjectCancellationTokenSource.Token,
-				async () =>
-				{
-					_viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
-					await InvokeAsync(StateHasChanged);
-				});
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
@@ -176,23 +164,20 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
-			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
-			var newCSharpProjectCommand = new TerminalCommand(
-				_viewModel.LoadProjectTemplatesTerminalCommandKey,
-				formattedCommand,
-				EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
-				_viewModel.NewCSharpProjectCancellationTokenSource.Token,
-				async () =>
-				{
-					_viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
-					await InvokeAsync(StateHasChanged);
-				});
+			var generalTerminal = TerminalStateWrap.Value.NEW_TERMINAL;
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
 	        	EnvironmentProvider.HomeDirectoryAbsolutePath.Value,
-	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandKey.Guid));
+	        	new Key<TerminalCommandRequest>(_viewModel.LoadProjectTemplatesTerminalCommandKey.Guid))
+	        {
+	        	ContinueWithFunc = parsedCommand =>
+	        	{
+		        	DotNetCliOutputParser.ParseOutputLineDotNetNewList(parsedCommand.OutputCache.ToString());
+					_viewModel.ProjectTemplateList = DotNetCliOutputParser.ProjectTemplateList ?? new();
+					return InvokeAsync(StateHasChanged);
+				}
+	        };
 	        	
 	        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 		}
@@ -231,44 +216,36 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
 		if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
 		{
-			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
-			var newCSharpProjectCommand = new TerminalCommand(
-				immutableView.NewCSharpProjectTerminalCommandKey,
-				immutableView.FormattedNewCSharpProjectCommand,
-				immutableView.ParentDirectoryNameValue,
-				immutableView.NewCSharpProjectCancellationTokenSource.Token,
-				() =>
-				{
-					var addExistingProjectToSolutionCommand = new TerminalCommand(
-						immutableView.NewCSharpProjectTerminalCommandKey,
-						immutableView.FormattedAddExistingProjectToSolutionCommand,
-						immutableView.ParentDirectoryNameValue,
-						immutableView.NewCSharpProjectCancellationTokenSource.Token,
-						() =>
-						{
-							Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
-
-							CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
-								immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
-							return Task.CompletedTask;
-						});
-
-					var terminalCommandRequest = new TerminalCommandRequest(
-			        	immutableView.FormattedAddExistingProjectToSolutionCommand.Value,
-			        	immutableView.ParentDirectoryNameValue,
-			        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandKey.Guid));
-			        	
-			        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
-					return Task.CompletedTask;
-				});
+			var generalTerminal = TerminalStateWrap.Value.NEW_TERMINAL;
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	immutableView.FormattedNewCSharpProjectCommand.Value,
 	        	immutableView.ParentDirectoryNameValue,
-	        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandKey.Guid));
+	        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandKey.Guid))
+	        {
+	        	ContinueWithFunc = parsedCommand =>
+	        	{
+					var terminalCommandRequest = new TerminalCommandRequest(
+			        	immutableView.FormattedAddExistingProjectToSolutionCommand.Value,
+			        	immutableView.ParentDirectoryNameValue,
+			        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandKey.Guid))
+			        {
+			        	ContinueWithFunc = parsedCommand =>
+			        	{
+				        	Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
+	
+							CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(
+								immutableView.DotNetSolutionModel.NamespacePath.AbsolutePath);
+							return Task.CompletedTask;
+						}
+			        };
+			        	
+			        generalTerminal.EnqueueCommand(terminalCommandRequest);
+					return Task.CompletedTask;
+	        	}
+	        };
 	        	
-	        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
+	        generalTerminal.EnqueueCommand(terminalCommandRequest);
 		}
 		else
 		{

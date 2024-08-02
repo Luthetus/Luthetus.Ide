@@ -354,14 +354,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				}),
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.NEW_TERMINAL,
 				Dispatcher,
 				IdeBackgroundTaskApi,
 				() => Task.CompletedTask),
 			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.NEW_TERMINAL,
 				Dispatcher,
 				() =>
 				{
@@ -387,7 +387,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.NEW_TERMINAL,
 				Dispatcher,
 				() =>
 				{
@@ -404,7 +404,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		{
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.NEW_TERMINAL,
 				Dispatcher, () => Task.CompletedTask),
 		};
 	}
@@ -423,7 +423,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.NEW_TERMINAL,
 				Dispatcher, () => Task.CompletedTask),
 		};
 	}
