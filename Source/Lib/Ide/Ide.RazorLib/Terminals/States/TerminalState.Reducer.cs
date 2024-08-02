@@ -57,5 +57,13 @@ public partial record TerminalState
         {
             return inState with { NEW_TERMINAL = NEW_TERMINAL_CODE_RegisterAction.NEW_TERMINAL };
         }
+
+        [ReducerMethod]
+        public static TerminalState ReduceEXECUTION_TERMINAL_CODE_RegisterAction(
+            TerminalState inState,
+            EXECUTION_TERMINAL_CODE_RegisterAction EXECUTION_TERMINAL_CODE_RegisterAction)
+        {
+            return inState with { EXECUTION_TERMINAL = EXECUTION_TERMINAL_CODE_RegisterAction.NEW_TERMINAL };
+        }
     }
 }

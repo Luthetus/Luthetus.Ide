@@ -48,16 +48,15 @@ public partial class TestExplorerScheduler
 
             treeViewProjectTestModel.Item.EnqueueDiscoverTestsFunc = callback =>
             {
-                var executionTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-
-                var dotNetTestListTestsCommand = new TerminalCommand(
-                    treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey,
-                    localFormattedCommand,
-                    treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery,
-                    CancellationToken.None,
-                    OutputParser: _dotNetCliOutputParser,
-					ContinueWith: async () =>
-                    {
+				var terminalCommandRequest = new TerminalCommandRequest(
+		        	localFormattedCommand.Value,
+		        	treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery,
+		        	treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey)
+		        {
+		        	ContinueWithFunc = async parsedCommand =>
+		        	{
+		        		// _dotNetCliOutputParser was being used
+		        	
 						try
 						{
 							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
@@ -97,7 +96,8 @@ public partial class TestExplorerScheduler
 							await callback.Invoke(new()).ConfigureAwait(false);
 							throw;
 						}
-					});
+		        	}
+		        };
 
                 treeViewProjectTestModel.Item.TerminalCommand = dotNetTestListTestsCommand;
 
@@ -223,15 +223,18 @@ public partial class TestExplorerScheduler
 		            // we can time the code to run once all the tests have been discovered.
 		            //
 		            // TODO: This solution is hacky. It needs to be reworked.
-		            var terminalCommand = new TerminalCommand(
-					    Key<TerminalCommand>.NewKey(),
-					    new FormattedCommand(string.Empty, Array.Empty<string>()),
-					    ContinueWith: Task_SumEachProjectTestCount);
-		            
-		            var executionTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+					var terminalCommandRequest = new TerminalCommandRequest(
+			        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(TestExplorerScheduler),
+			        	null)
+			        {
+			        	BeginWithFunc = parsedCommand =>
+			        	{
+							return Task_SumEachProjectTestCount;
+			        	}
+			        };
 		            
 		            _sumEachProjectTestCountTask = null;
-		            executionTerminal.EnqueueCommand(terminalCommand);
+		            _terminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
 		        }
 			}
 			catch (Exception e)

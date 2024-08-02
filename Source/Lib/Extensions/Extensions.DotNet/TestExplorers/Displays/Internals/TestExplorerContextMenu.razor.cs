@@ -128,12 +128,13 @@ public partial class TestExplorerContextMenu : ComponentBase
 					await treeViewProjectTestModel.LoadChildListAsync();
 					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
-					var terminalCommand = new TerminalCommand(
-					    Key<TerminalCommand>.NewKey(),
-					    new FormattedCommand(string.Empty, Array.Empty<string>()),
-					    ContinueWith: () =>
-					    {
-					    	Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
+					var terminalCommandRequest = new TerminalCommandRequest(
+			        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(TestExplorerContextMenu),
+			        	null)
+			        {
+			        	BeginWithFunc = parsedCommand =>
+			        	{
+							Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
 							{
 								var mutableNotRanTestHashSet = inState.NotRanTestHashSet.ToHashSet();
 								
@@ -149,10 +150,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 						    }));
 						    
 						    return Task.CompletedTask;
-					    });
+			        	}
+			        };
 		            
-		            var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-		            executionTerminal.EnqueueCommand(terminalCommand);
+		            _terminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				}));
 		}
 
@@ -328,15 +329,13 @@ public partial class TestExplorerContextMenu : ComponentBase
 			return;
 		}
 
-		var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-
-        var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
-            treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
-            dotNetTestByFullyQualifiedNameFormattedCommand,
-			directoryNameForTestDiscovery,
-			OutputParser: DotNetCliOutputParser,
-			ContinueWith: () => 
-			{
+		var terminalCommandRequest = new TerminalCommandRequest(
+        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(TestExplorerContextMenu),
+        	directoryNameForTestDiscovery,
+        	treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey)
+        {
+        	BeginWithFunc = parsedCommand =>
+        	{
 				BackgroundTaskService.Enqueue(
 					Key<IBackgroundTask>.NewKey(),
 					ContinuousBackgroundTaskWorker.GetQueueKey(),
@@ -372,10 +371,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 			
 				TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
 				return Task.CompletedTask;
-			});
-
-		treeViewStringFragment.Item.TerminalCommand = dotNetTestByFullyQualifiedNameTerminalCommand;
-
-		executionTerminal.EnqueueCommand(dotNetTestByFullyQualifiedNameTerminalCommand);
+        	}
+        };
+        
+		treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
+        _terminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
 	}
 }

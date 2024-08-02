@@ -11,4 +11,5 @@ public partial record TerminalState
     public record DisposeAction(Key<Terminal> TerminalKey);
     
     public record NEW_TERMINAL_CODE_RegisterAction(ITerminal NEW_TERMINAL);
+    public record EXECUTION_TERMINAL_CODE_RegisterAction(ITerminal NEW_TERMINAL);
 }

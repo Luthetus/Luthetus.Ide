@@ -78,6 +78,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 	{
                 		NEW_TERMINAL_CODE();
                 	}
+                	else if (terminalKey == TerminalFacts.EXECUTION_TERMINAL_KEY)
+                	{
+                		EXECUTION_TERMINAL_CODE();
+                	}
                 	
                     var displayName = $"BAD_WellKnownTerminalKey:{terminalKey.Guid}";
 
@@ -198,6 +202,25 @@ public partial class LuthetusIdeInitializer : ComponentBase
     	Dispatcher.Dispatch(new TerminalState.NEW_TERMINAL_CODE_RegisterAction(
 	    	new NEW_Terminal(
 				"General",
+				terminal => new TerminalInteractive(terminal),
+				terminal => new TerminalInputStringBuilder(terminal),
+				terminal => new TerminalOutput(
+					terminal,
+					new TerminalOutputFormatterExpand(
+						terminal,
+						TextEditorService,
+						CompilerServiceRegistry,
+						Dispatcher)),
+				BackgroundTaskService,
+				CommonComponentRenderers,
+				Dispatcher)));
+    }
+    
+    private void EXECUTION_TERMINAL_CODE()
+    {
+    	Dispatcher.Dispatch(new TerminalState.EXECUTION_TERMINAL_CODE_RegisterAction(
+	    	new NEW_Terminal(
+				"Execution",
 				terminal => new TerminalInteractive(terminal),
 				terminal => new TerminalInputStringBuilder(terminal),
 				terminal => new TerminalOutput(

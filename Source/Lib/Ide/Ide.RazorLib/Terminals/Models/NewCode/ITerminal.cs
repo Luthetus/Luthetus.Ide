@@ -13,4 +13,6 @@ public interface ITerminal : IDisposable
 	
 	public void EnqueueCommand(TerminalCommandRequest terminalCommandRequest);
 	public void EnqueueClear();
+	
+	public void KillProcess();
 }

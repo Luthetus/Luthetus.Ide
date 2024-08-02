@@ -372,15 +372,21 @@ Sln-Directory: '{parentDirectory.Value}'"));
 
 			// Set 'executionTerminal' working directory
 			{
-				var executionTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+				var terminalCommandRequest = new TerminalCommandRequest(
+		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetSolutionIdeApi),
+		        	parentDirectory.Value)
+		        {
+		        	BeginWithFunc = parsedCommand =>
+		        	{
+		        		_terminalStateWrap.Value.NEW_TERMINAL.TerminalOutput.WriteOutput(
+							parsedCommand,
+							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'.
+Sln-Directory: '{parentDirectory.Value}'"));
+		        		return Task.CompletedTask;
+		        	}
+		        };
 
-				var changeDirectoryCommand = new TerminalCommand(
-					Key<TerminalCommand>.NewKey(),
-					new FormattedCommand("cd", new string[] { }),
-					parentDirectory.Value,
-					CancellationToken.None);
-
-				executionTerminal.EnqueueCommand(changeDirectoryCommand);
+				_terminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
 			}
 		}
 
@@ -681,7 +687,7 @@ Sln-Directory: '{parentDirectory.Value}'"));
 				_ => Task.CompletedTask)));
 	}
 	
-	private TerminalCommand? StartupControl_GetStartProgramTerminalCommand(IDotNetProject project)
+	private TerminalCommandRequest? StartupControl_GetStartProgramTerminalCommand(IDotNetProject project)
     {
         var ancestorDirectory = project.AbsolutePath.ParentDirectory;
 
@@ -691,14 +697,32 @@ Sln-Directory: '{parentDirectory.Value}'"));
         var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
             project.AbsolutePath);
 
-        return new TerminalCommand(
-            _newDotNetSolutionTerminalCommandKey,
-            formattedCommand,
-            ancestorDirectory.Value,
-            _newDotNetSolutionCancellationTokenSource.Token,
-            OutputParser: _dotNetCliOutputParser)
+        return new TerminalCommandRequest(
+        	formattedCommand.Value,
+        	ancestorDirectory.Value,
+        	_newDotNetSolutionTerminalCommandKey)
         {
-        	OutputBuilder = null
+        	BeginWithFunc = parsedCommand =>
+        	{
+        		// _dotNetCliOutputParser was being used
+        		
+				Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
+				{
+					var mutableNotRanTestHashSet = inState.NotRanTestHashSet.ToHashSet();
+					
+					foreach (var fullyQualifiedTestName in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+					{
+						mutableNotRanTestHashSet.Add(fullyQualifiedTestName);
+					}
+					
+					return inState with
+			        {
+			            NotRanTestHashSet = mutableNotRanTestHashSet.ToImmutableHashSet(),
+			        };
+			    }));
+			    
+			    return Task.CompletedTask;
+        	}
         };
     }
 }

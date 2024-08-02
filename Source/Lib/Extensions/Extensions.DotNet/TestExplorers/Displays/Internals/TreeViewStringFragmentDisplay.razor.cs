@@ -23,18 +23,6 @@ public partial class TreeViewStringFragmentDisplay : FluxorComponent
 		// subscribes to its state changes, even though in this class its "unused".
 		_ = TerminalStateWrap;
 
-		TerminalStateSelection.Select(x =>
-		{
-			if (x.TerminalMap.TryGetValue(
-					TerminalFacts.EXECUTION_TERMINAL_KEY,
-					out var terminal))
-			{
-				return terminal;
-			}
-
-			return null;
-		});
-
 		base.OnInitialized();
 	}
 
