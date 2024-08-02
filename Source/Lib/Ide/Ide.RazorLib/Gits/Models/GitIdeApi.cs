@@ -569,21 +569,16 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.FetchEnqueue
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser,
-                    ContinueWith: () =>
-					{
-						RefreshEnqueue(repoAtTimeOfRequest);
-						return Task.CompletedTask;
-					});
-					
 			    var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value,
-                	Key<TerminalCommandRequest>.NewKey());
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		RefreshEnqueue(repoAtTimeOfRequest);
+						return Task.CompletedTask;
+                	}
+                };
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
