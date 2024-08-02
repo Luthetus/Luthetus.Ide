@@ -5,7 +5,6 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 

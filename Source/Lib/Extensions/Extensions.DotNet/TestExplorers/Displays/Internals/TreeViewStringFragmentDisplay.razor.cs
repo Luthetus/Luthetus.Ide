@@ -3,7 +3,6 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;

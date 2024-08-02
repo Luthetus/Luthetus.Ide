@@ -16,7 +16,6 @@ using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.Displays;

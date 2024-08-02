@@ -27,7 +27,6 @@ using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;

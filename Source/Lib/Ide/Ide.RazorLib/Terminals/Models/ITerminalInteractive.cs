@@ -1,4 +1,4 @@
-namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 /// <summary>State (i.e.: working directory)</summary>
 public interface ITerminalInteractive : IDisposable

@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalInteractive : ITerminalInteractive
 {

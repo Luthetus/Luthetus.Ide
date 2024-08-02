@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
 namespace Luthetus.Ide.RazorLib.Gits.Models;
@@ -13,6 +13,6 @@ public static class GitFacts
     public const string GIT_DIRTY_REASON_MODIFIED = "modified:";
     public const string GIT_DIRTY_REASON_DELETED = "deleted:";
 
-    public static readonly Key<TerminalCommand> GitInitTerminalCommandKey = Key<TerminalCommand>.NewKey();
-    public static readonly Key<TerminalCommand> GitStatusTerminalCommandKey = Key<TerminalCommand>.NewKey();
+    public static readonly Key<TerminalCommandRequest> GitInitTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
+    public static readonly Key<TerminalCommandRequest> GitStatusTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
 }

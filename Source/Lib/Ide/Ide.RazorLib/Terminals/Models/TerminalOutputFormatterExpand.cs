@@ -12,7 +12,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 {

@@ -1,6 +1,5 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 

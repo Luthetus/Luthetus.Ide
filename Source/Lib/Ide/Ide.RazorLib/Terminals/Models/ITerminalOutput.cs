@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 /// <summary>Output Data</summary>
 public interface ITerminalOutput : IDisposable

@@ -1,6 +1,5 @@
 using System.Text;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 

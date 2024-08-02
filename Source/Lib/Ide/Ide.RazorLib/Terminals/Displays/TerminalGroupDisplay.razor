@@ -40,9 +40,9 @@
             	{
             		<TerminalOutputTextEditorExpandDisplay/>
             	}
-            	else
+            	else if (activeTerminal.Key == TerminalFacts.EXECUTION_TERMINAL_KEY)
             	{
-            		<TerminalDisplay TerminalKey="activeTerminal.Key"/>
+            		<TerminalOutputTextEditorExpandDisplay/>
             	}
             }
         </div>

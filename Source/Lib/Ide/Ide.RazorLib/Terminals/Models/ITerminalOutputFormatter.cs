@@ -1,6 +1,6 @@
 using Luthetus.Ide.RazorLib.Exceptions;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 /// <summary>
 /// This is a sort of the built in <see cref="System.Globalization.CultureInfo"/>

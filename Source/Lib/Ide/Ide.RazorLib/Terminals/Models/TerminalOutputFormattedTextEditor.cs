@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalOutputFormattedTextEditor : ITerminalOutputFormatted
 {

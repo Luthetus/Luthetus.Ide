@@ -1,4 +1,4 @@
-namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public class TerminalInputStringBuilder : ITerminalInput
 {

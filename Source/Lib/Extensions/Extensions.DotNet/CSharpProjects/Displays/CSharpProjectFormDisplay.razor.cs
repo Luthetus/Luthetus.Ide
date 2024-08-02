@@ -14,7 +14,6 @@ using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Extensions.DotNet.CSharpProjects.Models;

@@ -1,6 +1,6 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 /// <summary>
 /// 'workingDirectory' is intended to be an absolute path in string form.

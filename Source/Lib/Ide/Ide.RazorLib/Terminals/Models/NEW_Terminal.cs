@@ -12,7 +12,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Terminals.States;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 /// <summary>
 /// This implementation of <see cref="ITerminal"/> is a "blank slate".
