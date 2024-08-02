@@ -588,7 +588,7 @@ public class GitIdeApi
     public void LogFileEnqueue(
         GitRepo repoAtTimeOfRequest,
         string relativePathToFile,
-        Func<GitCliOutputParser, Task> callback)
+        Func<GitCliOutputParser, string, Task> callback)
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
@@ -610,20 +610,17 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser,
-                    ContinueWith: () =>
-                    {
-                        return callback.Invoke(_gitCliOutputParser);
-                    });
-                    
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value,
-                	Key<TerminalCommandRequest>.NewKey());
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		return callback.Invoke(
+                			_gitCliOutputParser,
+                			parsedCommand.OutputCache.ToString());
+                	}
+                };
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
