@@ -35,14 +35,7 @@
             }
             else
             {
-            	if (activeTerminal.Key == TerminalFacts.GENERAL_TERMINAL_KEY)
-            	{
-            		<TerminalOutputTextEditorExpandDisplay/>
-            	}
-            	else if (activeTerminal.Key == TerminalFacts.EXECUTION_TERMINAL_KEY)
-            	{
-            		<TerminalOutputTextEditorExpandDisplay/>
-            	}
+            	<TerminalOutputTextEditorExpandDisplay/>
             }
         </div>
 
@@ -52,10 +45,10 @@
 
         <div class="luth_ide_terminal-tabs"
              style="@terminalGroupDisplayState.TabsElementDimensions.StyleString">
-            @for (var i = 0; i < TerminalFacts.WELL_KNOWN_TERMINAL_KEYS.Length; i++)
+            @for (var i = 0; i < TerminalFacts.WELL_KNOWN_KEYS.Length; i++)
             {
                 var index = i;
-                var wellKnownTerminalKey = TerminalFacts.WELL_KNOWN_TERMINAL_KEYS[index];
+                var wellKnownTerminalKey = TerminalFacts.WELL_KNOWN_KEYS[index];
 
                 var success = terminalState.TerminalMap.TryGetValue(
                     wellKnownTerminalKey,
@@ -100,7 +93,7 @@
                     </button>
                 }
 
-                if (i != TerminalFacts.WELL_KNOWN_TERMINAL_KEYS.Length - 1)
+                if (i != TerminalFacts.WELL_KNOWN_KEYS.Length - 1)
                 {
                     <text>
                         &nbsp;

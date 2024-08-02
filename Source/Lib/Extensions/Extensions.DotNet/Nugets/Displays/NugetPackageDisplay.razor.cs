@@ -107,6 +107,6 @@ public partial class NugetPackageDisplay : FluxorComponent
         	}
         };
         	
-        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 }

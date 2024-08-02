@@ -100,7 +100,7 @@ public partial class TestExplorerScheduler
 		        };
 
                 treeViewProjectTestModel.Item.TerminalCommandRequest = terminalCommandRequest;
-				_terminalStateWrap.Value.ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
+				_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 
                 return Task.CompletedTask;
             };
@@ -230,7 +230,7 @@ public partial class TestExplorerScheduler
 			        };
 		            
 		            _sumEachProjectTestCountTask = null;
-		            _terminalStateWrap.Value.ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
+		            _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 		        }
 			}
 			catch (Exception e)

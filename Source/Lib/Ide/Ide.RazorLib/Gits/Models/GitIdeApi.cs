@@ -84,7 +84,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
             });
     }
@@ -133,7 +133,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -174,7 +174,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 		});
     }
@@ -233,7 +233,7 @@ public class GitIdeApi
             		}
             	};
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -292,7 +292,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -338,7 +338,7 @@ public class GitIdeApi
 					}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -379,7 +379,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -421,7 +421,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -460,7 +460,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -501,7 +501,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -540,7 +540,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -579,7 +579,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -621,7 +621,7 @@ public class GitIdeApi
                 	}
                 };
                 	
-                _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }

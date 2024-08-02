@@ -353,14 +353,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				}),
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
-				TerminalStateWrap.Value.GeneralTerminal,
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				IdeBackgroundTaskApi,
 				() => Task.CompletedTask),
 			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.GeneralTerminal,
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				() =>
 				{
@@ -386,7 +386,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.GeneralTerminal,
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				() =>
 				{
@@ -403,7 +403,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		{
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
-				TerminalStateWrap.Value.GeneralTerminal,
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher, () => Task.CompletedTask),
 		};
 	}
@@ -422,7 +422,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
-				TerminalStateWrap.Value.GeneralTerminal,
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher, () => Task.CompletedTask),
 		};
 	}
@@ -539,7 +539,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        	}
 		        };
 		        	
-		        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+		        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			},
 			absolutePath =>

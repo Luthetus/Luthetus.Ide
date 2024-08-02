@@ -153,7 +153,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			        	}
 			        };
 		            
-		            TerminalStateWrap.Value.ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
+		            TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 				}));
 		}
 
@@ -381,6 +381,6 @@ public partial class TestExplorerContextMenu : ComponentBase
         };
         
 		treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
-        TerminalStateWrap.Value.ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
+        TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 }

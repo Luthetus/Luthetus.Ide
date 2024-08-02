@@ -358,7 +358,7 @@ public class DotNetSolutionIdeApi
 		        {
 		        	BeginWithFunc = parsedCommand =>
 		        	{
-		        		_terminalStateWrap.Value.GeneralTerminal.TerminalOutput.WriteOutput(
+		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'.
 Sln-Directory: '{parentDirectory.Value}'"));
@@ -366,7 +366,7 @@ Sln-Directory: '{parentDirectory.Value}'"));
 		        	}
 		        };
 		        	
-		        _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+		        _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 			}
 
 			// Set 'executionTerminal' working directory
@@ -377,7 +377,7 @@ Sln-Directory: '{parentDirectory.Value}'"));
 		        {
 		        	BeginWithFunc = parsedCommand =>
 		        	{
-		        		_terminalStateWrap.Value.GeneralTerminal.TerminalOutput.WriteOutput(
+		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'.
 Sln-Directory: '{parentDirectory.Value}'"));
@@ -385,7 +385,7 @@ Sln-Directory: '{parentDirectory.Value}'"));
 		        	}
 		        };
 
-				_terminalStateWrap.Value.ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
+				_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 			}
 		}
 

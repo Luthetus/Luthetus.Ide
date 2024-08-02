@@ -28,7 +28,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 
 	private readonly Throttle _throttle = new Throttle(TimeSpan.FromMilliseconds(700));
 	
-	private ITerminal? _terminal => TerminalStateWrap.Value.GeneralTerminal;
+	private ITerminal? _terminal => TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY];
 	private string _command;
 	
 	protected override void OnInitialized()

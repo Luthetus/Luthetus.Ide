@@ -9,7 +9,7 @@ namespace Luthetus.Ide.RazorLib.Terminals.States;
 [FeatureState]
 public partial record TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
 {
-    public TerminalGroupState() : this(TerminalFacts.GENERAL_TERMINAL_KEY)
+    public TerminalGroupState() : this(TerminalFacts.GENERAL_KEY)
     {
         // _bodyElementDimensions
         {

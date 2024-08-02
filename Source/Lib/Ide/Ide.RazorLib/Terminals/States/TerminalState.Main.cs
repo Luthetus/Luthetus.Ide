@@ -7,12 +7,10 @@ namespace Luthetus.Ide.RazorLib.Terminals.States;
 
 [FeatureState]
 public partial record TerminalState(
-	ImmutableDictionary<Key<ITerminal>, ITerminal> TerminalMap,
-	ITerminal? GeneralTerminal,
-	ITerminal? ExecutionTerminal)
+	ImmutableDictionary<Key<ITerminal>, ITerminal> TerminalMap)
 {
     public TerminalState()
-        : this(ImmutableDictionary<Key<ITerminal>, ITerminal>.Empty, null, null)
+        : this(ImmutableDictionary<Key<ITerminal>, ITerminal>.Empty)
     {
     }
 }

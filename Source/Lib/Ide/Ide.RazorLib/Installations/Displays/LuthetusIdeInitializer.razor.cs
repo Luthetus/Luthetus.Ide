@@ -70,11 +70,11 @@ public partial class LuthetusIdeInitializer : ComponentBase
                     }
                 }
 
-                foreach (var terminalKey in TerminalFacts.WELL_KNOWN_TERMINAL_KEYS)
+                foreach (var terminalKey in TerminalFacts.WELL_KNOWN_KEYS)
                 {
-                	if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
+                	if (terminalKey == TerminalFacts.GENERAL_KEY)
                 	{
-                		Dispatcher.Dispatch(new TerminalState.GeneralTerminalRegisterAction(
+                		Dispatcher.Dispatch(new TerminalState.RegisterAction(
 					    	new Terminal(
 								"General",
 								terminal => new TerminalInteractive(terminal),
@@ -88,11 +88,14 @@ public partial class LuthetusIdeInitializer : ComponentBase
 										Dispatcher)),
 								BackgroundTaskService,
 								CommonComponentRenderers,
-								Dispatcher)));
+								Dispatcher)
+							{
+								Key = TerminalFacts.GENERAL_KEY
+							}));
                 	}
-                	else if (terminalKey == TerminalFacts.EXECUTION_TERMINAL_KEY)
+                	else if (terminalKey == TerminalFacts.EXECUTION_KEY)
                 	{
-                		Dispatcher.Dispatch(new TerminalState.ExecutionTerminalRegisterAction(
+                		Dispatcher.Dispatch(new TerminalState.RegisterAction(
 					    	new Terminal(
 								"Execution",
 								terminal => new TerminalInteractive(terminal),
@@ -106,7 +109,10 @@ public partial class LuthetusIdeInitializer : ComponentBase
 										Dispatcher)),
 								BackgroundTaskService,
 								CommonComponentRenderers,
-								Dispatcher)));
+								Dispatcher)
+							{
+								Key = TerminalFacts.EXECUTION_KEY
+							}));
                 	}
                 }
 

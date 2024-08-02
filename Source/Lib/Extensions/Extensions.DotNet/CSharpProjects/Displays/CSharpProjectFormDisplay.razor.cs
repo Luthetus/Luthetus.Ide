@@ -128,7 +128,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewList();
-			var generalTerminal = TerminalStateWrap.Value.GeneralTerminal;
+			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY];
 				
 			var terminalCommandRequest = new TerminalCommandRequest(
 				formattedCommand.Value,
@@ -163,7 +163,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 			await InvokeAsync(StateHasChanged);
 
 			var formattedCommand = DotNetCliCommandFormatter.FormatDotnetNewListDeprecated();
-			var generalTerminal = TerminalStateWrap.Value.GeneralTerminal;
+			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY];
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	formattedCommand.Value,
@@ -178,7 +178,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 				}
 	        };
 	        	
-	        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
+	        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 		finally
 		{
@@ -215,7 +215,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 
 		if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
 		{
-			var generalTerminal = TerminalStateWrap.Value.GeneralTerminal;
+			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY];
 
 			var terminalCommandRequest = new TerminalCommandRequest(
 	        	immutableView.FormattedNewCSharpProjectCommand.Value,

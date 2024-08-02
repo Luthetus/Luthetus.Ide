@@ -80,7 +80,7 @@ public partial class StartupControlDisplay : FluxorComponent
 	            return;
 	
 			_executingTerminalCommandRequest = startProgramTerminalCommandRequest;
-		    TerminalStateWrap.Value.ExecutionTerminal.EnqueueCommand(startProgramTerminalCommandRequest);
+		    TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(startProgramTerminalCommandRequest);
         }
     }
     
@@ -129,7 +129,7 @@ public partial class StartupControlDisplay : FluxorComponent
 		    MenuOptionKind.Other,
 		    OnClickFunc: () =>
 		    {
-		    	var executionTerminal = TerminalStateWrap.Value.ExecutionTerminal;
+		    	var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY];
 		    	executionTerminal.KillProcess();
                 return Task.CompletedTask;
 		    }));
