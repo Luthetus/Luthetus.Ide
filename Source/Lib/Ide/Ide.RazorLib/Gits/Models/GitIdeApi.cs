@@ -368,21 +368,17 @@ public class GitIdeApi
                 {
                     HACK_ArgumentsString = argumentsString
                 };
-
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: () =>
-					{
-						RefreshEnqueue(repoAtTimeOfRequest);
-						return Task.CompletedTask;
-					});
-					
+                
 				var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value,
-                	Key<TerminalCommandRequest>.NewKey());
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		RefreshEnqueue(repoAtTimeOfRequest);
+						return Task.CompletedTask;
+                	}
+                };
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
@@ -420,8 +416,17 @@ public class GitIdeApi
                     
                 var terminalCommandRequest = new TerminalCommandRequest(
                 	formattedCommand.Value,
-                	localGitState.Repo.AbsolutePath.Value,
-                	Key<TerminalCommandRequest>.NewKey());
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		_gitCliOutputParser.GetBranchListEntire(
+                			parsedCommand.OutputCache.ToString());
+                			
+                		_gitCliOutputParser.DispatchSetBranchListAction();
+                		return Task.CompletedTask;
+                	}
+                };
                 	
                 _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;

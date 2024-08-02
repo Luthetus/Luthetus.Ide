@@ -179,6 +179,22 @@ public class GitCliOutputParser : IOutputParser
 				localOrigin));
 		}
 	}
+	
+	public void DispatchSetBranchListAction()
+	{
+		var localRepo = _repo;
+		if (localRepo is null)
+			return;
+			
+		var localBranchList = _branchList;
+		
+		if (localBranchList is not null)
+		{
+			_dispatcher.Dispatch(new GitState.SetBranchListAction(
+				localRepo,
+				localBranchList));
+		}
+	}
 
 	public List<TextEditorTextSpan> StatusParseLine(string output)
     {
@@ -933,6 +949,69 @@ public class GitCliOutputParser : IOutputParser
 
         textSpanList.Add(textSpan);
         _branchList.Add(textSpan.GetText());
+
+        return textSpanList;
+    }
+    
+    public List<TextEditorTextSpan> GetBranchListEntire(string outputEntire)
+	{
+		var localRepo = _repo;
+		if (localRepo is null)
+			return new();
+
+		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/GitCliOutputParser.txt"), outputEntire);
+        var textSpanList = new List<TextEditorTextSpan>();
+
+		while (!stringWalker.IsEof)
+		{
+			// "* Abc"    <-- Line 1 with quotes added to show where it starts and ends
+	        // "  master" <-- Line 2 with quotes added to show where it starts and ends
+	        //
+	        // Every branch seems to start with 2 characters, where the first is whether it's the active branch,
+	        // and the second is just a whitespace to separate whether its the active branch from its name.
+	        //
+	        // Therefore, naively skip 2 characters then readline.
+	        var isValid = false;
+	
+	        if (stringWalker.CurrentCharacter == '*' || stringWalker.CurrentCharacter == ' ')
+	        {
+	            if (stringWalker.NextCharacter == ' ')
+	                isValid = true;
+	        }
+	
+	        if (!isValid)
+	            return textSpanList;
+	
+	        _ = stringWalker.ReadRange(2);
+	
+	        var startPositionInclusive = stringWalker.PositionIndex;
+	
+	        while (!stringWalker.IsEof && !WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+	        {
+	            _ = stringWalker.ReadCharacter();
+	        }
+	
+	        var textSpan = new TextEditorTextSpan(
+	            startPositionInclusive,
+	            stringWalker,
+	            (byte)TerminalDecorationKind.StringLiteral);
+	            
+	        textSpanList.Add(textSpan);
+	        _branchList.Add(textSpan.GetText());
+	        
+	        if (stringWalker.IsEof)
+	        {
+	        	break;
+	        }
+	        else
+	        {
+	        	// Finished reading a line, so consume the line ending character(s)
+	        	while (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+	        	{
+		        	_ = stringWalker.ReadCharacter();
+	        	}
+	        }
+		}
 
         return textSpanList;
     }
