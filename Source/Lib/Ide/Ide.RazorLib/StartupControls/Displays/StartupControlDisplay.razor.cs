@@ -13,6 +13,7 @@ using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 
@@ -33,7 +34,7 @@ public partial class StartupControlDisplay : FluxorComponent
 
     private const string _startButtonElementId = "luth_ide_startup-controls-display_id";
 
-    private TerminalCommand? _executingTerminalCommandRequest;
+    private TerminalCommandRequest? _executingTerminalCommandRequest;
     
     private ElementReference? _startButtonElementReference;
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
@@ -74,13 +75,13 @@ public partial class StartupControlDisplay : FluxorComponent
         else
         {
 	        var startProgramTerminalCommandRequest = await ((StartupControlModel)localStartupControlState.ActiveStartupControl)
-	        	.GetTerminalCommandFunc.Invoke();
+	        	.GetTerminalCommandRequestFunc.Invoke();
 	        	
 	        if (startProgramTerminalCommandRequest is null)
 	            return;
 	
 			_executingTerminalCommandRequest = startProgramTerminalCommandRequest;
-		    _terminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(startProgramTerminalCommandRequest);
+		    TerminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(startProgramTerminalCommandRequest);
         }
     }
     

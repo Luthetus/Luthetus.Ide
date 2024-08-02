@@ -11,7 +11,7 @@
 	}
 	else
 	{
-		isExecuting = !localExecutingTerminalCommandRequest.IsCompleted;
+		isExecuting = !localStartupControlState.ActiveStartupControl.IsCompleted;
 	}
 }
 

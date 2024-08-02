@@ -1,6 +1,7 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Ide.RazorLib.StartupControls.Models;
 
@@ -11,22 +12,22 @@ public class StartupControlModel : IStartupControlModel
 		string title,
 		string titleVerbose,
 		IAbsolutePath startupProjectAbsolutePath,
-		Key<TerminalCommand> terminalCommandKey,
-		TerminalCommand? executingTerminalCommand,
+		Key<TerminalCommandRequest> terminalCommandKey,
+		TerminalCommandRequest? executingTerminalCommandRequest,
 		Type? componentType,
 		Dictionary<string, object?>? componentParameterMap,
-		Func<Task<TerminalCommand?>> getTerminalCommandFunc,
+		Func<Task<TerminalCommandRequest?>> getTerminalCommandRequestFunc,
 		Func<IStartupControlModel, Task> startButtonOnClickTask)
 	{
 		Key = key;
 		Title = title;
 		TitleVerbose = titleVerbose;
 		StartupProjectAbsolutePath = startupProjectAbsolutePath;
-		TerminalCommandKey = terminalCommandKey;
-		ExecutingTerminalCommand = executingTerminalCommand;
+		TerminalCommandRequestKey = terminalCommandKey;
+		ExecutingTerminalCommandRequest = executingTerminalCommandRequest;
 		ComponentType = componentType;
 		ComponentParameterMap = componentParameterMap;
-		GetTerminalCommandFunc = getTerminalCommandFunc;
+		GetTerminalCommandRequestFunc = getTerminalCommandRequestFunc;
 		StartButtonOnClickTask = startButtonOnClickTask;
 	}
 	
@@ -36,11 +37,12 @@ public class StartupControlModel : IStartupControlModel
 	public string Title { get; }
 	public string TitleVerbose { get; }
 	public IAbsolutePath StartupProjectAbsolutePath { get; }
-	public Key<TerminalCommand> TerminalCommandKey { get; }
-	public TerminalCommand? ExecutingTerminalCommand { get; }
+	public Key<TerminalCommandRequest> TerminalCommandRequestKey { get; }
+	public TerminalCommandRequest? ExecutingTerminalCommandRequest { get; }
 	public Type? ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; }
-	public Func<Task<TerminalCommand?>> GetTerminalCommandFunc { get; }
+	public Func<Task<TerminalCommandRequest?>> GetTerminalCommandRequestFunc { get; }
 	public Func<IStartupControlModel, Task> StartButtonOnClickTask { get; }
 	public bool IsExecuting { get; }
+	public bool IsCompleted { get; }
 }

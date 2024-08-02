@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 
@@ -51,7 +52,7 @@ public partial class TestExplorerScheduler
 				var terminalCommandRequest = new TerminalCommandRequest(
 		        	localFormattedCommand.Value,
 		        	treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery,
-		        	treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandKey)
+		        	treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandRequestKey)
 		        {
 		        	ContinueWithFunc = async parsedCommand =>
 		        	{
@@ -99,9 +100,8 @@ public partial class TestExplorerScheduler
 		        	}
 		        };
 
-                treeViewProjectTestModel.Item.TerminalCommand = dotNetTestListTestsCommand;
-
-				executionTerminal.EnqueueCommand(dotNetTestListTestsCommand);
+                treeViewProjectTestModel.Item.TerminalCommandRequest = terminalCommandRequest;
+				_terminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
 
                 return Task.CompletedTask;
             };
@@ -227,10 +227,7 @@ public partial class TestExplorerScheduler
 			        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(TestExplorerScheduler),
 			        	null)
 			        {
-			        	BeginWithFunc = parsedCommand =>
-			        	{
-							return Task_SumEachProjectTestCount;
-			        	}
+			        	BeginWithFunc = parsedCommand => Task_SumEachProjectTestCount()
 			        };
 		            
 		            _sumEachProjectTestCountTask = null;

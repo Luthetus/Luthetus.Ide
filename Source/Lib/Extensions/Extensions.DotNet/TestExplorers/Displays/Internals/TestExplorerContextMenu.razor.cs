@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
@@ -153,7 +154,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 			        	}
 			        };
 		            
-		            _terminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
+		            TerminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
 				}));
 		}
 
@@ -332,7 +333,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 		var terminalCommandRequest = new TerminalCommandRequest(
         	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(TestExplorerContextMenu),
         	directoryNameForTestDiscovery,
-        	treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey)
+        	treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey)
         {
         	BeginWithFunc = parsedCommand =>
         	{
@@ -342,7 +343,13 @@ public partial class TestExplorerContextMenu : ComponentBase
 					"CheckTestOutcome",
 					() => 
 					{
-						var output = treeViewStringFragment.Item.TerminalCommand?.OutputBuilder?.ToString() ?? null;
+						/*
+						//// (2024-08-02)
+						//// =================
+						var output = treeViewStringFragment.Item.TerminalCommandRequest?.OutputBuilder?.ToString() ?? null;
+						*/
+						
+						var output = (string?)null;
 						
 						if (output is not null && output.Contains("Duration:"))
 						{
@@ -375,6 +382,6 @@ public partial class TestExplorerContextMenu : ComponentBase
         };
         
 		treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
-        _terminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
+        TerminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
 	}
 }

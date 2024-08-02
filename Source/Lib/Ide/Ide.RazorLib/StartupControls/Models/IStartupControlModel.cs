@@ -38,4 +38,5 @@ public interface IStartupControlModel
 	public Func<IStartupControlModel, Task> StartButtonOnClickTask { get; }
 	
 	public bool IsExecuting { get; }
+	public bool IsCompleted { get; }
 }

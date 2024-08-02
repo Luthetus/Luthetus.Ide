@@ -1,5 +1,6 @@
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
 
@@ -13,6 +14,6 @@ public class StringFragment
 	public string Value { get; set; }
 	public Dictionary<string, StringFragment> Map { get; set; } = new();
 	public bool IsEndpoint { get; set; }
-	public TerminalCommandRequest? TerminalCommand { get; set; }
-	public Key<TerminalCommandRequest> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+	public TerminalCommandRequest? TerminalCommandRequest { get; set; }
+	public Key<TerminalCommandRequest> DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 }

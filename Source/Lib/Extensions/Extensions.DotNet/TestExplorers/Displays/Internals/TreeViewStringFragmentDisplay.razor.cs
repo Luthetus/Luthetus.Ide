@@ -3,14 +3,13 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models.NewCode;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 
 public partial class TreeViewStringFragmentDisplay : FluxorComponent
 {
-	[Inject]
-	private IStateSelection<TerminalState, Terminal?> TerminalStateSelection { get; set; } = null!;
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 
@@ -26,8 +25,9 @@ public partial class TreeViewStringFragmentDisplay : FluxorComponent
 		base.OnInitialized();
 	}
 
-	private string? GetTerminalCommandOutput(Terminal terminal)
+	private string? GetTerminalCommandRequestOutput(ITerminal terminal)
 	{
-		return TreeViewStringFragment.Item.TerminalCommand?.OutputBuilder?.ToString() ?? null;
+		return $"TODO: {nameof(GetTerminalCommandRequestOutput)}";
+		// return TreeViewStringFragment.Item.TerminalCommandRequest?.OutputBuilder?.ToString() ?? null;
 	}
 }

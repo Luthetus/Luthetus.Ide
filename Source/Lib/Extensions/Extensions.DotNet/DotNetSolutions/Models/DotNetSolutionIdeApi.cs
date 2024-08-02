@@ -58,7 +58,7 @@ public class DotNetSolutionIdeApi
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IServiceProvider _serviceProvider;
 	
-	private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
+	private readonly Key<TerminalCommandRequest> _newDotNetSolutionTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
 	public DotNetSolutionIdeApi(
@@ -679,7 +679,7 @@ Sln-Directory: '{parentDirectory.Value}'"));
 				project.DisplayName,
 				project.AbsolutePath.Value,
 				project.AbsolutePath,
-				Key<TerminalCommand>.NewKey(),
+				Key<TerminalCommandRequest>.NewKey(),
 				null,
 				null,
 				null,
@@ -700,29 +700,6 @@ Sln-Directory: '{parentDirectory.Value}'"));
         return new TerminalCommandRequest(
         	formattedCommand.Value,
         	ancestorDirectory.Value,
-        	_newDotNetSolutionTerminalCommandKey)
-        {
-        	BeginWithFunc = parsedCommand =>
-        	{
-        		// _dotNetCliOutputParser was being used
-        		
-				Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
-				{
-					var mutableNotRanTestHashSet = inState.NotRanTestHashSet.ToHashSet();
-					
-					foreach (var fullyQualifiedTestName in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
-					{
-						mutableNotRanTestHashSet.Add(fullyQualifiedTestName);
-					}
-					
-					return inState with
-			        {
-			            NotRanTestHashSet = mutableNotRanTestHashSet.ToImmutableHashSet(),
-			        };
-			    }));
-			    
-			    return Task.CompletedTask;
-        	}
-        };
+        	_newDotNetSolutionTerminalCommandRequestKey);
     }
 }

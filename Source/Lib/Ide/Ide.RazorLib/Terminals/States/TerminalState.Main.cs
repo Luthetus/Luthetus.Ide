@@ -13,7 +13,7 @@ public partial record TerminalState(
 	ITerminal? EXECUTION_TERMINAL)
 {
     public TerminalState()
-        : this(ImmutableDictionary<Key<Terminal>, Terminal>.Empty, null)
+        : this(ImmutableDictionary<Key<Terminal>, Terminal>.Empty, null, null)
     {
     }
 }
