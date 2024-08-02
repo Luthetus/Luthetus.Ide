@@ -84,6 +84,14 @@ public class Terminal : ITerminal
 		if (!string.IsNullOrWhiteSpace(parsedCommand.Arguments))
 			cliWrapCommand = cliWrapCommand.WithArguments(parsedCommand.Arguments);
 		
+		// TODO: Decide where to put invocation of 'parsedCommand.SourceTerminalCommandRequest.BeginWithFunc'...
+		//       ...and invocation of 'cliWrapCommand'
+		//       and invocation of 'parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc'
+		//       |
+		// 	  This comment is referring to the 'try/catch' block logic.
+		//       If the 'BeginWithFunc' throws an exception should the 'cliWrapCommand' run?
+		//       If the 'cliWrapCommand' throws an exception should the 'ContinueWithFunc' run?
+		
 		try
 		{
 			HasExecutingProcess = true;
@@ -99,16 +107,16 @@ public class Terminal : ITerminal
 				.Observe(_commandCancellationTokenSource.Token)
 				.ForEachAsync(HandleOutput)
 				.ConfigureAwait(false);
-				
+		}
+		catch (Exception e)
+		{
 			if (parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc is not null)
 			{
 				await parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc
 					.Invoke(parsedCommand)
 					.ConfigureAwait(false);
 			}
-		}
-		catch (Exception e)
-		{
+		
 			HasExecutingProcess = false;
 			
 			// TODO: This will erroneously write 'StartedCommandEvent' out twice...

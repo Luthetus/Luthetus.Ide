@@ -701,6 +701,18 @@ Execution Terminal"));
         return new TerminalCommandRequest(
         	formattedCommand.Value,
         	ancestorDirectory.Value,
-        	_newDotNetSolutionTerminalCommandRequestKey);
+        	_newDotNetSolutionTerminalCommandRequestKey)
+        {
+        	ContinueWithFunc = parsedCommand =>
+        	{
+        		Console.WriteLine("ASDASDASDASD");
+        	
+        		var aaa = _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			parsedCommand,
+        			parsedCommand.OutputCache.ToString());
+        			
+        		return Task.CompletedTask;
+        	}
+        };
     }
 }
