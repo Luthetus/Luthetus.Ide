@@ -360,8 +360,9 @@ public class DotNetSolutionIdeApi
 		        	{
 		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 							parsedCommand,
-							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'.
-Sln-Directory: '{parentDirectory.Value}'"));
+							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
+Sln-Directory: '{parentDirectory.Value}'
+General Terminal"));
 		        		return Task.CompletedTask;
 		        	}
 		        };
@@ -379,8 +380,9 @@ Sln-Directory: '{parentDirectory.Value}'"));
 		        	{
 		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
 							parsedCommand,
-							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'.
-Sln-Directory: '{parentDirectory.Value}'"));
+							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
+Sln-Directory: '{parentDirectory.Value}'
+Execution Terminal"));
 		        		return Task.CompletedTask;
 		        	}
 		        };

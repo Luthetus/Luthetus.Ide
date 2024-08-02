@@ -25,25 +25,55 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
+	
+	[Parameter, EditorRequired]
+	public ITerminal Terminal { get; set; } = null!;
 
 	private readonly Throttle _throttle = new Throttle(TimeSpan.FromMilliseconds(700));
 	
-	private ITerminal? _terminal => TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY];
 	private string _command;
+	private ITerminal? _previousTerminal = null;
 	
-	protected override void OnInitialized()
+	protected override void OnParametersSet()
 	{
-		_terminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
-		_terminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
+		var nextTerminal = Terminal;
+		
+		if (_previousTerminal is null ||
+		    _previousTerminal.Key != nextTerminal.Key)
+		{
+			if (_previousTerminal is not null)
+			{
+				_previousTerminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
+				_previousTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
+			}
 			
-		base.OnInitialized();
+			if (nextTerminal is not null)
+			{
+				nextTerminal.TerminalInteractive.WorkingDirectoryChanged += OnWorkingDirectoryChanged;
+				nextTerminal.TerminalOutput.OnWriteOutput += OnWriteOutput;
+			}
+			
+			// TODO: Is it possible for the Dispose() method to be invoked prior to...
+			//       ...OnParametersSet() finishing?
+			//       |
+			//       It is being presumed that 'Dispose()' will not fire until 'OnParametersSet()'
+			//       finishes. But, this should be proven to be the case.
+			_previousTerminal = nextTerminal;
+			
+			// The name of the method 'OnWriteOutput()' is awkward.
+			// The invocation here is to reload the text since the terminal changed.
+			OnWriteOutput();
+		}
+	
+		
+		base.OnParametersSet();
 	}
 	
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Code == "Enter")
 		{
-			_terminal.EnqueueCommand(new TerminalCommandRequest(
+			Terminal.EnqueueCommand(new TerminalCommandRequest(
 				commandText: _command,
 				workingDirectory: null));
 		}
@@ -62,7 +92,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 				nameof(TerminalOutput),
 				editContext =>
 				{
-					var formatter = _terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
+					var formatter = Terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
 						x => x.Name == nameof(TerminalOutputFormatterExpand));
 						
 					if (formatter is not TerminalOutputFormatterExpand terminalOutputFormatterExpand)
@@ -76,7 +106,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 					if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
 						return Task.CompletedTask;
 
-					var localTerminal = _terminal;
+					var localTerminal = Terminal;
 
 					var outputFormatted = (TerminalOutputFormattedTextEditor)localTerminal.TerminalOutput
 						.GetOutputFormatted(nameof(TerminalOutputFormatterExpand));
@@ -118,8 +148,9 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	
 	public void Dispose()
 	{
-		_terminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
-		_terminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
-		_terminal?.Dispose();
+		var localPreviousTerminal = _previousTerminal;
+	
+		localPreviousTerminal.TerminalInteractive.WorkingDirectoryChanged -= OnWorkingDirectoryChanged;
+		localPreviousTerminal.TerminalOutput.OnWriteOutput -= OnWriteOutput;
 	}
 }

@@ -8,9 +8,9 @@
 @using Luthetus.Ide.RazorLib.Terminals.Displays
 
 @{
-	var localTerminal = _terminal;
+	var localTerminal = Terminal;
 	
-	var localFormatter = _terminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
+	var localFormatter = localTerminal.TerminalOutput.OutputFormatterList.FirstOrDefault(
 		x => x.Name == nameof(TerminalOutputFormatterExpand));
 	
 	var workingDirectory = localTerminal.TerminalInteractive.WorkingDirectory

@@ -1,3 +1,4 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
 @using System.Collections.Immutable
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
@@ -35,7 +36,8 @@
             }
             else
             {
-            	<TerminalOutputTextEditorExpandDisplay/>
+            	<TerminalOutputTextEditorExpandDisplay @key="activeTerminal.Key"
+            										   Terminal="activeTerminal"/>
             }
         </div>
 
