@@ -111,6 +111,6 @@ public partial class NugetPackageDisplay : FluxorComponent
         	parentDirectory.Value,
         	new Key<TerminalCommandRequest>(AddNugetPackageTerminalCommandKey.Guid));
         	
-        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
+        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
 	}
 }

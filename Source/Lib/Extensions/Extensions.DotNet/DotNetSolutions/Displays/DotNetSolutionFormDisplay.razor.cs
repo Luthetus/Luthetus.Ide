@@ -140,7 +140,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 	        	_parentDirectoryName,
 	        	new Key<TerminalCommandRequest>(NewDotNetSolutionTerminalCommandKey.Guid));
 	        	
-	        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
+	        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
 		}
 	}
 

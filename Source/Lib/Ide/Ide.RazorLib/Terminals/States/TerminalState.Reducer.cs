@@ -51,19 +51,19 @@ public partial record TerminalState
         }
 
         [ReducerMethod]
-        public static TerminalState ReduceNEW_TERMINAL_CODE_RegisterAction(
+        public static TerminalState ReduceGeneralTerminalRegisterAction(
             TerminalState inState,
-            NEW_TERMINAL_CODE_RegisterAction NEW_TERMINAL_CODE_RegisterAction)
+            GeneralTerminalRegisterAction generalTerminalRegisterAction)
         {
-            return inState with { NEW_TERMINAL = NEW_TERMINAL_CODE_RegisterAction.NEW_TERMINAL };
+            return inState with { GeneralTerminalRegisterAction = generalTerminalRegisterAction.Terminal };
         }
 
         [ReducerMethod]
-        public static TerminalState ReduceEXECUTION_TERMINAL_CODE_RegisterAction(
+        public static TerminalState ReduceExecutionTerminalRegisterAction(
             TerminalState inState,
-            EXECUTION_TERMINAL_CODE_RegisterAction EXECUTION_TERMINAL_CODE_RegisterAction)
+            ExecutionTerminalRegisterAction executionTerminalRegisterAction)
         {
-            return inState with { EXECUTION_TERMINAL = EXECUTION_TERMINAL_CODE_RegisterAction.NEW_TERMINAL };
+            return inState with { ExecutionTerminal = executionTerminalRegisterAction.Terminal };
         }
     }
 }

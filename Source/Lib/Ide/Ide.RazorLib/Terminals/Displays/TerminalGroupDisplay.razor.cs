@@ -26,6 +26,6 @@ public partial class TerminalGroupDisplay : ComponentBase
     private void ClearTerminalOnClick(Key<Terminal> terminalKey)
     {
     	if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
-    		TerminalStateWrap.Value.NEW_TERMINAL?.EnqueueClear();
+    		TerminalStateWrap.Value.GeneralTerminal?.EnqueueClear();
     }
 }

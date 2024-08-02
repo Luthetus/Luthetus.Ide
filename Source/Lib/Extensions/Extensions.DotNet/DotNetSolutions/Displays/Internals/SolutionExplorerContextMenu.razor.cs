@@ -353,14 +353,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				}),
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
-				TerminalStateWrap.Value.NEW_TERMINAL,
+				TerminalStateWrap.Value.GeneralTerminal,
 				Dispatcher,
 				IdeBackgroundTaskApi,
 				() => Task.CompletedTask),
 			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.NEW_TERMINAL,
+				TerminalStateWrap.Value.GeneralTerminal,
 				Dispatcher,
 				() =>
 				{
@@ -386,7 +386,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.NEW_TERMINAL,
+				TerminalStateWrap.Value.GeneralTerminal,
 				Dispatcher,
 				() =>
 				{
@@ -403,7 +403,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		{
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
-				TerminalStateWrap.Value.NEW_TERMINAL,
+				TerminalStateWrap.Value.GeneralTerminal,
 				Dispatcher, () => Task.CompletedTask),
 		};
 	}
@@ -422,7 +422,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
-				TerminalStateWrap.Value.NEW_TERMINAL,
+				TerminalStateWrap.Value.GeneralTerminal,
 				Dispatcher, () => Task.CompletedTask),
 		};
 	}
@@ -543,7 +543,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		        	localFormattedAddExistingProjectToSolutionCommand.Value,
 		        	null);
 		        	
-		        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
+		        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			},
 			absolutePath =>

@@ -18,7 +18,6 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
-using Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.Gits.Displays;
@@ -75,11 +74,39 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 {
                 	if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
                 	{
-                		NEW_TERMINAL_CODE();
+                		Dispatcher.Dispatch(new TerminalState.GeneralTerminalRegisterAction(
+					    	new Terminal(
+								"General",
+								terminal => new TerminalInteractive(terminal),
+								terminal => new TerminalInputStringBuilder(terminal),
+								terminal => new TerminalOutput(
+									terminal,
+									new TerminalOutputFormatterExpand(
+										terminal,
+										TextEditorService,
+										CompilerServiceRegistry,
+										Dispatcher)),
+								BackgroundTaskService,
+								CommonComponentRenderers,
+								Dispatcher)));
                 	}
                 	else if (terminalKey == TerminalFacts.EXECUTION_TERMINAL_KEY)
                 	{
-                		EXECUTION_TERMINAL_CODE();
+                		Dispatcher.Dispatch(new TerminalState.ExecutionTerminalRegisterAction(
+					    	new Terminal(
+								"Execution",
+								terminal => new TerminalInteractive(terminal),
+								terminal => new TerminalInputStringBuilder(terminal),
+								terminal => new TerminalOutput(
+									terminal,
+									new TerminalOutputFormatterExpand(
+										terminal,
+										TextEditorService,
+										CompilerServiceRegistry,
+										Dispatcher)),
+								BackgroundTaskService,
+								CommonComponentRenderers,
+								Dispatcher)));
                 	}
                 }
 
@@ -175,43 +202,5 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         // SetActivePanelTabAction
         Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key));
-    }
-    
-    private void NEW_TERMINAL_CODE()
-    {
-    	Dispatcher.Dispatch(new TerminalState.NEW_TERMINAL_CODE_RegisterAction(
-	    	new NEW_Terminal(
-				"General",
-				terminal => new TerminalInteractive(terminal),
-				terminal => new TerminalInputStringBuilder(terminal),
-				terminal => new TerminalOutput(
-					terminal,
-					new TerminalOutputFormatterExpand(
-						terminal,
-						TextEditorService,
-						CompilerServiceRegistry,
-						Dispatcher)),
-				BackgroundTaskService,
-				CommonComponentRenderers,
-				Dispatcher)));
-    }
-    
-    private void EXECUTION_TERMINAL_CODE()
-    {
-    	Dispatcher.Dispatch(new TerminalState.EXECUTION_TERMINAL_CODE_RegisterAction(
-	    	new NEW_Terminal(
-				"Execution",
-				terminal => new TerminalInteractive(terminal),
-				terminal => new TerminalInputStringBuilder(terminal),
-				terminal => new TerminalOutput(
-					terminal,
-					new TerminalOutputFormatterExpand(
-						terminal,
-						TextEditorService,
-						CompilerServiceRegistry,
-						Dispatcher)),
-				BackgroundTaskService,
-				CommonComponentRenderers,
-				Dispatcher)));
     }
 }

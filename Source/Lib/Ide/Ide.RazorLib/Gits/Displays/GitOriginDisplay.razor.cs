@@ -68,6 +68,6 @@ public partial class GitOriginDisplay : ComponentBase
         	localGitState.Repo.AbsolutePath.Value,
         	new Key<TerminalCommandRequest>(GitSetOriginTerminalCommandKey.Guid));
         	
-        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
+        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
     }
 }

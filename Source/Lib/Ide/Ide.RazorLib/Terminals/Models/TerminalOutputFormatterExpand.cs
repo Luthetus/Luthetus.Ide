@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-using Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
+using Luthetus.Ide.RazorLib.Terminals.Displays;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 

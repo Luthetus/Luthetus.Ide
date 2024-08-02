@@ -358,7 +358,7 @@ public class DotNetSolutionIdeApi
 		        {
 		        	BeginWithFunc = parsedCommand =>
 		        	{
-		        		_terminalStateWrap.Value.NEW_TERMINAL.TerminalOutput.WriteOutput(
+		        		_terminalStateWrap.Value.GeneralTerminal.TerminalOutput.WriteOutput(
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'.
 Sln-Directory: '{parentDirectory.Value}'"));
@@ -366,7 +366,7 @@ Sln-Directory: '{parentDirectory.Value}'"));
 		        	}
 		        };
 		        	
-		        _terminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
+		        _terminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
 			}
 
 			// Set 'executionTerminal' working directory
@@ -377,7 +377,7 @@ Sln-Directory: '{parentDirectory.Value}'"));
 		        {
 		        	BeginWithFunc = parsedCommand =>
 		        	{
-		        		_terminalStateWrap.Value.NEW_TERMINAL.TerminalOutput.WriteOutput(
+		        		_terminalStateWrap.Value.GeneralTerminal.TerminalOutput.WriteOutput(
 							parsedCommand,
 							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'.
 Sln-Directory: '{parentDirectory.Value}'"));
@@ -385,7 +385,7 @@ Sln-Directory: '{parentDirectory.Value}'"));
 		        	}
 		        };
 
-				_terminalStateWrap.Value.EXECUTION_TERMINAL.EnqueueCommand(terminalCommandRequest);
+				_terminalStateWrap.Value.ExecutionTerminal.EnqueueCommand(terminalCommandRequest);
 			}
 		}
 

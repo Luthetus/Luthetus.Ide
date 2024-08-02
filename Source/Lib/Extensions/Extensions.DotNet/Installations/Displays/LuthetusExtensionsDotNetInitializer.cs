@@ -339,7 +339,7 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	formattedCommand.Value,
         	localParentDirectory.Value);
         	
-        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
+        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
 	}
 
 	private void CleanOnClick(string solutionAbsolutePathString)
@@ -356,6 +356,6 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	formattedCommand.Value,
         	localParentDirectory.Value);
         	
-        TerminalStateWrap.Value.NEW_TERMINAL.EnqueueCommand(terminalCommandRequest);
+        TerminalStateWrap.Value.GeneralTerminal.EnqueueCommand(terminalCommandRequest);
 	}
 }

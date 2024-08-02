@@ -17,17 +17,17 @@ namespace Luthetus.Ide.RazorLib.Terminals.Models;
 /// <summary>
 /// This implementation of <see cref="ITerminal"/> is a "blank slate".
 /// </summary>
-public class NEW_Terminal : ITerminal
+public class Terminal : ITerminal
 {
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly IDispatcher _dispatcher;
 
-	public NEW_Terminal(
+	public Terminal(
 		string displayName,
-		Func<NEW_Terminal, ITerminalInteractive> terminalInteractiveFactory,
-		Func<NEW_Terminal, ITerminalInput> terminalInputFactory,
-		Func<NEW_Terminal, ITerminalOutput> terminalOutputFactory,
+		Func<Terminal, ITerminalInteractive> terminalInteractiveFactory,
+		Func<Terminal, ITerminalInput> terminalInputFactory,
+		Func<Terminal, ITerminalOutput> terminalOutputFactory,
 		IBackgroundTaskService backgroundTaskService,
 		ICommonComponentRenderers commonComponentRenderers,
 		IDispatcher dispatcher)

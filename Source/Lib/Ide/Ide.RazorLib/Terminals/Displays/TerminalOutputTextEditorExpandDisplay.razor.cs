@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 
-namespace Luthetus.Ide.RazorLib.Terminals.Displays.NewCode;
+namespace Luthetus.Ide.RazorLib.Terminals.Displays;
 
 public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDisposable
 {
@@ -28,7 +28,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 
 	private readonly Throttle _throttle = new Throttle(TimeSpan.FromMilliseconds(700));
 	
-	private ITerminal? _terminal => TerminalStateWrap.Value.NEW_TERMINAL;
+	private ITerminal? _terminal => TerminalStateWrap.Value.GeneralTerminal;
 	private string _command;
 	
 	protected override void OnInitialized()
