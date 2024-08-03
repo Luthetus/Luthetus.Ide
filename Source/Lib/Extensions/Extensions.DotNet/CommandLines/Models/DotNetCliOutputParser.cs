@@ -21,6 +21,8 @@ public class DotNetCliOutputParser
 
 	public List<TextEditorTextSpan> ParseOutputEntireDotNetRun(TerminalCommandParsed terminalCommandParsed, string outputEntire)
 	{
+		ErrorList = new();
+	
 		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/DotNetRunOutputParser.txt"), outputEntire);
 		var textSpanList = new List<TextEditorTextSpan>();
 
@@ -38,15 +40,17 @@ public class DotNetCliOutputParser
 		// 	Step 5: Read project file path
 		var stepCounter = 1;
 		
+		var debugBuilder = new StringBuilder();
+		
+		var stageThreeColonCounter = 0;
+		
 		while (!stringWalker.IsEof)
 		{
+			debugBuilder.Append(stringWalker.CurrentCharacter);
+					
 			// If newline character then reset state.
 			if (!stringWalker.IsEof && WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
             {
-            	Console.WriteLine("ParseOutputEntireDotNetRun");
-            
-                _ = stringWalker.ReadCharacter();
-                
                 if (errorKeywordAndErrorCodeTextSpan.DecorationByte != 0)
 				{
 					for (int i = textSpanList.Count - 1; i >= 0; i--)
@@ -63,20 +67,18 @@ public class DotNetCliOutputParser
 					ErrorList.Add(textSpanList);
 				}
 
+				debugBuilder.Append($"\nstepCounter: {stepCounter}\n\n");
 				stepCounter = 1;
                 startPositionInclusiveIndex = stringWalker.PositionIndex;
-                continue;
             }
             else
             {
             	if (stepCounter == 1) // Step 1: Read filePathTextSpan
             	{
-            		var character = stringWalker.ReadCharacter();
+            		var character = stringWalker.CurrentCharacter;
 
 					if (character == '(')
 					{
-						_ = stringWalker.BacktrackCharacter();
-
 						textSpanList.Add(new TextEditorTextSpan(
 							startPositionInclusiveIndex,
 							stringWalker,
@@ -84,12 +86,11 @@ public class DotNetCliOutputParser
 
 						stepCounter++;
 						startPositionInclusiveIndex = stringWalker.CurrentCharacter;
-						continue;
 					}
             	}
             	else if (stepCounter == 2) // Step 2: Read rowAndColumnNumberTextSpan
 				{
-					var character = stringWalker.ReadCharacter();
+					var character = stringWalker.CurrentCharacter;
 
 					if (character == ')')
 					{
@@ -100,26 +101,33 @@ public class DotNetCliOutputParser
 
 						stepCounter++;
 						startPositionInclusiveIndex = stringWalker.CurrentCharacter;
-						continue;
 					}
 				}
 				else if (stepCounter == 3) // Step 3: Read errorKeywordAndErrorCode
 				{
+					if (stringWalker.CurrentCharacter == ':')
+					{
+						stageThreeColonCounter++;
+					}
+				
 					// Consider having Step 2 use ':' as its exclusive delimiter.
 					// Because now a step is needed to skip over some text.
 					{
-						if (stringWalker.CurrentCharacter == ':')
+						if (stageThreeColonCounter == 1)
+						{
 							_ = stringWalker.ReadCharacter();
+							debugBuilder.Append(stringWalker.CurrentCharacter);
+						}
 	
-						_ = stringWalker.ReadWhitespace();
+						var whitespace = stringWalker.ReadWhitespace();
+						debugBuilder.Append(whitespace);
+						debugBuilder.Append(stringWalker.CurrentCharacter);
 					}
 	
-					var character = stringWalker.ReadCharacter();
+					var character = stringWalker.CurrentCharacter;
 
-					if (character == ':')
+					if (stageThreeColonCounter == 2)
 					{
-						_ = stringWalker.BacktrackCharacter();
-
 						errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
 							startPositionInclusiveIndex,
 							stringWalker,
@@ -136,9 +144,9 @@ public class DotNetCliOutputParser
 							};
 						}
 
+						stageThreeColonCounter = 0;
 						stepCounter++;
 						startPositionInclusiveIndex = stringWalker.CurrentCharacter;
-						continue;
 					}
 				}
 				else if (stepCounter == 4) // Step 4: Read errorMessage
@@ -146,17 +154,20 @@ public class DotNetCliOutputParser
 					// A step is needed to skip over some text.
 					{
 						if (stringWalker.CurrentCharacter == ':')
+						{
 							_ = stringWalker.ReadCharacter();
+							debugBuilder.Append(stringWalker.CurrentCharacter);
+						}
 	
-						_ = stringWalker.ReadWhitespace();
+						var whitespace = stringWalker.ReadWhitespace();
+						debugBuilder.Append(whitespace);
+						debugBuilder.Append(stringWalker.CurrentCharacter);
 					}
 	
-					var character = stringWalker.ReadCharacter();
+					var character = stringWalker.CurrentCharacter;
 
 					if (character == '[')
 					{
-						_ = stringWalker.BacktrackCharacter();
-
 						textSpanList.Add(new TextEditorTextSpan(
 							startPositionInclusiveIndex,
 							stringWalker,
@@ -164,14 +175,13 @@ public class DotNetCliOutputParser
 
 						stepCounter++;
 						startPositionInclusiveIndex = stringWalker.CurrentCharacter;
-						continue;
 					}
 				}
 				else if (stepCounter == 5) // Step 5: Read project file path
 				{
 					var startPositionInclusiveProjectFilePath = stringWalker.PositionIndex;
 	
-					var character = stringWalker.ReadCharacter();
+					var character = stringWalker.CurrentCharacter;
 
 					if (character == ']')
 					{
@@ -182,13 +192,22 @@ public class DotNetCliOutputParser
 
 						stepCounter++;
 						startPositionInclusiveIndex = stringWalker.CurrentCharacter;
-						continue;
 					}
 				}
             }
 
 			_ = stringWalker.ReadCharacter();
 		}
+		
+		Console.WriteLine("=========================================");
+		Console.WriteLine("=========================================");
+		Console.WriteLine("=========================================");
+		Console.WriteLine("=========================================");
+		Console.WriteLine(debugBuilder.ToString());
+		Console.WriteLine("=========================================");
+		Console.WriteLine("=========================================");
+		Console.WriteLine("=========================================");
+		Console.WriteLine("=========================================");
 
 		return textSpanList;
 	}

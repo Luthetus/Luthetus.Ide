@@ -705,8 +705,6 @@ Execution Terminal"));
         {
         	ContinueWithFunc = parsedCommand =>
         	{
-        		Console.WriteLine("ASDASDASDASD");
-        	
         		var aaa = _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
         			parsedCommand,
         			parsedCommand.OutputCache.ToString());
