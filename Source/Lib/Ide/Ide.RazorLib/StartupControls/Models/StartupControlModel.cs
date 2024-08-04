@@ -13,7 +13,8 @@ public class StartupControlModel : IStartupControlModel
 		IAbsolutePath startupProjectAbsolutePath,
 		Type? componentType,
 		Dictionary<string, object?>? componentParameterMap,
-		Func<IStartupControlModel, Task> startButtonOnClickTask)
+		Func<IStartupControlModel, Task> startButtonOnClickTask,
+		Func<IStartupControlModel, Task> stopButtonOnClickTask)
 	{
 		Key = key;
 		Title = title;
@@ -22,6 +23,7 @@ public class StartupControlModel : IStartupControlModel
 		ComponentType = componentType;
 		ComponentParameterMap = componentParameterMap;
 		StartButtonOnClickTask = startButtonOnClickTask;
+		StopButtonOnClickTask = stopButtonOnClickTask;
 	}
 	
     private CancellationTokenSource _terminalCancellationTokenSource = new();
@@ -34,5 +36,7 @@ public class StartupControlModel : IStartupControlModel
 	public Type? ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; }
 	public Func<IStartupControlModel, Task> StartButtonOnClickTask { get; }
+	public Func<IStartupControlModel, Task> StopButtonOnClickTask { get; }
+	
 	public bool IsExecuting => ExecutingTerminalCommandRequest is not null;
 }

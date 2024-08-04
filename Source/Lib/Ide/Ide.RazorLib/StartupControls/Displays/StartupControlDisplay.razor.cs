@@ -122,9 +122,13 @@ public partial class StartupControlDisplay : FluxorComponent
 		    MenuOptionKind.Other,
 		    OnClickFunc: () =>
 		    {
-		    	var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY];
-		    	executionTerminal.KillProcess();
-                return Task.CompletedTask;
+		    	var localStartupControlState = StartupControlStateWrap.Value;
+		    	
+		    	if (localStartupControlState.ActiveStartupControl is null)
+		    		return Task.CompletedTask;
+		    		
+		    	return localStartupControlState.ActiveStartupControl.StopButtonOnClickTask
+		    		.Invoke(localStartupControlState.ActiveStartupControl);
 		    }));
 
 		var dropdownRecord = new DropdownRecord(

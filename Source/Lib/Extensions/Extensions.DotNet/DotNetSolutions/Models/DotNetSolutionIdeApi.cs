@@ -682,7 +682,8 @@ Execution Terminal"));
 				project.AbsolutePath,
 				null,
 				null,
-				startupControlModel => StartButtonOnClick(startupControlModel, project))));
+				startupControlModel => StartButtonOnClick(startupControlModel, project),
+				StopButtonOnClick)));
 	}
 	
 	private Task StartButtonOnClick(IStartupControlModel interfaceStartupControlModel, IDotNetProject project)
@@ -725,5 +726,16 @@ Execution Terminal"));
         
 		_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
     	return Task.CompletedTask;
+    }
+    
+    private Task StopButtonOnClick(IStartupControlModel interfaceStartupControlModel)
+    {
+    	var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
+    	
+		_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
+		startupControlModel.ExecutingTerminalCommandRequest = null;
+		
+        _dispatcher.Dispatch(new StartupControlState.StateChangedAction());
+        return Task.CompletedTask;
     }
 }
