@@ -72,6 +72,18 @@ public class DotNetCliOutputParser
 					diagnosticLine.Text = stringWalker.SourceText.Substring(
 						diagnosticLine.StartInclusiveIndex,
 						diagnosticLine.EndExclusiveIndex - diagnosticLine.StartInclusiveIndex);
+						
+					var diagnosticLineKindText = stringWalker.SourceText.Substring(
+						diagnosticLine.DiagnosticKindTextSpan.StartInclusiveIndex,
+						diagnosticLine.DiagnosticKindTextSpan.EndExclusiveIndex -
+							diagnosticLine.DiagnosticKindTextSpan.StartInclusiveIndex);
+							
+					if (string.Equals(diagnosticLineKindText, nameof(DiagnosticLineKind.Warning), StringComparison.OrdinalIgnoreCase))
+						diagnosticLine.DiagnosticLineKind = DiagnosticLineKind.Warning;
+					else if (string.Equals(diagnosticLineKindText, nameof(DiagnosticLineKind.Error), StringComparison.OrdinalIgnoreCase))
+						diagnosticLine.DiagnosticLineKind = DiagnosticLineKind.Error;
+					else
+						diagnosticLine.DiagnosticLineKind = DiagnosticLineKind.Other;
 				
 					diagnosticLineList.Add(diagnosticLine);
 				}
@@ -257,7 +269,7 @@ public class DotNetCliOutputParser
 		
 		lock (_listLock)
 		{
-			_diagnosticLineList = diagnosticLineList;
+			_diagnosticLineList = diagnosticLineList.OrderBy(x => x.DiagnosticLineKind).ToList();
 		}
 	}
 
@@ -528,6 +540,7 @@ public class DotNetCliOutputParser
 		public int EndExclusiveIndex { get; set; }
 		// <summary>The entire line of text itself</summary>
 		public string Text { get; set; }
+		public DiagnosticLineKind DiagnosticLineKind { get; set; } = DiagnosticLineKind.Error;
 		
 		public DiagnosticTextSpan? FilePathTextSpan { get; set; }
 		public DiagnosticTextSpan? LineAndColumnIndicesTextSpan { get; set; }
@@ -543,5 +556,12 @@ public class DotNetCliOutputParser
 			DiagnosticCodeTextSpan is not null &&
 			MessageTextSpan is not null &&
 			ProjectTextSpan is not null;
+	}
+	
+	public enum DiagnosticLineKind
+	{
+		Error,
+		Warning,
+		Other,
 	}
 }

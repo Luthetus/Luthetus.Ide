@@ -13,7 +13,22 @@
 	<ol>
 		@foreach (var diagnosticLine in localDiagnosticLineList)
 		{
-			<li class="luth_tree-view-exception"
+			var cssClass = string.Empty;
+			
+			@if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Warning)
+			{
+				cssClass = "luth_tree-view-warning";
+			}
+			else if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Error)
+			{
+				cssClass = "luth_tree-view-exception";
+			}
+			else if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Other)
+			{
+				cssClass = string.Empty;
+			}
+			
+			<li class="@cssClass"
 				style="margin: calc(1.6em + 4px) 0;">
 				
 				@diagnosticLine.Text
