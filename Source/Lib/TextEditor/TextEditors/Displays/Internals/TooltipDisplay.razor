@@ -1,8 +1,10 @@
-﻿@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.Common.RazorLib.Dimensions;
 @using Luthetus.Common.RazorLib.Dimensions.Models;
 
 @{
-    var localViewModel = TextEditorTooltipViewModel;
+	var renderBatchLocal = RenderBatch;
+	
+    var localViewModel = renderBatchLocal?.ViewModel?.TooltipViewModel;
 
     if (localViewModel is not null)
     {

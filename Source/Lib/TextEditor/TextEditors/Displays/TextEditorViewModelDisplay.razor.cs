@@ -22,7 +22,7 @@ using Luthetus.TextEditor.RazorLib.Events.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
-public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
+public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 {
     [Inject]
     private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
@@ -61,16 +61,22 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     // private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
     private TextEditorComponentData _componentData = null!;
-    private bool _thinksTouchIsOccurring;
-    private TouchEventArgs? _previousTouchEventArgs = null;
-    private DateTime? _touchStartDateTime = null;
     private BodySection? _bodySectionComponent;
-    private MeasureCharacterWidthAndRowHeight? _measureCharacterWidthAndRowHeightComponent;
-    private bool _userMouseIsInside;
     private TextEditorRenderBatchUnsafe _storedRenderBatch = null!;
     private TextEditorRenderBatchUnsafe? _previousRenderBatch;
+    private TextEditorRenderBatchValidated? _storedRenderBatchValidated;
     private TextEditorViewModel? _linkedViewModel;
-	private Task _shouldRenderSkipTask = Task.CompletedTask;
+    
+    private bool _thinksTouchIsOccurring;
+    private DateTime? _touchStartDateTime = null;
+    private TouchEventArgs? _previousTouchEventArgs = null;
+    private bool _userMouseIsInside;
+    
+    /* MeasureCharacterWidthAndRowHeight.razor Open */
+    private const string TEST_STRING_FOR_MEASUREMENT = "abcdefghijklmnopqrstuvwxyz0123456789";
+    private const int TEST_STRING_REPEAT_COUNT = 6;
+    public int COUNT_OF_TEST_CHARACTERS => TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
+    /* MeasureCharacterWidthAndRowHeight.razor Close */
 
     private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
     private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
@@ -78,13 +84,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private string ProportionalFontMeasurementsContainerElementId => $"luth_te_text-editor-proportional-font-measurement-container_{_textEditorHtmlElementId}";
 
 	public TextEditorComponentData ComponentData => _componentData;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        HandleTextEditorViewModelKeyChange();
-
-        await base.OnParametersSetAsync();
-    }
 
     protected override void OnInitialized()
     {
@@ -110,6 +109,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         base.OnInitialized();
     }
+    
+    protected override void OnParametersSet()
+    {
+    	HandleTextEditorViewModelKeyChange();
+    	base.OnParametersSet();
+    }
 
     protected override bool ShouldRender()
     {
@@ -133,7 +138,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
                 QueueRemeasureBackgroundTask(
                     _storedRenderBatch,
                     MeasureCharacterWidthAndRowHeightElementId,
-                    _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
+                    COUNT_OF_TEST_CHARACTERS,
                     CancellationToken.None);
             }
 
@@ -155,7 +160,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
             QueueRemeasureBackgroundTask(
                 _storedRenderBatch,
                 MeasureCharacterWidthAndRowHeightElementId,
-                _measureCharacterWidthAndRowHeightComponent?.CountOfTestCharacters ?? 0,
+                COUNT_OF_TEST_CHARACTERS,
                 CancellationToken.None);
 
             QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
@@ -170,19 +175,12 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    public TextEditorModel? GetModel() => TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey);
-
-    public TextEditorViewModel? GetViewModel() => TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
-        x => x.ViewModelKey == TextEditorViewModelKey);
-
-    public TextEditorOptions? GetOptions() => TextEditorOptionsStateWrap.Value.Options;
-
     private void ConstructRenderBatch()
     {
         var renderBatch = new TextEditorRenderBatchUnsafe(
-            GetModel(),
-            GetViewModel(),
-            GetOptions(),
+            TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey),
+            TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey),
+            TextEditorOptionsStateWrap.Value.Options,
             ITextEditorRenderBatch.DEFAULT_FONT_FAMILY,
             TextEditorOptionsState.DEFAULT_FONT_SIZE_IN_PIXELS,
             ViewModelDisplayOptions,
@@ -228,7 +226,6 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         {
             var localTextEditorViewModelKey = TextEditorViewModelKey;
 
-            // Don't use the method 'GetViewModel()'. The logic here needs to be transactional, the TextEditorViewModelKey must not change.
             var nextViewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == localTextEditorViewModelKey);
 
@@ -255,19 +252,33 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         }
     }
 
-    public async Task FocusTextEditorAsync()
+    public Task FocusTextEditorAsync()
     {
         if (CursorDisplay is not null)
-            await CursorDisplay.FocusAsync().ConfigureAwait(false);
+            return CursorDisplay.FocusAsync();
+            
+		return Task.CompletedTask;
     }
 
+    private string GetGlobalHeightInPixelsStyling()
+    {
+        var heightInPixels = TextEditorService.OptionsStateWrap.Value.Options.TextEditorHeightInPixels;
+
+        if (heightInPixels is null)
+            return string.Empty;
+
+        var heightInPixelsInvariantCulture = heightInPixels.Value.ToCssValue();
+
+        return $"height: {heightInPixelsInvariantCulture}px;";
+    }
+    
     private void ReceiveOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
         if (EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs))
             return;
 
-        var resourceUri = GetModel()?.ResourceUri;
-        var viewModelKey = GetViewModel()?.ViewModelKey;
+        var resourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
 
         if (resourceUri is null || viewModelKey is null)
 			return;
@@ -305,8 +316,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
-        var modelResourceUri = GetModel()?.ResourceUri;
-        var viewModelKey = GetViewModel()?.ViewModelKey;
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
@@ -324,10 +335,10 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     {
         _componentData.ThinksLeftMouseButtonIsDown = true;
 
-        var modelResourceUri = GetModel()?.ResourceUri;
-        var viewModel = GetViewModel();
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
+        var viewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey);
 
-        var viewModelKey = GetViewModel()?.ViewModelKey;
+        var viewModelKey = viewModel?.ViewModelKey;
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
@@ -353,8 +364,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
 
-        var modelResourceUri = GetModel()?.ResourceUri;
-        var viewModel = GetViewModel();
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
+        var viewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey);
         var viewModelKey = viewModel?.ViewModelKey;
 
         // MouseStoppedMovingEvent
@@ -456,7 +467,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     
     private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
-        var viewModelKey = GetViewModel()?.ViewModelKey;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
 
         if (viewModelKey is null)
             return;
@@ -490,7 +501,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         if (previousTouchPoint is null || currentTouchPoint is null)
              return;
 
-        var viewModel = GetViewModel();
+        var viewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey);
 
         if (viewModel is null)
 			return;
@@ -523,19 +534,7 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 
         _previousTouchEventArgs = touchEventArgs;
     }
-
-    private string GetGlobalHeightInPixelsStyling()
-    {
-        var heightInPixels = TextEditorService.OptionsStateWrap.Value.Options.TextEditorHeightInPixels;
-
-        if (heightInPixels is null)
-            return string.Empty;
-
-        var heightInPixelsInvariantCulture = heightInPixels.Value.ToCssValue();
-
-        return $"height: {heightInPixelsInvariantCulture}px;";
-    }
-
+    
     private void ClearTouch(TouchEventArgs touchEventArgs)
     {
         var rememberStartTouchEventArgs = _previousTouchEventArgs;
@@ -571,8 +570,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
         int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
-        var modelResourceUri = GetModel()?.ResourceUri;
-        var viewModelKey = GetViewModel()?.ViewModelKey;
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
 
         if (modelResourceUri is null || viewModelKey is null)
             return;
@@ -600,8 +599,8 @@ public partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
     private void QueueCalculateVirtualizationResultBackgroundTask(
 		ITextEditorRenderBatch localCurrentRenderBatch)
     {
-        var modelResourceUri = GetModel()?.ResourceUri;
-        var viewModelKey = GetViewModel()?.ViewModelKey;
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
 
         if (modelResourceUri is null || viewModelKey is null)
             return;

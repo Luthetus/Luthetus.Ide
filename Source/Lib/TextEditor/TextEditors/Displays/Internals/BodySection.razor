@@ -1,33 +1,129 @@
-@using Luthetus.TextEditor.RazorLib.Cursors.Models;
+@using System.Text
+@using Luthetus.Common.RazorLib.Keys.Models
+@using Luthetus.TextEditor.RazorLib.Cursors.Models
+@using Luthetus.TextEditor.RazorLib.Rows.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.TextEditor.RazorLib.Virtualizations.Models
+@using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
 
-<div class="luth_te_body-section"
-     style="@GetBodyStyleCss()">
+@{ var renderBatchLocal = RenderBatch; }
+    
+@if (renderBatchLocal is not null)
+{
+	_storedRenderBatch = renderBatchLocal;
+	
+	var primaryCursor = renderBatchLocal.ViewModel!.PrimaryCursor;
 
-    @{
-        var primaryCursor = RenderBatch.ViewModel!.PrimaryCursor;
+    var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
+    var spaceKeyOutput = "&nbsp;";
 
-        var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
-        var spaceKeyOutput = "&nbsp;";
-
-        if (TextEditorService.OptionsStateWrap.Value.Options.ShowWhitespace)
-        {
-            tabKeyOutput = "--->";
-            spaceKeyOutput = "·";
-        }
+    if (TextEditorService.OptionsStateWrap.Value.Options.ShowWhitespace)
+    {
+        tabKeyOutput = "--->";
+        spaceKeyOutput = "·";
     }
 
-    <RowSection @ref="_rowSectionComponent"
-                GlobalShowNewlines="TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines"
-                SpaceKeyOutput="@spaceKeyOutput"
-                TabKeyOutput="@tabKeyOutput"
-                TabIndex="@TabIndex"
-                PrimaryCursor="primaryCursor"
-                ContextMenuRenderFragmentOverride="ContextMenuRenderFragmentOverride"
-                IncludeContextMenuHelperComponent="IncludeContextMenuHelperComponent"
-                AutoCompleteMenuRenderFragmentOverride="AutoCompleteMenuRenderFragmentOverride"/>
-
-    <ScrollbarSection/>
-    <TooltipDisplay/>
-    <FindOverlayDisplay/>
-    <WidgetLayerDisplay/>
-</div>
+	<div class="luth_te_body-section"
+ 		style="@GetBodyStyleCss(renderBatchLocal)">
+        
+        @* RowSection.razor Open *@
+		<div class="luth_te_row-section"
+     		id="@renderBatchLocal.ViewModel.BodyElementId">
+    
+    		@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
+		    <VirtualizationDisplay VirtualizationResultWithoutTypeMask="renderBatchLocal.ViewModel.VirtualizationResult"
+		                           ItemsProviderFunc="RowSection_VirtualizationDisplayItemsProviderFunc"/>
+		                           
+			<PresentationAndSelectionSection PrimaryCursor="PrimaryCursor"/>
+		
+		    @foreach (var virtualizedRow in renderBatchLocal.ViewModel.VirtualizationResult.EntryList)
+		    {
+		        <div class="luth_te_row"
+		             style="@RowSection_GetRowStyleCss(renderBatchLocal, virtualizedRow.Index, virtualizedRow.LeftInPixels)">
+		            @if (virtualizedRow.Item.Any())
+		            {
+		                var spanBuilder = new StringBuilder();
+		                var currentDecorationByte = virtualizedRow.Item.First().DecorationByte;
+		
+		                foreach (var richCharacter in virtualizedRow.Item)
+		                {
+		                    if (currentDecorationByte == richCharacter.DecorationByte)
+		                    {
+		                        RowSection_AppendTextEscaped(renderBatchLocal, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+		                    }
+		                    else
+		                    {
+		                        <span class="@RowSection_GetCssClass(renderBatchLocal, currentDecorationByte)">
+		                            @((MarkupString)spanBuilder.ToString())
+		                        </span>
+		
+		                        spanBuilder.Clear();
+		
+		                        RowSection_AppendTextEscaped(renderBatchLocal, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+		
+		                        currentDecorationByte = richCharacter.DecorationByte;
+		                    }
+		                }
+		
+		                /* Final grouping of contiguous characters */
+		                <span class="@RowSection_GetCssClass(renderBatchLocal, currentDecorationByte)">
+		                    @((MarkupString)spanBuilder.ToString())
+		                </span>
+		            }
+		
+		            @if (GlobalShowNewlines && virtualizedRow.Index < renderBatchLocal.Model.LineCount)
+		            {
+		                var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
+		                    renderBatchLocal.ViewModel.CharAndLineMeasurements.CharacterWidth;
+		
+		                var lengthOfRow = renderBatchLocal.Model.GetLineLength(virtualizedRow.Index, true);
+		
+		                if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
+		                {
+		                    var rowEndingTuple = renderBatchLocal.Model.LineEndList[virtualizedRow.Index];
+		
+		                    <span class="luth_te_newline">
+		                        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
+		                    </span>
+		                }
+		            }
+		        </div>
+		    }
+		
+		    <CursorDisplay @ref="CursorDisplayComponent"
+		                   Cursor="renderBatchLocal.ViewModel.PrimaryCursor"
+		                   ScrollableContainerId="@renderBatchLocal.ViewModel.BodyElementId"
+		                   IsFocusTarget="true"
+		                   TabIndex="TabIndex"
+		                   IncludeContextMenuHelperComponent="IncludeContextMenuHelperComponent">
+		
+		        <OnContextMenuRenderFragment>
+		            @if (ContextMenuRenderFragmentOverride is not null)
+		            {
+		                @ContextMenuRenderFragmentOverride
+		            }
+		            else
+		            {
+		                <ContextMenu/>
+		            }
+		        </OnContextMenuRenderFragment>
+		        <AutoCompleteMenuRenderFragment>
+		            @if (AutoCompleteMenuRenderFragmentOverride is not null)
+		            {
+		                @AutoCompleteMenuRenderFragmentOverride
+		            }
+		            else
+		            {
+		                <AutocompleteMenu/>
+		            }
+		        </AutoCompleteMenuRenderFragment>
+		    </CursorDisplay>
+		</div>
+	    @* RowSection.razor Close *@
+	
+	    <ScrollbarSection/>
+	    <TooltipDisplay/>
+	    <FindOverlayDisplay/>
+	    <WidgetLayerDisplay/>
+	</div>
+}
