@@ -1,38 +1,43 @@
-@inherits Fluxor.Blazor.Web.Components.FluxorComponent
-
 @using System.Collections.Immutable
 @using Luthetus.Extensions.DotNet.CommandLines.Models
 @using Luthetus.TextEditor.RazorLib.Lexers.Models
 
 <div class="luth_output-display">
 	
-	@{ var localDiagnosticLineList = DotNetCliOutputParser.GetDiagnosticLineList(); }
+	@{ var dotNetRunParseResult = DotNetCliOutputParser.GetDotNetRunParseResult(); }
+	
+	<div class="luth_output-display-top-row">
+		FilterSet: ...;
+		Errors: @dotNetRunParseResult.ErrorList.Count;
+		Warnings: @dotNetRunParseResult.WarningList.Count;
+		Other: @dotNetRunParseResult.OtherList.Count;
+	</div>
 
-	@(nameof(DotNetCliOutputParser)).@(nameof(DotNetCliOutputParser.GetDiagnosticLineList)).Length: @localDiagnosticLineList.Count
-
-	<ol>
-		@foreach (var diagnosticLine in localDiagnosticLineList)
-		{
-			var cssClass = string.Empty;
-			
-			@if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Warning)
+	<div class="luth_output-display-body">		
+		<ol>
+			@foreach (var diagnosticLine in dotNetRunParseResult.AllDiagnosticLineList)
 			{
-				cssClass = "luth_tree-view-warning";
-			}
-			else if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Error)
-			{
-				cssClass = "luth_tree-view-exception";
-			}
-			else if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Other)
-			{
-				cssClass = string.Empty;
-			}
-			
-			<li class="@cssClass"
-				style="margin: calc(1.6em + 4px) 0;">
+				var cssClass = string.Empty;
 				
-				@diagnosticLine.Text
-			</li>
-		}
-	</ol>
+				@if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Warning)
+				{
+					cssClass = "luth_tree-view-warning";
+				}
+				else if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Error)
+				{
+					cssClass = "luth_tree-view-exception";
+				}
+				else if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Other)
+				{
+					cssClass = string.Empty;
+				}
+				
+				<li class="@cssClass"
+					style="margin: calc(1.6em + 4px) 0;">
+					
+					@diagnosticLine.Text
+				</li>
+			}
+		</ol>
+	</div>
 </div>

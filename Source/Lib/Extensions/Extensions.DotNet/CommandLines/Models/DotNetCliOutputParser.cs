@@ -13,18 +13,20 @@ public class DotNetCliOutputParser
 {
 	private readonly object _listLock = new();
 	
-	private List<DiagnosticLine> _diagnosticLineList = new();
+	private DotNetRunParseResult _dotNetRunParseResult = new();
 
 	private bool _hasSeenTextIndicatorForTheList;
+	
+	public event Action? StateChanged;
 	
 	/// <summary>
 	/// This immutable list is calculated everytime, so if necessary invoke once and then store the result.
 	/// </summary>
-	public ImmutableList<DiagnosticLine> GetDiagnosticLineList()
+	public DotNetRunParseResult GetDotNetRunParseResult()
 	{
 		lock (_listLock)
 		{
-			return _diagnosticLineList.ToImmutableList();
+			return _dotNetRunParseResult;
 		}
 	}
 
@@ -269,8 +271,18 @@ public class DotNetCliOutputParser
 		
 		lock (_listLock)
 		{
-			_diagnosticLineList = diagnosticLineList.OrderBy(x => x.DiagnosticLineKind).ToList();
+			var allDiagnosticLineList = diagnosticLineList.OrderBy(x => x.DiagnosticLineKind).ToImmutableList();
+		
+			_dotNetRunParseResult = new()
+			{
+				AllDiagnosticLineList = allDiagnosticLineList,
+				ErrorList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Error).ToImmutableList(),
+				WarningList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Warning).ToImmutableList(),
+				OtherList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Other).ToImmutableList(),
+			};
 		}
+		
+		StateChanged?.Invoke();
 	}
 
 	/// <summary>
@@ -563,5 +575,13 @@ public class DotNetCliOutputParser
 		Error,
 		Warning,
 		Other,
+	}
+	
+	public class DotNetRunParseResult
+	{
+		public ImmutableList<DiagnosticLine> AllDiagnosticLineList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
+		public ImmutableList<DiagnosticLine> ErrorList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
+		public ImmutableList<DiagnosticLine> WarningList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
+		public ImmutableList<DiagnosticLine> OtherList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
 	}
 }

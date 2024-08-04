@@ -1,22 +1,33 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 
 namespace Luthetus.Extensions.DotNet.Outputs.Displays.Internals;
 
-public partial class OutputDisplay : FluxorComponent
+public partial class OutputDisplay : IDisposable
 {
-	[Inject]
-    private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
     [Inject]
     private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
-
+    
+    private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
+    
     protected override void OnInitialized()
     {
-        // Supress unused property (its implicitly being used by the FluxorComponent attribute)
-        _ = TerminalStateWrap;
+    	DotNetCliOutputParser.StateChanged += DotNetCliOutputParser_StateChanged;
         base.OnInitialized();
+    }
+    
+    public void DotNetCliOutputParser_StateChanged()
+    {
+    	_eventThrottle.Run(_ => InvokeAsync(StateHasChanged));
+    }
+    
+    public void Dispose()
+    {
+    	DotNetCliOutputParser.StateChanged -= DotNetCliOutputParser_StateChanged;
     }
 }

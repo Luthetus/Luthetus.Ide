@@ -703,6 +703,13 @@ Execution Terminal"));
         	ancestorDirectory.Value,
         	_newDotNetSolutionTerminalCommandRequestKey)
         {
+        	BeginWithFunc = parsedCommand =>
+        	{
+        		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			string.Empty);
+        			
+        		return Task.CompletedTask;
+        	},
         	ContinueWithFunc = parsedCommand =>
         	{
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
