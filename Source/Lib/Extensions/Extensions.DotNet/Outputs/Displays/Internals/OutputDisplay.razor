@@ -6,19 +6,17 @@
 
 <div class="luth_output-display">
 	
-	@{ var localErrorList = DotNetCliOutputParser.ErrorList?.ToImmutableArray() ?? Array.Empty<List<TextEditorTextSpan>>().ToImmutableArray(); }
+	@{ var localDiagnosticLineList = DotNetCliOutputParser.GetDiagnosticLineList(); }
 
-	@(nameof(DotNetCliOutputParser)).@(nameof(DotNetCliOutputParser.ErrorList)).Length: @localErrorList.Length
+	@(nameof(DotNetCliOutputParser)).@(nameof(DotNetCliOutputParser.GetDiagnosticLineList)).Length: @localDiagnosticLineList.Count
 
 	<ol>
-		@foreach (var textSpanList in localErrorList)
+		@foreach (var diagnosticLine in localDiagnosticLineList)
 		{
-			var outputString = string.Join(" ", textSpanList.Select(x => x.GetText()));
-			
 			<li class="luth_tree-view-exception"
 				style="margin: calc(1.6em + 4px) 0;">
 				
-				@outputString
+				@diagnosticLine.Text
 			</li>
 		}
 	</ol>

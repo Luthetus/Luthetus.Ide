@@ -14,30 +14,79 @@ public class DotNetCliOutputParserTests
 		var diagnosticLineList = dotNetCliOutputParser.Parse(LARGE_SAMPLE_TEXT);
 		
 		Console.WriteLine($"diagnosticLineList.Count: {diagnosticLineList.Count}");
+		
+		for (int i = 0; i < diagnosticLineList.Count; i++)
+		{
+			var diagnosticLine = diagnosticLineList[i];
+			
+			Console.WriteLine(i);
+			
+			Console.WriteLine($"\t{nameof(diagnosticLine.FilePathTextSpan)}:");
+			ConsoleWriteLineDiagnosticTextSpan(diagnosticLine.FilePathTextSpan);
+			
+			Console.WriteLine($"\t{nameof(diagnosticLine.LineAndColumnIndicesTextSpan)}:");
+			ConsoleWriteLineDiagnosticTextSpan(diagnosticLine.LineAndColumnIndicesTextSpan);
+			
+			Console.WriteLine($"\t{nameof(diagnosticLine.DiagnosticKindTextSpan)}:");
+			ConsoleWriteLineDiagnosticTextSpan(diagnosticLine.DiagnosticKindTextSpan);
+			
+			Console.WriteLine($"\t{nameof(diagnosticLine.DiagnosticCodeTextSpan)}:");
+			ConsoleWriteLineDiagnosticTextSpan(diagnosticLine.DiagnosticCodeTextSpan);
+			
+			Console.WriteLine($"\t{nameof(diagnosticLine.MessageTextSpan)}:");
+			ConsoleWriteLineDiagnosticTextSpan(diagnosticLine.MessageTextSpan);
+			
+			Console.WriteLine($"\t{nameof(diagnosticLine.ProjectTextSpan)}:");
+			ConsoleWriteLineDiagnosticTextSpan(diagnosticLine.ProjectTextSpan);
+		}
+		
+		void ConsoleWriteLineDiagnosticTextSpan(DiagnosticTextSpan diagnosticTextSpan)
+		{
+			Console.WriteLine($"\t\t{nameof(diagnosticTextSpan.StartInclusiveIndex)}: {diagnosticTextSpan.StartInclusiveIndex}");
+			Console.WriteLine($"\t\t{nameof(diagnosticTextSpan.EndExclusiveIndex)}: {diagnosticTextSpan.EndExclusiveIndex}");
+			Console.WriteLine($"\t\t{nameof(diagnosticTextSpan.Text)}: {diagnosticTextSpan.Text}");
+		}
 			
 		throw new NotImplementedException();
 	}
 	
-	public class DotNetCliOutputParser
+	public class DiagnosticTextSpan
 	{
-		public class DiagnosticLine
+		public DiagnosticTextSpan(
+			int startInclusiveIndex,
+			int endExclusiveIndex,
+			string text)
 		{
-			public (int StartInclusiveIndex, int EndExclusiveIndex)? FilePathBoundary { get; set; }
-			public (int StartInclusiveIndex, int EndExclusiveIndex)? LineAndColumnIndicesBoundary { get; set; }
-			public (int StartInclusiveIndex, int EndExclusiveIndex)? DiagnosticKindBoundary { get; set; }
-			public (int StartInclusiveIndex, int EndExclusiveIndex)? DiagnosticCodeBoundary { get; set; }
-			public (int StartInclusiveIndex, int EndExclusiveIndex)? MessageBoundary { get; set; }
-			public (int StartInclusiveIndex, int EndExclusiveIndex)? ProjectBoundary { get; set; }
-			
-			public bool IsValid => 
-				FilePathBoundary is not null &&
-				LineAndColumnIndicesBoundary is not null &&
-				DiagnosticKindBoundary is not null &&
-				DiagnosticCodeBoundary is not null &&
-				MessageBoundary is not null &&
-				ProjectBoundary is not null;
+			StartInclusiveIndex = startInclusiveIndex;
+			EndExclusiveIndex = endExclusiveIndex;
+			Text = text;
 		}
 	
+		public int StartInclusiveIndex { get; }
+		public int EndExclusiveIndex { get; }
+		public string Text { get; }
+	}
+	
+	public class DiagnosticLine
+	{
+		public DiagnosticTextSpan? FilePathTextSpan { get; set; }
+		public DiagnosticTextSpan? LineAndColumnIndicesTextSpan { get; set; }
+		public DiagnosticTextSpan? DiagnosticKindTextSpan { get; set; }
+		public DiagnosticTextSpan? DiagnosticCodeTextSpan { get; set; }
+		public DiagnosticTextSpan? MessageTextSpan { get; set; }
+		public DiagnosticTextSpan? ProjectTextSpan { get; set; }
+		
+		public bool IsValid => 
+			FilePathTextSpan is not null &&
+			LineAndColumnIndicesTextSpan is not null &&
+			DiagnosticKindTextSpan is not null &&
+			DiagnosticCodeTextSpan is not null &&
+			MessageTextSpan is not null &&
+			ProjectTextSpan is not null;
+	}
+	
+	public class DotNetCliOutputParser
+	{
 		public List<DiagnosticLine> Parse(string output)
 		{
 			var stringWalker = new StringWalker(
@@ -67,7 +116,7 @@ public class DotNetCliOutputParserTests
 					
 					Console.WriteLine("WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter)");
 				
-					Console.WriteLine($"diagnosticLine.ProjectBoundary is null: {diagnosticLine.ProjectBoundary is null}");
+					Console.WriteLine($"diagnosticLine.ProjectTextSpan is null: {diagnosticLine.ProjectTextSpan is null}");
 					// Make a decision
 					if (diagnosticLine.IsValid)
 					{
@@ -79,7 +128,7 @@ public class DotNetCliOutputParserTests
 				}
 				else
 				{
-					if (diagnosticLine.FilePathBoundary is null)
+					if (diagnosticLine.FilePathTextSpan is null)
 					{
 						Console.Write("1");
 					
@@ -92,7 +141,11 @@ public class DotNetCliOutputParserTests
 							if (stringWalker.CurrentCharacter == '(')
 							{
 								endExclusiveIndex = stringWalker.PositionIndex;
-								diagnosticLine.FilePathBoundary = (startInclusiveIndex.Value, endExclusiveIndex.Value);
+								
+								diagnosticLine.FilePathTextSpan = new(
+									startInclusiveIndex.Value,
+									endExclusiveIndex.Value,
+									stringWalker.SourceText.Substring(startInclusiveIndex.Value, endExclusiveIndex.Value - startInclusiveIndex.Value));
 								
 								startInclusiveIndex = null;
 								endExclusiveIndex = null;
@@ -103,7 +156,7 @@ public class DotNetCliOutputParserTests
 							}
 						}
 					}
-					else if (diagnosticLine.LineAndColumnIndicesBoundary is null)
+					else if (diagnosticLine.LineAndColumnIndicesTextSpan is null)
 					{
 						Console.Write("2");
 					
@@ -116,7 +169,10 @@ public class DotNetCliOutputParserTests
 							if (stringWalker.CurrentCharacter == ')')
 							{
 								endExclusiveIndex = stringWalker.PositionIndex + 1;
-								diagnosticLine.LineAndColumnIndicesBoundary = (startInclusiveIndex.Value, endExclusiveIndex.Value);
+								diagnosticLine.LineAndColumnIndicesTextSpan = new(
+									startInclusiveIndex.Value,
+									endExclusiveIndex.Value,
+									stringWalker.SourceText.Substring(startInclusiveIndex.Value, endExclusiveIndex.Value - startInclusiveIndex.Value));
 								
 								startInclusiveIndex = null;
 								endExclusiveIndex = null;
@@ -125,7 +181,7 @@ public class DotNetCliOutputParserTests
 							}
 						}
 					}
-					else if (diagnosticLine.DiagnosticKindBoundary is null)
+					else if (diagnosticLine.DiagnosticKindTextSpan is null)
 					{
 						Console.Write("3");
 						
@@ -147,7 +203,10 @@ public class DotNetCliOutputParserTests
 							{
 								endExclusiveIndex = stringWalker.PositionIndex;
 								
-								diagnosticLine.DiagnosticKindBoundary = (startInclusiveIndex.Value, endExclusiveIndex.Value);
+								diagnosticLine.DiagnosticKindTextSpan = new(
+									startInclusiveIndex.Value,
+									endExclusiveIndex.Value,
+									stringWalker.SourceText.Substring(startInclusiveIndex.Value, endExclusiveIndex.Value - startInclusiveIndex.Value));
 								
 								startInclusiveIndex = null;
 								endExclusiveIndex = null;
@@ -155,7 +214,7 @@ public class DotNetCliOutputParserTests
 							}
 						}
 					}
-					else if (diagnosticLine.DiagnosticCodeBoundary is null)
+					else if (diagnosticLine.DiagnosticCodeTextSpan is null)
 					{
 						Console.Write("4");
 					
@@ -169,7 +228,10 @@ public class DotNetCliOutputParserTests
 							{
 								endExclusiveIndex = stringWalker.PositionIndex;
 								
-								diagnosticLine.DiagnosticCodeBoundary = (startInclusiveIndex.Value, endExclusiveIndex.Value);
+								diagnosticLine.DiagnosticCodeTextSpan = new(
+									startInclusiveIndex.Value,
+									endExclusiveIndex.Value,
+									stringWalker.SourceText.Substring(startInclusiveIndex.Value, endExclusiveIndex.Value - startInclusiveIndex.Value));
 								
 								startInclusiveIndex = null;
 								endExclusiveIndex = null;
@@ -178,7 +240,7 @@ public class DotNetCliOutputParserTests
 							}
 						}
 					}
-					else if (diagnosticLine.MessageBoundary is null)
+					else if (diagnosticLine.MessageTextSpan is null)
 					{
 						if (startInclusiveIndex is null)
 						{
@@ -220,7 +282,10 @@ public class DotNetCliOutputParserTests
 									_ = stringWalker.BacktrackCharacter();
 									endExclusiveIndex = stringWalker.PositionIndex;
 									
-									diagnosticLine.MessageBoundary = (startInclusiveIndex.Value, endExclusiveIndex.Value);
+									diagnosticLine.MessageTextSpan = new(
+										startInclusiveIndex.Value,
+										endExclusiveIndex.Value,
+										stringWalker.SourceText.Substring(startInclusiveIndex.Value, endExclusiveIndex.Value - startInclusiveIndex.Value));
 							
 									startInclusiveIndex = null;
 									endExclusiveIndex = null;
@@ -230,7 +295,7 @@ public class DotNetCliOutputParserTests
 							}
 						}
 					}
-					else if (diagnosticLine.ProjectBoundary is null)
+					else if (diagnosticLine.ProjectTextSpan is null)
 					{
 						Console.Write("6");
 					
@@ -249,7 +314,10 @@ public class DotNetCliOutputParserTests
 							{
 								endExclusiveIndex = stringWalker.PositionIndex;
 								
-								diagnosticLine.ProjectBoundary = (startInclusiveIndex.Value, endExclusiveIndex.Value);
+								diagnosticLine.ProjectTextSpan = new(
+									startInclusiveIndex.Value,
+									endExclusiveIndex.Value,
+									stringWalker.SourceText.Substring(startInclusiveIndex.Value, endExclusiveIndex.Value - startInclusiveIndex.Value));
 								
 								startInclusiveIndex = null;
 								endExclusiveIndex = null;

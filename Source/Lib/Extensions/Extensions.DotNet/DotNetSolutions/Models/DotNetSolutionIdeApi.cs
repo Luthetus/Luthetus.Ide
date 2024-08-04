@@ -705,8 +705,7 @@ Execution Terminal"));
         {
         	ContinueWithFunc = parsedCommand =>
         	{
-        		var aaa = _dotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand,
+        		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
         			parsedCommand.OutputCache.ToString());
         			
         		return Task.CompletedTask;
