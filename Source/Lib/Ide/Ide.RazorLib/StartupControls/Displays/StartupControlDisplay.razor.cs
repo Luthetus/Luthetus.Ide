@@ -33,8 +33,6 @@ public partial class StartupControlDisplay : FluxorComponent
 
     private const string _startButtonElementId = "luth_ide_startup-controls-display_id";
 
-    private TerminalCommandRequest? _executingTerminalCommandRequest;
-    
     private ElementReference? _startButtonElementReference;
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
     
@@ -73,14 +71,9 @@ public partial class StartupControlDisplay : FluxorComponent
 		}
         else
         {
-	        var startProgramTerminalCommandRequest = await ((StartupControlModel)localStartupControlState.ActiveStartupControl)
-	        	.GetTerminalCommandRequestFunc.Invoke();
-	        	
-	        if (startProgramTerminalCommandRequest is null)
-	            return;
-	
-			_executingTerminalCommandRequest = startProgramTerminalCommandRequest;
-		    TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(startProgramTerminalCommandRequest);
+	        await localStartupControlState.ActiveStartupControl.StartButtonOnClickTask
+	        	.Invoke(localStartupControlState.ActiveStartupControl)
+	        	.ConfigureAwait(false);
         }
     }
     

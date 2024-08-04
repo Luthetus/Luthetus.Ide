@@ -11,22 +11,16 @@ public class StartupControlModel : IStartupControlModel
 		string title,
 		string titleVerbose,
 		IAbsolutePath startupProjectAbsolutePath,
-		Key<TerminalCommandRequest> terminalCommandKey,
-		TerminalCommandRequest? executingTerminalCommandRequest,
 		Type? componentType,
 		Dictionary<string, object?>? componentParameterMap,
-		Func<Task<TerminalCommandRequest?>> getTerminalCommandRequestFunc,
 		Func<IStartupControlModel, Task> startButtonOnClickTask)
 	{
 		Key = key;
 		Title = title;
 		TitleVerbose = titleVerbose;
 		StartupProjectAbsolutePath = startupProjectAbsolutePath;
-		TerminalCommandRequestKey = terminalCommandKey;
-		ExecutingTerminalCommandRequest = executingTerminalCommandRequest;
 		ComponentType = componentType;
 		ComponentParameterMap = componentParameterMap;
-		GetTerminalCommandRequestFunc = getTerminalCommandRequestFunc;
 		StartButtonOnClickTask = startButtonOnClickTask;
 	}
 	
@@ -36,12 +30,9 @@ public class StartupControlModel : IStartupControlModel
 	public string Title { get; }
 	public string TitleVerbose { get; }
 	public IAbsolutePath StartupProjectAbsolutePath { get; }
-	public Key<TerminalCommandRequest> TerminalCommandRequestKey { get; }
-	public TerminalCommandRequest? ExecutingTerminalCommandRequest { get; }
+	public TerminalCommandRequest? ExecutingTerminalCommandRequest { get; set; }
 	public Type? ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; }
-	public Func<Task<TerminalCommandRequest?>> GetTerminalCommandRequestFunc { get; }
 	public Func<IStartupControlModel, Task> StartButtonOnClickTask { get; }
-	public bool IsExecuting { get; }
-	public bool IsCompleted { get; }
+	public bool IsExecuting => ExecutingTerminalCommandRequest is not null;
 }

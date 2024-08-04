@@ -335,26 +335,6 @@ public class DotNetCliOutputParserTests
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	private const string SMALL_SAMPLE_TEXT = @"C:\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg\BlazorApp4NetCoreDbg\Data\A.cs(1,36): error CS0234: The type or namespace name 'Characters' does not exist in the namespace 'Luthetus.TextEditor.RazorLib' (are you missing an assembly reference?) [C:\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg\BlazorApp4NetCoreDbg\BlazorApp4NetCoreDbg.csproj]
 ";
 	

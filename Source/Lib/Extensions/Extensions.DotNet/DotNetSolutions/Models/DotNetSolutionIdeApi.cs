@@ -680,25 +680,24 @@ Execution Terminal"));
 				project.DisplayName,
 				project.AbsolutePath.Value,
 				project.AbsolutePath,
-				Key<TerminalCommandRequest>.NewKey(),
 				null,
 				null,
-				null,
-				() => Task.FromResult(StartupControl_GetStartProgramTerminalCommand(project)),
-				_ => Task.CompletedTask)));
+				startupControlModel => StartButtonOnClick(startupControlModel, project))));
 	}
 	
-	private TerminalCommandRequest? StartupControl_GetStartProgramTerminalCommand(IDotNetProject project)
+	private Task StartButtonOnClick(IStartupControlModel interfaceStartupControlModel, IDotNetProject project)
     {
+    	var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
+    	
         var ancestorDirectory = project.AbsolutePath.ParentDirectory;
 
         if (ancestorDirectory is null)
-            return null;
+            return Task.CompletedTask;
 
         var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
             project.AbsolutePath);
-
-        return new TerminalCommandRequest(
+            
+        var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
         	ancestorDirectory.Value,
         	_newDotNetSolutionTerminalCommandRequestKey)
@@ -712,11 +711,19 @@ Execution Terminal"));
         	},
         	ContinueWithFunc = parsedCommand =>
         	{
+        		startupControlModel.ExecutingTerminalCommandRequest = null;
+        		_dispatcher.Dispatch(new StartupControlState.StateChangedAction());
+        	
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
         			parsedCommand.OutputCache.ToString());
         			
         		return Task.CompletedTask;
         	}
         };
+        
+        startupControlModel.ExecutingTerminalCommandRequest = terminalCommandRequest;
+        
+		_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+    	return Task.CompletedTask;
     }
 }
