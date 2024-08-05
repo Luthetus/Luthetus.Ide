@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 using Luthetus.Extensions.DotNet.Outputs.Models;
 
 namespace Luthetus.Extensions.DotNet.Outputs.States;
@@ -16,9 +17,26 @@ public partial class OutputScheduler
 				false,
 				false))
 			.ToArray();
+			
+		var filePathGrouping = treeViewNodeList.GroupBy(
+			x => ((TreeViewDiagnosticLine)x).Item.FilePathTextSpan.Text);
+			
+		var treeViewGroupList = new List<TreeViewNoType>();
+			
+		foreach (var group in filePathGrouping)
+		{
+			var treeViewGroup = new TreeViewGroup(
+				group.Key,
+				true,
+				false);
+				
+			treeViewGroup.ChildList = group.ToList();
+			treeViewGroup.LinkChildren(new(), treeViewGroup.ChildList);
+		
+			treeViewGroupList.Add(treeViewGroup);
+		}
     
-
-        var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(treeViewNodeList);
+        var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(treeViewGroupList.ToArray());
         var firstNode = treeViewNodeList.FirstOrDefault();
 
         var activeNodes = firstNode is null

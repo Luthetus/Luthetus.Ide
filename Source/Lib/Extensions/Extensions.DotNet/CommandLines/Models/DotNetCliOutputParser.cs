@@ -115,7 +115,8 @@ public class DotNetCliOutputParser
 							
 							diagnosticLine.FilePathTextSpan = new(
 								startInclusiveIndex.Value,
-								endExclusiveIndex.Value);
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
 							
 							startInclusiveIndex = null;
 							endExclusiveIndex = null;
@@ -135,9 +136,11 @@ public class DotNetCliOutputParser
 						if (stringWalker.CurrentCharacter == ')')
 						{
 							endExclusiveIndex = stringWalker.PositionIndex + 1;
+							
 							diagnosticLine.LineAndColumnIndicesTextSpan = new(
 								startInclusiveIndex.Value,
-								endExclusiveIndex.Value);
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
 							
 							startInclusiveIndex = null;
 							endExclusiveIndex = null;
@@ -166,7 +169,8 @@ public class DotNetCliOutputParser
 							
 							diagnosticLine.DiagnosticKindTextSpan = new(
 								startInclusiveIndex.Value,
-								endExclusiveIndex.Value);
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
 							
 							startInclusiveIndex = null;
 							endExclusiveIndex = null;
@@ -187,7 +191,8 @@ public class DotNetCliOutputParser
 							
 							diagnosticLine.DiagnosticCodeTextSpan = new(
 								startInclusiveIndex.Value,
-								endExclusiveIndex.Value);
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
 							
 							startInclusiveIndex = null;
 							endExclusiveIndex = null;
@@ -230,7 +235,8 @@ public class DotNetCliOutputParser
 								
 								diagnosticLine.MessageTextSpan = new(
 									startInclusiveIndex.Value,
-									endExclusiveIndex.Value);
+									endExclusiveIndex.Value,
+									stringWalker.SourceText);
 						
 								startInclusiveIndex = null;
 								endExclusiveIndex = null;
@@ -257,7 +263,8 @@ public class DotNetCliOutputParser
 							
 							diagnosticLine.ProjectTextSpan = new(
 								startInclusiveIndex.Value,
-								endExclusiveIndex.Value);
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
 							
 							startInclusiveIndex = null;
 							endExclusiveIndex = null;

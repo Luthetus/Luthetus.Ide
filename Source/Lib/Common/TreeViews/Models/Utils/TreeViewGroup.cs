@@ -1,7 +1,7 @@
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
+using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
-namespace Luthetus.Extensions.DotNet.TestExplorers.Models;
+namespace Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 
 public class TreeViewGroup : TreeViewWithType<string>
 {

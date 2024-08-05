@@ -1,7 +1,7 @@
 @using Luthetus.Extensions.DotNet.CommandLines.Models;
 
 @{ var cssClass = string.Empty; }
-				
+
 @if (TreeViewDiagnosticLine.Item.DiagnosticLineKind == DiagnosticLineKind.Warning)
 {
 	cssClass = "luth_tree-view-warning";
@@ -16,5 +16,5 @@ else if (TreeViewDiagnosticLine.Item.DiagnosticLineKind == DiagnosticLineKind.Ot
 }
 
 <span class="@cssClass">
-	@TreeViewDiagnosticLine.Item.Text
+	@TreeViewDiagnosticLine.Item.TextShort
 </span>

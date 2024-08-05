@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
-using Luthetus.Extensions.DotNet.TestExplorers.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 
-namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
+namespace Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 
 public partial class TreeViewGroupDisplay : ComponentBase
 {
