@@ -13,7 +13,9 @@ public class DiagnosticLine
 	public string Text { get; set; }
 	public DiagnosticLineKind DiagnosticLineKind { get; set; } = DiagnosticLineKind.Error;
 	
-	public string TextShort => _textShort ??= Text.Replace(FilePathTextSpan.Text, string.Empty);
+	public string TextShort => _textShort ??= Text
+		.Replace(FilePathTextSpan.Text, string.Empty)
+		.Replace(ProjectTextSpan.Text, string.Empty);
 	
 	public DiagnosticTextSpan? FilePathTextSpan { get; set; }
 	public DiagnosticTextSpan? LineAndColumnIndicesTextSpan { get; set; }

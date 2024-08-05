@@ -9,10 +9,9 @@
 	@{ var dotNetRunParseResult = DotNetCliOutputParser.GetDotNetRunParseResult(); }
 	
 	<div class="luth_output-display-top-row" style="height: 1.8em;">
-		FilterSet: ...;
-		Errors: @dotNetRunParseResult.ErrorList.Count;
-		Warnings: @dotNetRunParseResult.WarningList.Count;
-		Other: @dotNetRunParseResult.OtherList.Count;
+		(@dotNetRunParseResult.ErrorList.Count errors)
+		(@dotNetRunParseResult.WarningList.Count warnings)
+		(@dotNetRunParseResult.OtherList.Count other)
 	</div>
 
 	<div class="luth_output-display-body" style="height: calc(100% - 1.8em);">
