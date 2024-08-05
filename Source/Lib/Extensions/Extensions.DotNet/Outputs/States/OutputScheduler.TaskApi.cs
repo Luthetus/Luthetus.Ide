@@ -1,4 +1,6 @@
 using System.Collections.Immutable;
+using System.Text;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 using Luthetus.Extensions.DotNet.Outputs.Models;
@@ -25,12 +27,24 @@ public partial class OutputScheduler
 			
 		foreach (var group in filePathGrouping)
 		{
+			var absolutePath = _environmentProvider.AbsolutePathFactory(group.Key, false);
+		
+			var groupEnumerated = group.ToList();
+			
+			var groupNameBuilder = new StringBuilder();
+			
+			groupNameBuilder
+				.Append(absolutePath.NameWithExtension)
+				.Append("____")
+				.Append(groupEnumerated.Count)
+				.Append("____" + absolutePath.ParentDirectory?.Value ?? $"{nameof(IAbsolutePath.ParentDirectory)} was null");
+		
 			var treeViewGroup = new TreeViewGroup(
-				group.Key,
+				groupNameBuilder.ToString(),
 				true,
 				false);
 				
-			treeViewGroup.ChildList = group.ToList();
+			treeViewGroup.ChildList = groupEnumerated;
 			treeViewGroup.LinkChildren(new(), treeViewGroup.ChildList);
 		
 			treeViewGroupList.Add(treeViewGroup);

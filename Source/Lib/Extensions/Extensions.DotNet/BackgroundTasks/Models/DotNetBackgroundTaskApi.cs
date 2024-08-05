@@ -107,6 +107,7 @@ public class DotNetBackgroundTaskApi
 			_backgroundTaskService,
 			_dotNetCliOutputParser,
 			_treeViewService,
+			_environmentProvider,
 			_dispatcher);
 
         DotNetSolution = new DotNetSolutionIdeApi(
