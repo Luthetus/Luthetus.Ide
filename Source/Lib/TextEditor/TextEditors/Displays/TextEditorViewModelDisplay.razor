@@ -71,11 +71,7 @@
                 <GutterSection />
             }
 
-            <BodySection @ref="_bodySectionComponent"
-                         TabIndex="ViewModelDisplayOptions.TabIndex"
-                         ContextMenuRenderFragmentOverride="ViewModelDisplayOptions.ContextMenuRenderFragmentOverride"
-                         IncludeContextMenuHelperComponent="ViewModelDisplayOptions.IncludeContextMenuHelperComponent"
-                         AutoCompleteMenuRenderFragmentOverride="ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride" />
+            <BodySection @ref="_bodySectionComponent"/>
 
             @if (renderBatchValidated?.ViewModel?.ShowCommandBar ?? false)
             {

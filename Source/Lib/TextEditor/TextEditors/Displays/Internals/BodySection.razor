@@ -94,13 +94,13 @@
 		                   Cursor="renderBatchLocal.ViewModel.PrimaryCursor"
 		                   ScrollableContainerId="@renderBatchLocal.ViewModel.BodyElementId"
 		                   IsFocusTarget="true"
-		                   TabIndex="TabIndex"
-		                   IncludeContextMenuHelperComponent="IncludeContextMenuHelperComponent">
+		                   TabIndex="renderBatchLocal.ViewModelDisplayOptions.TabIndex"
+		                   IncludeContextMenuHelperComponent="renderBatchLocal.ViewModelDisplayOptions.IncludeContextMenuHelperComponent">
 		
 		        <OnContextMenuRenderFragment>
-		            @if (ContextMenuRenderFragmentOverride is not null)
+		            @if (renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride is not null)
 		            {
-		                @ContextMenuRenderFragmentOverride
+		                @renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride
 		            }
 		            else
 		            {
@@ -108,9 +108,9 @@
 		            }
 		        </OnContextMenuRenderFragment>
 		        <AutoCompleteMenuRenderFragment>
-		            @if (AutoCompleteMenuRenderFragmentOverride is not null)
+		            @if (renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride is not null)
 		            {
-		                @AutoCompleteMenuRenderFragmentOverride
+		                @renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride
 		            }
 		            else
 		            {

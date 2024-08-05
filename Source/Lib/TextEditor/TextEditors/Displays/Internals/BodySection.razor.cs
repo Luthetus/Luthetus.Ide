@@ -17,18 +17,6 @@ public partial class BodySection : ComponentBase
     [CascadingParameter]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
     
-    [Parameter, EditorRequired]
-    public TextEditorCursor PrimaryCursor { get; set; } = null!;
-    /// <summary>TabIndex is used for the html attribute named: 'tabindex'</summary>
-    [Parameter, EditorRequired]
-    public int TabIndex { get; set; } = -1;
-    [Parameter, EditorRequired]
-    public RenderFragment? ContextMenuRenderFragmentOverride { get; set; }
-    [Parameter, EditorRequired]
-    public RenderFragment? AutoCompleteMenuRenderFragmentOverride { get; set; }
-    [Parameter, EditorRequired]
-    public bool IncludeContextMenuHelperComponent { get; set; }
-    
     public bool GlobalShowNewlines => TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines;
     
     public CursorDisplay? CursorDisplayComponent { get; set; }
