@@ -55,7 +55,7 @@ public partial class OutputScheduler
 			{
 				TitleText = absolutePath.ParentDirectory?.Value ?? $"{nameof(IAbsolutePath.ParentDirectory)} was null"
 			};
-				
+
 			treeViewGroup.ChildList = groupEnumerated;
 			treeViewGroup.LinkChildren(new(), treeViewGroup.ChildList);
 			
@@ -64,11 +64,12 @@ public partial class OutputScheduler
 			if (firstEntry is not null)
 			{
 				var projectText = ((TreeViewDiagnosticLine)firstEntry).Item.ProjectTextSpan.Text;
+				var projectAbsolutePath = _environmentProvider.AbsolutePathFactory(projectText, false);
 			
 				if (!projectManualGrouping.ContainsKey(projectText))
 				{
 					var treeViewGroupProject = new TreeViewGroup(
-						projectText,
+						projectAbsolutePath.NameWithExtension,
 						true,
 						true)
 					{
