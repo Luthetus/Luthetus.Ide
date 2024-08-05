@@ -12,7 +12,7 @@ public partial class CommandBarDisplay : FluxorComponent
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
     [Parameter, EditorRequired]
     public Func<Task> RestoreFocusToTextEditor { get; set; } = null!;
@@ -46,18 +46,22 @@ public partial class CommandBarDisplay : FluxorComponent
 
     private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    		
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
 
             TextEditorService.PostRedundant(
                 nameof(HandleOnKeyDown),
-                RenderBatch.ViewModel.ResourceUri,
-                RenderBatch.ViewModel.ViewModelKey,
+                renderBatchLocal.ViewModel.ResourceUri,
+                renderBatchLocal.ViewModel.ViewModelKey,
                 editContext =>
                 {
-                	var modelModifier = editContext.GetModelModifier(RenderBatch.ViewModel.ResourceUri);
-		            var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+                	var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
+		            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		

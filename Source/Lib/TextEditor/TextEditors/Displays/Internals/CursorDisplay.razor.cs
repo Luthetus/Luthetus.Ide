@@ -20,7 +20,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
     [CascadingParameter(Name = "ProportionalFontMeasurementsContainerElementId")]
     public string ProportionalFontMeasurementsContainerElementId { get; set; } = null!;
 
@@ -54,7 +54,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     private double _leftRelativeToParentInPixels;
 
     public string CursorDisplayId => Cursor.IsPrimaryCursor
-        ? RenderBatch.ViewModel.PrimaryCursorContentId
+        ? RenderBatch?.ViewModel?.PrimaryCursorContentId ?? string.Empty
         : string.Empty;
 
     public string CursorStyleCss => GetCursorStyleCss();
@@ -79,10 +79,14 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         // This method is async, so I'll grab the references locally.
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
-        var options = RenderBatch.Options;
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
+        var options = renderBatchLocal.Options;
 
         if (!options.UseMonospaceOptimizations)
         {
@@ -124,10 +128,8 @@ public partial class CursorDisplay : ComponentBase, IDisposable
         {
             viewModel.UnsafeState.ShouldRevealCursor = false;
 
-            if (!RenderBatch.ViewModel.UnsafeState.CursorIsIntersecting)
+            if (!renderBatchLocal.ViewModel.UnsafeState.CursorIsIntersecting)
             {
-                var localRenderBatch = RenderBatch;
-
                 await _throttleShouldRevealCursor.PushEvent(_ =>
                 {
                     // I think after removing the throttle, that this is an infinite loop on WASM,
@@ -138,20 +140,20 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                         {
 							try
 							{
-								var modelModifier = editContext.GetModelModifier(localRenderBatch.Model.ResourceUri);
-				            	var viewModelModifier = editContext.GetViewModelModifier(localRenderBatch.ViewModel.ViewModelKey);
+								var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+				            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 				
 								if (modelModifier is null || viewModelModifier is null)
 									return Task.CompletedTask;
 							
-	                            var cursorPositionIndex = localRenderBatch.Model.GetPositionIndex(Cursor);
+	                            var cursorPositionIndex = renderBatchLocal.Model.GetPositionIndex(Cursor);
 	
 	                            var cursorTextSpan = new TextEditorTextSpan(
 	                                cursorPositionIndex,
 	                                cursorPositionIndex + 1,
 	                                0,
-	                                localRenderBatch.Model.ResourceUri,
-	                                localRenderBatch.Model.GetAllText());
+	                                renderBatchLocal.Model.ResourceUri,
+	                                renderBatchLocal.Model.GetAllText());
 	
 	                            TextEditorService.ViewModelApi.ScrollIntoView(
                             		editContext,
@@ -177,21 +179,29 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     [JSInvokable]
     public Task OnCursorPassedIntersectionThresholdAsync(bool cursorIsIntersecting)
     {
-        RenderBatch.ViewModel.UnsafeState.CursorIsIntersecting = cursorIsIntersecting;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
+        renderBatchLocal.ViewModel.UnsafeState.CursorIsIntersecting = cursorIsIntersecting;
         return Task.CompletedTask;
     }
 
     private string GetCursorStyleCss()
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         try
         {
-            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
+            var measurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
 
             var leftInPixels = 0d;
 
             // Tab key column offset
             {
-                var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+                var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
                     Cursor.LineIndex,
                     Cursor.ColumnIndex);
 
@@ -217,13 +227,13 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             var heightInPixelsInvariantCulture = measurements.LineHeight.ToCssValue();
             var height = $"height: {heightInPixelsInvariantCulture}px;";
 
-            var widthInPixelsInvariantCulture = RenderBatch.Options.CursorWidthInPixels.ToCssValue();
+            var widthInPixelsInvariantCulture = renderBatchLocal.Options.CursorWidthInPixels.ToCssValue();
             var width = $"width: {widthInPixelsInvariantCulture}px;";
 
-            var keymapStyling = ((ITextEditorKeymap)RenderBatch.Options.Keymap).GetCursorCssStyleString(
-                RenderBatch.Model,
-                RenderBatch.ViewModel,
-                RenderBatch.Options);
+            var keymapStyling = ((ITextEditorKeymap)renderBatchLocal.Options.Keymap).GetCursorCssStyleString(
+                renderBatchLocal.Model,
+                renderBatchLocal.ViewModel,
+                renderBatchLocal.Options);
             
             // This feels a bit hacky, exceptions are happening because the UI isn't accessing
             // the text editor in a thread safe way.
@@ -243,9 +253,13 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     private string GetCaretRowStyleCss()
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         try
         {
-            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
+            var measurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
 
             var topInPixelsInvariantCulture = (measurements.LineHeight * Cursor.LineIndex)
                 .ToCssValue();
@@ -256,7 +270,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
             var height = $"height: {heightInPixelsInvariantCulture}px;";
 
             var widthOfBodyInPixelsInvariantCulture =
-                (RenderBatch.Model.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
+                (renderBatchLocal.Model.MostCharactersOnASingleLineTuple.lineLength * measurements.CharacterWidth)
                 .ToCssValue();
 
             var width = $"width: {widthOfBodyInPixelsInvariantCulture}px;";
@@ -279,15 +293,19 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
     private string GetMenuStyleCss()
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         try
         {
-            var measurements = RenderBatch.ViewModel.CharAndLineMeasurements;
+            var measurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
 
             var leftInPixels = 0d;
 
             // Tab key column offset
             {
-                var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+                var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
                     Cursor.LineIndex,
                     Cursor.ColumnIndex);
 

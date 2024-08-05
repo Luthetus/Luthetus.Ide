@@ -22,7 +22,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
 	private LuthetusCommonJavaScriptInteropApi? _commonJavaScriptInteropApi;
 	private MouseEventArgs? _mouseDownEventArgs;
@@ -57,7 +57,11 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 
     private string HORIZONTAL_GetScrollbarHorizontalStyleCss()
     {
-        var scrollbarWidthInPixels = RenderBatch.ViewModel.TextEditorDimensions.Width -
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
+        var scrollbarWidthInPixels = renderBatchLocal.ViewModel.TextEditorDimensions.Width -
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         var scrollbarWidthInPixelsInvariantCulture = scrollbarWidthInPixels.ToCssValue();
@@ -68,23 +72,27 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 
     private string HORIZONTAL_GetSliderHorizontalStyleCss()
     {
-        var scrollbarWidthInPixels = RenderBatch.ViewModel.TextEditorDimensions.Width -
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
+        var scrollbarWidthInPixels = renderBatchLocal.ViewModel.TextEditorDimensions.Width -
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
         // Proportional Left
-        var sliderProportionalLeftInPixels = RenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft *
+        var sliderProportionalLeftInPixels = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollLeft *
             scrollbarWidthInPixels /
-            RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+            renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollWidth;
 
         var sliderProportionalLeftInPixelsInvariantCulture = sliderProportionalLeftInPixels.ToCssValue();
         var left = $"left: {sliderProportionalLeftInPixelsInvariantCulture}px;";
 
         // Proportional Width
-        var pageWidth = RenderBatch.ViewModel.TextEditorDimensions.Width;
+        var pageWidth = renderBatchLocal.ViewModel.TextEditorDimensions.Width;
 
         var sliderProportionalWidthInPixels = pageWidth *
             scrollbarWidthInPixels /
-            RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+            renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollWidth;
 
         var sliderProportionalWidthInPixelsInvariantCulture = sliderProportionalWidthInPixels.ToCssValue();
         var width = $"width: {sliderProportionalWidthInPixelsInvariantCulture}px;";
@@ -94,8 +102,12 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     
     private string VERTICAL_GetSliderVerticalStyleCss()
     {
-        var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
-        var scrollBarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
+        var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+        var scrollBarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
 
         var scrollbarHeightInPixels = textEditorDimensions.Height - ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 
@@ -124,15 +136,19 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 
     private async Task HORIZONTAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         HORIZONTAL_thinksLeftMouseButtonIsDown = true;
-		HORIZONTAL_scrollLeftOnMouseDown = RenderBatch.ViewModel.ScrollbarDimensions.ScrollLeft;
+		HORIZONTAL_scrollLeftOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollLeft;
 
 		var scrollbarBoundingClientRect = await CommonJavaScriptInteropApi
 			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
 		// Drag far up to reset scroll to original
-		var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
+		var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
 		var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
 		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - (distanceBetweenTopEditorAndTopScrollbar / 2);
 
@@ -154,15 +170,19 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     
     private async Task VERTICAL_HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         VERTICAL_thinksLeftMouseButtonIsDown = true;
-		VERTICAL_scrollTopOnMouseDown = RenderBatch.ViewModel.ScrollbarDimensions.ScrollTop;
+		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollTop;
 
 		var scrollbarBoundingClientRect = await CommonJavaScriptInteropApi
 			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
 		// Drag far left to reset scroll to original
-		var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
+		var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
 		var distanceBetweenLeftEditorAndLeftScrollbar = scrollbarBoundingClientRect.LeftInPixels - textEditorDimensions.BoundingClientRectLeft;
 		VERTICAL_clientXThresholdToResetScrollTopPosition = scrollbarBoundingClientRect.LeftInPixels - (distanceBetweenLeftEditorAndLeftScrollbar / 2);
 
@@ -203,6 +223,10 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 
     private Task HORIZONTAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         var localThinksLeftMouseButtonIsDown = HORIZONTAL_thinksLeftMouseButtonIsDown;
 
         if (!localThinksLeftMouseButtonIsDown)
@@ -211,8 +235,8 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
         {
-			var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
-			var scrollbarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
+			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+			var scrollbarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
 		
 			OnScrollHorizontal onScrollHorizontal;
 
@@ -221,8 +245,8 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 				// Drag far left to reset scroll to original
 				onScrollHorizontal = new OnScrollHorizontal(
 					HORIZONTAL_scrollLeftOnMouseDown,
-					RenderBatch.ComponentData,
-					RenderBatch.ViewModel.ViewModelKey);
+					renderBatchLocal.ComponentData,
+					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 			else
 			{
@@ -243,8 +267,8 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 	
 				onScrollHorizontal = new OnScrollHorizontal(
 					scrollLeft,
-					RenderBatch.ComponentData,
-					RenderBatch.ViewModel.ViewModelKey);
+					renderBatchLocal.ComponentData,
+					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 
 			TextEditorService.Post(onScrollHorizontal);
@@ -259,6 +283,10 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     
     private Task VERTICAL_DragEventHandlerScrollAsync(MouseEventArgs localMouseDownEventArgs, MouseEventArgs onDragMouseEventArgs)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         var localThinksLeftMouseButtonIsDown = VERTICAL_thinksLeftMouseButtonIsDown;
 
         if (!localThinksLeftMouseButtonIsDown)
@@ -267,8 +295,8 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
         // Buttons is a bit flag '& 1' gets if left mouse button is held
         if (localThinksLeftMouseButtonIsDown && (onDragMouseEventArgs.Buttons & 1) == 1)
         {
-			var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
-			var scrollbarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
+			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+			var scrollbarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
 
 			OnScrollVertical onScrollVertical;
 
@@ -277,8 +305,8 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 				// Drag far left to reset scroll to original
 				onScrollVertical = new OnScrollVertical(
 					VERTICAL_scrollTopOnMouseDown,
-					RenderBatch.ComponentData,
-					RenderBatch.ViewModel.ViewModelKey);
+					renderBatchLocal.ComponentData,
+					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 			else
 			{
@@ -299,8 +327,8 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 	
 				onScrollVertical = new OnScrollVertical(
 					scrollTop,
-					RenderBatch.ComponentData,
-					RenderBatch.ViewModel.ViewModelKey);
+					renderBatchLocal.ComponentData,
+					renderBatchLocal.ViewModel.ViewModelKey);
 			}
 
 			TextEditorService.Post(onScrollVertical);

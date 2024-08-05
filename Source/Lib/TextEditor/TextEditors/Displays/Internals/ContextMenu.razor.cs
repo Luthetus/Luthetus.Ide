@@ -27,7 +27,7 @@ public partial class ContextMenu : ComponentBase
     private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
     [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
     public Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
 
@@ -58,14 +58,14 @@ public partial class ContextMenu : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private TextEditorCommandArgs ConstructCommandArgs()
+    private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatchValidated renderBatchLocal)
     {
-        var cursorSnapshotsList = new TextEditorCursor[] { RenderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
+        var cursorSnapshotsList = new TextEditorCursor[] { renderBatchLocal.ViewModel.PrimaryCursor }.ToImmutableArray();
 
         return new TextEditorCommandArgs(
-            RenderBatch.Model.ResourceUri,
-            RenderBatch.ViewModel.ViewModelKey,
-			RenderBatch.ComponentData,
+            renderBatchLocal.Model.ResourceUri,
+            renderBatchLocal.ViewModel.ViewModelKey,
+			renderBatchLocal.ComponentData,
 			TextEditorService,
             ServiceProvider,
             null);
@@ -73,13 +73,17 @@ public partial class ContextMenu : ComponentBase
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    		
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
         {
             TextEditorService.PostUnique(
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 
 					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 					{
@@ -93,13 +97,17 @@ public partial class ContextMenu : ComponentBase
 
     private Task ReturnFocusToThisAsync()
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    		
         try
         {
             TextEditorService.PostUnique(
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 
 					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 					{
@@ -138,6 +146,10 @@ public partial class ContextMenu : ComponentBase
 
     private Task SelectMenuOption(Func<Task> menuOptionAction)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         _ = Task.Run(async () =>
         {
             try
@@ -146,7 +158,7 @@ public partial class ContextMenu : ComponentBase
 					nameof(ContextMenu),
 					editContext =>
 					{
-						var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+						var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 	
 						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 						{

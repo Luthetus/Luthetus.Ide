@@ -21,8 +21,8 @@ public partial class PresentationAndSelectionSection : ComponentBase
 	[Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     
-	[CascadingParameter]
-    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
+    [CascadingParameter]
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
     [CascadingParameter(Name = "ProportionalFontMeasurementsContainerElementId")]
     public string ProportionalFontMeasurementsContainerElementId { get; set; } = null!;
 
@@ -32,11 +32,15 @@ public partial class PresentationAndSelectionSection : ComponentBase
     private List<TextEditorPresentationModel> GetTextEditorPresentationModels(
     	ImmutableList<Key<TextEditorPresentationModel>> textEditorPresentationKeys)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         var textEditorPresentationModelList = new List<TextEditorPresentationModel>();
 
         foreach (var presentationKey in textEditorPresentationKeys)
         {
-            var textEditorPresentationModel = RenderBatch.Model.PresentationModelList.FirstOrDefault(x =>
+            var textEditorPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(x =>
                 x.TextEditorPresentationKey == presentationKey);
 
             if (textEditorPresentationModel is not null)
@@ -51,16 +55,20 @@ public partial class PresentationAndSelectionSection : ComponentBase
         int upperPositionIndexExclusive,
         int rowIndex)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         try
         {
-            var charMeasurements = RenderBatch.ViewModel.CharAndLineMeasurements;
-			var textEditorDimensions = RenderBatch.ViewModel.TextEditorDimensions;
-            var scrollbarDimensions = RenderBatch.ViewModel.ScrollbarDimensions;
+            var charMeasurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
+			var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
+            var scrollbarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
 
-            if (rowIndex >= RenderBatch.Model.LineEndList.Count)
+            if (rowIndex >= renderBatchLocal.Model.LineEndList.Count)
                 return string.Empty;
 
-            var line = RenderBatch.Model.GetLineInformation(rowIndex);
+            var line = renderBatchLocal.Model.GetLineInformation(rowIndex);
 
             var startingColumnIndex = 0;
             var endingColumnIndex = line.EndPositionIndexExclusive - 1;
@@ -91,7 +99,7 @@ public partial class PresentationAndSelectionSection : ComponentBase
 
             // startInPixels offset from Tab keys a width of many characters
             {
-                var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+                var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
                     rowIndex,
                     startingColumnIndex);
 
@@ -108,7 +116,7 @@ public partial class PresentationAndSelectionSection : ComponentBase
 
             // Tab keys a width of many characters
             {
-                var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+                var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
                     rowIndex,
                     endingColumnIndex);
 
@@ -153,17 +161,21 @@ public partial class PresentationAndSelectionSection : ComponentBase
         TextEditorTextModification[] textModifications,
         ImmutableArray<TextEditorTextSpan> inTextSpanList)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         try
         {
             // Virtualize the text spans
             var virtualizedTextSpanList = new List<TextEditorTextSpan>();
-            if (RenderBatch.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
+            if (renderBatchLocal.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
             {
-                var lowerLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.First().Index;
-                var upperLineIndexInclusive = RenderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
+                var lowerLineIndexInclusive = renderBatchLocal.ViewModel.VirtualizationResult.EntryList.First().Index;
+                var upperLineIndexInclusive = renderBatchLocal.ViewModel.VirtualizationResult.EntryList.Last().Index;
 
-                var lowerLine = RenderBatch.Model.GetLineInformation(lowerLineIndexInclusive);
-                var upperLine = RenderBatch.Model.GetLineInformation(upperLineIndexInclusive);
+                var lowerLine = renderBatchLocal.Model.GetLineInformation(lowerLineIndexInclusive);
+                var upperLine = renderBatchLocal.Model.GetLineInformation(upperLineIndexInclusive);
 
                 foreach (var textSpan in inTextSpanList)
                 {
@@ -226,13 +238,17 @@ public partial class PresentationAndSelectionSection : ComponentBase
 
     private (int FirstRowToSelectDataInclusive, int LastRowToSelectDataExclusive) PresentationGetBoundsInRowIndexUnits(TextEditorModel model, (int StartingIndexInclusive, int EndingIndexExclusive) boundsInPositionIndexUnits)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         try
         {
-            var firstRowToSelectDataInclusive = RenderBatch.Model
+            var firstRowToSelectDataInclusive = renderBatchLocal.Model
                 .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.StartingIndexInclusive)
                 .Index;
 
-            var lastRowToSelectDataExclusive = RenderBatch.Model
+            var lastRowToSelectDataExclusive = renderBatchLocal.Model
                 .GetLineInformationFromPositionIndex(boundsInPositionIndexUnits.EndingIndexExclusive)
                 .Index +
                 1;
@@ -250,12 +266,16 @@ public partial class PresentationAndSelectionSection : ComponentBase
         int upperPositionIndexExclusive,
         int rowIndex)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
 		try
 		{
-	        if (rowIndex >= RenderBatch.Model.LineEndList.Count)
+	        if (rowIndex >= renderBatchLocal.Model.LineEndList.Count)
 	            return string.Empty;
 	
-	        var line = RenderBatch.Model.GetLineInformation(rowIndex);
+	        var line = renderBatchLocal.Model.GetLineInformation(rowIndex);
 	
 	        var selectionStartingColumnIndex = 0;
 	        var selectionEndingColumnIndex = line.EndPositionIndexExclusive - 1;
@@ -274,7 +294,7 @@ public partial class PresentationAndSelectionSection : ComponentBase
 	            fullWidthOfRowIsSelected = false;
 	        }
 	
-	        var charMeasurements = RenderBatch.ViewModel.CharAndLineMeasurements;
+	        var charMeasurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
 	
 	        var topInPixelsInvariantCulture = (rowIndex * charMeasurements.LineHeight).ToCssValue();
 	        var top = $"top: {topInPixelsInvariantCulture}px;";
@@ -286,7 +306,7 @@ public partial class PresentationAndSelectionSection : ComponentBase
 	
 	        // selectionStartInPixels offset from Tab keys a width of many characters
 	        {
-	            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+	            var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
 	                rowIndex,
 	                selectionStartingColumnIndex);
 	
@@ -305,13 +325,13 @@ public partial class PresentationAndSelectionSection : ComponentBase
 	
 	        // Tab keys a width of many characters
 	        {
-	            var lineInformation = RenderBatch.Model.GetLineInformation(rowIndex);
+	            var lineInformation = renderBatchLocal.Model.GetLineInformation(rowIndex);
 	
 	            selectionEndingColumnIndex = Math.Min(
 	                selectionEndingColumnIndex,
 	                lineInformation.LastValidColumnIndex);
 	
-	            var tabsOnSameRowBeforeCursor = RenderBatch.Model.GetTabCountOnSameLineBeforeCursor(
+	            var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
 	                rowIndex,
 	                selectionEndingColumnIndex);
 	
@@ -322,13 +342,13 @@ public partial class PresentationAndSelectionSection : ComponentBase
 	        }
 	
 	        var widthCssStyleString = "width: ";
-	        var fullWidthValue = RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth;
+	        var fullWidthValue = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollWidth;
 	
-	        if (RenderBatch.ViewModel.TextEditorDimensions.Width >
-	            RenderBatch.ViewModel.ScrollbarDimensions.ScrollWidth)
+	        if (renderBatchLocal.ViewModel.TextEditorDimensions.Width >
+	            renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollWidth)
 	        {
 	            // If content does not fill the viewable width of the Text Editor User Interface
-	            fullWidthValue = RenderBatch.ViewModel.TextEditorDimensions.Width;
+	            fullWidthValue = renderBatchLocal.ViewModel.TextEditorDimensions.Width;
 	        }
 	
 	        var fullWidthValueInPixelsInvariantCulture = fullWidthValue.ToCssValue();
@@ -354,10 +374,14 @@ public partial class PresentationAndSelectionSection : ComponentBase
 
     private (int lowerRowIndexInclusive, int upperRowIndexExclusive) GetSelectionBoundsInRowIndexUnits((int lowerPositionIndexInclusive, int upperPositionIndexExclusive) selectionBoundsInPositionIndexUnits)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         try
         {
             return TextEditorSelectionHelper.ConvertSelectionOfPositionIndexUnitsToRowIndexUnits(
-                RenderBatch.Model,
+                renderBatchLocal.Model,
                 selectionBoundsInPositionIndexUnits);
         }
         catch (LuthetusTextEditorException)

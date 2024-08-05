@@ -11,14 +11,14 @@ public partial class WidgetLayerDisplay : ComponentBase
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	
     [CascadingParameter]
-    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
     
     /// <summary>
     /// This does not change per WidgetBlock rendered.
     /// So, it should be invoked once and then re-used.
     /// </summary>
     private string GetBlockWidth(TextEditorRenderBatchValidated localRenderBatch)
-    {
+    {    	
     	var widthInPixels = RenderBatch.ViewModel.TextEditorDimensions.Width -
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
 

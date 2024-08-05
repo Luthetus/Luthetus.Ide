@@ -15,7 +15,7 @@ public partial class BodySection : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [CascadingParameter]
-    public TextEditorRenderBatchValidated? RenderBatch { get; set; } = null!;
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
     
     [Parameter, EditorRequired]
     public TextEditorCursor PrimaryCursor { get; set; } = null!;
@@ -37,7 +37,7 @@ public partial class BodySection : ComponentBase
     /// Prefer passing of the renderBatchLocal, but in the case where this cannot be done
     /// without creating an anonymous lambda, then this nullable field exists.
     /// </summary>
-    private TextEditorRenderBatchValidated? _storedRenderBatch;
+    private TextEditorRenderBatchValidated? _renderBatchLocalMostRecent;
 
     private string GetBodyStyleCss(TextEditorRenderBatchValidated renderBatchLocal)
     {
@@ -113,8 +113,8 @@ public partial class BodySection : ComponentBase
 
     private Task RowSection_VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
     {
-        var model = _storedRenderBatch?.Model;
-        var viewModel = _storedRenderBatch?.ViewModel;
+        var model = _renderBatchLocalMostRecent?.Model;
+        var viewModel = _renderBatchLocalMostRecent?.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
