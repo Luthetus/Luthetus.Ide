@@ -4,18 +4,18 @@
 @using Luthetus.Extensions.DotNet.CommandLines.Models
 @using Luthetus.TextEditor.RazorLib.Lexers.Models
 
-<div class="luth_output-display">
+<div class="luth_output-display" style="height: 100%;">
 	
 	@{ var dotNetRunParseResult = DotNetCliOutputParser.GetDotNetRunParseResult(); }
 	
-	<div class="luth_output-display-top-row">
+	<div class="luth_output-display-top-row" style="height: 1.8em;">
 		FilterSet: ...;
 		Errors: @dotNetRunParseResult.ErrorList.Count;
 		Warnings: @dotNetRunParseResult.WarningList.Count;
 		Other: @dotNetRunParseResult.OtherList.Count;
 	</div>
 
-	<div class="luth_output-display-body">
+	<div class="luth_output-display-body" style="height: calc(100% - 1.8em);">
 	
 		<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
 			<CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
@@ -28,31 +28,5 @@
 	            </CascadingValue>
 	        </CascadingValue>
 		</CascadingValue>
-	
-		<ol>
-			@foreach (var diagnosticLine in dotNetRunParseResult.AllDiagnosticLineList)
-			{
-				var cssClass = string.Empty;
-				
-				@if (diagnosticLine.DiagnosticLineKind == DiagnosticLineKind.Warning)
-				{
-					cssClass = "luth_tree-view-warning";
-				}
-				else if (diagnosticLine.DiagnosticLineKind == DiagnosticLineKind.Error)
-				{
-					cssClass = "luth_tree-view-exception";
-				}
-				else if (diagnosticLine.DiagnosticLineKind == DiagnosticLineKind.Other)
-				{
-					cssClass = string.Empty;
-				}
-				
-				<li class="@cssClass"
-					style="margin: calc(1.6em + 4px) 0;">
-					
-					@diagnosticLine.Text
-				</li>
-			}
-		</ol>
 	</div>
 </div>
