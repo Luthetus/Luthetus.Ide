@@ -100,6 +100,10 @@ public class DotNetBackgroundTaskApi
             _terminalStateWrap,
             _testExplorerStateWrap,
             _dispatcher);
+            
+        Output = new OutputScheduler(
+        	this,
+        	_backgroundTaskService);
 
         DotNetSolution = new DotNetSolutionIdeApi(
 			_ideBackgroundTaskApi,
@@ -124,4 +128,5 @@ public class DotNetBackgroundTaskApi
 	public DotNetSolutionIdeApi DotNetSolution { get; }
     public CompilerServiceIdeApi CompilerService { get; }
     public TestExplorerScheduler TestExplorer { get; }
+    public OutputScheduler Output { get; }
 }

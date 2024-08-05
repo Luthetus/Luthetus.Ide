@@ -12,6 +12,8 @@ public partial class OutputDisplay : IDisposable
 {
     [Inject]
     private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
+    [Inject]
+    private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
@@ -23,6 +25,7 @@ public partial class OutputDisplay : IDisposable
     
     public void DotNetCliOutputParser_StateChanged()
     {
+    	DotNetBackgroundTaskApi.Output.Enqueue_ConstructTreeView();
     	_eventThrottle.Run(_ => InvokeAsync(StateHasChanged));
     }
     
