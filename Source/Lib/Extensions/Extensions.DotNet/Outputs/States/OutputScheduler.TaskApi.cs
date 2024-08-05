@@ -35,14 +35,17 @@ public partial class OutputScheduler
 			
 			groupNameBuilder
 				.Append(absolutePath.NameWithExtension)
-				.Append("____")
+				.Append(" (")
 				.Append(groupEnumerated.Count)
-				.Append("____" + absolutePath.ParentDirectory?.Value ?? $"{nameof(IAbsolutePath.ParentDirectory)} was null");
+				.Append(')');
 		
 			var treeViewGroup = new TreeViewGroup(
 				groupNameBuilder.ToString(),
 				true,
-				false);
+				false)
+			{
+				TitleText = absolutePath.ParentDirectory?.Value ?? $"{nameof(IAbsolutePath.ParentDirectory)} was null"
+			};
 				
 			treeViewGroup.ChildList = groupEnumerated;
 			treeViewGroup.LinkChildren(new(), treeViewGroup.ChildList);

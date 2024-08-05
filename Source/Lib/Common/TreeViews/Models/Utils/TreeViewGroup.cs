@@ -12,6 +12,8 @@ public class TreeViewGroup : TreeViewWithType<string>
 		: base(displayText, isExpandable, isExpanded)
 	{
 	}
+	
+	public string TitleText { get; init; } = string.Empty;
 
 	public override bool Equals(object? obj)
 	{

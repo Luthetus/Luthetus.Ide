@@ -103,8 +103,6 @@ public class IdeBackgroundTaskApi
             _backgroundTaskService,
             _dispatcher);
 
-        
-
 		Git = new GitIdeApi(
 			this,
 			_terminalStateWrap,
