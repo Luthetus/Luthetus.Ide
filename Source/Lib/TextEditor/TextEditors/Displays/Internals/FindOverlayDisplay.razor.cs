@@ -270,7 +270,7 @@ public partial class FindOverlayDisplay : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         TextEditorService.PostUnique(
             nameof(HandleActiveIndexMatchedTextSpanChanged),

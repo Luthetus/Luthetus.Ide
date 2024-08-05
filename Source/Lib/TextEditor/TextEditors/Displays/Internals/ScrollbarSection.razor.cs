@@ -59,7 +59,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return string.Empty;
     	
         var scrollbarWidthInPixels = renderBatchLocal.ViewModel.TextEditorDimensions.Width -
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
@@ -74,7 +74,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return string.Empty;
     	
         var scrollbarWidthInPixels = renderBatchLocal.ViewModel.TextEditorDimensions.Width -
             ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
@@ -104,7 +104,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return string.Empty;
     	
         var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
         var scrollBarDimensions = renderBatchLocal.ViewModel.ScrollbarDimensions;
@@ -225,7 +225,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var localThinksLeftMouseButtonIsDown = HORIZONTAL_thinksLeftMouseButtonIsDown;
 
@@ -285,7 +285,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var localThinksLeftMouseButtonIsDown = VERTICAL_thinksLeftMouseButtonIsDown;
 

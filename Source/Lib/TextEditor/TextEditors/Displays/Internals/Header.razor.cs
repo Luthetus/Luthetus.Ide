@@ -75,7 +75,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -83,7 +83,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Copy),
@@ -100,7 +100,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -108,7 +108,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Cut),
@@ -125,7 +125,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -133,7 +133,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),
@@ -150,7 +150,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -158,7 +158,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Redo),
@@ -175,7 +175,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -183,7 +183,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.TriggerSave),
@@ -200,7 +200,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -208,7 +208,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Undo),
@@ -225,7 +225,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -233,7 +233,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.SelectAll),
@@ -250,7 +250,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -258,7 +258,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Remeasure),
@@ -283,7 +283,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
         
         var dropdownKey = Key<DropdownRecord>.NewKey();
         
@@ -379,7 +379,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -387,7 +387,7 @@ public partial class Header : ComponentBase
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Remeasure),
@@ -411,7 +411,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return true;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;
@@ -433,7 +433,7 @@ public partial class Header : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return true;
     	
         var model = renderBatchLocal.Model;
         var viewModel = renderBatchLocal.ViewModel;

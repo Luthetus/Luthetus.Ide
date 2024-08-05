@@ -77,7 +77,7 @@
                          IncludeContextMenuHelperComponent="ViewModelDisplayOptions.IncludeContextMenuHelperComponent"
                          AutoCompleteMenuRenderFragmentOverride="ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride" />
 
-            @if (renderBatchValidated.ViewModel.ShowCommandBar)
+            @if (renderBatchValidated?.ViewModel?.ShowCommandBar ?? false)
             {
                 <CommandBarDisplay RestoreFocusToTextEditor="FocusTextEditorAsync" />
             }

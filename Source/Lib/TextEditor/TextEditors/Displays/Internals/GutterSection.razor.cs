@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -15,7 +16,7 @@ public partial class GutterSection : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return string.Empty;
     		
         var measurements = renderBatchLocal.ViewModel.CharAndLineMeasurements;
 
@@ -41,7 +42,7 @@ public partial class GutterSection : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return string.Empty;
     	
         var widthInPixelsInvariantCulture = renderBatchLocal.GutterWidthInPixels.ToCssValue();
         var width = $"width: {widthInPixelsInvariantCulture}px;";
@@ -53,7 +54,7 @@ public partial class GutterSection : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return VirtualizationResult<VirtualizationResult<List<RichCharacter>>>.GetEmptyRichCharacters();
     	
         var topBoundaryNarrow = renderBatchLocal.ViewModel.VirtualizationResult.TopVirtualizationBoundary with
         {

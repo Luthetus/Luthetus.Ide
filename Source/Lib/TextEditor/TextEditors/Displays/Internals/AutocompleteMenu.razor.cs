@@ -64,7 +64,7 @@ public partial class AutocompleteMenu : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     
         try
         {
@@ -94,7 +94,12 @@ public partial class AutocompleteMenu : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    	{
+    		return new MenuRecord(new MenuOptionRecord[]
+            {
+                new("No results", MenuOptionKind.Other)
+            }.ToImmutableArray());
+    	}
     
         try
         {
@@ -186,7 +191,7 @@ public partial class AutocompleteMenu : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     
         _ = Task.Run(async () =>
         {
@@ -223,9 +228,9 @@ public partial class AutocompleteMenu : ComponentBase
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-    	var renderBatchLocal = renderBatchLocal;
+    	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     
         TextEditorService.PostUnique(
             nameof(InsertAutocompleteMenuOption),

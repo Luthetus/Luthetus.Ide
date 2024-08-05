@@ -181,7 +181,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         renderBatchLocal.ViewModel.UnsafeState.CursorIsIntersecting = cursorIsIntersecting;
         return Task.CompletedTask;
@@ -191,7 +191,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return string.Empty;
     	
         try
         {
@@ -255,7 +255,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return string.Empty;
     	
         try
         {
@@ -295,7 +295,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return string.Empty;
     	
         try
         {

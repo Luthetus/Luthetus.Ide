@@ -26,15 +26,12 @@ public partial class PresentationAndSelectionSection : ComponentBase
     [CascadingParameter(Name = "ProportionalFontMeasurementsContainerElementId")]
     public string ProportionalFontMeasurementsContainerElementId { get; set; } = null!;
 
-    [Parameter, EditorRequired]
-    public TextEditorCursor PrimaryCursor { get; set; } = null!;
-
     private List<TextEditorPresentationModel> GetTextEditorPresentationModels(
     	ImmutableList<Key<TextEditorPresentationModel>> textEditorPresentationKeys)
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return new();
     	
         var textEditorPresentationModelList = new List<TextEditorPresentationModel>();
 
@@ -57,7 +54,7 @@ public partial class PresentationAndSelectionSection : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return string.Empty;
     	
         try
         {
@@ -163,7 +160,7 @@ public partial class PresentationAndSelectionSection : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return ImmutableArray<TextEditorTextSpan>.Empty;
     	
         try
         {
@@ -240,7 +237,7 @@ public partial class PresentationAndSelectionSection : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return (0, 0);
     	
         try
         {
@@ -268,7 +265,7 @@ public partial class PresentationAndSelectionSection : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return "display: none;";
     	
 		try
 		{
@@ -376,7 +373,7 @@ public partial class PresentationAndSelectionSection : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return (0, 0);
     	
         try
         {

@@ -76,7 +76,7 @@ public partial class ContextMenu : ComponentBase
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
     		return;
-    		
+    	
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
         {
             TextEditorService.PostUnique(
@@ -99,7 +99,7 @@ public partial class ContextMenu : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     		
         try
         {
@@ -148,7 +148,7 @@ public partial class ContextMenu : ComponentBase
     {
     	var renderBatchLocal = RenderBatch;
     	if (renderBatchLocal is null)
-    		return;
+    		return Task.CompletedTask;
     	
         _ = Task.Run(async () =>
         {
@@ -182,7 +182,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task CutMenuOption()
     {
-        var commandArgs = ConstructCommandArgs();
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Cut),
@@ -197,7 +201,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task CopyMenuOption()
     {
-        var commandArgs = ConstructCommandArgs();
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Copy),
@@ -212,7 +220,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task PasteMenuOption()
     {
-        var commandArgs = ConstructCommandArgs();
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),

@@ -57,11 +57,11 @@
 	</div>
 	
 	<div class="luth_te_text-selection-group">
-	    @if (TextEditorSelectionHelper.HasSelectedText(PrimaryCursor.Selection) &&
+	    @if (TextEditorSelectionHelper.HasSelectedText(renderBatchLocal.ViewModel.PrimaryCursor.Selection) &&
 	         renderBatchLocal.ViewModel.VirtualizationResult.EntryList.Length > 0)
 	    {
 	        var selectionBoundsInPositionIndexUnits = TextEditorSelectionHelper.GetSelectionBounds(
-	            PrimaryCursor.Selection);
+	            renderBatchLocal.ViewModel.PrimaryCursor.Selection);
 	
 	        var selectionBoundsInRowIndexUnits = GetSelectionBoundsInRowIndexUnits(selectionBoundsInPositionIndexUnits);
 	
