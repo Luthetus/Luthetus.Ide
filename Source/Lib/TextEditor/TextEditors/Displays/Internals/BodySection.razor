@@ -90,34 +90,7 @@
 		        </div>
 		    }
 		
-		    <CursorDisplay @ref="CursorDisplayComponent"
-		                   Cursor="renderBatchLocal.ViewModel.PrimaryCursor"
-		                   ScrollableContainerId="@renderBatchLocal.ViewModel.BodyElementId"
-		                   IsFocusTarget="true"
-		                   TabIndex="renderBatchLocal.ViewModelDisplayOptions.TabIndex"
-		                   IncludeContextMenuHelperComponent="renderBatchLocal.ViewModelDisplayOptions.IncludeContextMenuHelperComponent">
-		
-		        <OnContextMenuRenderFragment>
-		            @if (renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride is not null)
-		            {
-		                @renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride
-		            }
-		            else
-		            {
-		                <ContextMenu/>
-		            }
-		        </OnContextMenuRenderFragment>
-		        <AutoCompleteMenuRenderFragment>
-		            @if (renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride is not null)
-		            {
-		                @renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride
-		            }
-		            else
-		            {
-		                <AutocompleteMenu/>
-		            }
-		        </AutoCompleteMenuRenderFragment>
-		    </CursorDisplay>
+		    <CursorDisplay @ref="CursorDisplayComponent"/>
 		</div>
 	    @* RowSection.razor Close *@
 	

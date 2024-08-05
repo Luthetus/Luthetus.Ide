@@ -18,34 +18,47 @@
 	
 	<textarea @ref="_cursorDisplayElementReference"
 	          @onkeydown="HandleOnKeyDown"
-	          id="@CursorDisplayId"
-	          tabindex="@GetTabIndex()"
+	          id="@GetCursorDisplayId(renderBatchLocal)"
+	          tabindex="@GetTabIndex(renderBatchLocal)"
 	          class="luth_te_text-editor-cursor @BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
-	          style="@CursorStyleCss @leftRelativeToParentInPixelsCssStyle">
+	          style="@GetCursorStyleCss() @leftRelativeToParentInPixelsCssStyle">
 	</textarea>
 	
 	<div class="luth_te_text-editor-caret-row"
-	     style="@CaretRowStyleCss">
+	     style="@GetCaretRowStyleCss()">
 	</div>
 	
-	if (renderBatchLocal.ViewModel.MenuKind != MenuKind.None && IncludeContextMenuHelperComponent)
+	if (renderBatchLocal.ViewModel.MenuKind != MenuKind.None && GetIncludeContextMenuHelperComponent(renderBatchLocal))
 	{
 	    <div @onkeydown:stopPropagation="true"
 	         @onmousedown:stopPropagation="true"
 	         @onmousemove:stopPropagation="true"
 	         class="luth_te_text-editor-context-menu"
-	         style="@MenuStyleCss">
+	         style="@GetMenuStyleCss()">
 	
 	        <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
 	                        Value="TextEditorMenuShouldTakeFocus">
-	
 	            @switch (renderBatchLocal.ViewModel.MenuKind)
 	            {
 	                case MenuKind.ContextMenu:
-	                        @OnContextMenuRenderFragment
+                        if (renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride is not null)
+			            {
+			                @renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride
+			            }
+			            else
+			            {
+			                <ContextMenu/>
+			            }
 	                    break;
 	                case MenuKind.AutoCompleteMenu:
-	                        @AutoCompleteMenuRenderFragment
+	                    if (renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride is not null)
+			            {
+			                @renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride
+			            }
+			            else
+			            {
+			                <AutocompleteMenu/>
+			            }
 	                    break;
 	            }
 	        </CascadingValue>
