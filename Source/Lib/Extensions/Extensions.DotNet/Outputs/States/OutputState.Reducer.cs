@@ -7,11 +7,11 @@ public partial record OutputState
 	public class Reducer
     {
         [ReducerMethod]
-        public static TestExplorerState ReduceWithAction(
-            TestExplorerState inState,
-            WithAction withAction)
+        public static OutputState ReduceStateHasChangedAction(
+            OutputState inState,
+            StateHasChangedAction stateHasChangedAction)
         {
-            return withAction.WithFunc.Invoke(inState);
+            return inState with {};
         }
     }
 }

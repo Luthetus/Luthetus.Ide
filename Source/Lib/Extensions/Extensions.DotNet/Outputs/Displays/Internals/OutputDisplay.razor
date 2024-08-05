@@ -1,4 +1,6 @@
 @using System.Collections.Immutable
+@using Luthetus.Common.RazorLib.TreeViews.Displays
+@using Luthetus.Extensions.DotNet.Outputs.States
 @using Luthetus.Extensions.DotNet.CommandLines.Models
 @using Luthetus.TextEditor.RazorLib.Lexers.Models
 
@@ -13,21 +15,34 @@
 		Other: @dotNetRunParseResult.OtherList.Count;
 	</div>
 
-	<div class="luth_output-display-body">		
+	<div class="luth_output-display-body">
+	
+		<CascadingValue Name="LuthetusTreeViewIconWidth" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+			<CascadingValue Name="LuthetusTreeViewIconHeight" Value="AppOptionsStateWrap.Value.Options.IconSizeInPixels">
+	            <CascadingValue Name="OffsetPerDepthInPixels" Value="OffsetPerDepthInPixels">
+	                <TreeViewContainerDisplay TreeViewContainerKey="OutputState.TreeViewContainerKey"
+	                                          CssStyleString="height: 100%;"
+	                                          OnContextMenuFunc="OnTreeViewContextMenuFunc"
+	                                          TreeViewKeyboardEventHandler="_treeViewKeyboardEventHandler"
+	                                          TreeViewMouseEventHandler="_treeViewMouseEventHandler" />
+	            </CascadingValue>
+	        </CascadingValue>
+		</CascadingValue>
+	
 		<ol>
 			@foreach (var diagnosticLine in dotNetRunParseResult.AllDiagnosticLineList)
 			{
 				var cssClass = string.Empty;
 				
-				@if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Warning)
+				@if (diagnosticLine.DiagnosticLineKind == DiagnosticLineKind.Warning)
 				{
 					cssClass = "luth_tree-view-warning";
 				}
-				else if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Error)
+				else if (diagnosticLine.DiagnosticLineKind == DiagnosticLineKind.Error)
 				{
 					cssClass = "luth_tree-view-exception";
 				}
-				else if (diagnosticLine.DiagnosticLineKind == DotNetCliOutputParser.DiagnosticLineKind.Other)
+				else if (diagnosticLine.DiagnosticLineKind == DiagnosticLineKind.Other)
 				{
 					cssClass = string.Empty;
 				}

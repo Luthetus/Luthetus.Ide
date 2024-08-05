@@ -512,20 +512,6 @@ public class DotNetCliOutputParser
 
 		return new();
 	}
-	
-	public class DiagnosticTextSpan
-	{
-		public DiagnosticTextSpan(
-			int startInclusiveIndex,
-			int endExclusiveIndex)
-		{
-			StartInclusiveIndex = startInclusiveIndex;
-			EndExclusiveIndex = endExclusiveIndex;
-		}
-	
-		public int StartInclusiveIndex { get; }
-		public int EndExclusiveIndex { get; }
-	}
 
 	public class NewListModel
 	{
@@ -541,47 +527,5 @@ public class DotNetCliOutputParser
 		public int? ColumnLength { get; set; } = null;
 		public ProjectTemplate ProjectTemplate { get; set; } = new ProjectTemplate(null, null, null, null);
 		public List<ProjectTemplate> ProjectTemplateList { get; set; } = new List<ProjectTemplate>();
-	}
-	
-	/// <summary>Used in the method <see cref="ParseOutputEntireDotNetRun"/></summary>
-	public class DiagnosticLine
-	{
-		// <summary>The entire line of text itself</summary>
-		public int StartInclusiveIndex { get; set; }
-		// <summary>The entire line of text itself</summary>
-		public int EndExclusiveIndex { get; set; }
-		// <summary>The entire line of text itself</summary>
-		public string Text { get; set; }
-		public DiagnosticLineKind DiagnosticLineKind { get; set; } = DiagnosticLineKind.Error;
-		
-		public DiagnosticTextSpan? FilePathTextSpan { get; set; }
-		public DiagnosticTextSpan? LineAndColumnIndicesTextSpan { get; set; }
-		public DiagnosticTextSpan? DiagnosticKindTextSpan { get; set; }
-		public DiagnosticTextSpan? DiagnosticCodeTextSpan { get; set; }
-		public DiagnosticTextSpan? MessageTextSpan { get; set; }
-		public DiagnosticTextSpan? ProjectTextSpan { get; set; }
-		
-		public bool IsValid => 
-			FilePathTextSpan is not null &&
-			LineAndColumnIndicesTextSpan is not null &&
-			DiagnosticKindTextSpan is not null &&
-			DiagnosticCodeTextSpan is not null &&
-			MessageTextSpan is not null &&
-			ProjectTextSpan is not null;
-	}
-	
-	public enum DiagnosticLineKind
-	{
-		Error,
-		Warning,
-		Other,
-	}
-	
-	public class DotNetRunParseResult
-	{
-		public ImmutableList<DiagnosticLine> AllDiagnosticLineList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
-		public ImmutableList<DiagnosticLine> ErrorList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
-		public ImmutableList<DiagnosticLine> WarningList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
-		public ImmutableList<DiagnosticLine> OtherList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
 	}
 }

@@ -16,6 +16,7 @@ using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.States;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
+using Luthetus.Extensions.DotNet.Outputs.States;
 
 namespace Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 
@@ -103,7 +104,10 @@ public class DotNetBackgroundTaskApi
             
         Output = new OutputScheduler(
         	this,
-        	_backgroundTaskService);
+			_backgroundTaskService,
+			_dotNetCliOutputParser,
+			_treeViewService,
+			_dispatcher);
 
         DotNetSolution = new DotNetSolutionIdeApi(
 			_ideBackgroundTaskApi,
