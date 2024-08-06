@@ -31,74 +31,51 @@ namespace Luthetus.Common.RazorLib.Reactives.Models;
 /// </summary>
 public class ThrottleAsync
 {
+	private readonly object _lockWorkItems = new();
+	
     public ThrottleAsync(TimeSpan throttleTimeSpan)
     {
         ThrottleTimeSpan = throttleTimeSpan;
     }
 
     public TimeSpan ThrottleTimeSpan { get; }
-    public SemaphoreSlim WorkItemSemaphore { get; protected set; } = new(1, 1);
     public Stack<Func<CancellationToken, Task>> WorkItemStack { get; protected set; } = new();
-    public Task DelayTask { get; protected set; } = Task.CompletedTask;
     public Task WorkItemTask { get; protected set; } = Task.CompletedTask;
     public bool IsStoppingFurtherPushes { get; private set; }
 
-    public async Task PushEvent(Func<CancellationToken, Task> workItem)
+    public Task RunAsync(Func<CancellationToken, Task> workItem)
     {
-        try
-        {
-            await WorkItemSemaphore.WaitAsync().ConfigureAwait(false);
-
-            WorkItemStack.Push(workItem);
+    	lock (_lockWorkItems)
+		{
+			WorkItemStack.Push(workItem);
             if (WorkItemStack.Count > 1)
-                return;
-        }
-        finally
-        {
-            WorkItemSemaphore.Release();
-        }
-
+                return Task.CompletedTask;
+		}
+    
         var previousTask = WorkItemTask;
-
-        WorkItemTask = Task.Run(async () =>
-        {
-            // Await the previous work item task.
-            await previousTask.ConfigureAwait(false);
-
-            Func<CancellationToken, Task> popWorkItem;
-            try
-            {
-                await WorkItemSemaphore.WaitAsync().ConfigureAwait(false);
-
-                if (WorkItemStack.Count == 0)
-                    return;
-
-                popWorkItem = WorkItemStack.Pop();
-                WorkItemStack.Clear();
-            }
-            finally
-            {
-                WorkItemSemaphore.Release();
-            }
-
-			await Task.WhenAll(
-					popWorkItem.Invoke(CancellationToken.None),
-					Task.Delay(ThrottleTimeSpan, CancellationToken.None))
-				.ConfigureAwait(false);
-        });
+        WorkItemTask = ExecuteAsync(previousTask);
+        return WorkItemTask;
     }
-
-    public async Task StopFurtherPushes()
+    
+    private async Task ExecuteAsync(Task previousTask)
     {
-        try
+    	// Await the previous work item task.
+        await previousTask.ConfigureAwait(false);
+
+		Func<CancellationToken, Task> popWorkItem;
+        lock (_lockWorkItems)
         {
-            await WorkItemSemaphore.WaitAsync().ConfigureAwait(false);
-            IsStoppingFurtherPushes = true;
+            if (WorkItemStack.Count == 0)
+                return;
+
+            popWorkItem = WorkItemStack.Pop();
+            WorkItemStack.Clear();
         }
-        finally
-        {
-            WorkItemSemaphore.Release();
-        }
+
+		await Task.WhenAll(
+				popWorkItem.Invoke(CancellationToken.None),
+				Task.Delay(ThrottleTimeSpan, CancellationToken.None))
+			.ConfigureAwait(false);
     }
 
     /// <summary>
