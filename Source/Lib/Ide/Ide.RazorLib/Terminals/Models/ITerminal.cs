@@ -13,6 +13,7 @@ public interface ITerminal : IDisposable
 	public bool HasExecutingProcess { get; }
 	
 	public void EnqueueCommand(TerminalCommandRequest terminalCommandRequest);
+	public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest);
 	public void EnqueueClear();
 	
 	public void KillProcess();

@@ -64,6 +64,15 @@ public class Terminal : ITerminal
 			() => HandleCommand(terminalCommandRequest));
     }
     
+    public Task EnqueueCommandAsync(TerminalCommandRequest terminalCommandRequest)
+    {
+		return _backgroundTaskService.EnqueueAsync(
+			Key<IBackgroundTask>.NewKey(),
+			BlockingBackgroundTaskWorker.GetQueueKey(),
+			"Enqueue Command",
+			() => HandleCommand(terminalCommandRequest));
+    }
+    
     public void EnqueueClear()
     {
     	EnqueueCommand(new TerminalCommandRequest("clear", null));
