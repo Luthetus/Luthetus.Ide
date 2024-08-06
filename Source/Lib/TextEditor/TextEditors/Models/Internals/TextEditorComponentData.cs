@@ -23,7 +23,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// </summary>
 public class TextEditorComponentData
 {
-	private readonly ThrottleAsync _throttleApplySyntaxHighlighting = new ThrottleAsync(TimeSpan.FromMilliseconds(500));
+	private readonly Throttle _throttleApplySyntaxHighlighting = new(TimeSpan.FromMilliseconds(500));
 
 	public static TimeSpan ThrottleDelayDefault { get; } = TimeSpan.FromMilliseconds(60);
     public static TimeSpan OnMouseOutTooltipDelay { get; } = TimeSpan.FromMilliseconds(1_000);
@@ -81,9 +81,9 @@ public class TextEditorComponentData
 	/// </summary>
     public bool ThinksLeftMouseButtonIsDown { get; set; }
 
-	public Task ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
+	public void ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
     {
-        return _throttleApplySyntaxHighlighting.PushEvent(_ =>
+        _throttleApplySyntaxHighlighting.Run(_ =>
         {
             modelModifier.CompilerService.ResourceWasModified(modelModifier.ResourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
 			return Task.CompletedTask;

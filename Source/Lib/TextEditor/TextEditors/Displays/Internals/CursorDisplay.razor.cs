@@ -29,7 +29,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     public bool IsFocusTarget => true;
 
     private readonly Guid _intersectionObserverMapKey = Guid.NewGuid();
-    private readonly ThrottleAsync _throttleShouldRevealCursor = new(TimeSpan.FromMilliseconds(333));
+    private readonly Throttle _throttleShouldRevealCursor = new(TimeSpan.FromMilliseconds(333));
 
     private ElementReference? _cursorDisplayElementReference;
     private int _menuShouldGetFocusRequestCount;
@@ -128,7 +128,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
 
             if (!renderBatchLocal.ViewModel.UnsafeState.CursorIsIntersecting)
             {
-                await _throttleShouldRevealCursor.PushEvent(_ =>
+                _throttleShouldRevealCursor.Run(_ =>
                 {
                     // I think after removing the throttle, that this is an infinite loop on WASM,
                     // i.e. holding down ArrowRight
@@ -168,7 +168,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
                         	return Task.CompletedTask;
                         });
 					return Task.CompletedTask;
-                }).ConfigureAwait(false);
+                });
             }
         }
 

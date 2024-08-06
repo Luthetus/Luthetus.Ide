@@ -19,7 +19,7 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public static ThrottleAsync Throttle = new(ThrottleAsync.Thirty_Frames_Per_Second);
+    public static Throttle Throttle = new(Throttle.Thirty_Frames_Per_Second);
 
     private IDropzone? _onMouseOverDropzone = null;
 
@@ -35,9 +35,9 @@ public partial class DragInitializer : FluxorComponent
         });
     }
 
-    private async Task DispatchSetDragStateActionOnMouseMoveAsync(MouseEventArgs mouseEventArgs)
+    private void DispatchSetDragStateActionOnMouseMove(MouseEventArgs mouseEventArgs)
     {
-        await Throttle.PushEvent(_ =>
+        Throttle.Run(_ =>
         {
             if ((mouseEventArgs.Buttons & 1) != 1)
             {
@@ -53,15 +53,15 @@ public partial class DragInitializer : FluxorComponent
             }
 
             return Task.CompletedTask;
-        }).ConfigureAwait(false);
+        });
     }
 
-    private async Task DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
+    private void DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
     {
 		var dragState = DragStateWrap.Value;
 		var localOnMouseOverDropzone = _onMouseOverDropzone;
 
-        await Throttle.PushEvent(async _ =>
+        Throttle.Run(async _ =>
         {
             Dispatcher.Dispatch(ConstructClearDragStateAction());
 
@@ -72,7 +72,7 @@ public partial class DragInitializer : FluxorComponent
                     .OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone)
                     .ConfigureAwait(false);
             }
-        }).ConfigureAwait(false);
+        });
     }
 
 	private string GetIsActiveCssClass(IDropzone dropzone)

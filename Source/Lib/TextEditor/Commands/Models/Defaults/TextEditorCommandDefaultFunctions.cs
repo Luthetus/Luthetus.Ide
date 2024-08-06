@@ -1064,7 +1064,7 @@ public class TextEditorCommandDefaultFunctions
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
         {
-            await componentData.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+            componentData.ThrottleApplySyntaxHighlighting(modelModifier);
         }
     }
 
@@ -1158,7 +1158,7 @@ public class TextEditorCommandDefaultFunctions
 
         if (seenIsSyntaxHighlightingInvoker)
         {
-            await componentData.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+            componentData.ThrottleApplySyntaxHighlighting(modelModifier);
         }
     }
 
