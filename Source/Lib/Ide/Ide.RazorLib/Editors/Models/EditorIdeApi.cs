@@ -170,14 +170,9 @@ public class EditorIdeApi
 	            });
 			
 			if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
-			{
-				Console.WriteLine("if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)");
 				await _textEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
-			}
 			else
-			{
 				_textEditorService.Post(uniqueTextEditorWork);
-			}
         }
 
         await CheckIfContentsWereModifiedAsync(
