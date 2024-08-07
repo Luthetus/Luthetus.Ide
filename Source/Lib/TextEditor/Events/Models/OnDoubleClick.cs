@@ -125,7 +125,7 @@ public class OnDoubleClick : ITextEditorWork
 				.FinalizePost(EditContext)
 				.ConfigureAwait(false);
 				
-			await Task.Delay(Throttle.Thirty_Frames_Per_Second);
+			await Task.Delay(Throttle.Thirty_Frames_Per_Second).ConfigureAwait(false);
 		}
 		catch (Exception e)
 		{
