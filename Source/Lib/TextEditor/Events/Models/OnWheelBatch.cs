@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
@@ -23,14 +24,11 @@ public class OnWheelBatch : ITextEditorWork
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; private set; } = nameof(OnWheelBatch);
-    public Task? WorkProgress { get; }
     public List<WheelEventArgs> WheelEventArgsList { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
     public TextEditorComponentData ComponentData { get; }
 
 	public ITextEditorEditContext EditContext { get; set; }
-
-    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -84,6 +82,8 @@ public class OnWheelBatch : ITextEditorWork
             await EditContext.TextEditorService
             	.FinalizePost(EditContext)
             	.ConfigureAwait(false);
+            	
+            await Task.Delay(Throttle.Thirty_Frames_Per_Second);
 		}
 		catch (Exception e)
 		{

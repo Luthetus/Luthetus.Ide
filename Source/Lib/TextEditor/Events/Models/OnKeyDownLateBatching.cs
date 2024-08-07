@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -41,8 +42,6 @@ public class OnKeyDownLateBatching : ITextEditorWork
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; private set; } = nameof(OnKeyDownLateBatching);
-    public Task? WorkProgress { get; }
-    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
     public List<KeyboardEventArgs> KeyboardEventArgsList { get; }
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -301,6 +300,8 @@ public class OnKeyDownLateBatching : ITextEditorWork
 			await EditContext.TextEditorService
 				.FinalizePost(EditContext)
 				.ConfigureAwait(false);
+				
+			await Task.Delay(Throttle.Thirty_Frames_Per_Second);
 		}
 		catch (Exception e)
 		{
