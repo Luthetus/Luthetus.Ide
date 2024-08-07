@@ -51,16 +51,16 @@ public static class ServiceCollectionExtensions
             {
                 CustomThemeRecordList = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
-                RegisterModelFunc = async (registerModelArgs) =>
+                RegisterModelFunc = (registerModelArgs) =>
                 {
                     registerModelArgs = new RegisterModelArgs(
                         RemoveDriveFromResourceUri(registerModelArgs.ResourceUri, registerModelArgs.ServiceProvider),
                         registerModelArgs.ServiceProvider);
 
                     var ideBackgroundTaskApi = registerModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    await ideBackgroundTaskApi.Editor.RegisterModelFunc(registerModelArgs).ConfigureAwait(false);
+                    return ideBackgroundTaskApi.Editor.RegisterModelFunc(registerModelArgs);
                 },
-                TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
+                TryRegisterViewModelFunc = (tryRegisterViewModelArgs) =>
                 {
                     tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
                         tryRegisterViewModelArgs.ViewModelKey,
@@ -70,12 +70,12 @@ public static class ServiceCollectionExtensions
                         tryRegisterViewModelArgs.ServiceProvider);
 
                     var ideBackgroundTaskApi = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return await ideBackgroundTaskApi.Editor.TryRegisterViewModelFunc(tryRegisterViewModelArgs).ConfigureAwait(false);
+                    return ideBackgroundTaskApi.Editor.TryRegisterViewModelFunc(tryRegisterViewModelArgs);
                 },
-                TryShowViewModelFunc = async (tryShowViewModelArgs) =>
+                TryShowViewModelFunc = (tryShowViewModelArgs) =>
                 {
                     var ideBackgroundTaskApi = tryShowViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return await ideBackgroundTaskApi.Editor.TryShowViewModelFunc(tryShowViewModelArgs).ConfigureAwait(false);
+                    return ideBackgroundTaskApi.Editor.TryShowViewModelFunc(tryShowViewModelArgs);
                 },
             });
         }

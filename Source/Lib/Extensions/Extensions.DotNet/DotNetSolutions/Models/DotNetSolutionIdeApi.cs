@@ -405,24 +405,31 @@ Execution Terminal"));
 
 		if (dotNetSolutionModel is null)
 			return Task.CompletedTask;
-
-		var progressBarModel = new ProgressBarModel(0, "parsing...");
-
-		NotificationHelper.DispatchProgress(
-			$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
-			progressBarModel,
-			_commonComponentRenderers,
-			_dispatcher,
-			TimeSpan.FromMilliseconds(-1));
-
+			
 		_ = Task.Run(async () =>
 		{
+			var progressBarModel = new ProgressBarModel(0, "parsing...");
+
+			NotificationHelper.DispatchProgress(
+				$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
+				progressBarModel,
+				_commonComponentRenderers,
+				_dispatcher,
+				TimeSpan.FromMilliseconds(-1));
+				
+			var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
+		
 			try
 			{
 				if (_textEditorService.TextEditorConfig.RegisterModelFunc is null)
 					return;
-
-				progressBarModel.SetProgress(0.05, "Discovering projects...");
+					
+				progressThrottle.Run(_ => 
+				{
+					progressBarModel.SetProgress(0.05, "Discovering projects...");
+					return Task.CompletedTask;
+				});
+				
 				foreach (var project in dotNetSolutionModel.DotNetProjectList)
 				{
 					RegisterStartupControl(project);
@@ -462,24 +469,36 @@ Execution Terminal"));
 					var maximumProgressAvailableToProject = (1 - previousStageProgress) * ((double)1.0 / dotNetProjectListLength);
 					var currentProgress = Math.Min(1.0, previousStageProgress + maximumProgressAvailableToProject * projectsParsedCount);
 
+					// This 'SetProgress' is being kept out the throttle, since it sets message 1
+					// whereas the per class progress updates set message 2.
+					//
+					// Otherwise an update to message 2 could result in this message 1 update never being written.
 					progressBarModel.SetProgress(
 						currentProgress,
 						$"{projectsParsedCount + 1}/{dotNetProjectListLength}: {project.AbsolutePath.NameWithExtension}");
+					
 
-					await DiscoverClassesInProject(project, progressBarModel, currentProgress, maximumProgressAvailableToProject);
+					await DiscoverClassesInProject(project, progressBarModel, progressThrottle, currentProgress, maximumProgressAvailableToProject);
 					projectsParsedCount++;
 				}
 
-				progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+				progressThrottle.Run(_ => 
+				{
+					progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+					progressBarModel.Dispose();
+					return Task.CompletedTask;
+				});
 			}
 			catch (Exception e)
 			{
 				var currentProgress = progressBarModel.GetProgress();
-				progressBarModel.SetProgress(currentProgress, e.ToString());
-			}
-			finally
-			{
-				progressBarModel.Dispose();
+				
+				progressThrottle.Run(_ => 
+				{
+					progressBarModel.SetProgress(currentProgress, e.ToString());
+					progressBarModel.Dispose();
+					return Task.CompletedTask;
+				});
 			}
 		});
 
@@ -489,6 +508,7 @@ Execution Terminal"));
 	private async Task DiscoverClassesInProject(
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
+		Throttle progressThrottle,
 		double currentProgress,
 		double maximumProgressAvailableToProject)
 	{
@@ -502,12 +522,18 @@ Execution Terminal"));
 		var startingAbsolutePathForSearch = parentDirectory.Value;
 		var discoveredFileList = new List<string>();
 
-		progressBarModel.SetProgress(null, null, "discovering files");
+		progressThrottle.Run(_ => 
+		{
+			progressBarModel.SetProgress(null, null, "discovering files");
+			return Task.CompletedTask;
+		});
+		
 		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
 
 		await ParseClassesInProject(
 			dotNetProject,
 			progressBarModel,
+			progressThrottle,
 			currentProgress,
 			maximumProgressAvailableToProject,
 			discoveredFileList);
@@ -547,7 +573,12 @@ Execution Terminal"));
 				//if (isFirstInvocation)
 				//{
 				//	var currentProgress = progressBarModel.GetProgress();
+				// progressThrottle.Run(_ => 
+				// {
 				//	progressBarModel.SetProgress(currentProgress, $"{directoryPathChild} " + progressMessage);
+				//	return Task.CompletedTask;
+				// });
+				//	
 				//}
 
 				await DiscoverFilesRecursively(directoryPathChild, discoveredFileList, isFirstInvocation: false).ConfigureAwait(false);
@@ -558,6 +589,7 @@ Execution Terminal"));
 	private async Task ParseClassesInProject(
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
+		Throttle progressThrottle,
 		double currentProgress,
 		double maximumProgressAvailableToProject,
 		List<string> discoveredFileList)
@@ -570,10 +602,14 @@ Execution Terminal"));
 
 			var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
 
-			progressBarModel.SetProgress(
-				progress,
-				null,
-				$"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}");
+			progressThrottle.Run(_ => 
+			{
+				progressBarModel.SetProgress(
+					progress,
+					null,
+					$"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}");
+				return Task.CompletedTask;
+			});
 
 			var resourceUri = new ResourceUri(file);
 

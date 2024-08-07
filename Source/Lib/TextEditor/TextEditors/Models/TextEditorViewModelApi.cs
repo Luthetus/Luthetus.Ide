@@ -114,6 +114,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             _dialogService,
             _jsRuntime));
     }
+    
+    public void Register(TextEditorViewModel viewModel)
+    {
+        _dispatcher.Dispatch(new TextEditorState.RegisterViewModelExistingAction(viewModel));
+    }
     #endregion
 
     #region READ_METHODS

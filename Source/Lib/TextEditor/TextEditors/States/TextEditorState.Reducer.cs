@@ -91,6 +91,25 @@ public partial record TextEditorState
 
             return inState with { ViewModelList = outViewModelList };
         }
+        
+        [ReducerMethod]
+        public static TextEditorState ReduceRegisterViewModelExistingAction(
+            TextEditorState inState,
+            RegisterViewModelExistingAction registerViewModelExistingAction)
+        {
+            var inViewModel = inState.ViewModelList.FirstOrDefault(
+                x => x.ViewModelKey == registerViewModelExistingAction.ViewModel.ViewModelKey);
+
+            if (inViewModel is not null)
+                return inState;
+
+            if (registerViewModelExistingAction.ViewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
+                throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
+
+            var outViewModelList = inState.ViewModelList.Add(registerViewModelExistingAction.ViewModel);
+
+            return inState with { ViewModelList = outViewModelList };
+        }
 
         [ReducerMethod]
         public static TextEditorState ReduceDisposeViewModelAction(

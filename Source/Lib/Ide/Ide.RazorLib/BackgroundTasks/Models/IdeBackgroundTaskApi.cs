@@ -1,4 +1,6 @@
+using Microsoft.JSInterop;
 using Fluxor;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -34,6 +36,8 @@ public class IdeBackgroundTaskApi
     private readonly IState<GitState> _gitStateWrap;
 	private readonly GitCliOutputParser _gitCliOutputParser;
 	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
+	private readonly IDialogService _dialogService;
+	private readonly IJSRuntime _jsRuntime;
 
     public IdeBackgroundTaskApi(
         IBackgroundTaskService backgroundTaskService,
@@ -50,6 +54,8 @@ public class IdeBackgroundTaskApi
         IState<GitState> gitStateWrap,
         GitCliOutputParser gitCliOutputParser,
         IDecorationMapperRegistry decorationMapperRegistry,
+        IDialogService dialogService,
+        IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
         _backgroundTaskService = backgroundTaskService;
@@ -66,6 +72,8 @@ public class IdeBackgroundTaskApi
         _gitStateWrap = gitStateWrap;
 		_gitCliOutputParser = gitCliOutputParser;
 		_decorationMapperRegistry = decorationMapperRegistry;
+		_dialogService = dialogService;
+		_jsRuntime = jsRuntime;
 
         Editor = new EditorIdeApi(
             this,
@@ -77,7 +85,9 @@ public class IdeBackgroundTaskApi
             _environmentProvider,
             _decorationMapperRegistry,
             _compilerServiceRegistry,
+            _dialogService,
             _dispatcher,
+            _jsRuntime,
             serviceProvider);
 
         FileSystem = new FileSystemIdeApi(
