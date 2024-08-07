@@ -55,7 +55,10 @@ public static class ServiceCollectionExtensions
                 {
                     registerModelArgs = new RegisterModelArgs(
                         RemoveDriveFromResourceUri(registerModelArgs.ResourceUri, registerModelArgs.ServiceProvider),
-                        registerModelArgs.ServiceProvider);
+                        registerModelArgs.ServiceProvider)
+                    {
+                    	ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
+                    };
 
                     var ideBackgroundTaskApi = registerModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
                     return ideBackgroundTaskApi.Editor.RegisterModelFunc(registerModelArgs);

@@ -142,7 +142,9 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
                     modelModifier,
                     FindOverlayPresentationFacts.EmptyPresentationModel);
 
-                model.CompilerService.RegisterResource(model.ResourceUri);
+                model.CompilerService.RegisterResource(
+                	model.ResourceUri,
+                	shouldTriggerResourceWasModified: true);
 
                 _textEditorService.ViewModelApi.Register(
                     TextEditorViewModelKey,

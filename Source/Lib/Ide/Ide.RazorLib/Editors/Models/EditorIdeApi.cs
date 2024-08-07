@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
@@ -151,7 +152,32 @@ public class EditorIdeApi
             model = modelModifier.ToModel();
 
             _textEditorService.ModelApi.RegisterCustom(model);
-			model.CompilerService.RegisterResource(model.ResourceUri);
+            
+			model.CompilerService.RegisterResource(
+				model.ResourceUri,
+				shouldTriggerResourceWasModified: false);
+				
+			var uniqueTextEditorWork = new UniqueTextEditorWork(
+	            nameof(compilerService.ParseAsync),
+	            editContext =>
+	            {
+					var modelModifier = editContext.GetModelModifier(resourceUri);
+	
+					if (modelModifier is null)
+						return Task.CompletedTask;
+	
+					return compilerService.ParseAsync(editContext, modelModifier);
+	            });
+			
+			if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
+			{
+				Console.WriteLine("if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)");
+				await _textEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+			}
+			else
+			{
+				_textEditorService.Post(uniqueTextEditorWork);
+			}
         }
 
         await CheckIfContentsWereModifiedAsync(

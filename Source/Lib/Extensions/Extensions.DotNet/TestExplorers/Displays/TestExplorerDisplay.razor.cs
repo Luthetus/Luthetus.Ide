@@ -157,7 +157,9 @@ public partial class TestExplorerDisplay : FluxorComponent
 					modelModifier,
 					FindOverlayPresentationFacts.EmptyPresentationModel);
 
-				model.CompilerService.RegisterResource(model.ResourceUri);
+				model.CompilerService.RegisterResource(
+					model.ResourceUri,
+					shouldTriggerResourceWasModified: true);
 
 				var viewModelModifier = editContext.GetViewModelModifier(TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey);
 

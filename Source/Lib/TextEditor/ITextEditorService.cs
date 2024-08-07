@@ -71,6 +71,17 @@ public partial interface ITextEditorService
     /// invoke <see cref="FinalizePost"/> to finalize any changes.
     /// </summary>
     public void Post(ITextEditorWork textEditorWork);
+    
+    /// <summary>
+    /// This method will set the <see cref="ITextEditorWork.EditContext"/> property.
+    ///
+    /// Within the method
+    /// <see cref="Luthetus.Common.RazorLib.BackgroundTasks.Models.IBackgroundTask.HandleEvent"/>,
+    /// invoke <see cref="FinalizePost"/> to finalize any changes.
+    ///
+    /// This async version will block until the background task is completed.
+    /// </summary>
+    public Task PostAsync(ITextEditorWork textEditorWork);
 
 	/// <summmary>
 	/// This method writes any mutated data within the <see cref="ITextEditorWork.EditContext"/>

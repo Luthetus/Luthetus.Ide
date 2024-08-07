@@ -259,7 +259,9 @@ public class DotNetSolutionIdeApi
 
 			_compilerServiceRegistry
 				.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-				.RegisterResource(resourceUri);
+				.RegisterResource(
+					resourceUri,
+					shouldTriggerResourceWasModified: true);
 		}
 
 		var lexer = new DotNetSolutionLexer(
@@ -439,9 +441,12 @@ Execution Terminal"));
 					if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
 						continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 
-					await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-							resourceUri,
-							_serviceProvider))
+					var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
+					{
+						ShouldBlockUntilBackgroundTaskIsCompleted = true,
+					};
+
+					await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(registerModelArgs)
 						.ConfigureAwait(false);
 				}
 
@@ -594,8 +599,8 @@ Execution Terminal"));
 		double maximumProgressAvailableToProject,
 		List<string> discoveredFileList)
 	{
-		// TODO: Do not increment until enqueued task is finished.
 		var fileParsedCount = 0;
+		
 		foreach (var file in discoveredFileList)
 		{
 			var fileAbsolutePath = _environmentProvider.AbsolutePathFactory(file, false);
@@ -612,42 +617,16 @@ Execution Terminal"));
 			});
 
 			var resourceUri = new ResourceUri(file);
+			
+			var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
+			{
+				ShouldBlockUntilBackgroundTaskIsCompleted = true,
+			};
 
-			await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-					resourceUri,
-					_serviceProvider))
+			await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(registerModelArgs)
 				.ConfigureAwait(false);
-
-			var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
-
-			if (model is null)
-			{
-				Console.WriteLine($"Model with {nameof(resourceUri)}: '{resourceUri}' was null");
-				continue;
-			}
-
-			var consecutiveMissCounter = 0;
-
-			while (true)
-			{
-				var compilerService = model.CompilerService;
-				if (compilerService is null)
-					break;
-
-				if (compilerService.GetCompilerServiceResourceFor(resourceUri) is not null)
-				{
-					fileParsedCount++;
-					consecutiveMissCounter = 0;
-					break;
-				}
-				else
-				{
-					consecutiveMissCounter++;
-					if (consecutiveMissCounter > 50)
-						Console.WriteLine($"CompilerService did not contain {nameof(resourceUri)}: '{resourceUri}'");
-					await Task.Delay(20 * consecutiveMissCounter);
-				}
-			}
+				
+			fileParsedCount++;
 		}
 	}
 

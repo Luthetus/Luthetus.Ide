@@ -128,7 +128,10 @@ public partial class GitDiffDisplay : ComponentBase
                 originalModel.PartitionSize);
 
             TextEditorService.ModelApi.RegisterCustom(gitTextEditorModel);
-            originalModel.CompilerService.RegisterResource(gitTextEditorModel.ResourceUri);
+            
+            originalModel.CompilerService.RegisterResource(
+            	gitTextEditorModel.ResourceUri,
+            	shouldTriggerResourceWasModified: true);
 
             var originalViewModel = TextEditorService.ModelApi
                 .GetViewModelsOrEmpty(originalResourceUri)

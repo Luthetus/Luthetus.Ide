@@ -150,6 +150,15 @@ public partial class TextEditorService : ITextEditorService
 
         _backgroundTaskService.Enqueue(work);
     }
+    
+    public Task PostAsync(ITextEditorWork work)
+    {
+    	work.EditContext = new TextEditorEditContext(
+            this,
+            AuthenticatedActionKey);
+
+        return _backgroundTaskService.EnqueueAsync(work);
+    }
 
 	public async Task FinalizePost(ITextEditorEditContext editContext)
 	{
