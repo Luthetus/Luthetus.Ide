@@ -66,8 +66,6 @@ public static class TreeViewFindAllTextSpanHelper
                 		return Task.CompletedTask;
                 	});
             }
-            
-            
         }
 	}
 }
