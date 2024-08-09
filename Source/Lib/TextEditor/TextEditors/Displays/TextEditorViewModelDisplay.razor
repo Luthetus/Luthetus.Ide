@@ -64,12 +64,17 @@
 		</div>
 		@* MeasureCharacterWidthAndRowHeight Close *@
       
+        <BodySection @ref="_bodySectionComponent" RenderBatch="renderBatchValidated"/>
+        
         @if (ViewModelDisplayOptions.IncludeGutterComponent)
         {
+        	// The gutter needs to come after the 'BodySection' in the markup to
+        	// ensure the virtualization result in ready.
+        	//
+        	// Due to 'BodySection' being 'position: absolute;',
+        	// on the UI the gutter will appear to the left of the 'BodySection'
             <GutterSection RenderBatch="renderBatchValidated"/>
         }
-
-        <BodySection @ref="_bodySectionComponent" RenderBatch="renderBatchValidated"/>
 
         @if (renderBatchValidated?.ViewModel?.ShowCommandBar ?? false)
         {
