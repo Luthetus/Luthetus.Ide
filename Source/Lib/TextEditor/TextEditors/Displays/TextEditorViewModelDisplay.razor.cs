@@ -67,6 +67,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private TextEditorRenderBatchValidated? _storedRenderBatchValidated;
     private TextEditorViewModel? _linkedViewModel;
     
+    private GutterDriver _gutterDriver = new();
+    
     private bool _thinksTouchIsOccurring;
     private DateTime? _touchStartDateTime = null;
     private TouchEventArgs? _previousTouchEventArgs = null;
