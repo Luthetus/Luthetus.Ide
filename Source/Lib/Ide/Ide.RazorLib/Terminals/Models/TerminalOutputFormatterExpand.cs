@@ -1,15 +1,20 @@
 using System.Text;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
@@ -25,17 +30,23 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	private readonly ITerminal _terminal;
 	private readonly ITextEditorService _textEditorService;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
+	private readonly IDialogService _dialogService;
+	private readonly IJSRuntime _jsRuntime;
 	private readonly IDispatcher _dispatcher;
 
 	public TerminalOutputFormatterExpand(
 		ITerminal terminal,
 		ITextEditorService textEditorService,
 		ICompilerServiceRegistry compilerServiceRegistry,
+		IDialogService dialogService,
+        IJSRuntime jsRuntime,
 		IDispatcher dispatcher)
 	{
 		_terminal = terminal;
 		_textEditorService = textEditorService;
 		_compilerServiceRegistry = compilerServiceRegistry;
+		_dialogService = dialogService;
+		_jsRuntime = jsRuntime;
 		_dispatcher = dispatcher;
 		
 		TextEditorModelResourceUri = new(
@@ -99,75 +110,74 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
 	
 	private void CreateTextEditor()
     {
+    	var line1 = "Integrated-Terminal";
+        var line2 = "Try: cmd /c \"dir\"";
+        
+        var longestLineLength = Math.Max(line1.Length, line2.Length);
+    
+    	var model = new TextEditorModel(
+            TextEditorModelResourceUri,
+            DateTime.UtcNow,
+            "terminal",
+            $"{line1}\n" +
+                $"{line2}\n" +
+                new string('=', longestLineLength) +
+                "\n\n",
+            new TerminalDecorationMapper(),
+            _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));
+            
+        var modelModifier = new TextEditorModelModifier(model);
+        modelModifier.PerformRegisterPresentationModelAction(TerminalPresentationFacts.EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+        modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
+        
+        model = modelModifier.ToModel();
+
+        _textEditorService.ModelApi.RegisterCustom(model);
+        
+		model.CompilerService.RegisterResource(
+			model.ResourceUri,
+			shouldTriggerResourceWasModified: true);
+			
+        var viewModel = new TextEditorViewModel(
+            TextEditorViewModelKey,
+            TextEditorModelResourceUri,
+            _textEditorService,
+            _dispatcher,
+            _dialogService,
+            _jsRuntime,
+            VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
+			new TextEditorDimensions(0, 0, 0, 0),
+			new ScrollbarDimensions(0, 0, 0, 0, 0),
+    		new CharAndLineMeasurements(0, 0),
+            false,
+            new Category("terminal"));
+
+        var firstPresentationLayerKeys = new[]
+        {
+            TerminalPresentationFacts.PresentationKey,
+            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+            FindOverlayPresentationFacts.PresentationKey,
+        }.ToImmutableArray();
+            
+        viewModel = viewModel with
+        {
+            FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
+        };
+        
+        _textEditorService.ViewModelApi.Register(viewModel);
+
         _textEditorService.PostUnique(
             nameof(TerminalOutput),
             editContext =>
             {
-
-                var line1 = "Integrated-Terminal";
-                var line2 = "Try: cmd /c \"dir\"";
-
-                var longestLineLength = Math.Max(line1.Length, line2.Length);
-
-                var model = new TextEditorModel(
-                    TextEditorModelResourceUri,
-                    DateTime.UtcNow,
-                    "terminal",
-                    $"{line1}\n" +
-                        $"{line2}\n" +
-                        new string('=', longestLineLength) +
-                        "\n\n",
-                    new TerminalDecorationMapper(),
-                    _compilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.TERMINAL));
-
-                _textEditorService.ModelApi.RegisterCustom(model);
-
                 var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-
                 if (modelModifier is null)
                     return Task.CompletedTask;
-
-                _textEditorService.ModelApi.AddPresentationModel(
-                    editContext,
-                    modelModifier,
-                    TerminalPresentationFacts.EmptyPresentationModel);
-
-                _textEditorService.ModelApi.AddPresentationModel(
-                    editContext,
-                    modelModifier,
-                    CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
-
-                _textEditorService.ModelApi.AddPresentationModel(
-                    editContext,
-                    modelModifier,
-                    FindOverlayPresentationFacts.EmptyPresentationModel);
-
-                model.CompilerService.RegisterResource(
-                	model.ResourceUri,
-                	shouldTriggerResourceWasModified: true);
-
-                _textEditorService.ViewModelApi.Register(
-                    TextEditorViewModelKey,
-                    TextEditorModelResourceUri,
-                    new Category("terminal"));
-
-                var firstPresentationLayerKeys = new[]
-                {
-                    TerminalPresentationFacts.PresentationKey,
-                    CompilerServiceDiagnosticPresentationFacts.PresentationKey,
-                    FindOverlayPresentationFacts.PresentationKey,
-                }.ToImmutableArray();
-
+                    
                 var viewModelModifier = editContext.GetViewModelModifier(TextEditorViewModelKey);
-                if (viewModelModifier is null)
-                {
-	                return Task.CompletedTask;
-                }
-
-                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                {
-                    FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
-                };
+		        if (viewModelModifier is null)
+		            return Task.CompletedTask;
 
                 var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
                 var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
