@@ -88,4 +88,11 @@ public partial interface ITextEditorService
 	/// to the <see cref="TextEditorState"/>, and afterwards causes a UI render.
 	/// </summary>
 	public Task FinalizePost(ITextEditorEditContext editContext);
+	
+	public Task OpenInEditorAsync(
+		string absolutePath,
+		bool shouldSetFocusToEditor,
+		int? cursorPositionIndex,
+		Category category,
+		Key<TextEditorViewModel> preferredViewModelKey);
 }

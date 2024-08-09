@@ -301,6 +301,7 @@ public class EditorIdeApi
             showViewModelArgs = new TryShowViewModelArgs(
                 showViewModelArgs.ViewModelKey,
                 EditorTextEditorGroupKey,
+                showViewModelArgs.ShouldSetFocusToEditor,
                 showViewModelArgs.ServiceProvider);
         }
 
@@ -317,6 +318,16 @@ public class EditorIdeApi
         _textEditorService.GroupApi.SetActiveViewModel(
             showViewModelArgs.GroupKey,
             showViewModelArgs.ViewModelKey);
+            
+        _textEditorService.PostUnique(nameof(TryShowViewModelFunc), editContext =>
+        {
+        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
+        	
+        	viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender =
+        		showViewModelArgs.ShouldSetFocusToEditor;
+        	
+        	return Task.CompletedTask;
+        });
 
         return Task.FromResult(true);
     }

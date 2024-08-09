@@ -191,6 +191,7 @@ public partial class GitDiffDisplay : ComponentBase
                 await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
                         viewModelKey,
                         Key<TextEditorGroup>.Empty,
+                        false,
                         ServiceProvider))
                     .ConfigureAwait(false);
             }

@@ -14,6 +14,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
@@ -66,6 +67,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
@@ -557,38 +560,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			}.ToImmutableArray());
 	}
 
-	private async Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)
+	private Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)
 	{
-		var resourceUri = new ResourceUri(dotNetSolutionModel.AbsolutePath.Value);
-
-		if (TextEditorConfig.RegisterModelFunc is null)
-			return;
-
-		await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-				resourceUri,
-				ServiceProvider))
-			.ConfigureAwait(false);
-
-		if (TextEditorConfig.TryRegisterViewModelFunc is not null)
-		{
-			var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-					Key<TextEditorViewModel>.NewKey(),
-					resourceUri,
-					new Category("main"),
-					false,
-					ServiceProvider))
-				.ConfigureAwait(false);
-
-			if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-				TextEditorConfig.TryShowViewModelFunc is not null)
-			{
-				await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-						viewModelKey,
-						Key<TextEditorGroup>.Empty,
-						ServiceProvider))
-					.ConfigureAwait(false);
-			}
-		}
+		return TextEditorService.OpenInEditorAsync(
+			dotNetSolutionModel.AbsolutePath.Value,
+			true,
+			null,
+			new Category("main"),
+			Key<TextEditorViewModel>.NewKey());
 	}
 
 	/// <summary>
