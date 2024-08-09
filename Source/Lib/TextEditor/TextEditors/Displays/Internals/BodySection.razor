@@ -98,30 +98,7 @@
 	
 	    <ScrollbarSection RenderBatch="renderBatchLocal"/>
 	    
-	    @* TooltipDisplay.razor Open *@
-		@{
-		    var localViewModel = renderBatchLocal?.ViewModel?.TooltipViewModel;
-		
-		    if (localViewModel is not null)
-		    {
-		        var relativeX = localViewModel.RelativeCoordinates.RelativeX.ToCssValue();
-		        var relativeY = localViewModel.RelativeCoordinates.RelativeY.ToCssValue();
-		
-		        <div class="luth_te_tooltip luth_set-selectable @(localViewModel.CssClassString ?? string.Empty)"
-		             style="left: @(relativeX)px; top: @(relativeY)px;"
-		             @onmouseover="localViewModel.OnMouseOver"
-		             @onmousedown:stopPropagation="true"
-		             @onmousemove:stopPropagation="true"
-		             @ondblclick:stopPropagation="true"
-		             @onclick:stopPropagation="true"
-		             @oncontextmenu:stopPropagation="true">
-		
-		            <DynamicComponent Type="localViewModel.RendererType"
-		                              Parameters="localViewModel.ParameterMap" />
-		        </div>
-		    }
-		}
-	    @* TooltipDisplay.razor Close *@
+	    <TooltipDisplay RenderBatch="renderBatchLocal"/>
 	    
 	    <FindOverlayDisplay RenderBatch="renderBatchLocal"/>
 	    <WidgetLayerDisplay RenderBatch="renderBatchLocal"/>

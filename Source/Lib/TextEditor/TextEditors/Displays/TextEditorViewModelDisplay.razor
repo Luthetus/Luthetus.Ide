@@ -16,7 +16,7 @@
     var cssStyle = $"{renderBatchUnsafe.FontSizeInPixelsCssStyle} {renderBatchUnsafe.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
 }
 
-<div class="@cssClass" style="@cssStyle">	    
+<div class="@cssClass" style="@cssStyle">
     @if (renderBatchUnsafe.Options is not null && !renderBatchUnsafe.Options.UseMonospaceOptimizations)
     {
         <div style="display: flex; position: absolute; visibility: hidden;"
