@@ -11,7 +11,10 @@ public partial record OutputState
             OutputState inState,
             StateHasChangedAction stateHasChangedAction)
         {
-            return inState with {};
+            return inState with
+            {
+            	DotNetRunParseResultId = stateHasChangedAction.DotNetRunParseResultId
+            };
         }
     }
 }

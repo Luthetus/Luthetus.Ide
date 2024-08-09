@@ -139,7 +139,7 @@ public partial class OutputScheduler
                 false);
         }
 
-        _dispatcher.Dispatch(new OutputState.StateHasChangedAction());
+        _dispatcher.Dispatch(new OutputState.StateHasChangedAction(dotNetRunParseResult.Id));
         return Task.CompletedTask;
     }
 }

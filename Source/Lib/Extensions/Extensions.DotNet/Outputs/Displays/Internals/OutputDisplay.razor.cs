@@ -55,12 +55,22 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     	DotNetCliOutputParser.StateChanged += DotNetCliOutputParser_StateChanged;
     	OutputStateWrap.StateChanged += OutputStateWrap_StateChanged;
     	
+    	if (OutputStateWrap.Value.DotNetRunParseResultId != DotNetCliOutputParser.GetDotNetRunParseResult().Id)
+    		DotNetCliOutputParser_StateChanged();
+    	
         base.OnInitialized();
     }
     
     public void DotNetCliOutputParser_StateChanged()
     {
-    	DotNetBackgroundTaskApi.Output.Enqueue_ConstructTreeView();
+    	_eventThrottle.Run(_ =>
+    	{
+    		if (OutputStateWrap.Value.DotNetRunParseResultId == DotNetCliOutputParser.GetDotNetRunParseResult().Id)
+    			return Task.CompletedTask;
+    			
+    		DotNetBackgroundTaskApi.Output.Enqueue_ConstructTreeView();
+    		return Task.CompletedTask;
+    	});
     }
     
     public async void OutputStateWrap_StateChanged(object? sender, EventArgs e)
