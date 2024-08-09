@@ -14,8 +14,15 @@ _gutterDriver.GetRenderFragment(renderBatchLocal);
 
 */
 
-public class GutterDriver : ComponentBase
+public class GutterDriver
 {
+	private readonly TextEditorViewModelDisplay _textEditorViewModelDisplay;
+
+	public GutterDriver(TextEditorViewModelDisplay textEditorViewModelDisplay)
+	{
+		_textEditorViewModelDisplay = textEditorViewModelDisplay;
+	}
+
 	// Odd public but am middle of thinking
 	public TextEditorRenderBatchValidated _renderBatch;
 

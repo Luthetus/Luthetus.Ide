@@ -8,6 +8,8 @@ using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
@@ -25,29 +27,33 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposable
 {
     [Inject]
-    private IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
+    public IState<TextEditorState> TextEditorStateWrap { get; set; } = null!;
     [Inject]
-    private IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
+    public IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
-    private IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
+    public IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
     [Inject]
-    private IDispatcher Dispatcher { get; set; } = null!;
+    public IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
-    private IServiceProvider ServiceProvider { get; set; } = null!;
+    public IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
-    private ITextEditorService TextEditorService { get; set; } = null!;
+    public ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
-    private IAutocompleteIndexer AutocompleteIndexer { get; set; } = null!;
+    public IAutocompleteIndexer AutocompleteIndexer { get; set; } = null!;
     [Inject]
-    private IJSRuntime JsRuntime { get; set; } = null!;
+    public IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
-    private IClipboardService ClipboardService { get; set; } = null!;
+    public IClipboardService ClipboardService { get; set; } = null!;
     [Inject]
-    private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    public IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
-    private ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
+    public ILuthetusTextEditorComponentRenderers TextEditorComponentRenderers { get; set; } = null!;
     [Inject]
-    private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+    public IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    public IDialogService DialogService { get; set; } = null!;
+    [Inject]
+    public LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<TextEditorViewModel> TextEditorViewModelKey { get; set; } = Key<TextEditorViewModel>.Empty;
@@ -67,7 +73,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private TextEditorRenderBatchValidated? _storedRenderBatchValidated;
     private TextEditorViewModel? _linkedViewModel;
     
-    private GutterDriver _gutterDriver = new();
+    private GutterDriver _gutterDriver;
     
     private bool _thinksTouchIsOccurring;
     private DateTime? _touchStartDateTime = null;
@@ -89,6 +95,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     protected override void OnInitialized()
     {
+    	_gutterDriver = new(this);
+    
         ConstructRenderBatch();
 
 		// TODO: This line is why one cannot switch to a vim keymap, without needing to restart the IDE...
