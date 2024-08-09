@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -9,10 +9,12 @@ public class TryShowViewModelArgs
     public TryShowViewModelArgs(
         Key<TextEditorViewModel> viewModelKey,
         Key<TextEditorGroup> groupKey,
+        bool shouldSetFocusToEditor,
         IServiceProvider serviceProvider)
     {
         ViewModelKey = viewModelKey;
         GroupKey = groupKey;
+        ShouldSetFocusToEditor = shouldSetFocusToEditor;
         ServiceProvider = serviceProvider;
     }
 
@@ -25,5 +27,6 @@ public class TryShowViewModelArgs
     /// Otherwise pass in <see cref="Key{T}.Empty"/>
     /// </summary>
     public Key<TextEditorGroup> GroupKey { get; }
+    public bool ShouldSetFocusToEditor { get; }
     public IServiceProvider ServiceProvider { get; }
 }

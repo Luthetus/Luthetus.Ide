@@ -13,7 +13,7 @@ public partial record CodeSearchState
 {
     public class Effector
     {
-        private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
+        private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
         private readonly IState<CodeSearchState> _codeSearchStateWrap;
         private readonly IFileSystemProvider _fileSystemProvider;
         private readonly IEnvironmentProvider _environmentProvider;
@@ -46,7 +46,7 @@ public partial record CodeSearchState
             SearchEffect searchEffect,
             IDispatcher dispatcher)
         {
-            return _throttle.PushEvent(async _ =>
+            _throttle.Run(async _ =>
             {
                 dispatcher.Dispatch(new ClearResultListAction());
 
@@ -105,6 +105,8 @@ public partial record CodeSearchState
                     }
                 }
             });
+            
+            return Task.CompletedTask;
         }
         
         private void ConstructTreeView(CodeSearchState codeSearchState)

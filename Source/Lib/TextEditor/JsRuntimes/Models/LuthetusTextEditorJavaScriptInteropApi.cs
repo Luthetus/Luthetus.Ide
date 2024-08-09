@@ -1,8 +1,8 @@
+using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
-using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
-using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 

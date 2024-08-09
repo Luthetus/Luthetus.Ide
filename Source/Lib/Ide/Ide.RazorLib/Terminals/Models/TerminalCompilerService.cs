@@ -16,8 +16,7 @@ public sealed class TerminalCompilerService : CompilerService
     {
         _compilerServiceOptions = new()
         {
-            RegisterResourceFunc = resourceUri => new TerminalResource(resourceUri, this, terminalStateWrap),
-            GetLexerFunc = (resource, sourceText) => new TerminalLexer((TerminalResource)resource, sourceText),
+            RegisterResourceFunc = resourceUri => new TerminalResource(resourceUri, this),
         };
     }
 

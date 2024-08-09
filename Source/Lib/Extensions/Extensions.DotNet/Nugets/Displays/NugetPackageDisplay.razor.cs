@@ -30,7 +30,7 @@ public partial class NugetPackageDisplay : FluxorComponent
 	[Parameter, EditorRequired]
 	public NugetPackageRecord NugetPackageRecord { get; set; } = null!;
 
-	private static readonly Key<TerminalCommand> AddNugetPackageTerminalCommandKey = Key<TerminalCommand>.NewKey();
+	private static readonly Key<TerminalCommandRequest> AddNugetPackageTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
 
 	private string _nugetPackageVersionString = string.Empty;
 
@@ -95,18 +95,18 @@ public partial class NugetPackageDisplay : FluxorComponent
 			targetNugetPackage.Id,
 			targetNugetVersion);
 
-		var addNugetPackageReferenceCommand = new TerminalCommand(
-			AddNugetPackageTerminalCommandKey,
-			formattedCommand,
-			parentDirectory.Value,
-			CancellationToken.None,
-			() =>
-			{
-				NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
+		var terminalCommandRequest = new TerminalCommandRequest(
+        	formattedCommand.Value,
+        	parentDirectory.Value,
+        	AddNugetPackageTerminalCommandRequestKey)
+        {
+        	ContinueWithFunc = parsedCommand =>
+        	{
+        		NotificationHelper.DispatchInformative("Add Nuget Package Reference", $"{targetNugetPackage.Title}, {targetNugetVersion} was added to {targetProject.DisplayName}", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(7));
 				return Task.CompletedTask;
-			});
-
-		var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-		generalTerminal.EnqueueCommand(addNugetPackageReferenceCommand);
+        	}
+        };
+        	
+        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 }

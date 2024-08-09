@@ -39,7 +39,7 @@ public partial class GitDiffDisplay : ComponentBase
     [Parameter, EditorRequired]
     public GitFile GitFile { get; set; } = null!;
 
-    public Key<TerminalCommand> GitLogTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommandRequest> GitLogTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 
     private Key<TextEditorDiffModel> _textEditorDiffModelKey = Key<TextEditorDiffModel>.NewKey();
     private Key<TextEditorViewModel> _gitTextEditorViewModelKey = Key<TextEditorViewModel>.NewKey();
@@ -67,10 +67,14 @@ public partial class GitDiffDisplay : ComponentBase
         IdeBackgroundTaskApi.Git.LogFileEnqueue(
             localGitState.Repo,
             localGitFile.RelativePathString,
-            gitCliOutputParser => CreateEditorFromLog(gitCliOutputParser, localGitFile));
+            (gitCliOutputParser, logFileContent) =>
+            	CreateEditorFromLog(gitCliOutputParser, localGitFile, logFileContent));
     }
 
-    private async Task CreateEditorFromLog(GitCliOutputParser gitCliOutputParser, GitFile localGitFile)
+    private async Task CreateEditorFromLog(
+    	GitCliOutputParser gitCliOutputParser,
+    	GitFile localGitFile,
+    	string logFileContent)
     {
         ResourceUri RemoveDriveFromResourceUri(ResourceUri resourceUri)
         {
@@ -85,7 +89,7 @@ public partial class GitDiffDisplay : ComponentBase
             return resourceUri;
         }
 
-        _logFileContent = gitCliOutputParser.LogFileContent;
+        _logFileContent = logFileContent;
 
         if (_logFileContent is null)
             return;
@@ -124,7 +128,10 @@ public partial class GitDiffDisplay : ComponentBase
                 originalModel.PartitionSize);
 
             TextEditorService.ModelApi.RegisterCustom(gitTextEditorModel);
-            originalModel.CompilerService.RegisterResource(gitTextEditorModel.ResourceUri);
+            
+            originalModel.CompilerService.RegisterResource(
+            	gitTextEditorModel.ResourceUri,
+            	shouldTriggerResourceWasModified: true);
 
             var originalViewModel = TextEditorService.ModelApi
                 .GetViewModelsOrEmpty(originalResourceUri)
@@ -184,6 +191,7 @@ public partial class GitDiffDisplay : ComponentBase
                 await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
                         viewModelKey,
                         Key<TextEditorGroup>.Empty,
+                        false,
                         ServiceProvider))
                     .ConfigureAwait(false);
             }

@@ -14,6 +14,8 @@ public interface ITextEditorViewModelApi
         Key<TextEditorViewModel> textEditorViewModelKey,
         ResourceUri resourceUri,
         Category category);
+        
+    public void Register(TextEditorViewModel viewModel);
     #endregion
 
     #region READ_METHODS

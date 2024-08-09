@@ -23,10 +23,7 @@ public static class DotNetCliCommandFormatter
 			"run",
 			"--project",
 			projectPath
-		})
-		{
-			Tag = DotNetCliOutputParser.TagConstants.Run
-		};
+		});
 	}
 
 	public static FormattedCommand FormatDotnetNewSln(string solutionName)
@@ -161,30 +158,21 @@ public static class DotNetCliCommandFormatter
 		{
 			"new",
 			"list",
-		})
-		{
-			Tag = DotNetCliOutputParser.TagConstants.NewList
-		};
+		});
 
 	public static FormattedCommand FormatDotnetNewListDeprecated() =>
 		new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
 		{
 			"new",
 			"--list",
-		})
-		{
-			Tag = DotNetCliOutputParser.TagConstants.NewList
-		};
+		});
 
 	public static FormattedCommand FormatDotNetTestListTests() =>
 		new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
 		{
 			"test",
 			"-t",
-		})
-		{
-			Tag = DotNetCliOutputParser.TagConstants.Test
-		};
+		});
 
 	public static FormattedCommand FormatDotNetTestByFullyQualifiedName(string fullyQualifiedName) =>
 		new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
@@ -192,20 +180,14 @@ public static class DotNetCliCommandFormatter
 			"test",
 			"--filter",
 			$"FullyQualifiedName={fullyQualifiedName}",
-		})
-		{
-			Tag = DotNetCliOutputParser.TagConstants.Run
-		};
+		});
 
 	public static FormattedCommand FormatDotnetBuild(string solutionAbsolutePathString) =>
 		new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
 		{
 			"build",
 			solutionAbsolutePathString,
-		})
-		{
-			Tag = DotNetCliOutputParser.TagConstants.Run
-		};
+		});
 
 	public static FormattedCommand FormatDotnetClean(string solutionAbsolutePathString) =>
 		new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]

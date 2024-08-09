@@ -1,5 +1,9 @@
-﻿<div class="luth_te_symbol">
-    @switch (Symbol.SymbolKindString)
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+
+@{ var localSymbol = Symbol; }
+
+<div class="luth_te_symbol">
+    @switch (localSymbol.SymbolKindString)
     {
         case "TypeSymbol":
             <text>
@@ -8,7 +12,7 @@
                 </span>
                 
                 <span class="luth_te_type">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;
@@ -19,7 +23,7 @@
                 </span>
 
                 <span class="luth_te_type">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;
@@ -30,7 +34,7 @@
                 </span>
 
                 <span class="luth_te_method">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;
@@ -41,7 +45,7 @@
                 </span>
 
                 <span class="luth_te_variable">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;
@@ -52,7 +56,7 @@
                 </span>
 
                 <span class="@(string.Empty /* Fields do not have their own css class as of (2023-07-20) */)">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;
@@ -63,7 +67,7 @@
                 </span>
 
                 <span class="@(string.Empty /* Properties do not have their own css class as of (2023-07-20) */)">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;
@@ -74,7 +78,7 @@
                 </span>
 
                 <span class="luth_te_string-literal">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;
@@ -85,7 +89,7 @@
                 </span>
 
                 <span class="@(string.Empty /* Namespaces do not have their own css class as of (2023-07-20) */)">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;
@@ -96,7 +100,7 @@
                 </span>
 
                 <span class="luth_te_injected-language-component">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;
@@ -107,8 +111,18 @@
                 </span>
 
                 <button class="luth_button luth_te_source-file"
-                        @onclick="() => OpenInEditorOnClick(Symbol.TextSpan.GetText())">
-                    @Symbol.TextSpan.GetText()
+                        @onclick="() => OpenInEditorOnClick(localSymbol.TextSpan.GetText())">
+                    @localSymbol.TextSpan.GetText()
+                </button>
+            </text>
+            break;
+        case "OnClickSymbol":
+        	var onClickSymbol = (OnClickSymbol)localSymbol;
+        
+            <text>
+                <button class="luth_button luth_te_source-file"
+                        @onclick="onClickSymbol.OnClickFunc">
+                    @onClickSymbol.DisplayText
                 </button>
             </text>
             break;
@@ -119,7 +133,7 @@
                 </span>
 
                 <span class="@(string.Empty /* Unknown-symbol-kinds do not have their own css class as of (2023-07-20) */)">
-                    @Symbol.TextSpan.GetText()
+                    @localSymbol.TextSpan.GetText()
                 </span>
             </text>
             break;

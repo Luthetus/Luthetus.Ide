@@ -2,16 +2,15 @@
 
 @{ 
 	var localStartupControlState = StartupControlStateWrap.Value;
-	var localExecutingTerminalCommand = _executingTerminalCommand;
 	bool isExecuting;
-	
-	if (localExecutingTerminalCommand is null)
+
+	if (localStartupControlState?.ActiveStartupControl is null)
 	{
 		isExecuting = false;
 	}
 	else
 	{
-		isExecuting = !localExecutingTerminalCommand.IsCompleted;
+		isExecuting = localStartupControlState.ActiveStartupControl.IsExecuting;
 	}
 }
 

@@ -28,6 +28,11 @@
                 }
                 else
                 {
+                	// Add a ShouldRenderBoundary here? (2024-08-04)
+                	// If this group component re-renders, could it cause a double render
+                	// due to the TextEditorViewModelDisplay re-rendering because:
+                	// 	- It is a child of this component
+                	//     - It is subscribed to the state change
                     <TextEditorViewModelDisplay TextEditorViewModelKey="textEditorGroup.ActiveViewModelKey"
                                                 ViewModelDisplayOptions="ViewModelDisplayOptions"/>
                 }

@@ -35,7 +35,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 	[Inject]
 	private IState<TextEditorGroupState> TextEditorGroupStateWrap { get; set; } = null!;
 
-	private readonly ThrottleAsync _throttleEventCausingReRender = new ThrottleAsync(TimeSpan.FromMilliseconds(75));
+	private readonly Throttle _throttleEventCausingReRender = new(TimeSpan.FromMilliseconds(75));
 
 	private CSharpCompilerService _cSharpCompilerService = null!;
 
@@ -121,27 +121,27 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
 	private async void TextEditorStateWrap_StateChanged(object? sender, EventArgs e)
 	{
-		await ThrottledReRender();
+		ThrottledReRender();
 	}
 
 	private async void TextEditorGroupStateWrap_StateChanged(object? sender, EventArgs e)
 	{
-		await ThrottledReRender();
+		ThrottledReRender();
 	}
 
 	private async void CompilerServiceEditorStateWrap_StateChanged(object? sender, EventArgs e)
 	{
-		await ThrottledReRender();
+		ThrottledReRender();
 	}
 
 	private async void CSharpCompilerService_StateChanged()
 	{
-		await ThrottledReRender();
+		ThrottledReRender();
 	}
 
-	private Task ThrottledReRender()
+	private void ThrottledReRender()
 	{
-		return _throttleEventCausingReRender.PushEvent(async _ =>
+		_throttleEventCausingReRender.Run(async _ =>
 		{
 			_shouldRecalculateViewModel = true;
 			await InvokeAsync(StateHasChanged);

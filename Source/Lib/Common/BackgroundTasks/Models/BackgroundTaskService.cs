@@ -5,7 +5,26 @@ namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 public class BackgroundTaskService : IBackgroundTaskService
 {
-    private readonly Dictionary<Key<IBackgroundTaskQueue>, BackgroundTaskQueue> _queueContainerMap = new();
+	private readonly Dictionary<Key<IBackgroundTaskQueue>, BackgroundTaskQueue> _queueContainerMap = new();
+	
+	/// <summary>
+	/// Add async blocking enqueue (2024-08-06)
+	/// =======================================
+	/// The thought here is that the async blocking enqueue could
+	/// be done generally two different ways.
+	///
+	/// Way 1: If async enqueue then store in a Dictionary<Key<IBackgroundTask>, TaskCompletionSource>
+	///        Once the 'HandleEvent' is completed then check if there is an entry in the dictionary.
+	///        If there is, then complete it.
+	///
+	/// Way 2: Every BackgroundTask gets a 'TaskCompletionSource?' property which is nullable.
+	///        Once the 'HandleEvent' is completed, then check if the 'TaskCompletionSource?' property
+	///        is non-null.
+	///        If it is non-null, then complete it.
+	/// </summary>
+    private readonly Dictionary<Key<IBackgroundTask>, TaskCompletionSource> _taskCompletionSourceMap = new();
+    
+    private readonly object _taskCompletionSourceLock = new();
 
     private bool _enqueuesAreDisabled;
 
@@ -24,6 +43,63 @@ public class BackgroundTaskService : IBackgroundTaskService
     public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
     {
         Enqueue(new BackgroundTask(taskKey, queueKey, name, runFunc));
+    }
+    
+    public Task EnqueueAsync(IBackgroundTask backgroundTask)
+    {
+        // TODO: Could there be concurrency issues regarding '_enqueuesAreDisabled'? (2023-11-19)
+        if (_enqueuesAreDisabled)
+            return Task.CompletedTask;
+            
+        TaskCompletionSource taskCompletionSource = new();
+            
+		lock (_taskCompletionSourceLock)
+		{
+			if (_taskCompletionSourceMap.ContainsKey(backgroundTask.BackgroundTaskKey))
+	        {
+	        	var existingTaskCompletionSource = _taskCompletionSourceMap[backgroundTask.BackgroundTaskKey];
+	        	
+	        	if (!existingTaskCompletionSource.Task.IsCompleted)
+	        	{
+	        		existingTaskCompletionSource.SetException(new InvalidOperationException("SIMULATED EXCEPTION"));
+	        	}
+	        	
+	        	// The re-use of the key is not an issue, so long as the previous usage has completed
+        		_taskCompletionSourceMap[backgroundTask.BackgroundTaskKey] = taskCompletionSource;
+	        }
+	        else
+	        {
+	        	_taskCompletionSourceMap.Add(backgroundTask.BackgroundTaskKey, taskCompletionSource);
+	        }
+		}
+
+        _queueContainerMap[backgroundTask.QueueKey]
+			.Enqueue(backgroundTask);
+			
+		return taskCompletionSource.Task;
+    }
+
+    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
+    {
+        return EnqueueAsync(new BackgroundTask(taskKey, queueKey, name, runFunc));
+    }
+    
+    public void CompleteTaskCompletionSource(Key<IBackgroundTask> backgroundTaskKey)
+    {
+    	lock (_taskCompletionSourceLock)
+		{
+			if (_taskCompletionSourceMap.ContainsKey(backgroundTaskKey))
+	        {
+	        	var existingTaskCompletionSource = _taskCompletionSourceMap[backgroundTaskKey];
+	        	
+	        	if (!existingTaskCompletionSource.Task.IsCompleted)
+	        	{
+	        		existingTaskCompletionSource.SetResult();
+	        	}
+	        	
+	        	_taskCompletionSourceMap.Remove(backgroundTaskKey);
+	        }
+		}
     }
 
 	public IBackgroundTask? Dequeue(Key<IBackgroundTaskQueue> queueKey)

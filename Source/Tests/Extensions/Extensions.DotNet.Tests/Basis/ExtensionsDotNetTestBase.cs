@@ -1,13 +1,15 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Misc;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.JSInterop;
-using Luthetus.Ide.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.Ide.RazorLib.Installations.Models;
+
+using Luthetus.Extensions.Config.Installations.Models;
 
 namespace Luthetus.Extensions.DotNet.Tests.Basis;
 
@@ -16,14 +18,20 @@ public class ExtensionsDotNetTestBase
     protected static void Test_RegisterServices(out ServiceProvider serviceProvider)
     {
         var backgroundTaskService = new BackgroundTaskServiceSynchronous();
+        
+        var hostingInformation = new LuthetusHostingInformation(
+        	LuthetusHostingKind.UnitTestingSynchronous,
+        	backgroundTaskService);
 
         var serviceCollection = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusIdeRazorLibServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
+            .AddLuthetusIdeRazorLibServices(hostingInformation)
+            .AddLuthetusConfigServices(hostingInformation)
             .AddFluxor(options => options.ScanAssemblies(
                 typeof(LuthetusCommonConfig).Assembly,
                 typeof(LuthetusTextEditorConfig).Assembly,
-                typeof(LuthetusIdeConfig).Assembly));
+                typeof(LuthetusIdeConfig).Assembly,
+                typeof(Luthetus.Extensions.DotNet.Installations.Models.ServiceCollectionExtensions).Assembly));
 
         serviceProvider = serviceCollection.BuildServiceProvider();
 

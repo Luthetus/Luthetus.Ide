@@ -70,26 +70,54 @@ public partial class LuthetusIdeInitializer : ComponentBase
                     }
                 }
 
-                foreach (var terminalKey in TerminalFacts.WELL_KNOWN_TERMINAL_KEYS)
+                foreach (var terminalKey in TerminalFacts.WELL_KNOWN_KEYS)
                 {
-                    var displayName = $"BAD_WellKnownTerminalKey:{terminalKey.Guid}";
-
-                    if (terminalKey == TerminalFacts.EXECUTION_TERMINAL_KEY)
-                        displayName = "Execution";
-                    else if (terminalKey == TerminalFacts.GENERAL_TERMINAL_KEY)
-                        displayName = "General";
-
-                    var terminal = await Terminal.Factory(
-                        displayName,
-                        null,
-                        Dispatcher,
-                        BackgroundTaskService,
-                        TextEditorService,
-                        CommonComponentRenderers,
-                        CompilerServiceRegistry,
-						terminalKey);
-
-                    Dispatcher.Dispatch(new TerminalState.RegisterAction(terminal));
+                	if (terminalKey == TerminalFacts.GENERAL_KEY)
+                	{
+                		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+					    	new Terminal(
+								"General",
+								terminal => new TerminalInteractive(terminal),
+								terminal => new TerminalInputStringBuilder(terminal),
+								terminal => new TerminalOutput(
+									terminal,
+									new TerminalOutputFormatterExpand(
+										terminal,
+										TextEditorService,
+										CompilerServiceRegistry,
+										DialogService,
+				 				       JsRuntime,
+										Dispatcher)),
+								BackgroundTaskService,
+								CommonComponentRenderers,
+								Dispatcher)
+							{
+								Key = TerminalFacts.GENERAL_KEY
+							}));
+                	}
+                	else if (terminalKey == TerminalFacts.EXECUTION_KEY)
+                	{
+                		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+					    	new Terminal(
+								"Execution",
+								terminal => new TerminalInteractive(terminal),
+								terminal => new TerminalInputStringBuilder(terminal),
+								terminal => new TerminalOutput(
+									terminal,
+									new TerminalOutputFormatterExpand(
+										terminal,
+										TextEditorService,
+										CompilerServiceRegistry,
+										DialogService,
+				 				       JsRuntime,
+										Dispatcher)),
+								BackgroundTaskService,
+								CommonComponentRenderers,
+								Dispatcher)
+							{
+								Key = TerminalFacts.EXECUTION_KEY
+							}));
+                	}
                 }
 
                 InitializePanelTabs();

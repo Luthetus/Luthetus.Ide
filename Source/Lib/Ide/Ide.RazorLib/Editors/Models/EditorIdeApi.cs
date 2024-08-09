@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
+using Microsoft.JSInterop;
 using Fluxor;
+using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -7,6 +9,10 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Notifications.States;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib;
@@ -37,7 +43,9 @@ public class EditorIdeApi
     private readonly IEnvironmentProvider _environmentProvider;
     private readonly IDecorationMapperRegistry _decorationMapperRegistry;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
+    private readonly IDialogService _dialogService;
     private readonly IDispatcher _dispatcher;
+    private readonly IJSRuntime _jsRuntime;
     private readonly IServiceProvider _serviceProvider;
 
     public EditorIdeApi(
@@ -50,7 +58,9 @@ public class EditorIdeApi
         IEnvironmentProvider environmentProvider,
         IDecorationMapperRegistry decorationMapperRegistry,
         ICompilerServiceRegistry compilerServiceRegistry,
+        IDialogService dialogService,
         IDispatcher dispatcher,
+        IJSRuntime jsRuntime,
         IServiceProvider serviceProvider)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -62,7 +72,9 @@ public class EditorIdeApi
         _environmentProvider = environmentProvider;
         _decorationMapperRegistry = decorationMapperRegistry;
         _compilerServiceRegistry = compilerServiceRegistry;
+        _dialogService = dialogService;
         _dispatcher = dispatcher;
+        _jsRuntime = jsRuntime;
         _serviceProvider = serviceProvider;
     }
 
@@ -120,7 +132,6 @@ public class EditorIdeApi
                 .ConfigureAwait(false);
 
             var absolutePath = _environmentProvider.AbsolutePathFactory(resourceUri.Value, false);
-
             var decorationMapper = _decorationMapperRegistry.GetDecorationMapper(absolutePath.ExtensionNoPeriod);
             var compilerService = _compilerServiceRegistry.GetCompilerService(absolutePath.ExtensionNoPeriod);
 
@@ -131,41 +142,37 @@ public class EditorIdeApi
                 content,
                 decorationMapper,
                 compilerService);
+                
+            var modelModifier = new TextEditorModelModifier(model);
+            modelModifier.PerformRegisterPresentationModelAction(CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+            modelModifier.PerformRegisterPresentationModelAction(FindOverlayPresentationFacts.EmptyPresentationModel);
+            modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyInPresentationModel);
+            modelModifier.PerformRegisterPresentationModelAction(DiffPresentationFacts.EmptyOutPresentationModel);
+            
+            model = modelModifier.ToModel();
 
             _textEditorService.ModelApi.RegisterCustom(model);
-
-            _textEditorService.PostUnique(
-                nameof(_textEditorService.ModelApi.AddPresentationModel),
-                editContext =>
-                {
-                	var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-
+            
+			model.CompilerService.RegisterResource(
+				model.ResourceUri,
+				shouldTriggerResourceWasModified: false);
+				
+			var uniqueTextEditorWork = new UniqueTextEditorWork(
+	            nameof(compilerService.ParseAsync),
+	            editContext =>
+	            {
+					var modelModifier = editContext.GetModelModifier(resourceUri);
+	
 					if (modelModifier is null)
 						return Task.CompletedTask;
-                
-                    _textEditorService.ModelApi.AddPresentationModel(
-                    	editContext,
-                        modelModifier,
-                        CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
-
-                    _textEditorService.ModelApi.AddPresentationModel(
-                    	editContext,
-                        modelModifier,
-                        FindOverlayPresentationFacts.EmptyPresentationModel);
-
-                    _textEditorService.ModelApi.AddPresentationModel(
-                    	editContext,
-                        modelModifier,
-                        DiffPresentationFacts.EmptyInPresentationModel);
-
-                    _textEditorService.ModelApi.AddPresentationModel(
-                    	editContext,
-                        modelModifier,
-                        DiffPresentationFacts.EmptyOutPresentationModel);
-
-                    model.CompilerService.RegisterResource(model.ResourceUri);
-                    return Task.CompletedTask;
-                });
+	
+					return compilerService.ParseAsync(editContext, modelModifier);
+	            });
+			
+			if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
+				await _textEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+			else
+				_textEditorService.Post(uniqueTextEditorWork);
         }
 
         await CheckIfContentsWereModifiedAsync(
@@ -196,12 +203,21 @@ public class EditorIdeApi
 	
 	        var viewModelKey = Key<TextEditorViewModel>.NewKey();
 	
-	        _textEditorService.ViewModelApi.Register(
-	            viewModelKey,
-	            registerViewModelArgs.ResourceUri,
-	            registerViewModelArgs.Category);
+	        viewModel = new TextEditorViewModel(
+                viewModelKey,
+                registerViewModelArgs.ResourceUri,
+                _textEditorService,
+                _dispatcher,
+                _dialogService,
+                _jsRuntime,
+                VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
+				new TextEditorDimensions(0, 0, 0, 0),
+				new ScrollbarDimensions(0, 0, 0, 0, 0),
+        		new CharAndLineMeasurements(0, 0),
+                false,
+                registerViewModelArgs.Category);
 	
-	        var layerLastPresentationKeys = new[]
+	        var firstPresentationLayerKeys = new[]
 	        {
 	            CompilerServiceDiagnosticPresentationFacts.PresentationKey,
 	            FindOverlayPresentationFacts.PresentationKey,
@@ -210,40 +226,17 @@ public class EditorIdeApi
 	        var absolutePath = _environmentProvider.AbsolutePathFactory(
 	            registerViewModelArgs.ResourceUri.Value,
 	            false);
-	
-	        _textEditorService.PostUnique(
-	            nameof(TryRegisterViewModelFunc),
-	            editContext =>
-	            {
-	            	try
-	            	{
-	            		var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
-					
-						if (viewModelModifier is null)
-							throw new LuthetusIdeException("View model modifier not found");
+	            
+	        viewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
 		
-		                viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = registerViewModelArgs.ShouldSetFocusToEditor;
-		
-		                viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-		                {
-		                    OnSaveRequested = HandleOnSaveRequested,
-		                    GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
-		                    LastPresentationLayerKeysList = layerLastPresentationKeys.ToImmutableList()
-		                };
-		
-		                return Task.CompletedTask;
-	            	}
-	            	catch (Exception e)
-	            	{
-	            		NotificationHelper.DispatchError(
-					        nameof(TryRegisterViewModelFunc),
-					        e.ToString(),
-					        _commonComponentRenderers,
-					        _dispatcher,
-					        TimeSpan.FromSeconds(6));
-					    return Task.CompletedTask;
-	            	}
-	            });
+            viewModel = viewModel with
+            {
+                OnSaveRequested = HandleOnSaveRequested,
+                GetTabDisplayNameFunc = _ => absolutePath.NameWithExtension,
+                FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
+            };
+            
+            _textEditorService.ViewModelApi.Register(viewModel);
 	
 	        return Task.FromResult(viewModelKey);
 
@@ -308,6 +301,7 @@ public class EditorIdeApi
             showViewModelArgs = new TryShowViewModelArgs(
                 showViewModelArgs.ViewModelKey,
                 EditorTextEditorGroupKey,
+                showViewModelArgs.ShouldSetFocusToEditor,
                 showViewModelArgs.ServiceProvider);
         }
 
@@ -324,6 +318,16 @@ public class EditorIdeApi
         _textEditorService.GroupApi.SetActiveViewModel(
             showViewModelArgs.GroupKey,
             showViewModelArgs.ViewModelKey);
+            
+        _textEditorService.PostUnique(nameof(TryShowViewModelFunc), editContext =>
+        {
+        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
+        	
+        	viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender =
+        		showViewModelArgs.ShouldSetFocusToEditor;
+        	
+        	return Task.CompletedTask;
+        });
 
         return Task.FromResult(true);
     }

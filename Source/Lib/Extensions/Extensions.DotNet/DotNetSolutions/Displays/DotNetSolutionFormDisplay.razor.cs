@@ -45,7 +45,7 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 	private string _solutionName = string.Empty;
 	private string _parentDirectoryName = string.Empty;
 
-	public Key<TerminalCommand> NewDotNetSolutionTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+	public Key<TerminalCommandRequest> NewDotNetSolutionTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 	public CancellationTokenSource NewDotNetSolutionCancellationTokenSource { get; set; } = new();
 
 	private string DisplaySolutionName => string.IsNullOrWhiteSpace(_solutionName)
@@ -104,14 +104,14 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 		}
 		else
 		{
-			var newDotNetSolutionCommand = new TerminalCommand(
-				NewDotNetSolutionTerminalCommandKey,
-				localFormattedCommand,
-				_parentDirectoryName,
-				NewDotNetSolutionCancellationTokenSource.Token,
-				() =>
-				{
-					// Close Dialog
+			var terminalCommandRequest = new TerminalCommandRequest(
+	        	localFormattedCommand.Value,
+	        	_parentDirectoryName,
+	        	new Key<TerminalCommandRequest>(NewDotNetSolutionTerminalCommandRequestKey.Guid))
+	        {
+	        	ContinueWithFunc = parsedCommand =>
+	        	{
+	        		// Close Dialog
 					Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
 
 					// Open the created .NET Solution
@@ -133,10 +133,10 @@ public partial class DotNetSolutionFormDisplay : FluxorComponent
 
 					CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
 					return Task.CompletedTask;
-				});
-
-			var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-			generalTerminal.EnqueueCommand(newDotNetSolutionCommand);
+	        	}
+	        };
+	        	
+	        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 		}
 	}
 

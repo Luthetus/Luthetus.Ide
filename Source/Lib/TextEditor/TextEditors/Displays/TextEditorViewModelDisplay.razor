@@ -7,106 +7,101 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 
 @{
-    var renderBatch = _storedRenderBatch;
+    var renderBatchUnsafe = _storedRenderBatch;
     
-    // Do not use <CascadingValue Value="renderBatchValidated">...</CascadingValue>
-    // at the top level in order to D.R.Y the code.
-    //
-    // If at any point the renderBatchValidated is null, checking after the fact is not sufficient.
-    // The cascading parameter could change out from under a child component, and cause some confusing exceptions.
-    var renderBatchValidated = renderBatch.IsValid ? new TextEditorRenderBatchValidated(renderBatch) : null;
+    var renderBatchValidated = renderBatchUnsafe.IsValid ? new TextEditorRenderBatchValidated(renderBatchUnsafe) : null;
+    _storedRenderBatchValidated = renderBatchValidated;
 
-    var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyle} {renderBatch.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
-    var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    var cssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    var cssStyle = $"{renderBatchUnsafe.FontSizeInPixelsCssStyle} {renderBatchUnsafe.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
 }
 
-<ContextBoundary ContextRecord="renderBatch.ViewModelDisplayOptions.ContextRecord"
-                 ClassCssString="@contextBoundaryClass"
-                 StyleCssString="@contextBoundaryStyle">
-
-    @if (renderBatchValidated is not null && !renderBatch.Options!.UseMonospaceOptimizations)
+<div class="@cssClass" style="@cssStyle">	    
+    @if (renderBatchUnsafe.Options is not null && !renderBatchUnsafe.Options.UseMonospaceOptimizations)
     {
-        // TODO: Move this inside MeasureCharacterWidthAndRowHeight.razor
         <div style="display: flex; position: absolute; visibility: hidden;"
              id="@ProportionalFontMeasurementsContainerElementId">
         </div>
     }
 
-    <CascadingValue Name="ProportionalFontMeasurementsContainerElementId" Value="ProportionalFontMeasurementsContainerElementId">
-        @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
+    @if (renderBatchUnsafe.ViewModelDisplayOptions.IncludeHeaderHelperComponent)
+    {
+		<Header RenderBatch="renderBatchValidated"/>
+    }
+
+    <div @onclick="FocusTextEditorAsync"
+         @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"
+         @onkeydown:preventDefault="true"
+         @oncontextmenu="EventUtil.AsNonRenderingEventHandler(ReceiveOnContextMenu)"
+         @oncontextmenu:preventDefault="true"
+         @onmousedown="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseDown)"
+         @onmousemove="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseMove)"
+         @onmouseout="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseOut)"
+         @ondblclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveOnDoubleClick)"
+         @onwheel="EventUtil.AsNonRenderingEventHandler<WheelEventArgs>(ReceiveOnWheel)"
+         @ontouchstart="ReceiveOnTouchStart"
+         @ontouchmove="ReceiveOnTouchMove"
+         @ontouchend="ClearTouch"
+         @ontouchcancel="ClearTouch"
+         @ontouchleave="ClearTouch"
+         id="@ContentElementId"
+         style="@(renderBatchUnsafe.HeightCssStyle) @ViewModelDisplayOptions.TextEditorStyleCssString"
+         class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
+         tabindex="-1">
+
+		@* MeasureCharacterWidthAndRowHeight.razor Open *@
+		<div class="luth_te_measure-character-width-and-row-height-wrapper luth_te_row">
+		    <div class="luth_te_measure-character-width-and-row-height luth_te_row"
+		         id="@MeasureCharacterWidthAndRowHeightElementId">
+		
+		        @for (var i = 0; i < TEST_STRING_REPEAT_COUNT; i++)
+		        {
+		            <text>
+		                @TEST_STRING_FOR_MEASUREMENT
+		            </text>
+		        }
+		    </div>
+		</div>
+		@* MeasureCharacterWidthAndRowHeight Close *@
+      
+        <BodySection @ref="_bodySectionComponent" RenderBatch="renderBatchValidated"/>
+        
+        @if (ViewModelDisplayOptions.IncludeGutterComponent)
         {
-            <CascadingValue Value="renderBatchValidated">
-                <Header HeaderButtonKinds="ViewModelDisplayOptions.HeaderButtonKinds" />
-            </CascadingValue>
+        	// TODO: The comment under this describes something that was believed to be a fix...
+        	//       ...but the gutter is still 'desync' at times? It doesn't align with the text?
+        	//       Is every scroll event scrolling BOTH the gutter and the body? I imagine
+        	//       the issue is that there is a scroll event that is only scrolling the body.
+        	//
+        	// The gutter needs to come after the 'BodySection' in the markup to
+        	// ensure the virtualization result in ready.
+        	//
+        	// Due to 'BodySection' being 'position: absolute;',
+        	// on the UI the gutter will appear to the left of the 'BodySection'
+            <GutterSection RenderBatch="renderBatchValidated"/>
         }
 
-        <div @onclick="FocusTextEditorAsync"
-             @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"
-             @onkeydown:preventDefault="true"
-             @oncontextmenu="EventUtil.AsNonRenderingEventHandler(ReceiveOnContextMenu)"
-             @oncontextmenu:preventDefault="true"
-             @onmousedown="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseDown)"
-             @onmousemove="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseMove)"
-             @onmouseout="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseOut)"
-             @ondblclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveOnDoubleClick)"
-             @onwheel="EventUtil.AsNonRenderingEventHandler<WheelEventArgs>(ReceiveOnWheel)"
-             @ontouchstart="ReceiveOnTouchStart"
-             @ontouchmove="ReceiveOnTouchMove"
-             @ontouchend="ClearTouch"
-             @ontouchcancel="ClearTouch"
-             @ontouchleave="ClearTouch"
-             id="@ContentElementId"
-             style="@(renderBatch.HeightCssStyle) @ViewModelDisplayOptions.TextEditorStyleCssString"
-             class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
-             tabindex="-1">
-
-            <MeasureCharacterWidthAndRowHeight @ref="_measureCharacterWidthAndRowHeightComponent"
-                                               HtmlElementId="@MeasureCharacterWidthAndRowHeightElementId" />
-
-            @if (renderBatchValidated is not null)
-            {
-                <CascadingValue Value="renderBatchValidated">
-                    <CascadingValue Value="renderBatchValidated.ViewModel.TooltipViewModel">
-                        @if (ViewModelDisplayOptions.IncludeGutterComponent)
-                        {
-                            <GutterSection />
-                        }
-
-                        <BodySection @ref="_bodySectionComponent"
-                                     TabIndex="ViewModelDisplayOptions.TabIndex"
-                                     ContextMenuRenderFragmentOverride="ViewModelDisplayOptions.ContextMenuRenderFragmentOverride"
-                                     IncludeContextMenuHelperComponent="ViewModelDisplayOptions.IncludeContextMenuHelperComponent"
-                                     AutoCompleteMenuRenderFragmentOverride="ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride" />
-
-                        @if (renderBatchValidated.ViewModel.ShowCommandBar)
-                        {
-                            <CommandBarDisplay RestoreFocusToTextEditor="FocusTextEditorAsync" />
-                        }
-                    </CascadingValue>
-                </CascadingValue>
-            }
-            else
-            {
-                if (renderBatch.Model is null)
-                {
-                    <div>The @nameof(TextEditorModel) was null</div>
-                }
-                else if (renderBatch.ViewModel is null)
-                {
-                    <div>The @nameof(TextEditorViewModel) was null</div>
-                }
-                else if (renderBatch.Options is null)
-                {
-                    <div>The @nameof(TextEditorOptions) was null</div>
-                }
-            }
-        </div>
-
-        @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeFooterHelperComponent)
+        @if (renderBatchValidated?.ViewModel?.ShowCommandBar ?? false)
         {
-            <CascadingValue Value="renderBatchValidated">
-                <Footer />
-            </CascadingValue>
+            <CommandBarDisplay RenderBatch="renderBatchValidated"/>
         }
-    </CascadingValue>
-</ContextBoundary>
+        
+        @if (renderBatchUnsafe.Model is null)
+	    {
+	        <div>The @nameof(TextEditorModel) was null</div>
+	    }
+	    else if (renderBatchUnsafe.ViewModel is null)
+	    {
+	        <div>The @nameof(TextEditorViewModel) was null</div>
+	    }
+	    else if (renderBatchUnsafe.Options is null)
+	    {
+	        <div>The @nameof(TextEditorOptions) was null</div>
+	    }
+    </div>
+
+    @if (renderBatchUnsafe.ViewModelDisplayOptions.IncludeHeaderHelperComponent)
+    {
+        <Footer RenderBatch="renderBatchValidated"/>
+    }
+</div>

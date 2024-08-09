@@ -61,6 +61,8 @@ public class BackgroundTaskWorker : BackgroundService
 					{
 						await task.ConfigureAwait(false);
 					}
+					
+					BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
                 }
                 catch (Exception ex)
                 {

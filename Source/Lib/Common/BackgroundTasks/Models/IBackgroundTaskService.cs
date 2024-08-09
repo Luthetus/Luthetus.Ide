@@ -9,6 +9,12 @@ public interface IBackgroundTaskService
 
     public void Enqueue(IBackgroundTask backgroundTask);
     public void Enqueue(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc);
+    
+    public Task EnqueueAsync(IBackgroundTask backgroundTask);
+    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc);
+
+	public void CompleteTaskCompletionSource(Key<IBackgroundTask> taskKey);
+
     public void RegisterQueue(IBackgroundTaskQueue queue);
 
 	public IBackgroundTask? Dequeue(Key<IBackgroundTaskQueue> queueKey);

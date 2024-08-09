@@ -44,11 +44,8 @@ public partial class Header : ComponentBase
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
-    [CascadingParameter]
-    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
-
-    [Parameter]
-    public ImmutableArray<HeaderButtonKind>? HeaderButtonKinds { get; set; }
+    [Parameter, EditorRequired]
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
 	private string _reloadButtonHtmlElementId = "luth_te_text-editor-header-reload-button";
 	
@@ -57,17 +54,15 @@ public partial class Header : ComponentBase
     private LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
     	_jsRuntimeCommonApi ??= JsRuntime.GetLuthetusCommonApi();
 
-    private TextEditorCommandArgs ConstructCommandArgs(
-        TextEditorModel textEditorModel,
-        TextEditorViewModel viewModel)
+    private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatchValidated renderBatchLocal)
     {
-        var cursorSnapshotsList = new TextEditorCursor[] { viewModel.PrimaryCursor }.ToImmutableArray();
+        var cursorSnapshotsList = new TextEditorCursor[] { renderBatchLocal.ViewModel.PrimaryCursor }.ToImmutableArray();
         var hasSelection = TextEditorSelectionHelper.HasSelectedText(cursorSnapshotsList.First(x => x.IsPrimaryCursor).Selection);
 
         return new TextEditorCommandArgs(
-            textEditorModel.ResourceUri,
-            viewModel.ViewModelKey,
-            RenderBatch.ComponentData,
+            renderBatchLocal.Model.ResourceUri,
+            renderBatchLocal.ViewModel.ViewModelKey,
+            renderBatchLocal.ComponentData,
 			TextEditorService,
             ServiceProvider,
             null);
@@ -75,13 +70,17 @@ public partial class Header : ComponentBase
 
     private Task DoCopyOnClick(MouseEventArgs arg)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Copy),
@@ -96,13 +95,17 @@ public partial class Header : ComponentBase
 
     private Task DoCutOnClick(MouseEventArgs arg)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Cut),
@@ -117,13 +120,17 @@ public partial class Header : ComponentBase
 
     private Task DoPasteOnClick(MouseEventArgs arg)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),
@@ -138,13 +145,17 @@ public partial class Header : ComponentBase
 
     private Task DoRedoOnClick(MouseEventArgs arg)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Redo),
@@ -159,13 +170,17 @@ public partial class Header : ComponentBase
 
     private Task DoSaveOnClick(MouseEventArgs arg)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.TriggerSave),
@@ -180,13 +195,17 @@ public partial class Header : ComponentBase
 
     private Task DoUndoOnClick(MouseEventArgs arg)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Undo),
@@ -201,13 +220,17 @@ public partial class Header : ComponentBase
 
     private Task DoSelectAllOnClick(MouseEventArgs arg)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.SelectAll),
@@ -222,13 +245,17 @@ public partial class Header : ComponentBase
 
     private Task DoRemeasureOnClick(MouseEventArgs arg)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Remeasure),
@@ -243,13 +270,17 @@ public partial class Header : ComponentBase
 
     private async Task DoReloadOnClick(MouseEventArgs arg)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
         
         var dropdownKey = Key<DropdownRecord>.NewKey();
         
@@ -308,13 +339,17 @@ public partial class Header : ComponentBase
 
     private void ShowWatchWindowDisplayDialogOnClick()
     {
-        var model = RenderBatch.Model;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
+        var model = renderBatchLocal.Model;
 
         if (model is null)
             return;
 
         var watchWindowObject = new WatchWindowObject(
-            RenderBatch,
+            renderBatchLocal,
             typeof(TextEditorRenderBatchValidated),
             nameof(TextEditorRenderBatchValidated),
             true);
@@ -339,13 +374,17 @@ public partial class Header : ComponentBase
 
     private Task DoRefreshOnClick()
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return Task.CompletedTask;
 
-        var commandArgs = ConstructCommandArgs(model, viewModel);
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Remeasure),
@@ -367,8 +406,12 @@ public partial class Header : ComponentBase
     /// </summary>
     private bool GetUndoDisabledAttribute()
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return true;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return true;
@@ -385,8 +428,12 @@ public partial class Header : ComponentBase
     /// </summary>
     private bool GetRedoDisabledAttribute()
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return true;
+    	
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return true;

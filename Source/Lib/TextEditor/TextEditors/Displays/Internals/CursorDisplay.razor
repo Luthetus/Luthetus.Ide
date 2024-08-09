@@ -3,50 +3,65 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 @using Luthetus.Common.RazorLib.Dimensions.Models;
 
-@{
-	var localRenderBatch = RenderBatch;
-    var leftRelativeToParentInPixelsCssStyle = string.Empty;
-    var textEditorKeymap = (ITextEditorKeymap)RenderBatch.Options!.Keymap!;
-}
+@{ var renderBatchLocal = RenderBatch; }
 
-@if (!RenderBatch.Options!.UseMonospaceOptimizations)
+@if (renderBatchLocal is not null)
 {
-    var leftRelativeToParentInPixelsCssValue = _leftRelativeToParentInPixels.ToCssValue();
-    leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
-}
-
-<textarea @ref="_cursorDisplayElementReference"
-          @onkeydown="HandleOnKeyDown"
-          id="@CursorDisplayId"
-          tabindex="@GetTabIndex()"
-          class="luth_te_text-editor-cursor @BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
-          style="@CursorStyleCss @leftRelativeToParentInPixelsCssStyle">
-</textarea>
-
-<div class="luth_te_text-editor-caret-row"
-     style="@CaretRowStyleCss">
-</div>
-
-@if (localRenderBatch.ViewModel.MenuKind != MenuKind.None && IncludeContextMenuHelperComponent)
-{
-    <div @onkeydown:stopPropagation="true"
-         @onmousedown:stopPropagation="true"
-         @onmousemove:stopPropagation="true"
-         class="luth_te_text-editor-context-menu"
-         style="@MenuStyleCss">
-
-        <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
-                        Value="TextEditorMenuShouldTakeFocus">
-
-            @switch (localRenderBatch.ViewModel.MenuKind)
-            {
-                case MenuKind.ContextMenu:
-                        @OnContextMenuRenderFragment
-                    break;
-                case MenuKind.AutoCompleteMenu:
-                        @AutoCompleteMenuRenderFragment
-                    break;
-            }
-        </CascadingValue>
-    </div>
+	var leftRelativeToParentInPixelsCssStyle = string.Empty;
+    var textEditorKeymap = (ITextEditorKeymap)renderBatchLocal.Options!.Keymap!;
+    
+    if (!renderBatchLocal.Options!.UseMonospaceOptimizations)
+	{
+	    var leftRelativeToParentInPixelsCssValue = _leftRelativeToParentInPixels.ToCssValue();
+	    leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
+	}
+	
+	<textarea @ref="_cursorDisplayElementReference"
+	          @onkeydown="HandleOnKeyDown"
+	          id="@GetCursorDisplayId(renderBatchLocal)"
+	          tabindex="@GetTabIndex(renderBatchLocal)"
+	          class="luth_te_text-editor-cursor @BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
+	          style="@GetCursorStyleCss() @leftRelativeToParentInPixelsCssStyle">
+	</textarea>
+	
+	<div class="luth_te_text-editor-caret-row"
+	     style="@GetCaretRowStyleCss()">
+	</div>
+	
+	if (renderBatchLocal.ViewModel.MenuKind != MenuKind.None && GetIncludeContextMenuHelperComponent(renderBatchLocal))
+	{
+	    <div @onkeydown:stopPropagation="true"
+	         @onmousedown:stopPropagation="true"
+	         @onmousemove:stopPropagation="true"
+	         class="luth_te_text-editor-context-menu"
+	         style="@GetMenuStyleCss()">
+	
+	        <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
+	                        Value="TextEditorMenuShouldTakeFocus">
+	            @switch (renderBatchLocal.ViewModel.MenuKind)
+	            {
+	                case MenuKind.ContextMenu:
+                        if (renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride is not null)
+			            {
+			                @renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride(RenderBatch)
+			            }
+			            else
+			            {
+			                <ContextMenu RenderBatch="RenderBatch"/>
+			            }
+	                    break;
+	                case MenuKind.AutoCompleteMenu:
+	                    if (renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride is not null)
+			            {
+			                @renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride(RenderBatch)
+			            }
+			            else
+			            {
+			                <AutocompleteMenu RenderBatch="RenderBatch"/>
+			            }
+	                    break;
+	            }
+	        </CascadingValue>
+	    </div>
+	}
 }

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Ide.RazorLib.Terminals.Models;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public enum TerminalDecorationKind
 {

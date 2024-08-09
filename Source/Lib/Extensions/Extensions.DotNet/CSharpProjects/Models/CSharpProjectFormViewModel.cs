@@ -11,8 +11,8 @@ namespace Luthetus.Extensions.DotNet.CSharpProjects.Models;
 
 public class CSharpProjectFormViewModel
 {
-	public readonly Key<TerminalCommand> NewCSharpProjectTerminalCommandKey = Key<TerminalCommand>.NewKey();
-	public readonly Key<TerminalCommand> LoadProjectTemplatesTerminalCommandKey = Key<TerminalCommand>.NewKey();
+	public readonly Key<TerminalCommandRequest> NewCSharpProjectTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
+	public readonly Key<TerminalCommandRequest> LoadProjectTemplatesTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
 	public readonly CancellationTokenSource NewCSharpProjectCancellationTokenSource = new();
 
 	public CSharpProjectFormViewModel(
@@ -89,8 +89,8 @@ public class CSharpProjectFormViewModel
 			ParentDirectoryNameDisplay,
 			FormattedNewCSharpProjectCommand,
 			FormattedAddExistingProjectToSolutionCommand,
-			NewCSharpProjectTerminalCommandKey,
-			LoadProjectTemplatesTerminalCommandKey,
+			NewCSharpProjectTerminalCommandRequestKey,
+			LoadProjectTemplatesTerminalCommandRequestKey,
 			NewCSharpProjectCancellationTokenSource);
 
 		return true;

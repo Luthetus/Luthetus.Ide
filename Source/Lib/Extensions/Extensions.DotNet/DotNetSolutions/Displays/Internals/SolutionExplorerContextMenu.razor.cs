@@ -14,15 +14,16 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
-using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
@@ -66,6 +67,8 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 	private IFileSystemProvider FileSystemProvider { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
 	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
 	[Inject]
@@ -353,14 +356,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				}),
 			DotNetMenuOptionsFactory.AddProjectToProjectReference(
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				IdeBackgroundTaskApi,
 				() => Task.CompletedTask),
 			DotNetMenuOptionsFactory.MoveProjectToSolutionFolder(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				() =>
 				{
@@ -386,7 +389,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveCSharpProjectReferenceFromSolution(
 				treeViewSolution,
 				treeViewModel,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher,
 				() =>
 				{
@@ -403,7 +406,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 		{
 			DotNetMenuOptionsFactory.RemoveProjectToProjectReference(
 				treeViewCSharpProjectToProjectReference,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher, () => Task.CompletedTask),
 		};
 	}
@@ -422,7 +425,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			DotNetMenuOptionsFactory.RemoveNuGetPackageReferenceFromProject(
 				treeViewCSharpProjectNugetPackageReferences.Item.CSharpProjectNamespacePath,
 				treeViewCSharpProjectNugetPackageReference,
-				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY],
+				TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY],
 				Dispatcher, () => Task.CompletedTask),
 		};
 	}
@@ -525,22 +528,21 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 					return Task.CompletedTask;
 
 				var localFormattedAddExistingProjectToSolutionCommand = DotNetCliCommandFormatter.FormatAddExistingProjectToSolution(
-						dotNetSolutionModel.NamespacePath.AbsolutePath.Value,
-						absolutePath.Value);
+					dotNetSolutionModel.NamespacePath.AbsolutePath.Value,
+					absolutePath.Value);
 
-				var addExistingProjectToSolutionTerminalCommand = new TerminalCommand(
-					Key<TerminalCommand>.NewKey(),
-					localFormattedAddExistingProjectToSolutionCommand,
-					null,
-					CancellationToken.None,
-					() =>
-					{
-						CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
+				var terminalCommandRequest = new TerminalCommandRequest(
+		        	localFormattedAddExistingProjectToSolutionCommand.Value,
+		        	null)
+		        {
+		        	ContinueWithFunc = parsedCommand =>
+		        	{
+		        		CompilerServicesBackgroundTaskApi.DotNetSolution.SetDotNetSolution(dotNetSolutionModel.NamespacePath.AbsolutePath);
 						return Task.CompletedTask;
-					});
-
-				var generalTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-				generalTerminal.EnqueueCommand(addExistingProjectToSolutionTerminalCommand);
+		        	}
+		        };
+		        	
+		        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			},
 			absolutePath =>
@@ -558,38 +560,14 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 			}.ToImmutableArray());
 	}
 
-	private async Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)
+	private Task OpenSolutionInTextEditor(DotNetSolutionModel dotNetSolutionModel)
 	{
-		var resourceUri = new ResourceUri(dotNetSolutionModel.AbsolutePath.Value);
-
-		if (TextEditorConfig.RegisterModelFunc is null)
-			return;
-
-		await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-				resourceUri,
-				ServiceProvider))
-			.ConfigureAwait(false);
-
-		if (TextEditorConfig.TryRegisterViewModelFunc is not null)
-		{
-			var viewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-					Key<TextEditorViewModel>.NewKey(),
-					resourceUri,
-					new Category("main"),
-					false,
-					ServiceProvider))
-				.ConfigureAwait(false);
-
-			if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-				TextEditorConfig.TryShowViewModelFunc is not null)
-			{
-				await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-						viewModelKey,
-						Key<TextEditorGroup>.Empty,
-						ServiceProvider))
-					.ConfigureAwait(false);
-			}
-		}
+		return TextEditorService.OpenInEditorAsync(
+			dotNetSolutionModel.AbsolutePath.Value,
+			true,
+			null,
+			new Category("main"),
+			Key<TextEditorViewModel>.NewKey());
 	}
 
 	/// <summary>

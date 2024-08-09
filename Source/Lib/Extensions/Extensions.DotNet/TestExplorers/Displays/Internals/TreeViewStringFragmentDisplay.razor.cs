@@ -10,8 +10,6 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 public partial class TreeViewStringFragmentDisplay : FluxorComponent
 {
 	[Inject]
-	private IStateSelection<TerminalState, Terminal?> TerminalStateSelection { get; set; } = null!;
-	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 
 	[Parameter, EditorRequired]
@@ -23,23 +21,12 @@ public partial class TreeViewStringFragmentDisplay : FluxorComponent
 		// subscribes to its state changes, even though in this class its "unused".
 		_ = TerminalStateWrap;
 
-		TerminalStateSelection.Select(x =>
-		{
-			if (x.TerminalMap.TryGetValue(
-					TerminalFacts.EXECUTION_TERMINAL_KEY,
-					out var terminal))
-			{
-				return terminal;
-			}
-
-			return null;
-		});
-
 		base.OnInitialized();
 	}
 
-	private string? GetTerminalCommandOutput(Terminal terminal)
+	private string? GetTerminalCommandRequestOutput(ITerminal terminal)
 	{
-		return TreeViewStringFragment.Item.TerminalCommand?.OutputBuilder?.ToString() ?? null;
+		return $"TODO: {nameof(GetTerminalCommandRequestOutput)}";
+		// return TreeViewStringFragment.Item.TerminalCommandRequest?.OutputBuilder?.ToString() ?? null;
 	}
 }

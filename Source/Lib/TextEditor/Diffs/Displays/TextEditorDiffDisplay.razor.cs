@@ -58,7 +58,7 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     private CancellationTokenSource _calculateDiffCancellationTokenSource = new();
     private TextEditorDiffResult? _mostRecentDiffResult;
 
-    private ThrottleAsync _throttleDiffCalculation = new(TimeSpan.FromMilliseconds(1_000));
+    private Throttle _throttleDiffCalculation = new(TimeSpan.FromMilliseconds(1_000));
 
     protected override void OnInitialized()
     {
@@ -88,12 +88,14 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
         // needs to be written. It currently freezes the application. (2024-05-19)
         // =====================================================================================
         //
-        //await _throttleDiffCalculation.PushEvent(_ =>
+        //_throttleDiffCalculation.Run(_ =>
         //{
-        //    return TextEditorService.PostUnique(
+        //    TextEditorService.PostUnique(
         //        nameof(TextEditorDiffDisplay),
         //        nameof(TextEditorDiffDisplay),
         //        TextEditorService.DiffApi.CalculateFactory(TextEditorDiffKey, CancellationToken.None));
+        //
+        //	return Task.CompletedTask;
         //});
     }
 

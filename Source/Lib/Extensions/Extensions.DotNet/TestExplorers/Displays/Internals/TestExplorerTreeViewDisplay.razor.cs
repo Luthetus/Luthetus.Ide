@@ -36,8 +36,8 @@ public partial class TestExplorerTreeViewDisplay : ComponentBase
 	[Parameter, EditorRequired]
 	public ElementDimensions ElementDimensions { get; set; } = null!;
 
-	private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-	private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+	private TestExplorerTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
+	private TestExplorerTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
 		RenderBatch.AppOptionsState.Options.IconSizeInPixels * (2.0 / 3.0));

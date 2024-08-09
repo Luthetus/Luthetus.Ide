@@ -1,0 +1,20 @@
+@using Luthetus.Extensions.DotNet.CommandLines.Models;
+
+@{ var cssClass = string.Empty; }
+
+@if (TreeViewDiagnosticLine.Item.DiagnosticLineKind == DiagnosticLineKind.Warning)
+{
+	cssClass = "luth_tree-view-warning";
+}
+else if (TreeViewDiagnosticLine.Item.DiagnosticLineKind == DiagnosticLineKind.Error)
+{
+	cssClass = "luth_tree-view-exception";
+}
+else if (TreeViewDiagnosticLine.Item.DiagnosticLineKind == DiagnosticLineKind.Other)
+{
+	cssClass = string.Empty;
+}
+
+<span class="@cssClass luth_set-selectable">
+	@TreeViewDiagnosticLine.Item.TextShort
+</span>

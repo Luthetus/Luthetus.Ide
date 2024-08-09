@@ -9,7 +9,7 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
     [Inject]
     public IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 
-    private readonly ThrottleAsync _executingBackgroundTaskChangedThrottle = new ThrottleAsync(TimeSpan.FromMilliseconds(1000));
+    private readonly Throttle _executingBackgroundTaskChangedThrottle = new(TimeSpan.FromMilliseconds(1000));
     private readonly List<IBackgroundTask> _seenBackgroundTasks = new List<IBackgroundTask>();
     private readonly object _seenBackgroundTasksLock = new();
 
@@ -25,7 +25,7 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-    private async void ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged()
+    private void ContinuousBackgroundTaskWorker_ExecutingBackgroundTaskChanged()
     {
         var executingBackgroundTask = _continuousBackgroundTaskWorker.ExecutingBackgroundTask;
         
@@ -44,7 +44,7 @@ public partial class BackgroundTaskDialogDisplay : ComponentBase, IDisposable
 			}
         }
 
-        await _executingBackgroundTaskChangedThrottle.PushEvent(async _ =>
+        _executingBackgroundTaskChangedThrottle.Run(async _ =>
         {
             await InvokeAsync(StateHasChanged);
         });

@@ -12,6 +12,9 @@ public record TextEditorRenderBatchUnsafe(
         int FontSizeInPixels,
         ViewModelDisplayOptions ViewModelDisplayOptions,
 		TextEditorComponentData ComponentData)
+		// Func<Task> RestoreFocusToTextEditor
+	    // Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync
+	    // ImmutableArray<HeaderButtonKind>? HeaderButtonKinds
     : ITextEditorRenderBatch
 {
     private double? _gutterWidthInPixels;

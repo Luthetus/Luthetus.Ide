@@ -18,7 +18,7 @@ public partial record GitState
         private readonly ICommonComponentRenderers _commonComponentRenderers;
         private readonly ITreeViewService _treeViewService;
         private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
-        private readonly ThrottleAsync _throttle = new ThrottleAsync(TimeSpan.FromMilliseconds(300));
+        private readonly Throttle _throttle = new(TimeSpan.FromMilliseconds(300));
 
         public Effector(
             IState<GitState> gitStateWrap,
@@ -40,7 +40,7 @@ public partial record GitState
             // Suppress unused variable warning
             _ = dispatcher;
 
-			return _throttle.PushEvent(_ =>
+			_throttle.Run(_ =>
             {
                 var gitState = _gitStateWrap.Value;
 
@@ -123,6 +123,8 @@ public partial record GitState
 
                 return Task.CompletedTask;
             });
+            
+            return Task.CompletedTask;
         }
         
         [EffectMethod]

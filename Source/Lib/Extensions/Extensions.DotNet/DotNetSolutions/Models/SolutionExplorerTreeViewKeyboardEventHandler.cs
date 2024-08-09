@@ -7,6 +7,9 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
@@ -20,6 +23,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IMenuOptionsFactory _menuOptionsFactory;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
+	private readonly ITextEditorService _textEditorService;
 	private readonly ITreeViewService _treeViewService;
 	private readonly IEnvironmentProvider _environmentProvider;
 	private readonly IDispatcher _dispatcher;
@@ -28,6 +32,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 			IdeBackgroundTaskApi ideBackgroundTaskApi,
 			IMenuOptionsFactory menuOptionsFactory,
 			ICommonComponentRenderers commonComponentRenderers,
+			ITextEditorService textEditorService,
 			ITreeViewService treeViewService,
 			IBackgroundTaskService backgroundTaskService,
 			IEnvironmentProvider environmentProvider,
@@ -37,6 +42,7 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_menuOptionsFactory = menuOptionsFactory;
 		_commonComponentRenderers = commonComponentRenderers;
+		_textEditorService = textEditorService;
 		_treeViewService = treeViewService;
 		_environmentProvider = environmentProvider;
 		_dispatcher = dispatcher;
@@ -202,16 +208,15 @@ public class SolutionExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEven
 
 	private Task InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
 	{
-		var activeNode = commandArgs.TreeViewContainer.ActiveNode;
-
-		if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
+		if (commandArgs.TreeViewContainer.ActiveNode is not TreeViewNamespacePath treeViewNamespacePath)
 			return Task.CompletedTask;
-
-		_ideBackgroundTaskApi.Editor.OpenInEditor(
-			treeViewNamespacePath.Item.AbsolutePath,
-			shouldSetFocusToEditor);
-
-		return Task.CompletedTask;
+			
+		return _textEditorService.OpenInEditorAsync(
+			treeViewNamespacePath.Item.AbsolutePath.Value,
+			shouldSetFocusToEditor,
+			null,
+			new Category("main"),
+			Key<TextEditorViewModel>.NewKey());
 	}
 
 	private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)

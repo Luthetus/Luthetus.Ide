@@ -25,8 +25,8 @@ public class ProjectTestModel
 
 	public Guid ProjectIdGuid { get; }
 	public IAbsolutePath AbsolutePath { get; }
-	public TerminalCommand? TerminalCommand { get; set; }
-	public Key<TerminalCommand> DotNetTestListTestsTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+	public TerminalCommandRequest? TerminalCommandRequest { get; set; }
+	public Key<TerminalCommandRequest> DotNetTestListTestsTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 	public Action<TreeViewNoType> ReRenderNodeAction { get; }
 
 	public string DirectoryNameForTestDiscovery => AbsolutePath.ParentDirectory?.Value ?? string.Empty;

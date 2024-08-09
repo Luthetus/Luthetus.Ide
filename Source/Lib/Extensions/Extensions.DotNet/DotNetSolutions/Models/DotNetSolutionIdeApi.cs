@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Runtime.InteropServices;
 using Fluxor;
+using CliWrap.EventStream;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
@@ -56,7 +57,7 @@ public class DotNetSolutionIdeApi
 	private readonly DotNetCliOutputParser _dotNetCliOutputParser;
 	private readonly IServiceProvider _serviceProvider;
 	
-	private readonly Key<TerminalCommand> _newDotNetSolutionTerminalCommandKey = Key<TerminalCommand>.NewKey();
+	private readonly Key<TerminalCommandRequest> _newDotNetSolutionTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
     private readonly CancellationTokenSource _newDotNetSolutionCancellationTokenSource = new();
 
 	public DotNetSolutionIdeApi(
@@ -258,7 +259,9 @@ public class DotNetSolutionIdeApi
 
 			_compilerServiceRegistry
 				.GetCompilerService(ExtensionNoPeriodFacts.DOT_NET_SOLUTION)
-				.RegisterResource(resourceUri);
+				.RegisterResource(
+					resourceUri,
+					shouldTriggerResourceWasModified: true);
 		}
 
 		var lexer = new DotNetSolutionLexer(
@@ -351,28 +354,42 @@ public class DotNetSolutionIdeApi
 
 			// Set 'generalTerminal' working directory
 			{
-				var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-
-				var changeDirectoryCommand = new TerminalCommand(
-					Key<TerminalCommand>.NewKey(),
-					new FormattedCommand("cd", new string[] { }),
-					parentDirectory.Value,
-					CancellationToken.None);
-
-				generalTerminal.EnqueueCommand(changeDirectoryCommand);
+				var terminalCommandRequest = new TerminalCommandRequest(
+		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetSolutionIdeApi),
+		        	parentDirectory.Value)
+		        {
+		        	BeginWithFunc = parsedCommand =>
+		        	{
+		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+							parsedCommand,
+							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
+Sln-Directory: '{parentDirectory.Value}'
+General Terminal"));
+		        		return Task.CompletedTask;
+		        	}
+		        };
+		        	
+		        _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 			}
 
 			// Set 'executionTerminal' working directory
 			{
-				var executionTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
+				var terminalCommandRequest = new TerminalCommandRequest(
+		        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(DotNetSolutionIdeApi),
+		        	parentDirectory.Value)
+		        {
+		        	BeginWithFunc = parsedCommand =>
+		        	{
+		        		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].TerminalOutput.WriteOutput(
+							parsedCommand,
+							new StandardOutputCommandEvent(@$"Sln found: '{solutionAbsolutePath.Value}'
+Sln-Directory: '{parentDirectory.Value}'
+Execution Terminal"));
+		        		return Task.CompletedTask;
+		        	}
+		        };
 
-				var changeDirectoryCommand = new TerminalCommand(
-					Key<TerminalCommand>.NewKey(),
-					new FormattedCommand("cd", new string[] { }),
-					parentDirectory.Value,
-					CancellationToken.None);
-
-				executionTerminal.EnqueueCommand(changeDirectoryCommand);
+				_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 			}
 		}
 
@@ -390,24 +407,31 @@ public class DotNetSolutionIdeApi
 
 		if (dotNetSolutionModel is null)
 			return Task.CompletedTask;
-
-		var progressBarModel = new ProgressBarModel(0, "parsing...");
-
-		NotificationHelper.DispatchProgress(
-			$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
-			progressBarModel,
-			_commonComponentRenderers,
-			_dispatcher,
-			TimeSpan.FromMilliseconds(-1));
-
+			
 		_ = Task.Run(async () =>
 		{
+			var progressBarModel = new ProgressBarModel(0, "parsing...");
+
+			NotificationHelper.DispatchProgress(
+				$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
+				progressBarModel,
+				_commonComponentRenderers,
+				_dispatcher,
+				TimeSpan.FromMilliseconds(-1));
+				
+			var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
+		
 			try
 			{
 				if (_textEditorService.TextEditorConfig.RegisterModelFunc is null)
 					return;
-
-				progressBarModel.SetProgress(0.05, "Discovering projects...");
+					
+				progressThrottle.Run(_ => 
+				{
+					progressBarModel.SetProgress(0.05, "Discovering projects...");
+					return Task.CompletedTask;
+				});
+				
 				foreach (var project in dotNetSolutionModel.DotNetProjectList)
 				{
 					RegisterStartupControl(project);
@@ -417,9 +441,12 @@ public class DotNetSolutionIdeApi
 					if (!await _fileSystemProvider.File.ExistsAsync(resourceUri.Value))
 						continue; // TODO: This can still cause a race condition exception if the file is removed before the next line runs.
 
-					await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-							resourceUri,
-							_serviceProvider))
+					var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
+					{
+						ShouldBlockUntilBackgroundTaskIsCompleted = true,
+					};
+
+					await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(registerModelArgs)
 						.ConfigureAwait(false);
 				}
 
@@ -447,24 +474,36 @@ public class DotNetSolutionIdeApi
 					var maximumProgressAvailableToProject = (1 - previousStageProgress) * ((double)1.0 / dotNetProjectListLength);
 					var currentProgress = Math.Min(1.0, previousStageProgress + maximumProgressAvailableToProject * projectsParsedCount);
 
+					// This 'SetProgress' is being kept out the throttle, since it sets message 1
+					// whereas the per class progress updates set message 2.
+					//
+					// Otherwise an update to message 2 could result in this message 1 update never being written.
 					progressBarModel.SetProgress(
 						currentProgress,
 						$"{projectsParsedCount + 1}/{dotNetProjectListLength}: {project.AbsolutePath.NameWithExtension}");
+					
 
-					await DiscoverClassesInProject(project, progressBarModel, currentProgress, maximumProgressAvailableToProject);
+					await DiscoverClassesInProject(project, progressBarModel, progressThrottle, currentProgress, maximumProgressAvailableToProject);
 					projectsParsedCount++;
 				}
 
-				progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+				progressThrottle.Run(_ => 
+				{
+					progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+					progressBarModel.Dispose();
+					return Task.CompletedTask;
+				});
 			}
 			catch (Exception e)
 			{
 				var currentProgress = progressBarModel.GetProgress();
-				progressBarModel.SetProgress(currentProgress, e.ToString());
-			}
-			finally
-			{
-				progressBarModel.Dispose();
+				
+				progressThrottle.Run(_ => 
+				{
+					progressBarModel.SetProgress(currentProgress, e.ToString());
+					progressBarModel.Dispose();
+					return Task.CompletedTask;
+				});
 			}
 		});
 
@@ -474,6 +513,7 @@ public class DotNetSolutionIdeApi
 	private async Task DiscoverClassesInProject(
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
+		Throttle progressThrottle,
 		double currentProgress,
 		double maximumProgressAvailableToProject)
 	{
@@ -487,12 +527,18 @@ public class DotNetSolutionIdeApi
 		var startingAbsolutePathForSearch = parentDirectory.Value;
 		var discoveredFileList = new List<string>();
 
-		progressBarModel.SetProgress(null, null, "discovering files");
+		progressThrottle.Run(_ => 
+		{
+			progressBarModel.SetProgress(null, null, "discovering files");
+			return Task.CompletedTask;
+		});
+		
 		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
 
 		await ParseClassesInProject(
 			dotNetProject,
 			progressBarModel,
+			progressThrottle,
 			currentProgress,
 			maximumProgressAvailableToProject,
 			discoveredFileList);
@@ -532,7 +578,12 @@ public class DotNetSolutionIdeApi
 				//if (isFirstInvocation)
 				//{
 				//	var currentProgress = progressBarModel.GetProgress();
+				// progressThrottle.Run(_ => 
+				// {
 				//	progressBarModel.SetProgress(currentProgress, $"{directoryPathChild} " + progressMessage);
+				//	return Task.CompletedTask;
+				// });
+				//	
 				//}
 
 				await DiscoverFilesRecursively(directoryPathChild, discoveredFileList, isFirstInvocation: false).ConfigureAwait(false);
@@ -543,60 +594,39 @@ public class DotNetSolutionIdeApi
 	private async Task ParseClassesInProject(
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
+		Throttle progressThrottle,
 		double currentProgress,
 		double maximumProgressAvailableToProject,
 		List<string> discoveredFileList)
 	{
-		// TODO: Do not increment until enqueued task is finished.
 		var fileParsedCount = 0;
+		
 		foreach (var file in discoveredFileList)
 		{
 			var fileAbsolutePath = _environmentProvider.AbsolutePathFactory(file, false);
 
 			var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
 
-			progressBarModel.SetProgress(
-				progress,
-				null,
-				$"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}");
+			progressThrottle.Run(_ => 
+			{
+				progressBarModel.SetProgress(
+					progress,
+					null,
+					$"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}");
+				return Task.CompletedTask;
+			});
 
 			var resourceUri = new ResourceUri(file);
+			
+			var registerModelArgs = new RegisterModelArgs(resourceUri, _serviceProvider)
+			{
+				ShouldBlockUntilBackgroundTaskIsCompleted = true,
+			};
 
-			await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-					resourceUri,
-					_serviceProvider))
+			await _textEditorService.TextEditorConfig.RegisterModelFunc.Invoke(registerModelArgs)
 				.ConfigureAwait(false);
-
-			var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
-
-			if (model is null)
-			{
-				Console.WriteLine($"Model with {nameof(resourceUri)}: '{resourceUri}' was null");
-				continue;
-			}
-
-			var consecutiveMissCounter = 0;
-
-			while (true)
-			{
-				var compilerService = model.CompilerService;
-				if (compilerService is null)
-					break;
-
-				if (compilerService.GetCompilerServiceResourceFor(resourceUri) is not null)
-				{
-					fileParsedCount++;
-					consecutiveMissCounter = 0;
-					break;
-				}
-				else
-				{
-					consecutiveMissCounter++;
-					if (consecutiveMissCounter > 50)
-						Console.WriteLine($"CompilerService did not contain {nameof(resourceUri)}: '{resourceUri}'");
-					await Task.Delay(20 * consecutiveMissCounter);
-				}
-			}
+				
+			fileParsedCount++;
 		}
 	}
 
@@ -665,32 +695,62 @@ public class DotNetSolutionIdeApi
 				project.DisplayName,
 				project.AbsolutePath.Value,
 				project.AbsolutePath,
-				Key<TerminalCommand>.NewKey(),
 				null,
 				null,
-				null,
-				() => Task.FromResult(StartupControl_GetStartProgramTerminalCommand(project)),
-				_ => Task.CompletedTask)));
+				startupControlModel => StartButtonOnClick(startupControlModel, project),
+				StopButtonOnClick)));
 	}
 	
-	private TerminalCommand? StartupControl_GetStartProgramTerminalCommand(IDotNetProject project)
+	private Task StartButtonOnClick(IStartupControlModel interfaceStartupControlModel, IDotNetProject project)
     {
+    	var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
+    	
         var ancestorDirectory = project.AbsolutePath.ParentDirectory;
 
         if (ancestorDirectory is null)
-            return null;
+            return Task.CompletedTask;
 
         var formattedCommand = DotNetCliCommandFormatter.FormatStartProjectWithoutDebugging(
             project.AbsolutePath);
-
-        return new TerminalCommand(
-            _newDotNetSolutionTerminalCommandKey,
-            formattedCommand,
-            ancestorDirectory.Value,
-            _newDotNetSolutionCancellationTokenSource.Token,
-            OutputParser: _dotNetCliOutputParser)
+            
+        var terminalCommandRequest = new TerminalCommandRequest(
+        	formattedCommand.Value,
+        	ancestorDirectory.Value,
+        	_newDotNetSolutionTerminalCommandRequestKey)
         {
-        	OutputBuilder = null
+        	BeginWithFunc = parsedCommand =>
+        	{
+        		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			string.Empty);
+        			
+        		return Task.CompletedTask;
+        	},
+        	ContinueWithFunc = parsedCommand =>
+        	{
+        		startupControlModel.ExecutingTerminalCommandRequest = null;
+        		_dispatcher.Dispatch(new StartupControlState.StateChangedAction());
+        	
+        		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			parsedCommand.OutputCache.ToString());
+        			
+        		return Task.CompletedTask;
+        	}
         };
+        
+        startupControlModel.ExecutingTerminalCommandRequest = terminalCommandRequest;
+        
+		_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
+    	return Task.CompletedTask;
+    }
+    
+    private Task StopButtonOnClick(IStartupControlModel interfaceStartupControlModel)
+    {
+    	var startupControlModel = (StartupControlModel)interfaceStartupControlModel;
+    	
+		_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].KillProcess();
+		startupControlModel.ExecutingTerminalCommandRequest = null;
+		
+        _dispatcher.Dispatch(new StartupControlState.StateChangedAction());
+        return Task.CompletedTask;
     }
 }

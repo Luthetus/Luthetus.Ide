@@ -140,6 +140,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 							terminalResource.GetTokenTextSpans());
 					}
 
+					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 					return Task.CompletedTask;
 				});
 		}
@@ -157,8 +158,11 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 		if (node is TreeViewStringFragment treeViewStringFragment)
 		{
-			var terminalCommand = treeViewStringFragment.Item.TerminalCommand;
+			var terminalCommand = treeViewStringFragment.Item.TerminalCommandRequest;
 
+			/*
+			//// (2024-08-02)
+			//// =================
 			if (terminalCommand is not null)
 			{
 				terminalCommand.StateChangedCallbackFunc = () =>
@@ -167,6 +171,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 					return Task.CompletedTask;
 				};
 			}
+			*/
 
 			// Decoration text span
 			{
@@ -187,23 +192,31 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 			}
 
 			newContent = $"{treeViewStringFragment.Item.Value}:\n";
-
+			
+			/*
+			//// (2024-08-02)
+			//// =================
 			if (terminalCommand is not null)
 				newContent += terminalCommand.OutputBuilder?.ToString() ?? $"{nameof(terminalCommand.OutputBuilder)} was null";
 			else
 				newContent += "TerminalCommand was null";
+			*/
 		}
 		else if (node is TreeViewProjectTestModel treeViewProjectTestModel)
 		{
-			var terminalCommand = treeViewProjectTestModel.Item.TerminalCommand;
+			var terminalCommand = treeViewProjectTestModel.Item.TerminalCommandRequest;
 
 			if (terminalCommand is not null)
 			{
+				/*
+				//// (2024-08-02)
+				//// =================
 				terminalCommand.StateChangedCallbackFunc = () =>
 				{
 					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					return Task.CompletedTask;
 				};
+				*/
 			}
 
 			// Decoration text span
@@ -226,10 +239,14 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 			newContent = $"{treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}:\n";
 
+			/*
+			//// (2024-08-02)
+			//// =================
 			if (terminalCommand is not null)
 				newContent += terminalCommand.OutputBuilder?.ToString() ?? $"{nameof(terminalCommand.OutputBuilder)} was null";
 			else
 				newContent += "terminalCommand was null";
+			*/
 		}
 		else if (node is not null)
 		{

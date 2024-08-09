@@ -11,15 +11,19 @@ public partial class Footer : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [CascadingParameter]
-    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
     private int _previousPositionNumber;
 
     private void SelectRowEndingKindOnChange(ChangeEventArgs changeEventArgs)
     {
-        var model = RenderBatch.Model;
-        var viewModel = RenderBatch.ViewModel;
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+	    		
+        var model = renderBatchLocal.Model;
+        var viewModel = renderBatchLocal.ViewModel;
 
         if (model is null || viewModel is null)
             return;

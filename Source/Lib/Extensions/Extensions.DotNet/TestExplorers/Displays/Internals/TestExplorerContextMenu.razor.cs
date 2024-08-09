@@ -37,7 +37,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 	public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
 
 	public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
-	public static readonly Key<TerminalCommand> DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey = Key<TerminalCommand>.NewKey();
+	public static readonly Key<TerminalCommandRequest> DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
 
 	// TODO: If one changes from 'OnInitializedAsync' an infinite loop is very likely to occur (2024-06-29)
 	private MenuRecord? _menuRecord = null;
@@ -128,12 +128,13 @@ public partial class TestExplorerContextMenu : ComponentBase
 					await treeViewProjectTestModel.LoadChildListAsync();
 					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
-					var terminalCommand = new TerminalCommand(
-					    Key<TerminalCommand>.NewKey(),
-					    new FormattedCommand(string.Empty, Array.Empty<string>()),
-					    ContinueWith: () =>
-					    {
-					    	Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
+					var terminalCommandRequest = new TerminalCommandRequest(
+			        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(TestExplorerContextMenu),
+			        	null)
+			        {
+			        	BeginWithFunc = parsedCommand =>
+			        	{
+							Dispatcher.Dispatch(new TestExplorerState.WithAction(inState =>
 							{
 								var mutableNotRanTestHashSet = inState.NotRanTestHashSet.ToHashSet();
 								
@@ -149,10 +150,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 						    }));
 						    
 						    return Task.CompletedTask;
-					    });
+			        	}
+			        };
 		            
-		            var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-		            executionTerminal.EnqueueCommand(terminalCommand);
+		            TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 				}));
 		}
 
@@ -328,22 +329,26 @@ public partial class TestExplorerContextMenu : ComponentBase
 			return;
 		}
 
-		var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-
-        var dotNetTestByFullyQualifiedNameTerminalCommand = new TerminalCommand(
-            treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandKey,
-            dotNetTestByFullyQualifiedNameFormattedCommand,
-			directoryNameForTestDiscovery,
-			OutputParser: DotNetCliOutputParser,
-			ContinueWith: () => 
-			{
+		var terminalCommandRequest = new TerminalCommandRequest(
+        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(TestExplorerContextMenu),
+        	directoryNameForTestDiscovery,
+        	treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey)
+        {
+        	BeginWithFunc = parsedCommand =>
+        	{
 				BackgroundTaskService.Enqueue(
 					Key<IBackgroundTask>.NewKey(),
 					ContinuousBackgroundTaskWorker.GetQueueKey(),
 					"CheckTestOutcome",
 					() => 
 					{
-						var output = treeViewStringFragment.Item.TerminalCommand?.OutputBuilder?.ToString() ?? null;
+						/*
+						//// (2024-08-02)
+						//// =================
+						var output = treeViewStringFragment.Item.TerminalCommandRequest?.OutputBuilder?.ToString() ?? null;
+						*/
+						
+						var output = (string?)null;
 						
 						if (output is not null && output.Contains("Duration:"))
 						{
@@ -372,10 +377,10 @@ public partial class TestExplorerContextMenu : ComponentBase
 			
 				TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
 				return Task.CompletedTask;
-			});
-
-		treeViewStringFragment.Item.TerminalCommand = dotNetTestByFullyQualifiedNameTerminalCommand;
-
-		executionTerminal.EnqueueCommand(dotNetTestByFullyQualifiedNameTerminalCommand);
+        	}
+        };
+        
+		treeViewStringFragment.Item.TerminalCommandRequest = terminalCommandRequest;
+        TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 }

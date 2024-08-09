@@ -1,6 +1,8 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@{ var terminal = TerminalStateSelection.Value; }
+@using Luthetus.Ide.RazorLib.Terminals.Models
+
+@{ var terminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY]; }
 
 @if (terminal is null)
 {
@@ -8,7 +10,7 @@
 }
 else
 {
-	var output = GetTerminalCommandOutput(terminal);
+	var output = GetTerminalCommandRequestOutput(terminal);
 
 	RenderFragment renderFragment = @<text>?</text>;
 

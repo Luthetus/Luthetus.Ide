@@ -39,6 +39,24 @@ public class BackgroundTaskServiceSynchronous : IBackgroundTaskService
     {
         Enqueue(new BackgroundTask(taskKey, queueKey, name, runFunc));
     }
+    
+    public Task EnqueueAsync(IBackgroundTask backgroundTask)
+    {
+    	Enqueue(backgroundTask);
+    	return Task.CompletedTask;
+    }
+    
+    public Task EnqueueAsync(Key<IBackgroundTask> taskKey, Key<IBackgroundTaskQueue> queueKey, string name, Func<Task> runFunc)
+    {
+    	return EnqueueAsync(new BackgroundTask(taskKey, queueKey, name, runFunc));
+    }
+    
+	public void CompleteTaskCompletionSource(Key<IBackgroundTask> taskKey)
+	{
+		throw new NotImplementedException($"The {nameof(CompleteTaskCompletionSource)}(...) method should not be invoked when using " +
+            $"a {nameof(BackgroundTaskServiceSynchronous)}. This type is designed such that {nameof(Enqueue)}(...) " +
+            $"will invoke {nameof(Task.Wait)}() on the background task, as opposed to enqueueing.");
+	}
 
 	public IBackgroundTask? Dequeue(Key<IBackgroundTaskQueue> queueKey)
     {
