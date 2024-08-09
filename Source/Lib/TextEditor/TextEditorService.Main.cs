@@ -252,42 +252,51 @@ public partial class TextEditorService : ITextEditorService
 		Category category,
 		Key<TextEditorViewModel> preferredViewModelKey)
 	{
-		// RegisterModelFunc
-		if (TextEditorConfig.RegisterModelFunc is null)
-			return;
-		var resourceUri = new ResourceUri(absolutePath);
-		await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(resourceUri, _serviceProvider)).ConfigureAwait(false);
-	
-		// TryRegisterViewModelFunc
-		if (TextEditorConfig.TryRegisterViewModelFunc is null)
-			return;
-		var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-			preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
-	
-		// TryShowViewModelFunc
-		if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
-			return;
-		await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-			actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
-			
-		// Move cursor
-		if (cursorPositionIndex is null)
-			return; // Leave the cursor unchanged if the argument is null
-		PostUnique(nameof(OpenInEditorAsync), editContext =>
+		try
 		{
-			var modelModifier = editContext.GetModelModifier(resourceUri);
-			var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
-			var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-	
-			if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-				return Task.CompletedTask;
+			// RegisterModelFunc
+			if (TextEditorConfig.RegisterModelFunc is null)
+				return;
+			var resourceUri = new ResourceUri(absolutePath);
+			await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(resourceUri, _serviceProvider)).ConfigureAwait(false);
 		
-			var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
+			// TryRegisterViewModelFunc
+			if (TextEditorConfig.TryRegisterViewModelFunc is null)
+				return;
+			var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+				preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
+		
+			// TryShowViewModelFunc
+			if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
+				return;
+			await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+				actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
 				
-			primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
-			primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
-			return Task.CompletedTask;
-		});
+			// Move cursor
+			if (cursorPositionIndex is null)
+				return; // Leave the cursor unchanged if the argument is null
+			PostUnique(nameof(OpenInEditorAsync), editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(resourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					return Task.CompletedTask;
+			
+				var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
+					
+				primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
+				primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+				return Task.CompletedTask;
+			});
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			// One would never want a failed attempt at opening a text file to cause a fatal exception.
+			// TODO: Perhaps add a notification? Perhaps 'throw' then add handling in the callers? But again, this should never cause a fatal exception.
+		}
 	}
 }
