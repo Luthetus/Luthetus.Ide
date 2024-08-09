@@ -68,6 +68,11 @@
         
         @if (ViewModelDisplayOptions.IncludeGutterComponent)
         {
+        	// TODO: The comment under this describes something that was believed to be a fix...
+        	//       ...but the gutter is still 'desync' at times? It doesn't align with the text?
+        	//       Is every scroll event scrolling BOTH the gutter and the body? I imagine
+        	//       the issue is that there is a scroll event that is only scrolling the body.
+        	//
         	// The gutter needs to come after the 'BodySection' in the markup to
         	// ensure the virtualization result in ready.
         	//
