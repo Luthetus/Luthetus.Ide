@@ -25,7 +25,7 @@ public partial class FindOverlayDisplay : ComponentBase
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
     private bool _lastSeenShowFindOverlayValue = false;

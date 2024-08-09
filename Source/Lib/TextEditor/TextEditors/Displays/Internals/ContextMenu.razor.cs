@@ -26,10 +26,8 @@ public partial class ContextMenu : ComponentBase
     [Inject]
     private IServiceProvider ServiceProvider { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
-    [CascadingParameter(Name = "SetShouldDisplayMenuAsync")]
-    public Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync { get; set; } = null!;
 
     private ElementReference? _textEditorContextMenuElementReference;
 

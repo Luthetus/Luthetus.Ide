@@ -19,7 +19,7 @@ public partial class CursorDisplay : ComponentBase, IDisposable
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
     
     public string ProportionalFontMeasurementsContainerElementId => throw new NotImplementedException(

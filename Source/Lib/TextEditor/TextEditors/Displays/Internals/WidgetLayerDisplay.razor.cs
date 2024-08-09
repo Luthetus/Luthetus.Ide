@@ -10,7 +10,7 @@ public partial class WidgetLayerDisplay : ComponentBase
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
 	
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
     
     /// <summary>

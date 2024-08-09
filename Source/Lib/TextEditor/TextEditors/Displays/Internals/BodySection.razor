@@ -36,7 +36,7 @@
 		    <VirtualizationDisplay VirtualizationResultWithoutTypeMask="renderBatchLocal.ViewModel.VirtualizationResult"
 		                           ItemsProviderFunc="RowSection_VirtualizationDisplayItemsProviderFunc"/>
 		                           
-			<PresentationAndSelectionSection/>
+			<PresentationAndSelectionSection RenderBatch="renderBatchLocal"/>
 		
 		    @foreach (var virtualizedRow in renderBatchLocal.ViewModel.VirtualizationResult.EntryList)
 		    {
@@ -92,11 +92,11 @@
 		        </div>
 		    }
 		
-		    <CursorDisplay @ref="CursorDisplayComponent"/>
+		    <CursorDisplay @ref="CursorDisplayComponent" RenderBatch="renderBatchLocal"/>
 		</div>
 	    @* RowSection.razor Close *@
 	
-	    <ScrollbarSection/>
+	    <ScrollbarSection RenderBatch="renderBatchLocal"/>
 	    
 	    @* TooltipDisplay.razor Open *@
 		@{
@@ -123,7 +123,7 @@
 		}
 	    @* TooltipDisplay.razor Close *@
 	    
-	    <FindOverlayDisplay/>
-	    <WidgetLayerDisplay/>
+	    <FindOverlayDisplay RenderBatch="renderBatchLocal"/>
+	    <WidgetLayerDisplay RenderBatch="renderBatchLocal"/>
 	</div>
 }

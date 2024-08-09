@@ -11,7 +11,7 @@ public partial class Footer : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
     private int _previousPositionNumber;

@@ -11,14 +11,18 @@
 	     id="@renderBatchLocal.ViewModel.GutterElementId">
 	    
 	    @*
+	    	TODO: WHAT??? I don't understand what the point of this is just use the existing one (2024-08-09)
+	    
 	        VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent
 	        The GutterSection needs to render the "VirtualizationDisplay" in order to increase its ScrollHeight in accordance with the "RowSection".
 	        The actual behavior of JavaScript Intersection Observers and invoking a providers func when a boundary comes into view gets turned off for the gutter. This is unlike the "RowSection".
 	    *@
+	    @*
 	    <VirtualizationDisplay VirtualizationResultWithoutTypeMask="GetVirtualizationResult()"
 	                           UseHorizontalVirtualization="false"
 	                           UseIntersectionObserver="false"
 	                           ItemsProviderFunc="_ => Task.CompletedTask"/>
+	    *@
 	    
 	    @foreach (var virtualizedRow in renderBatchLocal.ViewModel.VirtualizationResult.EntryList)
 	    {

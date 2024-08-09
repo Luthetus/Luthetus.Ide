@@ -44,11 +44,8 @@ public partial class Header : ComponentBase
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
-
-    [Parameter]
-    public ImmutableArray<HeaderButtonKind>? HeaderButtonKinds { get; set; }
 
 	private string _reloadButtonHtmlElementId = "luth_te_text-editor-header-reload-button";
 	

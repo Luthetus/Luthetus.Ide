@@ -14,6 +14,7 @@
 	
 	            if (model is not null)
 	            {
+	                /* (2024-08-09)
 	                var localHeaderButtonKindsList = HeaderButtonKinds;
 	
 	                if (localHeaderButtonKindsList is null)
@@ -23,6 +24,12 @@
 	                        .Cast<HeaderButtonKind>()
 	                        .ToImmutableArray();
 	                }
+	                */
+	                
+	                var localHeaderButtonKindsList = Enum
+	                    .GetValues(typeof(HeaderButtonKind))
+	                    .Cast<HeaderButtonKind>()
+	                    .ToImmutableArray();
 	
 	                foreach (var headerButtonKind in localHeaderButtonKindsList)
 	                {

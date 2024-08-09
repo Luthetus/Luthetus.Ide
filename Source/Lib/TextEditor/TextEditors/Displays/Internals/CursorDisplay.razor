@@ -43,21 +43,21 @@
 	                case MenuKind.ContextMenu:
                         if (renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride is not null)
 			            {
-			                @renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride
+			                @renderBatchLocal.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride(RenderBatch)
 			            }
 			            else
 			            {
-			                <ContextMenu/>
+			                <ContextMenu RenderBatch="RenderBatch"/>
 			            }
 	                    break;
 	                case MenuKind.AutoCompleteMenu:
 	                    if (renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride is not null)
 			            {
-			                @renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride
+			                @renderBatchLocal.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride(RenderBatch)
 			            }
 			            else
 			            {
-			                <AutocompleteMenu/>
+			                <AutocompleteMenu RenderBatch="RenderBatch"/>
 			            }
 	                    break;
 	            }

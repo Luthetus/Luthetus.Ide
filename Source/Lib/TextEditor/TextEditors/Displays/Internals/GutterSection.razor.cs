@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class GutterSection : ComponentBase
 {
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
     private string GetGutterStyleCss(int index)

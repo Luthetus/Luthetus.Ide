@@ -21,10 +21,8 @@ public partial class PresentationAndSelectionSection : ComponentBase
 	[Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
     
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
-    [CascadingParameter(Name = "ProportionalFontMeasurementsContainerElementId")]
-    public string ProportionalFontMeasurementsContainerElementId { get; set; } = null!;
 
     private List<TextEditorPresentationModel> GetTextEditorPresentationModels(
     	ImmutableList<Key<TextEditorPresentationModel>> textEditorPresentationKeys)

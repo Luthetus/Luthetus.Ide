@@ -21,7 +21,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
 	private LuthetusCommonJavaScriptInteropApi? _commonJavaScriptInteropApi;

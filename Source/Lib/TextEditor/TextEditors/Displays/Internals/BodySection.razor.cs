@@ -14,7 +14,7 @@ public partial class BodySection : ComponentBase
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
     
     public bool GlobalShowNewlines => TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines;

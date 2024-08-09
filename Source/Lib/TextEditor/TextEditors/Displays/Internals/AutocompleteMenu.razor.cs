@@ -20,18 +20,16 @@ public partial class AutocompleteMenu : ComponentBase
     [Inject]
     private IAutocompleteService AutocompleteService { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
-    [CascadingParameter(Name = "TextEditorMenuShouldTakeFocusFunc")]
-    public Func<bool> TextEditorMenuShouldTakeFocusFunc { get; set; } = null!;
 
     private ElementReference? _autocompleteMenuElementReference;
     private MenuDisplay? _autocompleteMenuComponent;
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        if (TextEditorMenuShouldTakeFocusFunc.Invoke())
-            _autocompleteMenuComponent?.SetFocusToFirstOptionInMenuAsync();
+        //if (TextEditorMenuShouldTakeFocusFunc.Invoke())
+        //    _autocompleteMenuComponent?.SetFocusToFirstOptionInMenuAsync();
 
         return base.OnAfterRenderAsync(firstRender);
     }

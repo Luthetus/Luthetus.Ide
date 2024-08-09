@@ -11,11 +11,8 @@ public partial class CommandBarDisplay : FluxorComponent
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [CascadingParameter]
-    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
-
     [Parameter, EditorRequired]
-    public Func<Task> RestoreFocusToTextEditor { get; set; } = null!;
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
     private ElementReference? _commandBarDisplayElementReference;
 
@@ -52,7 +49,7 @@ public partial class CommandBarDisplay : FluxorComponent
     		
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
-            await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
+            // await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
 
             TextEditorService.PostRedundant(
                 nameof(HandleOnKeyDown),
