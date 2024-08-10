@@ -34,7 +34,8 @@
 		    <VirtualizationDisplay VirtualizationResultWithoutTypeMask="driver._renderBatch.ViewModel.VirtualizationResult"
 		                           ItemsProviderFunc="driver.RowSection_VirtualizationDisplayItemsProviderFunc"/>
 		                           
-			<PresentationAndSelectionSection RenderBatch="driver._renderBatch"/>
+		    @driver._root._presentationAndSelectionDriver.GetRenderFragment(driver._renderBatch)
+			@*<PresentationAndSelectionSection RenderBatch="driver._renderBatch"/>*@
 		
 		    @foreach (var virtualizedRow in driver._renderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {

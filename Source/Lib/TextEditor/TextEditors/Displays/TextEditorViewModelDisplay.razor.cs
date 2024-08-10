@@ -76,6 +76,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private BodyDriver _bodyDriver;
     private HeaderDriver _headerDriver;
     private FooterDriver _footerDriver;
+    // TODO: awkward public
+    public PresentationAndSelectionDriver _presentationAndSelectionDriver;
     
     private bool _thinksTouchIsOccurring;
     private DateTime? _touchStartDateTime = null;
@@ -100,6 +102,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     	_bodyDriver = new(this);
     	_headerDriver = new(this);
     	_footerDriver = new(this);
+    	_presentationAndSelectionDriver = new(this);
     
         ConstructRenderBatch();
 
