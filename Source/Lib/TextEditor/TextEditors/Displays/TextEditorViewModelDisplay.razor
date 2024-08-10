@@ -63,10 +63,15 @@
 		    </div>
 		</div>
 		@* MeasureCharacterWidthAndRowHeight Close *@
-      
-        <BodySection @ref="_bodySectionComponent" RenderBatch="renderBatchValidated"/>
+      	
+        @if (renderBatchValidated is not null)
+        {
+        	// <BodySection @ref="_bodySectionComponent" RenderBatch="renderBatchValidated"/>
+        	@_bodyDriver.GetRenderFragment(renderBatchValidated);
+        }
         
-        @if (ViewModelDisplayOptions.IncludeGutterComponent)
+        @if (ViewModelDisplayOptions.IncludeGutterComponent &&
+        	 renderBatchValidated is not null)
         {
         	// TODO: The comment under this describes something that was believed to be a fix...
         	//       ...but the gutter is still 'desync' at times? It doesn't align with the text?

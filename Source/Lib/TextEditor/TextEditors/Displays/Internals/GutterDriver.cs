@@ -7,20 +7,13 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-/*
-Usage:
-_gutterDriver = new GutterDriver();
-_gutterDriver.GetRenderFragment(renderBatchLocal);
-
-*/
-
 public class GutterDriver
 {
-	private readonly TextEditorViewModelDisplay _textEditorViewModelDisplay;
+	private readonly TextEditorViewModelDisplay _root;
 
 	public GutterDriver(TextEditorViewModelDisplay textEditorViewModelDisplay)
 	{
-		_textEditorViewModelDisplay = textEditorViewModelDisplay;
+		_root = textEditorViewModelDisplay;
 	}
 
 	// Odd public but am middle of thinking
