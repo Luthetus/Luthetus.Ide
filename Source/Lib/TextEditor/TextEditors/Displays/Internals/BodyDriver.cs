@@ -30,7 +30,7 @@ public class BodyDriver
     
     public bool GlobalShowNewlines => _root.TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines;
     
-    public CursorDisplay? CursorDisplayComponent { get; set; }
+    // public CursorDisplay? CursorDisplayComponent { get; set; }
 
     public string GetBodyStyleCss(TextEditorRenderBatchValidated renderBatchLocal)
     {

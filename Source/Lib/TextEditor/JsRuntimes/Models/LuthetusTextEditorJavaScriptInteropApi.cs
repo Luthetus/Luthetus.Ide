@@ -147,6 +147,7 @@ public class LuthetusTextEditorJavaScriptInteropApi
          */
     }
 
+	/*
     public ValueTask InitializeTextEditorCursorIntersectionObserver(
         string intersectionObserverMapKey,
         DotNetObjectReference<CursorDisplay> cursorDisplayDotNetObjectReference,
@@ -160,6 +161,7 @@ public class LuthetusTextEditorJavaScriptInteropApi
             scrollableContainerId,
             cursorDisplayId);
     }
+    */
 
     /// <summary>
     /// TODO: This javascript function is NOT BEING USED by anyone at any point
