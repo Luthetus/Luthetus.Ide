@@ -49,7 +49,6 @@
          class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
          tabindex="-1">
 
-		@* MeasureCharacterWidthAndRowHeight.razor Open *@
 		<div class="luth_te_measure-character-width-and-row-height-wrapper luth_te_row">
 		    <div class="luth_te_measure-character-width-and-row-height luth_te_row"
 		         id="@MeasureCharacterWidthAndRowHeightElementId">
@@ -62,11 +61,9 @@
 		        }
 		    </div>
 		</div>
-		@* MeasureCharacterWidthAndRowHeight Close *@
       	
         @if (renderBatchValidated is not null)
         {
-        	// <BodySection @ref="_bodySectionComponent" RenderBatch="renderBatchValidated"/>
         	@_bodyDriver.GetRenderFragment(renderBatchValidated);
         }
         
@@ -83,10 +80,6 @@
         	//
         	// Due to 'BodySection' being 'position: absolute;',
         	// on the UI the gutter will appear to the left of the 'BodySection'
-            // <GutterSection RenderBatch="renderBatchValidated"/>
-            
-            // Umm... this code works I need to continue looking at it to know if its a good idea
-            // to move some components to being just a RenderFragment (2024-08-09)
             @_gutterDriver.GetRenderFragment(renderBatchValidated);
         }
 

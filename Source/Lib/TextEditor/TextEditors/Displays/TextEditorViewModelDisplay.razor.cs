@@ -67,7 +67,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     // private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
     private TextEditorComponentData _componentData = null!;
-    private BodySection? _bodySectionComponent;
     private TextEditorRenderBatchUnsafe _storedRenderBatch = null!;
     private TextEditorRenderBatchUnsafe? _previousRenderBatch;
     private TextEditorRenderBatchValidated? _storedRenderBatchValidated;
@@ -87,7 +86,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public int COUNT_OF_TEST_CHARACTERS => TEST_STRING_REPEAT_COUNT * TEST_STRING_FOR_MEASUREMENT.Length;
     /* MeasureCharacterWidthAndRowHeight.razor Close */
 
-    private CursorDisplay? CursorDisplay => _bodySectionComponent?.CursorDisplayComponent;
     private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
     private string ContentElementId => $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
     private string ProportionalFontMeasurementsContainerElementId => $"luth_te_text-editor-proportional-font-measurement-container_{_textEditorHtmlElementId}";
@@ -181,7 +179,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (_storedRenderBatch?.ViewModel is not null && _storedRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender)
         {
             _storedRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
-            await FocusTextEditorAsync().ConfigureAwait(false);
+            // await FocusTextEditorAsync().ConfigureAwait(false);
         }
 
         await base.OnAfterRenderAsync(firstRender);
@@ -264,13 +262,13 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         }
     }
 
-    public Task FocusTextEditorAsync()
-    {
-        if (CursorDisplay is not null)
-            return CursorDisplay.FocusAsync();
-            
-		return Task.CompletedTask;
-    }
+  public Task FocusTextEditorAsync()
+  {
+  //      if (CursorDisplay is not null)
+  //          return CursorDisplay.FocusAsync();
+  //          
+    return Task.CompletedTask;
+  }
 
     private string GetGlobalHeightInPixelsStyling()
     {
