@@ -75,6 +75,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private GutterDriver _gutterDriver;
     private BodyDriver _bodyDriver;
     private HeaderDriver _headerDriver;
+    private FooterDriver _footerDriver;
     
     private bool _thinksTouchIsOccurring;
     private DateTime? _touchStartDateTime = null;
@@ -98,6 +99,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     	_gutterDriver = new(this);
     	_bodyDriver = new(this);
     	_headerDriver = new(this);
+    	_footerDriver = new(this);
     
         ConstructRenderBatch();
 
