@@ -30,13 +30,11 @@ public class TextEditorComponentData
     public static TimeSpan MouseStoppedMovingDelay { get; } = TimeSpan.FromMilliseconds(400);
 
 	public TextEditorComponentData(
-		string proportionalFontMeasurementsContainerElementId,
 		Guid textEditorHtmlElementId,
 		ViewModelDisplayOptions viewModelDisplayOptions,
 		TextEditorOptions options,
 		IServiceProvider serviceProvider)
 	{
-		ProportionalFontMeasurementsContainerElementId = proportionalFontMeasurementsContainerElementId;
 		TextEditorHtmlElementId = textEditorHtmlElementId;
 		ViewModelDisplayOptions = viewModelDisplayOptions;
 		Options = options;
@@ -47,7 +45,6 @@ public class TextEditorComponentData
 		TextEditorComponentData otherComponentData,
 		Keymap keymap)
 	{
-		ProportionalFontMeasurementsContainerElementId = otherComponentData.ProportionalFontMeasurementsContainerElementId;
 		TextEditorHtmlElementId = otherComponentData.TextEditorHtmlElementId;
 		ViewModelDisplayOptions = otherComponentData.ViewModelDisplayOptions;
 
@@ -66,7 +63,6 @@ public class TextEditorComponentData
 	/// </summary>
 	public TextEditorOptions Options { get; init; }
 
-	public string ProportionalFontMeasurementsContainerElementId { get; }
 	public Guid TextEditorHtmlElementId { get; }
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
 	public IServiceProvider ServiceProvider { get; }

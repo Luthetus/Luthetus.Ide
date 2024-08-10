@@ -93,7 +93,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private string MeasureCharacterWidthAndRowHeightElementId => $"luth_te_measure-character-width-and-row-height_{_textEditorHtmlElementId}";
     private string ContentElementId => $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
-    private string ProportionalFontMeasurementsContainerElementId => $"luth_te_text-editor-proportional-font-measurement-container_{_textEditorHtmlElementId}";
 
 	public TextEditorComponentData ComponentData => _componentData;
 
@@ -117,7 +116,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 		//	   This is done 'OnInitialized', which for the main editor only happens one when initially opening the app.
 		//       Therefore, one can never change their keymap for the main editor.
 		_componentData = new(
-			ProportionalFontMeasurementsContainerElementId,
 			_textEditorHtmlElementId,
 			ViewModelDisplayOptions,
 			_storedRenderBatch.Options,

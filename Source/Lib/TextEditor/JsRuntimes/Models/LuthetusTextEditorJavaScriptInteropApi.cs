@@ -58,40 +58,6 @@ public class LuthetusTextEditorJavaScriptInteropApi
             input);
     }
 
-    public ValueTask<int> CalculateProportionalColumnIndex(
-        string containerElementId,
-        string parentElementId,
-        string cursorElementId,
-        double positionXInPixels,
-        double characterWidthInPixels,
-        string textOnRow)
-    {
-        return _jsRuntime.InvokeAsync<int>(
-            "luthetusTextEditor.calculateProportionalColumnIndex",
-            containerElementId,
-            parentElementId,
-            cursorElementId,
-            positionXInPixels,
-            characterWidthInPixels,
-            textOnRow);
-    }
-
-    public ValueTask<double> CalculateProportionalLeftOffset(
-        string containerElementId,
-        string parentElementId,
-        string cursorElementId,
-        string textOffsettingCursor,
-        bool shouldCreateElements)
-    {
-        return _jsRuntime.InvokeAsync<double>(
-            "luthetusTextEditor.calculateProportionalLeftOffset",
-            containerElementId,
-            parentElementId,
-            cursorElementId,
-            textOffsettingCursor,
-            shouldCreateElements);
-    }
-
     public ValueTask<RelativeCoordinates> GetRelativePosition(
         string elementId,
         double clientX,
@@ -124,17 +90,6 @@ public class LuthetusTextEditorJavaScriptInteropApi
         return _jsRuntime.InvokeAsync<TextEditorDimensions>(
             "luthetusTextEditor.getTextEditorMeasurementsInPixelsById",
             elementId);
-    }
-
-    /// <summary>
-    /// TODO: This javascript function is only invoked by other javascript functions.
-    /// </summary>
-    public ValueTask<TextEditorDimensions> GetElementMeasurementsInPixelsByElementReference(ElementReference elementReference)
-    {
-        // TODO: Not sure if one can pass a C# 'ElementReference' like this to JS interop
-        return _jsRuntime.InvokeAsync<TextEditorDimensions>(
-            "luthetusTextEditor.getElementMeasurementsInPixelsByElementReference",
-            elementReference);
     }
 
     /// <summary>

@@ -23,12 +23,6 @@
 }
 
 <div class="@cssClass" style="@cssStyle">
-    @if (renderBatchUnsafe.Options is not null && !renderBatchUnsafe.Options.UseMonospaceOptimizations)
-    {
-        <div style="display: flex; position: absolute; visibility: hidden;"
-             id="@ProportionalFontMeasurementsContainerElementId">
-        </div>
-    }
 
     @if (renderBatchUnsafe.ViewModelDisplayOptions.IncludeHeaderHelperComponent &&
     	 renderBatchValidated is not null)

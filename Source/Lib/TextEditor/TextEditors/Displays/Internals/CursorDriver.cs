@@ -30,9 +30,6 @@ public class CursorDriver : IDisposable
 		_renderBatch = renderBatch;
 		return CursorStaticRenderFragments.GetRenderFragment(this);
 	}
-    
-    public string ProportionalFontMeasurementsContainerElementId => throw new NotImplementedException(
-    	"2024-08-04 doing optimizations. Will probably just disable proportional font for the time being.");
 
     /// <summary>This property will need to be used when multi-cursor is added.</summary>
     public bool IsFocusTarget => true;
@@ -98,29 +95,6 @@ public class CursorDriver : IDisposable
         var viewModel = renderBatchLocal.ViewModel;
         var options = renderBatchLocal.Options;
 
-        if (!options.UseMonospaceOptimizations)
-        {
-            var textOffsettingCursor = model.GetTextOffsettingCursor(renderBatchLocal.ViewModel.PrimaryCursor).EscapeHtml();
-
-            var guid = Guid.NewGuid();
-
-            var nextLeftRelativeToParentInPixels = await _root.TextEditorService.JsRuntimeTextEditorApi
-                .CalculateProportionalLeftOffset(
-                    ProportionalFontMeasurementsContainerElementId,
-                    $"luth_te_proportional-font-measurement-parent_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
-                    $"luth_te_proportional-font-measurement-cursor_{viewModel.ViewModelKey.Guid}_cursor_{guid}",
-                    textOffsettingCursor,
-                    true)
-                .ConfigureAwait(false);
-
-            var previousLeftRelativeToParentInPixels = _leftRelativeToParentInPixels;
-
-            _leftRelativeToParentInPixels = nextLeftRelativeToParentInPixels;
-
-            if ((int)nextLeftRelativeToParentInPixels != (int)previousLeftRelativeToParentInPixels)
-                await InvokeAsync(StateHasChanged);
-        }
-        
         var cursorDisplayId = GetCursorDisplayId(renderBatchLocal);
 
         if (_previouslyObservedCursorDisplayId != cursorDisplayId && IsFocusTarget)
