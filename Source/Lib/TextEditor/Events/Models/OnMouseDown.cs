@@ -93,8 +93,6 @@ public class OnMouseDown : ITextEditorWork
             primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
             primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
-
             var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
                 rowAndColumnIndex.rowIndex,
                 rowAndColumnIndex.columnIndex,

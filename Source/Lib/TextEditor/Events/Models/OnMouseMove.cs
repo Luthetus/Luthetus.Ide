@@ -73,7 +73,7 @@ public class OnMouseMove : ITextEditorWork
             primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
             primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+			// EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 
             primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 		

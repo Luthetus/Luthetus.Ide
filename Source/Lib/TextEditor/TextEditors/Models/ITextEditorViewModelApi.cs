@@ -34,8 +34,6 @@ public interface ITextEditorViewModelApi
 
     public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey);
     public string? GetAllText(Key<TextEditorViewModel> viewModelKey);
-
-    public void SetCursorShouldBlink(bool cursorShouldBlink);
     #endregion
 
     #region UPDATE_METHODS
@@ -157,7 +155,4 @@ public interface ITextEditorViewModelApi
     #region DELETE_METHODS
     public void Dispose(Key<TextEditorViewModel> viewModelKey);
     #endregion
-
-    public bool CursorShouldBlink { get; }
-    public event Action? CursorShouldBlinkChanged;
 }

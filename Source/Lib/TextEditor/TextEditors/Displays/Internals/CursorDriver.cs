@@ -66,9 +66,11 @@ public class CursorDriver : IDisposable
 	        : string.Empty;
     }
 
-    public string BlinkAnimationCssClass => _root.TextEditorService.ViewModelApi.CursorShouldBlink
+    /*public string BlinkAnimationCssClass => _root.TextEditorService.ViewModelApi.CursorShouldBlink
         ? "luth_te_blink"
-        : string.Empty;
+        : string.Empty;*/
+        
+    public string BlinkAnimationCssClass => string.Empty;
 
 	/*
     protected override void OnInitialized()
@@ -383,7 +385,7 @@ public class CursorDriver : IDisposable
 
     public void HandleOnKeyDown()
     {
-        _root.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+        // _root.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
     }
 
     public async Task SetFocusToActiveMenuAsync()
@@ -413,7 +415,7 @@ public class CursorDriver : IDisposable
 
     public void Dispose()
     {
-        _root.TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
+        // _root.TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         if (IsFocusTarget)
         {
