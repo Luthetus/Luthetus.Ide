@@ -1,3 +1,4 @@
+@using System.Collections.Immutable;
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Common.RazorLib.CustomEvents.Models
@@ -24,9 +25,129 @@
         </div>
     }
 
-    @if (renderBatchUnsafe.ViewModelDisplayOptions.IncludeHeaderHelperComponent)
+    @if (renderBatchUnsafe.ViewModelDisplayOptions.IncludeHeaderHelperComponent &&
+    	 renderBatchValidated is not null)
     {
-		<Header RenderBatch="renderBatchValidated"/>
+    	_headerDriver.GetRenderFragment(renderBatchValidated);
+    
+		<div class="luth_te_text-editor-header @TextEditorService.ThemeCssClassString">
+		    <div class="luth_te_text-editor-header-listing"
+		         style="overflow-y: hidden;">
+		        @{
+		            var model = TextEditorService.TextEditorStateWrap.Value;
+		
+		            if (model is not null)
+		            {
+		                /* (2024-08-09)
+		                var localHeaderButtonKindsList = HeaderButtonKinds;
+		
+		                if (localHeaderButtonKindsList is null)
+		                {
+		                    localHeaderButtonKindsList = Enum
+		                        .GetValues(typeof(HeaderButtonKind))
+		                        .Cast<HeaderButtonKind>()
+		                        .ToImmutableArray();
+		                }
+		                */
+		                
+		                var localHeaderButtonKindsList = Enum
+		                    .GetValues(typeof(HeaderButtonKind))
+		                    .Cast<HeaderButtonKind>()
+		                    .ToImmutableArray();
+		
+		                foreach (var headerButtonKind in localHeaderButtonKindsList)
+		                {
+		                    <div class="luth_te_text-editor-header-entry">
+		                        @switch (headerButtonKind)
+		                        {
+		                            case HeaderButtonKind.Cut:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoCutOnClick">
+		                                    <IconNote />
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Copy:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoCopyOnClick">
+		                                    <IconCopy />
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Paste:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoPasteOnClick">
+		                                    <IconClippy />
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Undo:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                        disabled=@_headerDriver.GetUndoDisabledAttribute()
+		                                		@onclick="_headerDriver.DoUndoOnClick">
+		                                    <IconArrowLeft />
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Redo:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                        disabled=@_headerDriver.GetRedoDisabledAttribute()
+		                                		@onclick="_headerDriver.DoRedoOnClick">
+		                                    <IconArrowRight />
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Save:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoSaveOnClick">
+		                                    <IconSave />
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.SelectAll:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoSelectAllOnClick">
+		                                    <IconListSelection />
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.PeekWindowDisplay:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.ShowWatchWindowDisplayDialogOnClick">
+		                                    <IconProjectDependencies />
+		                                </button>
+		                                break;
+		                        }
+		                    </div>
+		                }
+		
+		                <div class="luth_te_text-editor-header-entry">
+		                    <button title="Measure editor size"
+		                            class="luth_button"
+		                    		@onclick="_headerDriver.DoRemeasureOnClick">
+		                        <IconSymbolRuler />
+		                    </button>
+		                </div>
+		                
+		                <div class="luth_te_text-editor-header-entry">
+		                    <button title="Reload"
+		                            class="luth_button"
+		                            id="@_headerDriver._reloadButtonHtmlElementId"
+		                    		@onclick="_headerDriver.DoReloadOnClick">
+		                        <IconRefresh />
+		                    </button>
+		                </div>
+		            }
+		            else
+		            {
+		                <div class="luth_te_text-editor-header-entry luth_te_text-editor-header-file-sizing">
+		                    <div>The @nameof(TextEditorModel) was null</div>
+		                </div>
+		            }
+		        }
+		    </div>
+		</div>
     }
 
     <div @onclick="FocusTextEditorAsync"
