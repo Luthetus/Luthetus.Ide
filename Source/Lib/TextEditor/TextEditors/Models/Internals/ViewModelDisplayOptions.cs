@@ -19,8 +19,8 @@ public class ViewModelDisplayOptions
     /// TabIndex is used for the html attribute named: 'tabindex'
     /// </summary>
     public int TabIndex { get; set; } = -1;
-    public RenderFragment? ContextMenuRenderFragmentOverride { get; set; }
-    public RenderFragment? AutoCompleteMenuRenderFragmentOverride { get; set; }
+    public RenderFragment<TextEditorRenderBatchValidated>? ContextMenuRenderFragmentOverride { get; set; }
+    public RenderFragment<TextEditorRenderBatchValidated>? AutoCompleteMenuRenderFragmentOverride { get; set; }
 
     /// <summary>
     /// If left null, the default <see cref="HandleAfterOnKeyDownAsync"/> will be used.

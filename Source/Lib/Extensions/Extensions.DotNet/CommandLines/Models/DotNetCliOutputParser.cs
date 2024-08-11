@@ -1,248 +1,335 @@
 using System.Text;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 
 namespace Luthetus.Extensions.DotNet.CommandLines.Models;
 
-public class DotNetCliOutputParser : IOutputParser
+public class DotNetCliOutputParser
 {
-	public List<List<TextEditorTextSpan>> ErrorList { get; private set; }
+	private readonly object _listLock = new();
+	
+	private DotNetRunParseResult _dotNetRunParseResult = new();
+
+	private bool _hasSeenTextIndicatorForTheList;
+	
+	public event Action? StateChanged;
+	
+	/// <summary>
+	/// This immutable list is calculated everytime, so if necessary invoke once and then store the result.
+	/// </summary>
+	public DotNetRunParseResult GetDotNetRunParseResult()
+	{
+		lock (_listLock)
+		{
+			return _dotNetRunParseResult;
+		}
+	}
 
 	public List<ProjectTemplate>? ProjectTemplateList { get; private set; }
-
 	public List<string>? TheFollowingTestsAreAvailableList { get; private set; }
-	private bool _hasSeenTextIndicatorForTheList;
-
 	public NewListModel NewListModelSession { get; private set; }
-
-	public Task OnAfterCommandStarted(TerminalCommand terminalCommand)
+	
+	/// <summary>The results can be retrieved by invoking <see cref="GetDiagnosticLineList"/></summary>
+	public void ParseOutputEntireDotNetRun(string output)
 	{
-		// Clear data
-		if (terminalCommand.FormattedCommand.Tag == TagConstants.Run)
-			ErrorList = new();
-		else if (terminalCommand.FormattedCommand.Tag == TagConstants.NewList)
+		var stringWalker = new StringWalker(
+			new ResourceUri("/__LUTHETUS__/DotNetRunOutputParser.txt"),
+			output);
+			
+		var diagnosticLineList = new List<DiagnosticLine>();
+		
+		var diagnosticLine = new DiagnosticLine
 		{
-			NewListModelSession = new();
-		}
-		else if (terminalCommand.FormattedCommand.Tag == TagConstants.Test)
-		{
-			TheFollowingTestsAreAvailableList = new();
-			_hasSeenTextIndicatorForTheList = false;
-		}
-
-		return Task.CompletedTask;
-	}
-
-	public List<TextEditorTextSpan> OnAfterOutputLine(TerminalCommand terminalCommand, string outputLine)
-	{
-		if (terminalCommand.FormattedCommand.Tag == TagConstants.Run)
-			return ParseOutputLineDotNetRun(terminalCommand, outputLine);
-		else if (terminalCommand.FormattedCommand.Tag == TagConstants.NewList)
-			return ParseOutputLineDotNetNewList(terminalCommand, outputLine);
-		else if (terminalCommand.FormattedCommand.Tag == TagConstants.Test)
-			return ParseOutputLineDotNetTestListTests(terminalCommand, outputLine);
-
-		return new();
-	}
-
-	public List<TextEditorTextSpan> ParseOutputLineDotNetRun(TerminalCommand terminalCommand, string outputLine)
-	{
-		var stringWalker = new StringWalker(new ResourceUri("/__LUTHETUS__/DotNetRunOutputParser.txt"), outputLine);
-		var textSpanList = new List<TextEditorTextSpan>();
-
-		TextEditorTextSpan errorKeywordAndErrorCodeTextSpan = new(0, 0, 0, ResourceUri.Empty, string.Empty);
-
+			StartInclusiveIndex = stringWalker.PositionIndex
+		};
+			
+		int? startInclusiveIndex = null;
+		int? endExclusiveIndex = null;
+		
+		var badState = false;
+			
 		while (!stringWalker.IsEof)
 		{
-			// Step 1: Read filePathTextSpan
+			// Once inside this while loop for the first time
+			// stringWalker.CurrentCharacter == the first character of the output
+			
+			if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
 			{
-				var startPositionInclusiveFilePath = stringWalker.PositionIndex;
-
-				while (true)
+				if (stringWalker.CurrentCharacter == '\r' &&
+					stringWalker.NextCharacter == '\n')
 				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == '(')
-					{
-						_ = stringWalker.BacktrackCharacter();
-
-						textSpanList.Add(new TextEditorTextSpan(
-							startPositionInclusiveFilePath,
-							stringWalker,
-							(byte)GenericDecorationKind.None));
-
-						break;
-					}
-					else if (stringWalker.IsEof)
-					{
-						break;
-					}
+					_ = stringWalker.ReadCharacter();
 				}
+
+				// Make a decision
+				if (diagnosticLine.IsValid)
+				{
+					diagnosticLine.EndExclusiveIndex = stringWalker.PositionIndex;
+					
+					diagnosticLine.Text = stringWalker.SourceText.Substring(
+						diagnosticLine.StartInclusiveIndex,
+						diagnosticLine.EndExclusiveIndex - diagnosticLine.StartInclusiveIndex);
+						
+					var diagnosticLineKindText = stringWalker.SourceText.Substring(
+						diagnosticLine.DiagnosticKindTextSpan.StartInclusiveIndex,
+						diagnosticLine.DiagnosticKindTextSpan.EndExclusiveIndex -
+							diagnosticLine.DiagnosticKindTextSpan.StartInclusiveIndex);
+							
+					if (string.Equals(diagnosticLineKindText, nameof(DiagnosticLineKind.Warning), StringComparison.OrdinalIgnoreCase))
+						diagnosticLine.DiagnosticLineKind = DiagnosticLineKind.Warning;
+					else if (string.Equals(diagnosticLineKindText, nameof(DiagnosticLineKind.Error), StringComparison.OrdinalIgnoreCase))
+						diagnosticLine.DiagnosticLineKind = DiagnosticLineKind.Error;
+					else
+						diagnosticLine.DiagnosticLineKind = DiagnosticLineKind.Other;
+				
+					diagnosticLineList.Add(diagnosticLine);
+				}
+				
+				diagnosticLine = new DiagnosticLine
+				{
+					StartInclusiveIndex = stringWalker.PositionIndex
+				};
+				
+				startInclusiveIndex = null;
+				endExclusiveIndex = null;
+				badState = false;
 			}
-
-			// Step 2: Read rowAndColumnNumberTextSpan
+			else
 			{
-				var startPositionInclusiveRowAndColumnNumber = stringWalker.PositionIndex;
-
-				while (true)
+				if (diagnosticLine.FilePathTextSpan is null)
 				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == ')')
+					if (startInclusiveIndex is null) // Start: Char at index 0
 					{
-						textSpanList.Add(new TextEditorTextSpan(
-							startPositionInclusiveRowAndColumnNumber,
-							stringWalker,
-							(byte)GenericDecorationKind.None));
-
-						break;
+						startInclusiveIndex = stringWalker.PositionIndex;
 					}
-					else if (stringWalker.IsEof)
+					else if (endExclusiveIndex is null) // Algorithm: start at position 0 inclusive until '(' exclusive
 					{
-						break;
-					}
-				}
-			}
-
-			// Step 3: Read errorKeywordAndErrorCode
-			{
-				// Consider having Step 2 use ':' as its exclusive delimiter.
-				// Because now a step is needed to skip over some text.
-				{
-					if (stringWalker.CurrentCharacter == ':')
-						_ = stringWalker.ReadCharacter();
-
-					_ = stringWalker.ReadWhitespace();
-				}
-
-				var startPositionInclusiveErrorKeywordAndErrorCode = stringWalker.PositionIndex;
-
-				while (true)
-				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == ':')
-					{
-						_ = stringWalker.BacktrackCharacter();
-
-						errorKeywordAndErrorCodeTextSpan = new TextEditorTextSpan(
-							startPositionInclusiveErrorKeywordAndErrorCode,
-							stringWalker,
-							(byte)TerminalDecorationKind.Warning);
-
-						// I would rather a warning be incorrectly syntax highlighted as an error,
-						// than for an error to be incorrectly syntax highlighted as a warning.
-						// Therefore, presume warning, then check if the text isn't "warning".
-						if (!errorKeywordAndErrorCodeTextSpan.GetText().StartsWith("warning", StringComparison.InvariantCultureIgnoreCase))
+						if (stringWalker.CurrentCharacter == '(')
 						{
-							errorKeywordAndErrorCodeTextSpan = errorKeywordAndErrorCodeTextSpan with
-							{
-								DecorationByte = (byte)TerminalDecorationKind.Error
-							};
+							endExclusiveIndex = stringWalker.PositionIndex;
+							
+							diagnosticLine.FilePathTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+							
+							_ = stringWalker.BacktrackCharacter();
 						}
-
-						break;
-					}
-					else if (stringWalker.IsEof)
-					{
-						break;
 					}
 				}
-			}
-
-			// Step 4: Read errorMessage
-			{
-				// A step is needed to skip over some text.
+				else if (diagnosticLine.LineAndColumnIndicesTextSpan is null)
 				{
-					if (stringWalker.CurrentCharacter == ':')
+					if (startInclusiveIndex is null)
+					{
+						startInclusiveIndex = stringWalker.PositionIndex;
+					}
+					else if (endExclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ')')
+						{
+							endExclusiveIndex = stringWalker.PositionIndex + 1;
+							
+							diagnosticLine.LineAndColumnIndicesTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+						}
+					}
+				}
+				else if (diagnosticLine.DiagnosticKindTextSpan is null)
+				{
+					if (startInclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ':')
+						{
+							// Skip the ':'
+							_ = stringWalker.ReadCharacter();
+							// Skip the ' '
+							_ = stringWalker.ReadCharacter();
+							
+							startInclusiveIndex = stringWalker.PositionIndex;
+						}
+					}
+					else if (endExclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ' ')
+						{
+							endExclusiveIndex = stringWalker.PositionIndex;
+							
+							diagnosticLine.DiagnosticKindTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+						}
+					}
+				}
+				else if (diagnosticLine.DiagnosticCodeTextSpan is null)
+				{
+					if (startInclusiveIndex is null)
+					{
+						startInclusiveIndex = stringWalker.PositionIndex;
+					}
+					else if (endExclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ':')
+						{
+							endExclusiveIndex = stringWalker.PositionIndex;
+							
+							diagnosticLine.DiagnosticCodeTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+						}
+					}
+				}
+				else if (diagnosticLine.MessageTextSpan is null)
+				{
+					if (startInclusiveIndex is null)
+					{
+						// Skip the ' '
 						_ = stringWalker.ReadCharacter();
-
-					_ = stringWalker.ReadWhitespace();
-				}
-
-				var startPositionInclusiveErrorMessage = stringWalker.PositionIndex;
-
-				while (true)
-				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == '[')
-					{
-						_ = stringWalker.BacktrackCharacter();
-
-						textSpanList.Add(new TextEditorTextSpan(
-							startPositionInclusiveErrorMessage,
-							stringWalker,
-							errorKeywordAndErrorCodeTextSpan.DecorationByte));
-
-						break;
+					
+						startInclusiveIndex = stringWalker.PositionIndex;
 					}
-					else if (stringWalker.IsEof)
+					else if (endExclusiveIndex is null)
 					{
-						break;
+						if (badState)
+						{
+							_ = stringWalker.ReadCharacter();
+							continue;
+						}
+						
+						if (stringWalker.CurrentCharacter == ']' &&
+							stringWalker.NextCharacter == '\n' || stringWalker.NextCharacter == '\r')
+						{
+							while (stringWalker.CurrentCharacter != '[')
+							{
+								if (stringWalker.BacktrackCharacter() == ParserFacts.END_OF_FILE)
+								{
+									badState = true;
+									break;
+								}
+							}
+
+							if (!badState)
+							{
+								_ = stringWalker.BacktrackCharacter();
+								endExclusiveIndex = stringWalker.PositionIndex;
+								
+								diagnosticLine.MessageTextSpan = new(
+									startInclusiveIndex.Value,
+									endExclusiveIndex.Value,
+									stringWalker.SourceText);
+						
+								startInclusiveIndex = null;
+								endExclusiveIndex = null;
+							}
+						}
+					}
+				}
+				else if (diagnosticLine.ProjectTextSpan is null)
+				{
+					if (startInclusiveIndex is null)
+					{
+						// Skip the ' '
+						_ = stringWalker.ReadCharacter();
+						// Skip the '['
+						_ = stringWalker.ReadCharacter();
+						
+						startInclusiveIndex = stringWalker.PositionIndex;
+					}
+					else if (endExclusiveIndex is null)
+					{
+						if (stringWalker.CurrentCharacter == ']')
+						{
+							endExclusiveIndex = stringWalker.PositionIndex;
+							
+							diagnosticLine.ProjectTextSpan = new(
+								startInclusiveIndex.Value,
+								endExclusiveIndex.Value,
+								stringWalker.SourceText);
+							
+							startInclusiveIndex = null;
+							endExclusiveIndex = null;
+						}
 					}
 				}
 			}
-
-			// Step 5: Read project file path
-			{
-				var startPositionInclusiveProjectFilePath = stringWalker.PositionIndex;
-
-				while (true)
-				{
-					var character = stringWalker.ReadCharacter();
-
-					if (character == ']')
-					{
-						textSpanList.Add(new TextEditorTextSpan(
-							startPositionInclusiveProjectFilePath,
-							stringWalker,
-							(byte)GenericDecorationKind.None));
-
-						break;
-					}
-					else if (stringWalker.IsEof)
-					{
-						break;
-					}
-				}
-			}
-
+		
 			_ = stringWalker.ReadCharacter();
 		}
-
-		if (errorKeywordAndErrorCodeTextSpan.DecorationByte != 0)
+		
+		lock (_listLock)
 		{
-			for (int i = textSpanList.Count - 1; i >= 0; i--)
+			var allDiagnosticLineList = diagnosticLineList.OrderBy(x => x.DiagnosticLineKind).ToImmutableList();
+		
+			_dotNetRunParseResult = new()
 			{
-				textSpanList[i] = textSpanList[i] with
-				{
-					DecorationByte = errorKeywordAndErrorCodeTextSpan.DecorationByte
-				};
-			}
+				AllDiagnosticLineList = allDiagnosticLineList,
+				ErrorList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Error).ToImmutableList(),
+				WarningList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Warning).ToImmutableList(),
+				OtherList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Other).ToImmutableList(),
+			};
 		}
-
-		if (errorKeywordAndErrorCodeTextSpan.DecorationByte == (byte)TerminalDecorationKind.Error)
-		{
-			ErrorList.Add(textSpanList);
-		}
-
-		return textSpanList;
+		
+		StateChanged?.Invoke();
 	}
 
-	public List<TextEditorTextSpan> ParseOutputLineDotNetNewList(TerminalCommand terminalCommand, string outputLine)
+	/// <summary>
+	/// (NOTE: this has been fixed but the note is being left here as its a common issue with this code)
+	/// ================================================================================================
+	/// The following output breaks because the 'Language' for template name of 'dotnet gitignore file'
+	/// is left empty.
+	///
+	/// Template Name                             Short Name                  Language    Tags                                                                         
+	/// ----------------------------------------  --------------------------  ----------  -----------------------------------------------------------------------------
+	/// Console App                               console                     [C#],F#,VB  Common/Console                                                               
+	/// dotnet gitignore file                     gitignore,.gitignore                    Config      
+	/// </summary>
+	public List<TextEditorTextSpan> ParseOutputLineDotNetNewList(string outputEntire)
 	{
+		// TODO: This seems to have provided the desired output...
+		//       ...the code is quite nasty but I'm not feeling well,
+		//       so I'm going to leave it like this for now.
+		//       Some edge case in the future will probably break this.
+	
+		NewListModelSession = new();
+	
 		// The columns are titled: { "Template Name", "Short Name", "Language", "Tags" }
 		var keywordTags = "Tags";
 
 		var resourceUri = ResourceUri.Empty;
-		var stringWalker = new StringWalker(resourceUri, outputLine);
+		var stringWalker = new StringWalker(resourceUri, outputEntire);
+
+		var shouldCountSpaceBetweenColumns = true;
+		var spaceBetweenColumnsCount = 0;
+	
+		var isFirstColumn = true;
+		
+		var firstLocateDashes = true;
 
 		while (!stringWalker.IsEof)
 		{
+			var whitespaceWasRead = false;
+
+		
 			if (NewListModelSession.ShouldLocateKeywordTags)
 			{
 				switch (stringWalker.CurrentCharacter)
@@ -266,13 +353,22 @@ public class DotNetCliOutputParser : IOutputParser
 					while (!stringWalker.IsEof)
 					{
 						if (stringWalker.CurrentCharacter != '-')
+						{
 							_ = stringWalker.ReadCharacter();
+							
+							if (!firstLocateDashes && shouldCountSpaceBetweenColumns)
+								spaceBetweenColumnsCount++;
+						}
 						else
+						{
 							break;
+						}
 					}
 
 					NewListModelSession.ShouldLocateDashes = false;
 				}
+				
+				shouldCountSpaceBetweenColumns = false;
 
 				// Count the '-' (dashes) to know the character length of each column.
 				if (stringWalker.CurrentCharacter != '-')
@@ -303,15 +399,48 @@ public class DotNetCliOutputParser : IOutputParser
 			}
 			else
 			{
+				/*
+				var startPositionIndex = stringWalker.PositionIndex;
+				
+				var templateNameStartInclusiveIndex = 0;
+				var templateNameEndExclusiveIndex = templateNameStartInclusiveIndex + NewListModelSession.LengthOfTemplateNameColumn;
+				
+				var shortNameStartInclusiveIndex = templateNameEndExclusiveIndex + spaceBetweenColumnsCount;
+				var shortNameEndExclusiveIndex = shortNameStartInclusiveIndex + NewListModelSession.LengthOfShortNameColumn;
+				
+				var languageStartInclusiveIndex = shortNameEndExclusiveIndex + spaceBetweenColumnsCount;
+				var languageEndExclusiveIndex = languageStartInclusiveIndex + NewListModelSession.LengthOfLanguageColumn;
+				
+				var tagsStartInclusiveIndex = languageEndExclusiveIndex + spaceBetweenColumnsCount;
+				var tagsEndExclusiveIndex = tagsStartInclusiveIndex + NewListModelSession.LengthOfTagsColumn;
+				
+				var columnWasEmpty = false;
+				*/
+				
+				if (isFirstColumn)
+					isFirstColumn = false;
+				else
+					stringWalker.ReadRange(spaceBetweenColumnsCount);
+
+				/*			
 				// Skip whitespace
 				while (!stringWalker.IsEof)
 				{
 					// TODO: What if a column starts with a lot of whitespace?
 					if (char.IsWhiteSpace(stringWalker.CurrentCharacter))
+					{
 						_ = stringWalker.ReadCharacter();
+						whitespaceWasRead = true;
+						
+						if (startPositionIndex + NewListModelSession.ColumnLength < stringWalker.PositionIndex)
+							columnWasEmpty = true;
+					}
 					else
+					{
 						break;
+					}
 				}
+				*/
 
 				for (int i = 0; i < NewListModelSession.ColumnLength; i++)
 				{
@@ -356,12 +485,15 @@ public class DotNetCliOutputParser : IOutputParser
 
 					NewListModelSession.ProjectTemplate = new(null, null, null, null);
 					NewListModelSession.ColumnLength = NewListModelSession.LengthOfTemplateNameColumn;
+					
+					isFirstColumn = true;
 				}
 
 				NewListModelSession.ColumnBuilder = new();
 			}
 
-			_ = stringWalker.ReadCharacter();
+			if (!whitespaceWasRead)
+				_ = stringWalker.ReadCharacter();
 		}
 
 		ProjectTemplateList = NewListModelSession.ProjectTemplateList;
@@ -369,7 +501,7 @@ public class DotNetCliOutputParser : IOutputParser
 		return new();
 	}
 
-	public List<TextEditorTextSpan> ParseOutputLineDotNetTestListTests(TerminalCommand terminalCommand, string outputLine)
+	public List<TextEditorTextSpan> ParseOutputLineDotNetTestListTests(TerminalCommandParsed terminalCommandParsed, string outputLine)
 	{
 		if (!_hasSeenTextIndicatorForTheList)
 		{
@@ -386,18 +518,6 @@ public class DotNetCliOutputParser : IOutputParser
 			TheFollowingTestsAreAvailableList.Add(outputLine);
 
 		return new();
-	}
-
-	public Task OnAfterCommandFinished(TerminalCommand terminalCommand)
-	{
-		return Task.CompletedTask;
-	}
-
-	public static class TagConstants
-	{
-		public const string Test = "test";
-		public const string NewList = "info";
-		public const string Run = "run";
 	}
 
 	public class NewListModel

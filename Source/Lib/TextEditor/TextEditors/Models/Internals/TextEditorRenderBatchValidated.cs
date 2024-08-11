@@ -18,6 +18,9 @@ public class TextEditorRenderBatchValidated : ITextEditorRenderBatch
         HeightCssStyle = textEditorRenderBatchUnsafe.HeightCssStyle;
         GutterWidthInPixels = textEditorRenderBatchUnsafe.GutterWidthInPixels;
 		IsValid = textEditorRenderBatchUnsafe.IsValid;
+		// Func<Task> RestoreFocusToTextEditor
+	    // Func<MenuKind, bool, Task> SetShouldDisplayMenuAsync
+	    // ImmutableArray<HeaderButtonKind>? HeaderButtonKinds
     }
 
     public TextEditorModel Model { get; }

@@ -14,6 +14,8 @@ public interface ITextEditorViewModelApi
         Key<TextEditorViewModel> textEditorViewModelKey,
         ResourceUri resourceUri,
         Category category);
+        
+    public void Register(TextEditorViewModel viewModel);
     #endregion
 
     #region READ_METHODS
@@ -32,8 +34,6 @@ public interface ITextEditorViewModelApi
 
     public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey);
     public string? GetAllText(Key<TextEditorViewModel> viewModelKey);
-
-    public void SetCursorShouldBlink(bool cursorShouldBlink);
     #endregion
 
     #region UPDATE_METHODS
@@ -132,6 +132,13 @@ public interface ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier);
+        
+    public void RevealCursor(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier cursorModifier);
 
     public void CalculateVirtualizationResult(
         ITextEditorEditContext editContext,
@@ -155,7 +162,4 @@ public interface ITextEditorViewModelApi
     #region DELETE_METHODS
     public void Dispose(Key<TextEditorViewModel> viewModelKey);
     #endregion
-
-    public bool CursorShouldBlink { get; }
-    public event Action? CursorShouldBlinkChanged;
 }

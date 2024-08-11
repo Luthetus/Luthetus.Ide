@@ -1,6 +1,10 @@
+@using Luthetus.Common.RazorLib.Icons.Models
 @using Luthetus.Ide.RazorLib.FileSystems.Displays
 
 <div title="@NamespacePath.AbsolutePath.Value">
-    <FileIconDisplay AbsolutePath="NamespacePath.AbsolutePath"/>
+	
+	@{ var iconDriver = new IconDriver(WidthInPixels, HeightInPixels); }
+	
+	@FileIconStaticRenderFragments.GetRenderFragment((iconDriver, NamespacePath.AbsolutePath))
     @NamespacePath.AbsolutePath.NameWithExtension
 </div>

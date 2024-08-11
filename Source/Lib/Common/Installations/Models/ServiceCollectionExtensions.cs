@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton(sp => new BlockingBackgroundTaskWorker(
             sp.GetRequiredService<IBackgroundTaskService>(),
             sp.GetRequiredService<ILoggerFactory>()));
-
+            
         if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
         {
             services.AddHostedService(sp => sp.GetRequiredService<ContinuousBackgroundTaskWorker>());

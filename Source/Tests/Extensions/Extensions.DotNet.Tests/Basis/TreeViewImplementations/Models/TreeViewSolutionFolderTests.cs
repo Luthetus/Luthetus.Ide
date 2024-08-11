@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
+using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.DotNet.Tests.Basis.TreeViewImplementations.Models;
 
@@ -28,6 +29,7 @@ public class TreeViewSolutionFolderTests : ExtensionsDotNetTestBase
         Test_RegisterServices(out var serviceProvider);
         Test_CreateFileSystem(serviceProvider);
 
+        var dotNetComponentRenderers = serviceProvider.GetRequiredService<IDotNetComponentRenderers>();
         var ideComponentRenderers = serviceProvider.GetRequiredService<IIdeComponentRenderers>();
         var commonComponentRenderers = serviceProvider.GetRequiredService<ICommonComponentRenderers>();
         var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
@@ -47,6 +49,7 @@ public class TreeViewSolutionFolderTests : ExtensionsDotNetTestBase
 
         var treeView = new TreeViewSolutionFolder(
             dotNetSolutionFolder,
+            dotNetComponentRenderers,
             ideComponentRenderers,
             commonComponentRenderers,
             fileSystemProvider,
@@ -55,6 +58,7 @@ public class TreeViewSolutionFolderTests : ExtensionsDotNetTestBase
             isExpanded);
 
         Assert.Equal(treeView.Item, dotNetSolutionFolder);
+        Assert.Equal(treeView.DotNetComponentRenderers, dotNetComponentRenderers);
         Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
         Assert.Equal(treeView.CommonComponentRenderers, commonComponentRenderers);
         Assert.Equal(treeView.FileSystemProvider, fileSystemProvider);

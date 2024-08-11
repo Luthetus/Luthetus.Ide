@@ -1,4 +1,11 @@
-﻿<div title="@TreeViewText.Key.Guid">
-    <IconSymbolKey/>
+<div title="@TreeViewText.Key.Guid">
+
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
+
+    @IconSymbolKeyFragment.Render(iconDriver)
     @TreeViewText.Item
 </div>

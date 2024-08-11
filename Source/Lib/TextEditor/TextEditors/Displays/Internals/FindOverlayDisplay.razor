@@ -1,7 +1,15 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-@if (RenderBatch.ViewModel!.ShowFindOverlay)
+
+@{ var renderBatchLocal = RenderBatch; }
+
+@if (renderBatchLocal is not null &&
+	 renderBatchLocal.ViewModel.ShowFindOverlay)
 {
-    <div class="luth_te_find-overlay"
+	var iconDriver = new IconDriver(
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+
+	<div class="luth_te_find-overlay"
          @onmousedown:stopPropagation="true"
          @onmousemove:stopPropagation="true"
          @ondblclick:stopPropagation="true"
@@ -14,14 +22,14 @@
             <input @bind="InputValue"
                    @bind:event="oninput"
                    @onfocus="HandleOnFocus"
-                   id="@RenderBatch.ViewModel.FindOverlayId"
+                   id="@renderBatchLocal.ViewModel.FindOverlayId"
                    class="luth_ide_input luth_ide_input-text"
                    placeholder="Find..." />
          </div>
 
         <div class="luth_te_find-overlay-bottom-row">
             @{
-                var findOverlayPresentationModel = RenderBatch.Model!.PresentationModelList.FirstOrDefault(
+                var findOverlayPresentationModel = renderBatchLocal.Model!.PresentationModelList.FirstOrDefault(
                     x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
                 var completedCalculation = findOverlayPresentationModel?.CompletedCalculation;
@@ -65,7 +73,7 @@
                             @ondblclick:stopPropagation="true"
                             @oncontextmenu:stopPropagation="true"
                             @onkeydown:stopPropagation="true">
-                        <IconArrowDown />
+                        @IconArrowDownFragment.Render(iconDriver)
                     </button>
 
 					<button class="luth_button"
@@ -77,10 +85,11 @@
                             @ondblclick:stopPropagation="true"
                             @oncontextmenu:stopPropagation="true"
                             @onkeydown:stopPropagation="true">
-                        <IconArrowUp />
+                        @IconArrowUpFragment.Render(iconDriver)
                     </button>
                 </div>
             }
         </div>
     </div>
 }
+

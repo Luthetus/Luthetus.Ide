@@ -64,6 +64,22 @@ public partial record TextEditorState
             TextEditorState inState,
             RegisterViewModelAction registerViewModelAction)
         {
+        	// The category and ViewModelKey do NOT need to be a compound unique identifier
+        	// Only check for the 'ViewModelKey' already existing.
+        	//
+        	// Category is just a way to filter a list of view models.
+        	//
+        	// TODO: What is the difference between Category and Group? I'm asking this to myself. If their redundant then get rid of one. Otherwise...
+        	//       ...write down the justification for both existing before you forget again.
+        	//
+        	// I think I made both Category and Group because:
+        	// Category describes relationships between view models
+        	//
+        	// Group is solely meant to provide tab UI.
+        	// 	- One can put a view model of any category into a group.
+        	// 	- Or one could add dropzone logic that validates the category of a 'being dragged view model'
+        	//     	  to ensure it belongs in that group.
+        	
             var inViewModel = inState.ViewModelList.FirstOrDefault(
                 x => x.ViewModelKey == registerViewModelAction.ViewModelKey);
 
@@ -88,6 +104,25 @@ public partial record TextEditorState
                 registerViewModelAction.Category);
 
             var outViewModelList = inState.ViewModelList.Add(viewModel);
+
+            return inState with { ViewModelList = outViewModelList };
+        }
+        
+        [ReducerMethod]
+        public static TextEditorState ReduceRegisterViewModelExistingAction(
+            TextEditorState inState,
+            RegisterViewModelExistingAction registerViewModelExistingAction)
+        {
+            var inViewModel = inState.ViewModelList.FirstOrDefault(
+                x => x.ViewModelKey == registerViewModelExistingAction.ViewModel.ViewModelKey);
+
+            if (inViewModel is not null)
+                return inState;
+
+            if (registerViewModelExistingAction.ViewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
+                throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
+
+            var outViewModelList = inState.ViewModelList.Add(registerViewModelExistingAction.ViewModel);
 
             return inState with { ViewModelList = outViewModelList };
         }

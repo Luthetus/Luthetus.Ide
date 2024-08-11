@@ -1,8 +1,8 @@
+using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
-using Microsoft.JSInterop;
-using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
-using Microsoft.AspNetCore.Components;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Displays;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -58,40 +58,6 @@ public class LuthetusTextEditorJavaScriptInteropApi
             input);
     }
 
-    public ValueTask<int> CalculateProportionalColumnIndex(
-        string containerElementId,
-        string parentElementId,
-        string cursorElementId,
-        double positionXInPixels,
-        double characterWidthInPixels,
-        string textOnRow)
-    {
-        return _jsRuntime.InvokeAsync<int>(
-            "luthetusTextEditor.calculateProportionalColumnIndex",
-            containerElementId,
-            parentElementId,
-            cursorElementId,
-            positionXInPixels,
-            characterWidthInPixels,
-            textOnRow);
-    }
-
-    public ValueTask<double> CalculateProportionalLeftOffset(
-        string containerElementId,
-        string parentElementId,
-        string cursorElementId,
-        string textOffsettingCursor,
-        bool shouldCreateElements)
-    {
-        return _jsRuntime.InvokeAsync<double>(
-            "luthetusTextEditor.calculateProportionalLeftOffset",
-            containerElementId,
-            parentElementId,
-            cursorElementId,
-            textOffsettingCursor,
-            shouldCreateElements);
-    }
-
     public ValueTask<RelativeCoordinates> GetRelativePosition(
         string elementId,
         double clientX,
@@ -127,17 +93,6 @@ public class LuthetusTextEditorJavaScriptInteropApi
     }
 
     /// <summary>
-    /// TODO: This javascript function is only invoked by other javascript functions.
-    /// </summary>
-    public ValueTask<TextEditorDimensions> GetElementMeasurementsInPixelsByElementReference(ElementReference elementReference)
-    {
-        // TODO: Not sure if one can pass a C# 'ElementReference' like this to JS interop
-        return _jsRuntime.InvokeAsync<TextEditorDimensions>(
-            "luthetusTextEditor.getElementMeasurementsInPixelsByElementReference",
-            elementReference);
-    }
-
-    /// <summary>
     /// TODO: This is a javascript object
     /// </summary>
     public void CursorIntersectionObserverMap()
@@ -147,6 +102,7 @@ public class LuthetusTextEditorJavaScriptInteropApi
          */
     }
 
+	/*
     public ValueTask InitializeTextEditorCursorIntersectionObserver(
         string intersectionObserverMapKey,
         DotNetObjectReference<CursorDisplay> cursorDisplayDotNetObjectReference,
@@ -160,6 +116,7 @@ public class LuthetusTextEditorJavaScriptInteropApi
             scrollableContainerId,
             cursorDisplayId);
     }
+    */
 
     /// <summary>
     /// TODO: This javascript function is NOT BEING USED by anyone at any point

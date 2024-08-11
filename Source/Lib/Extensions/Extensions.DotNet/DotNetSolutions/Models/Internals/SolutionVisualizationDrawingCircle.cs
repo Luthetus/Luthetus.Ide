@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -83,41 +84,17 @@ public class SolutionVisualizationDrawingCircle<TItem> : ISolutionVisualizationD
 			SubMenu: new MenuRecord(menuOptionRecordList.ToImmutableArray()));
 	}
 
-	private async Task OpenFileInEditor(
+	private Task OpenFileInEditor(
 		string filePath,
 		LuthetusTextEditorConfig textEditorConfig,
 		IServiceProvider serviceProvider)
 	{
-		var resourceUri = new ResourceUri(filePath);
-
-		if (textEditorConfig.RegisterModelFunc is null)
-			return;
-
-		await textEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-				resourceUri,
-				serviceProvider))
-			.ConfigureAwait(false);
-
-		if (textEditorConfig.TryRegisterViewModelFunc is not null)
-		{
-			var viewModelKey = await textEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-					Key<TextEditorViewModel>.NewKey(),
-					resourceUri,
-					new Category("main"),
-					false,
-					serviceProvider))
-				.ConfigureAwait(false);
-
-			if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-				textEditorConfig.TryShowViewModelFunc is not null)
-			{
-				await textEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-						viewModelKey,
-						Key<TextEditorGroup>.Empty,
-						serviceProvider))
-					.ConfigureAwait(false);
-			}
-		}
+		return serviceProvider.GetRequiredService<ITextEditorService>().OpenInEditorAsync(
+			filePath,
+			true,
+			null,
+			new Category("main"),
+			Key<TextEditorViewModel>.NewKey());
 	}
 
 	private async Task LoadProjects(

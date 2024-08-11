@@ -1,0 +1,62 @@
+@using Luthetus.Common.RazorLib.Dimensions.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+@using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
+
+@code {
+	public static RenderFragment<GutterDriver> GetRenderFragment = driver => 
+	@<div class="luth_te_gutter-section"
+	      style="@(driver.GetGutterSectionStyleCss())"
+	      id="@driver._renderBatch.ViewModel.GutterElementId">
+	    
+	    @foreach (var virtualizedRow in driver._renderBatch.ViewModel.VirtualizationResult.EntryList)
+	    {
+	        <div class="luth_te_gutter"
+	             style="@(driver.GetGutterStyleCss(virtualizedRow.Index))">
+	            @(virtualizedRow.Index + 1)
+	        </div>
+	    }
+	    
+	    @{
+	        var heightOfGutter = driver._renderBatch.ViewModel.VirtualizationResult.EntryList.Length *
+	                             driver._renderBatch.ViewModel.CharAndLineMeasurements.LineHeight;
+	
+	        // The scrollbar is off when one uses the 'if (heightOfGutter...)' code to draw the rest of the gutter but empty.
+	        // To replicate this, one must scroll to the bottom of a file, then manage to have the gutter not fill the screen.
+	        //
+	        // But, there is a catch. The bug comes down to whether your virtualization result, has any 'overhang'
+	        // at the top of the text editor.
+	        //
+	        // Because this code just takes the virtualization result height as if it were centered
+	        // one ontop of the other with the visible content.
+	        //
+	        // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
+	        //
+	        // Editor scrolltop - 0th element's top == topOffscreenOverhang (2024-03-02)
+	        var topOffscreenOverhang = driver._renderBatch.ViewModel.VirtualizationResult.EntryList.FirstOrDefault()?.TopInPixels ?? -1;
+	
+	        if (topOffscreenOverhang != -1)
+	        {
+	            // If the 'topOffscreenOverhang' was measureable, then subtract from the height of the gutter,
+	            // however much of it overhangs the top offscreen.
+	            heightOfGutter -= topOffscreenOverhang;
+	        }
+	
+	        // '1' is added to the text editor's height in order to avoid rounding errors
+	        if (heightOfGutter < 1 + driver._renderBatch.ViewModel.TextEditorDimensions.Height)
+	        {
+	            var remainingHeightToFill = driver._renderBatch.ViewModel.TextEditorDimensions.Height -
+	                heightOfGutter +
+	                ScrollbarFacts.SCROLLBAR_SIZE_IN_PIXELS;
+	            
+	            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
+	
+	            var imaginaryNextIndex = (driver._renderBatch.ViewModel.VirtualizationResult.EntryList.LastOrDefault()?.Index ?? -1) + 
+	                1;
+	            
+	            <div class="luth_te_gutter"
+	                 style="@(driver.GetGutterStyleCss(imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
+	            </div>
+	        }
+	    }
+	</div>;
+}

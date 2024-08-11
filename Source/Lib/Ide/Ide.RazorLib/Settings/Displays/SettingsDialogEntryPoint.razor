@@ -1,4 +1,10 @@
 <button class="luth_button"
         @onclick="async () => DispatchRegisterDialogRecordAction()">
-    <IconSettingsGear />
+        
+    @{
+    	var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+    }
+    @IconSettingsGearFragment.Render(iconDriver)
 </button>

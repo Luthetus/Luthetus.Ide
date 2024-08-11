@@ -1,0 +1,12 @@
+@using Luthetus.Common.RazorLib.Icons.Models
+
+@* https://loading.io/css/ *@
+
+@code {
+	public const int SCALE_SIZES_BY = 2;
+
+	public static RenderFragment<IconDriver> Render = driver => 
+	@<div class="lds-dual-ring"
+	     style="width: @(driver.WidthInPixels * SCALE_SIZES_BY)px; height: @(driver.HeightInPixels * SCALE_SIZES_BY)px;">
+	</div>;
+}

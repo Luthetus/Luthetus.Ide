@@ -1,6 +1,12 @@
-﻿<div title="@TreeViewFields.Key.Guid">
+<div title="@TreeViewFields.Key.Guid">
     <span>
-        <IconSymbolField/>
+    	@{
+    		var iconDriver = new IconDriver(
+				AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+				AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+    	}
+    
+        @IconSymbolFieldFragment.Render(iconDriver)
         Fields
     </span>
 </div>

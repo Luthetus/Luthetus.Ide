@@ -1,4 +1,10 @@
-﻿<div>
-    <IconDotNetSolutionFolder/>
+<div>
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
+	
+    @IconDotNetSolutionFolderFragment.Render(iconDriver)
     @DotNetSolutionFolder.DisplayName
 </div>

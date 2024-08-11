@@ -1,0 +1,66 @@
+@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+@using Luthetus.Common.RazorLib.Dimensions.Models;
+
+@code {
+	public static RenderFragment<CursorDriver> GetRenderFragment = driver => 
+	@<text>
+		@{
+			var leftRelativeToParentInPixelsCssStyle = string.Empty;
+		    var textEditorKeymap = (ITextEditorKeymap)driver._renderBatch.Options!.Keymap!;
+		    
+		    if (!driver._renderBatch.Options!.UseMonospaceOptimizations)
+			{
+			    var leftRelativeToParentInPixelsCssValue = driver._leftRelativeToParentInPixels.ToCssValue();
+			    leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
+			}
+		}
+	<textarea id="@driver.GetCursorDisplayId(driver._renderBatch)"
+	          tabindex="@driver.GetTabIndex(driver._renderBatch)"
+	          class="luth_te_text-editor-cursor @driver.BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
+	          style="@driver.GetCursorStyleCss() @leftRelativeToParentInPixelsCssStyle">
+	</textarea>
+	
+	<div class="luth_te_text-editor-caret-row"
+	     style="@driver.GetCaretRowStyleCss()">
+	</div>
+	
+	@if (driver._renderBatch.ViewModel.MenuKind != MenuKind.None && driver.GetIncludeContextMenuHelperComponent(driver._renderBatch))
+	{
+	    <div @onkeydown:stopPropagation="true"
+	         @onmousedown:stopPropagation="true"
+	         @onmousemove:stopPropagation="true"
+	         class="luth_te_text-editor-context-menu"
+	         style="@driver.GetMenuStyleCss()">
+	
+	        <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
+	                        Value="driver.TextEditorMenuShouldTakeFocus">
+	            @switch (driver._renderBatch.ViewModel.MenuKind)
+	            {
+	                case MenuKind.ContextMenu:
+                        if (driver._renderBatch.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride is not null)
+			            {
+			                @driver._renderBatch.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride(driver._renderBatch)
+			            }
+			            else
+			            {
+			                <ContextMenu RenderBatch="driver._renderBatch"/>
+			            }
+	                    break;
+	                case MenuKind.AutoCompleteMenu:
+	                    if (driver._renderBatch.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride is not null)
+			            {
+			                @driver._renderBatch.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride(driver._renderBatch)
+			            }
+			            else
+			            {
+			                <AutocompleteMenu RenderBatch="driver._renderBatch"/>
+			            }
+	                    break;
+	            }
+	        </CascadingValue>
+	    </div>
+	    }
+	</text>;
+}

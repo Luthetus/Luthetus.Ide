@@ -1,112 +1,415 @@
+@using System.Collections.Immutable;
+@using System.Text;
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Common.RazorLib.CustomEvents.Models
+@using Luthetus.Common.RazorLib.Keyboards.Models;
+@using Luthetus.Common.RazorLib.Icons.Models
+@using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+@using Luthetus.TextEditor.RazorLib.Rows.Models;
 @using Luthetus.TextEditor.RazorLib.Options.Models;
+@using Luthetus.TextEditor.RazorLib.Htmls.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 
 @{
-    var renderBatch = _storedRenderBatch;
+    var renderBatchUnsafe = _storedRenderBatch;
     
-    // Do not use <CascadingValue Value="renderBatchValidated">...</CascadingValue>
-    // at the top level in order to D.R.Y the code.
-    //
-    // If at any point the renderBatchValidated is null, checking after the fact is not sufficient.
-    // The cascading parameter could change out from under a child component, and cause some confusing exceptions.
-    var renderBatchValidated = renderBatch.IsValid ? new TextEditorRenderBatchValidated(renderBatch) : null;
+    var renderBatchValidated = renderBatchUnsafe.IsValid ? new TextEditorRenderBatchValidated(renderBatchUnsafe) : null;
+    _storedRenderBatchValidated = renderBatchValidated;
 
-    var contextBoundaryStyle = $"{renderBatch.FontSizeInPixelsCssStyle} {renderBatch.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
-    var contextBoundaryClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    var cssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
+    var cssStyle = $"{renderBatchUnsafe.FontSizeInPixelsCssStyle} {renderBatchUnsafe.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
 }
 
-<ContextBoundary ContextRecord="renderBatch.ViewModelDisplayOptions.ContextRecord"
-                 ClassCssString="@contextBoundaryClass"
-                 StyleCssString="@contextBoundaryStyle">
+<div class="@cssClass" style="@cssStyle">
 
-    @if (renderBatchValidated is not null && !renderBatch.Options!.UseMonospaceOptimizations)
+    @if (renderBatchUnsafe.ViewModelDisplayOptions.IncludeHeaderHelperComponent &&
+    	 renderBatchValidated is not null)
     {
-        // TODO: Move this inside MeasureCharacterWidthAndRowHeight.razor
-        <div style="display: flex; position: absolute; visibility: hidden;"
-             id="@ProportionalFontMeasurementsContainerElementId">
-        </div>
+    	_headerDriver.GetRenderFragment(renderBatchValidated);
+    
+		<div class="luth_te_text-editor-header @TextEditorService.ThemeCssClassString">
+		    <div class="luth_te_text-editor-header-listing"
+		         style="overflow-y: hidden;">
+		        @{
+		            var model = TextEditorService.TextEditorStateWrap.Value;
+		
+		            if (model is not null)
+		            {
+		                /* (2024-08-09)
+		                var localHeaderButtonKindsList = HeaderButtonKinds;
+		
+		                if (localHeaderButtonKindsList is null)
+		                {
+		                    localHeaderButtonKindsList = Enum
+		                        .GetValues(typeof(HeaderButtonKind))
+		                        .Cast<HeaderButtonKind>()
+		                        .ToImmutableArray();
+		                }
+		                */
+		                
+		                var localHeaderButtonKindsList = Enum
+		                    .GetValues(typeof(HeaderButtonKind))
+		                    .Cast<HeaderButtonKind>()
+		                    .ToImmutableArray();
+		                    
+		            	var iconDriver = new IconDriver(
+		            		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+		            		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+		
+		                foreach (var headerButtonKind in localHeaderButtonKindsList)
+		                {
+		                    <div class="luth_te_text-editor-header-entry">
+		                        @switch (headerButtonKind)
+		                        {
+		                            case HeaderButtonKind.Cut:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoCutOnClick">
+		                                    @IconNoteFragment.Render(iconDriver)
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Copy:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoCopyOnClick">
+		                                    @IconCopyFragment.Render(iconDriver)
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Paste:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoPasteOnClick">
+		                                    @IconClippyFragment.Render(iconDriver)
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Undo:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                        disabled=@_headerDriver.GetUndoDisabledAttribute()
+		                                		@onclick="_headerDriver.DoUndoOnClick">
+		                                    @IconArrowLeftFragment.Render(iconDriver)
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Redo:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                        disabled=@_headerDriver.GetRedoDisabledAttribute()
+		                                		@onclick="_headerDriver.DoRedoOnClick">
+		                                    @IconArrowRightFragment.Render(iconDriver)
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.Save:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoSaveOnClick">
+		                                    @IconSaveFragment.Render(iconDriver)
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.SelectAll:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.DoSelectAllOnClick">
+		                                    @IconListSelectionFragment.Render(iconDriver)
+		                                </button>
+		                                break;
+		                            case HeaderButtonKind.PeekWindowDisplay:
+		                                <button title="@headerButtonKind.ToString()"
+		                                        class="luth_button"
+		                                		@onclick="_headerDriver.ShowWatchWindowDisplayDialogOnClick">
+		                                    @IconProjectDependenciesFragment.Render(iconDriver)
+		                                </button>
+		                                break;
+		                        }
+		                    </div>
+		                }
+		
+		                <div class="luth_te_text-editor-header-entry">
+		                    <button title="Measure editor size"
+		                            class="luth_button"
+		                    		@onclick="_headerDriver.DoRemeasureOnClick">
+		                        @IconSymbolRulerFragment.Render(iconDriver)
+		                    </button>
+		                </div>
+		                
+		                <div class="luth_te_text-editor-header-entry">
+		                    <button title="Reload"
+		                            class="luth_button"
+		                            id="@_headerDriver._reloadButtonHtmlElementId"
+		                    		@onclick="_headerDriver.DoReloadOnClick">
+		                        @IconRefreshFragment.Render(iconDriver)
+		                    </button>
+		                </div>
+		            }
+		            else
+		            {
+		                <div class="luth_te_text-editor-header-entry luth_te_text-editor-header-file-sizing">
+		                    <div>The @nameof(TextEditorModel) was null</div>
+		                </div>
+		            }
+		        }
+		    </div>
+		</div>
     }
 
-    <CascadingValue Name="ProportionalFontMeasurementsContainerElementId" Value="ProportionalFontMeasurementsContainerElementId">
-        @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeHeaderHelperComponent)
+    <div @onclick="FocusTextEditorAsync"
+         @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"
+         @onkeydown:preventDefault="true"
+         @oncontextmenu="EventUtil.AsNonRenderingEventHandler(ReceiveOnContextMenu)"
+         @oncontextmenu:preventDefault="true"
+         @onmousedown="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseDown)"
+         @onmousemove="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseMove)"
+         @onmouseout="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseOut)"
+         @ondblclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveOnDoubleClick)"
+         @onwheel="EventUtil.AsNonRenderingEventHandler<WheelEventArgs>(ReceiveOnWheel)"
+         @ontouchstart="ReceiveOnTouchStart"
+         @ontouchmove="ReceiveOnTouchMove"
+         @ontouchend="ClearTouch"
+         @ontouchcancel="ClearTouch"
+         @ontouchleave="ClearTouch"
+         id="@ContentElementId"
+         style="@(renderBatchUnsafe.HeightCssStyle) @ViewModelDisplayOptions.TextEditorStyleCssString"
+         class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
+         tabindex="-1">
+
+		<div class="luth_te_measure-character-width-and-row-height-wrapper luth_te_row">
+		    <div class="luth_te_measure-character-width-and-row-height luth_te_row"
+		         id="@MeasureCharacterWidthAndRowHeightElementId">
+		
+		        @for (var i = 0; i < TEST_STRING_REPEAT_COUNT; i++)
+		        {
+		            <text>
+		                @TEST_STRING_FOR_MEASUREMENT
+		            </text>
+		        }
+		    </div>
+		</div>
+      	
+        @if (renderBatchValidated is not null)
         {
-            <CascadingValue Value="renderBatchValidated">
-                <Header HeaderButtonKinds="ViewModelDisplayOptions.HeaderButtonKinds" />
-            </CascadingValue>
+        	@_bodyDriver.GetRenderFragment(renderBatchValidated);
+        }
+        
+        @if (ViewModelDisplayOptions.IncludeGutterComponent &&
+        	 renderBatchValidated is not null)
+        {
+        	// TODO: The comment under this describes something that was believed to be a fix...
+        	//       ...but the gutter is still 'desync' at times? It doesn't align with the text?
+        	//       Is every scroll event scrolling BOTH the gutter and the body? I imagine
+        	//       the issue is that there is a scroll event that is only scrolling the body.
+        	//
+        	// The gutter needs to come after the 'BodySection' in the markup to
+        	// ensure the virtualization result in ready.
+        	//
+        	// Due to 'BodySection' being 'position: absolute;',
+        	// on the UI the gutter will appear to the left of the 'BodySection'
+            @_gutterDriver.GetRenderFragment(renderBatchValidated);
         }
 
-        <div @onclick="FocusTextEditorAsync"
-             @onkeydown="EventUtil.AsNonRenderingEventHandler<KeyboardEventArgs>(ReceiveOnKeyDown)"
-             @onkeydown:preventDefault="true"
-             @oncontextmenu="EventUtil.AsNonRenderingEventHandler(ReceiveOnContextMenu)"
-             @oncontextmenu:preventDefault="true"
-             @onmousedown="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseDown)"
-             @onmousemove="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseMove)"
-             @onmouseout="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveContentOnMouseOut)"
-             @ondblclick="EventUtil.AsNonRenderingEventHandler<MouseEventArgs>(ReceiveOnDoubleClick)"
-             @onwheel="EventUtil.AsNonRenderingEventHandler<WheelEventArgs>(ReceiveOnWheel)"
-             @ontouchstart="ReceiveOnTouchStart"
-             @ontouchmove="ReceiveOnTouchMove"
-             @ontouchend="ClearTouch"
-             @ontouchcancel="ClearTouch"
-             @ontouchleave="ClearTouch"
-             id="@ContentElementId"
-             style="@(renderBatch.HeightCssStyle) @ViewModelDisplayOptions.TextEditorStyleCssString"
-             class="luth_te_text-editor luth_unselectable @ViewModelDisplayOptions.TextEditorClassCssString"
-             tabindex="-1">
-
-            <MeasureCharacterWidthAndRowHeight @ref="_measureCharacterWidthAndRowHeightComponent"
-                                               HtmlElementId="@MeasureCharacterWidthAndRowHeightElementId" />
-
-            @if (renderBatchValidated is not null)
-            {
-                <CascadingValue Value="renderBatchValidated">
-                    <CascadingValue Value="renderBatchValidated.ViewModel.TooltipViewModel">
-                        @if (ViewModelDisplayOptions.IncludeGutterComponent)
-                        {
-                            <GutterSection />
-                        }
-
-                        <BodySection @ref="_bodySectionComponent"
-                                     TabIndex="ViewModelDisplayOptions.TabIndex"
-                                     ContextMenuRenderFragmentOverride="ViewModelDisplayOptions.ContextMenuRenderFragmentOverride"
-                                     IncludeContextMenuHelperComponent="ViewModelDisplayOptions.IncludeContextMenuHelperComponent"
-                                     AutoCompleteMenuRenderFragmentOverride="ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride" />
-
-                        @if (renderBatchValidated.ViewModel.ShowCommandBar)
-                        {
-                            <CommandBarDisplay RestoreFocusToTextEditor="FocusTextEditorAsync" />
-                        }
-                    </CascadingValue>
-                </CascadingValue>
-            }
-            else
-            {
-                if (renderBatch.Model is null)
-                {
-                    <div>The @nameof(TextEditorModel) was null</div>
-                }
-                else if (renderBatch.ViewModel is null)
-                {
-                    <div>The @nameof(TextEditorViewModel) was null</div>
-                }
-                else if (renderBatch.Options is null)
-                {
-                    <div>The @nameof(TextEditorOptions) was null</div>
-                }
-            }
-        </div>
-
-        @if (renderBatchValidated is not null && ViewModelDisplayOptions.IncludeFooterHelperComponent)
+        @if (renderBatchValidated?.ViewModel?.ShowCommandBar ?? false)
         {
-            <CascadingValue Value="renderBatchValidated">
-                <Footer />
-            </CascadingValue>
+            <CommandBarDisplay RenderBatch="renderBatchValidated"/>
         }
-    </CascadingValue>
-</ContextBoundary>
+        
+        @if (renderBatchUnsafe.Model is null)
+	    {
+	        <div>The @nameof(TextEditorModel) was null</div>
+	    }
+	    else if (renderBatchUnsafe.ViewModel is null)
+	    {
+	        <div>The @nameof(TextEditorViewModel) was null</div>
+	    }
+	    else if (renderBatchUnsafe.Options is null)
+	    {
+	        <div>The @nameof(TextEditorOptions) was null</div>
+	    }
+    </div>
+
+    @if (renderBatchUnsafe.ViewModelDisplayOptions.IncludeHeaderHelperComponent &&
+    	 renderBatchValidated is not null)
+    {
+    	_footerDriver.GetRenderFragment(renderBatchValidated);
+    
+        <div class="luth_te_text-editor-footer @TextEditorService.ThemeCssClassString">
+		    <div class="luth_te_text-editor-footer-listing">
+		        @{
+		            var model = _footerDriver._renderBatch.Model;
+		            var viewModel = _footerDriver._renderBatch.ViewModel;
+		            var options = _footerDriver._renderBatch.Options;
+		
+		            if (model is not null && viewModel is not null)
+		            {
+		                if (options is not null && options.Keymap is TextEditorKeymapVim keymapVim)
+		                {
+		                    var activeVimMode = keymapVim.ActiveVimMode;
+		                    var pendingSentenceList = keymapVim.VimSentence.PendingSentenceList;
+		                    var mostRecentSyntacticallyCompleteSentence = keymapVim.VimSentence.MostRecentSyntacticallyCompleteSentence;
+		
+		                    var sentenceToDisplay = pendingSentenceList.Length == 0
+		                        ? mostRecentSyntacticallyCompleteSentence
+		                        : pendingSentenceList;
+		
+		                    <div class="luth_te_text-editor-footer-entry">
+		                        <div class="luth_te_text-editor-footer-name-value-pair">
+		                            <div class="luth_te_text-editor-footer-name">
+		                                Vim:
+		                            </div>
+		                            <div class="luth_te_text-editor-footer-value" title="Mode: @activeVimMode">
+		                                @activeVimMode,&nbsp;
+		                            </div>
+		                        </div>
+		
+		                        <div class="luth_te_text-editor-footer-name-value-pair">
+		                            <div class="luth_te_text-editor-footer-value">
+		                                @{
+		                                    var sentenceBuilder = new StringBuilder();
+		
+		                                    foreach (var vimToken in sentenceToDisplay)
+		                                    {
+		                                        sentenceBuilder.Append(KeyboardKeyFacts.ConvertCodeToKey(
+		                                            vimToken.KeymapArgument.Code));
+		                                    }
+		
+		                                    var minAndMaxCharacters = 4;
+		                                    for (int i = minAndMaxCharacters - sentenceBuilder.Length; i > 0; i--)
+		                                    {
+		                                        sentenceBuilder.Append(' ');
+		                                    }
+		
+		                                    var sentence = sentenceBuilder.ToString();
+		
+		                                    if (sentence.Length > minAndMaxCharacters)
+		                                    {
+		                                        var elipsisString = "...";
+		
+		                                        sentence = sentence[..(minAndMaxCharacters - elipsisString.Length)];
+		                                        sentence += elipsisString;
+		                                    }
+		
+		                                    sentence = sentence.EscapeHtml();
+		                                }
+		
+		                                @((MarkupString)('{' + sentence + '}'))
+		                            </div>
+		                        </div>
+		                    </div>
+		                }
+		
+		                if (!string.IsNullOrWhiteSpace(model.FileExtension))
+		                {
+		                    <div class="luth_te_text-editor-footer-entry">
+		                        @model.FileExtension
+		                    </div>
+		                }
+		
+		                <div class="luth_te_text-editor-footer-entry">
+		                    <div class="luth_te_text-editor-footer-name-value-pair">
+		                        <div class="luth_te_text-editor-footer-name">
+		                            length:
+		                        </div>
+		                        <div class="luth_te_text-editor-footer-value"
+		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
+		                            @($"{model.DocumentLength}")
+		                        </div>
+		                    </div>
+		
+		                    <div class="luth_te_text-editor-footer-name-value-pair">
+		                        <div class="luth_te_text-editor-footer-name">
+		                            lines:
+		                        </div>
+		                        <div class="luth_te_text-editor-footer-value"
+		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
+		                            @($"{model.LineCount}")
+		                        </div>
+		                    </div>
+		                </div>
+		
+		                <div class="luth_te_text-editor-footer-entry">
+		                    <div class="luth_te_text-editor-footer-name-value-pair">
+		                        <div class="luth_te_text-editor-footer-name">
+		                            Ln:
+		                        </div>
+		
+		                        @{
+		                            var rowNumber = viewModel.PrimaryCursor.LineIndex + 1;
+		                        }
+		
+		                        <div class="luth_te_text-editor-footer-value"
+		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
+		                            @($"{rowNumber}")
+		                        </div>
+		                    </div>
+		
+		                    <div class="luth_te_text-editor-footer-name-value-pair">
+		                        <div class="luth_te_text-editor-footer-name">
+		                            Col:
+		                        </div>
+		
+		                        @{
+		                            var columnNumber = viewModel.PrimaryCursor.ColumnIndex + 1;
+		                        }
+		
+		                        <div class="luth_te_text-editor-footer-value"
+		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleLineTuple.lineLength)">
+		                            @($"{columnNumber}")
+		                        </div>
+		                    </div>
+		
+		                    <div class="luth_te_text-editor-footer-name-value-pair">
+		                        <div class="luth_te_text-editor-footer-name">
+		                            Pos:
+		                        </div>
+		
+		                        @{
+		                            var positionNumber = _footerDriver.GetPositionNumber(model, viewModel);
+		                        }
+		
+		                        <div class="luth_te_text-editor-footer-value"
+		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
+		                            @($"{positionNumber}")
+		                        </div>
+		                    </div>
+		                </div>
+		
+		                <div class="luth_te_text-editor-footer-entry">
+		                    @if (model.OnlyLineEndKind is null)
+		                    {
+		                        <text>has:mixed </text>
+		                    }
+		                    else
+		                    {
+		                        <text>has:@model.OnlyLineEndKind.Value.AsFriendlyName() </text>
+		                    }
+		
+		                    use:
+		                    <select @onchange="_footerDriver.SelectRowEndingKindOnChange">
+		                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
+		                        {
+		                            <option value="@rowEndingKind.ToString()"
+		                                    selected="@(model.LineEndKindPreference == rowEndingKind)">
+		                                @rowEndingKind.AsFriendlyName()
+		                            </option>
+		                        }
+		                    </select>
+		                </div>
+		            }
+		            else
+		            {
+		                <div class="luth_te_text-editor-footer-entry luth_te_text-editor-footer-file-sizing">
+		                    @if (model is null)
+		                    {
+		                        <div>The @nameof(TextEditorModel) was null</div>
+		                    }
+		                    else if (viewModel is not null)
+		                    {
+		                        <div>The @nameof(TextEditorViewModel) was null</div>
+		                    }
+		                </div>
+		            }
+		        }
+		    </div>
+		</div>
+    }
+</div>

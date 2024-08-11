@@ -1,27 +1,33 @@
-﻿@using Luthetus.Common.RazorLib.FileSystems.Models;
+@using Luthetus.Common.RazorLib.FileSystems.Models;
+
+@{
+	var iconDriver = new IconDriver(
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+}
 
 <div class="luth_ide_input-file-display-top-nav-bar">
     <div class="luth_ide_input-file-display-top-nav-bar-buttons">
         <button class="luth_button"
                 disabled=@GetHandleBackButtonIsDisabled()
                 @onclick="HandleBackButtonOnClick">
-            <IconArrowLeft/>
+            @IconArrowLeftFragment.Render(iconDriver)
         </button>
         
         <button class="luth_button"
                 disabled=@GetHandleForwardButtonIsDisabled()
                 @onclick="HandleForwardButtonOnClick">
-            <IconArrowRight/>
+            @IconArrowRightFragment.Render(iconDriver)
         </button>
     
         <button class="luth_button"
                 @onclick="HandleUpwardButtonOnClick">
-            <IconArrowUp/>
+            @IconArrowUpFragment.Render(iconDriver)
         </button>
         
         <button class="luth_button"
                 @onclick="HandleRefreshButtonOnClick">
-            <IconRefresh/>
+            @IconRefreshFragment.Render(iconDriver)
         </button>
     </div>
     
@@ -59,7 +65,7 @@
     <div class="luth_ide_input-file-display-top-nav-bar-search">
         <button @onclick="FocusSearchElementReferenceOnClickAsync"
                 class="luth_button luth_ide_input-file-search-button">
-            <IconSearch/>
+            @IconSearchFragment.Render(iconDriver)
         </button>
         
         <input @ref="SearchElementReference"

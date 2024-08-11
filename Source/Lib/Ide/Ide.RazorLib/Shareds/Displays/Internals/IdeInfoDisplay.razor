@@ -130,8 +130,26 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.2.0 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.2.0 </em> (2024-08-11)</div>
                 <ul>
+                	<li>
+                		Bug in this version: The text editor appears to be "randomly" losing focus.
+                		I presume I can fix this, but I am sitting on too many code changes at the moment,
+                		so I'll accept these changes then look at this bug.
+                	</li>
+                	<li>
+                		Cursor blinking is purposefully broken at the moment. It was
+                		causing rerenders to all the actively rendered text editors because I wanted them
+                		to synchronize the blinking. I still want it synchronized but I just want to revisit the
+                		implementation I think it could be better.
+                	</li>
+                	<li>
+                		Use RenderFragment(s) instead of Blazor components were applicable
+                		to avoid the overhead of a component, while still using razor markup.
+                	</li>
+                	<li>
+                		Rewrite terminal code. (this rewrite is still in progress, not finished).
+                	</li>
                     <li>
                         If a file does not save properly, make it obvious to the user
                     </li>

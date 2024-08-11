@@ -1,4 +1,11 @@
-﻿<div>
-    <IconReferences/>
+<div>
+	
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
+
+    @IconReferencesFragment.Render(iconDriver)
     Project References
 </div>

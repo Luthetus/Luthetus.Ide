@@ -1,4 +1,11 @@
-﻿<div>
-    <IconProjectDependencies/>
+<div>
+
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
+
+    @IconProjectDependenciesFragment.Render(iconDriver)
     Dependencies
 </div>

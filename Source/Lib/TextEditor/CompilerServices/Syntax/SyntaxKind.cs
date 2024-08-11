@@ -231,4 +231,5 @@ public enum SyntaxKind
     NamespaceSymbol,
     InjectedLanguageComponentSymbol,
     SourceFileSymbol,
+    OnClickSymbol,
 }

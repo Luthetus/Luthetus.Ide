@@ -29,6 +29,12 @@
 
         <div class="luth_dialog-display-buttons"
              @onmousedown:stopPropagation="true">
+             
+            @{
+            	var iconDriver = new IconDriver(
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+            }
             
             @if (Dialog.DialogIsResizable)
             {
@@ -37,18 +43,18 @@
 
                     @if (Dialog.DialogIsMaximized)
                     {
-                        <IconRestore/>
+                        @IconRestoreFragment.Render(iconDriver)
                     }
                     else
                     {
-                        <IconMaximize/>
+                        @IconMaximizeFragment.Render(iconDriver)
                     }
                 </button>
             }
             
             <button class="luth_button luth_dialog-display-button-entry"
                     @onclick="DispatchDisposeDialogRecordAction">
-                <IconClose/>
+                @IconCloseFragment.Render(iconDriver)
             </button>
         </div>
     </div>

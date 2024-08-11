@@ -18,4 +18,5 @@ public class RegisterModelArgs
     /// </summary>
     public ResourceUri ResourceUri { get; }
     public IServiceProvider ServiceProvider { get; }
+    public bool ShouldBlockUntilBackgroundTaskIsCompleted { get; init; }
 }

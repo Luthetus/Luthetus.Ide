@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -26,15 +27,12 @@ public class OnMouseMove : ITextEditorWork
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
     public string Name { get; } = nameof(OnMouseMove);
-    public Task? WorkProgress { get; }
     public MouseEventArgs MouseEventArgs { get; }
     public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public TextEditorComponentData ComponentData { get; }
 
 	public ITextEditorEditContext EditContext { get; set; }
-
-    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -52,7 +50,7 @@ public class OnMouseMove : ITextEditorWork
     public async Task HandleEvent(CancellationToken cancellationToken)
     {
 		try
-		{
+		{		
             var modelModifier = EditContext.GetModelModifier(ResourceUri, true);
             var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
             var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
@@ -75,13 +73,15 @@ public class OnMouseMove : ITextEditorWork
             primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
             primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+			// EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 
             primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 		
 			await EditContext.TextEditorService
 				.FinalizePost(EditContext)
 				.ConfigureAwait(false);
+				
+			await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
 		}
 		catch (Exception e)
 		{

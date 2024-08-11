@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;
@@ -27,14 +28,14 @@ public partial class StartupControlDisplay : FluxorComponent
     [Inject]
     private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
     [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
     private const string _startButtonElementId = "luth_ide_startup-controls-display_id";
 
-    private TerminalCommand? _executingTerminalCommand;
-    
     private ElementReference? _startButtonElementReference;
     private Key<DropdownRecord> _startButtonDropdownKey = Key<DropdownRecord>.NewKey();
     
@@ -73,15 +74,9 @@ public partial class StartupControlDisplay : FluxorComponent
 		}
         else
         {
-	        var startProgramTerminalCommand = await ((StartupControlModel)localStartupControlState.ActiveStartupControl)
-	        	.GetTerminalCommandFunc.Invoke();
-	        	
-	        if (startProgramTerminalCommand is null)
-	            return;
-	
-			_executingTerminalCommand = startProgramTerminalCommand;
-	        var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-	        executionTerminal.EnqueueCommand(startProgramTerminalCommand);
+	        await localStartupControlState.ActiveStartupControl.StartButtonOnClickTask
+	        	.Invoke(localStartupControlState.ActiveStartupControl)
+	        	.ConfigureAwait(false);
         }
     }
     
@@ -130,9 +125,13 @@ public partial class StartupControlDisplay : FluxorComponent
 		    MenuOptionKind.Other,
 		    OnClickFunc: () =>
 		    {
-		    	var executionTerminal = TerminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_TERMINAL_KEY];
-		    	executionTerminal.KillProcess();
-                return Task.CompletedTask;
+		    	var localStartupControlState = StartupControlStateWrap.Value;
+		    	
+		    	if (localStartupControlState.ActiveStartupControl is null)
+		    		return Task.CompletedTask;
+		    		
+		    	return localStartupControlState.ActiveStartupControl.StopButtonOnClickTask
+		    		.Invoke(localStartupControlState.ActiveStartupControl);
 		    }));
 
 		var dropdownRecord = new DropdownRecord(

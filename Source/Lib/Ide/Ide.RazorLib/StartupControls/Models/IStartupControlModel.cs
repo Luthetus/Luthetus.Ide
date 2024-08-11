@@ -30,12 +30,8 @@ public interface IStartupControlModel
 	/// </summary>
 	public Dictionary<string, object?>? ComponentParameterMap { get; }
 
-	/// <summary>
-	/// This func is invoked whether the program is currently executing or not.
-	/// One can use <see cref="IsExecuting"/> and perhaps if it isn't executing,
-	/// then start the program. And if it is executing, then stop the program.
-	/// </summary>
 	public Func<IStartupControlModel, Task> StartButtonOnClickTask { get; }
+	public Func<IStartupControlModel, Task> StopButtonOnClickTask { get; }
 	
 	public bool IsExecuting { get; }
 }

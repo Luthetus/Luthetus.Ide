@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Options.States;
 
 namespace Luthetus.Common.RazorLib.Menus.Displays;
 
@@ -15,6 +16,8 @@ public partial class MenuOptionDisplay : ComponentBase
 {
     [Inject]
     private IState<DropdownState> DropdownStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 	[Inject]

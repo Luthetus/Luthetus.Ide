@@ -64,19 +64,6 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     {
         if (firstRender)
         {
-            if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
-                LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.UnitTestingSynchronous ||
-                LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.UnitTestingAsync)
-            {
-                _ = Task.Run(async () =>
-                        await ContinuousBackgroundTaskWorker.StartAsync(CancellationToken.None).ConfigureAwait(false))
-                    .ConfigureAwait(false);
-
-                _ = Task.Run(async () => 
-                        await BlockingBackgroundTaskWorker.StartAsync(CancellationToken.None).ConfigureAwait(false))
-                    .ConfigureAwait(false);
-            }
-
             BackgroundTaskService.Enqueue(
                 Key<IBackgroundTask>.NewKey(),
                 ContinuousBackgroundTaskWorker.GetQueueKey(),
@@ -228,7 +215,9 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                         modelModifier,
                         DiffPresentationFacts.EmptyOutPresentationModel);
 
-                    textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
+                    textEditorModel.CompilerService.RegisterResource(
+                    	textEditorModel.ResourceUri,
+                    	shouldTriggerResourceWasModified: true);
 					return Task.CompletedTask;
 				});
         }

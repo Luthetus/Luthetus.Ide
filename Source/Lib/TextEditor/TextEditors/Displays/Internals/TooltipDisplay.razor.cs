@@ -1,10 +1,10 @@
-using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Microsoft.AspNetCore.Components;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public partial class TooltipDisplay : ComponentBase
 {
-    [CascadingParameter]
-    public TooltipViewModel? TextEditorTooltipViewModel { get; set; }
+	[Parameter, EditorRequired]
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 }

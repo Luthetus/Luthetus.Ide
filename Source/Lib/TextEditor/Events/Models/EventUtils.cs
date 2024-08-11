@@ -200,31 +200,9 @@ public static class EventUtils
 
         int columnIndexInt;
 
-        if (!globalTextEditorOptions.UseMonospaceOptimizations)
-        {
-            var guid = Guid.NewGuid();
 
-            columnIndexInt = await editContext.TextEditorService.JsRuntimeTextEditorApi
-                .CalculateProportionalColumnIndex(
-                    componentData.ProportionalFontMeasurementsContainerElementId,
-                    $"luth_te_proportional-font-measurement-parent_{componentData.TextEditorHtmlElementId}_{guid}",
-                    $"luth_te_proportional-font-measurement-cursor_{componentData.TextEditorHtmlElementId}_{guid}",
-                    positionX,
-                    charMeasurements.CharacterWidth,
-                    modelModifier.GetLineText(rowIndex))
-                .ConfigureAwait(false);
-
-            if (columnIndexInt == -1)
-            {
-                var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
-                columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-            }
-        }
-        else
-        {
-            var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
-            columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
-        }
+        var columnIndexDouble = positionX / charMeasurements.CharacterWidth;
+        columnIndexInt = (int)Math.Round(columnIndexDouble, MidpointRounding.AwayFromZero);
 
         var lengthOfRow = modelModifier.GetLineLength(rowIndex);
 

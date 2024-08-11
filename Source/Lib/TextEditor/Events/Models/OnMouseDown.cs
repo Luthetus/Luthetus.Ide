@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -34,8 +35,6 @@ public class OnMouseDown : ITextEditorWork
 	public TextEditorComponentData ComponentData { get; }
 
 	public ITextEditorEditContext EditContext { get; set; }
-
-    public TimeSpan ThrottleTimeSpan => TextEditorComponentData.ThrottleDelayDefault;
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent)
     {
@@ -94,8 +93,6 @@ public class OnMouseDown : ITextEditorWork
             primaryCursorModifier.ColumnIndex = rowAndColumnIndex.columnIndex;
             primaryCursorModifier.PreferredColumnIndex = rowAndColumnIndex.columnIndex;
 
-			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
-
             var cursorPositionIndex = modelModifier.GetPositionIndex(new TextEditorCursor(
                 rowAndColumnIndex.rowIndex,
                 rowAndColumnIndex.columnIndex,
@@ -122,6 +119,8 @@ public class OnMouseDown : ITextEditorWork
             await EditContext.TextEditorService
             	.FinalizePost(EditContext)
             	.ConfigureAwait(false);
+            	
+            await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
 		}
 		catch (Exception e)
 		{

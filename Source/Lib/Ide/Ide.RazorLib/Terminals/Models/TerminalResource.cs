@@ -22,22 +22,15 @@ public class TerminalResource : CompilerServiceResource
     public readonly object UnsafeStateLock = new();
 
     public TerminalResource(
-            ResourceUri resourceUri,
-            TerminalCompilerService terminalCompilerService,
-            IState<TerminalState> terminalStateWrap)
+    	ResourceUri resourceUri,
+    	TerminalCompilerService terminalCompilerService)
         : base(resourceUri, terminalCompilerService)
     {
-        _terminalStateWrap = terminalStateWrap;
     }
 
     public override ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
-    public TextEditorTextSpan ArgumentsTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, ResourceUri.Empty, string.Empty);
-    public TextEditorTextSpan TargetFilePathTextSpan { get; set; } = new TextEditorTextSpan(0, 0, 0, ResourceUri.Empty, string.Empty);
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
     public List<ITextEditorSymbol> ManualSymbolList { get; } = new List<ITextEditorSymbol>();
-
-    public Terminal Terminal => _terminalStateWrap.Value.TerminalMap.Values.First(
-        x => x.ResourceUri == ResourceUri);
 
     public override ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
     {
