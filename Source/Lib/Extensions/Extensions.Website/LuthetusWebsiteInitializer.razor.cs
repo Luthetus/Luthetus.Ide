@@ -215,7 +215,9 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                         modelModifier,
                         DiffPresentationFacts.EmptyOutPresentationModel);
 
-                    textEditorModel.CompilerService.RegisterResource(textEditorModel.ResourceUri);
+                    textEditorModel.CompilerService.RegisterResource(
+                    	textEditorModel.ResourceUri,
+                    	shouldTriggerResourceWasModified: true);
 					return Task.CompletedTask;
 				});
         }

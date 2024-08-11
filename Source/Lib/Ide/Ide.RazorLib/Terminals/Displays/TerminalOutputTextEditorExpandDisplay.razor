@@ -40,12 +40,12 @@
 				   readonly
 				   value="@workingDirectory" />
 				   
-			<input @bind="_command"
-			       @bind:event="oninput"
-				   @onkeydown="HandleOnKeyDown"
-				   type="text"
+			<input type="text"
 				   style="width: calc(100% - @(workingDirectoryTextWidth)ch); height: 100%;"
-				   title="Command" />
+				   title="Command"
+				   readonly
+				   disabled
+				   value="manual input is disabled until tested thoroughly" />
 		</div>
 	}
 </div>
