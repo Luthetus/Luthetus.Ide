@@ -1,3 +1,4 @@
+@using Luthetus.Common.RazorLib.Icons.Models;
 @using Luthetus.Ide.RazorLib.Terminals.Models;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
@@ -33,7 +34,12 @@
 
             <button class="luth_button"
                     @onclick="RequestInputFileForParentDirectory">
-                <IconFolder/>
+                @{ 
+	            	var iconDriver = new IconDriver(
+	            		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+	            		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	            }
+	            @IconFolder.GetRenderFragment(iconDriver)
             </button>
         </div>
     </div>

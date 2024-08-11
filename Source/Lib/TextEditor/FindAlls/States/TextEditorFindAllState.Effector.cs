@@ -19,7 +19,7 @@ public partial record TextEditorFindAllState
 		private readonly IState<TextEditorFindAllState> _textEditorFindAllStateWrap;
 		private readonly IDispatcher _dispatcher;
 		private readonly Throttle _throttleSetSearchQuery = new Throttle(TimeSpan.FromMilliseconds(500));
-		private readonly Throttle _throttleUiUpdate = new Throttle(Throttle.Thirty_Frames_Per_Second);
+		private readonly Throttle _throttleUiUpdate = new Throttle(ThrottleFacts.TwentyFour_Frames_Per_Second);
 		
 		public Effector(
 			IFileSystemProvider fileSystemProvider,

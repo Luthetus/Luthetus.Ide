@@ -1,6 +1,7 @@
+@using Luthetus.Common.RazorLib.Icons.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Models;
 @using Luthetus.Extensions.DotNet.CSharpProjects.Models;
 @using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
-@using Luthetus.Ide.RazorLib.Terminals.Models;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -154,7 +155,12 @@
 
                     <button class="luth_button"
                             @onclick='() => RequestInputFileForParentDirectory("Directory for new C# Project")'>
-                        <IconFolder />
+                        @{ 
+			            	var iconDriver = new IconDriver(
+			            		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			            		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+			            }
+			            @IconFolder.GetRenderFragment(iconDriver)
                     </button>
                 </div>
             </div>

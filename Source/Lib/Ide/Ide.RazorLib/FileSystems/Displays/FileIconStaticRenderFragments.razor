@@ -1,25 +1,29 @@
-@using Luthetus.Ide.RazorLib.FileSystems.Models;
-@using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+@using Luthetus.Common.RazorLib.Icons.Models
+@using Luthetus.Common.RazorLib.FileSystems.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.Ide.RazorLib.FileSystems.Models
 
-<span class="luth_ide_solution-explorer-icon-display">
-    @if (AbsolutePath.IsDirectory)
+@code {
+	public static RenderFragment<(IconDriver IconDriver, IAbsolutePath AbsolutePath)> GetRenderFragment = tuple => 
+	@<span class="luth_ide_solution-explorer-icon-display">
+    @if (tuple.AbsolutePath.IsDirectory)
     {
-        if (AbsolutePath.NameNoExtension == UniqueFileFacts.Properties)
+        if (tuple.AbsolutePath.NameNoExtension == UniqueFileFacts.Properties)
         {
             <IconProperties/>
         }
-        else if (AbsolutePath.NameNoExtension == UniqueFileFacts.WwwRoot)
+        else if (tuple.AbsolutePath.NameNoExtension == UniqueFileFacts.WwwRoot)
         {
             <IconWwwRoot/>
         }
         else
         {
-            <IconFolder/>
+        	@IconFolder.GetRenderFragment(tuple.IconDriver)
         }
     }
     else
     {
-        switch (AbsolutePath.ExtensionNoPeriod)
+        switch (tuple.AbsolutePath.ExtensionNoPeriod)
         {
             case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
                 <IconDotNetSolution/>
@@ -54,4 +58,5 @@
                 break;
         }
     }
-</span>
+</span>;
+}

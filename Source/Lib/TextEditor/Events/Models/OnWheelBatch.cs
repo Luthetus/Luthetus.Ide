@@ -83,7 +83,7 @@ public class OnWheelBatch : ITextEditorWork
             	.FinalizePost(EditContext)
             	.ConfigureAwait(false);
             	
-            await Task.Delay(Throttle.Thirty_Frames_Per_Second).ConfigureAwait(false);
+            await Task.Delay(ThrottleFacts.TwentyFour_Frames_Per_Second).ConfigureAwait(false);
 		}
 		catch (Exception e)
 		{

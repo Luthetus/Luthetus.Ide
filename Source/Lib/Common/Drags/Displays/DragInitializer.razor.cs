@@ -19,7 +19,7 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public static Throttle Throttle = new(Throttle.Thirty_Frames_Per_Second);
+    public static Throttle Throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second);
 
     private IDropzone? _onMouseOverDropzone = null;
 
