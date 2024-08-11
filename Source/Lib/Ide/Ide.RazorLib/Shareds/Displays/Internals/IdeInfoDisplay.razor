@@ -130,18 +130,15 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.2.0 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.2.0 </em> (2024-08-11)</div>
                 <ul>
                 	<li>
-                		TODO: Fix text editor "randomly" losing focus, and cursor scroll into view
-                		before accepting this pull request / updating the website.
+                		Bug in this version: The text editor appears to be "randomly" losing focus.
+                		I presume I can fix this, but I am sitting on too many code changes at the moment,
+                		so I'll accept these changes then look at this bug.
                 	</li>
                 	<li>
-                		Cursor blinking, and cursor scroll into view are purposefully broken at the moment.
-                		Scroll into view was being done with a javascript intersection observer. I feel like
-                		the javascript intersection observer makes sense for the virtualization, but for the cursor
-                		I know where it will be prior to it having rendered, and I think writing it in C# will
-                		be the best answer. Cursor blinking I'm wondering if it can be more optimized. It was
+                		Cursor blinking is purposefully broken at the moment. It was
                 		causing rerenders to all the actively rendered text editors because I wanted them
                 		to synchronize the blinking. I still want it synchronized but I just want to revisit the
                 		implementation I think it could be better.
