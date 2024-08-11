@@ -11,6 +11,10 @@
     display: flex;
 }
 
+.luth_te_text-editor:focus-visible {
+	outline: none;
+}
+
 .luth_te_text-editor-group {
     height: 100%;
 }
