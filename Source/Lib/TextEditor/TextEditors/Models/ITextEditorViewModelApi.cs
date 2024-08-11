@@ -132,6 +132,13 @@ public interface ITextEditorViewModelApi
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier);
+        
+    public void RevealCursor(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier cursorModifier);
 
     public void CalculateVirtualizationResult(
         ITextEditorEditContext editContext,

@@ -604,6 +604,49 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             cursorModifier.ColumnIndex = lastEntriesLineLength;
         }
     }
+    
+    public void RevealCursor(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier cursorModifier)
+    {
+    	try
+    	{
+    		if (!viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor)
+    			return;
+    			
+    		viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = false;
+    	
+    		var cursorIsVisible = false;
+    		
+    		if (cursorIsVisible)
+    			return;
+    			
+    		Console.WriteLine(nameof(RevealCursor));
+		
+            var cursorPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+
+            var cursorTextSpan = new TextEditorTextSpan(
+                cursorPositionIndex,
+                cursorPositionIndex + 1,
+                0,
+                modelModifier.ResourceUri,
+                sourceText: string.Empty,
+                getTextPrecalculatedResult: string.Empty);
+
+            ScrollIntoView(
+        		editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorTextSpan);
+    	}
+    	catch (LuthetusTextEditorException exception)
+    	{
+    		Console.WriteLine(exception);
+    	}
+    }
 
     public void CalculateVirtualizationResult(
         ITextEditorEditContext editContext,

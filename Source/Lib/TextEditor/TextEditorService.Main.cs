@@ -215,6 +215,23 @@ public partial class TextEditorService : ITextEditorService
                         .ToImmutableArray()
                 };
             }
+            
+            if (viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor)
+            {
+            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
+            	cursorModifierBag ??= editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            	var cursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+            	
+            	if (modelModifier is not null)
+            	{
+            		ViewModelApi.RevealCursor(
+	            		editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        cursorModifier);
+            	}
+            }
 
             if (viewModelModifier.ScrollWasModified)
             {
