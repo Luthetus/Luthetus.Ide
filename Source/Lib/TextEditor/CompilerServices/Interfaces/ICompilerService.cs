@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
@@ -15,7 +16,7 @@ public interface ICompilerService
     public IBinder? Binder { get; }
 
     /// <summary>Expected to be concurrency safe with <see cref="DisposeResource"/></summary>
-    public void RegisterResource(ResourceUri resourceUri);
+    public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified);
 
     /// <summary>Expected to be an <see cref="Microsoft.Extensions.Hosting.IHostedService"/> (or anything which performs background task work)</summary>
     public void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList);
@@ -51,6 +52,8 @@ public interface ICompilerService
     /// this method is invoked to populate the autocomplete menu.
     /// </summary>
     public ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan);
+
+	public Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier);
 
     /// <summary>Expected to be concurrency safe with <see cref="RegisterResource"/></summary>
     public void DisposeResource(ResourceUri resourceUri);

@@ -35,7 +35,7 @@ public partial class SolutionVisualizationDisplay : ComponentBase, IDisposable
 	[CascadingParameter]
 	public IDialog Dialog { get; set; }
 
-	private readonly Throttle _stateChangedThrottle = new(Throttle.Thirty_Frames_Per_Second);
+	private readonly Throttle _stateChangedThrottle = new(ThrottleFacts.TwentyFour_Frames_Per_Second);
 
 	private SolutionVisualizationModel _solutionVisualizationModel;
 	private DotNetSolutionCompilerService _dotNetSolutionCompilerService;

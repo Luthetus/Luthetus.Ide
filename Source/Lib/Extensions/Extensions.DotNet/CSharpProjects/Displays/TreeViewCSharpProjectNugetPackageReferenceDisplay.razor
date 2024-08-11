@@ -1,5 +1,12 @@
-﻿<div>
-    <IconPackage/>
+<div>
+
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
+
+    @IconPackageFragment.Render(iconDriver)
     @CSharpProjectNugetPackageReference.LightWeightNugetPackageRecord.Title<!--
     -->/<!--
     -->@CSharpProjectNugetPackageReference.LightWeightNugetPackageRecord.Version

@@ -2,16 +2,15 @@
 
 @{ 
 	var localStartupControlState = StartupControlStateWrap.Value;
-	var localExecutingTerminalCommand = _executingTerminalCommand;
 	bool isExecuting;
-	
-	if (localExecutingTerminalCommand is null)
+
+	if (localStartupControlState?.ActiveStartupControl is null)
 	{
 		isExecuting = false;
 	}
 	else
 	{
-		isExecuting = !localExecutingTerminalCommand.IsCompleted;
+		isExecuting = localStartupControlState.ActiveStartupControl.IsExecuting;
 	}
 }
 
@@ -42,13 +41,19 @@
                 disabled=@(localStartupControlState.ActiveStartupControl is null)
                 title="Start without debugging:  @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
             
+            @{
+            	var iconDriver = new IconDriver(
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+            }
+            
             @if (isExecuting)
             {
-				<IconStopCircle/>
+				@IconStopCircleFragment.Render(iconDriver)
             }
             else
             {
-				<IconStartWithoutDebugging/>
+				@IconStartWithoutDebuggingFragment.Render(iconDriver)
             }
         </button>
    </div>

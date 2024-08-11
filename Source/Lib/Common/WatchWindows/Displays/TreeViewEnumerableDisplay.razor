@@ -1,4 +1,11 @@
-﻿<div title="@TreeViewEnumerable.Key.Guid">
-    <IconListUnordered/>
+<div title="@TreeViewEnumerable.Key.Guid">
+
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
+
+    @IconListUnorderedFragment.Render(iconDriver)
     Enumerable
 </div>

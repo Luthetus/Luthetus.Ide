@@ -1,5 +1,12 @@
-﻿<div title="@TreeViewInterfaceImplementation.Key.Guid">
-    <IconSymbolInterface/>
+<div title="@TreeViewInterfaceImplementation.Key.Guid">
+
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
+
+    @IconSymbolInterfaceFragment.Render(iconDriver)
     ConcreteType:
     <span class="luth_te_type">@TreeViewInterfaceImplementation.Item.ItemType.Name</span>
 </div>

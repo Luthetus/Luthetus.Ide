@@ -1,4 +1,11 @@
-﻿<div>
-    <IconNuGetPackages/>
+<div>
+
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
+
+    @IconNuGetPackagesFragment.Render(iconDriver)
     NuGet Packages
 </div>

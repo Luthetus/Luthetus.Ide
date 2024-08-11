@@ -44,7 +44,7 @@ public class GitIdeApi
         _dispatcher = dispatcher;
     }
 
-    public Key<TerminalCommand> GitTerminalCommandKey { get; } = Key<TerminalCommand>.NewKey();
+    public Key<TerminalCommandRequest> GitTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 
     public void StatusEnqueue()
     {
@@ -68,15 +68,24 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.StatusEnqueue,
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser);
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
-                return Task.CompletedTask;
+                var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		var textSpanList = _gitCliOutputParser.StatusParseEntire(
+                			parsedCommand.OutputCache.ToString());
+                			
+                		_gitCliOutputParser.DispatchSetStatusAction();
+                			
+                		parsedCommand.TextSpanList = textSpanList;
+                		return Task.CompletedTask;
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+				return Task.CompletedTask;
             });
     }
 
@@ -110,14 +119,21 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.GetActiveBranchNameEnqueue
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser);
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
+                var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		_gitCliOutputParser.GetBranchParse(
+                			parsedCommand.OutputCache.ToString());
+                			
+                		_gitCliOutputParser.DispatchSetBranchAction();
+                		return Task.CompletedTask;
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -143,17 +159,24 @@ public class GitIdeApi
                     HACK_ArgumentsString = terminalCommandArgs,
                     Tag = GitCliOutputParser.TagConstants.GetOriginNameEnqueue,
 				};
-
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser);
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
+                    
+                var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		_gitCliOutputParser.GetOriginParse(
+                			parsedCommand.OutputCache.ToString());
+                		
+                		_gitCliOutputParser.DispatchSetOriginAction();
+                		return Task.CompletedTask;
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
-			});
+		});
     }
 
     public void AddEnqueue(GitRepo repoAtTimeOfRequest)
@@ -198,19 +221,19 @@ public class GitIdeApi
 		        {
 		            HACK_ArgumentsString = terminalCommandArgs
 		        };
-		        
-		        var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-		            formattedCommand,
-		            localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: () =>
-					{
-						StatusEnqueue();
+					
+				var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+            	{
+            		ContinueWithFunc = parsedCommand =>
+            		{
+            			StatusEnqueue();
 						return Task.CompletedTask;
-					});
-		
-		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-		        generalTerminal.EnqueueCommand(terminalCommand);
+            		}
+            	};
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -258,18 +281,18 @@ public class GitIdeApi
 		            HACK_ArgumentsString = terminalCommandArgs
 		        };
 		        
-		        var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-		            formattedCommand,
-		            localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: () =>
-					{
-						StatusEnqueue();
-						return Task.CompletedTask;
-					});
-		
-		        var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-		        generalTerminal.EnqueueCommand(terminalCommand);
+				var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		StatusEnqueue();
+                		return Task.CompletedTask;
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -296,26 +319,26 @@ public class GitIdeApi
                     HACK_ArgumentsString = argumentsString
                 };
 
-                var gitCommitCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: () =>
-					{
-						StatusEnqueue();
-
+                var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+	                	StatusEnqueue();
+	
 						NotificationHelper.DispatchInformative(
 							"Git: committed",
-                            commitSummary,
+	                        commitSummary,
 							_commonComponentRenderers,
 							_dispatcher,
 							TimeSpan.FromSeconds(5));
-
+	
 						return Task.CompletedTask;
-                    });
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(gitCommitCommand);
+					}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -344,19 +367,19 @@ public class GitIdeApi
                 {
                     HACK_ArgumentsString = argumentsString
                 };
-
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    ContinueWith: () =>
-					{
-						RefreshEnqueue(repoAtTimeOfRequest);
+                
+				var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		RefreshEnqueue(repoAtTimeOfRequest);
 						return Task.CompletedTask;
-					});
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -383,15 +406,22 @@ public class GitIdeApi
                     HACK_ArgumentsString = argumentsString,
                     Tag = GitCliOutputParser.TagConstants.BranchGetAllEnqueue,
 				};
-
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser);
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
+                    
+                var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		_gitCliOutputParser.GetBranchListEntire(
+                			parsedCommand.OutputCache.ToString());
+                			
+                		_gitCliOutputParser.DispatchSetBranchListAction();
+                		return Task.CompletedTask;
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -419,19 +449,18 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.BranchSetEnqueue,
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser,
-                    ContinueWith: () =>
-					{
-						RefreshEnqueue(repoAtTimeOfRequest);
-						return Task.CompletedTask;
-					});
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
+				var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		RefreshEnqueue(repoAtTimeOfRequest);
+                		return Task.CompletedTask;
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -461,19 +490,18 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.PushToOriginWithTrackingEnqueue
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser,
-                    ContinueWith: () =>
-					{
-						RefreshEnqueue(repoAtTimeOfRequest);
+				var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+	                	RefreshEnqueue(repoAtTimeOfRequest);
 						return Task.CompletedTask;
-					});
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -501,19 +529,18 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.PullEnqueue
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser,
-                    ContinueWith: () =>
-					{
-						RefreshEnqueue(repoAtTimeOfRequest);
+				var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		RefreshEnqueue(repoAtTimeOfRequest);
 						return Task.CompletedTask;
-					});
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -541,19 +568,18 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.FetchEnqueue
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser,
-                    ContinueWith: () =>
-					{
-						RefreshEnqueue(repoAtTimeOfRequest);
+			    var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		RefreshEnqueue(repoAtTimeOfRequest);
 						return Task.CompletedTask;
-					});
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }
@@ -561,7 +587,7 @@ public class GitIdeApi
     public void LogFileEnqueue(
         GitRepo repoAtTimeOfRequest,
         string relativePathToFile,
-        Func<GitCliOutputParser, Task> callback)
+        Func<GitCliOutputParser, string, Task> callback)
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
@@ -583,18 +609,19 @@ public class GitIdeApi
                     Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
 				};
 
-                var terminalCommand = new TerminalCommand(
-                    GitTerminalCommandKey,
-                    formattedCommand,
-                    localGitState.Repo.AbsolutePath.Value,
-                    OutputParser: _gitCliOutputParser,
-                    ContinueWith: () =>
-                    {
-                        return callback.Invoke(_gitCliOutputParser);
-                    });
-
-                var generalTerminal = _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_TERMINAL_KEY];
-                generalTerminal.EnqueueCommand(terminalCommand);
+                var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		return callback.Invoke(
+                			_gitCliOutputParser,
+                			parsedCommand.OutputCache.ToString());
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }

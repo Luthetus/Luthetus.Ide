@@ -146,7 +146,11 @@
 
                 @if (_performingNugetQuery)
                 {
-                    <IconLoading />
+                	var iconDriver = new IconDriver(
+						AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+						AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+						
+                    @IconLoadingFragment.Render(iconDriver)
                 }
 
                 @if (_exceptionFromNugetQuery is not null)

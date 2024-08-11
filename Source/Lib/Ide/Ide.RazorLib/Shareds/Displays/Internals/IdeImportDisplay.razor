@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Forms
 
 <div>
     Note:<br />
@@ -55,17 +55,23 @@
     </div>
 }
 
+@{
+	var iconDriver = new IconDriver(
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+}
+
 @switch (_activePhase)
 {
     case ImportPhase.RequestRepoContents:
-        <div>Requesting repo as zip archive<IconLoading/></div>
+        <div>Requesting repo as zip archive@IconLoadingFragment.Render(iconDriver)</div>
         break;
     case ImportPhase.ReadZipArchive:
         <div>
             Reading zip archive
             (@_processedFilesInZipArchive/@_totalFilesInZipArchive)
             processed:@_nameOfEntryMostRecentlyProcessed
-            <IconLoading/>
+            @IconLoadingFragment.Render(iconDriver)
         </div>
         break;
     case ImportPhase.Error:

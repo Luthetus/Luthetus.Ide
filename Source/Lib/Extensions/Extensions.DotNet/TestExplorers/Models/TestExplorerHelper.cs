@@ -231,6 +231,7 @@ public static class TestExplorerHelper
 				textEditorService.TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
 					definitionViewModelKey,
 					Key<TextEditorGroup>.Empty,
+					true,
 					serviceProvider));
 			}
 			else

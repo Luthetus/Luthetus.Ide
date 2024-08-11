@@ -2,9 +2,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
+using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.DotNet.Tests.Basis.TreeViewImplementations.Models;
 
@@ -25,6 +26,7 @@ public class TreeViewCompilerServiceTests : ExtensionsDotNetTestBase
         Test_RegisterServices(out var serviceProvider);
         Test_CreateFileSystem(serviceProvider);
 
+        var dotNetComponentRenderers = serviceProvider.GetRequiredService<IDotNetComponentRenderers>();
         var ideComponentRenderers = serviceProvider.GetRequiredService<IIdeComponentRenderers>();
         var commonComponentRenderers = serviceProvider.GetRequiredService<ICommonComponentRenderers>();
         var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
@@ -38,12 +40,14 @@ public class TreeViewCompilerServiceTests : ExtensionsDotNetTestBase
 
         var treeView = new TreeViewCompilerService(
             compilerService,
+            dotNetComponentRenderers,
             ideComponentRenderers,
             commonComponentRenderers,
             isExpandable,
             isExpanded);
 
         Assert.Equal(treeView.Item, compilerService);
+        Assert.Equal(treeView.DotNetComponentRenderers, dotNetComponentRenderers);
         Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
         Assert.Equal(treeView.CommonComponentRenderers, commonComponentRenderers);
         Assert.Equal(treeView.IsExpandable, isExpandable);

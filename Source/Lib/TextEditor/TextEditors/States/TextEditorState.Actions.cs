@@ -33,6 +33,8 @@ public partial record TextEditorState
         IDispatcher Dispatcher,
         IDialogService DialogService,
         IJSRuntime JsRuntime);
+        
+    public record RegisterViewModelExistingAction(TextEditorViewModel ViewModel);
 
     public record DisposeViewModelAction(Key<TextEditorViewModel> ViewModelKey);
 

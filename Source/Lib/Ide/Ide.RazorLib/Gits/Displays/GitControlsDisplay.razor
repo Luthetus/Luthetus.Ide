@@ -9,7 +9,13 @@
         </button>
         <button class="luth_button"
                 @onclick="() => ExecuteGitRefreshOnClick(localGitState)">
-            <IconRefresh /> Refresh
+            
+            @{
+	            var iconDriver = new IconDriver(
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+            }
+            @IconRefreshFragment.Render(iconDriver) Refresh
         </button>
     </div>
 

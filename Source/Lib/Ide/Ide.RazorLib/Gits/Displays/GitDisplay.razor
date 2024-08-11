@@ -27,7 +27,13 @@
 					id="@_dropdownMenuHtmlElementId"
                     class="luth_button luth_ide_git-justify-end"
                     style="position: relative; margin-top: 10px; padding: 8px; justify-content: center; align-items: center;">
-                <IconSettingsGear />
+                    
+                @{
+                	var iconDriver = new IconDriver(
+						AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+						AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+                }
+                @IconSettingsGearFragment.Render(iconDriver)
             </button>
 
             <div style="margin-top: 10px;">

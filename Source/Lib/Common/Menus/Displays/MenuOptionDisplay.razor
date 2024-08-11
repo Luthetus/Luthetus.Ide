@@ -21,10 +21,16 @@
     }
     
     @MenuOptionRecord.DisplayName
+    
+    @{
+    	var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+    }
 
     @if (MenuOptionRecord.SubMenu is not null)
     {
-        <IconChevronRight/>
+        @IconChevronRightFragment.Render(iconDriver)
     }
 
     @if (DisplayWidget)

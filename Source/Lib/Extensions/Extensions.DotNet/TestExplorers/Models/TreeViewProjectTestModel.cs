@@ -44,10 +44,10 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 			});
 	}
 
-	public override async Task LoadChildListAsync()
+	public override Task LoadChildListAsync()
 	{
 		if (Item.DotNetTestListTestsCommandOutput is not null)
-			return;
+			return Task.CompletedTask;
 
 		var previousChildren = new List<TreeViewNoType>(ChildList);
 
@@ -64,7 +64,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 
 		TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 
-		await Item.EnqueueDiscoverTestsFunc(async rootStringFragmentMap =>
+		return Item.EnqueueDiscoverTestsFunc(async rootStringFragmentMap =>
 		{
 			try
 			{
@@ -119,7 +119,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 
 			TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 			Item.ReRenderNodeAction.Invoke(this);
-		}).ConfigureAwait(false);
+		});
 	}
 
 	public override void RemoveRelatedFilesFromParent(List<TreeViewNoType> siblingsAndSelfTreeViews)
