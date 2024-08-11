@@ -41,13 +41,19 @@
                 disabled=@(localStartupControlState.ActiveStartupControl is null)
                 title="Start without debugging:  @(localStartupControlState.ActiveStartupControl?.TitleVerbose)">
             
+            @{
+            	var iconDriver = new IconDriver(
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+            }
+            
             @if (isExecuting)
             {
-				<IconStopCircle/>
+				@IconStopCircleFragment.Render(iconDriver)
             }
             else
             {
-				<IconStartWithoutDebugging/>
+				@IconStartWithoutDebuggingFragment.Render(iconDriver)
             }
         </button>
    </div>

@@ -10,11 +10,11 @@
     {
         if (tuple.AbsolutePath.NameNoExtension == UniqueFileFacts.Properties)
         {
-            <IconProperties/>
+            @IconPropertiesFragment.Render(tuple.IconDriver)
         }
         else if (tuple.AbsolutePath.NameNoExtension == UniqueFileFacts.WwwRoot)
         {
-            <IconWwwRoot/>
+            @IconWwwRootFragment.Render(tuple.IconDriver)
         }
         else
         {
@@ -26,35 +26,35 @@
         switch (tuple.AbsolutePath.ExtensionNoPeriod)
         {
             case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
-                <IconDotNetSolution/>
+                @IconDotNetSolutionFragment.Render(tuple.IconDriver)
                 break;
             case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
-                <IconCSharpProject/>
+                @IconCSharpProjectFragment.Render(tuple.IconDriver)
                 break;
             case ExtensionNoPeriodFacts.C_SHARP_CLASS:
             case ExtensionNoPeriodFacts.RAZOR_CODEBEHIND:
-                <IconCSharpClass/>
+                @IconCSharpClassFragment.Render(tuple.IconDriver)
                 break;
             case ExtensionNoPeriodFacts.CSHTML_CLASS:
-                <IconCshtml/>
+                @IconCshtmlFragment.Render(tuple.IconDriver)
                 break;
             case ExtensionNoPeriodFacts.RAZOR_MARKUP:
-                <IconRazor/>
+                @IconRazorFragment.Render(tuple.IconDriver)
                 break;
             case ExtensionNoPeriodFacts.JSON:
-                <IconJson/>
+                @IconJsonFragment.Render(tuple.IconDriver)
                 break;
             case ExtensionNoPeriodFacts.CSS:
-                <IconCss/>
+                @IconCssFragment.Render(tuple.IconDriver)
                 break;
             case ExtensionNoPeriodFacts.JAVA_SCRIPT:
-                <IconJs/>
+                @IconJsFragment.Render(tuple.IconDriver)
                 break;
             case ExtensionNoPeriodFacts.TYPE_SCRIPT:
-                <IconTs/>
+                @IconTsFragment.Render(tuple.IconDriver)
                 break;
             default:
-                <IconFile/>
+                @IconFileFragment.Render(tuple.IconDriver)
                 break;
         }
     }

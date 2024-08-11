@@ -1,17 +1,23 @@
-﻿<div class="luth_reflective-constructor @IsActiveCssClass">
+<div class="luth_reflective-constructor @IsActiveCssClass">
+
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
 
     @if (IsChosenConstructor)
     {
         <button class="luth_button"
                 @onclick="InvokeOnUnsetChosenConstructorInfo">
-            <IconClose/>
+            @IconCloseFragment.Render(iconDriver)
         </button>
     }
     else
     {
         <button class="luth_button"
                 @onclick="InvokeOnClick">
-            <IconCSharpProject/>
+            @IconCSharpProjectFragment.Render(iconDriver)
         </button>
     }
 

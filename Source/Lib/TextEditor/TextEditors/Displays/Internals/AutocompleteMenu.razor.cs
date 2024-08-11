@@ -1,9 +1,11 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
@@ -19,6 +21,8 @@ public partial class AutocompleteMenu : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private IAutocompleteService AutocompleteService { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }

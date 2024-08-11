@@ -1,7 +1,13 @@
 <div class="luth_tree-view-exception"
      style="display: flex; align-items: center;">
+     
+    @{
+    	var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+    }
 
-    <IconError/>
+    @IconErrorFragment.Render(iconDriver)
 
     <span style="margin-left: 0.5ch;">
         @TreeViewException.Item.Message

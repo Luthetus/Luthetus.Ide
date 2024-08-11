@@ -34,7 +34,12 @@
 						<div class="luth_te_widget-toolbar-right">
 							<button class="luth_button"
 				                    @onclick="() => CloseWidgetOnClick(renderBatchLocal, widget)">
-				                <IconClose/>
+				                @{
+				                	var iconDriver = new IconDriver(
+					            		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+					            		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+				                }
+				                @IconCloseFragment.Render(iconDriver)
 				            </button>
 						</div>
 					</div>

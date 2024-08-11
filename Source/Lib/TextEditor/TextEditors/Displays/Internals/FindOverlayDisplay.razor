@@ -5,6 +5,10 @@
 @if (renderBatchLocal is not null &&
 	 renderBatchLocal.ViewModel.ShowFindOverlay)
 {
+	var iconDriver = new IconDriver(
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+
 	<div class="luth_te_find-overlay"
          @onmousedown:stopPropagation="true"
          @onmousemove:stopPropagation="true"
@@ -69,7 +73,7 @@
                             @ondblclick:stopPropagation="true"
                             @oncontextmenu:stopPropagation="true"
                             @onkeydown:stopPropagation="true">
-                        <IconArrowDown />
+                        @IconArrowDownFragment.Render(iconDriver)
                     </button>
 
 					<button class="luth_button"
@@ -81,7 +85,7 @@
                             @ondblclick:stopPropagation="true"
                             @oncontextmenu:stopPropagation="true"
                             @onkeydown:stopPropagation="true">
-                        <IconArrowUp />
+                        @IconArrowUpFragment.Render(iconDriver)
                     </button>
                 </div>
             }

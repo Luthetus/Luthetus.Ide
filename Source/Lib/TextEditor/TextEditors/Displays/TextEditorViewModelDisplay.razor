@@ -4,6 +4,7 @@
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Common.RazorLib.CustomEvents.Models
 @using Luthetus.Common.RazorLib.Keyboards.Models;
+@using Luthetus.Common.RazorLib.Icons.Models
 @using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 @using Luthetus.TextEditor.RazorLib.Rows.Models;
 @using Luthetus.TextEditor.RazorLib.Options.Models;
@@ -53,6 +54,10 @@
 		                    .GetValues(typeof(HeaderButtonKind))
 		                    .Cast<HeaderButtonKind>()
 		                    .ToImmutableArray();
+		                    
+		            	var iconDriver = new IconDriver(
+		            		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+		            		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
 		
 		                foreach (var headerButtonKind in localHeaderButtonKindsList)
 		                {
@@ -63,21 +68,21 @@
 		                                <button title="@headerButtonKind.ToString()"
 		                                        class="luth_button"
 		                                		@onclick="_headerDriver.DoCutOnClick">
-		                                    <IconNote />
+		                                    @IconNoteFragment.Render(iconDriver)
 		                                </button>
 		                                break;
 		                            case HeaderButtonKind.Copy:
 		                                <button title="@headerButtonKind.ToString()"
 		                                        class="luth_button"
 		                                		@onclick="_headerDriver.DoCopyOnClick">
-		                                    <IconCopy />
+		                                    @IconCopyFragment.Render(iconDriver)
 		                                </button>
 		                                break;
 		                            case HeaderButtonKind.Paste:
 		                                <button title="@headerButtonKind.ToString()"
 		                                        class="luth_button"
 		                                		@onclick="_headerDriver.DoPasteOnClick">
-		                                    <IconClippy />
+		                                    @IconClippyFragment.Render(iconDriver)
 		                                </button>
 		                                break;
 		                            case HeaderButtonKind.Undo:
@@ -85,7 +90,7 @@
 		                                        class="luth_button"
 		                                        disabled=@_headerDriver.GetUndoDisabledAttribute()
 		                                		@onclick="_headerDriver.DoUndoOnClick">
-		                                    <IconArrowLeft />
+		                                    @IconArrowLeftFragment.Render(iconDriver)
 		                                </button>
 		                                break;
 		                            case HeaderButtonKind.Redo:
@@ -93,28 +98,28 @@
 		                                        class="luth_button"
 		                                        disabled=@_headerDriver.GetRedoDisabledAttribute()
 		                                		@onclick="_headerDriver.DoRedoOnClick">
-		                                    <IconArrowRight />
+		                                    @IconArrowRightFragment.Render(iconDriver)
 		                                </button>
 		                                break;
 		                            case HeaderButtonKind.Save:
 		                                <button title="@headerButtonKind.ToString()"
 		                                        class="luth_button"
 		                                		@onclick="_headerDriver.DoSaveOnClick">
-		                                    <IconSave />
+		                                    @IconSaveFragment.Render(iconDriver)
 		                                </button>
 		                                break;
 		                            case HeaderButtonKind.SelectAll:
 		                                <button title="@headerButtonKind.ToString()"
 		                                        class="luth_button"
 		                                		@onclick="_headerDriver.DoSelectAllOnClick">
-		                                    <IconListSelection />
+		                                    @IconListSelectionFragment.Render(iconDriver)
 		                                </button>
 		                                break;
 		                            case HeaderButtonKind.PeekWindowDisplay:
 		                                <button title="@headerButtonKind.ToString()"
 		                                        class="luth_button"
 		                                		@onclick="_headerDriver.ShowWatchWindowDisplayDialogOnClick">
-		                                    <IconProjectDependencies />
+		                                    @IconProjectDependenciesFragment.Render(iconDriver)
 		                                </button>
 		                                break;
 		                        }
@@ -125,7 +130,7 @@
 		                    <button title="Measure editor size"
 		                            class="luth_button"
 		                    		@onclick="_headerDriver.DoRemeasureOnClick">
-		                        <IconSymbolRuler />
+		                        @IconSymbolRulerFragment.Render(iconDriver)
 		                    </button>
 		                </div>
 		                
@@ -134,7 +139,7 @@
 		                            class="luth_button"
 		                            id="@_headerDriver._reloadButtonHtmlElementId"
 		                    		@onclick="_headerDriver.DoReloadOnClick">
-		                        <IconRefresh />
+		                        @IconRefreshFragment.Render(iconDriver)
 		                    </button>
 		                </div>
 		            }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
@@ -11,6 +12,8 @@ public partial class TreeViewStringFragmentDisplay : FluxorComponent
 {
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public TreeViewStringFragment TreeViewStringFragment { get; set; } = null!;

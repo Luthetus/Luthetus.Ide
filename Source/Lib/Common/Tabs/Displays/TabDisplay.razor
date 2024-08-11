@@ -24,7 +24,12 @@
 	            @onclick:stopPropagation="true"
 	            @onclick="CloseTabOnClickAsync">
 	        
-	        <IconClose/>
+	        @{
+	        	var iconDriver = new IconDriver(
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	        }
+	        @IconCloseFragment.Render(iconDriver)
     	</button>
 	}
 </button>

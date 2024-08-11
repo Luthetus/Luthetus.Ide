@@ -10,6 +10,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
@@ -32,6 +33,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public IState<TextEditorOptionsState> TextEditorOptionsStateWrap { get; set; } = null!;
     [Inject]
     public IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     public IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

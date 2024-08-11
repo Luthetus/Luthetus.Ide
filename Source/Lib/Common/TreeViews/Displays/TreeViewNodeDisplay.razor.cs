@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
+using Fluxor;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Options.States;
 
 namespace Luthetus.Common.RazorLib.TreeViews.Displays;
 
@@ -13,18 +15,20 @@ public partial class TreeViewNodeDisplay : ComponentBase
     private ITreeViewService TreeViewService { get; set; } = null!;
 	[Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 
     [CascadingParameter]
     public TreeViewContainer TreeViewContainer { get; set; } = null!;
-    [CascadingParameter(Name = "HandleTreeViewOnContextMenu")]
+    [CascadingParameter(Name="HandleTreeViewOnContextMenu")]
     public Func<MouseEventArgs?, Key<TreeViewContainer>, TreeViewNoType?, Task> HandleTreeViewOnContextMenu { get; set; } = null!;
-    [CascadingParameter(Name = "TreeViewMouseEventHandler")]
+    [CascadingParameter(Name="TreeViewMouseEventHandler")]
     public TreeViewMouseEventHandler TreeViewMouseEventHandler { get; set; } = null!;
-    [CascadingParameter(Name = "TreeViewKeyboardEventHandler")]
+    [CascadingParameter(Name="TreeViewKeyboardEventHandler")]
     public TreeViewKeyboardEventHandler TreeViewKeyboardEventHandler { get; set; } = null!;
-    [CascadingParameter(Name = "OffsetPerDepthInPixels")]
+    [CascadingParameter(Name="OffsetPerDepthInPixels")]
     public int OffsetPerDepthInPixels { get; set; } = 12;
-    [CascadingParameter(Name = "LuthetusTreeViewIconWidth")]
+    [CascadingParameter(Name="LuthetusTreeViewIconWidth")]
     public int WidthOfTitleExpansionChevron { get; set; } = 16;
 
     [Parameter, EditorRequired]

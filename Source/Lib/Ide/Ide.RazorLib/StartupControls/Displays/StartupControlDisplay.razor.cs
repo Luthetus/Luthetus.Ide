@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;
@@ -26,6 +27,8 @@ public partial class StartupControlDisplay : FluxorComponent
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
     [Inject]
     private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
     [Inject]

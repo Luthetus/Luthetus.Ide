@@ -1,4 +1,4 @@
-﻿@using Fluxor.Blazor.Web.Components;
+@using Fluxor.Blazor.Web.Components;
 @using Luthetus.Common.RazorLib.Keymaps.Displays
 
 @inherits FluxorComponent
@@ -11,14 +11,20 @@
         <button class="luth_button"
                 style="display: inline;"
                 @onclick="() => _isExpanded = !_isExpanded">
+                
+            @{
+            	var iconDriver = new IconDriver(
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+            }
         
             @if (_isExpanded)
             {
-                <IconChevronDown />
+                @IconChevronDownFragment.Render(iconDriver)
             }
             else
             {
-                <IconChevronRight />
+                @IconChevronRightFragment.Render(iconDriver)
             }
         </button>
 

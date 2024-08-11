@@ -2,6 +2,7 @@ using System.IO.Compression;
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.Exceptions;
 
@@ -15,6 +16,8 @@ public partial class IdeImportDisplay : ComponentBase, IDisposable
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 

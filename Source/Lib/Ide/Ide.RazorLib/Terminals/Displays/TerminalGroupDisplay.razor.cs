@@ -3,6 +3,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 
@@ -14,6 +15,8 @@ public partial class TerminalGroupDisplay : FluxorComponent
     private IState<TerminalGroupState> TerminalGroupDisplayStateWrap { get; set; } = null!;
     [Inject]
     private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

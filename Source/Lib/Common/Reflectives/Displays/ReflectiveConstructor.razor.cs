@@ -1,11 +1,16 @@
-using Luthetus.Common.RazorLib.Reflectives.Models;
-using Microsoft.AspNetCore.Components;
 using System.Reflection;
+using Microsoft.AspNetCore.Components;
+using Fluxor;
+using Luthetus.Common.RazorLib.Reflectives.Models;
+using Luthetus.Common.RazorLib.Options.States;
 
 namespace Luthetus.Common.RazorLib.Reflectives.Displays;
 
 public partial class ReflectiveConstructor : ComponentBase
 {
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    
     [CascadingParameter, EditorRequired]
     public ReflectiveModel DisplayState { get; set; } = null!;
 

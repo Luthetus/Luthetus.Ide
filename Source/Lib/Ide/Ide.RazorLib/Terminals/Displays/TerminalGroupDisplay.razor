@@ -83,13 +83,20 @@
                         </button>
 
                         <div style="margin-left: 15px;">
+                        
+                        	@{
+                        		var iconDriver = new IconDriver(
+									AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+									AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+                        	}
+                        
                             @if (terminal.HasExecutingProcess)
                             {
-                                <IconLoading />
+                                @IconLoadingFragment.Render(iconDriver)
                             }
                             else
                             {
-                                <IconBlank />
+                                @IconBlankFragment.Render(iconDriver)
                             }
                         </div>
                     </button>

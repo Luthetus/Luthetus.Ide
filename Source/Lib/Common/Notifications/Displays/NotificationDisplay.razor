@@ -13,13 +13,20 @@
         </div>
 
         <div class="luth_notification-control-buttons">
+        
+        	@{
+				var iconDriver = new IconDriver(
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+					AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+			}
+			
             <button class="luth_button luth_notification-button-entry"
             		@onclick="ChangeNotificationToDialog">
-                <IconEmptyWindow/>
+                @IconEmptyWindowFragment.Render(iconDriver)
             </button>
             <button class="luth_button luth_notification-button-entry"
             		@onclick="() => HandleShouldNoLongerRender(wasCausedByUiEvent: true)">
-                <IconClose/>
+                @IconCloseFragment.Render(iconDriver)
             </button>
         </div>
     </div>

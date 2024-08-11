@@ -20,7 +20,11 @@ else
 	}
 	else if (!output.Contains("Duration:"))
 	{
-		renderFragment = @<IconLoading/>;
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+		
+		renderFragment = IconLoadingFragment.Render(iconDriver);
 	}
 	else
 	{

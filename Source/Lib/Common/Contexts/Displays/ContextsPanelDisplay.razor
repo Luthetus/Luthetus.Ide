@@ -18,14 +18,20 @@
 	        <button class="luth_button"
 	                style="display: inline;"
 	                @onclick="() => DispatchToggleInspectActionOnClick(isInspecting)">
+	                
+	            @{
+	            	var iconDriver = new IconDriver(
+						AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+						AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	            }
 	
 	            @if (isInspecting)
 	            {
-	                <IconLock />
+	                @IconLockFragment.Render(iconDriver)
 	            }
 	            else
 	            {
-	                <IconInspect />
+	                @IconInspectFragment.Render(iconDriver)
 	            }
 	        </button>
 	

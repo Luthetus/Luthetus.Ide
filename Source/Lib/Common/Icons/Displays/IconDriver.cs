@@ -1,4 +1,4 @@
-namespace Luthetus.Common.RazorLib.Icons.Models;
+namespace Luthetus.Common.RazorLib.Icons.Displays;
 
 public struct IconDriver
 {

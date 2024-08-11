@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Components;
+using Fluxor;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -9,6 +11,8 @@ public partial class WidgetLayerDisplay : ComponentBase
 {
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	
     [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
