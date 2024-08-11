@@ -140,14 +140,14 @@ TODO: Decide if 'OutlineInitializer.razor' is an improvement,
 	color: var(--luth_active-button-primary-font-color);
 }
 
-/* _content/Luthetus.Common/Icons/Displays/IconLoading.razor.rz.scp.css */
-.lds-dual-ring[b-xvhigmhipw] {
+/* _content/Luthetus.Common/Icons/Displays/IconLoadingFragment.razor.rz.scp.css */
+.lds-dual-ring[b-o1lr8stm4g] {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.lds-dual-ring[b-xvhigmhipw]:after {
+.lds-dual-ring[b-o1lr8stm4g]:after {
     content: " ";
     display: block;
     width: 1em;
@@ -156,10 +156,10 @@ TODO: Decide if 'OutlineInitializer.razor' is an improvement,
     border-radius: 50%;
     border: .15em solid var(--luth_primary-font-color);
     border-color: var(--luth_primary-font-color) transparent var(--luth_primary-font-color) transparent;
-    animation: lds-dual-ring-b-xvhigmhipw 1.2s linear infinite;
+    animation: lds-dual-ring-b-o1lr8stm4g 1.2s linear infinite;
 }
 
-@keyframes lds-dual-ring-b-xvhigmhipw {
+@keyframes lds-dual-ring-b-o1lr8stm4g {
     0% {
         transform: rotate(0deg);
     }

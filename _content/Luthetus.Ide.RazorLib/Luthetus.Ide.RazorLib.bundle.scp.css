@@ -93,12 +93,15 @@ table[b-3571gv473k], th[b-3571gv473k], td[b-3571gv473k] {
     align-items: center;
     margin-left: 15px;
 }
-/* _content/Luthetus.Ide.RazorLib/Terminals/Displays/TerminalDisplay.razor.rz.scp.css */
-.luth_ide_terminal[b-ok6phnkp1e] {
-    height: 100%;
-}
 /* _content/Luthetus.Ide.RazorLib/Terminals/Displays/TerminalGroupDisplay.razor.rz.scp.css */
 .luth_ide_section-body[b-z1tqs2fkb6] {
     width: 100%;
     display: flex;
+}
+/* _content/Luthetus.Ide.RazorLib/Terminals/Displays/TerminalOutputTextEditorExpandDisplay.razor.rz.scp.css */
+.luth_ide_new-terminal-panel[b-mbxoy5w1k8] {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	font-family: monospace;
 }
