@@ -42,6 +42,7 @@ public partial class TextEditorService : ITextEditorService
     // TODO: Perhaps do not reference IJSRuntime but instead wrap it in a 'IUiProvider' or something like that. The 'IUiProvider' would then expose methods that allow the TextEditorViewModel to adjust the scrollbars. 
     private readonly IJSRuntime _jsRuntime;
     private readonly CommonBackgroundTaskApi _commonBackgroundTaskApi;
+    private readonly IServiceProvider _serviceProvider;
 
     public TextEditorService(
         IState<TextEditorState> textEditorStateWrap,
@@ -60,7 +61,8 @@ public partial class TextEditorService : ITextEditorService
         IDialogService dialogService,
 		IAutocompleteIndexer autocompleteIndexer,
 		IAutocompleteService autocompleteService,
-		IState<AppDimensionState> appDimensionStateWrap)
+		IState<AppDimensionState> appDimensionStateWrap,
+		IServiceProvider serviceProvider)
     {
         TextEditorStateWrap = textEditorStateWrap;
         GroupStateWrap = groupStateWrap;
@@ -69,6 +71,7 @@ public partial class TextEditorService : ITextEditorService
         OptionsStateWrap = optionsStateWrap;
         FindAllStateWrap = findAllStateWrap;
 		AppDimensionStateWrap = appDimensionStateWrap;
+		_serviceProvider = serviceProvider;
 
         _backgroundTaskService = backgroundTaskService;
         TextEditorConfig = textEditorConfig;
@@ -150,6 +153,15 @@ public partial class TextEditorService : ITextEditorService
 
         _backgroundTaskService.Enqueue(work);
     }
+    
+    public Task PostAsync(ITextEditorWork work)
+    {
+    	work.EditContext = new TextEditorEditContext(
+            this,
+            AuthenticatedActionKey);
+
+        return _backgroundTaskService.EnqueueAsync(work);
+    }
 
 	public async Task FinalizePost(ITextEditorEditContext editContext)
 	{
@@ -203,6 +215,23 @@ public partial class TextEditorService : ITextEditorService
                         .ToImmutableArray()
                 };
             }
+            
+            if (viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor)
+            {
+            	var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
+            	cursorModifierBag ??= editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+            	var cursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+            	
+            	if (modelModifier is not null)
+            	{
+            		ViewModelApi.RevealCursor(
+	            		editContext,
+				        modelModifier,
+				        viewModelModifier,
+				        cursorModifierBag,
+				        cursorModifier);
+            	}
+            }
 
             if (viewModelModifier.ScrollWasModified)
             {
@@ -231,5 +260,60 @@ public partial class TextEditorService : ITextEditorService
                 modelModifierNeedRenderList,
 				viewModelModifierNeedRenderList));
         }
+	}
+	
+	public async Task OpenInEditorAsync(
+		string absolutePath,
+		bool shouldSetFocusToEditor,
+		int? cursorPositionIndex,
+		Category category,
+		Key<TextEditorViewModel> preferredViewModelKey)
+	{
+		try
+		{
+			// RegisterModelFunc
+			if (TextEditorConfig.RegisterModelFunc is null)
+				return;
+			var resourceUri = new ResourceUri(absolutePath);
+			await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(resourceUri, _serviceProvider)).ConfigureAwait(false);
+		
+			// TryRegisterViewModelFunc
+			if (TextEditorConfig.TryRegisterViewModelFunc is null)
+				return;
+			var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+				preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
+		
+			// TryShowViewModelFunc
+			if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
+				return;
+			await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+				actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
+				
+			// Move cursor
+			if (cursorPositionIndex is null)
+				return; // Leave the cursor unchanged if the argument is null
+			PostUnique(nameof(OpenInEditorAsync), editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(resourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					return Task.CompletedTask;
+			
+				var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(cursorPositionIndex.Value);
+					
+				primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
+				primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+				return Task.CompletedTask;
+			});
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			// One would never want a failed attempt at opening a text file to cause a fatal exception.
+			// TODO: Perhaps add a notification? Perhaps 'throw' then add handling in the callers? But again, this should never cause a fatal exception.
+		}
 	}
 }

@@ -1,8 +1,14 @@
-﻿@using Luthetus.Common.RazorLib.Reflectives.Models;
+@using Luthetus.Common.RazorLib.Reflectives.Models;
 
 <div class="luth_reflective">
 
     @{ var model = ReflectiveStateSelection.Value; }
+    
+    @{
+    	var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+    }
 
     @if (model is not null)
     {
@@ -10,18 +16,18 @@
             <button class="luth_button"
                     title="Add Component Before"
                     @onclick="() => DispatchRegisterAction(Index)">
-                <IconArrowUp />
+                @IconArrowUpFragment.Render(iconDriver)
             </button>
 
             <button class="luth_button"
                     title="Add Component After"
                     @onclick="() => DispatchRegisterAction(Index + 1)">
-                <IconArrowDown />
+                @IconArrowDownFragment.Render(iconDriver)
             </button>
 
             <button class="luth_button"
                     @onclick="() => DispatchDisposeAction(model)">
-                <IconClose />
+                @IconCloseFragment.Render(iconDriver)
             </button>
         </div>
 
@@ -74,7 +80,7 @@
                     <button class="luth_button"
                             title="Recover from error"
                             @onclick="WrapRecover">
-                        <IconRefresh />
+                        @IconRefreshFragment.Render(iconDriver)
                     </button>
 
                     @if (model.ChosenTypeGuid != Guid.Empty)

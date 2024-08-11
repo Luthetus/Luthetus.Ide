@@ -14,6 +14,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
@@ -47,6 +48,8 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+	[Inject]
+	private ITextEditorService TextEditorService { get; set; } = null!;
 
 	private SolutionExplorerTreeViewKeyboardEventHandler _solutionExplorerTreeViewKeymap = null!;
 	private SolutionExplorerTreeViewMouseEventHandler _solutionExplorerTreeViewMouseEventHandler = null!;
@@ -61,6 +64,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 			IdeBackgroundTaskApi,
 			MenuOptionsFactory,
 			CommonComponentRenderers,
+			TextEditorService,
 			TreeViewService,
 			BackgroundTaskService,
 			EnvironmentProvider,
@@ -68,6 +72,7 @@ public partial class SolutionExplorerDisplay : FluxorComponent
 
 		_solutionExplorerTreeViewMouseEventHandler = new SolutionExplorerTreeViewMouseEventHandler(
 			IdeBackgroundTaskApi,
+			TextEditorService,
 			TreeViewService,
 			BackgroundTaskService);
 

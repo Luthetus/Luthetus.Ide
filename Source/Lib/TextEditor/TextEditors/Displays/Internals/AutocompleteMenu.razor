@@ -1,44 +1,53 @@
 @using Luthetus.Common.RazorLib.Menus.Displays
 @using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
-<div @ref="_autocompleteMenuElementReference"
-     tab-index="-1"
-     class="luth_ide_text-editor-autocomplete-menu"
-     @onkeydown="HandleOnKeyDown">
-    
-    <CascadingValue Name="ReturnFocusToParentFuncAsync"
-                    Value="ReturnFocusToThisAsync">
-        
-        <MenuDisplay @ref="_autocompleteMenuComponent" 
-                     MenuRecord="GetMenuRecord()"
-                     FocusOnAfterRenderAsync="false"
-                     Context="menuOption">
+@{ var renderBatchLocal = RenderBatch; }
 
-            <IconRenderFragment>
-                @{
-                    if ((menuOption.WidgetParameterMap?.TryGetValue(
-                            nameof(AutocompleteEntry), out var value) ?? false) &&
-                        value is AutocompleteEntry autocompleteEntry)
-                    {
-                        switch (autocompleteEntry.AutocompleteEntryKind)
-                        {
-                            case AutocompleteEntryKind.Word:
-                                <IconSymbolKey/>
-                                break;
-                            case AutocompleteEntryKind.Variable:
-                                <IconSymbolField/>
-                                break;
-                            case AutocompleteEntryKind.Function:
-                                <IconSymbolMethod/>
-                                break;
-                            case AutocompleteEntryKind.Type:
-                                <IconSymbolClass/>
-                                break;
-                        }
-                    }
-                }
-            </IconRenderFragment>
-        </MenuDisplay>
-    </CascadingValue>
+@if (renderBatchLocal is not null)
+{
+	var iconDriver = new IconDriver(
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
 
-</div>
+	<div @ref="_autocompleteMenuElementReference"
+	     tab-index="-1"
+	     class="luth_ide_text-editor-autocomplete-menu"
+	     @onkeydown="HandleOnKeyDown">
+	    
+	    <CascadingValue Name="ReturnFocusToParentFuncAsync"
+	                    Value="ReturnFocusToThisAsync">
+	        
+	        <MenuDisplay @ref="_autocompleteMenuComponent" 
+	                     MenuRecord="GetMenuRecord()"
+	                     FocusOnAfterRenderAsync="false"
+	                     Context="menuOption">
+	
+	            <IconRenderFragment>
+	                @{
+	                    if ((menuOption.WidgetParameterMap?.TryGetValue(
+	                            nameof(AutocompleteEntry), out var value) ?? false) &&
+	                        value is AutocompleteEntry autocompleteEntry)
+	                    {
+	                        switch (autocompleteEntry.AutocompleteEntryKind)
+	                        {
+	                            case AutocompleteEntryKind.Word:
+	                                @IconSymbolKeyFragment.Render(iconDriver)
+	                                break;
+	                            case AutocompleteEntryKind.Variable:
+	                                @IconSymbolFieldFragment.Render(iconDriver)
+	                                break;
+	                            case AutocompleteEntryKind.Function:
+	                                @IconSymbolMethodFragment.Render(iconDriver)
+	                                break;
+	                            case AutocompleteEntryKind.Type:
+	                                @IconSymbolClassFragment.Render(iconDriver)
+	                                break;
+	                        }
+	                    }
+	                }
+	            </IconRenderFragment>
+	        </MenuDisplay>
+	    </CascadingValue>
+	
+	</div>
+}

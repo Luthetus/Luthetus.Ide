@@ -11,23 +11,19 @@ public class StartupControlModel : IStartupControlModel
 		string title,
 		string titleVerbose,
 		IAbsolutePath startupProjectAbsolutePath,
-		Key<TerminalCommand> terminalCommandKey,
-		TerminalCommand? executingTerminalCommand,
 		Type? componentType,
 		Dictionary<string, object?>? componentParameterMap,
-		Func<Task<TerminalCommand?>> getTerminalCommandFunc,
-		Func<IStartupControlModel, Task> startButtonOnClickTask)
+		Func<IStartupControlModel, Task> startButtonOnClickTask,
+		Func<IStartupControlModel, Task> stopButtonOnClickTask)
 	{
 		Key = key;
 		Title = title;
 		TitleVerbose = titleVerbose;
 		StartupProjectAbsolutePath = startupProjectAbsolutePath;
-		TerminalCommandKey = terminalCommandKey;
-		ExecutingTerminalCommand = executingTerminalCommand;
 		ComponentType = componentType;
 		ComponentParameterMap = componentParameterMap;
-		GetTerminalCommandFunc = getTerminalCommandFunc;
 		StartButtonOnClickTask = startButtonOnClickTask;
+		StopButtonOnClickTask = stopButtonOnClickTask;
 	}
 	
     private CancellationTokenSource _terminalCancellationTokenSource = new();
@@ -36,11 +32,11 @@ public class StartupControlModel : IStartupControlModel
 	public string Title { get; }
 	public string TitleVerbose { get; }
 	public IAbsolutePath StartupProjectAbsolutePath { get; }
-	public Key<TerminalCommand> TerminalCommandKey { get; }
-	public TerminalCommand? ExecutingTerminalCommand { get; }
+	public TerminalCommandRequest? ExecutingTerminalCommandRequest { get; set; }
 	public Type? ComponentType { get; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; }
-	public Func<Task<TerminalCommand?>> GetTerminalCommandFunc { get; }
 	public Func<IStartupControlModel, Task> StartButtonOnClickTask { get; }
-	public bool IsExecuting { get; }
+	public Func<IStartupControlModel, Task> StopButtonOnClickTask { get; }
+	
+	public bool IsExecuting => ExecutingTerminalCommandRequest is not null;
 }

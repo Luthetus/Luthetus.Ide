@@ -24,7 +24,7 @@ public class SearchEngineFileSystem : ITextEditorSearchEngine
     public Key<ITextEditorSearchEngine> Key { get; } =
         new Key<ITextEditorSearchEngine>(Guid.Parse("dd38073d-b2fb-478c-844f-8af5e61855e7"));
 
-    public Type IconComponentRendererType { get; } = typeof(IconCopy);
+    public Type IconComponentRendererType { get; }
     public string DisplayName { get; } = "FileSystem";
 	public List<string> FilePathList = new List<string>();
 	public event Action? ProgressOccurred;

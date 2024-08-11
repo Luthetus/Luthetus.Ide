@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.Namespaces.Models;
+using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.DotNet.Tests.Basis.TreeViewImplementations.Models;
 
@@ -26,6 +27,7 @@ public class TreeViewNamespacePathTests : ExtensionsDotNetTestBase
         Test_RegisterServices(out var serviceProvider);
         Test_CreateFileSystem(serviceProvider);
 
+        var dotNetComponentRenderers = serviceProvider.GetRequiredService<IDotNetComponentRenderers>();
         var ideComponentRenderers = serviceProvider.GetRequiredService<IIdeComponentRenderers>();
         var commonComponentRenderers = serviceProvider.GetRequiredService<ICommonComponentRenderers>();
         var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
@@ -40,6 +42,7 @@ public class TreeViewNamespacePathTests : ExtensionsDotNetTestBase
 
         var treeView = new TreeViewNamespacePath(
             namespacePath,
+            dotNetComponentRenderers,
             ideComponentRenderers,
             commonComponentRenderers,
             fileSystemProvider,
@@ -48,6 +51,7 @@ public class TreeViewNamespacePathTests : ExtensionsDotNetTestBase
             isExpanded);
 
         Assert.Equal(treeView.Item, namespacePath);
+        Assert.Equal(treeView.DotNetComponentRenderers, dotNetComponentRenderers);
         Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
         Assert.Equal(treeView.CommonComponentRenderers, commonComponentRenderers);
         Assert.Equal(treeView.FileSystemProvider, fileSystemProvider);

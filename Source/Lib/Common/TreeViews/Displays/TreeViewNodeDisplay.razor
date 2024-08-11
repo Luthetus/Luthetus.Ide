@@ -24,21 +24,27 @@
                  @onclick:stopPropagation="TreeViewNoType.IsExpandable"
                  @onmousedown:stopPropagation="TreeViewNoType.IsExpandable"
                  @onmousedown="_ => HandleExpansionChevronOnMouseDown(TreeViewNoType)">
+                 
+                @{
+                	var iconDriver = new IconDriver(
+						AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+						AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+                }
 
                 @if (TreeViewNoType.IsExpandable)
                 {
                     if (TreeViewNoType.IsExpanded)
                     {
-                        <IconChevronDown/>
+                        @IconChevronDownFragment.Render(iconDriver)
                     }
                     else
                     {
-                        <IconChevronRight/>
+                        @IconChevronRightFragment.Render(iconDriver)
                     }
                 }
                 else
                 {
-                    <IconBlank/>
+                    @IconBlankFragment.Render(iconDriver)
                 }
             </div>
 

@@ -42,62 +42,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         _jsRuntime = jsRuntime;
         _dispatcher = dispatcher;
         _dialogService = dialogService;
-    }
-
-    private Task _cursorShouldBlinkTask = Task.CompletedTask;
-    private CancellationTokenSource _cursorShouldBlinkCancellationTokenSource = new();
-    private TimeSpan _blinkingCursorTaskDelay = TimeSpan.FromMilliseconds(1000);
-
-    public bool CursorShouldBlink { get; private set; } = true;
-    public event Action? CursorShouldBlinkChanged;
-
-    public void SetCursorShouldBlink(bool cursorShouldBlink)
-    {
-        if (!cursorShouldBlink)
-        {
-            if (CursorShouldBlink)
-            {
-                // Change true -> false THEREFORE: notify subscribers
-                CursorShouldBlink = cursorShouldBlink;
-                CursorShouldBlinkChanged?.Invoke();
-            }
-
-            // Single Threaded Applications flicker every "_blinkingCursorTaskDelay" event while holding a key down if this line is not included
-            _cursorShouldBlinkCancellationTokenSource.Cancel();
-
-            if (_cursorShouldBlinkTask.IsCompleted)
-            {
-                // Considering that just before entering this if block we cancel the cancellation token source. I want to ensure we get a new one if a new Task session beings.
-                _cursorShouldBlinkCancellationTokenSource = new();
-
-                _cursorShouldBlinkTask = Task.Run(async () =>
-                {
-                    while (true)
-                    {
-                        try
-                        {
-                            var cancellationToken = _cursorShouldBlinkCancellationTokenSource.Token;
-
-                            await Task
-                                .Delay(_blinkingCursorTaskDelay, cancellationToken)
-                                .ConfigureAwait(false);
-
-                            // Change false -> true THEREFORE: notify subscribers
-                            CursorShouldBlink = true;
-                            CursorShouldBlinkChanged?.Invoke();
-                            break;
-                        }
-                        catch (TaskCanceledException)
-                        {
-                            // Single Threaded Applications cannot exit the while loop unless they cancel the token themselves.
-                            _cursorShouldBlinkCancellationTokenSource.Cancel();
-                            _cursorShouldBlinkCancellationTokenSource = new();
-                        }
-                    }
-                });
-            }
-        }
-    }
+    }    
 
     #region CREATE_METHODS
     public void Register(
@@ -113,6 +58,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             _dispatcher,
             _dialogService,
             _jsRuntime));
+    }
+    
+    public void Register(TextEditorViewModel viewModel)
+    {
+        _dispatcher.Dispatch(new TextEditorState.RegisterViewModelExistingAction(viewModel));
     }
     #endregion
 
@@ -653,6 +603,49 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
             cursorModifier.LineIndex = lastEntry.Index;
             cursorModifier.ColumnIndex = lastEntriesLineLength;
         }
+    }
+    
+    public void RevealCursor(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier cursorModifier)
+    {
+    	try
+    	{
+    		if (!viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor)
+    			return;
+    			
+    		viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = false;
+    	
+    		var cursorIsVisible = false;
+    		
+    		if (cursorIsVisible)
+    			return;
+    			
+    		Console.WriteLine(nameof(RevealCursor));
+		
+            var cursorPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+
+            var cursorTextSpan = new TextEditorTextSpan(
+                cursorPositionIndex,
+                cursorPositionIndex + 1,
+                0,
+                modelModifier.ResourceUri,
+                sourceText: string.Empty,
+                getTextPrecalculatedResult: string.Empty);
+
+            ScrollIntoView(
+        		editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorTextSpan);
+    	}
+    	catch (LuthetusTextEditorException exception)
+    	{
+    		Console.WriteLine(exception);
+    	}
     }
 
     public void CalculateVirtualizationResult(

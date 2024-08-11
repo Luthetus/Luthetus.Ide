@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.CSharpProjects.Models;
+using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 
 namespace Luthetus.Extensions.DotNet.Tests.Basis.TreeViewImplementations.Models;
 
@@ -26,6 +27,7 @@ public class TreeViewCSharpProjectDependenciesTests : ExtensionsDotNetTestBase
         Test_RegisterServices(out var serviceProvider);
         Test_CreateFileSystem(serviceProvider);
 
+        var dotNetComponentRenderers = serviceProvider.GetRequiredService<IDotNetComponentRenderers>();
         var ideComponentRenderers = serviceProvider.GetRequiredService<IIdeComponentRenderers>();
         var commonComponentRenderers = serviceProvider.GetRequiredService<ICommonComponentRenderers>();
         var fileSystemProvider = serviceProvider.GetRequiredService<IFileSystemProvider>();
@@ -41,6 +43,7 @@ public class TreeViewCSharpProjectDependenciesTests : ExtensionsDotNetTestBase
 
         var treeView = new TreeViewCSharpProjectDependencies(
             cSharpProjectDependencies,
+            dotNetComponentRenderers,
             ideComponentRenderers,
             fileSystemProvider,
             environmentProvider,
@@ -48,6 +51,7 @@ public class TreeViewCSharpProjectDependenciesTests : ExtensionsDotNetTestBase
             isExpanded);
 
         Assert.Equal(treeView.Item, cSharpProjectDependencies);
+        Assert.Equal(treeView.DotNetComponentRenderers, dotNetComponentRenderers);
         Assert.Equal(treeView.IdeComponentRenderers, ideComponentRenderers);
         Assert.Equal(treeView.FileSystemProvider, fileSystemProvider);
         Assert.Equal(treeView.EnvironmentProvider, environmentProvider);

@@ -800,40 +800,12 @@ public class TextEditorCommandDefaultFunctions
 			menuOptionList.Add(new MenuOptionRecord(
 				siblingAbsolutePath.NameWithExtension,
 				MenuOptionKind.Other,
-				OnClickFunc: async () =>
-				{
-					var resourceUri = new ResourceUri(file);
-					var textEditorConfig = commandArgs.TextEditorService.TextEditorConfig;
-
-			        if (textEditorConfig.RegisterModelFunc is null)
-			            return;
-			
-			        await textEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(
-			                resourceUri,
-			                commandArgs.ServiceProvider))
-			            .ConfigureAwait(false);
-			
-			        if (textEditorConfig.TryRegisterViewModelFunc is not null)
-			        {
-			            var viewModelKey = await textEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-			                    Key<TextEditorViewModel>.NewKey(),
-			                    resourceUri,
-			                    new Category("main"),
-			                    false,
-			                    commandArgs.ServiceProvider))
-			                .ConfigureAwait(false);
-			
-			            if (viewModelKey != Key<TextEditorViewModel>.Empty &&
-			                textEditorConfig.TryShowViewModelFunc is not null)
-			            {
-			                await textEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-			                        viewModelModifier.ViewModel.ViewModelKey,
-			                        Key<TextEditorGroup>.Empty,
-			                        commandArgs.ServiceProvider))
-			                    .ConfigureAwait(false);
-			            }
-			        }
-				}));
+				OnClickFunc: async () => commandArgs.TextEditorService.OpenInEditorAsync(
+					file,
+					true,
+					null,
+					new Category("main"),
+					Key<TextEditorViewModel>.NewKey())));
 		}
 		
 		MenuRecord menu;
@@ -974,6 +946,7 @@ public class TextEditorCommandDefaultFunctions
             commandArgs.TextEditorService.TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
                 definitionViewModelKey,
                 Key<TextEditorGroup>.Empty,
+                true,
                 commandArgs.ServiceProvider));
         }
     }
@@ -1064,7 +1037,7 @@ public class TextEditorCommandDefaultFunctions
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
         {
-            await componentData.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+            componentData.ThrottleApplySyntaxHighlighting(modelModifier);
         }
     }
 
@@ -1158,7 +1131,7 @@ public class TextEditorCommandDefaultFunctions
 
         if (seenIsSyntaxHighlightingInvoker)
         {
-            await componentData.ThrottleApplySyntaxHighlighting(modelModifier).ConfigureAwait(false);
+            componentData.ThrottleApplySyntaxHighlighting(modelModifier);
         }
     }
 

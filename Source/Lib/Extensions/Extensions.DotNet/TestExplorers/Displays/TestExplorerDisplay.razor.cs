@@ -15,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.States;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;
 
@@ -156,14 +157,16 @@ public partial class TestExplorerDisplay : FluxorComponent
 					modelModifier,
 					FindOverlayPresentationFacts.EmptyPresentationModel);
 
-				model.CompilerService.RegisterResource(model.ResourceUri);
+				model.CompilerService.RegisterResource(
+					model.ResourceUri,
+					shouldTriggerResourceWasModified: true);
 
 				var viewModelModifier = editContext.GetViewModelModifier(TestExplorerDetailsDisplay.DetailsTextEditorViewModelKey);
 
 				if (viewModelModifier is null)
 					throw new NullReferenceException();
 
-				var layerFirstPresentationKeys = new[]
+				var firstPresentationLayerKeys = new[]
 				{
 					TerminalPresentationFacts.PresentationKey,
 					CompilerServiceDiagnosticPresentationFacts.PresentationKey,
@@ -172,7 +175,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
-					FirstPresentationLayerKeysList = layerFirstPresentationKeys.ToImmutableList()
+					FirstPresentationLayerKeysList = firstPresentationLayerKeys.ToImmutableList()
 				};
 				
 				return Task.CompletedTask;

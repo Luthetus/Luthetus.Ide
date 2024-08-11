@@ -14,34 +14,34 @@ public interface IDotNetMenuOptionsFactory
 	public MenuOptionRecord RemoveCSharpProjectReferenceFromSolution(
 		TreeViewSolution solutionNode,
 		TreeViewNamespacePath projectNode,
-		Terminal terminal,
+		ITerminal terminal,
 		IDispatcher dispatcher,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord AddProjectToProjectReference(
 		TreeViewNamespacePath projectReceivingReference,
-		Terminal terminal,
+		ITerminal terminal,
 		IDispatcher dispatcher,
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord RemoveProjectToProjectReference(
 		TreeViewCSharpProjectToProjectReference treeViewCSharpProjectToProjectReference,
-		Terminal terminal,
+		ITerminal terminal,
 		IDispatcher dispatcher,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord MoveProjectToSolutionFolder(
 		TreeViewSolution treeViewSolution,
 		TreeViewNamespacePath treeViewProjectToMove,
-		Terminal terminal,
+		ITerminal terminal,
 		IDispatcher dispatcher,
 		Func<Task> onAfterCompletion);
 
 	public MenuOptionRecord RemoveNuGetPackageReferenceFromProject(
 		NamespacePath modifyProjectNamespacePath,
 		TreeViewCSharpProjectNugetPackageReference treeViewCSharpProjectNugetPackageReference,
-		Terminal terminal,
+		ITerminal terminal,
 		IDispatcher dispatcher,
 		Func<Task> onAfterCompletion);
 }

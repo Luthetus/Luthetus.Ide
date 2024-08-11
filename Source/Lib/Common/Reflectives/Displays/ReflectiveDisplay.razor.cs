@@ -1,10 +1,11 @@
+using System.Reflection;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
 using Luthetus.Common.RazorLib.Reflectives.States;
 using Luthetus.Common.RazorLib.Keys.Models;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using System.Reflection;
 using Luthetus.Common.RazorLib.Reflectives.Models;
+using Luthetus.Common.RazorLib.Options.States;
 
 namespace Luthetus.Common.RazorLib.Reflectives.Displays;
 
@@ -14,6 +15,8 @@ public partial class ReflectiveDisplay : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IStateSelection<ReflectiveState, ReflectiveModel?> ReflectiveStateSelection { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public Key<ReflectiveModel> ReflectiveModelKey { get; set; }

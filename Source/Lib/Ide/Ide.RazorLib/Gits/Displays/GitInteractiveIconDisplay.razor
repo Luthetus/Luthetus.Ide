@@ -1,6 +1,12 @@
-﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@{ var localGitState = GitStateWrap.Value; }
+@{
+	var localGitState = GitStateWrap.Value;
+	
+	var iconDriver = new IconDriver(
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+}
 
 <button class="luth_button luth_git-interactive-icon @CssClassString"
         style="@CssStyleString"
@@ -26,11 +32,11 @@
             }
             &nbsp;
 
-            <IconArrowUp/>
+            @IconArrowUpFragment.Render(iconDriver)
             @localGitState.AheadByCommitCount
             &nbsp;
 
-            <IconArrowDown/>
+            @IconArrowDownFragment.Render(iconDriver)
             @localGitState.BehindByCommitCount
             &nbsp;
         </text>

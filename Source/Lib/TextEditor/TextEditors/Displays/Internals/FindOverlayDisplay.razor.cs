@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -20,19 +21,21 @@ public partial class FindOverlayDisplay : ComponentBase
     private ITextEditorService TextEditorService { get; set; } = null!;
 	[Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-    [CascadingParameter]
-    public TextEditorRenderBatchValidated RenderBatch { get; set; } = null!;
+    [Parameter, EditorRequired]
+    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
     private bool _lastSeenShowFindOverlayValue = false;
     private string _inputValue = string.Empty;
     private int? _activeIndexMatchedTextSpan = null;
 
-    private ThrottleAsync _throttleInputValueChange = new ThrottleAsync(TimeSpan.FromMilliseconds(150));
+    private Throttle _throttleInputValueChange = new Throttle(TimeSpan.FromMilliseconds(150));
     private TextEditorTextSpan? _decorationByteChangedTargetTextSpan;
 
     private string InputValue
@@ -40,76 +43,81 @@ public partial class FindOverlayDisplay : ComponentBase
         get => _inputValue;
         set
         {
+	    	var renderBatchLocal = RenderBatch;
+	    	if (renderBatchLocal is null)
+	    		return;
+        
             _inputValue = value;
-
-            _ = Task.Run(async () =>
+            
+            _throttleInputValueChange.Run(_ =>
             {
-                await _throttleInputValueChange.PushEvent(_ =>
-                {
-                    TextEditorService.PostUnique(
-                        nameof(FindOverlayDisplay),
-                        editContext =>
-                        {
-                            var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+            	TextEditorService.PostUnique(
+                    nameof(FindOverlayDisplay),
+                    editContext =>
+                    {
+                        var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 
-                            if (viewModelModifier is null)
-                                return Task.CompletedTask;
-
-                            var localInputValue = _inputValue;
-
-                            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                            {
-                                FindOverlayValue = localInputValue,
-                            };
-
-                            var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
-
-                            if (modelModifier is null)
-                                return Task.CompletedTask;
-
-                            ImmutableArray<TextEditorTextSpan> textSpanMatches = ImmutableArray<TextEditorTextSpan>.Empty;
-
-                            if (!string.IsNullOrWhiteSpace(localInputValue))
-                                textSpanMatches = modelModifier.FindMatches(localInputValue);
-
-                            TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
-                            	editContext,
-                                modelModifier,
-                                FindOverlayPresentationFacts.PresentationKey,
-                                FindOverlayPresentationFacts.EmptyPresentationModel);
-
-                            var presentationModel = modelModifier.PresentationModelList.First(
-                                x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
-
-                            if (presentationModel.PendingCalculation is null)
-                                throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
-
-                            modelModifier.CompletePendingCalculatePresentationModel(
-                                FindOverlayPresentationFacts.PresentationKey,
-                                FindOverlayPresentationFacts.EmptyPresentationModel,
-                                textSpanMatches);
-
-                            _activeIndexMatchedTextSpan = null;
-                            _decorationByteChangedTargetTextSpan = null;
+                        if (viewModelModifier is null)
                             return Task.CompletedTask;
-                        });
-					return Task.CompletedTask;
-                }).ConfigureAwait(false);
+
+                        var localInputValue = _inputValue;
+
+                        viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                        {
+                            FindOverlayValue = localInputValue,
+                        };
+
+                        var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
+
+                        if (modelModifier is null)
+                            return Task.CompletedTask;
+
+                        ImmutableArray<TextEditorTextSpan> textSpanMatches = ImmutableArray<TextEditorTextSpan>.Empty;
+
+                        if (!string.IsNullOrWhiteSpace(localInputValue))
+                            textSpanMatches = modelModifier.FindMatches(localInputValue);
+
+                        TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+                        	editContext,
+                            modelModifier,
+                            FindOverlayPresentationFacts.PresentationKey,
+                            FindOverlayPresentationFacts.EmptyPresentationModel);
+
+                        var presentationModel = modelModifier.PresentationModelList.First(
+                            x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
+
+                        if (presentationModel.PendingCalculation is null)
+                            throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
+
+                        modelModifier.CompletePendingCalculatePresentationModel(
+                            FindOverlayPresentationFacts.PresentationKey,
+                            FindOverlayPresentationFacts.EmptyPresentationModel,
+                            textSpanMatches);
+
+                        _activeIndexMatchedTextSpan = null;
+                        _decorationByteChangedTargetTextSpan = null;
+                        return Task.CompletedTask;
+                    });
+				return Task.CompletedTask;
             });
         }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (_lastSeenShowFindOverlayValue != RenderBatch.ViewModel.ShowFindOverlay)
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    		
+        if (_lastSeenShowFindOverlayValue != renderBatchLocal.ViewModel.ShowFindOverlay)
         {
-            _lastSeenShowFindOverlayValue = RenderBatch.ViewModel.ShowFindOverlay;
+            _lastSeenShowFindOverlayValue = renderBatchLocal.ViewModel.ShowFindOverlay;
 
             // If it changes from 'false' to 'true', focus the input element
             if (_lastSeenShowFindOverlayValue)
             {
                 await JsRuntime.GetLuthetusCommonApi()
-                    .FocusHtmlElementById(RenderBatch.ViewModel.FindOverlayId)
+                    .FocusHtmlElementById(renderBatchLocal.ViewModel.FindOverlayId)
                     .ConfigureAwait(false);
             }
         }
@@ -119,29 +127,37 @@ public partial class FindOverlayDisplay : ComponentBase
 
 	private void HandleOnFocus()
 	{
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
 		// In the case where the find over value was changed, by an outside event,
 		// just refresh the InputValue to be sure its up to date.
 		//
 		// Example: user has a selection when using the keybind to open the find overlay,
 		// 		 then the find overlay would be populated with their text selection.
-		InputValue = RenderBatch.ViewModel.FindOverlayValue;
+		InputValue = renderBatchLocal.ViewModel.FindOverlayValue;
 	}
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
         if (keyboardEventArgs.Key == KeyboardKeyFacts.MetaKeys.ESCAPE)
         {
             await JsRuntime.GetLuthetusCommonApi()
-                .FocusHtmlElementById(RenderBatch.ViewModel.PrimaryCursorContentId)
+                .FocusHtmlElementById(renderBatchLocal.ViewModel.PrimaryCursorContentId)
                 .ConfigureAwait(false);
 
             TextEditorService.PostRedundant(
                 nameof(FindOverlayDisplay),
-				RenderBatch.ViewModel.ResourceUri,
-                RenderBatch.ViewModel.ViewModelKey,
+				renderBatchLocal.ViewModel.ResourceUri,
+                renderBatchLocal.ViewModel.ViewModelKey,
                 editContext =>
                 {
-                    var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+                    var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 
                     if (viewModelModifier is null)
                         return Task.CompletedTask;
@@ -151,7 +167,7 @@ public partial class FindOverlayDisplay : ComponentBase
                         ShowFindOverlay = false,
                     };
 
-                    var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
+                    var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
 
                     if (modelModifier is null)
                         return Task.CompletedTask;
@@ -179,7 +195,11 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private async Task MoveActiveIndexMatchedTextSpanUp()
     {
-        var findOverlayPresentationModel = RenderBatch.Model.PresentationModelList.FirstOrDefault(
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
+        var findOverlayPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)
@@ -213,7 +233,11 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private async Task MoveActiveIndexMatchedTextSpanDown()
     {
-        var findOverlayPresentationModel = RenderBatch.Model.PresentationModelList.FirstOrDefault(
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return;
+    	
+        var findOverlayPresentationModel = renderBatchLocal.Model.PresentationModelList.FirstOrDefault(
             x => x.TextEditorPresentationKey == FindOverlayPresentationFacts.PresentationKey);
 
         if (findOverlayPresentationModel is null)
@@ -247,6 +271,10 @@ public partial class FindOverlayDisplay : ComponentBase
 
     private Task HandleActiveIndexMatchedTextSpanChanged()
     {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
         TextEditorService.PostUnique(
             nameof(HandleActiveIndexMatchedTextSpanChanged),
             editContext =>
@@ -256,12 +284,12 @@ public partial class FindOverlayDisplay : ComponentBase
                 if (localActiveIndexMatchedTextSpan is null)
                     return Task.CompletedTask;
 
-                var viewModelModifier = editContext.GetViewModelModifier(RenderBatch.ViewModel.ViewModelKey);
+                var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
 
                 if (viewModelModifier is null)
                     return Task.CompletedTask;
                 
-                var modelModifier = editContext.GetModelModifier(RenderBatch.Model.ResourceUri);
+                var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
 
                 if (modelModifier is null)
                     return Task.CompletedTask;

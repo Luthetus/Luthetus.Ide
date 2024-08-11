@@ -1,6 +1,11 @@
-﻿<div title="@TreeViewProperties.Key.Guid">
+<div title="@TreeViewProperties.Key.Guid">
     <span>
-        <IconSymbolProperty/>
+    	@{
+    		var iconDriver = new IconDriver(
+				AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+				AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+    	}
+        @IconSymbolPropertyFragment.Render(iconDriver)
         Properties
     </span>
 </div>

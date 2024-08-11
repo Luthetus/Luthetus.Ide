@@ -1,0 +1,62 @@
+@using Luthetus.Common.RazorLib.Icons.Models
+@using Luthetus.Common.RazorLib.FileSystems.Models
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models
+@using Luthetus.Ide.RazorLib.FileSystems.Models
+
+@code {
+	public static RenderFragment<(IconDriver IconDriver, IAbsolutePath AbsolutePath)> GetRenderFragment = tuple => 
+	@<span class="luth_ide_solution-explorer-icon-display">
+    @if (tuple.AbsolutePath.IsDirectory)
+    {
+        if (tuple.AbsolutePath.NameNoExtension == UniqueFileFacts.Properties)
+        {
+            @IconPropertiesFragment.Render(tuple.IconDriver)
+        }
+        else if (tuple.AbsolutePath.NameNoExtension == UniqueFileFacts.WwwRoot)
+        {
+            @IconWwwRootFragment.Render(tuple.IconDriver)
+        }
+        else
+        {
+        	@IconFolderFragment.Render(tuple.IconDriver)
+        }
+    }
+    else
+    {
+        switch (tuple.AbsolutePath.ExtensionNoPeriod)
+        {
+            case ExtensionNoPeriodFacts.DOT_NET_SOLUTION:
+                @IconDotNetSolutionFragment.Render(tuple.IconDriver)
+                break;
+            case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
+                @IconCSharpProjectFragment.Render(tuple.IconDriver)
+                break;
+            case ExtensionNoPeriodFacts.C_SHARP_CLASS:
+            case ExtensionNoPeriodFacts.RAZOR_CODEBEHIND:
+                @IconCSharpClassFragment.Render(tuple.IconDriver)
+                break;
+            case ExtensionNoPeriodFacts.CSHTML_CLASS:
+                @IconCshtmlFragment.Render(tuple.IconDriver)
+                break;
+            case ExtensionNoPeriodFacts.RAZOR_MARKUP:
+                @IconRazorFragment.Render(tuple.IconDriver)
+                break;
+            case ExtensionNoPeriodFacts.JSON:
+                @IconJsonFragment.Render(tuple.IconDriver)
+                break;
+            case ExtensionNoPeriodFacts.CSS:
+                @IconCssFragment.Render(tuple.IconDriver)
+                break;
+            case ExtensionNoPeriodFacts.JAVA_SCRIPT:
+                @IconJsFragment.Render(tuple.IconDriver)
+                break;
+            case ExtensionNoPeriodFacts.TYPE_SCRIPT:
+                @IconTsFragment.Render(tuple.IconDriver)
+                break;
+            default:
+                @IconFileFragment.Render(tuple.IconDriver)
+                break;
+        }
+    }
+</span>;
+}

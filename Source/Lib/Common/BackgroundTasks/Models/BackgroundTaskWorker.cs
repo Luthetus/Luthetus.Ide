@@ -21,6 +21,7 @@ public class BackgroundTaskWorker : BackgroundService
 
     public Key<IBackgroundTaskQueue> QueueKey { get; }
     public IBackgroundTaskService BackgroundTaskService { get; }
+    public Task? ExecuteAsyncTask { get; internal set; }
 
     protected async override Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -60,6 +61,8 @@ public class BackgroundTaskWorker : BackgroundService
 					{
 						await task.ConfigureAwait(false);
 					}
+					
+					BackgroundTaskService.CompleteTaskCompletionSource(backgroundTask.BackgroundTaskKey);
                 }
                 catch (Exception ex)
                 {

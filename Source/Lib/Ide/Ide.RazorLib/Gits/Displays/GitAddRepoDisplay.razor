@@ -1,4 +1,6 @@
-﻿<div class="luth_ide_form-group">
+@using Luthetus.Common.RazorLib.Icons.Models;
+
+<div class="luth_ide_form-group">
     <div class="luth_ide_form-label">
         Repo Folder (absolute path):
     </div>
@@ -14,7 +16,12 @@
 
         <button class="luth_button"
                 @onclick="RequestInputFileForGitFolder">
-            <IconFolder />
+            @{ 
+            	var iconDriver = new IconDriver(
+            		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+            		AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+            }
+            @IconFolderFragment.Render(iconDriver)
         </button>
     </div>
 </div>

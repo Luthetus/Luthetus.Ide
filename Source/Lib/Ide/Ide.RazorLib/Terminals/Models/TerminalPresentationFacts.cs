@@ -2,7 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 
-namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 public static class TerminalPresentationFacts
 {

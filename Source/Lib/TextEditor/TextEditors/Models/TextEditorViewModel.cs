@@ -177,13 +177,14 @@ public record TextEditorViewModel : IDisposable
 	/// This property is intended to be used for displaying 'code lens' comments.
 	/// For example, above a property perhaps the text "3 references".
 	/// </summary>
-    public ImmutableArray<WidgetBlock> TextEditorWidgetBlockList { get; init; } = ImmutableArray<WidgetBlock>.Empty;
+    public ImmutableArray<WidgetBlock> WidgetBlockList { get; init; } = ImmutableArray<WidgetBlock>.Empty;
 	/// <summary>
 	/// This property is intended to be used for displaying 'inline hints'.
 	/// For example, if the type of a lambda's parameter is not deemed obvious,
 	/// one could inline the parameter's type. This inline hint wouldn't be actual text in the document.
 	/// </summary>
-    public ImmutableArray<WidgetInline> TextEditorWidgetInlineList { get; init; } = ImmutableArray<WidgetInline>.Empty;
+    public ImmutableArray<WidgetInline> WidgetInlineList { get; init; } = ImmutableArray<WidgetInline>.Empty;
+    public ImmutableArray<WidgetOverlay> WidgetOverlayList { get; init; } = ImmutableArray<WidgetOverlay>.Empty;
 
 	public string BodyElementId => $"luth_te_text-editor-content_{ViewModelKey.Guid}";
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";

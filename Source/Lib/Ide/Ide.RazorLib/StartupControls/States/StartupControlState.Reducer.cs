@@ -70,5 +70,13 @@ public partial record StartupControlState
 				ActiveStartupControlKey = startupControl.Key
 			};
 		}
+		
+		[ReducerMethod]
+		public static StartupControlState ReduceStateChangedAction(
+			StartupControlState inState,
+			StateChangedAction stateChangedAction)
+		{
+			return inState with {};
+		}
 	}
 }

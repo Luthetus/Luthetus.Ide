@@ -1,6 +1,7 @@
+@using Luthetus.Common.RazorLib.Icons.Models;
+@using Luthetus.Ide.RazorLib.Terminals.Models;
 @using Luthetus.Extensions.DotNet.CSharpProjects.Models;
 @using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
-@using Luthetus.Ide.RazorLib.Terminals.Models;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -14,6 +15,10 @@
     }
     else
     {
+    	var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+    
         <div class="luth_ide_c-sharp-project-form-top-inputs">
             <div class="luth_ide_form-group">
                 <div class="luth_ide_form-label">
@@ -83,7 +88,7 @@
                                 {
                                     <div>
                                         Reading project templates
-                                        <IconLoading />
+                                        @IconLoadingFragment.Render(iconDriver)
                                     </div>
                                 }
                                 else
@@ -154,7 +159,7 @@
 
                     <button class="luth_button"
                             @onclick='() => RequestInputFileForParentDirectory("Directory for new C# Project")'>
-                        <IconFolder />
+			            @IconFolderFragment.Render(iconDriver)
                     </button>
                 </div>
             </div>

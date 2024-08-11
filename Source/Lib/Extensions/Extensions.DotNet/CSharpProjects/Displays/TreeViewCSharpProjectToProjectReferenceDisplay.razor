@@ -1,4 +1,11 @@
-﻿<div>
-    <IconGoToFile/>
+<div>
+
+	@{
+		var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	}
+
+    @IconGoToFileFragment.Render(iconDriver)
     @CSharpProjectToProjectReference.ReferenceProjectAbsolutePath.NameWithExtension
 </div>

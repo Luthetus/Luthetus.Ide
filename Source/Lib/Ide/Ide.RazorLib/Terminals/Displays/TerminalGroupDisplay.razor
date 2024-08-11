@@ -1,8 +1,9 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent;
+@using System.Collections.Immutable
 @using Luthetus.Common.RazorLib.Contexts.Displays
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Common.RazorLib.Keys.Models
 @using Luthetus.Ide.RazorLib.Terminals.Models;
-@using System.Collections.Immutable
 
 <ContextBoundary ContextRecord="ContextFacts.TerminalContext"
                  ClassCssString="luth_ide_terminal"
@@ -35,7 +36,8 @@
             }
             else
             {
-                <TerminalDisplay TerminalKey="activeTerminal.Key"/>
+            	<TerminalOutputTextEditorExpandDisplay @key="activeTerminal.Key"
+            										   Terminal="activeTerminal"/>
             }
         </div>
 
@@ -45,10 +47,10 @@
 
         <div class="luth_ide_terminal-tabs"
              style="@terminalGroupDisplayState.TabsElementDimensions.StyleString">
-            @for (var i = 0; i < TerminalFacts.WELL_KNOWN_TERMINAL_KEYS.Length; i++)
+            @for (var i = 0; i < TerminalFacts.WELL_KNOWN_KEYS.Length; i++)
             {
                 var index = i;
-                var wellKnownTerminalKey = TerminalFacts.WELL_KNOWN_TERMINAL_KEYS[index];
+                var wellKnownTerminalKey = TerminalFacts.WELL_KNOWN_KEYS[index];
 
                 var success = terminalState.TerminalMap.TryGetValue(
                     wellKnownTerminalKey,
@@ -57,7 +59,7 @@
                 if (success && terminal is not null)
                 {
                     string isActiveCssClass = string.Empty;
-                    if ((activeTerminal?.Key ?? Key<Terminal>.Empty) == terminal.Key)
+                    if ((activeTerminal?.Key ?? Key<ITerminal>.Empty) == terminal.Key)
                         isActiveCssClass = "luth_active";
 
                     <button class="luth_button @isActiveCssClass"
@@ -73,21 +75,34 @@
                                 @onclick:stopPropagation="true">
                             Kill
                         </button>
+                        
+                        <button class="luth_button"
+                                @onclick="() => ClearTerminalOnClick(wellKnownTerminalKey)"
+                                @onclick:stopPropagation="true">
+                            Clear
+                        </button>
 
                         <div style="margin-left: 15px;">
+                        
+                        	@{
+                        		var iconDriver = new IconDriver(
+									AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+									AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+                        	}
+                        
                             @if (terminal.HasExecutingProcess)
                             {
-                                <IconLoading />
+                                @IconLoadingFragment.Render(iconDriver)
                             }
                             else
                             {
-                                <IconBlank />
+                                @IconBlankFragment.Render(iconDriver)
                             }
                         </div>
                     </button>
                 }
 
-                if (i != TerminalFacts.WELL_KNOWN_TERMINAL_KEYS.Length - 1)
+                if (i != TerminalFacts.WELL_KNOWN_KEYS.Length - 1)
                 {
                     <text>
                         &nbsp;
