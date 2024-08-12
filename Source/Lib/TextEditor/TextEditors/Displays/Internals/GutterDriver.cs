@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 public class GutterDriver
 {
-	private readonly TextEditorViewModelDisplay _root;
+	public readonly TextEditorViewModelDisplay _root;
 
 	public GutterDriver(TextEditorViewModelDisplay textEditorViewModelDisplay)
 	{

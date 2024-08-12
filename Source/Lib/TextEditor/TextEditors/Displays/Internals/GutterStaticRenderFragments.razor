@@ -7,6 +7,9 @@
 	@<div class="luth_te_gutter-section"
 	      style="@(driver.GetGutterSectionStyleCss())"
 	      id="@driver._renderBatch.ViewModel.GutterElementId">
+	      
+	   @* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
+       @driver._root._gutterVirtualizationDriver.GetRenderFragment(driver._renderBatch)
 	    
 	    @foreach (var virtualizedRow in driver._renderBatch.ViewModel.VirtualizationResult.EntryList)
 	    {
