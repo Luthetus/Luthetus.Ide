@@ -243,6 +243,37 @@ public partial class TextEditorService : ITextEditorService
 		                viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop)
 		            .ConfigureAwait(false);
             }
+            
+            if (!viewModelModifier.ShouldReloadVirtualizationResult)
+            {
+            	// If not already going to reload virtualization result,
+            	// then check if the virtualization needs to be refreshed due to a
+            	// change in scroll position.
+            	
+            	if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Length > 0)
+            	{
+            		var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
+            		
+            		var firstEntryTop = firstEntry.Index * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+
+            		
+            		if (viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop < firstEntryTop)
+            		{
+            			viewModelModifier.ShouldReloadVirtualizationResult = true;
+            		}
+            		else
+            		{
+            			var bigTop = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop +
+            				viewModelModifier.ViewModel.TextEditorDimensions.Height;
+            				
+            			var imaginaryLastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
+            			var imaginaryLastEntryTop = (imaginaryLastEntry.Index + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+            				
+            			if (bigTop > imaginaryLastEntryTop)
+            				viewModelModifier.ShouldReloadVirtualizationResult = true;
+            		}
+            	}
+            }
 
 			if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
