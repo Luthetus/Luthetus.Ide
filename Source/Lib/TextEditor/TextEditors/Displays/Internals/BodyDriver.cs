@@ -21,11 +21,11 @@ public class BodyDriver
 	// Odd public but am middle of thinking
 	public TextEditorRenderBatchValidated _renderBatch;
 
-	public RenderFragment GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
+	public void GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
 	{
 		// Dangerous state can change mid run possible?
 		_renderBatch = renderBatch;
-		return BodyStaticRenderFragments.GetRenderFragment(this);
+		// return BodyStaticRenderFragments.GetRenderFragment(this);
 	}
     
     public bool GlobalShowNewlines => _root.TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines;
@@ -103,35 +103,4 @@ public class BodyDriver
                 break;
         }
     }
-
-    public Task RowSection_VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
-    {
-        var model = _renderBatch?.Model;
-        var viewModel = _renderBatch?.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        _root.TextEditorService.PostRedundant(
-            nameof(RowSection_VirtualizationDisplayItemsProviderFunc),
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            editContext =>
-            {
-            	var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
-
-				if (modelModifier is null || viewModelModifier is null)
-					return Task.CompletedTask;
-            	
-            	_root.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
-            		editContext,
-			        modelModifier,
-			        viewModelModifier,
-			        CancellationToken.None);
-			    return Task.CompletedTask;
-            });
-    	return Task.CompletedTask;
-    }
-    /* RowSection.razor Close */
 }

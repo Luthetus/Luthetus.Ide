@@ -12,7 +12,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public class CursorDriver : IDisposable
+public class CursorDriver
 {
 	private readonly TextEditorViewModelDisplay _root;
 
@@ -24,11 +24,11 @@ public class CursorDriver : IDisposable
 	// Odd public but am middle of thinking
 	public TextEditorRenderBatchValidated _renderBatch;
 
-	public RenderFragment GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
+	public void GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
 	{
 		// Dangerous state can change mid run possible?
 		_renderBatch = renderBatch;
-		return CursorStaticRenderFragments.GetRenderFragment(this);
+		// return CursorStaticRenderFragments.GetRenderFragment(this);
 	}
 
     /// <summary>This property will need to be used when multi-cursor is added.</summary>
@@ -63,117 +63,7 @@ public class CursorDriver : IDisposable
 	        : string.Empty;
     }
 
-    /*public string BlinkAnimationCssClass => _root.TextEditorService.ViewModelApi.CursorShouldBlink
-        ? "luth_te_blink"
-        : string.Empty;*/
-        
     public string BlinkAnimationCssClass => string.Empty;
-
-	/*
-    protected override void OnInitialized()
-    {
-        _root.TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
-
-        base.OnInitialized();
-    }
-    */
-
-    public async void ViewModel_CursorShouldBlinkChanged()
-    {
-        // await InvokeAsync(StateHasChanged);
-    }
-	
-	/*
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return;
-    	
-        // This method is async, so I'll grab the references locally.
-        var model = renderBatchLocal.Model;
-        var viewModel = renderBatchLocal.ViewModel;
-        var options = renderBatchLocal.Options;
-
-        var cursorDisplayId = GetCursorDisplayId(renderBatchLocal);
-
-        if (_previouslyObservedCursorDisplayId != cursorDisplayId && IsFocusTarget)
-        {
-            await _root.TextEditorService.JsRuntimeTextEditorApi
-                .InitializeTextEditorCursorIntersectionObserver(
-                    _intersectionObserverMapKey.ToString(),
-                    DotNetObjectReference.Create(this),
-                    GetScrollableContainerId(renderBatchLocal),
-                    cursorDisplayId)
-                .ConfigureAwait(false);
-
-            _previouslyObservedCursorDisplayId = cursorDisplayId;
-        }
-
-        if (viewModel.UnsafeState.ShouldRevealCursor)
-        {
-            viewModel.UnsafeState.ShouldRevealCursor = false;
-
-            if (!renderBatchLocal.ViewModel.UnsafeState.CursorIsIntersecting)
-            {
-                _throttleShouldRevealCursor.Run(_ =>
-                {
-                    // I think after removing the throttle, that this is an infinite loop on WASM,
-                    // i.e. holding down ArrowRight
-                    _root.TextEditorService.PostUnique(
-                        nameof(_throttleShouldRevealCursor),
-                        editContext =>
-                        {
-							try
-							{
-								var modelModifier = editContext.GetModelModifier(renderBatchLocal.Model.ResourceUri);
-				            	var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
-				
-								if (modelModifier is null || viewModelModifier is null)
-									return Task.CompletedTask;
-							
-	                            var cursorPositionIndex = renderBatchLocal.Model.GetPositionIndex(
-	                            	renderBatchLocal.ViewModel.PrimaryCursor);
-	
-	                            var cursorTextSpan = new TextEditorTextSpan(
-	                                cursorPositionIndex,
-	                                cursorPositionIndex + 1,
-	                                0,
-	                                renderBatchLocal.Model.ResourceUri,
-	                                renderBatchLocal.Model.GetAllText());
-	
-	                            _root.TextEditorService.ViewModelApi.ScrollIntoView(
-                            		editContext,
-							        modelModifier,
-							        viewModelModifier,
-							        cursorTextSpan);
-							 }
-							 catch (LuthetusTextEditorException)
-							 {
-							     // Eat this specific exception
-							 }
-                        
-                        	return Task.CompletedTask;
-                        });
-					return Task.CompletedTask;
-                });
-            }
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-    */
-
-    [JSInvokable]
-    public Task OnCursorPassedIntersectionThresholdAsync(bool cursorIsIntersecting)
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return Task.CompletedTask;
-    	
-        renderBatchLocal.ViewModel.UnsafeState.CursorIsIntersecting = cursorIsIntersecting;
-        return Task.CompletedTask;
-    }
 
     public string GetCursorStyleCss()
     {
@@ -385,30 +275,5 @@ public class CursorDriver : IDisposable
             return -1;
 
         return renderBatchLocal.ViewModelDisplayOptions.TabIndex;;
-    }
-
-    public void Dispose()
-    {
-        // _root.TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
-
-        if (IsFocusTarget)
-        {
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    await _root.TextEditorService.JsRuntimeTextEditorApi
-                        .DisposeTextEditorCursorIntersectionObserver(
-                            CancellationToken.None,
-                            _intersectionObserverMapKey.ToString())
-                        .ConfigureAwait(false);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-            }, CancellationToken.None);
-        }
     }
 }
