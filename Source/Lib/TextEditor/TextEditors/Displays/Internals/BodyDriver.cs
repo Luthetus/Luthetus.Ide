@@ -21,11 +21,11 @@ public class BodyDriver
 	// Odd public but am middle of thinking
 	public TextEditorRenderBatchValidated _renderBatch;
 
-	public RenderFragment GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
+	public void GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
 	{
 		// Dangerous state can change mid run possible?
 		_renderBatch = renderBatch;
-		return BodyStaticRenderFragments.GetRenderFragment(this);
+		// return BodyStaticRenderFragments.GetRenderFragment(this);
 	}
     
     public bool GlobalShowNewlines => _root.TextEditorService.OptionsStateWrap.Value.Options.ShowNewlines;

@@ -24,11 +24,11 @@ public class CursorDriver
 	// Odd public but am middle of thinking
 	public TextEditorRenderBatchValidated _renderBatch;
 
-	public RenderFragment GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
+	public void GetRenderFragment(TextEditorRenderBatchValidated renderBatch)
 	{
 		// Dangerous state can change mid run possible?
 		_renderBatch = renderBatch;
-		return CursorStaticRenderFragments.GetRenderFragment(this);
+		// return CursorStaticRenderFragments.GetRenderFragment(this);
 	}
 
     /// <summary>This property will need to be used when multi-cursor is added.</summary>
