@@ -253,7 +253,6 @@ public partial class TextEditorService : ITextEditorService
             	if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Length > 0)
             	{
             		var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
-            		
             		var firstEntryTop = firstEntry.Index * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
 
             		
@@ -271,6 +270,31 @@ public partial class TextEditorService : ITextEditorService
             				
             			if (bigTop > imaginaryLastEntryTop)
             				viewModelModifier.ShouldReloadVirtualizationResult = true;
+            		}
+            	}
+            	
+            	// A check for horizontal virtualization still needs to be done.
+            	//
+            	// If we didn't already determine the necessity of calculating the virtualization
+            	// result when checking the vertical virtualization, then we check horizontal.
+            	if (!viewModelModifier.ShouldReloadVirtualizationResult)
+            	{
+            		var leftBoundary = viewModelModifier.ViewModel.VirtualizationResult.LeftVirtualizationBoundary;
+            		var scrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
+            		
+            		if (scrollLeft < leftBoundary.LeftInPixels)
+            		{
+            			viewModelModifier.ShouldReloadVirtualizationResult = true;
+            		}
+            		else
+            		{
+            			var rightBoundary = viewModelModifier.ViewModel.VirtualizationResult.RightVirtualizationBoundary;
+						var bigLeft = scrollLeft + viewModelModifier.ViewModel.TextEditorDimensions.Width;
+            			
+            			if (bigLeft > rightBoundary.LeftInPixels)
+            			{
+            				viewModelModifier.ShouldReloadVirtualizationResult = true;
+            			}
             		}
             	}
             }
