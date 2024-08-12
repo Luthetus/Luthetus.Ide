@@ -244,11 +244,14 @@ public partial class TextEditorService : ITextEditorService
 		            .ConfigureAwait(false);
             }
             
-            if (!viewModelModifier.ShouldReloadVirtualizationResult)
+            if (!viewModelModifier.ShouldReloadVirtualizationResult &&
+            	viewModelModifier.ScrollWasModified)
             {
             	// If not already going to reload virtualization result,
             	// then check if the virtualization needs to be refreshed due to a
             	// change in scroll position.
+            	//
+            	// This code only needs to run if the scrollbar was modified.
             	
             	if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Length > 0)
             	{
