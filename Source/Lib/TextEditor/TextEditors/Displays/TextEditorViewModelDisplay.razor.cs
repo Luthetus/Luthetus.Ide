@@ -285,9 +285,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
   public Task FocusTextEditorAsync()
   {
-  //      if (CursorDisplay is not null)
-  //          return CursorDisplay.FocusAsync();
-  //          
+  	var localTextEditorViewModelKey = TextEditorViewModelKey;
+
+      var nextViewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
+          x => x.ViewModelKey == localTextEditorViewModelKey);
+      
+      if (nextViewModel is not null)
+      	return nextViewModel.FocusAsync();
+            
     return Task.CompletedTask;
   }
 

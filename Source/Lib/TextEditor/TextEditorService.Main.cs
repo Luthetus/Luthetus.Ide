@@ -279,10 +279,12 @@ public partial class TextEditorService : ITextEditorService
             	// result when checking the vertical virtualization, then we check horizontal.
             	if (!viewModelModifier.ShouldReloadVirtualizationResult)
             	{
+            		// low end plus width of it
+            	
             		var leftBoundary = viewModelModifier.ViewModel.VirtualizationResult.LeftVirtualizationBoundary;
             		var scrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
             		
-            		if (scrollLeft < leftBoundary.LeftInPixels)
+            		if (scrollLeft < (leftBoundary.LeftInPixels + leftBoundary.WidthInPixels))
             		{
             			viewModelModifier.ShouldReloadVirtualizationResult = true;
             		}
