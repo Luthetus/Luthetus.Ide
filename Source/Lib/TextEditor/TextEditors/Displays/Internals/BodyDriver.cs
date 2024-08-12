@@ -103,35 +103,4 @@ public class BodyDriver
                 break;
         }
     }
-
-    public Task RowSection_VirtualizationDisplayItemsProviderFunc(VirtualizationRequest virtualizationRequest)
-    {
-        var model = _renderBatch?.Model;
-        var viewModel = _renderBatch?.ViewModel;
-
-        if (model is null || viewModel is null)
-            return Task.CompletedTask;
-
-        _root.TextEditorService.PostRedundant(
-            nameof(RowSection_VirtualizationDisplayItemsProviderFunc),
-            model.ResourceUri,
-            viewModel.ViewModelKey,
-            editContext =>
-            {
-            	var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
-
-				if (modelModifier is null || viewModelModifier is null)
-					return Task.CompletedTask;
-            	
-            	_root.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
-            		editContext,
-			        modelModifier,
-			        viewModelModifier,
-			        CancellationToken.None);
-			    return Task.CompletedTask;
-            });
-    	return Task.CompletedTask;
-    }
-    /* RowSection.razor Close */
 }

@@ -31,11 +31,9 @@
      		id="@driver._renderBatch.ViewModel.BodyElementId">
     
     		@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
-		    <VirtualizationDisplay VirtualizationResultWithoutTypeMask="driver._renderBatch.ViewModel.VirtualizationResult"
-		                           ItemsProviderFunc="driver.RowSection_VirtualizationDisplayItemsProviderFunc"/>
+    		@driver._root._virtualizationDriver.GetRenderFragment(driver._renderBatch)
 		                           
 		    @driver._root._presentationAndSelectionDriver.GetRenderFragment(driver._renderBatch)
-			@*<PresentationAndSelectionSection RenderBatch="driver._renderBatch"/>*@
 		
 		    @foreach (var virtualizedRow in driver._renderBatch.ViewModel.VirtualizationResult.EntryList)
 		    {
