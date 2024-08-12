@@ -76,12 +76,15 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private TextEditorViewModel? _linkedViewModel;
     
     private GutterDriver _gutterDriver;
+    public VirtualizationDriver _gutterVirtualizationDriver;
     private BodyDriver _bodyDriver;
+    public VirtualizationDriver _bodyVirtualizationDriver;
     private HeaderDriver _headerDriver;
     private FooterDriver _footerDriver;
     // TODO: awkward public
     public PresentationAndSelectionDriver _presentationAndSelectionDriver;
     public CursorDriver _cursorDriver;
+
     
     private bool _thinksTouchIsOccurring;
     private DateTime? _touchStartDateTime = null;
@@ -102,7 +105,15 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     protected override void OnInitialized()
     {
     	_gutterDriver = new(this);
+    	_gutterVirtualizationDriver = new(
+    		this,
+    		useHorizontalVirtualization: false,
+    		useVerticalVirtualization: true);
     	_bodyDriver = new(this);
+    	_bodyVirtualizationDriver = new(
+    		this,
+    		useHorizontalVirtualization: true,
+    		useVerticalVirtualization: true);
     	_headerDriver = new(this);
     	_footerDriver = new(this);
     	_presentationAndSelectionDriver = new(this);
@@ -274,9 +285,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
   public Task FocusTextEditorAsync()
   {
-  //      if (CursorDisplay is not null)
-  //          return CursorDisplay.FocusAsync();
-  //          
+  	var localTextEditorViewModelKey = TextEditorViewModelKey;
+
+      var nextViewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
+          x => x.ViewModelKey == localTextEditorViewModelKey);
+      
+      if (nextViewModel is not null)
+      	return nextViewModel.FocusAsync();
+            
     return Task.CompletedTask;
   }
 

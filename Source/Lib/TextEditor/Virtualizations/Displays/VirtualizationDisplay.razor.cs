@@ -72,6 +72,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                     });
                 }
 
+				/*
                 await TextEditorService.JsRuntimeTextEditorApi
                     .InitializeVirtualizationIntersectionObserver(
                         _virtualizationDisplayGuid.ToString(),
@@ -79,6 +80,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                         _scrollableParentFinder,
                         boundaryIdList)
                     .ConfigureAwait(false);
+                */
             }
         }
 
@@ -111,6 +113,7 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
     {
         _scrollEventCancellationTokenSource.Cancel();
 
+		/*
         if (UseIntersectionObserver)
         {
             _ = Task.Run(async () =>
@@ -122,5 +125,6 @@ public partial class VirtualizationDisplay : ComponentBase, IDisposable
                     .ConfigureAwait(false);
             }, CancellationToken.None).ConfigureAwait(false);
         }
+        */
     }
 }
