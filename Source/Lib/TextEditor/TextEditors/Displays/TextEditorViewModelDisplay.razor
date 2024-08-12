@@ -4,7 +4,12 @@
 @using Luthetus.Common.RazorLib.Contexts.Models;
 @using Luthetus.Common.RazorLib.CustomEvents.Models
 @using Luthetus.Common.RazorLib.Keyboards.Models;
+@using Luthetus.Common.RazorLib.Keys.Models
 @using Luthetus.Common.RazorLib.Icons.Models
+@using Luthetus.Common.RazorLib.Dimensions;
+@using Luthetus.Common.RazorLib.Dimensions.Models;
+@using Luthetus.TextEditor.RazorLib.Keymaps.Models;
+@using Luthetus.TextEditor.RazorLib.Cursors.Models
 @using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 @using Luthetus.TextEditor.RazorLib.Rows.Models;
 @using Luthetus.TextEditor.RazorLib.Options.Models;
@@ -12,6 +17,8 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+@using Luthetus.TextEditor.RazorLib.Virtualizations.Models
+@using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
 
 @{
     var renderBatchUnsafe = _storedRenderBatch;
@@ -187,25 +194,164 @@
 		    </div>
 		</div>
       	
-        @if (renderBatchValidated is not null)
-        {
-        	@_bodyDriver.GetRenderFragment(renderBatchValidated);
-        }
-        
         @if (ViewModelDisplayOptions.IncludeGutterComponent &&
         	 renderBatchValidated is not null)
         {
-        	// TODO: The comment under this describes something that was believed to be a fix...
-        	//       ...but the gutter is still 'desync' at times? It doesn't align with the text?
-        	//       Is every scroll event scrolling BOTH the gutter and the body? I imagine
-        	//       the issue is that there is a scroll event that is only scrolling the body.
-        	//
-        	// The gutter needs to come after the 'BodySection' in the markup to
-        	// ensure the virtualization result in ready.
-        	//
-        	// Due to 'BodySection' being 'position: absolute;',
-        	// on the UI the gutter will appear to the left of the 'BodySection'
             @_gutterDriver.GetRenderFragment(renderBatchValidated);
+        }
+
+        @if (renderBatchValidated is not null)
+        {
+        	_bodyDriver.GetRenderFragment(renderBatchValidated);
+        
+        	<div class="luth_te_body-section"
+		 		style="@_bodyDriver.GetBodyStyleCss(_bodyDriver._renderBatch)">
+		 		
+			@{
+				var primaryCursor = _bodyDriver._renderBatch.ViewModel!.PrimaryCursor;
+			
+			    var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
+			    var spaceKeyOutput = "&nbsp;";
+			
+			    if (_bodyDriver._root.TextEditorService.OptionsStateWrap.Value.Options.ShowWhitespace)
+			    {
+			        tabKeyOutput = "--->";
+			        spaceKeyOutput = "·";
+			    }
+			}
+		        
+		        @* RowSection.razor Open *@
+				<div class="luth_te_row-section"
+		     		id="@_bodyDriver._renderBatch.ViewModel.BodyElementId">
+		    
+		    		@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
+		    		@_bodyDriver._root._bodyVirtualizationDriver.GetRenderFragment(_bodyDriver._renderBatch)
+				                           
+				    @_bodyDriver._root._presentationAndSelectionDriver.GetRenderFragment(_bodyDriver._renderBatch)
+				
+				    @foreach (var virtualizedRow in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList)
+				    {
+				        <div class="luth_te_row"
+				             style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizedRow.Index, virtualizedRow.LeftInPixels)">
+				            @if (virtualizedRow.Item.Any())
+				            {
+				                var spanBuilder = new StringBuilder();
+				                var currentDecorationByte = virtualizedRow.Item.First().DecorationByte;
+				
+				                foreach (var richCharacter in virtualizedRow.Item)
+				                {
+				                    if (currentDecorationByte == richCharacter.DecorationByte)
+				                    {
+				                        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+				                    }
+				                    else
+				                    {
+				                        <span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
+				                            @((MarkupString)spanBuilder.ToString())
+				                        </span>
+				
+				                        spanBuilder.Clear();
+				
+				                        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+				
+				                        currentDecorationByte = richCharacter.DecorationByte;
+				                    }
+				                }
+				
+				                /* Final grouping of contiguous characters */
+				                <span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
+				                    @((MarkupString)spanBuilder.ToString())
+				                </span>
+				            }
+				
+				            @if (_bodyDriver.GlobalShowNewlines && virtualizedRow.Index < _bodyDriver._renderBatch.Model.LineCount)
+				            {
+				                var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
+				                    _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+				
+				                var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(virtualizedRow.Index, true);
+				
+				                if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
+				                {
+				                    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[virtualizedRow.Index];
+				
+				                    <span class="luth_te_newline">
+				                        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
+				                    </span>
+				                }
+				            }
+				        </div>
+				    }
+				
+					
+				    <text>
+						@{
+							_cursorDriver.GetRenderFragment(renderBatchValidated);
+						
+							var leftRelativeToParentInPixelsCssStyle = string.Empty;
+						    var textEditorKeymap = (ITextEditorKeymap)_cursorDriver._renderBatch.Options!.Keymap!;
+						    
+						    if (!_cursorDriver._renderBatch.Options!.UseMonospaceOptimizations)
+							{
+							    var leftRelativeToParentInPixelsCssValue = _cursorDriver._leftRelativeToParentInPixels.ToCssValue();
+							    leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
+							}
+						}
+					<textarea id="@_cursorDriver.GetCursorDisplayId(_cursorDriver._renderBatch)"
+					          tabindex="@_cursorDriver.GetTabIndex(_cursorDriver._renderBatch)"
+					          class="luth_te_text-editor-cursor @_cursorDriver.BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
+					          style="@_cursorDriver.GetCursorStyleCss() @leftRelativeToParentInPixelsCssStyle">
+					</textarea>
+					
+					<div class="luth_te_text-editor-caret-row"
+					     style="@_cursorDriver.GetCaretRowStyleCss()">
+					</div>
+					
+					@if (_cursorDriver._renderBatch.ViewModel.MenuKind != MenuKind.None && _cursorDriver.GetIncludeContextMenuHelperComponent(_cursorDriver._renderBatch))
+					{
+					    <div @onkeydown:stopPropagation="true"
+					         @onmousedown:stopPropagation="true"
+					         @onmousemove:stopPropagation="true"
+					         class="luth_te_text-editor-context-menu"
+					         style="@_cursorDriver.GetMenuStyleCss()">
+					
+					        <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
+					                        Value="_cursorDriver.TextEditorMenuShouldTakeFocus">
+					            @switch (_cursorDriver._renderBatch.ViewModel.MenuKind)
+					            {
+					                case MenuKind.ContextMenu:
+				                        if (_cursorDriver._renderBatch.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride is not null)
+							            {
+							                @_cursorDriver._renderBatch.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride(_cursorDriver._renderBatch)
+							            }
+							            else
+							            {
+							                <ContextMenu RenderBatch="_cursorDriver._renderBatch"/>
+							            }
+					                    break;
+					                case MenuKind.AutoCompleteMenu:
+					                    if (_cursorDriver._renderBatch.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride is not null)
+							            {
+							                @_cursorDriver._renderBatch.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride(_cursorDriver._renderBatch)
+							            }
+							            else
+							            {
+							                <AutocompleteMenu RenderBatch="_cursorDriver._renderBatch"/>
+							            }
+					                    break;
+					            }
+					        </CascadingValue>
+					    </div>
+					    }
+					</text>
+				</div>
+			    @* RowSection.razor Close *@
+			
+			    <ScrollbarSection RenderBatch="_bodyDriver._renderBatch"/>
+			    <TooltipDisplay RenderBatch="_bodyDriver._renderBatch"/>
+			    <FindOverlayDisplay RenderBatch="_bodyDriver._renderBatch"/>
+			    <WidgetLayerDisplay RenderBatch="_bodyDriver._renderBatch"/>
+			</div>
         }
 
         @if (renderBatchValidated?.ViewModel?.ShowCommandBar ?? false)

@@ -243,6 +243,66 @@ public partial class TextEditorService : ITextEditorService
 		                viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop)
 		            .ConfigureAwait(false);
             }
+            
+            if (!viewModelModifier.ShouldReloadVirtualizationResult &&
+            	viewModelModifier.ScrollWasModified)
+            {
+            	// If not already going to reload virtualization result,
+            	// then check if the virtualization needs to be refreshed due to a
+            	// change in scroll position.
+            	//
+            	// This code only needs to run if the scrollbar was modified.
+            	
+            	if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Length > 0)
+            	{
+            		var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
+            		var firstEntryTop = firstEntry.Index * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+
+            		
+            		if (viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop < firstEntryTop)
+            		{
+            			viewModelModifier.ShouldReloadVirtualizationResult = true;
+            		}
+            		else
+            		{
+            			var bigTop = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop +
+            				viewModelModifier.ViewModel.TextEditorDimensions.Height;
+            				
+            			var imaginaryLastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
+            			var imaginaryLastEntryTop = (imaginaryLastEntry.Index + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+            				
+            			if (bigTop > imaginaryLastEntryTop)
+            				viewModelModifier.ShouldReloadVirtualizationResult = true;
+            		}
+            	}
+            	
+            	// A check for horizontal virtualization still needs to be done.
+            	//
+            	// If we didn't already determine the necessity of calculating the virtualization
+            	// result when checking the vertical virtualization, then we check horizontal.
+            	if (!viewModelModifier.ShouldReloadVirtualizationResult)
+            	{
+            		// low end plus width of it
+            	
+            		var leftBoundary = viewModelModifier.ViewModel.VirtualizationResult.LeftVirtualizationBoundary;
+            		var scrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
+            		
+            		if (scrollLeft < (leftBoundary.LeftInPixels + leftBoundary.WidthInPixels))
+            		{
+            			viewModelModifier.ShouldReloadVirtualizationResult = true;
+            		}
+            		else
+            		{
+            			var rightBoundary = viewModelModifier.ViewModel.VirtualizationResult.RightVirtualizationBoundary;
+						var bigLeft = scrollLeft + viewModelModifier.ViewModel.TextEditorDimensions.Width;
+            			
+            			if (bigLeft > rightBoundary.LeftInPixels)
+            			{
+            				viewModelModifier.ShouldReloadVirtualizationResult = true;
+            			}
+            		}
+            	}
+            }
 
 			if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
