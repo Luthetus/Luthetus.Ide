@@ -13,6 +13,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 var hostingInformation = new LuthetusHostingInformation(
     LuthetusHostingKind.Wasm,
+    LuthetusPurposeKind.TextEditor,
     new BackgroundTaskService());
 
 builder.Services.AddLuthetusTutorialsRazorLibServices(hostingInformation);

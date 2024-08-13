@@ -20,6 +20,7 @@ class Program
         
         var hostingInformation = new LuthetusHostingInformation(
             LuthetusHostingKind.Photino,
+            LuthetusPurposeKind.TextEditor,
             new BackgroundTaskService());
 	        
         appBuilder.Services.AddLuthetusTutorialsRazorLibServices(hostingInformation);

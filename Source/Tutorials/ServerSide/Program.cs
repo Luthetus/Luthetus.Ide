@@ -10,6 +10,7 @@ builder.Services.AddServerSideBlazor();
 
 var hostingInformation = new LuthetusHostingInformation(
     LuthetusHostingKind.ServerSide,
+    LuthetusPurposeKind.TextEditor,
     new BackgroundTaskService());
     
 builder.Services.AddLuthetusTutorialsRazorLibServices(hostingInformation);
