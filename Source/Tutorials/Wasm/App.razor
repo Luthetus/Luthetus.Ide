@@ -1,6 +1,11 @@
+@using Luthetus.Common.RazorLib.Installations.Displays
+@using Luthetus.TextEditor.RazorLib.Installations.Displays
 @using Luthetus.Tutorials.RazorLib.Shared;
 
 <Fluxor.Blazor.Web.StoreInitializer />
+
+<LuthetusCommonInitializer />
+<LuthetusTextEditorInitializer />
 
 <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new [] { typeof(Luthetus.Tutorials.RazorLib.Shared.MainLayout).Assembly }">
     <Found Context="routeData">
