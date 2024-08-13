@@ -23,13 +23,16 @@ public record LuthetusHostingInformation
 {
     public LuthetusHostingInformation(
         LuthetusHostingKind luthetusHostingKind,
+        LuthetusPurposeKind luthetusPurposeKind,
         IBackgroundTaskService backgroundTaskService)
     {
         LuthetusHostingKind = luthetusHostingKind;
+        LuthetusPurposeKind = luthetusPurposeKind;
         BackgroundTaskService = backgroundTaskService;
     }
 
     public LuthetusHostingKind LuthetusHostingKind { get; init; }
+    public LuthetusPurposeKind LuthetusPurposeKind { get; init; }
     public IBackgroundTaskService BackgroundTaskService { get; init; }
     
     public void StartBackgroundTaskWorkers(IServiceProvider serviceProvider)
@@ -50,28 +53,40 @@ public record LuthetusHostingInformation
         continuousBtw.ExecuteAsyncTask = continuousBtw.StartAsync(continuousCtsUp.Token);
         Task continuousTaskDown;
 
-        var blockingCtsUp = new CancellationTokenSource();
-        var blockingCtsDown = new CancellationTokenSource();
-        var blockingBtw = serviceProvider.GetRequiredService<BlockingBackgroundTaskWorker>();
-        blockingBtw.ExecuteAsyncTask = blockingBtw.StartAsync(blockingCtsUp.Token);
-        Task blockingTaskDown;
+		CancellationTokenSource? blockingCtsUp = null;
+		CancellationTokenSource? blockingCtsDown = null;
+		BlockingBackgroundTaskWorker? blockingBtw = null;
+		Task? blockingTaskDown = null;
+		if (LuthetusPurposeKind == LuthetusPurposeKind.Ide)
+		{
+			blockingCtsUp = new CancellationTokenSource();
+	        blockingCtsDown = new CancellationTokenSource();
+	        blockingBtw = serviceProvider.GetRequiredService<BlockingBackgroundTaskWorker>();
+	        blockingBtw.ExecuteAsyncTask = blockingBtw.StartAsync(blockingCtsUp.Token);
+		}
 
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>
         {
             continuousCtsUp.Cancel();
-            blockingCtsUp.Cancel();
-
             continuousTaskDown = continuousBtw.StopAsync(continuousCtsDown.Token);
-            blockingTaskDown = blockingBtw.StopAsync(blockingCtsDown.Token);
+            
+            if (blockingCtsUp is not null)
+            	blockingCtsUp.Cancel();
+            
+            if (blockingBtw is not null)
+        		blockingTaskDown = blockingBtw.StopAsync(blockingCtsDown.Token);
         };
 
         AppDomain.CurrentDomain.ProcessExit += (sender, error) =>
         {
             continuousCtsUp.Cancel();
-            blockingCtsUp.Cancel();
-
             continuousCtsDown.Cancel();
-            blockingCtsDown.Cancel();
+            
+            if (blockingCtsUp is not null)
+            	blockingCtsUp.Cancel();
+
+            if (blockingCtsDown is not null)
+	            blockingCtsDown.Cancel();
         };
     }
 }

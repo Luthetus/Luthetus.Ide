@@ -12,6 +12,7 @@ builder.Services.AddHttpClient();
 
 var hostingInformation = new LuthetusHostingInformation(
     LuthetusHostingKind.ServerSide,
+    LuthetusPurposeKind.Ide,
     new BackgroundTaskService());
 
 builder.Services.AddLuthetusWebsiteServices(hostingInformation);

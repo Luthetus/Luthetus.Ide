@@ -1,19 +1,20 @@
-# Luthetus.TextEditor (v1.4.0)
+# Luthetus.TextEditor (v2.0.0)
 
 ## Installation
 
-### Source Code
-The .NET Solution: [Luthetus.TextEditor.Usage.sln](../Source/Tutorials/Usage/Luthetus.TextEditor.Usage.sln),
+The .NET Solution: [Luthetus.Tutorials.sln](../../Source/Tutorials/Luthetus.Tutorials.sln),
 was made by following steps described here. So, the completed result can be found there.
 
 ### Goal
+
+![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../../Images/TextEditor/Gifs/text-editor-tutorial-result.gif)
 
 - Reference the `Luthetus.TextEditor` Nuget Package
 - Register the `Services`
 - Reference the `CSS`
 - Reference the `JavaScript`
 - In `App.razor` render the `<Fluxor.Blazor.Web.StoreInitializer/>`
-- In `MainLayout.razor` render the `<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />` Blazor component
+- In `MainLayout.razor` render the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />` and the `<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />` Blazor components
 
 ### Steps
 - Reference the `Luthetus.TextEditor` NuGet Package
@@ -26,56 +27,93 @@ The nuget.org link to the NuGet Package is here: https://www.nuget.org/packages/
 
 Go to the file that you register your services and add the following lines of C# code.
 
-> *NOTE:* In many C# Project templates, the services are registered in `Program.cs`.
-
 ```csharp
-var luthetusHostingInformation = new LuthetusHostingInformation(
-    // LuthetusHostingKind.Wasm,
-    // OR
-    // LuthetusHostingKind.ServerSide,
+// using Fluxor;
+// using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+// using Luthetus.Common.RazorLib.Installations.Models;
+// using Luthetus.TextEditor.RazorLib.Installations.Models;
+
+// Use either Wasm or ServerSide depending on how your app is being hosted.
+// var luthetusHostingKind = LuthetusHostingKind.ServerSide;
+var luthetusHostingKind = LuthetusHostingKind.Wasm;
+
+var hostingInformation = new LuthetusHostingInformation(
+    luthetusHostingKind,
+    LuthetusPurposeKind.TextEditor,
     new BackgroundTaskService());
 
-services
-    .AddLuthetusTextEditor(luthetusHostingInformation)
-    .AddFluxor(options => options.ScanAssemblies(
-        typeof(LuthetusCommonOptions).Assembly,
-        typeof(LuthetusTextEditorOptions).Assembly));
+services.AddLuthetusTextEditor(hostingInformation);
+
+services.AddFluxor(options => options.ScanAssemblies(
+    typeof(LuthetusCommonConfig).Assembly,
+    typeof(LuthetusTextEditorConfig).Assembly));
+
+// If NOT running ServerSide then one needs to run:
+// 'hostingInformation.StartBackgroundTaskWorkers(host.Services);'
+//
+// Some builders have 'Build()' invoked then fluent API into their 'Run()' or 'RunAsync()'.
+// This might require one to capture the 'Build()' result
+//
+// This can be done anywhere, so long as the services have been built
+// (by "can be done anywhere" this includes even after the app rendered,
+//  I wonder if you could tie it to the lifecycle of a Blazor component with IDisposable?)
+
+/*
+var host = builder.Build();
+hostingInformation.StartBackgroundTaskWorkers(host.Services);
+
+await host.RunAsync();
+*/
 ```
 
 - Reference the `CSS`
 
 Go to the file that you reference CSS files from and add the following CSS references.
 
-> *NOTE:* In many Blazor ServerSide apps this file would be `Pages/_Layout.cshtml`. As for Blazor WASM apps, this file tends to be `wwwroot/index.html`
-
 ```html
 <link href="_content/Luthetus.Common/luthetusCommon.css" rel="stylesheet" />
 <link href="_content/Luthetus.TextEditor/luthetusTextEditor.css" rel="stylesheet" />
 ```
 
-> *NOTE:* `luthetusCommon.css` is not necessary to reference, if one has already done so.
-
 - Reference the `JavaScript`
 
 Go to the file that you reference JavaScript files from and add the following JavaScript reference below the Blazor framework JavaScript reference
-
-> *NOTE:* In many Blazor ServerSide apps this file would be `Pages/_Layout.cshtml`. As for Blazor WASM apps, this file tends to be `wwwroot/index.html`
 
 ```html
 <script src="_content/Luthetus.Common/luthetusCommon.js"></script>
 <script src="_content/Luthetus.TextEditor/luthetusTextEditor.js"></script>
 ```
 
-> *NOTE:* `luthetusCommon.js` is not necessary to reference, if one has already done so.
+- In `App.razor` add the following towards the top of the file:
 
-- In `App.razor` render the `<Fluxor.Blazor.Web.StoreInitializer/>` Blazor component
+```html
+<Fluxor.Blazor.Web.StoreInitializer />
+
+<!--
+    The Luthetus components here, can be moved wherever.
+    Preferably, these are in one's LayoutComponentBase.
+    As here they cannot receive any cascading css.
+-->
+<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />
+<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />
+```
 
 > *NOTE:* Luthetus repositories use the state management library named `Fluxor` ([github link](https://github.com/mrpmorris/Fluxor)).
+
+- My Entire App.razor file as of this step:
 
 ```html
 <!-- App.razor -->
 
-<Fluxor.Blazor.Web.StoreInitializer/>
+<Fluxor.Blazor.Web.StoreInitializer />
+
+<!--
+    The Luthetus components here, can be more wherever.
+    Preferably, these are in one's LayoutComponentBase.
+    As here they cannot receive any cascading css.
+-->
+<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />
+<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />
 
 <Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="new [] { typeof(MainLayout).Assembly }">
     <Found Context="routeData">
@@ -89,35 +127,6 @@ Go to the file that you reference JavaScript files from and add the following Ja
         </LayoutView>
     </NotFound>
 </Router>
-```
-
-- In `MainLayout.razor` render both the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />` and the  `<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />` Blazor component
-
-> *NOTE:* The placement of the `<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />` Blazor component should be wrapped in an encompassing div. This allows one to cascade css. A later tutorial is intended to show this, as to keep the installation tutorial more to the point.
-
-```html
-@inherits LayoutComponentBase
-
-<PageTitle>Luthetus.Common.Installation.ServerSide</PageTitle>
-
-<Luthetus.Common.RazorLib.Installations.Displays.LuthetusCommonInitializer />
-<Luthetus.TextEditor.RazorLib.Installations.Displays.LuthetusTextEditorInitializer />
-
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
-
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
 ```
 
 # Next tutorial: [usage.md](./usage.md)

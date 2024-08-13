@@ -24,6 +24,7 @@ class Program
 
         var hostingInformation = new LuthetusHostingInformation(
             LuthetusHostingKind.Photino,
+            LuthetusPurposeKind.Ide,
             new BackgroundTaskService());
 
         appBuilder.Services.AddLuthetusIdeRazorLibServices(hostingInformation);

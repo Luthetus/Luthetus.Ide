@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Luthetus.Tutorials.Photino": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:63101;http://localhost:63102"
+    }
+  }
+}
