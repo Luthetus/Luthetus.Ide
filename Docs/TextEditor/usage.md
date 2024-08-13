@@ -3,7 +3,7 @@
 ## Usage
 
 ### Source Code
-The .NET Solution: [Luthetus.TextEditor.Usage.sln](../../Source/Tutorials/TextEditor/Luthetus.TextEditor.Usage.sln),
+The .NET Solution: [Luthetus.Tutorials.sln](../../Source/Tutorials/Luthetus.Tutorials.sln),
 was made by following steps described here. So, the completed result can be found there.
 
 ### Goal
@@ -211,10 +211,12 @@ public partial class Index : ComponentBase
 
 Welcome to your new app.
 
-<TextEditorViewModelDisplay TextEditorViewModelKey="TextEditorViewModelKey" />
+<TextEditorViewModelDisplay TextEditorViewModelKey="ViewModelKey" />
 ```
 
 - A plain text editor without syntax highlighting should render now when the app is ran.
+
+![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../../Images/TextEditor/Gifs/text-editor-tutorial-midway.gif)
 
 > *NOTE:* Height of the text editor is 100% of the parent element. In the Blazor default project template one needs the following:
 
@@ -271,6 +273,8 @@ Welcome to your new app.
 
 ```
 
+![tutorial_Usage-CSharpCompilerServiceTextEditor.gif](../../Images/TextEditor/Gifs/text-editor-tutorial-resize.gif)
+
 - Now we can add in the C# Compiler Service.
 
 - Reference the `Luthetus.CompilerServices.CSharp` Nuget Package
@@ -278,8 +282,10 @@ Welcome to your new app.
 Go to the file that you register your services and add the following lines of C# code.
 
 ```csharp
-using Luthetus.CompilerServices.Lang.CSharp.CompilerServiceCase;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 
+// NOTE: the next step creates the implementations
 services
     .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
     .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>();
@@ -368,6 +374,9 @@ public class DecorationMapperRegistry : IDecorationMapperRegistry
 - Inject the `ICompilerServiceRegistry` and the `IDecorationMapperRegistry`
 
 ```csharp
+// using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+// using Luthetus.TextEditor.RazorLib.Decorations.Models;
+
 [Inject]
 private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
 [Inject]
@@ -391,45 +400,41 @@ var cSharpCompilerService = CompilerServiceRegistry.GetCompilerService(
 - My `Pages/Index.razor.cs` file as of this step is shown in the following code snippet:
 
 ```csharp
-using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
-using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Microsoft.AspNetCore.Components;
 
-namespace Luthetus.Tutorials.RazorLib.Pages;
+namespace NugetPackageTest.Pages;
 
-public partial class Index : ComponentBase
+public partial class Home : ComponentBase
 {
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;
-	[Inject]
-	private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
-	[Inject]
-	private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
+    [Inject]
+    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
+    [Inject]
+    private IDecorationMapperRegistry DecorationMapperRegistry { get; set; } = null!;
 
-	public static ResourceUri ResourceUri { get; } = new("/index.txt");
+    public static ResourceUri ResourceUri { get; } = new("/index.txt");
 	public static Key<TextEditorViewModel> ViewModelKey { get; } = Key<TextEditorViewModel>.NewKey();
-	
+
 	protected override void OnInitialized()
 	{
-		var existingModel = TextEditorService.ModelApi.GetOrDefault(ResourceUri);
-		if (existingModel is not null)
-			return;
+        var genericDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(
+			ExtensionNoPeriodFacts.C_SHARP_CLASS);
 
-		var genericDecorationMapper = DecorationMapperRegistry.GetDecorationMapper(
-			ExtensionNoPeriodFacts.C_SHARP_CLASS);
-			
-		var cSharpCompilerService = CompilerServiceRegistry.GetCompilerService(
-			ExtensionNoPeriodFacts.C_SHARP_CLASS);
-			
-		var model = new TextEditorModel(
-	        ResourceUri,
-	        DateTime.UtcNow,
-	        ExtensionNoPeriodFacts.TXT,
-	        @"public class MyClass
+        var cSharpCompilerService = CompilerServiceRegistry.GetCompilerService(
+            ExtensionNoPeriodFacts.C_SHARP_CLASS);
+
+        var model = new TextEditorModel(
+				ResourceUri,
+				DateTime.UtcNow,
+				ExtensionNoPeriodFacts.TXT,
+				@"public class MyClass
 {
 	public MyClass(string firstName, string lastName)
 	{
@@ -450,20 +455,18 @@ public partial class Index : ComponentBase
 		return;
 	}
 }",
-	        genericDecorationMapper,
-	        cSharpCompilerService);
-	
+            genericDecorationMapper,
+            cSharpCompilerService);
+
 		TextEditorService.ModelApi.RegisterCustom(model);
-		
-		cSharpCompilerService.RegisterResource(
-			model.ResourceUri,
-			shouldTriggerResourceWasModified: true);
-		
-		TextEditorService.ViewModelApi.Register(
+
+        cSharpCompilerService.RegisterResource(model.ResourceUri, shouldTriggerResourceWasModified: true);
+
+        TextEditorService.ViewModelApi.Register(
 			ViewModelKey,
 			ResourceUri,
 			new Category("main"));
-			
+
 		base.OnInitialized();
 	}
 }

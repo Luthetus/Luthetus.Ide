@@ -28,17 +28,14 @@ The nuget.org link to the NuGet Package is here: https://www.nuget.org/packages/
 Go to the file that you register your services and add the following lines of C# code.
 
 ```csharp
-
-using Fluxor;
-using Luthetus.Common.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.Installations.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
-
+// using Fluxor;
+// using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+// using Luthetus.Common.RazorLib.Installations.Models;
+// using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 // Use either Wasm or ServerSide depending on how your app is being hosted.
-var luthetusHostingKind = LuthetusHostingKind.Wasm;
 // var luthetusHostingKind = LuthetusHostingKind.ServerSide;
+var luthetusHostingKind = LuthetusHostingKind.Wasm;
 
 var hostingInformation = new LuthetusHostingInformation(
     luthetusHostingKind,
@@ -46,10 +43,6 @@ var hostingInformation = new LuthetusHostingInformation(
     new BackgroundTaskService());
 
 services.AddLuthetusTextEditor(hostingInformation);
-        
-services
-    .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
-    .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>();
 
 services.AddFluxor(options => options.ScanAssemblies(
     typeof(LuthetusCommonConfig).Assembly,
@@ -59,15 +52,18 @@ services.AddFluxor(options => options.ScanAssemblies(
 // 'hostingInformation.StartBackgroundTaskWorkers(host.Services);'
 //
 // Some builders have 'Build()' invoked then fluent API into their 'Run()' or 'RunAsync()'.
-//
 // This might require one to capture the 'Build()' result
 //
 // This can be done anywhere, so long as the services have been built
+// (by "can be done anywhere" this includes even after the app rendered,
+//  I wonder if you could tie it to the lifecycle of a Blazor component with IDisposable?)
 
+/*
 var host = builder.Build();
 hostingInformation.StartBackgroundTaskWorkers(host.Services);
 
 await host.RunAsync();
+*/
 ```
 
 - Reference the `CSS`
@@ -94,7 +90,7 @@ Go to the file that you reference JavaScript files from and add the following Ja
 <Fluxor.Blazor.Web.StoreInitializer />
 
 <!--
-    The Luthetus components here, can be more wherever.
+    The Luthetus components here, can be moved wherever.
     Preferably, these are in one's LayoutComponentBase.
     As here they cannot receive any cascading css.
 -->
@@ -103,6 +99,8 @@ Go to the file that you reference JavaScript files from and add the following Ja
 ```
 
 > *NOTE:* Luthetus repositories use the state management library named `Fluxor` ([github link](https://github.com/mrpmorris/Fluxor)).
+
+- My Entire App.razor file as of this step:
 
 ```html
 <!-- App.razor -->
