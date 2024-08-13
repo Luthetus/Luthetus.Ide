@@ -1,4 +1,4 @@
-# Luthetus.TextEditor (v1.4.0)
+# Luthetus.TextEditor (v2.0.0)
 
 ## Usage
 
