@@ -305,6 +305,17 @@ public class OnKeyDownLateBatching : ITextEditorWork
 		}
 		catch (Exception e)
 		{
+			// It was found to be the case (2024-08-13)
+			// ========================================
+			// that if an exception is thrown after the partitions were modified,
+			// that the "only 'FinalizePost' if there were no exceptions" idea is not sufficient.
+			// Because the partitions are shared between recreations of the text editor model,
+			// and the corrupt state will be spread.
+			//
+			// So, a follow up idea is that inside the catch, if there is a 'modified' flag on a model,
+			// then presume that the partitions are corrupted?
+			//
+			// Could one then recover from this state?
 			Console.WriteLine(e);
 		}
     }
