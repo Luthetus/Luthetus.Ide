@@ -253,7 +253,7 @@ public class TextEditorModelApi : ITextEditorModelApi
         {
             for (var i = textEditorTextSpan.StartingIndexInclusive; i < textEditorTextSpan.EndingIndexExclusive; i++)
             {
-                if (i < 0 || i >= localRichCharacterList.Count)
+                if (i < 0 || i >= localRichCharacterList.Length)
                     continue;
 
                 modelModifier.__SetDecorationByte(i, textEditorTextSpan.DecorationByte);
@@ -261,7 +261,7 @@ public class TextEditorModelApi : ITextEditorModelApi
             }
         }
 
-        for (var i = 0; i < localRichCharacterList.Count - 1; i++)
+        for (var i = 0; i < localRichCharacterList.Length - 1; i++)
         {
             if (!positionsPainted.Contains(i))
             {
