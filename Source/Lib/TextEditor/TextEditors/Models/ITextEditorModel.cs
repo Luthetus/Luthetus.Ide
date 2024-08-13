@@ -76,6 +76,8 @@ public interface ITextEditorModel
 	///
 	/// Would the app's memory go up, or would the so called ".NET Host" have its memory go up?
 	/// I'm seeing in task manager a process called ".NET Host", separate to that of "Luthetus.Ide.Photino".
+	///
+	/// I'm now seeing 643 MB of memory usage after changing RichCharacter to a struct from a class
 	/// </summary>
     public RichCharacter[] RichCharacterList { get; }
     public ImmutableList<TextEditorPartition> PartitionList { get; }
