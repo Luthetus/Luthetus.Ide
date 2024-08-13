@@ -22,7 +22,6 @@ directly.
 
 ## Getting started
 
-- Video format: [YouTube video](https://youtu.be/hC4E2-LNxB4?si=fnqbyVvGcns5fy3z)
 - Markdown format: [installation.md](./installation.md)
 
 ## Installation
