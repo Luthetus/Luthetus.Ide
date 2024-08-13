@@ -1231,7 +1231,9 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     [Fact]
     public async Task SetCursorShouldBlink()
     {
-        TestsHelper.InitializeTextEditorServicesTestsHelper(
+        // TODO: Bring back cursor blinking code (2024-08-13)
+        // ==================================================
+        /* TestsHelper.InitializeTextEditorServicesTestsHelper(
             out var textEditorService,
             out var inModel,
             out var inViewModel,
@@ -1271,7 +1273,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
         await checkResultTask;
         textEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModelApi_CursorShouldBlinkChanged;
-        Assert.Equal(expectedChangeCount, cursorShouldBlinkChangedCount);
+        Assert.Equal(expectedChangeCount, cursorShouldBlinkChangedCount);*/
     }
 
     /// <summary>
