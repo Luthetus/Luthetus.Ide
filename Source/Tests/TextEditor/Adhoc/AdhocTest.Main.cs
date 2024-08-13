@@ -426,7 +426,7 @@ public partial class AdhocTest
         // ContentList
         {
             var contentList = refModel.RichCharacterList;
-            Assert.Equal(27, refModel.RichCharacterList.Count);
+            Assert.Equal(27, refModel.RichCharacterList.Length);
 
             var i = 0;
 
@@ -437,111 +437,111 @@ public partial class AdhocTest
             //       Internally 'RichCharacter GetRichCharacter(int globalPositionIndex)' would be no different,
             //       but perhaps the API would provide some sanity?
 
-            var richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            var richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('p', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('u', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('b', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('l', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('i', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('c', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal(' ', richCharacter.Value);
             Assert.Equal(0, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('c', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('l', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('a', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('s', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('s', richCharacter.Value);
             Assert.Equal(1, richCharacter.DecorationByte);
             
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal(' ', richCharacter.Value);
             Assert.Equal(0, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('M', richCharacter.Value);
             Assert.Equal(11, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('y', richCharacter.Value);
             Assert.Equal(11, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('C', richCharacter.Value);
             Assert.Equal(11, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('l', richCharacter.Value);
             Assert.Equal(11, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('a', richCharacter.Value);
             Assert.Equal(11, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('s', richCharacter.Value);
             Assert.Equal(11, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('s', richCharacter.Value);
             Assert.Equal(11, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('\n', richCharacter.Value);
             Assert.Equal(0, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('{', richCharacter.Value);
             Assert.Equal(0, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('\n', richCharacter.Value);
             Assert.Equal(0, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('\t', richCharacter.Value);
             Assert.Equal(0, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('\n', richCharacter.Value);
             Assert.Equal(0, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('}', richCharacter.Value);
             Assert.Equal(0, richCharacter.DecorationByte);
 
-            richCharacter = refModel.RichCharacterList[i++] ?? throw new ArgumentNullException();
+            richCharacter = refModel.RichCharacterList[i++];
             Assert.Equal('\n', richCharacter.Value);
             Assert.Equal(0, richCharacter.DecorationByte);
 
@@ -827,7 +827,7 @@ public partial class AdhocTest
              cSharpCompilerService);
 
         textEditorService.ModelApi.RegisterCustom(model);
-        cSharpCompilerService.RegisterResource(model.ResourceUri);
+        cSharpCompilerService.RegisterResource(model.ResourceUri, shouldTriggerResourceWasModified: true);
         model = textEditorService.ModelApi.GetOrDefault(resourceUri) ?? throw new ArgumentNullException();
 
         var viewModelKey = Key<TextEditorViewModel>.NewKey();

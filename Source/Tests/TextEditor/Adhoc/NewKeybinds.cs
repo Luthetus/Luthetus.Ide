@@ -190,7 +190,7 @@ doremi".ReplaceLineEndings("\n");
 				throw new NotImplementedException("Invoke GetColumnIndexOfCharacterWithDifferingKind instead");
 			}
 				
-			while (++positionIndex < modelModifier.RichCharacterList.Count)
+			while (++positionIndex < modelModifier.RichCharacterList.Length)
 			{
 				var currentRichCharacter = modelModifier.RichCharacterList[positionIndex];
 				

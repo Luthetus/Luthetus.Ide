@@ -22,11 +22,7 @@ public class RichCharacterTests
 			var decorationByte = (byte)GenericDecorationKind.Function;
 			var value = 'C';
 
-            var richCharacter = new RichCharacter
-            {
-                DecorationByte = decorationByte,
-                Value = value
-            };
+            var richCharacter = new RichCharacter(value, decorationByte);
 
 			Assert.Equal(decorationByte, richCharacter.DecorationByte);
 			Assert.Equal(value, richCharacter.Value);
@@ -36,11 +32,7 @@ public class RichCharacterTests
 			var decorationByte = (byte)GenericDecorationKind.Keyword;
 			var value = 'K';
 
-            var richCharacter = new RichCharacter
-            {
-                DecorationByte = decorationByte,
-                Value = value
-            };
+            var richCharacter = new RichCharacter(value, decorationByte);
 
 			Assert.Equal(decorationByte, richCharacter.DecorationByte);
 			Assert.Equal(value, richCharacter.Value);
