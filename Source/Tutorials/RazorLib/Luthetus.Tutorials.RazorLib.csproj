@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Lib\Common\Luthetus.Common.RazorLib.csproj" />
     <ProjectReference Include="..\..\Lib\TextEditor\Luthetus.TextEditor.RazorLib.csproj" />
+    <ProjectReference Include="..\..\Lib\CompilerServices\CSharp\Luthetus.CompilerServices.CSharp.csproj" />
   </ItemGroup>
 
 </Project>
