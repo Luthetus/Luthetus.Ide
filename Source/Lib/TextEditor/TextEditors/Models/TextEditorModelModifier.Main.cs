@@ -38,7 +38,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
         _partitionList = _textEditorModel.PartitionList;
     }
 
-    public ImmutableList<RichCharacter> RichCharacterList => _richCharacterList is null ? _textEditorModel.RichCharacterList : _richCharacterList;
+    public RichCharacter[] RichCharacterList => _richCharacterList is null ? _textEditorModel.RichCharacterList : _richCharacterList;
     public ImmutableList<TextEditorPartition> PartitionList => _partitionList is null ? _textEditorModel.PartitionList : _partitionList;
 
     public IList<ITextEditorEdit> EditBlockList => _editBlocksList is null ? _textEditorModel.EditBlockList : _editBlocksList;
@@ -60,7 +60,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
     public int LineCount => LineEndList.Count;
-    public int CharCount => _richCharacterList.Count;
+    public int CharCount => _richCharacterList.Length;
 
 	/// <summary>
 	/// The <see cref="TextEditorEditOther"/> works by invoking 'Open' then when finished invoking 'Close'.
@@ -76,7 +76,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     ///       |
     ///       Need to revisit naming this.
     /// </summary>
-    private ImmutableList<RichCharacter> _richCharacterList => _partitionList.SelectMany(x => x.RichCharacterList).ToImmutableList();
+    private RichCharacter[] _richCharacterList => _partitionList.SelectMany(x => x.RichCharacterList).ToArray();
     /// <summary>
     /// TODO: Awkward naming convention is being used here. This is an expression bound property,...
     ///       ...with the naming conventions of a private field.

@@ -15,19 +15,19 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// Stores the <see cref="RichCharacter"/> class instances that represent the text.<br/><br/>
 /// Each TextEditorModel has a unique underlying resource uri.<br/><br/>
 /// Therefore, if one has a text file named "myHomework.txt", then only one TextEditorModel
-/// can exist with the resource uri of "myHomework.txt".
-/// <br/><br/>
+/// can exist with the resource uri of "myHomework.txt".<br/><br/>
+/// 
 /// In regards to the use of the words: "line", and "row":
-/// A "line" is being defined as a contiguous block of characters, up to and including a <see cref="LineEnd"/>.
-/// <br/>
+/// A "line" is being defined as a contiguous block of characters, up to and including a <see cref="LineEnd"/>.<br/>
+/// 
 /// A "row" is being defined as a UI rendering term. Such that, without a line-wrap,
 /// a line of text will be rendered at the same 'y-axis' position, with only a difference
 /// in 'x-axis' between each character.
 /// With line-wrap, a line can span many "row"(s) on the UI.
 /// That is, the same line of text can be rendered as '1 row' up until the 'x-coordinate'
 /// goes out of view. At that point the 'y-axis' will be incremented by the height of 1 'line',
-/// and the 'x-coordinate' is reset, and more of the line can be rendered.
-/// <br/><br/>
+/// and the 'x-coordinate' is reset, and more of the line can be rendered.<br/><br/>
+/// 
 /// <see cref="TextEditorModel"/> uses <see cref="ResourceUri"/> as its unique identifier.
 /// Throughout this library, one finds <see cref="Key{T}"/> to be a unique identifier.
 /// However, since <see cref="ResourceUri"/> should be unique,
@@ -35,7 +35,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public interface ITextEditorModel
 {
-    public ImmutableList<RichCharacter> RichCharacterList { get; }
+    public RichCharacter[] RichCharacterList { get; }
     public ImmutableList<TextEditorPartition> PartitionList { get; }
     public IList<ITextEditorEdit> EditBlockList { get; }
     /// <summary>
