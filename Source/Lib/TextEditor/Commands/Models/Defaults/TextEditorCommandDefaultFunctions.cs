@@ -26,6 +26,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -1005,26 +1006,33 @@ public class TextEditorCommandDefaultFunctions
         // Indexing can be invoked and this method still check for syntax highlighting and such
         if (EventUtils.IsAutocompleteIndexerInvoker(keyboardEventArgs))
         {
-        	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-        	
-            if (primaryCursorModifier.ColumnIndex > 0)
+            try
             {
-                // All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
-                // are to be 1 character long, as well either specific whitespace or punctuation.
-                // Therefore 1 character behind might be a word that can be indexed.
-                var word = modelModifier.ReadPreviousWordOrDefault(
-                    primaryCursorModifier.LineIndex,
-                    primaryCursorModifier.ColumnIndex);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-                if (word is not null)
-                {
-	                _ = Task.Run(async () =>
-        			{
-	                    await editContext.TextEditorService.AutocompleteIndexer
-	                        .IndexWordAsync(word)
-	                        .ConfigureAwait(false);
-        			});
-                }
+				if (primaryCursorModifier.ColumnIndex > 0)
+				{
+					// All keyboardEventArgs that return true from "IsAutocompleteIndexerInvoker"
+					// are to be 1 character long, as well either specific whitespace or punctuation.
+					// Therefore 1 character behind might be a word that can be indexed.
+					var word = modelModifier.ReadPreviousWordOrDefault(
+						primaryCursorModifier.LineIndex,
+						primaryCursorModifier.ColumnIndex);
+
+					if (word is not null)
+					{
+						_ = Task.Run(async () =>
+						{
+							await editContext.TextEditorService.AutocompleteIndexer
+								.IndexWordAsync(word)
+								.ConfigureAwait(false);
+						});
+					}
+				}
+			}
+            catch (LuthetusTextEditorException e)
+            {
+                // Eat this exception
             }
         }
 

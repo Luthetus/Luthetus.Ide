@@ -1152,7 +1152,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         {
             var firstPartition = modifier.PartitionList.First();
 
-            var richCharacter = new RichCharacter { Value = sourceText[i] };
+            var richCharacter = new RichCharacter(sourceText[i], default);
             modifier.__Add(richCharacter);
 
             if (i < model.PartitionSize)
@@ -1211,7 +1211,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
                 Assert.Single(modifier.PartitionList);
             }
 
-            var richCharacter = new RichCharacter { Value = sourceText[i] };
+            var richCharacter = new RichCharacter(sourceText[i], default);
             modifier.__Add(richCharacter);
 
             if (i == model.PartitionSize)
