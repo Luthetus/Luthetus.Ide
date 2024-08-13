@@ -35,6 +35,48 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public interface ITextEditorModel
 {
+	/// <summary>
+	/// Changed this property to an array from an ImmutableList (2024-08-13).
+	/// =====================================================================
+	/// The motivation for this change comes from calculating the virtualization result.
+	///
+	/// The storage for the underlying data of a 'ImmutableList' is believed to be more of
+	/// a 'tree' structure than a contiguous array.
+	///
+	/// And therefore, when we virtualize vertically, and then horizontally after,
+	/// this is an incredible amount of overhead if performed on a 'tree'-like structure.
+	///
+	/// A contiguous array is expected to be a dramatic improvement in performance
+	/// when calculating the virtualization result.
+	///
+	/// A side note on this change: could .NET internally more easily leverage
+	/// caching with this now being a contiguous array, rather than a 'tree'?
+	///
+	/// A worry: I'm not quite certain on the details of the idea in my head.
+	/// It is something along lines of an array being treated as a struct
+	/// and that this could cause a mess somehow?
+	/// |
+	/// Copying the entire list of rich characters versus just passing around a pointer
+	/// kind of thing.
+	/// |
+	/// But, this array is located on an object, the text editor model, and it is the model that
+	/// is being passed around in the code base. So this shouldn't be an issue.
+	///
+	/// Quite non-scientifically I simply took note of the memory usage that the Task Manager on windows
+	/// reported for the IDE while this used to be an ImmutableList, before I made the change.
+	/// |
+	/// It was 1,744 MB of memory pre change.
+	/// It is 1,568 MB of memory after change.
+	///
+	/// There is 0 control of variables going on here so the change of 200 MB perhaps
+	/// is completely meaningless.
+	///
+	/// More so, I took a simple note of memory usage incase I see that the memory usage
+	/// doubled or something absurd.
+	///
+	/// Would the app's memory go up, or would the so called ".NET Host" have its memory go up?
+	/// I'm seeing in task manager a process called ".NET Host", separate to that of "Luthetus.Ide.Photino".
+	/// </summary>
     public RichCharacter[] RichCharacterList { get; }
     public ImmutableList<TextEditorPartition> PartitionList { get; }
     public IList<ITextEditorEdit> EditBlockList { get; }

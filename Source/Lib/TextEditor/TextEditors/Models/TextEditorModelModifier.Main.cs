@@ -86,7 +86,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     ///       |
     ///       Need to revisit naming this.
     /// </summary>
-    private ImmutableList<TextEditorPartition> _partitionList = new TextEditorPartition[] { new(Array.Empty<RichCharacter>().ToImmutableList()) }.ToImmutableList();
+    private ImmutableList<TextEditorPartition> _partitionList = new TextEditorPartition[] { new TextEditorPartition(new List<RichCharacter>()) }.ToImmutableList();
 
     private List<ITextEditorEdit>? _editBlocksList;
     private List<LineEnd>? _lineEndList;

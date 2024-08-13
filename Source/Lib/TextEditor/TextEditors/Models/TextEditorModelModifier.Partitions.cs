@@ -129,7 +129,11 @@ public partial class TextEditorModelModifier : ITextEditorModel
             throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
 
         var inPartition = _partitionList[indexOfPartitionWithAvailableSpace];
-        inPartition.RichCharacterList[relativePositionIndex].DecorationByte = decorationByte;
+        var targetRichCharacter = inPartition.RichCharacterList[relativePositionIndex];
+        
+        inPartition.RichCharacterList[relativePositionIndex] = new(
+        	targetRichCharacter.Value,
+        	decorationByte);
     }
 
     public void __RemoveAt(int globalPositionIndex)
@@ -174,7 +178,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
     private void __InsertNewPartition(int partitionIndex)
     {
-        _partitionList = _partitionList.Insert(partitionIndex, new TextEditorPartition(Array.Empty<RichCharacter>().ToImmutableList()));
+        _partitionList = _partitionList.Insert(partitionIndex, new TextEditorPartition(new List<RichCharacter>()));
     }
 
     private void __SplitIntoTwoPartitions(int partitionIndex)
@@ -189,7 +193,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             var partition = new TextEditorPartition(originalPartition.RichCharacterList
                 .Skip(0)
                 .Take(firstUnevenSplit)
-                .ToImmutableList());
+                .ToList());
 
             _partitionList = _partitionList.SetItem(
                 partitionIndex,
@@ -201,7 +205,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
             var partition = new TextEditorPartition(originalPartition.RichCharacterList
                 .Skip(firstUnevenSplit)
                 .Take(secondUnevenSplit)
-                .ToImmutableList());
+                .ToList());
 
             _partitionList = _partitionList.Insert(
                 partitionIndex + 1,

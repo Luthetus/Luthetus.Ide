@@ -310,11 +310,7 @@ public partial class TextEditorModelModifier
 
         __InsertRange(
             cursorPositionIndex,
-            value.Select(character => new RichCharacter
-            {
-                Value = character,
-                DecorationByte = 0,
-            }));
+            value.Select(character => new RichCharacter(character, 0)));
     }
 
 	/// <summary>
