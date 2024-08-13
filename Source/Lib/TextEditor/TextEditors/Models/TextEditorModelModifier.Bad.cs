@@ -30,7 +30,7 @@ public partial class TextEditorModelModifier
 
         _mostCharactersOnASingleLineTuple = (0, TextEditorModel.MOST_CHARACTERS_ON_A_SINGLE_ROW_MARGIN);
 
-        _partitionList = new TextEditorPartition[] { new(Array.Empty<RichCharacter>().ToImmutableList()) }.ToImmutableList();
+        _partitionList = new TextEditorPartition[] { new TextEditorPartition(new List<RichCharacter>()) }.ToImmutableList();
 
         _lineEndList = new List<LineEnd> 
         {
@@ -290,11 +290,7 @@ public partial class TextEditorModelModifier
             previousCharacter = character;
         }
 
-        __InsertRange(0, content.Select(x => new RichCharacter
-        {
-            Value = x,
-            DecorationByte = default,
-        }));
+        __InsertRange(0, content.Select(x => new RichCharacter(x, default)));
 
         // Update the line end count list (TODO: Fix the awkward tuple not a variable logic going on here)
         {

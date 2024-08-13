@@ -1,12 +1,19 @@
 namespace Luthetus.TextEditor.RazorLib.Characters.Models;
 
-/// <summary>
-/// Why is this class not a struct?
-/// (current named: 'RichCharacter' and only contains two properties: a char, and a byte)
-/// </summary>
-public class RichCharacter
+public struct RichCharacter
 {
-    public char Value { get; init; }
+	public RichCharacter(char value, byte decorationByte)
+	{
+		Value = value;
+		DecorationByte = decorationByte;
+	}
+
+    public char Value { get; }
+    
+    /// <summary>
+    /// The decoration byte is expected to change "on the fly"
+    /// its solely for the UI to color the text and therefore has a setter.
+    /// </summary>
     public byte DecorationByte { get; set; }
 
     public override bool Equals(object? obj)

@@ -305,16 +305,12 @@ public partial class TextEditorModelModifier
         CancellationToken cancellationToken)
     {
         // If cursor is out of bounds then continue
-        if (cursorPositionIndex > _richCharacterList.Count)
+        if (cursorPositionIndex > _richCharacterList.Length)
             return;
 
         __InsertRange(
             cursorPositionIndex,
-            value.Select(character => new RichCharacter
-            {
-                Value = character,
-                DecorationByte = 0,
-            }));
+            value.Select(character => new RichCharacter(character, 0)));
     }
 
 	/// <summary>
@@ -718,7 +714,7 @@ public partial class TextEditorModelModifier
 	private void DeleteValue(int positionIndex, int count, CancellationToken cancellationToken)
     {
         // If cursor is out of bounds then continue
-        if (positionIndex >= _richCharacterList.Count)
+        if (positionIndex >= _richCharacterList.Length)
             return;
 
         __RemoveRange(positionIndex, count);

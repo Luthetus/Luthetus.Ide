@@ -49,7 +49,7 @@ public partial class TextEditorModel
 
 	public TextEditorModel(
         string allText,
-        ImmutableList<RichCharacter> richCharacterList,
+        RichCharacter[] richCharacterList,
         int partitionSize,
         ImmutableList<TextEditorPartition> partitionList,
 		ImmutableList<ITextEditorEdit> editBlocksList,

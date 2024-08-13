@@ -21,7 +21,7 @@ public partial class TextEditorModel
 
     private string? _allText;
 
-    public ImmutableList<RichCharacter> RichCharacterList { get; init; }
+    public RichCharacter[] RichCharacterList { get; init; }
     public ImmutableList<TextEditorPartition> PartitionList { get; init; }
 
     public ImmutableList<ITextEditorEdit> EditBlockList { get; init; } = ImmutableList<ITextEditorEdit>.Empty;
@@ -56,5 +56,5 @@ public partial class TextEditorModel
     public string AllText => _allText ??= new string (RichCharacterList.Select(x => x.Value).ToArray());
 
     public int LineCount => LineEndList.Count;
-    public int DocumentLength => RichCharacterList.Count;
+    public int DocumentLength => RichCharacterList.Length;
 }
