@@ -1,16 +1,16 @@
-﻿using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.Characters.Models;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 public class TextEditorPartition
 {
-    public TextEditorPartition(ImmutableList<RichCharacter> richCharacterList)
+    public TextEditorPartition(List<RichCharacter> richCharacterList)
     {
         RichCharacterList = richCharacterList;
     }
 
-    public ImmutableList<RichCharacter> RichCharacterList { get; }
+    public List<RichCharacter> RichCharacterList { get; }
 
     /// <summary>
     /// This is the count of rich characters in THIS particular partition, the <see cref="TextEditorModel.DocumentLength"/>
@@ -22,24 +22,32 @@ public class TextEditorPartition
         int relativePositionIndex,
         RichCharacter richCharacter)
     {
-        return new TextEditorPartition(RichCharacterList.Insert(relativePositionIndex, richCharacter));
+    	var copy = new List<RichCharacter>(RichCharacterList);
+    	copy.Insert(relativePositionIndex, richCharacter);
+    	return new(copy);
     }
 
     public TextEditorPartition InsertRange(
         int relativePositionIndex,
         IEnumerable<RichCharacter> richCharacterList)
     {
-        return new TextEditorPartition(RichCharacterList.InsertRange(relativePositionIndex, richCharacterList));
+    	var copy = new List<RichCharacter>(RichCharacterList);
+    	copy.InsertRange(relativePositionIndex, richCharacterList);
+    	return new(copy);
     }
 
     public TextEditorPartition RemoveAt(int relativePositionIndex)
     {
-        return new TextEditorPartition(RichCharacterList.RemoveAt(relativePositionIndex));
+    	var copy = new List<RichCharacter>(RichCharacterList);
+    	copy.RemoveAt(relativePositionIndex);
+    	return new(copy);
     }
 
     public TextEditorPartition RemoveRange(int relativePositionIndex, int count)
     {
-        return new TextEditorPartition(RichCharacterList.RemoveRange(relativePositionIndex, count));
+    	var copy = new List<RichCharacter>(RichCharacterList);
+    	copy.RemoveRange(relativePositionIndex, count);
+    	return new(copy);
     }
 
     public TextEditorPartition AddRange(IEnumerable<RichCharacter> richCharacterList)
@@ -58,6 +66,8 @@ public class TextEditorPartition
         int relativePositionIndex,
         RichCharacter richCharacter)
     {
-        return new TextEditorPartition(RichCharacterList.SetItem(relativePositionIndex, richCharacter));
+	    var copy = new List<RichCharacter>(RichCharacterList);
+    	copy[relativePositionIndex] = richCharacter;
+    	return new(copy);
     }
 }

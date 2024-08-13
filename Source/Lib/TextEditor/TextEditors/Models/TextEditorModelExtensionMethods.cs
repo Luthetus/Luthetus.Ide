@@ -403,14 +403,14 @@ public static class TextEditorModelExtensionMethods
             positionIndex -= 1;
         }
 
-        if (positionIndex < 0 || positionIndex >= model.RichCharacterList.Count)
+        if (positionIndex < 0 || positionIndex >= model.RichCharacterList.Length)
             return -1;
 
         var startCharacterKind = CharacterKindHelper.CharToCharacterKind(model.RichCharacterList[positionIndex].Value);
 
         while (true)
         {
-            if (positionIndex >= model.RichCharacterList.Count ||
+            if (positionIndex >= model.RichCharacterList.Length ||
                 positionIndex > lastPositionIndexOnRow ||
                 positionIndex < lineStartPositionIndex)
             {
