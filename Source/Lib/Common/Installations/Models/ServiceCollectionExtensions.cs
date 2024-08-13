@@ -44,7 +44,9 @@ public static class ServiceCollectionExtensions
         if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
         {
             services.AddHostedService(sp => sp.GetRequiredService<ContinuousBackgroundTaskWorker>());
-            services.AddHostedService(sp => sp.GetRequiredService<BlockingBackgroundTaskWorker>());
+            
+            if (hostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide)
+	            services.AddHostedService(sp => sp.GetRequiredService<BlockingBackgroundTaskWorker>());
         }
 
         services

@@ -12,11 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Luthetus.Common" Version="2.0.0" />
+    <PackageReference Include="Luthetus.TextEditor" Version="2.0.0" />
+    <PackageReference Include="Luthetus.CompilerServices.CSharp" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Lib\Common\Luthetus.Common.RazorLib.csproj" />
   </ItemGroup>
 
 </Project>
