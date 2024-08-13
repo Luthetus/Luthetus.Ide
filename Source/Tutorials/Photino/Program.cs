@@ -3,6 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Photino.Blazor;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Tutorials.RazorLib;
 
 namespace Luthetus.Tutorials.Photino;
@@ -15,7 +17,13 @@ class Program
         var appBuilder = PhotinoBlazorAppBuilder.CreateDefault(args);
 
         appBuilder.Services.AddLogging();
-        appBuilder.Services.AddLuthetusTutorialsRazorLibServices();
+        
+        var hostingInformation = new LuthetusHostingInformation(
+            LuthetusHostingKind.Photino,
+            LuthetusPurposeKind.TextEditor,
+            new BackgroundTaskService());
+	        
+        appBuilder.Services.AddLuthetusTutorialsRazorLibServices(hostingInformation);
 
         appBuilder.RootComponents.Add<App>("app");
 
@@ -42,6 +50,8 @@ class Program
         {
             app.MainWindow.ShowMessage("Fatal exception", error.ExceptionObject.ToString());
         };
+        
+        hostingInformation.StartBackgroundTaskWorkers(app.Services);
         
         app.Run();
     }
