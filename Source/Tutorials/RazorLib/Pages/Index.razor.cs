@@ -70,5 +70,7 @@ public partial class Index : ComponentBase
 			ViewModelKey,
 			ResourceUri,
 			new Category("main"));
+			
+		base.OnInitialized();
 	}
 }
