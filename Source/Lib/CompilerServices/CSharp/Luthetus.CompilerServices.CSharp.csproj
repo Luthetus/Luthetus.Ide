@@ -14,8 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Luthetus.TextEditor" Version="2.0.0" />
     <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TextEditor\Luthetus.TextEditor.RazorLib.csproj" />
   </ItemGroup>
 
 </Project>

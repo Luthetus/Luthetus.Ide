@@ -14,7 +14,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Luthetus.Common" Version="2.0.0" />
+      <ProjectReference Include="..\Common\Luthetus.Common.RazorLib.csproj" />
     </ItemGroup>
 
     <ItemGroup>
