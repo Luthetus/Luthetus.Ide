@@ -12,9 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 	### Fixed
 	- Fix text editor context menu crashing when closing
     - Fix out of sync syntax highlighting.
-    - Text Editor uses 60% less memory after various struct/array optimizations.
-    - Text Editor "feels" an order of magnitude faster after various Blazor optimizations and
-      struct/array optimizations (which reduce the garbage collection overhead thus improving performance greatly).
 </details>
 
 ## [2.0.0] - 2023-08-14
@@ -27,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Change RichCharacter.cs to a struct (it was previously a class).
     - Change ITextEditorModel.RichCharacterList to an array (it was previously an ImmutableList).
     - Fix typing at start of file (position index 0) a non letter or digit.
+	- Text Editor uses 60% less memory after various struct/array optimizations.
+    - Text Editor "feels" an order of magnitude faster after various Blazor optimizations and
+      struct/array optimizations (which reduce the garbage collection overhead thus improving performance greatly).
 	
 	### Bugs
 	- If one opens the text editor's context menu with the dedicated 'ContextMenu' button on the keyboard,
