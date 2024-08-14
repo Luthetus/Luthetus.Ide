@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
@@ -11,6 +12,8 @@ public partial class IdeInfoDisplay : ComponentBase
 	private ContinuousBackgroundTaskWorker ContinuousBackgroundTaskWorker { get; set; } = null!;
 	[Inject]
 	private BlockingBackgroundTaskWorker BlockingBackgroundTaskWorker { get; set; } = null!;
+	[Inject]
+	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 
 #region
 	[Conditional("DEBUG")]

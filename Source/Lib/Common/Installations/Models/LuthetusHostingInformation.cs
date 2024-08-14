@@ -34,7 +34,12 @@ public record LuthetusHostingInformation
     public LuthetusHostingKind LuthetusHostingKind { get; init; }
     public LuthetusPurposeKind LuthetusPurposeKind { get; init; }
     public IBackgroundTaskService BackgroundTaskService { get; init; }
-    
+    /// <summary>
+    /// If the main window hasn't been initialized yet, 0 is returned.
+    /// Whether 0 returns at other points is uncertain.
+    /// </summary>
+    public Func<uint> GetMainWindowScreenDpiFunc { get; set; }
+
     public void StartBackgroundTaskWorkers(IServiceProvider serviceProvider)
     {
     	if (LuthetusHostingKind == LuthetusHostingKind.ServerSide)

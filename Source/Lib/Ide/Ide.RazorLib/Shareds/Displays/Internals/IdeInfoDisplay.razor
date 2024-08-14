@@ -137,6 +137,34 @@
 			</div>
 		</div>
 	</div>
+
+	<hr/>
+	
+	<div>
+        LuthetusHostingInformation:
+		<div>
+            <div>
+                @nameof(LuthetusHostingInformation.LuthetusHostingKind): @LuthetusHostingInformation.LuthetusHostingKind
+            </div>
+            <div>
+                @nameof(LuthetusHostingInformation.LuthetusPurposeKind): @LuthetusHostingInformation.LuthetusPurposeKind
+            </div>
+            <div>
+                @nameof(LuthetusHostingInformation.BackgroundTaskService):
+                @if (LuthetusHostingInformation.BackgroundTaskService is null)
+                {
+                    <text>null</text>
+                }
+                else
+                {
+                    <text>NOT-null</text>
+                }
+            </div>
+            <div>
+                @nameof(LuthetusHostingInformation.GetMainWindowScreenDpiFunc): @LuthetusHostingInformation.GetMainWindowScreenDpiFunc.Invoke()
+            </div>
+		</div>
+	</div>
 	
 	<hr/>
 

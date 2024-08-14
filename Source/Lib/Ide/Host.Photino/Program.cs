@@ -94,6 +94,19 @@ class Program
 				dispatcher.Dispatch(new AppDimensionState.NotifyIntraAppResizeAction());
 			});
 
+        hostingInformation.GetMainWindowScreenDpiFunc = () =>
+        {
+            try
+            {
+                return app.MainWindow.ScreenDpi;
+            }
+            catch (Exception e)
+            {
+                // Eat this exception
+                return 0;
+            }
+        };
+
         // Personal settings to have closing and reopening the IDE be exactly where I want while developing.
         {
             var specialFolderUserProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
