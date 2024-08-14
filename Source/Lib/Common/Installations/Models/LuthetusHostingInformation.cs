@@ -37,8 +37,10 @@ public record LuthetusHostingInformation
     /// <summary>
     /// If the main window hasn't been initialized yet, 0 is returned.
     /// Whether 0 returns at other points is uncertain.
+    /// 
+    /// This also returns 0 if the host isn't Photino (i.e.: ServerSide Blazor or Wasm Blazor)
     /// </summary>
-    public Func<uint> GetMainWindowScreenDpiFunc { get; set; }
+    public Func<uint> GetMainWindowScreenDpiFunc { get; set; } = () => 0;
 
     public void StartBackgroundTaskWorkers(IServiceProvider serviceProvider)
     {
