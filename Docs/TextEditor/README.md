@@ -23,6 +23,7 @@ directly.
 ## Getting started
 
 - Markdown format: [installation.md](./installation.md)
+- Video format: https://youtu.be/ff730h3B3rM?si=nAc0CdvCrpK2_iSE
 
 ## Installation
 
