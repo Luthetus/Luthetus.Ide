@@ -269,6 +269,8 @@ public class TextEditorModelApi : ITextEditorModelApi
                 modelModifier.__SetDecorationByte(i, 0);
             }
         }
+        
+        modelModifier.ShouldReloadVirtualizationResult = true;
     }
 
     public void ApplySyntaxHighlighting(
