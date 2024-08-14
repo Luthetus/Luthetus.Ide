@@ -782,7 +782,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 						viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 						leftInPixels,
 						topInPixels);
-				}).ToImmutableArray();
+				}).ToArray();
 
 			var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
 				viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
