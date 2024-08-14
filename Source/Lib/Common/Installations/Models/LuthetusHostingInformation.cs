@@ -50,7 +50,7 @@ public record LuthetusHostingInformation
 		var continuousCtsUp = new CancellationTokenSource();
         var continuousCtsDown = new CancellationTokenSource();
         var continuousBtw = serviceProvider.GetRequiredService<ContinuousBackgroundTaskWorker>();
-        continuousBtw.ExecuteAsyncTask = continuousBtw.StartAsync(continuousCtsUp.Token);
+        continuousBtw.StartAsyncTask = continuousBtw.StartAsync(continuousCtsUp.Token);
         Task continuousTaskDown;
 
 		CancellationTokenSource? blockingCtsUp = null;
@@ -62,7 +62,7 @@ public record LuthetusHostingInformation
 			blockingCtsUp = new CancellationTokenSource();
 	        blockingCtsDown = new CancellationTokenSource();
 	        blockingBtw = serviceProvider.GetRequiredService<BlockingBackgroundTaskWorker>();
-	        blockingBtw.ExecuteAsyncTask = blockingBtw.StartAsync(blockingCtsUp.Token);
+	        blockingBtw.StartAsyncTask = blockingBtw.StartAsync(blockingCtsUp.Token);
 		}
 
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>

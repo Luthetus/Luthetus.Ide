@@ -1,11 +1,59 @@
 using System.Diagnostics;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays.Internals;
 
 public partial class IdeInfoDisplay : ComponentBase
 {
+	[Inject]
+	private ContinuousBackgroundTaskWorker ContinuousBackgroundTaskWorker { get; set; } = null!;
+	[Inject]
+	private BlockingBackgroundTaskWorker BlockingBackgroundTaskWorker { get; set; } = null!;
+
+#region
+	[Conditional("DEBUG")]
+	private void IsDebugCheck(ref bool isDebug)
+	{
+	    isDebug = true;
+	}
+	 
+	public bool MethodConditionalAttributeIsDebug()
+	{ 
+	    bool isDebug = false;
+	    IsDebugCheck(ref isDebug);
+	
+	    return isDebug;
+	}
+#endregion
+
+#region
+	static bool AssemblyCustomAttributeIsDebug(Assembly assembly)
+	{
+	    var debugAttr = assembly.GetCustomAttribute<DebuggableAttribute>();
+	
+	    if (debugAttr is null)
+	    {
+	        return false;
+	    }
+	
+	    return (debugAttr.DebuggingFlags & DebuggableAttribute.DebuggingModes.Default) != 0;
+	}
+#endregion
+
+#region
+	public static bool PreprocessorIsDebug()
+	{
+#if DEBUG
+		return true;
+#else
+		return false;
+#endif
+	}
+#endregion
+}
+
 // https://stackoverflow.com/questions/1611410/how-to-check-if-a-app-is-in-debug-or-release
 //
 // Goal here is to display at runtime whether the IDE is being ran with code compiled
@@ -141,44 +189,3 @@ public partial class IdeInfoDisplay : ComponentBase
 // contents of the folder, and then publish to the empty folder,
 // rather than overwriting an existing publish.
 // ----------------------------------------------------------------
-#region
-	[Conditional("DEBUG")]
-	private void IsDebugCheck(ref bool isDebug)
-	{
-	    isDebug = true;
-	}
-	 
-	public bool MethodConditionalAttributeIsDebug()
-	{ 
-	    bool isDebug = false;
-	    IsDebugCheck(ref isDebug);
-	
-	    return isDebug;
-	}
-#endregion
-
-#region
-	static bool AssemblyCustomAttributeIsDebug(Assembly assembly)
-	{
-	    var debugAttr = assembly.GetCustomAttribute<DebuggableAttribute>();
-	
-	    if (debugAttr is null)
-	    {
-	        return false;
-	    }
-	
-	    return (debugAttr.DebuggingFlags & DebuggableAttribute.DebuggingModes.Default) != 0;
-	}
-#endregion
-
-#region
-	public static bool PreprocessorIsDebug()
-	{
-#if DEBUG
-		return true;
-#else
-		return false;
-#endif
-	}
-#endregion
-}
