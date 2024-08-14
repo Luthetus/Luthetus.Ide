@@ -134,7 +134,8 @@ public partial class MenuDisplay : ComponentBase
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
-                Dispatcher.Dispatch(new DropdownState.DisposeAction(Dropdown.Key));
+            	if (Dropdown is not null)
+	                Dispatcher.Dispatch(new DropdownState.DisposeAction(Dropdown.Key));
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);
@@ -160,7 +161,8 @@ public partial class MenuDisplay : ComponentBase
                 _activeMenuOptionRecordIndex = MenuRecord.MenuOptionList.Length - 1;
                 break;
             case KeyboardKeyFacts.MetaKeys.ESCAPE:
-                Dispatcher.Dispatch(new DropdownState.DisposeAction(Dropdown.Key));
+            	if (Dropdown is not null)
+	                Dispatcher.Dispatch(new DropdownState.DisposeAction(Dropdown.Key));
 
                 if (ReturnFocusToParentFuncAsync is not null)
                     await ReturnFocusToParentFuncAsync.Invoke().ConfigureAwait(false);

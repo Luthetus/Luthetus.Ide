@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
 {
     public VirtualizationResult(
-        ImmutableArray<VirtualizationEntry<T>> entries,
+        VirtualizationEntry<T>[] entries,
         VirtualizationBoundary leftVirtualizationBoundary,
         VirtualizationBoundary rightVirtualizationBoundary,
         VirtualizationBoundary topVirtualizationBoundary,
@@ -20,13 +20,13 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
     }
 
     public static VirtualizationResult<List<RichCharacter>> GetEmptyRichCharacters() => new(
-        ImmutableArray<VirtualizationEntry<List<RichCharacter>>>.Empty,
+        Array.Empty<VirtualizationEntry<List<RichCharacter>>>(),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0));
 
-    public ImmutableArray<VirtualizationEntry<T>> EntryList { get; init; }
+    public VirtualizationEntry<T>[] EntryList { get; init; }
     public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
     public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
     public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
