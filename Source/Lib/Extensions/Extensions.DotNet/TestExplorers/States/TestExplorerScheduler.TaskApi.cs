@@ -61,14 +61,12 @@ public partial class TestExplorerScheduler
 		        	},
 		        	ContinueWithFunc = async parsedCommand =>
 		        	{
-		        		// _dotNetCliOutputParser was being used
-		        		
 		        		treeViewProjectTestModel.Item.TerminalCommandParsed = parsedCommand;
 		        	
 						try
 						{
-							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
-								_dotNetCliOutputParser.TheFollowingTestsAreAvailableList ?? new();
+							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput = _dotNetCliOutputParser.ParseOutputLineDotNetTestListTests(
+		        				treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString());
 
 							// THINKING_ABOUT_TREE_VIEW();
 							{

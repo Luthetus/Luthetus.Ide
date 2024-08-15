@@ -80,7 +80,7 @@ public class Terminal : ITerminal
 
     private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
-    	if (TerminalOutput.GetParsedCommandListCount() > 5)
+    	if (TerminalOutput.GetParsedCommandListCount() > 10)
     	{
             TerminalOutput.ClearOutput();
         }
