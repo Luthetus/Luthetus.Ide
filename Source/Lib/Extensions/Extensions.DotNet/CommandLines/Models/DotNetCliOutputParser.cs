@@ -589,6 +589,31 @@ public class DotNetCliOutputParser
 						theFollowingTestsAreAvailableList.Add(
 							outputEntire.Substring(startInclusiveIndex, endExclusiveIndex - startInclusiveIndex));
 					}
+					else
+					{
+						// The line did not start with '\t' or etc... therefore skip to the next line
+						while (outputIndex < outputEntire.Length)
+						{
+							if (outputEntire[outputIndex] == '\r')
+							{
+								// Peek for "\r\n"
+								var peekIndex = outputIndex + 1;
+								if (peekIndex < outputEntire.Length)
+								{
+									if (outputEntire[peekIndex] == '\n')
+										outputIndex++;
+								}
+								
+								break;
+							}
+							else if (outputEntire[outputIndex] == '\n')
+							{
+								break;
+							}
+							
+							outputIndex++;
+						}
+					}
 				}
 				
 				outputIndex++;
