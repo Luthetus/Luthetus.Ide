@@ -761,11 +761,11 @@
     --luth_te_text-editor-caret-row-border-color-editor-focus-within: #ed9500;
     --luth_te_newline-foreground-color: #007F00;
     --luth_te_newline-background-color: #faeee2;
-	--luth_te_method-foreground-color: rgb(200,100,0);
+	--luth_te_method-foreground-color: rgb(0,128,0);
     --luth_te_type-foreground-color: rgb(2 110 200);
     --luth_te_variable-foreground-color: rgb(120 0 160);
-    --luth_te_string-literal-foreground-color: rgb(0 128 0);
-    --luth_te_string-literal-escape-character-foreground-color: rgb(0, 0, 200);
+    --luth_te_string-literal-foreground-color: rgb(0 0 255);
+    --luth_te_string-literal-escape-character-foreground-color: rgb(0, 180, 180);
     --luth_te_keyword-foreground-color: rgb(200,100,0);
     --luth_te_keyword-control-foreground-color: rgb(200,0,0);
     --luth_te_comment-foreground-color: rgb(120, 120, 120);
