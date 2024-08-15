@@ -193,14 +193,12 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 			newContent = $"{treeViewStringFragment.Item.Value}:\n";
 			
-			/*
 			//// (2024-08-02)
 			//// =================
-			if (terminalCommand is not null)
-				newContent += terminalCommand.OutputBuilder?.ToString() ?? $"{nameof(terminalCommand.OutputBuilder)} was null";
+			if (treeViewStringFragment.Item.TerminalCommandParsed is not null)
+				newContent += treeViewStringFragment.Item.TerminalCommandParsed.OutputCache.ToString();
 			else
 				newContent += "TerminalCommand was null";
-			*/
 		}
 		else if (node is TreeViewProjectTestModel treeViewProjectTestModel)
 		{
@@ -239,14 +237,12 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 			newContent = $"{treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}:\n";
 
-			/*
 			//// (2024-08-02)
 			//// =================
-			if (terminalCommand is not null)
-				newContent += terminalCommand.OutputBuilder?.ToString() ?? $"{nameof(terminalCommand.OutputBuilder)} was null";
+			if (treeViewProjectTestModel.Item.TerminalCommandParsed is not null)
+				newContent += treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString();
 			else
 				newContent += "terminalCommand was null";
-			*/
 		}
 		else if (node is not null)
 		{

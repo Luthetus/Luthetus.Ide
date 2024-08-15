@@ -80,6 +80,11 @@ public class Terminal : ITerminal
 
     private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
+    	if (TerminalOutput.GetParsedCommandListCount() > 5)
+    	{
+            TerminalOutput.ClearOutput();
+        }
+    
     	var parsedCommand = await TerminalInteractive.TryHandleCommand(terminalCommandRequest);
     	ActiveTerminalCommandParsed = parsedCommand;
 

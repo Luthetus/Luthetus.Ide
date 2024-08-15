@@ -86,6 +86,14 @@ public class TerminalOutput : ITerminalOutput
 		}
 	}
 	
+	public int GetParsedCommandListCount()
+	{
+		lock (_listLock)
+		{
+			return _parsedCommandList.Count;
+		}
+	}
+	
 	public void RegisterOutputFormatterCustom(ITerminalOutputFormatter outputFormatter)
 	{
 		lock (_listLock)

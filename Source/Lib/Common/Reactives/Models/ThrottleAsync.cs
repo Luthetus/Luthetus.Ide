@@ -1,33 +1,21 @@
 namespace Luthetus.Common.RazorLib.Reactives.Models;
 
 /// <summary>
-/// I have been considering deleting this class for quite some time (2024-08-05).
-/// But, I think I see the use of an async throttle, versus a synchronous throttle.
+/// ThrottleAsync does not achieve the desired result.
+/// It blocks itself, and therefore is useless?
+/// I like the idea I had with a blocking background task.
+/// But it doesn't really extend here much, at least given how its currently written?
 ///
-/// It is the same scenario as a background task service which has
-/// a synchronous enqueue, and an asynchronous enqueue.
+/// Okay, I see, ThrottleAsync works SOLELY from the idea that you are
+/// using a fire and forget Task.Run and want to throttle the logic within
+/// the Task.Run at a top level. But you cannot use it inside a foreach loop
+/// because you are awaiting yourself.
 ///
-/// If one if on the UI thread, they will likely want to use the synchronous version
-/// of these types. Because the synchronous versions execute the code
-/// on a "different thread" and won't block the UI.
+/// In short ThrottleAsync is actually useful... because it keeps two invocations
+/// of code running concurrently. Because one has to wait for the other to finish.
 ///
-/// But, perhaps one has already used 'Task.Run(async () => ...)' in order
-/// to get off the UI thread.
-///
-/// If they then go on to invoke the synchronous version of the throttle,
-/// they originally started a task on a "different thread",
-/// which then went on to later start a task on a "different thread".
-/// 
-/// If one knows they're not on the "UI thread" then the 'ThrottleAsync'
-/// could be preferable, because someone needs to await the work item.
-/// And, it might reduce overhead if the non UI thread waits the work item,
-/// instead of yet again creating ANOTHER task that will await the work item.
-///
-/// Also, in the case of the background task service having an async enqueue,
-/// at times one wants to block until their work item is finished executing.
-/// Otherwise there becomes the need to do some hacky logic were a second enqueue
-/// is performed after the first, in order to notify oneself that the first enqueue
-/// was completed.
+/// And that many Task.Run will cancel out to the most recent one.
+/// But it still seems quite asinine?
 /// </summary>
 public class ThrottleAsync
 {

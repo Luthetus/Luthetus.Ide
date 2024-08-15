@@ -26,6 +26,7 @@ public class ProjectTestModel
 	public Guid ProjectIdGuid { get; }
 	public IAbsolutePath AbsolutePath { get; }
 	public TerminalCommandRequest? TerminalCommandRequest { get; set; }
+	public TerminalCommandParsed? TerminalCommandParsed { get; set; }
 	public Key<TerminalCommandRequest> DotNetTestListTestsTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 	public Action<TreeViewNoType> ReRenderNodeAction { get; }
 
