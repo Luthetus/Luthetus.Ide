@@ -501,12 +501,12 @@ public class DotNetCliOutputParser
 
 	public List<string> ParseOutputLineDotNetTestListTests(string outputEntire)
 	{
-		var theFollowingTestsAreAvailableList = new List<string>();
 		var textIndicatorForTheList = "The following Tests are available:";
 		var indicatorIndex = outputEntire.IndexOf(textIndicatorForTheList);
 	
 		if (indicatorIndex != -1)
 		{
+			var theFollowingTestsAreAvailableList = new List<string>();
 			var outputIndex = indicatorIndex;
 			var hasFoundFirstLineAfterIndicator = false;
 			
@@ -593,13 +593,13 @@ public class DotNetCliOutputParser
 				
 				outputIndex++;
 			}
+			
+			return theFollowingTestsAreAvailableList;
 		}
-	
-		foreach (var test in theFollowingTestsAreAvailableList)
+		else
 		{
-			Console.WriteLine("theFollowingTestsAreAvailableList" + '_' + test);
+			return null;
 		}
-		return theFollowingTestsAreAvailableList;
 	}
 
 	public class NewListModel

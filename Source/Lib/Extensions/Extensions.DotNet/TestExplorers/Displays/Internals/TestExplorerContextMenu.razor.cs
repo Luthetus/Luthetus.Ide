@@ -109,7 +109,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 						var mutableNotRanTestHashSet = inState.NotRanTestHashSet.ToHashSet();
 						var mutableFailedTestHashSet = inState.FailedTestHashSet.ToHashSet();
 						
-						foreach (var fullyQualifiedTestName in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+						foreach (var fullyQualifiedTestName in treeViewProjectTestModel.Item.TestNameFullyQualifiedList)
 						{
 							mutablePassedTestHashSet.Remove(fullyQualifiedTestName);
 							mutableNotRanTestHashSet.Remove(fullyQualifiedTestName);
@@ -124,7 +124,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 				        };
 				    }));
 			        
-					treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput = null;
+					treeViewProjectTestModel.Item.TestNameFullyQualifiedList = null;
 					await treeViewProjectTestModel.LoadChildListAsync();
 					TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel);
 					
@@ -138,7 +138,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 							{
 								var mutableNotRanTestHashSet = inState.NotRanTestHashSet.ToHashSet();
 								
-								foreach (var fullyQualifiedTestName in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+								foreach (var fullyQualifiedTestName in treeViewProjectTestModel.Item.TestNameFullyQualifiedList)
 								{
 									mutableNotRanTestHashSet.Add(fullyQualifiedTestName);
 								}

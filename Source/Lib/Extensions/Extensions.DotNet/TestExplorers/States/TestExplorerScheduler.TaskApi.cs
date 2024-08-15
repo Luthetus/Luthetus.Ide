@@ -65,12 +65,12 @@ public partial class TestExplorerScheduler
 		        	
 						try
 						{
-							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput = _dotNetCliOutputParser.ParseOutputLineDotNetTestListTests(
+							treeViewProjectTestModel.Item.TestNameFullyQualifiedList = _dotNetCliOutputParser.ParseOutputLineDotNetTestListTests(
 		        				treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString());
 
 							// THINKING_ABOUT_TREE_VIEW();
 							{
-								var splitOutputList = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
+								var splitOutputList = (treeViewProjectTestModel.Item.TestNameFullyQualifiedList ?? new())
 									.Select(x => x.Split('.'));
 
 								var rootMap = new Dictionary<string, StringFragment>();
@@ -242,7 +242,12 @@ public partial class TestExplorerScheduler
     	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
     	
     	var containsTestsTreeViewGroup = new TreeViewGroup(
-	    	"Projects that have tests",
+	    	"Have tests",
+            true,
+            true);
+            
+        var noTestsTreeViewGroup = new TreeViewGroup(
+	    	"No tests (but still a test-project)",
             true,
             true);
             
@@ -250,9 +255,9 @@ public partial class TestExplorerScheduler
 	    	"Projects that threw an exception during discovery",
             true,
             true);
-    
-    	var noTestsTreeViewGroup = new TreeViewGroup(
-	    	"Projects that do NOT have tests",
+            
+        var notValidProjectForUnitTestTreeViewGroup = new TreeViewGroup(
+	    	"Not a test-project",
             true,
             true);
     
@@ -266,28 +271,35 @@ public partial class TestExplorerScheduler
             	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
             		return Task.CompletedTask;
             
-            	totalTestCount += treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0;
+            	totalTestCount += treeViewProjectTestModel.Item.TestNameFullyQualifiedList?.Count ?? 0;
             	
-            	if ((treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0) > 0)
+            	if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
             	{
-            		containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
-            	}
-            	else
-            	{
-            		if (treeViewProjectTestModel.Item.TerminalCommandParsed is not null &&
-            			treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString().EndsWith("threw an exception"))
+            		if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList.Count > 0)
             		{
-            			threwAnExceptionTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            			containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
             		}
             		else
             		{
             			noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
             		}
             	}
-            	
-            	if (treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput is not null)
+            	else
             	{
-            		foreach (var output in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+            		if (treeViewProjectTestModel.Item.TerminalCommandParsed is not null &&
+            			treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString().Contains("threw an exception"))
+            		{
+            			threwAnExceptionTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            		}
+            		else
+            		{
+            			notValidProjectForUnitTestTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            		}
+            	}
+            	
+            	if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
+            	{
+            		foreach (var output in treeViewProjectTestModel.Item.TestNameFullyQualifiedList)
 	            	{
 	            		notRanTestHashSet = notRanTestHashSet.Add(output);
 	            	}
@@ -297,11 +309,13 @@ public partial class TestExplorerScheduler
             containsTestsTreeViewGroup.LinkChildren(new(), containsTestsTreeViewGroup.ChildList);
             noTestsTreeViewGroup.LinkChildren(new(), noTestsTreeViewGroup.ChildList);
             threwAnExceptionTreeViewGroup.LinkChildren(new(), threwAnExceptionTreeViewGroup.ChildList);
+            notValidProjectForUnitTestTreeViewGroup.LinkChildren(new(), notValidProjectForUnitTestTreeViewGroup.ChildList);
             
             var nextTreeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc(
             	containsTestsTreeViewGroup,
+            	noTestsTreeViewGroup,
             	threwAnExceptionTreeViewGroup,
-            	noTestsTreeViewGroup);
+            	notValidProjectForUnitTestTreeViewGroup);
             	
             nextTreeViewAdhoc.LinkChildren(new(), nextTreeViewAdhoc.ChildList);
             
