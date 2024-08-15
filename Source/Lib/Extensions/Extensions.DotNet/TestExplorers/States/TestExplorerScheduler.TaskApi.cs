@@ -242,12 +242,17 @@ public partial class TestExplorerScheduler
     	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
     	
     	var containsTestsTreeViewGroup = new TreeViewGroup(
-	    	"Found",
+	    	"Projects that have tests",
             true,
             true);
             
-        var noTestsTreeViewGroup = new TreeViewGroup(
-	    	"Empty",
+        var threwAnExceptionTreeViewGroup = new TreeViewGroup(
+	    	"Projects that threw an exception during discovery",
+            true,
+            true);
+    
+    	var noTestsTreeViewGroup = new TreeViewGroup(
+	    	"Projects that do NOT have tests",
             true,
             true);
     
@@ -264,9 +269,21 @@ public partial class TestExplorerScheduler
             	totalTestCount += treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0;
             	
             	if ((treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0) > 0)
+            	{
             		containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            	}
             	else
-            		noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            	{
+            		if (treeViewProjectTestModel.Item.TerminalCommandParsed is not null &&
+            			treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString().EndsWith("threw an exception"))
+            		{
+            			threwAnExceptionTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            		}
+            		else
+            		{
+            			noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            		}
+            	}
             	
             	if (treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput is not null)
             	{
@@ -279,9 +296,11 @@ public partial class TestExplorerScheduler
             
             containsTestsTreeViewGroup.LinkChildren(new(), containsTestsTreeViewGroup.ChildList);
             noTestsTreeViewGroup.LinkChildren(new(), noTestsTreeViewGroup.ChildList);
+            threwAnExceptionTreeViewGroup.LinkChildren(new(), threwAnExceptionTreeViewGroup.ChildList);
             
             var nextTreeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc(
             	containsTestsTreeViewGroup,
+            	threwAnExceptionTreeViewGroup,
             	noTestsTreeViewGroup);
             	
             nextTreeViewAdhoc.LinkChildren(new(), nextTreeViewAdhoc.ChildList);
