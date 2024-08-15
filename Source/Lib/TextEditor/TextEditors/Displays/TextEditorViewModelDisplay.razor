@@ -282,21 +282,20 @@
 				            }
 				        </div>
 				    }
-				
 					
-				    <text>
-						@{
-							_cursorDriver.GetRenderFragment(renderBatchValidated);
-						
-							var leftRelativeToParentInPixelsCssStyle = string.Empty;
-						    var textEditorKeymap = (ITextEditorKeymap)_cursorDriver._renderBatch.Options!.Keymap!;
-						    
-						    if (!_cursorDriver._renderBatch.Options!.UseMonospaceOptimizations)
-							{
-							    var leftRelativeToParentInPixelsCssValue = _cursorDriver._leftRelativeToParentInPixels.ToCssValue();
-							    leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
-							}
+					@{
+						_cursorDriver.GetRenderFragment(renderBatchValidated);
+					
+						var leftRelativeToParentInPixelsCssStyle = string.Empty;
+					    var textEditorKeymap = (ITextEditorKeymap)_cursorDriver._renderBatch.Options!.Keymap!;
+					    
+					    if (!_cursorDriver._renderBatch.Options!.UseMonospaceOptimizations)
+						{
+						    var leftRelativeToParentInPixelsCssValue = _cursorDriver._leftRelativeToParentInPixels.ToCssValue();
+						    leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
 						}
+					}
+					
 					<textarea id="@_cursorDriver.GetCursorDisplayId(_cursorDriver._renderBatch)"
 					          tabindex="@_cursorDriver.GetTabIndex(_cursorDriver._renderBatch)"
 					          class="luth_te_text-editor-cursor @_cursorDriver.BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
@@ -342,8 +341,7 @@
 					            }
 					        </CascadingValue>
 					    </div>
-					    }
-					</text>
+					}
 				</div>
 			    @* RowSection.razor Close *@
 			

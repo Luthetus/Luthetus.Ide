@@ -330,50 +330,42 @@ public partial class TestExplorerContextMenu : ComponentBase
 		}
 
 		var terminalCommandRequest = new TerminalCommandRequest(
-        	TerminalInteractive.RESERVED_TARGET_FILENAME_PREFIX + nameof(TestExplorerContextMenu),
+        	dotNetTestByFullyQualifiedNameFormattedCommand.Value,
         	directoryNameForTestDiscovery,
         	treeViewStringFragment.Item.DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey)
         {
         	BeginWithFunc = parsedCommand =>
         	{
-				BackgroundTaskService.Enqueue(
-					Key<IBackgroundTask>.NewKey(),
-					ContinuousBackgroundTaskWorker.GetQueueKey(),
-					"CheckTestOutcome",
-					() => 
+        		treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
+        		TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
+        		return Task.CompletedTask;
+        	},
+        	ContinueWithFunc = parsedCommand =>
+        	{
+        		treeViewStringFragment.Item.TerminalCommandParsed = parsedCommand;
+				var output = treeViewStringFragment.Item.TerminalCommandParsed?.OutputCache.ToString() ?? null;
+				
+				if (output is not null && output.Contains("Duration:"))
+				{
+					if (output.Contains("Passed!"))
 					{
-						/*
-						//// (2024-08-02)
-						//// =================
-						var output = treeViewStringFragment.Item.TerminalCommandRequest?.OutputBuilder?.ToString() ?? null;
-						*/
-						
-						var output = (string?)null;
-						
-						if (output is not null && output.Contains("Duration:"))
-						{
-							if (output.Contains("Passed!"))
-							{
-								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
-						        {
-						            PassedTestHashSet = inState.PassedTestHashSet.Add(fullyQualifiedName),
-						            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
-						            FailedTestHashSet = inState.FailedTestHashSet.Remove(fullyQualifiedName),
-						        }));
-							}
-							else
-							{
-								Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
-						        {
-						            FailedTestHashSet = inState.FailedTestHashSet.Add(fullyQualifiedName),
-						            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
-						            PassedTestHashSet = inState.PassedTestHashSet.Remove(fullyQualifiedName),
-						        }));
-							}
-						}
-						
-						return Task.CompletedTask;
-					});
+						Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+				        {
+				            PassedTestHashSet = inState.PassedTestHashSet.Add(fullyQualifiedName),
+				            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
+				            FailedTestHashSet = inState.FailedTestHashSet.Remove(fullyQualifiedName),
+				        }));
+					}
+					else
+					{
+						Dispatcher.Dispatch(new TestExplorerState.WithAction(inState => inState with
+				        {
+				            FailedTestHashSet = inState.FailedTestHashSet.Add(fullyQualifiedName),
+				            NotRanTestHashSet = inState.NotRanTestHashSet.Remove(fullyQualifiedName),
+				            PassedTestHashSet = inState.PassedTestHashSet.Remove(fullyQualifiedName),
+				        }));
+					}
+				}
 			
 				TreeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewStringFragment);
 				return Task.CompletedTask;
