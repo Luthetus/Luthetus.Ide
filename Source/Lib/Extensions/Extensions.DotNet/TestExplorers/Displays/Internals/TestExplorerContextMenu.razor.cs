@@ -154,6 +154,20 @@ public partial class TestExplorerContextMenu : ComponentBase
 				        };
 				    }));
 				}));
+				
+			if (treeViewProjectTestModel.Parent is TreeViewGroup tvg &&
+				tvg.Item == "Projects that threw an exception during discovery")
+			{
+				menuRecordsList.Add(new MenuOptionRecord(
+					$"Send to Output panel",
+					MenuOptionKind.Other,
+					OnClickFunc: () =>
+					{
+						DotNetCliOutputParser.ParseOutputEntireDotNetRun(
+							treeViewProjectTestModel.Item.TerminalCommandParsed?.OutputCache.ToString() ?? string.Empty);
+						return Task.CompletedTask;
+					}));
+			}
 		}
 
 		if (!menuRecordsList.Any())
