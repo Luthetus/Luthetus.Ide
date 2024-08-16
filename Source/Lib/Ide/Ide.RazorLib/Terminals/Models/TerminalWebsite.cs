@@ -105,11 +105,11 @@ public class TerminalWebsite : ITerminal
 			TerminalOutput.WriteOutput(
 				parsedCommand,
 				new StartedCommandEvent(-1));
-				
+			
 			TerminalOutput.WriteOutput(
 				parsedCommand,
 				new StandardErrorCommandEvent(
-					"website demo lacks access to terminal, clone source code and run Luthetus.Ide.Photino locally to use terminal"));
+					"run source locally for terminal"));
 		}
 		catch (Exception e)
 		{
