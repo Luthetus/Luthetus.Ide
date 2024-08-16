@@ -101,6 +101,15 @@ public class TerminalWebsite : ITerminal
 					.Invoke(parsedCommand)
 					.ConfigureAwait(false);
 			}
+			
+			TerminalOutput.WriteOutput(
+				parsedCommand,
+				new StartedCommandEvent(-1));
+				
+			TerminalOutput.WriteOutput(
+				parsedCommand,
+				new StandardErrorCommandEvent(
+					"website demo lacks access to terminal, clone source code and run Luthetus.Ide.Photino locally to use terminal"));
 		}
 		catch (Exception e)
 		{
