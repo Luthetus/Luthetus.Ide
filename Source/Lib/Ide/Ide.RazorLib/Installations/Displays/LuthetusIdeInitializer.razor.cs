@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -53,6 +54,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private IDialogService DialogService { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+    [Inject]
+    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 
 	protected override void OnInitialized()
 	{
@@ -73,51 +76,9 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 foreach (var terminalKey in TerminalFacts.WELL_KNOWN_KEYS)
                 {
                 	if (terminalKey == TerminalFacts.GENERAL_KEY)
-                	{
-                		Dispatcher.Dispatch(new TerminalState.RegisterAction(
-					    	new Terminal(
-								"General",
-								terminal => new TerminalInteractive(terminal),
-								terminal => new TerminalInputStringBuilder(terminal),
-								terminal => new TerminalOutput(
-									terminal,
-									new TerminalOutputFormatterExpand(
-										terminal,
-										TextEditorService,
-										CompilerServiceRegistry,
-										DialogService,
-				 				       JsRuntime,
-										Dispatcher)),
-								BackgroundTaskService,
-								CommonComponentRenderers,
-								Dispatcher)
-							{
-								Key = TerminalFacts.GENERAL_KEY
-							}));
-                	}
+                		AddGeneralTerminal();
                 	else if (terminalKey == TerminalFacts.EXECUTION_KEY)
-                	{
-                		Dispatcher.Dispatch(new TerminalState.RegisterAction(
-					    	new Terminal(
-								"Execution",
-								terminal => new TerminalInteractive(terminal),
-								terminal => new TerminalInputStringBuilder(terminal),
-								terminal => new TerminalOutput(
-									terminal,
-									new TerminalOutputFormatterExpand(
-										terminal,
-										TextEditorService,
-										CompilerServiceRegistry,
-										DialogService,
-				 				       JsRuntime,
-										Dispatcher)),
-								BackgroundTaskService,
-								CommonComponentRenderers,
-								Dispatcher)
-							{
-								Key = TerminalFacts.EXECUTION_KEY
-							}));
-                	}
+                		AddExecutionTerminal();
                 }
 
                 InitializePanelTabs();
@@ -212,5 +173,107 @@ public partial class LuthetusIdeInitializer : ComponentBase
 
         // SetActivePanelTabAction
         Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(bottomPanel.Key, terminalGroupPanel.Key));
+    }
+    
+    private void AddGeneralTerminal()
+    {
+    	if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
+    		LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
+    	{
+    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+		    	new TerminalWebsite(
+					"General",
+					terminal => new TerminalInteractive(terminal),
+					terminal => new TerminalInputStringBuilder(terminal),
+					terminal => new TerminalOutput(
+						terminal,
+						new TerminalOutputFormatterExpand(
+							terminal,
+							TextEditorService,
+							CompilerServiceRegistry,
+							DialogService,
+						       JsRuntime,
+							Dispatcher)),
+					BackgroundTaskService,
+					CommonComponentRenderers,
+					Dispatcher)
+				{
+					Key = TerminalFacts.GENERAL_KEY
+				}));
+    	}
+    	else
+    	{
+    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+		    	new Terminal(
+					"General",
+					terminal => new TerminalInteractive(terminal),
+					terminal => new TerminalInputStringBuilder(terminal),
+					terminal => new TerminalOutput(
+						terminal,
+						new TerminalOutputFormatterExpand(
+							terminal,
+							TextEditorService,
+							CompilerServiceRegistry,
+							DialogService,
+						       JsRuntime,
+							Dispatcher)),
+					BackgroundTaskService,
+					CommonComponentRenderers,
+					Dispatcher)
+				{
+					Key = TerminalFacts.GENERAL_KEY
+				}));
+    	}
+    }
+    
+    private void AddExecutionTerminal()
+    {
+    	if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Wasm ||
+    		LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.ServerSide)
+    	{
+    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+		    	new TerminalWebsite(
+					"Execution",
+					terminal => new TerminalInteractive(terminal),
+					terminal => new TerminalInputStringBuilder(terminal),
+					terminal => new TerminalOutput(
+						terminal,
+						new TerminalOutputFormatterExpand(
+							terminal,
+							TextEditorService,
+							CompilerServiceRegistry,
+							DialogService,
+	 				       JsRuntime,
+							Dispatcher)),
+					BackgroundTaskService,
+					CommonComponentRenderers,
+					Dispatcher)
+				{
+					Key = TerminalFacts.EXECUTION_KEY
+				}));
+    	}
+    	else
+    	{
+    		Dispatcher.Dispatch(new TerminalState.RegisterAction(
+		    	new Terminal(
+					"Execution",
+					terminal => new TerminalInteractive(terminal),
+					terminal => new TerminalInputStringBuilder(terminal),
+					terminal => new TerminalOutput(
+						terminal,
+						new TerminalOutputFormatterExpand(
+							terminal,
+							TextEditorService,
+							CompilerServiceRegistry,
+							DialogService,
+	 				       JsRuntime,
+							Dispatcher)),
+					BackgroundTaskService,
+					CommonComponentRenderers,
+					Dispatcher)
+				{
+					Key = TerminalFacts.EXECUTION_KEY
+				}));
+    	}
     }
 }

@@ -4,6 +4,10 @@ using Luthetus.Ide.RazorLib.CommandLines.Models;
 namespace Luthetus.Extensions.DotNet.CommandLines.Models;
 
 /// <summary>
+/// TODO: The terminal code was rewritten, I think we need to change this code
+///       to wrap arguments in quotes? I don't think CliWrap is receiving
+///       the arguments the same way as it was when just left it to CliWrap to do the wrapping.
+///
 /// Any values given will NOT be wrapped in quotes internally at this step.
 /// Later, if one uses CliWrap, then at that point they will be wrapped in quotes.
 /// </summary>
@@ -182,14 +186,28 @@ public static class DotNetCliCommandFormatter
 			$"FullyQualifiedName={fullyQualifiedName}",
 		});
 
-	public static FormattedCommand FormatDotnetBuild(string solutionAbsolutePathString) =>
+	public static FormattedCommand FormatDotnetBuildProject(string projectAbsolutePathString) =>
+		new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
+		{
+			"build",
+			projectAbsolutePathString,
+		});
+
+	public static FormattedCommand FormatDotnetCleanProject(string projectAbsolutePathString) =>
+		new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
+		{
+			"clean",
+			projectAbsolutePathString,
+		});
+
+	public static FormattedCommand FormatDotnetBuildSolution(string solutionAbsolutePathString) =>
 		new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
 		{
 			"build",
 			solutionAbsolutePathString,
 		});
 
-	public static FormattedCommand FormatDotnetClean(string solutionAbsolutePathString) =>
+	public static FormattedCommand FormatDotnetCleanSolution(string solutionAbsolutePathString) =>
 		new FormattedCommand(DOT_NET_CLI_TARGET_FILE_NAME, new[]
 		{
 			"clean",

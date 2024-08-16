@@ -10,12 +10,16 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Displays;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
@@ -48,7 +52,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	[Inject]
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
+	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
+    [Inject]
+    private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
+    [Inject]
+    private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
+    [Inject]
+    private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 
@@ -278,35 +290,69 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	{
 		var menuOptionsList = new List<MenuOptionRecord>();
 
-		var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+		// Menu Option Build Project (startup project)
+        menuOptionsList.Add(new MenuOptionRecord(
+			"Build Project (startup project)",
+            MenuOptionKind.Create,
+            () =>
+			{
+				var startupControlState = StartupControlStateWrap.Value;
+				var activeStartupControl = startupControlState.ActiveStartupControl;
+			
+				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
+					BuildProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
+				else
+					NotificationHelper.DispatchError(nameof(BuildProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(6));
+				return Task.CompletedTask;
+			}));
 
-        // Menu Option Build
-        {
-            var menuOption = new MenuOptionRecord(
-				"Build",
-                MenuOptionKind.Create,
-                () =>
-				{
-					BuildOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
-					return Task.CompletedTask;
-				});
+		// Menu Option Clean (startup project)
+        menuOptionsList.Add(new MenuOptionRecord(
+			"Clean Project (startup project)",
+            MenuOptionKind.Create,
+            () =>
+			{
+				var startupControlState = StartupControlStateWrap.Value;
+				var activeStartupControl = startupControlState.ActiveStartupControl;
+			
+				if (activeStartupControl?.StartupProjectAbsolutePath is not null)
+					CleanProjectOnClick(activeStartupControl.StartupProjectAbsolutePath.Value);
+				else
+					NotificationHelper.DispatchError(nameof(CleanProjectOnClick), "activeStartupControl?.StartupProjectAbsolutePath was null", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(6));
+				return Task.CompletedTask;
+			}));
 
-            menuOptionsList.Add(menuOption);
-        }
+        // Menu Option Build Solution
+        menuOptionsList.Add(new MenuOptionRecord(
+			"Build Solution",
+            MenuOptionKind.Delete,
+            () =>
+			{
+				var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+				var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+				
+				if (dotNetSolutionModel?.AbsolutePath is not null)
+					BuildSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
+				else
+					NotificationHelper.DispatchError(nameof(BuildSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(6));
+				return Task.CompletedTask;
+			}));
 
-		// Menu Option Clean
-        {
-            var menuOption = new MenuOptionRecord(
-				"Clean",
-                MenuOptionKind.Delete,
-                () =>
-				{
-					CleanOnClick(dotNetSolutionState.DotNetSolutionModel.AbsolutePath.Value);
-					return Task.CompletedTask;
-				});
-
-            menuOptionsList.Add(menuOption);
-        }
+		// Menu Option Clean Solution
+        menuOptionsList.Add(new MenuOptionRecord(
+			"Clean Solution",
+            MenuOptionKind.Delete,
+            () =>
+			{
+				var dotNetSolutionState = DotNetSolutionStateWrap.Value;
+				var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
+				
+				if (dotNetSolutionModel?.AbsolutePath is not null)
+					CleanSolutionOnClick(dotNetSolutionModel.AbsolutePath.Value);
+				else
+					NotificationHelper.DispatchError(nameof(CleanSolutionOnClick), "dotNetSolutionModel?.AbsolutePath was null", CommonComponentRenderers, Dispatcher, TimeSpan.FromSeconds(6));
+				return Task.CompletedTask;
+			}));
 
         Dispatcher.Dispatch(new IdeHeaderState.ModifyMenuRunAction(inMenu =>
         {
@@ -319,10 +365,69 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         }));
 	}
 
-	private void BuildOnClick(string solutionAbsolutePathString)
+	private void BuildProjectOnClick(string projectAbsolutePathString)
 	{
-		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuild(solutionAbsolutePathString);
+		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildProject(projectAbsolutePathString);
+        var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+		
+		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+		if (localParentDirectory is null)
+			return;
+        
+        var terminalCommandRequest = new TerminalCommandRequest(
+        	formattedCommand.Value,
+        	localParentDirectory.Value)
+        {
+        	BeginWithFunc = parsedCommand =>
+        	{
+        		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			string.Empty);
+        		return Task.CompletedTask;
+        	},
+        	ContinueWithFunc = parsedCommand =>
+        	{
+        		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			parsedCommand.OutputCache.ToString());
+        		return Task.CompletedTask;
+        	}
+        };
+        	
+        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	}
 
+	private void CleanProjectOnClick(string projectAbsolutePathString)
+	{
+		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanProject(projectAbsolutePathString);
+		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(projectAbsolutePathString, false);
+		
+		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
+		if (localParentDirectory is null)
+			return;
+			
+        var terminalCommandRequest = new TerminalCommandRequest(
+        	formattedCommand.Value,
+        	localParentDirectory.Value)
+        {
+        	BeginWithFunc = parsedCommand =>
+        	{
+        		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			string.Empty);
+        		return Task.CompletedTask;
+        	},
+        	ContinueWithFunc = parsedCommand =>
+        	{
+        		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			parsedCommand.OutputCache.ToString());
+        		return Task.CompletedTask;
+        	}
+        };
+        	
+        TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+	}
+
+	private void BuildSolutionOnClick(string solutionAbsolutePathString)
+	{
+		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetBuildSolution(solutionAbsolutePathString);
         var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
 		
 		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
@@ -331,15 +436,28 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value);
+        	localParentDirectory.Value)
+        {
+        	BeginWithFunc = parsedCommand =>
+        	{
+        		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			string.Empty);
+        		return Task.CompletedTask;
+        	},
+        	ContinueWithFunc = parsedCommand =>
+        	{
+        		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			parsedCommand.OutputCache.ToString());
+        		return Task.CompletedTask;
+        	}
+        };
         	
         TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}
 
-	private void CleanOnClick(string solutionAbsolutePathString)
+	private void CleanSolutionOnClick(string solutionAbsolutePathString)
 	{
-		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetClean(solutionAbsolutePathString);
-		
+		var formattedCommand = DotNetCliCommandFormatter.FormatDotnetCleanSolution(solutionAbsolutePathString);
 		var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(solutionAbsolutePathString, false);
 		
 		var localParentDirectory = solutionAbsolutePath.ParentDirectory;
@@ -348,7 +466,21 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			
         var terminalCommandRequest = new TerminalCommandRequest(
         	formattedCommand.Value,
-        	localParentDirectory.Value);
+        	localParentDirectory.Value)
+        {
+        	BeginWithFunc = parsedCommand =>
+        	{
+        		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			string.Empty);
+        		return Task.CompletedTask;
+        	},
+        	ContinueWithFunc = parsedCommand =>
+        	{
+        		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
+        			parsedCommand.OutputCache.ToString());
+        		return Task.CompletedTask;
+        	}
+        };
         	
         TerminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 	}

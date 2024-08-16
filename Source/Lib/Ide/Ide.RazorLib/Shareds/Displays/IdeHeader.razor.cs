@@ -440,11 +440,11 @@ public partial class IdeHeader : ComponentBase
 		        		InitializeMenuView();
 		        		return RenderDropdownOnClick(IdeHeaderState.ButtonViewId, _buttonViewElementReference, IdeHeaderState.DropdownKeyView, IdeHeaderStateWrap.Value.MenuView);
 		        	}));
-		
+
 		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-		        new KeymapArgument("KeyR", false, false, true, Key<KeymapLayer>.Empty),
-		        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false,
-		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun)));
+	        new KeymapArgument("KeyR", false, false, true, Key<KeymapLayer>.Empty),
+	        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false,
+	        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun)));
 	}
 	
 	private Task RenderFileDropdownOnClick()
