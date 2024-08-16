@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -54,6 +55,7 @@ public class TextEditorRefactorFunctions
 	/// </summary>
 	public static void GenerateConstructor(
 		TypeDefinitionNode unsafeTypeDefinitionNode,
+		IEnumerable<IVariableDeclarationNode> variableDeclarationNodeList,
 		IServiceProvider serviceProvider,
 		ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
@@ -111,10 +113,9 @@ public class TextEditorRefactorFunctions
 					lineAndColumnIndices.lineIndex,
 					lineAndColumnIndices.columnIndex,
 					true);
-				
 			
 				modelModifier.Insert(
-					"abc123", 
+					$"\n\tpublic {typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}()\n\t{{\n\t\t\n\t}}\n",
 					new(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursor) }));
 			}
 			catch (Exception e)

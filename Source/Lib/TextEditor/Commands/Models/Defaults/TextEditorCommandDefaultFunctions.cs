@@ -17,8 +17,9 @@ using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -934,6 +935,7 @@ public class TextEditorCommandDefaultFunctions
 							{
 								TextEditorRefactorFacts.GenerateConstructor(
 									typeDefinitionNode,
+									Array.Empty<IVariableDeclarationNode>(),
 									commandArgs.ServiceProvider,
 									editContext.TextEditorService,
 							        modelModifier.ResourceUri,
