@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -12,6 +12,7 @@ public sealed record EmptyNode : ISyntaxNode
     }
 
     public ImmutableArray<ISyntax> ChildList { get; } = ImmutableArray<ISyntax>.Empty;
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyNode;

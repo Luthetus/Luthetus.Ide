@@ -118,6 +118,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 null,
                                 null,
                                 null,
+            					null,
                                 null,
                                 null);
 
@@ -239,6 +240,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 typeDefinitionNode.GenericArgumentsListingNode,
                                 null,
                                 typeDefinitionNode.InheritedTypeClauseNode,
+                                null,
                                 typeBodyCodeBlockNodeBuilder.Build());
 
                             var typeNamespace = definedType.Namespace;

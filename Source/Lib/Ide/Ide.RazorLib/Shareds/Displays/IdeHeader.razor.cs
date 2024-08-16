@@ -167,7 +167,7 @@ public partial class IdeHeader : ComponentBase
         // Menu Option Find All
         {
             var menuOptionFindAll = new MenuOptionRecord(
-				"Find All",
+				"Find All (Ctrl Shift f)",
                 MenuOptionKind.Delete,
                 () =>
                 {
@@ -181,7 +181,7 @@ public partial class IdeHeader : ComponentBase
 		// Menu Option Code Search
         {
             var menuOptionCodeSearch = new MenuOptionRecord(
-				"Code Search",
+				"Code Search (Ctrl ,)",
                 MenuOptionKind.Delete,
                 () =>
 				{
@@ -204,7 +204,7 @@ public partial class IdeHeader : ComponentBase
 		// Menu Option Find
         {
             var menuOptionFind = new MenuOptionRecord(
-				"Find (in text editor)",
+				"Find in text editor (Ctrl f)",
                 MenuOptionKind.Delete,
                 () =>
 				{
@@ -440,11 +440,11 @@ public partial class IdeHeader : ComponentBase
 		        		InitializeMenuView();
 		        		return RenderDropdownOnClick(IdeHeaderState.ButtonViewId, _buttonViewElementReference, IdeHeaderState.DropdownKeyView, IdeHeaderStateWrap.Value.MenuView);
 		        	}));
-		
+
 		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-		        new KeymapArgument("KeyR", false, false, true, Key<KeymapLayer>.Empty),
-		        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false,
-		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun)));
+	        new KeymapArgument("KeyR", false, false, true, Key<KeymapLayer>.Empty),
+	        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false,
+	        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun)));
 	}
 	
 	private Task RenderFileDropdownOnClick()

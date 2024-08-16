@@ -314,6 +314,7 @@ public static class ParseTypes
             typeDefinitionNode.GenericArgumentsListingNode,
             functionArgumentsListingNode,
             typeDefinitionNode.InheritedTypeClauseNode,
+            typeDefinitionNode.OpenBraceToken,
             typeDefinitionNode.TypeBodyCodeBlockNode);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)

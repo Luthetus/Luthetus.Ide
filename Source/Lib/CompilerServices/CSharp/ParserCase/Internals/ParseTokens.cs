@@ -400,6 +400,7 @@ public static class ParseTokens
                     null,
                     null,
                     null,
+                    null,
                     null)
                 {
                     IsFabricated = true
@@ -530,6 +531,7 @@ public static class ParseTokens
                 typeDefinitionNode.GenericArgumentsListingNode,
                 typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
                 inheritedTypeClauseNode,
+                typeDefinitionNode.OpenBraceToken,
                 typeDefinitionNode.TypeBodyCodeBlockNode));
         }
         else
@@ -596,11 +598,24 @@ public static class ParseTokens
                     typeDefinitionNode.GenericArgumentsListingNode,
                     typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
                     typeDefinitionNode.InheritedTypeClauseNode,
+                    typeDefinitionNode.OpenBraceToken,
                     codeBlockNode);
 
                 model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model, true);
                 closureCurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
             });
+
+			typeDefinitionNode = new TypeDefinitionNode(
+                typeDefinitionNode.AccessModifierKind,
+                typeDefinitionNode.HasPartialModifier,
+                typeDefinitionNode.StorageModifierKind,
+                typeDefinitionNode.TypeIdentifierToken,
+                typeDefinitionNode.ValueType,
+                typeDefinitionNode.GenericArgumentsListingNode,
+                typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
+                typeDefinitionNode.InheritedTypeClauseNode,
+                consumedOpenBraceToken,
+                typeDefinitionNode.TypeBodyCodeBlockNode);
 
             model.SyntaxStack.Push(typeDefinitionNode);
         }

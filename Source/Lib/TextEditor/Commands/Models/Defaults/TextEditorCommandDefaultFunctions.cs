@@ -17,6 +17,9 @@ using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -807,6 +810,148 @@ public class TextEditorCommandDefaultFunctions
 					null,
 					new Category("main"),
 					Key<TextEditorViewModel>.NewKey())));
+		}
+		
+		MenuRecord menu;
+		
+		if (menuOptionList.Count == 0)
+			menu = MenuRecord.Empty;
+		else
+			menu = new MenuRecord(menuOptionList.ToImmutableArray());
+		
+		var dropdownRecord = new DropdownRecord(
+			Key<DropdownRecord>.NewKey(),
+			cursorDimensions.LeftInPixels,
+			cursorDimensions.TopInPixels + cursorDimensions.HeightInPixels,
+			typeof(MenuDisplay),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(MenuDisplay.MenuRecord),
+					menu
+				}
+			},
+			// TODO: this callback when the dropdown closes is suspect.
+			//       The editContext is supposed to live the lifespan of the
+			//       Post. But what if the Post finishes before the dropdown is closed?
+			() => 
+			{
+				// TODO: Even if this '.single or default' to get the main group works it is bad and I am ashamed...
+				//       ...I'm too tired at the moment, need to make this sensible.
+				//	   The key is in the IDE project yet its circular reference if I do so, gotta
+				//       make groups more sensible I'm not sure what to say here I'm super tired and brain checked out.
+				//       |
+				//       I ran this and it didn't work. Its for the best that it doesn't.
+				//	   maybe when I wake up tomorrow I'll realize what im doing here.
+				var mainEditorGroup = commandArgs.TextEditorService.GroupStateWrap.Value.GroupList.SingleOrDefault();
+				
+				if (mainEditorGroup is not null &&
+					mainEditorGroup.ActiveViewModelKey != Key<TextEditorViewModel>.Empty)
+				{
+					var activeViewModel = commandArgs.TextEditorService.ViewModelApi.GetOrDefault(mainEditorGroup.ActiveViewModelKey);
+
+					if (activeViewModel is not null)
+						return activeViewModel.FocusAsync();
+				}
+				
+				return viewModelModifier.ViewModel.FocusAsync();
+			});
+
+		var dispatcher = commandArgs.ServiceProvider.GetRequiredService<IDispatcher>();
+        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+    }
+    
+    public static async Task QuickActionsSlashRefactor(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCommandArgs commandArgs)
+    {
+        var jsRuntime = commandArgs.ServiceProvider.GetRequiredService<IJSRuntime>();
+        var jsRuntimeCommonApi = jsRuntime.GetLuthetusCommonApi();
+		       
+		var cursorDimensions = await jsRuntimeCommonApi
+			.MeasureElementById(viewModelModifier.ViewModel.PrimaryCursorContentId)
+			.ConfigureAwait(false);
+
+        var environmentProvider = commandArgs.ServiceProvider.GetRequiredService<IEnvironmentProvider>();
+        
+		var resourceAbsolutePath = environmentProvider.AbsolutePathFactory(modelModifier.ResourceUri.Value, false);
+		var parentDirectoryAbsolutePath = environmentProvider.AbsolutePathFactory(resourceAbsolutePath.ParentDirectory.Value, true);
+	
+		var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		var compilerService = modelModifier.CompilerService;
+	
+		var compilerServiceResource = viewModelModifier is null
+			? null
+			: compilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
+
+		int? primaryCursorPositionIndex = modelModifier is null || viewModelModifier is null
+			? null
+			: modelModifier.GetPositionIndex(primaryCursorModifier);
+
+		var syntaxNode = primaryCursorPositionIndex is null || compilerService.Binder is null || compilerServiceResource?.CompilationUnit is null
+			? null
+			: compilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, compilerServiceResource.CompilationUnit);
+			
+		var menuOptionList = new List<MenuOptionRecord>();
+			
+		menuOptionList.Add(new MenuOptionRecord(
+			"QuickActionsSlashRefactorMenu",
+			MenuOptionKind.Other));
+			
+		if (syntaxNode is null)
+		{
+			menuOptionList.Add(new MenuOptionRecord(
+				"syntaxNode was null",
+				MenuOptionKind.Other,
+				OnClickFunc: async () => {}));
+		}
+		else
+		{
+			menuOptionList.Add(new MenuOptionRecord(
+				syntaxNode.SyntaxKind.ToString(),
+				MenuOptionKind.Other,
+				OnClickFunc: async () => {}));
+				
+			if (syntaxNode.SyntaxKind == SyntaxKind.PropertyDefinitionNode)
+			{
+				if (syntaxNode.Parent is null)
+				{
+					menuOptionList.Add(new MenuOptionRecord(
+						"syntaxNode.Parent is null",
+						MenuOptionKind.Other,
+						OnClickFunc: async () => {}));
+				}
+				else
+				{
+					if (syntaxNode.Parent is TypeDefinitionNode typeDefinitionNode)
+					{
+						menuOptionList.Add(new MenuOptionRecord(
+							$"Add to {typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}() constructor",
+							MenuOptionKind.Other,
+							OnClickFunc: () => 
+							{
+								TextEditorRefactorFacts.GenerateConstructor(
+									typeDefinitionNode,
+									Array.Empty<IVariableDeclarationNode>(),
+									commandArgs.ServiceProvider,
+									editContext.TextEditorService,
+							        modelModifier.ResourceUri,
+							        viewModelModifier.ViewModel.ViewModelKey);
+							    return Task.CompletedTask;
+							}));
+					}
+					else
+					{
+						menuOptionList.Add(new MenuOptionRecord(
+							$"Parent is not {nameof(SyntaxKind)}.{nameof(SyntaxKind.TypeDefinitionNode)} it is: {nameof(SyntaxKind)}.{syntaxNode.Parent.SyntaxKind}",
+							MenuOptionKind.Other,
+							OnClickFunc: async () => {}));
+					}
+				}
+			}
 		}
 		
 		MenuRecord menu;

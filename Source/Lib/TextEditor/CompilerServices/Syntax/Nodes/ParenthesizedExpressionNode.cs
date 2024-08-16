@@ -32,6 +32,7 @@ public sealed record ParenthesizedExpressionNode : IExpressionNode
     public TypeClauseNode ResultTypeClauseNode => InnerExpression.ResultTypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;

@@ -127,14 +127,20 @@ public partial class ContextMenu : ComponentBase
     {
         List<MenuOptionRecord> menuOptionRecordsList = new();
 
-        var cut = new MenuOptionRecord("Cut", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
+        var cut = new MenuOptionRecord("Cut (Ctrl x)", MenuOptionKind.Other, () => SelectMenuOption(CutMenuOption));
         menuOptionRecordsList.Add(cut);
 
-        var copy = new MenuOptionRecord("Copy", MenuOptionKind.Other, () => SelectMenuOption(CopyMenuOption));
+        var copy = new MenuOptionRecord("Copy (Ctrl c)", MenuOptionKind.Other, () => SelectMenuOption(CopyMenuOption));
         menuOptionRecordsList.Add(copy);
 
-        var paste = new MenuOptionRecord("Paste", MenuOptionKind.Other, () => SelectMenuOption(PasteMenuOption));
+        var paste = new MenuOptionRecord("Paste (Ctrl v)", MenuOptionKind.Other, () => SelectMenuOption(PasteMenuOption));
         menuOptionRecordsList.Add(paste);
+        
+        var goToDefinition = new MenuOptionRecord("Go to definition (F12)", MenuOptionKind.Other, () => SelectMenuOption(GoToDefinitionOption));
+        menuOptionRecordsList.Add(goToDefinition);
+        
+        var quickActionsSlashRefactors = new MenuOptionRecord("QuickActions/Refactors (Ctrl .)", MenuOptionKind.Other, () => SelectMenuOption(QuickActionsSlashRefactors));
+        menuOptionRecordsList.Add(quickActionsSlashRefactors);
 
         if (!menuOptionRecordsList.Any())
             menuOptionRecordsList.Add(new MenuOptionRecord("No Context Menu Options for this item", MenuOptionKind.Other));
@@ -230,6 +236,44 @@ public partial class ContextMenu : ComponentBase
             {
                 commandArgs.EditContext = editContext;
                 return TextEditorCommandDefaultFacts.PasteCommand.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
+    }
+
+    private Task GoToDefinitionOption()
+    {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.PasteCommand),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.GoToDefinition.CommandFunc
+                    .Invoke(commandArgs);
+            });
+        return Task.CompletedTask;
+    }
+    
+    private Task QuickActionsSlashRefactors()
+    {
+    	var renderBatchLocal = RenderBatch;
+    	if (renderBatchLocal is null)
+    		return Task.CompletedTask;
+    	
+        var commandArgs = ConstructCommandArgs(renderBatchLocal);
+
+        TextEditorService.PostUnique(
+            nameof(TextEditorCommandDefaultFacts.PasteCommand),
+            editContext =>
+            {
+                commandArgs.EditContext = editContext;
+                return TextEditorCommandDefaultFacts.QuickActionsSlashRefactor.CommandFunc
                     .Invoke(commandArgs);
             });
         return Task.CompletedTask;
