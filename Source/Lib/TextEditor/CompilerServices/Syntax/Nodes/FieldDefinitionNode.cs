@@ -47,6 +47,7 @@ public sealed record FieldDefinitionNode : IVariableDeclarationNode
     public bool SetterIsAutoImplemented { get; set; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FieldDefinitionNode;

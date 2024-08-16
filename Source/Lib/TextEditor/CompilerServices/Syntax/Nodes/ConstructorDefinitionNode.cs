@@ -52,6 +52,7 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;

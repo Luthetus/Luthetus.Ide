@@ -24,6 +24,7 @@ public sealed record UnaryExpressionNode : IExpressionNode
     public TypeClauseNode ResultTypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;

@@ -43,6 +43,7 @@ public sealed record CompilationUnit : ISyntaxNode
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
     public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntaxNode? Parent { get; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
 }

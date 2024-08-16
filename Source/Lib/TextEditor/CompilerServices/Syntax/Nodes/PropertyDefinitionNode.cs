@@ -11,7 +11,8 @@ public sealed record PropertyDefinitionNode : IVariableDeclarationNode
         TypeClauseNode typeClauseNode,
         IdentifierToken identifierToken,
         VariableKind variableKind,
-        bool isInitialized)
+        bool isInitialized,
+        ISyntaxNode parent)
     {
         TypeClauseNode = typeClauseNode;
         IdentifierToken = identifierToken;
@@ -23,6 +24,8 @@ public sealed record PropertyDefinitionNode : IVariableDeclarationNode
             TypeClauseNode,
             IdentifierToken,
         }.ToImmutableArray();
+        
+        Parent = parent;
     }
 
     public TypeClauseNode TypeClauseNode { get; }
@@ -47,6 +50,7 @@ public sealed record PropertyDefinitionNode : IVariableDeclarationNode
     public bool SetterIsAutoImplemented { get; set; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PropertyDefinitionNode;

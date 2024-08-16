@@ -35,6 +35,7 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
     public bool HasRefKeyword { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentEntryNode;

@@ -20,20 +20,20 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
-using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
-using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
@@ -99,135 +99,13 @@ public class DotNetSolutionIdeApi
 		_serviceProvider = serviceProvider;
 	}
 
-	public void Website_AddExistingProjectToSolution(
-		Key<DotNetSolutionModel> dotNetSolutionModelKey,
-		string projectTemplateShortName,
-		string cSharpProjectName,
-		IAbsolutePath cSharpProjectAbsolutePath)
-	{
-		_backgroundTaskService.Enqueue(
-			Key<IBackgroundTask>.NewKey(),
-			ContinuousBackgroundTaskWorker.GetQueueKey(),
-			"Add Existing-Project To Solution",
-			async () => await Website_AddExistingProjectToSolutionAsync(
-				dotNetSolutionModelKey,
-				projectTemplateShortName,
-				cSharpProjectName,
-				cSharpProjectAbsolutePath));
-	}
-
-	private async Task Website_AddExistingProjectToSolutionAsync(
-		Key<DotNetSolutionModel> dotNetSolutionModelKey,
-		string projectTemplateShortName,
-		string cSharpProjectName,
-		IAbsolutePath cSharpProjectAbsolutePath)
-	{
-		var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(
-			x => x.Key == dotNetSolutionModelKey);
-
-		if (inDotNetSolutionModel is null)
-			return;
-
-		var projectTypeGuid = WebsiteProjectTemplateFacts.GetProjectTypeGuid(
-			projectTemplateShortName);
-
-		var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(
-			inDotNetSolutionModel.NamespacePath.AbsolutePath,
-			cSharpProjectAbsolutePath,
-			_environmentProvider);
-
-		var projectIdGuid = Guid.NewGuid();
-
-		var dotNetSolutionModelBuilder = new DotNetSolutionModelBuilder(inDotNetSolutionModel);
-
-		var cSharpProject = new CSharpProjectModel(
-			cSharpProjectName,
-			projectTypeGuid,
-			relativePathFromSlnToProject,
-			projectIdGuid,
-			// TODO: 'openAssociatedGroupToken' gets set when 'AddDotNetProject(...)' is ran, which is hacky and should be changed. Until then passing in 'null!'
-			null!,
-			null,
-			cSharpProjectAbsolutePath);
-
-		dotNetSolutionModelBuilder.AddDotNetProject(cSharpProject, _environmentProvider);
-
-		var outDotNetSolutionModel = dotNetSolutionModelBuilder.Build();
-
-		await _fileSystemProvider.File.WriteAllTextAsync(
-				outDotNetSolutionModel.NamespacePath.AbsolutePath.Value,
-				outDotNetSolutionModel.SolutionFileContents)
-			.ConfigureAwait(false);
-
-		var solutionTextEditorModel = _textEditorService.ModelApi.GetOrDefault(
-			new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.Value));
-
-		if (solutionTextEditorModel is not null)
-		{
-			_textEditorService.PostUnique(
-				nameof(Website_AddExistingProjectToSolutionAsync),
-				editContext =>
-				{
-					var modelModifier = editContext.GetModelModifier(solutionTextEditorModel.ResourceUri);
-					if (modelModifier is null)
-						return Task.CompletedTask;
-				
-					_textEditorService.ModelApi.Reload(
-						editContext,
-				        modelModifier,
-				        outDotNetSolutionModel.SolutionFileContents,
-				        DateTime.UtcNow);
-					return Task.CompletedTask;
-				});
-		}
-
-		// TODO: Putting a hack for now to overwrite if somehow model was registered already
-		_dispatcher.Dispatch(ConstructModelReplacement(
-			outDotNetSolutionModel.Key,
-			outDotNetSolutionModel));
-
-		await SetDotNetSolutionTreeViewAsync(outDotNetSolutionModel.Key).ConfigureAwait(false);
-	}
-
-	/// <summary>Don't have the implementation <see cref="WithAction"/> as public scope.</summary>
-	public interface IWithAction
-	{
-	}
-
-	/// <summary>Don't have <see cref="WithAction"/> itself as public scope.</summary>
-	public record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc)
-		: IWithAction;
-
-	public static IWithAction ConstructModelReplacement(
-			Key<DotNetSolutionModel> dotNetSolutionModelKey,
-			DotNetSolutionModel outDotNetSolutionModel)
-	{
-		return new WithAction(dotNetSolutionState =>
-		{
-			var indexOfSln = dotNetSolutionState.DotNetSolutionsList.FindIndex(
-				sln => sln.Key == dotNetSolutionModelKey);
-
-			if (indexOfSln == -1)
-				return dotNetSolutionState;
-
-			var outDotNetSolutions = dotNetSolutionState.DotNetSolutionsList.SetItem(
-				indexOfSln,
-				outDotNetSolutionModel);
-
-			return dotNetSolutionState with
-			{
-				DotNetSolutionsList = outDotNetSolutions
-			};
-		});
-	}
-
 	public void SetDotNetSolution(IAbsolutePath inSolutionAbsolutePath)
 	{
 		_backgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
 			"Set .NET Solution",
-			async () => await SetDotNetSolutionAsync(inSolutionAbsolutePath).ConfigureAwait(false));
+			() => SetDotNetSolutionAsync(inSolutionAbsolutePath));
 	}
 
 	private async Task SetDotNetSolutionAsync(IAbsolutePath inSolutionAbsolutePath)
@@ -753,4 +631,126 @@ Execution Terminal"));
         _dispatcher.Dispatch(new StartupControlState.StateChangedAction());
         return Task.CompletedTask;
     }
+    
+    public void Website_AddExistingProjectToSolution(
+		Key<DotNetSolutionModel> dotNetSolutionModelKey,
+		string projectTemplateShortName,
+		string cSharpProjectName,
+		IAbsolutePath cSharpProjectAbsolutePath)
+	{
+		_backgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			"Add Existing-Project To Solution",
+			async () => await Website_AddExistingProjectToSolutionAsync(
+				dotNetSolutionModelKey,
+				projectTemplateShortName,
+				cSharpProjectName,
+				cSharpProjectAbsolutePath));
+	}
+
+	private async Task Website_AddExistingProjectToSolutionAsync(
+		Key<DotNetSolutionModel> dotNetSolutionModelKey,
+		string projectTemplateShortName,
+		string cSharpProjectName,
+		IAbsolutePath cSharpProjectAbsolutePath)
+	{
+		var inDotNetSolutionModel = _dotNetSolutionStateWrap.Value.DotNetSolutionsList.FirstOrDefault(
+			x => x.Key == dotNetSolutionModelKey);
+
+		if (inDotNetSolutionModel is null)
+			return;
+
+		var projectTypeGuid = WebsiteProjectTemplateFacts.GetProjectTypeGuid(
+			projectTemplateShortName);
+
+		var relativePathFromSlnToProject = PathHelper.GetRelativeFromTwoAbsolutes(
+			inDotNetSolutionModel.NamespacePath.AbsolutePath,
+			cSharpProjectAbsolutePath,
+			_environmentProvider);
+
+		var projectIdGuid = Guid.NewGuid();
+
+		var dotNetSolutionModelBuilder = new DotNetSolutionModelBuilder(inDotNetSolutionModel);
+
+		var cSharpProject = new CSharpProjectModel(
+			cSharpProjectName,
+			projectTypeGuid,
+			relativePathFromSlnToProject,
+			projectIdGuid,
+			// TODO: 'openAssociatedGroupToken' gets set when 'AddDotNetProject(...)' is ran, which is hacky and should be changed. Until then passing in 'null!'
+			null!,
+			null,
+			cSharpProjectAbsolutePath);
+
+		dotNetSolutionModelBuilder.AddDotNetProject(cSharpProject, _environmentProvider);
+
+		var outDotNetSolutionModel = dotNetSolutionModelBuilder.Build();
+
+		await _fileSystemProvider.File.WriteAllTextAsync(
+				outDotNetSolutionModel.NamespacePath.AbsolutePath.Value,
+				outDotNetSolutionModel.SolutionFileContents)
+			.ConfigureAwait(false);
+
+		var solutionTextEditorModel = _textEditorService.ModelApi.GetOrDefault(
+			new ResourceUri(inDotNetSolutionModel.NamespacePath.AbsolutePath.Value));
+
+		if (solutionTextEditorModel is not null)
+		{
+			_textEditorService.PostUnique(
+				nameof(Website_AddExistingProjectToSolutionAsync),
+				editContext =>
+				{
+					var modelModifier = editContext.GetModelModifier(solutionTextEditorModel.ResourceUri);
+					if (modelModifier is null)
+						return Task.CompletedTask;
+				
+					_textEditorService.ModelApi.Reload(
+						editContext,
+				        modelModifier,
+				        outDotNetSolutionModel.SolutionFileContents,
+				        DateTime.UtcNow);
+					return Task.CompletedTask;
+				});
+		}
+
+		// TODO: Putting a hack for now to overwrite if somehow model was registered already
+		_dispatcher.Dispatch(ConstructModelReplacement(
+			outDotNetSolutionModel.Key,
+			outDotNetSolutionModel));
+
+		await SetDotNetSolutionTreeViewAsync(outDotNetSolutionModel.Key).ConfigureAwait(false);
+	}
+
+	/// <summary>Don't have the implementation <see cref="WithAction"/> as public scope.</summary>
+	public interface IWithAction
+	{
+	}
+
+	/// <summary>Don't have <see cref="WithAction"/> itself as public scope.</summary>
+	public record WithAction(Func<DotNetSolutionState, DotNetSolutionState> WithFunc)
+		: IWithAction;
+
+	public static IWithAction ConstructModelReplacement(
+			Key<DotNetSolutionModel> dotNetSolutionModelKey,
+			DotNetSolutionModel outDotNetSolutionModel)
+	{
+		return new WithAction(dotNetSolutionState =>
+		{
+			var indexOfSln = dotNetSolutionState.DotNetSolutionsList.FindIndex(
+				sln => sln.Key == dotNetSolutionModelKey);
+
+			if (indexOfSln == -1)
+				return dotNetSolutionState;
+
+			var outDotNetSolutions = dotNetSolutionState.DotNetSolutionsList.SetItem(
+				indexOfSln,
+				outDotNetSolutionModel);
+
+			return dotNetSolutionState with
+			{
+				DotNetSolutionsList = outDotNetSolutions
+			};
+		});
+	}
 }
