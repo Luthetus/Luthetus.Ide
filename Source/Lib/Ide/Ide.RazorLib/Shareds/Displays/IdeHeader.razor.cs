@@ -167,7 +167,7 @@ public partial class IdeHeader : ComponentBase
         // Menu Option Find All
         {
             var menuOptionFindAll = new MenuOptionRecord(
-				"Find All",
+				"Find All (Ctrl Shift f)",
                 MenuOptionKind.Delete,
                 () =>
                 {
@@ -181,7 +181,7 @@ public partial class IdeHeader : ComponentBase
 		// Menu Option Code Search
         {
             var menuOptionCodeSearch = new MenuOptionRecord(
-				"Code Search",
+				"Code Search (Ctrl ,)",
                 MenuOptionKind.Delete,
                 () =>
 				{
@@ -204,7 +204,7 @@ public partial class IdeHeader : ComponentBase
 		// Menu Option Find
         {
             var menuOptionFind = new MenuOptionRecord(
-				"Find (in text editor)",
+				"Find in text editor (Ctrl f)",
                 MenuOptionKind.Delete,
                 () =>
 				{

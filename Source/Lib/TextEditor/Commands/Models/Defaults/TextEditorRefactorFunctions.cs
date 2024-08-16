@@ -123,11 +123,6 @@ public class TextEditorRefactorFunctions
 				NotificationHelper.DispatchError(
 			        nameof(GenerateConstructor), e.ToString(), serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
 			}
-			finally
-			{
-				NotificationHelper.DispatchInformative(
-			        nameof(GenerateConstructor), "?", serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
-			}
 		}
     
         return;
