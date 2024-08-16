@@ -82,6 +82,7 @@ public record LuthetusCommonFactoriesTests
 
         var hostingInformation = new LuthetusHostingInformation(
             LuthetusHostingKind.UnitTestingSynchronous,
+            LuthetusPurposeKind.Common,
             new BackgroundTaskServiceSynchronous());
 
         var services = new ServiceCollection()
