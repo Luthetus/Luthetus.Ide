@@ -10,34 +10,40 @@
 
     @{ var contextState = ContextStateWrap.Value; }
 
+	@*
+	This components title must always show because
+	the locking of inspected context is done from a button
+	in the title.
+	=======================================
 	@if (AppOptionsService.ShowPanelTitles)
 	{
-	    <div class="luth_ide_section-title">
-	        @{ var isInspecting = GetIsInspecting(contextState); }
-	
-	        <button class="luth_button"
-	                style="display: inline;"
-	                @onclick="() => DispatchToggleInspectActionOnClick(isInspecting)">
-	                
-	            @{
-	            	var iconDriver = new IconDriver(
-						AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-						AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels);
-	            }
-	
-	            @if (isInspecting)
-	            {
-	                @IconLockFragment.Render(iconDriver)
-	            }
-	            else
-	            {
-	                @IconInspectFragment.Render(iconDriver)
-	            }
-	        </button>
-	
-	        ActiveContextsDisplay
-	    </div>
     }
+    *@
+    <div class="luth_ide_section-title">
+        @{ var isInspecting = GetIsInspecting(contextState); }
+
+        <button class="luth_button"
+                style="display: inline;"
+                @onclick="() => DispatchToggleInspectActionOnClick(isInspecting)">
+                
+            @{
+            	var iconDriver = new IconDriver(
+					AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+					AppOptionsService.AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+            }
+
+            @if (isInspecting)
+            {
+                @IconLockFragment.Render(iconDriver)
+            }
+            else
+            {
+                @IconInspectFragment.Render(iconDriver)
+            }
+        </button>
+
+        ActiveContextsDisplay
+    </div>
 
     <div class="luth_ide_section-body @AppOptionsService.ShowPanelTitlesCssClass">
 
