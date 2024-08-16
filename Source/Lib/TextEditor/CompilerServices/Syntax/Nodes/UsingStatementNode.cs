@@ -21,6 +21,7 @@ public sealed record UsingStatementNode : ISyntaxNode
     public IdentifierToken NamespaceIdentifier { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;

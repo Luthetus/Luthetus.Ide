@@ -17,6 +17,7 @@ using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -915,15 +916,37 @@ public class TextEditorCommandDefaultFunctions
 				
 			if (syntaxNode.SyntaxKind == SyntaxKind.PropertyDefinitionNode)
 			{
-				//menuOptionList.Add(new MenuOptionRecord(
-				//	"Add to () constructor",
-				//	MenuOptionKind.Other,
-				//	OnClickFunc: async () => {}));
-			
-				menuOptionList.Add(new MenuOptionRecord(
-					"Add to () constructor",
-					MenuOptionKind.Other,
-					OnClickFunc: async () => {}));
+				if (syntaxNode.Parent is null)
+				{
+					menuOptionList.Add(new MenuOptionRecord(
+						"syntaxNode.Parent is null",
+						MenuOptionKind.Other,
+						OnClickFunc: async () => {}));
+				}
+				else
+				{
+					if (syntaxNode.Parent is TypeDefinitionNode typeDefinitionNode)
+					{
+						menuOptionList.Add(new MenuOptionRecord(
+							$"Add to {typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()}() constructor",
+							MenuOptionKind.Other,
+							OnClickFunc: () => 
+							{
+								TextEditorRefactorFacts.GenerateConstructor(
+									editContext.TextEditorService,
+							        modelModifier.ResourceUri,
+							        viewModelModifier.ViewModel.ViewModelKey);
+							    return Task.CompletedTask;
+							}));
+					}
+					else
+					{
+						menuOptionList.Add(new MenuOptionRecord(
+							$"Parent is not {nameof(SyntaxKind)}.{nameof(SyntaxKind.TypeClauseNode)} it is: {nameof(SyntaxKind)}.{syntaxNode.Parent.SyntaxKind}",
+							MenuOptionKind.Other,
+							OnClickFunc: async () => {}));
+					}
+				}
 			}
 		}
 		

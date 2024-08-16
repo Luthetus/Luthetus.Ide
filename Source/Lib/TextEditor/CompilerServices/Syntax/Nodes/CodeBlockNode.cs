@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -27,6 +27,7 @@ public sealed record CodeBlockNode : ISyntaxNode
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
     public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntaxNode? Parent { get; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CodeBlockNode;
 }

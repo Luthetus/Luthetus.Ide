@@ -28,6 +28,7 @@ public sealed record VariableReferenceNode : IExpressionNode
     public TypeClauseNode ResultTypeClauseNode => VariableDeclarationNode.TypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;

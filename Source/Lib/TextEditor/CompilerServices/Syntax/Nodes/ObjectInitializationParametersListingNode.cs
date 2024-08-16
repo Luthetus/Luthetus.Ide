@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -31,6 +31,7 @@ public sealed record ObjectInitializationParametersListingNode : ISyntaxNode
     public CloseBraceToken CloseBraceToken { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParametersListingNode;

@@ -49,7 +49,8 @@ public static class ParseVariables
 	            consumedTypeClauseNode,
 	            consumedIdentifierToken,
 	            variableKind,
-	            false);
+	            false,
+	            model.CurrentCodeBlockBuilder.CodeBlockOwner);
 		}
 		else
 		{

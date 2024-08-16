@@ -34,6 +34,7 @@ public sealed record FunctionParametersListingNode : ISyntaxNode
     public CloseParenthesisToken CloseParenthesisToken { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionParametersListingNode;

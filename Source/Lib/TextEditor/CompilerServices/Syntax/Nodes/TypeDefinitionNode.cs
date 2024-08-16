@@ -78,6 +78,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;

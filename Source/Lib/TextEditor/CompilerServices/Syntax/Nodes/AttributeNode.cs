@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -30,6 +30,7 @@ public sealed record AttributeNode : ISyntaxNode
     public CloseSquareBracketToken CloseSquareBracketToken { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
