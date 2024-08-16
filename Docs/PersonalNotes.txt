@@ -355,6 +355,16 @@ I have a massive headache right now. I need to go touch grass.
 Common.Tests.csproj:
 	12:45 start; 1:04 end; 19 minutes total;
 	350 total; 194 passed; 156 failed;
+--------------------------------------------
+(2024-08-15) Common.Tests.csproj:
+	8:07 start; 8:24 end; 17 minutes total;
+	350 total; 197 passed; 153 failed;
+--------------------------------------------
+- Running many tests is still ridiculously slow.
+- Task Parallel Library?
+- The fact that they only run 1 at a time,
+  	I wonder how much of the issue is due to that.
+
 	
 TextEditor.Tests.csproj:
 	??:?? start; ??:?? end; ?? minutes total;

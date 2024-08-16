@@ -55,6 +55,7 @@ public sealed record TypeClauseNode : ISyntaxNode
     public AttributeNode AttributeNode { get; set; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;

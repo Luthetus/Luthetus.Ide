@@ -38,6 +38,7 @@ public sealed record ConstructorInvocationExpressionNode : IExpressionNode
     public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; }
     
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;

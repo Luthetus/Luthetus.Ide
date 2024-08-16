@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -18,6 +18,7 @@ public sealed record NamespaceGroupNode : ISyntaxNode
     public ImmutableArray<NamespaceStatementNode> NamespaceStatementNodeList { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceGroupNode;

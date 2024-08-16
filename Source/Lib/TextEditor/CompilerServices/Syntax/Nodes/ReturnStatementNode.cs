@@ -22,6 +22,7 @@ public sealed record ReturnStatementNode : ISyntaxNode
     public IExpressionNode ExpressionNode { get; }
 
     public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;

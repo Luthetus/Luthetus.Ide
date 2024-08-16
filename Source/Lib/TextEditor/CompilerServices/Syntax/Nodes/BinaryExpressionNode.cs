@@ -28,6 +28,7 @@ public sealed record BinaryExpressionNode : IExpressionNode
     public TypeClauseNode ResultTypeClauseNode => BinaryOperatorNode.ResultTypeClauseNode;
 
     public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;

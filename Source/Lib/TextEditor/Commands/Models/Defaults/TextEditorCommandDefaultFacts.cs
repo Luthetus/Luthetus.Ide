@@ -581,6 +581,28 @@ public static class TextEditorCommandDefaultFacts
 		        cursorModifierBag,
 		        commandArgs);
         });
+        
+    public static readonly TextEditorCommand QuickActionsSlashRefactor = new(
+        "QuickActionsSlashRefactor", "defaults_quick-actions-slash-refactor", false, true, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+			
+            var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+            var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+                
+            return TextEditorCommandDefaultFunctions.QuickActionsSlashRefactor(
+            	commandArgs.EditContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        commandArgs);
+        });
     
     public static readonly TextEditorCommand GoToDefinition = new(
         "GoToDefinition", "defaults_go-to-definition", false, true, TextEditKind.None, null,
