@@ -8,7 +8,7 @@ public class ProjectTestModelTests
     /// <summary>
     /// <see cref="ProjectTestModel(Guid, IAbsolutePath, Func{Func{Dictionary{string, StringFragment}, Task}, Task}, Action{TreeViewNoType})"/>
     /// <br/>----<br/>
-    /// <see cref="ProjectTestModel.DotNetTestListTestsCommandOutput"/>
+    /// <see cref="ProjectTestModel.TestNameFullyQualifiedList"/>
     /// <see cref="ProjectTestModel.EnqueueDiscoverTestsFunc"/>
     /// <see cref="ProjectTestModel.RootStringFragmentMap"/>
     /// <see cref="ProjectTestModel.ProjectIdGuid"/>

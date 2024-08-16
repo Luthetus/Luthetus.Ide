@@ -18,6 +18,7 @@ public class CommonTestingBase
 
         var hostingInformation = new LuthetusHostingInformation(
             LuthetusHostingKind.UnitTestingSynchronous,
+            LuthetusPurposeKind.Common,
             new BackgroundTaskServiceSynchronous());
 
         CommonUnitTestHelper.AddLuthetusCommonServicesUnitTesting(services, hostingInformation);

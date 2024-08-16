@@ -30,6 +30,7 @@ public class TreeViewCommandArgsTests
 
         var hostingInformation = new LuthetusHostingInformation(
             LuthetusHostingKind.UnitTestingSynchronous,
+            LuthetusPurposeKind.Common,
             new BackgroundTaskServiceSynchronous());
 
         services.AddFluxor(options => options.ScanAssemblies(

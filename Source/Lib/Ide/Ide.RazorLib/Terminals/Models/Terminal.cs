@@ -80,6 +80,11 @@ public class Terminal : ITerminal
 
     private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
+    	if (TerminalOutput.GetParsedCommandListCount() > 10)
+    	{
+            TerminalOutput.ClearOutput();
+        }
+    
     	var parsedCommand = await TerminalInteractive.TryHandleCommand(terminalCommandRequest);
     	ActiveTerminalCommandParsed = parsedCommand;
 
@@ -119,15 +124,6 @@ public class Terminal : ITerminal
 		}
 		catch (Exception e)
 		{
-			if (parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc is not null)
-			{
-				await parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc
-					.Invoke(parsedCommand)
-					.ConfigureAwait(false);
-			}
-		
-			HasExecutingProcess = false;
-			
 			// TODO: This will erroneously write 'StartedCommandEvent' out twice...
 			//       ...unless a check is added to see WHEN the exception was thrown.
 			TerminalOutput.WriteOutput(
@@ -142,7 +138,17 @@ public class Terminal : ITerminal
 					"\n"));
 		
 			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
-			
+		}
+		finally
+		{
+			if (parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc is not null)
+			{
+				await parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc
+					.Invoke(parsedCommand)
+					.ConfigureAwait(false);
+			}
+		
+			HasExecutingProcess = false;
 		}
 	}
 	

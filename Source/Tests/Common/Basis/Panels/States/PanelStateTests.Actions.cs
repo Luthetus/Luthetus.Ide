@@ -178,7 +178,11 @@ public class PanelStateActionsTests
 
         var serviceCollection = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusCommonServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
+            .AddLuthetusCommonServices(
+            	new LuthetusHostingInformation(
+            		LuthetusHostingKind.UnitTestingSynchronous,
+            		LuthetusPurposeKind.Common,
+            		backgroundTaskService))
             .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly));
 
         var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -188,7 +192,7 @@ public class PanelStateActionsTests
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
             ContextFacts.SolutionExplorerContext.ContextKey,
-            typeof(IconCSharpClass),
+            typeof(IconCSharpClassFragment),
             null,
             serviceProvider.GetRequiredService<IDispatcher>(),
             serviceProvider.GetRequiredService<IDialogService>(),

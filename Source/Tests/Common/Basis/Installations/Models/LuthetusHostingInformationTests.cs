@@ -25,6 +25,7 @@ public record LuthetusHostingInformationTests
 
             var hostingInformation = new LuthetusHostingInformation(
                 hostingKind,
+                LuthetusPurposeKind.Common,
                 backgroundTaskServiceSynchronous);
 
             Assert.Equal(hostingKind, hostingInformation.LuthetusHostingKind);
@@ -39,6 +40,7 @@ public record LuthetusHostingInformationTests
 
             var hostingInformation = new LuthetusHostingInformation(
                 hostingKind,
+                LuthetusPurposeKind.Common,
                 backgroundTaskService);
 
             Assert.Equal(hostingKind, hostingInformation.LuthetusHostingKind);

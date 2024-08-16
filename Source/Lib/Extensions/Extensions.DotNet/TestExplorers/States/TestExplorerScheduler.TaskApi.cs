@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
+using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.CompilerServices.DotNetSolution.Models.Project;
 using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -54,18 +55,22 @@ public partial class TestExplorerScheduler
 		        	treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery,
 		        	treeViewProjectTestModel.Item.DotNetTestListTestsTerminalCommandRequestKey)
 		        {
+		        	BeginWithFunc = async parsedCommand =>
+		        	{
+		        		treeViewProjectTestModel.Item.TerminalCommandParsed = parsedCommand;
+		        	},
 		        	ContinueWithFunc = async parsedCommand =>
 		        	{
-		        		// _dotNetCliOutputParser was being used
+		        		treeViewProjectTestModel.Item.TerminalCommandParsed = parsedCommand;
 		        	
 						try
 						{
-							treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput =
-								_dotNetCliOutputParser.TheFollowingTestsAreAvailableList ?? new();
+							treeViewProjectTestModel.Item.TestNameFullyQualifiedList = _dotNetCliOutputParser.ParseOutputLineDotNetTestListTests(
+		        				treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString());
 
 							// THINKING_ABOUT_TREE_VIEW();
 							{
-								var splitOutputList = treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput
+								var splitOutputList = (treeViewProjectTestModel.Item.TestNameFullyQualifiedList ?? new())
 									.Select(x => x.Split('.'));
 
 								var rootMap = new Dictionary<string, StringFragment>();
@@ -142,45 +147,6 @@ public partial class TestExplorerScheduler
     
     public Task Task_DiscoverTests()
     {
-		// (2024-08-06)
-		// ============
-		// [] Add blocking enqueue (EnqueueAsync?)
-		// [] Add blocking throttle (RunAsync?)
-		// [] Successfully discover the unit tests, and make the tree view.
-		// [] To start, I don't fully understand what I'm about to describe here
-		// 	[] It appears that on Linux the "pipe" that all my code is pushed through
-		// 	   	is not as optimized as the "pipe" that is used on Windows.
-		//     [] Could this be a driver issue? Do I have the wrong drivers installed on Ubuntu at the moment?
-		//     [] Either way, on windows if I select text with my cursor, and drag over the text in a fast motion,
-		//        	the text editor's cursor only slightly lags behind my movement (maybe 1 character of lag?).
-		//     	   But, on Linux I'm seeing 10 to 20 characters of lag.
-		// 	[] As well, on Windows, it seems I've hit an "optimization plateau" with respect to this
-		//        	cursor text selection, and viewing the character lag.
-		//     [] More specifically, this plateau appears to be in relation to me optimizing via
-		//        	the UI.
-		//	 [] i.e.:
-		//        	Limit the amount of Blazor parameters (they are set using reflection, which is slow)
-		//        	Limit the amount of Blazor components (especially when dealing with loops, because each component
-		// 												  carries more overhead, than if a RenderFragment template were used.)
-		//        	Limit the amount of anonymous lambdas (especially when dealing with loops,
-		//												   because it causes 1 entry to re-render all entires
-		//                                                   due to them sharing the same static class
-		//                                                   that represents the anonymous lambda.)
-		// 	[] While I do think I could benefit from more UI optimization, at this point
-		//        	it likely has become an order of magnitude less optimization than "other" forms of optimization.
-		// 	[] For example, I think the reason I have 1 character of lag when using my mouse to drag select text,
-		//        	is because I am not throttling the amount of UI events that are coming through.
-		//     [] Previously, I had used the 'batching' logic, where two successive mouse move events were deemed "redundant"
-		//        	and therefore I only would take the most recent mouse event, and then discard the earlier ones.
-		//     [] But, I am not sure if any batching logic even is running anymore, because I made changes to the IBackgroundTaskService,
-		//        	such that there is no implicit 'await Task.Delay(...)' between background tasks.
-		//     [] I like the removal of the implicit 'await Task.Delay(...)' but I would imagine this makes the likelyhood
-		//        	of every mouse move event causing a background task to be very high.
-		//     [] If there is a background task that needs delay, then it should itself 'await Task.Delay(...)' within
-		//        	the code for its background task work item.
-		// 	[] So, the on mouse move might benefit from the addition of a 'await Task.Delay(...)' within its own work item at the end
-		//        	after it finishes.
-    
     	return _throttleDiscoverTests.RunAsync(async _ => 
     	{
 	    	var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
@@ -190,12 +156,26 @@ public partial class TestExplorerScheduler
 	            return;
 	    	
 	    	var localTestExplorerState = _testExplorerStateWrap.Value;
+	    	
+	    	var progressBarModel = new ProgressBarModel(0, "parsing...");
+
+			NotificationHelper.DispatchProgress(
+				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
+				progressBarModel,
+				_commonComponentRenderers,
+				_dispatcher,
+				TimeSpan.FromMilliseconds(-1));
+				
+			var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
 		    
-		    NotificationHelper.DispatchInformative(
-		        "DiscoverTestsAsync", "DiscoverTestsAsync", _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(5));
-	
 			try
 			{
+				progressThrottle.Run(_ => 
+				{
+					progressBarModel.SetProgress(0, "Discovering tests...");
+					return Task.CompletedTask;
+				});
+			
 				var completionPercentPerProject = 1.0 / (double)localTestExplorerState.ProjectTestModelList.Count;
 	    		var projectsHandled = 0;
 	    		
@@ -203,23 +183,49 @@ public partial class TestExplorerScheduler
 		        {
 		        	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
 						return;
+						
+					var dotNetProjectListLength = treeViewAdhoc.ChildList.Count;
 		        		
 		            foreach (var treeViewProject in treeViewAdhoc.ChildList)
 		            {
 		            	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
 		            		continue;
+		            		
+		            	var currentProgress = completionPercentPerProject * projectsHandled;
+		            	
+		            	progressThrottle.Run(_ => 
+						{
+							progressBarModel.SetProgress(
+								currentProgress,
+								$"{projectsHandled + 1}/{dotNetProjectListLength}: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}");
+							return Task.CompletedTask;
+						});
 		            
 		            	await treeViewProject.LoadChildListAsync();
 			    		projectsHandled++;
 		            }
-		            
+		       
+		       	 progressThrottle.Run(_ => 
+					{
+						progressBarModel.SetProgress(1, $"Finished test discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
+						progressBarModel.Dispose();
+						return Task.CompletedTask;
+					});     
 		            await Task_SumEachProjectTestCount();
 		        }
 			}
 			catch (Exception e)
 			{
-				NotificationHelper.DispatchError(
-			        "DiscoverTestsAsync", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(5));
+				var currentProgress = progressBarModel.GetProgress();
+				
+				progressThrottle.Run(_ => 
+				{
+					// TODO: Set message 2 as the error instead so we can see the project...
+					//       ... that it was discovering tests for when it threw exception?
+					progressBarModel.SetProgress(currentProgress, e.ToString());
+					progressBarModel.Dispose();
+					return Task.CompletedTask;
+				});
 			}
 		});
     }
@@ -236,12 +242,22 @@ public partial class TestExplorerScheduler
     	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
     	
     	var containsTestsTreeViewGroup = new TreeViewGroup(
-	    	"Found",
+	    	"Have tests",
             true,
             true);
             
         var noTestsTreeViewGroup = new TreeViewGroup(
-	    	"Empty",
+	    	"No tests (but still a test-project)",
+            true,
+            true);
+            
+        var threwAnExceptionTreeViewGroup = new TreeViewGroup(
+	    	"Projects that threw an exception during discovery",
+            true,
+            true);
+            
+        var notValidProjectForUnitTestTreeViewGroup = new TreeViewGroup(
+	    	"Not a test-project",
             true,
             true);
     
@@ -255,16 +271,35 @@ public partial class TestExplorerScheduler
             	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
             		return Task.CompletedTask;
             
-            	totalTestCount += treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0;
+            	totalTestCount += treeViewProjectTestModel.Item.TestNameFullyQualifiedList?.Count ?? 0;
             	
-            	if ((treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput?.Count ?? 0) > 0)
-            		containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
-            	else
-            		noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
-            	
-            	if (treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput is not null)
+            	if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
             	{
-            		foreach (var output in treeViewProjectTestModel.Item.DotNetTestListTestsCommandOutput)
+            		if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList.Count > 0)
+            		{
+            			containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            		}
+            		else
+            		{
+            			noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            		}
+            	}
+            	else
+            	{
+            		if (treeViewProjectTestModel.Item.TerminalCommandParsed is not null &&
+            			treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString().Contains("threw an exception"))
+            		{
+            			threwAnExceptionTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            		}
+            		else
+            		{
+            			notValidProjectForUnitTestTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            		}
+            	}
+            	
+            	if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
+            	{
+            		foreach (var output in treeViewProjectTestModel.Item.TestNameFullyQualifiedList)
 	            	{
 	            		notRanTestHashSet = notRanTestHashSet.Add(output);
 	            	}
@@ -273,10 +308,14 @@ public partial class TestExplorerScheduler
             
             containsTestsTreeViewGroup.LinkChildren(new(), containsTestsTreeViewGroup.ChildList);
             noTestsTreeViewGroup.LinkChildren(new(), noTestsTreeViewGroup.ChildList);
+            threwAnExceptionTreeViewGroup.LinkChildren(new(), threwAnExceptionTreeViewGroup.ChildList);
+            notValidProjectForUnitTestTreeViewGroup.LinkChildren(new(), notValidProjectForUnitTestTreeViewGroup.ChildList);
             
             var nextTreeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc(
             	containsTestsTreeViewGroup,
-            	noTestsTreeViewGroup);
+            	noTestsTreeViewGroup,
+            	threwAnExceptionTreeViewGroup,
+            	notValidProjectForUnitTestTreeViewGroup);
             	
             nextTreeViewAdhoc.LinkChildren(new(), nextTreeViewAdhoc.ChildList);
             

@@ -69,6 +69,7 @@ public record LuthetusCommonConfigTests
         {
             var hostingInformation = new LuthetusHostingInformation(
                 LuthetusHostingKind.UnitTestingSynchronous,
+                LuthetusPurposeKind.Common,
                 new BackgroundTaskServiceSynchronous());
 
             var services = new ServiceCollection()
@@ -89,6 +90,7 @@ public record LuthetusCommonConfigTests
         {
             var hostingInformation = new LuthetusHostingInformation(
                 LuthetusHostingKind.UnitTestingSynchronous,
+                LuthetusPurposeKind.Common,
                 new BackgroundTaskServiceSynchronous());
 
             var services = new ServiceCollection()

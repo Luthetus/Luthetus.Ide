@@ -23,4 +23,5 @@ public interface ITerminalOutput : IDisposable
 	public ITerminalOutputFormatted GetOutputFormatted(string terminalOutputFormatterName);
 	public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey);
 	public ImmutableList<TerminalCommandParsed> GetParsedCommandList();
+	public int GetParsedCommandListCount();
 }
