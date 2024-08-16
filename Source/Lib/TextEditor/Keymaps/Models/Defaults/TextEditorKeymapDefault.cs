@@ -174,6 +174,12 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.RefreshSyntaxHighlighting);
+        
+        Map.Add(new KeymapArgument("Period")
+        {
+            CtrlKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.QuickActionsSlashRefactor);
     }
 
     private void AddDefaultAltModifiedKeymap()
