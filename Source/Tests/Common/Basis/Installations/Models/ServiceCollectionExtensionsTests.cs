@@ -33,6 +33,7 @@ public class ServiceCollectionExtensionsTests
     {
         var hostingInformation = new LuthetusHostingInformation(
             LuthetusHostingKind.UnitTestingSynchronous,
+            LuthetusPurposeKind.Common,
             new BackgroundTaskServiceSynchronous());
 
         var services = new ServiceCollection()
@@ -61,6 +62,7 @@ public class ServiceCollectionExtensionsTests
 
             var innerHostingInformation = new LuthetusHostingInformation(
                 LuthetusHostingKind.UnitTestingSynchronous,
+                LuthetusPurposeKind.Common,
                 new BackgroundTaskServiceSynchronous());
 
             var innerServiceCollection = new ServiceCollection()

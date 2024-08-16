@@ -9,11 +9,14 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.Outputs.States;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.Outputs.Models;
 
 namespace Luthetus.Extensions.DotNet.Outputs.Displays.Internals;
 
@@ -25,8 +28,14 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
     [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private LuthetusTextEditorConfig TextEditorConfig { get; set; } = null!;
+	[Inject]
+	private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+	private IServiceProvider ServiceProvider { get; set; } = null!;
     [Inject]
     private IState<OutputState> OutputStateWrap { get; set; } = null!;
 	[Inject]
@@ -36,19 +45,25 @@ public partial class OutputDisplay : ComponentBase, IDisposable
     
     private readonly Throttle _eventThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
     
-    private TreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
-	private TreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
+    private OutputTreeViewKeyboardEventHandler _treeViewKeyboardEventHandler = null!;
+	private OutputTreeViewMouseEventHandler _treeViewMouseEventHandler = null!;
 
 	private int OffsetPerDepthInPixels => (int)Math.Ceiling(
 		AppOptionsStateWrap.Value.Options.IconSizeInPixels * (2.0 / 3.0));
     
     protected override void OnInitialized()
     {
-    	_treeViewKeyboardEventHandler = new TreeViewKeyboardEventHandler(
+    	_treeViewKeyboardEventHandler = new OutputTreeViewKeyboardEventHandler(
+			TextEditorService,
+			TextEditorConfig,
+			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
 
-		_treeViewMouseEventHandler = new TreeViewMouseEventHandler(
+		_treeViewMouseEventHandler = new OutputTreeViewMouseEventHandler(
+			TextEditorService,
+			TextEditorConfig,
+			ServiceProvider,
 			TreeViewService,
 			BackgroundTaskService);
     

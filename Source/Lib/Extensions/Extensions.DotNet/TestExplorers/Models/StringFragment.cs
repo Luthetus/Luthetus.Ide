@@ -14,5 +14,6 @@ public class StringFragment
 	public Dictionary<string, StringFragment> Map { get; set; } = new();
 	public bool IsEndpoint { get; set; }
 	public TerminalCommandRequest? TerminalCommandRequest { get; set; }
+	public TerminalCommandParsed? TerminalCommandParsed { get; set; }
 	public Key<TerminalCommandRequest> DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 }

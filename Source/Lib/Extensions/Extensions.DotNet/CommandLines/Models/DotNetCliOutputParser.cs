@@ -15,8 +15,6 @@ public class DotNetCliOutputParser
 	
 	private DotNetRunParseResult _dotNetRunParseResult = new();
 
-	private bool _hasSeenTextIndicatorForTheList;
-	
 	public event Action? StateChanged;
 	
 	/// <summary>
@@ -501,23 +499,132 @@ public class DotNetCliOutputParser
 		return new();
 	}
 
-	public List<TextEditorTextSpan> ParseOutputLineDotNetTestListTests(TerminalCommandParsed terminalCommandParsed, string outputLine)
+	public List<string> ParseOutputLineDotNetTestListTests(string outputEntire)
 	{
-		if (!_hasSeenTextIndicatorForTheList)
+		var textIndicatorForTheList = "The following Tests are available:";
+		var indicatorIndex = outputEntire.IndexOf(textIndicatorForTheList);
+	
+		if (indicatorIndex != -1)
 		{
-			var textIndicatorForTheList = "The following Tests are available:";
-			var indicatorIndex = outputLine.IndexOf(textIndicatorForTheList);
-
-			if (indicatorIndex != -1)
-				_hasSeenTextIndicatorForTheList = true;
-
-			return new();
+			var theFollowingTestsAreAvailableList = new List<string>();
+			var outputIndex = indicatorIndex;
+			var hasFoundFirstLineAfterIndicator = false;
+			
+			while (outputIndex < outputEntire.Length)
+			{
+				var character = outputEntire[outputIndex];
+				
+				if (!hasFoundFirstLineAfterIndicator)
+				{
+					if (character == '\r')
+					{
+						// Peek for "\r\n"
+						var peekIndex = outputIndex + 1;
+						if (peekIndex < outputEntire.Length)
+						{
+							if (outputEntire[peekIndex] == '\n')
+								outputIndex++;
+						}
+						
+						hasFoundFirstLineAfterIndicator = true;
+					}
+					else if (character == '\n')
+					{
+						hasFoundFirstLineAfterIndicator = true;
+					}
+				}
+				else
+				{
+					// Read line by line each test's fully qualified name
+					if (character == '\t' || character == ' ')
+					{
+						if (character == '\t')
+						{
+							outputIndex++;
+						}
+						if (character == ' ')
+						{
+							// This code skips 4 space characters
+							while (outputIndex < outputEntire.Length)
+							{
+								if (outputEntire[outputIndex] == ' ')
+									outputIndex++;
+								else
+									break;
+							}
+						}
+					
+						var startInclusiveIndex = outputIndex;
+						var endExclusiveIndex = -1; // Exclusive because don't include the line ending
+						
+						while (outputIndex < outputEntire.Length)
+						{
+							if (outputEntire[outputIndex] == '\r')
+							{
+								endExclusiveIndex = outputIndex;
+							
+								// Peek for "\r\n"
+								var peekIndex = outputIndex + 1;
+								if (peekIndex < outputEntire.Length)
+								{
+									if (outputEntire[peekIndex] == '\n')
+										outputIndex++;
+								}
+							}
+							else if (outputEntire[outputIndex] == '\n')
+							{
+								endExclusiveIndex = outputIndex;
+							}
+							
+							if (endExclusiveIndex != -1)
+								break;
+							
+							outputIndex++;
+						}
+						
+						// If final test didn't end with a newline. (this is a presumed possibility, NOT backed up by fact)
+						if (endExclusiveIndex == -1 && outputIndex == outputEntire.Length)
+							endExclusiveIndex = outputEntire.Length;
+					
+						theFollowingTestsAreAvailableList.Add(
+							outputEntire.Substring(startInclusiveIndex, endExclusiveIndex - startInclusiveIndex));
+					}
+					else
+					{
+						// The line did not start with '\t' or etc... therefore skip to the next line
+						while (outputIndex < outputEntire.Length)
+						{
+							if (outputEntire[outputIndex] == '\r')
+							{
+								// Peek for "\r\n"
+								var peekIndex = outputIndex + 1;
+								if (peekIndex < outputEntire.Length)
+								{
+									if (outputEntire[peekIndex] == '\n')
+										outputIndex++;
+								}
+								
+								break;
+							}
+							else if (outputEntire[outputIndex] == '\n')
+							{
+								break;
+							}
+							
+							outputIndex++;
+						}
+					}
+				}
+				
+				outputIndex++;
+			}
+			
+			return theFollowingTestsAreAvailableList;
 		}
-
-		if (outputLine.StartsWith("\t") || outputLine.StartsWith(" "))
-			TheFollowingTestsAreAvailableList.Add(outputLine);
-
-		return new();
+		else
+		{
+			return null;
+		}
 	}
 
 	public class NewListModel

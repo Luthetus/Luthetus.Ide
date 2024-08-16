@@ -46,7 +46,7 @@ public class TreeViewProjectTestModel : TreeViewWithType<ProjectTestModel>
 
 	public override Task LoadChildListAsync()
 	{
-		if (Item.DotNetTestListTestsCommandOutput is not null)
+		if (Item.TestNameFullyQualifiedList is not null)
 			return Task.CompletedTask;
 
 		var previousChildren = new List<TreeViewNoType>(ChildList);
