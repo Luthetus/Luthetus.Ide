@@ -103,7 +103,7 @@ public class PanelStateReducerTests
                 Key<Panel>.NewKey(),
                 Key<IDynamicViewModel>.NewKey(),
                 ContextFacts.SolutionExplorerContext.ContextKey,
-                typeof(IconCSharpClass),
+                typeof(IconCSharpClassFragment),
                 new(),
                 dispatcher,
                 serviceProvider.GetRequiredService<IDialogService>(),
@@ -128,7 +128,7 @@ public class PanelStateReducerTests
                 Key<Panel>.NewKey(),
                 Key<IDynamicViewModel>.NewKey(),
                 ContextFacts.SolutionExplorerContext.ContextKey,
-                typeof(IconCSharpClass),
+                typeof(IconCSharpClassFragment),
                 new(),
                 dispatcher,
                 serviceProvider.GetRequiredService<IDialogService>(),
@@ -245,7 +245,7 @@ public class PanelStateReducerTests
                 Key<Panel>.NewKey(),
                 Key<IDynamicViewModel>.NewKey(),
                 context.ContextKey,
-                typeof(IconCSharpClass),
+                typeof(IconCSharpClassFragment),
                 new(),
                 dispatcher,
                 serviceProvider.GetRequiredService<IDialogService>(),
@@ -316,7 +316,11 @@ public class PanelStateReducerTests
 
         var serviceCollection = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusCommonServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
+            .AddLuthetusCommonServices(
+            	new LuthetusHostingInformation(
+            		LuthetusHostingKind.UnitTestingSynchronous,
+            		LuthetusPurposeKind.Common,
+            		backgroundTaskService))
             .AddFluxor(options => options.ScanAssemblies(typeof(LuthetusCommonConfig).Assembly));
 
         serviceProvider = serviceCollection.BuildServiceProvider();
@@ -358,7 +362,7 @@ public class PanelStateReducerTests
             Key<Panel>.NewKey(),
             Key<IDynamicViewModel>.NewKey(),
             ContextFacts.SolutionExplorerContext.ContextKey,
-            typeof(IconCSharpClass),
+            typeof(IconCSharpClassFragment),
             null,
             dispatcher,
             serviceProvider.GetRequiredService<IDialogService>(),

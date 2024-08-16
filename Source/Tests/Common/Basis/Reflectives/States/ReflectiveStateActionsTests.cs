@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Reflectives.Models;
 using Luthetus.Common.RazorLib.Reflectives.States;
 using Luthetus.Common.RazorLib.Icons.Displays.Codicon;
@@ -75,10 +75,10 @@ public class ReflectiveStateActionsTests
 
         var componentTypeList = new List<Type>
         {
-            typeof(IconArrowDown),
-            typeof(IconArrowLeft),
-            typeof(IconArrowRight),
-            typeof(IconArrowUp),
+            typeof(IconArrowDownFragment),
+            typeof(IconArrowLeftFragment),
+            typeof(IconArrowRightFragment),
+            typeof(IconArrowUpFragment),
         };
 
         model = new ReflectiveModel(

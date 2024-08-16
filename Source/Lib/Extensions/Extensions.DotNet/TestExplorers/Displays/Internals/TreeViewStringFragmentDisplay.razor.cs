@@ -29,7 +29,6 @@ public partial class TreeViewStringFragmentDisplay : FluxorComponent
 
 	private string? GetTerminalCommandRequestOutput(ITerminal terminal)
 	{
-		return $"TODO: {nameof(GetTerminalCommandRequestOutput)}";
-		// return TreeViewStringFragment.Item.TerminalCommandRequest?.OutputBuilder?.ToString() ?? null;
+		return TreeViewStringFragment.Item.TerminalCommandParsed?.OutputCache.ToString() ?? null;
 	}
 }

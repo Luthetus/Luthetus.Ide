@@ -19,13 +19,19 @@ public class ProjectTestModel
 		ReRenderNodeAction = reRenderNodeAction;
 	}
 
-	public List<string>? DotNetTestListTestsCommandOutput { get; set; }
+	/// <summary>
+	/// If null then the test was not a "test-project".
+	/// As of this comment that means that the text "The following Tests are available:"
+	/// was not found in the output (2024-08-15).
+	/// </summary>
+	public List<string>? TestNameFullyQualifiedList { get; set; }
 	public Func<Func<Dictionary<string, StringFragment>, Task>, Task> EnqueueDiscoverTestsFunc { get; set; }
 	public Dictionary<string, StringFragment> RootStringFragmentMap { get; set; } = new();
 
 	public Guid ProjectIdGuid { get; }
 	public IAbsolutePath AbsolutePath { get; }
 	public TerminalCommandRequest? TerminalCommandRequest { get; set; }
+	public TerminalCommandParsed? TerminalCommandParsed { get; set; }
 	public Key<TerminalCommandRequest> DotNetTestListTestsTerminalCommandRequestKey { get; } = Key<TerminalCommandRequest>.NewKey();
 	public Action<TreeViewNoType> ReRenderNodeAction { get; }
 
