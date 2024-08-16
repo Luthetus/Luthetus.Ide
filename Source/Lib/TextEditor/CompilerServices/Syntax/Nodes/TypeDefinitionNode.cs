@@ -19,6 +19,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
         TypeClauseNode? inheritedTypeClauseNode,
+		OpenBraceToken? openBraceToken,
         CodeBlockNode? typeBodyCodeBlockNode)
     {
         AccessModifierKind = accessModifierKind;
@@ -29,6 +30,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         GenericArgumentsListingNode = genericArgumentsListingNode;
         PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
         InheritedTypeClauseNode = inheritedTypeClauseNode;
+        OpenBraceToken = openBraceToken;
         TypeBodyCodeBlockNode = typeBodyCodeBlockNode;
 
         var children = new List<ISyntax>
@@ -65,6 +67,10 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     /// </summary>
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; }
+    /// <summary>
+    /// The open brace for the body code block node.
+    /// </summary>
+    public OpenBraceToken OpenBraceToken { get; }
 
     /// <summary>
     /// Given:<br/>

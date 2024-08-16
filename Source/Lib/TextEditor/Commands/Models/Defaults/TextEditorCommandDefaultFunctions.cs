@@ -933,6 +933,8 @@ public class TextEditorCommandDefaultFunctions
 							OnClickFunc: () => 
 							{
 								TextEditorRefactorFacts.GenerateConstructor(
+									typeDefinitionNode,
+									commandArgs.ServiceProvider,
 									editContext.TextEditorService,
 							        modelModifier.ResourceUri,
 							        viewModelModifier.ViewModel.ViewModelKey);
@@ -942,7 +944,7 @@ public class TextEditorCommandDefaultFunctions
 					else
 					{
 						menuOptionList.Add(new MenuOptionRecord(
-							$"Parent is not {nameof(SyntaxKind)}.{nameof(SyntaxKind.TypeClauseNode)} it is: {nameof(SyntaxKind)}.{syntaxNode.Parent.SyntaxKind}",
+							$"Parent is not {nameof(SyntaxKind)}.{nameof(SyntaxKind.TypeDefinitionNode)} it is: {nameof(SyntaxKind)}.{syntaxNode.Parent.SyntaxKind}",
 							MenuOptionKind.Other,
 							OnClickFunc: async () => {}));
 					}

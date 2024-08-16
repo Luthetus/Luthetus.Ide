@@ -1,5 +1,13 @@
+using Microsoft.Extensions.DependencyInjection;
+using Fluxor;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -45,12 +53,82 @@ public class TextEditorRefactorFunctions
 	/// But, in terms of progressively approaching that goal, how should this be handled?
 	/// </summary>
 	public static void GenerateConstructor(
+		TypeDefinitionNode unsafeTypeDefinitionNode,
+		IServiceProvider serviceProvider,
 		ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursorModifier)
     {
+		var compilerService = modelModifier.CompilerService;
+	
+		var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
+		
+		if (compilerServiceResource is null)
+		{
+			NotificationHelper.DispatchError(
+		        nameof(GenerateConstructor), "compilerServiceResource was null", serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
+			return;
+		}
+    
+		// Try to match unsafeTypeDefinitionNode to the current text editor state
+		// in the event that an edit to the document was made between the time
+		// that the menu option was constructed, and the menu option was onclick'd.
+		{
+			var unsafeStartingIndexInclusive = unsafeTypeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+
+			var syntaxNode = compilerService.Binder.GetSyntaxNode(unsafeStartingIndexInclusive, compilerServiceResource.CompilationUnit);
+			
+			if (syntaxNode is null)
+			{
+				NotificationHelper.DispatchError(
+			        nameof(GenerateConstructor), "syntaxNode was null", serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
+				return;
+			}
+			
+			if (syntaxNode is not TypeDefinitionNode typeDefinitionNode)
+			{
+				NotificationHelper.DispatchError(
+			        nameof(GenerateConstructor), $"Node is not {nameof(SyntaxKind)}.{nameof(SyntaxKind.TypeDefinitionNode)} it is: {nameof(SyntaxKind)}.{syntaxNode.Parent.SyntaxKind}", serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
+			    return;
+			}
+			
+			if (typeDefinitionNode.TypeBodyCodeBlockNode is null)
+			{
+				NotificationHelper.DispatchError(
+			        nameof(GenerateConstructor), $"typeDefinitionNode.TypeBodyCodeBlockNode was null", serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
+			    return;
+			}
+			
+			try
+			{
+				var insertionPointForText = 1 + typeDefinitionNode.OpenBraceToken.TextSpan.StartingIndexInclusive;
+				
+				var lineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(insertionPointForText);
+				
+				var cursor = new TextEditorCursor(
+					lineAndColumnIndices.lineIndex,
+					lineAndColumnIndices.columnIndex,
+					true);
+				
+			
+				modelModifier.Insert(
+					"abc123", 
+					new(Key<TextEditorViewModel>.Empty, new List<TextEditorCursorModifier> { new(cursor) }));
+			}
+			catch (Exception e)
+			{
+				NotificationHelper.DispatchError(
+			        nameof(GenerateConstructor), e.ToString(), serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
+			}
+			finally
+			{
+				NotificationHelper.DispatchInformative(
+			        nameof(GenerateConstructor), "?", serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
+			}
+		}
+    
         return;
     }
 }
