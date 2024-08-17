@@ -5,7 +5,15 @@ All notable changes to the `Luthetus.TextEditor` repository will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.1.0] - 2023-08-15
+## [2.2.0] - ????-??-??
+<details>
+  <summary>Click to show changes</summary>
+
+	### Fixed
+	- Home keybind understands indentation
+</details>
+
+## [2.1.0] - 2024-08-15
 <details>
   <summary>Click to show changes</summary>
 
@@ -14,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Fix out of sync syntax highlighting.
 </details>
 
-## [2.0.0] - 2023-08-14
+## [2.0.0] - 2024-08-14
 <details>
   <summary>Click to show changes</summary>
 

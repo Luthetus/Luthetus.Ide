@@ -517,9 +517,45 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 break;
             case KeyboardKeyFacts.MovementKeys.HOME:
                 if (keyboardEventArgs.CtrlKey)
+                {
                     cursorModifier.LineIndex = 0;
-
-                cursorModifier.SetColumnIndexAndPreferred(0);
+                    cursorModifier.SetColumnIndexAndPreferred(0);
+                }
+				else
+				{
+					var originalPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+					
+					var lineInformation = modelModifier.GetLineInformation(cursorModifier.LineIndex);
+					var lastValidPositionIndex = lineInformation.StartPositionIndexInclusive + lineInformation.LastValidColumnIndex;
+					
+					cursorModifier.ColumnIndex = 0; // This column index = 0 is needed for the while loop below.
+					var indentationPositionIndexExclusiveEnd = modelModifier.GetPositionIndex(cursorModifier);
+					
+					var cursorWithinIndentation = false;
+		
+					while (indentationPositionIndexExclusiveEnd < lastValidPositionIndex)
+					{
+						var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndexExclusiveEnd].Value;
+		
+						if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+						{
+							if (indentationPositionIndexExclusiveEnd == originalPositionIndex)
+								cursorWithinIndentation = true;
+						}
+						else
+						{
+							break;
+						}
+						
+						indentationPositionIndexExclusiveEnd++;
+					}
+					
+					if (originalPositionIndex == indentationPositionIndexExclusiveEnd)
+						cursorModifier.SetColumnIndexAndPreferred(0);
+					else
+						cursorModifier.SetColumnIndexAndPreferred(
+							indentationPositionIndexExclusiveEnd - lineInformation.StartPositionIndexInclusive);
+				}
 
                 break;
             case KeyboardKeyFacts.MovementKeys.END:
