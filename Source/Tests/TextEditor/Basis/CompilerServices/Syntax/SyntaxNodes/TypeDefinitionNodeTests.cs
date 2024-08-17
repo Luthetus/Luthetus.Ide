@@ -63,6 +63,7 @@ public class TypeDefinitionNodeTests
             genericArgumentsListingNode,
             null,
             inheritedTypeClauseNode,
+            openBraceToken: null,
             typeBodyCodeBlockNode);
 
         Assert.Equal(typeIdentifier, typeDefinitionNode.TypeIdentifierToken);
