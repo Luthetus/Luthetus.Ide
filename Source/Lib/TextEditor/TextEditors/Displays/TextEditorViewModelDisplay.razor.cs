@@ -84,7 +84,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     // TODO: awkward public
     public PresentationAndSelectionDriver _presentationAndSelectionDriver;
     public CursorDriver _cursorDriver;
-
     
     private bool _thinksTouchIsOccurring;
     private DateTime? _touchStartDateTime = null;
@@ -121,22 +120,10 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
         ConstructRenderBatch();
 
-		// TODO: This line is why one cannot switch to a vim keymap, without needing to restart the IDE...
-		//       ...for the change to take effect.
-		//       |
-		//       In short, there is a sort of hack for "keymap overriding".
-		//       'Keymap = renderBatch.ViewModelDisplayOptions.KeymapOverride'
-		//       |
-		//	   This is done 'OnInitialized', which for the main editor only happens one when initially opening the app.
-		//       Therefore, one can never change their keymap for the main editor.
-		_componentData = new(
-			_textEditorHtmlElementId,
-			ViewModelDisplayOptions,
-			_storedRenderBatch.Options,
-			ServiceProvider);
+		SetComponentData();
 
         TextEditorStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
-        TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
+        TextEditorOptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
         TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
 
         base.OnInitialized();
@@ -248,9 +235,29 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         _previousRenderBatch = _storedRenderBatch;
         _storedRenderBatch = renderBatch;
     }
+    
+    private void SetComponentData()
+    {
+		_componentData = new(
+			_textEditorHtmlElementId,
+			ViewModelDisplayOptions,
+			_storedRenderBatch.Options,
+			ServiceProvider);
+    }
 
     private async void GeneralOnStateChangedEventHandler(object? sender, EventArgs e) =>
         await InvokeAsync(StateHasChanged);
+        
+    private async void TextEditorOptionsStateWrap_StateChanged(object? sender, EventArgs e)
+    {
+    	if (TextEditorOptionsStateWrap.Value.Options.Keymap.Key != _componentData.Options.Keymap.Key)
+    	{
+    		ConstructRenderBatch();
+    		SetComponentData();
+    	}
+    	
+    	await InvokeAsync(StateHasChanged);
+    }
         
     private async void ViewModel_CursorShouldBlinkChanged() =>
         await InvokeAsync(StateHasChanged);
@@ -669,7 +676,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public void Dispose()
     {
         TextEditorStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
-        TextEditorOptionsStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
+        TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrap_StateChanged;
 		TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         lock (_linkedViewModelLock)
