@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -18,7 +19,7 @@ public sealed record CompilationUnit : ISyntaxNode
         IBinder? binder)
     {
         RootCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
-        Lexer = lexer ?? new Lexer(null, null, null);
+        Lexer = lexer ?? new Lexer(ResourceUri.Empty, null, null);
         Parser = parser ?? new Parser(Lexer);
         Binder = binder ?? new Binder();
 
