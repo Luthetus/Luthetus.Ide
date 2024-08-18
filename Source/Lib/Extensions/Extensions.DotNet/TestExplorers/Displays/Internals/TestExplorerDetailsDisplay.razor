@@ -1,5 +1,6 @@
 @using Luthetus.Common.RazorLib.Keys.Models
 @using Luthetus.Common.RazorLib.ShouldRenderBoundaries.Displays
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models
 @using Luthetus.Ide.RazorLib.Terminals.Models;
@@ -9,6 +10,7 @@
 	 style="@ElementDimensions.StyleString">
 
 	<ShouldRenderBoundary>
-		<ReadOnlyTextEditorViewModelDisplay TextEditorViewModelKey="DetailsTextEditorViewModelKey" />
+		<TextEditorViewModelDisplay TextEditorViewModelKey="DetailsTextEditorViewModelKey"
+									ViewModelDisplayOptions="_textEditorViewModelDisplayOptions" />
 	</ShouldRenderBoundary>
 </div>
