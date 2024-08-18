@@ -142,8 +142,8 @@ public static class KeyboardKeyFacts
     public static bool CheckIsAlternateContextMenuEvent(
         string key, string code, bool shiftWasPressed, bool altWasPressed)
     {
-        var wasShiftF10 = (key == "F10" || key == "f10")
-                          && shiftWasPressed;
+        var wasShiftF10 = (key == "F10" || key == "f10") &&
+        				  shiftWasPressed;
 
         return wasShiftF10;
     }
