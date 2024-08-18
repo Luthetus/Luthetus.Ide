@@ -497,7 +497,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var character = (char)i;
 
-                var keymapArgument = new KeymapArgument($"{char.ToUpperInvariant(character)}", $"Key{char.ToUpperInvariant(character)}")
+                var keymapArgument = new KeymapArgument($"{character}", $"Key{char.ToUpperInvariant(character)}")
                 {
                     LayerKey = keymapLayerKey
                 };

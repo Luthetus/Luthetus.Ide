@@ -232,7 +232,7 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
         {
             var character = (char)i;
 
-            _ = Map.TryAdd(new KeymapArgument($"{char.ToUpperInvariant(character)}", $"Key{char.ToUpperInvariant(character)}")
+            _ = Map.TryAdd(new KeymapArgument($"{character}", $"Key{char.ToUpperInvariant(character)}")
             {
                 CtrlKey = true,
                 AltKey = true,
