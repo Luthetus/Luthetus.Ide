@@ -60,112 +60,179 @@ public class CommandFactory : ICommandFactory
         // ActiveContextsContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyA", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("a", "KeyA", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.ActiveContextsContext, "Focus: ActiveContexts", "focus-active-contexts"));
         }
         // BackgroundServicesContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyB", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("b", "KeyB", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.BackgroundServicesContext, "Focus: BackgroundServices", "focus-background-services"));
         }
         // CompilerServiceExplorerContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyC", true, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("C", "KeyC", Key<KeymapLayer>.Empty)
+                {
+                	ShiftKey = true,
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.CompilerServiceExplorerContext, "Focus: CompilerServiceExplorer", "focus-compiler-service-explorer"));
         }
         // CompilerServiceEditorContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyC", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("c", "KeyC", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.CompilerServiceEditorContext, "Focus: CompilerServiceEditor", "focus-compiler-service-editor"));
         }
         // DialogDisplayContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyD", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("d", "KeyD", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.DialogDisplayContext, "Focus: DialogDisplay", "focus-dialog-display"));
         }
         // EditorContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyE", true, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("E", "KeyE", Key<KeymapLayer>.Empty)
+                {
+                	ShiftKey = true,
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.EditorContext, "Focus: Editor", "focus-editor"));
         }
         // FolderExplorerContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyF", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("f", "KeyF", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.FolderExplorerContext, "Focus: FolderExplorer", "focus-folder-explorer"));
         }
         // GitContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyG", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("g", "KeyG", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.GitContext, "Focus: Git", "focus-git"));
         }
         // GlobalContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyG", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("g", "KeyG", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.GlobalContext, "Focus: Global", "focus-global"));
         }
         // MainLayoutFooterContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyF", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("f", "KeyF", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.MainLayoutFooterContext, "Focus: Footer", "focus-footer"));
         }
         // MainLayoutHeaderContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyH", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("h", "KeyH", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.MainLayoutHeaderContext, "Focus: Header", "focus-header"));
         }
         // ErrorListContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyE", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("e", "KeyE", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.ErrorListContext, "Focus: Error List", "error-list"));
         }
         // OutputContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyO", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("o", "KeyO", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.OutputContext, "Focus: Output", "focus-output"));
         }
 		// TerminalContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyT", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("t", "KeyT", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.TerminalContext, "Focus: Terminal", "focus-terminal"));
         }
         // TestExplorerContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyT", true, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("T", "KeyT", Key<KeymapLayer>.Empty)
+                {
+                	ShiftKey = true,
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.TestExplorerContext, "Focus: Test Explorer", "focus-test-explorer"));
         }
         // TextEditorContext
         {
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("KeyT", false, true, true, Key<KeymapLayer>.Empty),
+                new KeymapArgument("t", "KeyT", Key<KeymapLayer>.Empty)
+                {
+                	CtrlKey = true,
+                	AltKey = true,
+                },
                 ConstructFocusContextElementCommand(
                     ContextFacts.TextEditorContext, "Focus: TextEditor", "focus-text-editor"));
         }
@@ -192,7 +259,7 @@ public class CommandFactory : ICommandFactory
                 });
 
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                    new KeymapArgument("Escape", false, false, false, Key<KeymapLayer>.Empty),
+                    new KeymapArgument("Escape", "Escape", Key<KeymapLayer>.Empty),
                     focusTextEditorCommand);
         }
 
@@ -207,7 +274,11 @@ public class CommandFactory : ICommandFactory
 				});
 
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-	                new KeymapArgument("KeyF", true, true, false, Key<KeymapLayer>.Empty),
+	                new KeymapArgument("F", "KeyF", Key<KeymapLayer>.Empty)
+	                {
+	                	ShiftKey = true,
+	                	CtrlKey = true,
+	                },
 	                openFindDialogCommand);
         }
 
@@ -233,7 +304,10 @@ public class CommandFactory : ICommandFactory
 				});
 
             _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-	                new KeymapArgument("Comma", false, true, false, Key<KeymapLayer>.Empty),
+	                new KeymapArgument(",", "Comma", Key<KeymapLayer>.Empty)
+	                {
+	                	CtrlKey = true,
+	                },
 	                openCodeSearchDialogCommand);
         }
 
@@ -298,11 +372,18 @@ public class CommandFactory : ICommandFactory
 				});
 
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument("Tab", false, true, false, Key<KeymapLayer>.Empty),
+					new KeymapArgument("Tab", "Tab", Key<KeymapLayer>.Empty)
+					{
+						CtrlKey = true,
+					},
 					openContextSwitchDialogCommand);
 					
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument("Slash", false, true, true, Key<KeymapLayer>.Empty),
+					new KeymapArgument("/", "Slash", Key<KeymapLayer>.Empty)
+					{
+						CtrlKey = true,
+						AltKey = true,
+					},
 					openContextSwitchDialogCommand);
 		}
     }
