@@ -116,6 +116,8 @@ public class OnMouseDown : ITextEditorWork
 
             primaryCursorModifier.SelectionEndingPositionIndex = cursorPositionIndex;
             
+            EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+            
             await EditContext.TextEditorService
             	.FinalizePost(EditContext)
             	.ConfigureAwait(false);

@@ -137,6 +137,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
         TextEditorStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
+        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
 
         base.OnInitialized();
     }
@@ -249,6 +250,9 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     }
 
     private async void GeneralOnStateChangedEventHandler(object? sender, EventArgs e) =>
+        await InvokeAsync(StateHasChanged);
+        
+    private async void ViewModel_CursorShouldBlinkChanged() =>
         await InvokeAsync(StateHasChanged);
 
     private void HandleTextEditorViewModelKeyChange()
@@ -666,6 +670,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     {
         TextEditorStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
         TextEditorOptionsStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
+		TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         lock (_linkedViewModelLock)
         {
