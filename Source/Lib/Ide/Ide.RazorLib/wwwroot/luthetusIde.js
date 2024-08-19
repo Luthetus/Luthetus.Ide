@@ -7,8 +7,19 @@ window.luthetusIde = {
     	// the fact that, for example, 'F5' refreshes
     	// the native application is very frustrating.
         window.addEventListener('keydown', function(e) {
-		    if (e.code === 'F5') {
-		        e.preventDefault();
+        	if (e.code === 'F5') {
+        		e.preventDefault();
+        	}
+
+		    if (e.ctrlKey) {
+		    
+		    	switch (e.code)
+		    	{
+		    		case 'KeyR':
+		    		case 'KeyP':
+		    			e.preventDefault();
+		    			break;
+		    	}
 		    }
 		});
     },
