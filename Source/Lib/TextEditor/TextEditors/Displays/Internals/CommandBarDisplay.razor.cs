@@ -51,10 +51,31 @@ public partial class CommandBarDisplay : FluxorComponent
         {
             // await RestoreFocusToTextEditor.Invoke().ConfigureAwait(false);
 
-            TextEditorService.PostRedundant(
+            TextEditorService.PostUnique(
                 nameof(HandleOnKeyDown),
-                renderBatchLocal.ViewModel.ResourceUri,
-                renderBatchLocal.ViewModel.ViewModelKey,
+                editContext =>
+                {
+                	var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);
+		            var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+		            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+		            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		
+		            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+		                return Task.CompletedTask;
+
+                    viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                    {
+                        CommandBarValue = string.Empty,
+                        ShowCommandBar = false
+                    };
+
+                    return Task.CompletedTask;
+                });
+        }
+        else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+        {
+        	TextEditorService.PostUnique(
+                nameof(HandleOnKeyDown),
                 editContext =>
                 {
                 	var modelModifier = editContext.GetModelModifier(renderBatchLocal.ViewModel.ResourceUri);

@@ -20,6 +20,7 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Editors.Models;
+using Luthetus.Ide.RazorLib.CommandBars.States;
 
 namespace Luthetus.Ide.RazorLib.Commands;
 
@@ -385,6 +386,23 @@ public class CommandFactory : ICommandFactory
 						AltKey = true,
 					},
 					openContextSwitchDialogCommand);
+		}
+		// Command bar
+		{
+			var openCommandBarCommand = new CommonCommand(
+	            "Open: Command Bar", "open-command-bar", false,
+	            commandArgs =>
+				{
+                    _dispatcher.Dispatch(new CommandBarState.SetShouldDisplayAction(true));
+                    return Task.CompletedTask;
+				});
+		
+			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
+					new KeymapArgument("p", "KeyP", Key<KeymapLayer>.Empty)
+					{
+						CtrlKey = true,
+					},
+					openCommandBarCommand);
 		}
     }
 
