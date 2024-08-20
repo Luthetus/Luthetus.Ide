@@ -142,7 +142,28 @@ public partial class ContextSwitchDisplay : ComponentBase
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
-            	// TODO: Determine current column, ...
+            	var inGroupIndex = GetActiveGroupIndex();
+            	
+            	if (inGroupIndex < 0)
+            		return;
+            		
+            	var localActiveIndex = _activeIndex;
+            	
+            	// Move to left column
+            	var outGroupIndex = inGroupIndex - 1;
+            	if (outGroupIndex == -1)
+            		outGroupIndex = _groupMenuTupleList.Count - 1;
+            		
+            	var outGroup = _groupMenuTupleList[outGroupIndex];
+            	
+            	// Set offset within left column relative to the previously held offset
+            	var inGroup = _groupMenuTupleList[inGroupIndex];
+            	var inGroupOffset = localActiveIndex - inGroup.StartInclusiveIndex;
+            	
+            	// If matching inGroupOffset results in out of bounds, use last valid index for the outGroup
+            	_activeIndex = Math.Min(
+            		outGroup.StartInclusiveIndex + inGroupOffset,
+            		outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
