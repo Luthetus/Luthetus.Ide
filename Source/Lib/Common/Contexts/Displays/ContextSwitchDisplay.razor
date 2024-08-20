@@ -16,6 +16,8 @@
     
     @if (_hasCalculatedGroupMenuTupleList)
     {
+    	<div>GetActiveGroupIndex(): @GetActiveGroupIndex()</div>
+    
     	var flatBadIndex = 0;
     	
     	foreach (var tuple in _groupMenuTupleList)
@@ -24,7 +26,7 @@
     		
     		<div>
     			<div style="background-color: var(--luth_ide_section-title-background-color);">
-    				@tuple.ContextSwitchGroupTitle
+    				@tuple.Title
     			</div>
     			
     			<div>
