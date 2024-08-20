@@ -2,6 +2,7 @@
 
 <div class="luth_context-switch"
 	 style="display: flex; justify-content: space-evenly;"
+	 @ref="_contextSwitchHtmlElement"
      @onclick:stopPropagation="true"
      @ondblclick:stopPropagation="true"
      @onkeydownwithpreventscroll:stopPropagation="true"
@@ -22,18 +23,24 @@
     		var groupEndExclusiveIndexFlatList = flatBadIndex + tuple.Menu.MenuOptionList.Length;
     		
     		<div>
-    			@for (; flatBadIndex < groupEndExclusiveIndexFlatList; flatBadIndex++)
-	    		{
-	    			var index = flatBadIndex;
-	    			if (index >= _flatMenuOptionList.Count)
-	    				break;
-	    				
-	    			var menuOption = _flatMenuOptionList[index];
-	    			
-					<MenuOptionDisplay MenuOptionRecord="menuOption"
-		                               ActiveMenuOptionRecordIndex="_activeIndex"
-		                               Index="index"/>
-	    		}
+    			<div style="background-color: var(--luth_ide_section-title-background-color);">
+    				@tuple.ContextSwitchGroupTitle
+    			</div>
+    			
+    			<div>
+	    			@for (; flatBadIndex < groupEndExclusiveIndexFlatList; flatBadIndex++)
+		    		{
+		    			var index = flatBadIndex;
+		    			if (index >= _flatMenuOptionList.Count)
+		    				break;
+		    				
+		    			var menuOption = _flatMenuOptionList[index];
+		    			
+						<MenuOptionDisplay MenuOptionRecord="menuOption"
+			                               ActiveMenuOptionRecordIndex="_activeIndex"
+			                               Index="index"/>
+		    		}
+		    	</div>
     		</div>
     	}
     }

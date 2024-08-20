@@ -24,8 +24,10 @@ public partial class ContextSwitchDisplay : ComponentBase
     
     private readonly List<(string ContextSwitchGroupTitle, MenuRecord Menu)> _groupMenuTupleList = new();
     private readonly List<MenuOptionRecord> _flatMenuOptionList = new();
+    
     private bool _hasCalculatedGroupMenuTupleList = false;
     private int _activeIndex = 0;
+    private ElementReference? _contextSwitchHtmlElement;
 	
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -42,6 +44,18 @@ public partial class ContextSwitchDisplay : ComponentBase
 			}
 			
 			_hasCalculatedGroupMenuTupleList = true;
+			await InvokeAsync(StateHasChanged);
+			
+			try
+            {
+                await _contextSwitchHtmlElement.Value
+                    .FocusAsync()
+                    .ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+				// Eat this exception
+            }
 		}
 
 		base.OnAfterRenderAsync(firstRender);
@@ -59,6 +73,7 @@ public partial class ContextSwitchDisplay : ComponentBase
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
+            	// TODO: Determine current column, ...
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
@@ -73,6 +88,10 @@ public partial class ContextSwitchDisplay : ComponentBase
                     _activeIndex = _flatMenuOptionList.Count - 1;
                 else
                     _activeIndex--;
+                break;
+            case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
+            	// TODO: Determine current column, ...
                 break;
             case KeyboardKeyFacts.MovementKeys.HOME:
                 _activeIndex = 0;
