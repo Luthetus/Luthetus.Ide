@@ -4,4 +4,11 @@
 	height: 60vh;
 	left: 20vw;
 	top: 20vh;
+	z-index: var(--luth_dialog-display-z-index);
+    color: var(--luth_secondary-foreground-color);
+    background-color: var(--luth_secondary-background-color);
+    box-shadow: 0 0 var(--luth_dialog-display-box-shadow-blur-radius) var(--luth_primary-box-shadow-color);
 }
+    .luth_widget:focus {
+        outline: 4px solid var(--luth_toggled-on-hover-background-color);
+    }

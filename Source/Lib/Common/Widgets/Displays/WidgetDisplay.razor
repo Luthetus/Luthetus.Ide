@@ -1,4 +1,13 @@
-<div class="luth_widget">
+<div class="luth_widget"
+	 id="@WIDGET_HTML_ELEMENT_ID"
+     tabindex="-1"
+	 @onfocusin="HandleOnFocusIn"
+     @onfocusin:stopPropagation="true"
+     @onfocusout="HandleOnFocusOut"
+     @onfocusout:stopPropagation="true"
+     @onmousedown="HandleOnMouseDown"
+     @onmousedown:stopPropagation="true">
+     
 	<CascadingValue Value="Widget">
         <DynamicComponent Type="Widget.ComponentType"
                           Parameters="Widget.ComponentParameterMap" />

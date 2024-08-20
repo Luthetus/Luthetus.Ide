@@ -4,6 +4,8 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Widgets.Models;
+using Luthetus.Common.RazorLib.Widgets.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
@@ -16,7 +18,7 @@ public partial class ContextSwitchDisplay : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
 	
 	[CascadingParameter]
-    public IDialog DialogRecord { get; set; } = null!;
+    public WidgetModel Widget { get; set; } = null!;
 	
 	private MenuRecord _menu;
 	
@@ -39,7 +41,7 @@ public partial class ContextSwitchDisplay : ComponentBase
         		MenuOptionKind.Other,
         		OnClickFunc: () =>
         		{
-        			Dispatcher.Dispatch(new DialogState.DisposeAction(DialogRecord.DynamicViewModelKey));
+        			Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
         			return Task.CompletedTask;
         		}));
         }
