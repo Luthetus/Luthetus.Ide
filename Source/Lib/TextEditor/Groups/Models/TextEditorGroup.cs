@@ -17,6 +17,7 @@ public record TextEditorGroup(
         Key<TextEditorGroup> GroupKey,
         Key<TextEditorViewModel> ActiveViewModelKey,
         ImmutableList<Key<TextEditorViewModel>> ViewModelKeyList,
+        Category Category,
         ITextEditorService TextEditorService,
         IDispatcher Dispatcher,
         IDialogService DialogService,

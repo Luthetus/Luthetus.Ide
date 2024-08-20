@@ -16,6 +16,7 @@ using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 
@@ -42,6 +43,8 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
+    [Inject]
+    private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -76,18 +79,37 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 						() =>
 						{
 							var menuOptionList = new List<MenuOptionRecord>();
+							
+							var mainGroup = TextEditorService.GroupApi.GetGroups()
+								.FirstOrDefault(x => x.Category.Value == "main");
+								
+							if (mainGroup is not null)
+							{
+								var viewModelList = new List<TextEditorViewModel>();
+								
+								foreach (var viewModelKey in mainGroup.ViewModelKeyList)
+								{
+									var viewModel = TextEditorService.ViewModelApi.GetOrDefault(viewModelKey);
+									
+									if (viewModel is not null)
+									{
+										viewModelList.Add(viewModel);
 										
-							foreach (var character in "abc")
-					        {
-					        	menuOptionList.Add(new MenuOptionRecord(
-					        		character.ToString(),
-					        		MenuOptionKind.Other,
-					        		OnClickFunc: () =>
-					        		{
-					        			Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
-					        			return Task.CompletedTask;
-					        		}));
-					        }
+							        	var absolutePath = EnvironmentProvider.AbsolutePathFactory(
+								        	viewModel.ResourceUri.Value,
+								        	false);
+							        	
+							        	menuOptionList.Add(new MenuOptionRecord(
+							        		absolutePath.NameWithExtension,
+							        		MenuOptionKind.Other,
+							        		OnClickFunc: () =>
+							        		{
+							        			Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
+							        			return Task.CompletedTask;
+							        		}));
+							        }
+								}
+							}
 							
 							var menu = menuOptionList.Count == 0
 								? MenuRecord.Empty
