@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Themes.States;
@@ -6,6 +7,11 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Displays;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Menus.Models;
+using Luthetus.Common.RazorLib.Widgets.Models;
+using Luthetus.Common.RazorLib.Widgets.States;
+using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.States;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
@@ -37,6 +43,8 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     [Inject]
     private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
     
+    public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
+    
     protected override void OnInitialized()
     {
     	BackgroundTaskService.Enqueue(
@@ -60,6 +68,33 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
                     Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
 
                 await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
+                
+                Dispatcher.Dispatch(new ContextSwitchState.RegisterContextSwitchGroupAction(
+                	new ContextSwitchGroup(
+                		ContextSwitchGroupKey,
+						"Text Editor",
+						() =>
+						{
+							var menuOptionList = new List<MenuOptionRecord>();
+										
+							foreach (var character in "abc")
+					        {
+					        	menuOptionList.Add(new MenuOptionRecord(
+					        		character.ToString(),
+					        		MenuOptionKind.Other,
+					        		OnClickFunc: () =>
+					        		{
+					        			Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
+					        			return Task.CompletedTask;
+					        		}));
+					        }
+							
+							var menu = menuOptionList.Count == 0
+								? MenuRecord.Empty
+								: new MenuRecord(menuOptionList.ToImmutableArray());
+								
+							return Task.FromResult(menu);
+						})));
             });
             
         base.OnInitialized();
