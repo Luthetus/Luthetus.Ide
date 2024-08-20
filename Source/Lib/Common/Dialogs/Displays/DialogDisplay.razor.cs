@@ -28,7 +28,7 @@ public partial class DialogDisplay : ComponentBase, IDisposable
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public IDialog Dialog { get; set; } = null!;
     [Parameter, EditorRequired]
     public Func<IDialog, Task> OnFocusInFunc { get; set; } = null!;

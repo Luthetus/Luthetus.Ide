@@ -11,6 +11,8 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
+using Luthetus.Common.RazorLib.Widgets.Models;
+using Luthetus.Common.RazorLib.Widgets.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
@@ -52,7 +54,7 @@ public class CommandFactory : ICommandFactory
 		_jsRuntime = jsRuntime;
     }
 
-    private IDialog? _contextSwitchDialog;
+    private WidgetModel? _contextSwitchWidget;
     
 	public IDialog? CodeSearchDialog { get; set; }
 
@@ -360,16 +362,13 @@ public class CommandFactory : ICommandFactory
 			
 			        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 				
-                    _contextSwitchDialog ??= new DialogViewModel(
-                        Key<IDynamicViewModel>.NewKey(),
-						"Context Switch",
+                    _contextSwitchWidget ??= new WidgetModel(
                         typeof(ContextSwitchDisplay),
-                        null,
-                        null,
-						true,
-						null);
+                        componentParameterMap: null,
+                        cssClass: null,
+                        cssStyle: null);
 
-                    _dispatcher.Dispatch(new DialogState.RegisterAction(_contextSwitchDialog));
+                    _dispatcher.Dispatch(new WidgetState.SetWidgetAction(_contextSwitchWidget));
 				});
 
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
