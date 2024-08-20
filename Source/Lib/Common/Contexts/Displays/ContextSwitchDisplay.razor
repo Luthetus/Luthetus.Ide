@@ -1,12 +1,18 @@
 @using Luthetus.Common.RazorLib.Menus.Displays
 
-<div class="luth_context-switch">
+<div class="luth_context-switch"
+	 style="display: flex;">
     
-    @{ var contextState = ContextStateWrap.Value; }
+    @{ var contextSwitchState = ContextSwitchStateWrap.Value; }
     
-    luth_context-switch
-
-    <div>
-        <MenuDisplay MenuRecord="_menu"/>
-    </div>
+    @if (hasCalculatedGroupMenuTupleList)
+    {
+    	foreach (var tuple in _groupMenuTupleList)
+		{
+			<div>
+				@tuple.ContextSwitchGroupTitle
+				<MenuDisplay MenuRecord="tuple.Menu"/>
+			</div>
+		}
+    }
 </div>

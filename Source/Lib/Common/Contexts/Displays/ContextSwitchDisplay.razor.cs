@@ -13,42 +13,31 @@ namespace Luthetus.Common.RazorLib.Contexts.Displays;
 public partial class ContextSwitchDisplay : ComponentBase
 {
 	[Inject]
-	private IState<ContextState> ContextStateWrap { get; set; } = null!;
+	private IState<ContextSwitchState> ContextSwitchStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 	
 	[CascadingParameter]
     public WidgetModel Widget { get; set; } = null!;
+    
+    private readonly List<(string ContextSwitchGroupTitle, MenuRecord Menu)> _groupMenuTupleList = new();
+    private bool hasCalculatedGroupMenuTupleList = false;
 	
-	private MenuRecord _menu;
-	
-	protected override void OnInitialized()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		InitializeMenu();
-		base.OnInitialized();
-	}
-	
-	private void InitializeMenu()
-	{
-		var contextState = ContextStateWrap.Value;
-	
-		var menuOptionList = new List<MenuOptionRecord>();
-					
-		foreach (var context in contextState.AllContextsList)
-        {
-        	menuOptionList.Add(new MenuOptionRecord(
-        		context.DisplayNameFriendly,
-        		MenuOptionKind.Other,
-        		OnClickFunc: () =>
-        		{
-        			Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
-        			return Task.CompletedTask;
-        		}));
-        }
-		
-		if (menuOptionList.Count == 0)
-			_menu = MenuRecord.Empty;
-		else
-			_menu = new MenuRecord(menuOptionList.ToImmutableArray());
+		if (firstRender)
+		{
+			var contextSwitchState = ContextSwitchStateWrap.Value;
+			
+			foreach (var contextSwitchGroup in contextSwitchState.ContextSwitchGroupList)
+			{
+				_groupMenuTupleList.Add(
+					(contextSwitchGroup.Title, await contextSwitchGroup.GetMenuFunc()));
+			}
+			
+			hasCalculatedGroupMenuTupleList = true;
+		}
+
+		base.OnAfterRenderAsync(firstRender);
 	}
 }
