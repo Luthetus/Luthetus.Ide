@@ -44,8 +44,6 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
     [Inject]
     private IState<TextEditorFindAllState> TextEditorFindAllStateWrap { get; set; } = null!;
     [Inject]
-    private IState<ContextSwitchState> ContextSwitchStateWrap { get; set; } = null!;
-    [Inject]
     private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
@@ -73,10 +71,7 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
                     Dispatcher.Dispatch(new TextEditorOptionsState.SetThemeAction(initialThemeRecord));
 
                 await TextEditorService.OptionsApi.SetFromLocalStorageAsync().ConfigureAwait(false);
-                
-                // TODO: This is hacky mutable state.
-                ContextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = ContextSwitchGroupKey;
-                
+                                
                 Dispatcher.Dispatch(new ContextSwitchState.RegisterContextSwitchGroupAction(
                 	new ContextSwitchGroup(
                 		ContextSwitchGroupKey,

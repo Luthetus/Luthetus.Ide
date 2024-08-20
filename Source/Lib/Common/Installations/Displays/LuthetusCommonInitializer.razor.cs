@@ -30,6 +30,8 @@ public partial class LuthetusCommonInitializer : ComponentBase
     [Inject]
     private IState<ContextState> ContextStateWrap { get; set; } = null!;
     [Inject]
+    private IState<ContextSwitchState> ContextSwitchStateWrap { get; set; } = null!;
+    [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
@@ -47,7 +49,8 @@ public partial class LuthetusCommonInitializer : ComponentBase
                 await AppOptionsService
                     .SetFromLocalStorageAsync()
                     .ConfigureAwait(false);
-                    
+
+				ContextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = ContextSwitchGroupKey;                    
                 Dispatcher.Dispatch(new ContextSwitchState.RegisterContextSwitchGroupAction(
                 	new ContextSwitchGroup(
                 		ContextSwitchGroupKey,

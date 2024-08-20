@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Dialogs.States;
@@ -9,6 +10,7 @@ using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.Widgets.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
@@ -34,14 +36,21 @@ public partial class ContextSwitchDisplay : ComponentBase
     /// </summary>
     private class ContextSwitchGroupMarker
     {
-		public ContextSwitchGroupMarker(string title, MenuRecord menu, int startInclusiveIndex, int menuOptionListLength)
+		public ContextSwitchGroupMarker(
+			Key<ContextSwitchGroup> contextSwitchGroupKey,
+			string title,
+			MenuRecord menu,
+			int startInclusiveIndex,
+			int menuOptionListLength)
 		{
+			ContextSwitchGroupKey = contextSwitchGroupKey;
 			Title = title;
 			Menu = menu;
 			StartInclusiveIndex = startInclusiveIndex;
 			MenuOptionListLength = menuOptionListLength;
 		}
 
+    	public Key<ContextSwitchGroup> ContextSwitchGroupKey { get; }
     	public string Title { get; }
     	public MenuRecord Menu { get; }
     	public int StartInclusiveIndex { get; }
@@ -59,12 +68,22 @@ public partial class ContextSwitchDisplay : ComponentBase
 				var menu = await contextSwitchGroup.GetMenuFunc();
 				
 				_groupMenuTupleList.Add(new(
+					contextSwitchGroup.Key,
 					contextSwitchGroup.Title,
 					menu,
 					_flatMenuOptionList.Count,
 					menu.MenuOptionList.Length));
 					
 				_flatMenuOptionList.AddRange(menu.MenuOptionList);
+			}
+			
+			// Initialize _activeIndex in accordance with 'ContextSwitchState.FocusInitiallyContextSwitchGroupKey'
+			{
+				var initialGroup = _groupMenuTupleList.FirstOrDefault(x =>
+					x.ContextSwitchGroupKey == contextSwitchState.FocusInitiallyContextSwitchGroupKey);
+					
+				if (initialGroup is not null)
+					_activeIndex = initialGroup.StartInclusiveIndex;
 			}
 			
 			_hasCalculatedGroupMenuTupleList = true;
@@ -74,7 +93,7 @@ public partial class ContextSwitchDisplay : ComponentBase
             {
                 await _contextSwitchHtmlElement.Value
                     .FocusAsync()
-                    .ConfigureAwait(false);
+                    .ConfigureAwait(false);	
             }
             catch (Exception)
             {
