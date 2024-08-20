@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
 using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Menus.Models;
@@ -7,6 +8,7 @@ using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Widgets.Models;
 using Luthetus.Common.RazorLib.Widgets.States;
 using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Keyboards.Models;
 
 namespace Luthetus.Common.RazorLib.Contexts.Displays;
 
@@ -21,7 +23,9 @@ public partial class ContextSwitchDisplay : ComponentBase
     public WidgetModel Widget { get; set; } = null!;
     
     private readonly List<(string ContextSwitchGroupTitle, MenuRecord Menu)> _groupMenuTupleList = new();
-    private bool hasCalculatedGroupMenuTupleList = false;
+    private readonly List<MenuOptionRecord> _flatMenuOptionList = new();
+    private bool _hasCalculatedGroupMenuTupleList = false;
+    private int _activeIndex = 0;
 	
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
@@ -31,13 +35,53 @@ public partial class ContextSwitchDisplay : ComponentBase
 			
 			foreach (var contextSwitchGroup in contextSwitchState.ContextSwitchGroupList)
 			{
-				_groupMenuTupleList.Add(
-					(contextSwitchGroup.Title, await contextSwitchGroup.GetMenuFunc()));
+				var menu = await contextSwitchGroup.GetMenuFunc();
+				
+				_groupMenuTupleList.Add((contextSwitchGroup.Title, menu));
+				_flatMenuOptionList.AddRange(menu.MenuOptionList);
 			}
 			
-			hasCalculatedGroupMenuTupleList = true;
+			_hasCalculatedGroupMenuTupleList = true;
 		}
 
 		base.OnAfterRenderAsync(firstRender);
 	}
+	
+	private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+    {
+        if (_flatMenuOptionList.Count == 0)
+        {
+            _activeIndex = -1;
+            return;
+        }
+        
+        switch (keyboardEventArgs.Key)
+        {
+            case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
+                break;
+            case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
+                if (_activeIndex >= _flatMenuOptionList.Count - 1)
+                    _activeIndex = 0;
+                else
+                    _activeIndex++;
+                break;
+            case KeyboardKeyFacts.MovementKeys.ARROW_UP:
+            case KeyboardKeyFacts.AlternateMovementKeys.ARROW_UP:
+                if (_activeIndex <= 0)
+                    _activeIndex = _flatMenuOptionList.Count - 1;
+                else
+                    _activeIndex--;
+                break;
+            case KeyboardKeyFacts.MovementKeys.HOME:
+                _activeIndex = 0;
+                break;
+            case KeyboardKeyFacts.MovementKeys.END:
+                _activeIndex = _flatMenuOptionList.Count - 1;
+                break;
+            case KeyboardKeyFacts.MetaKeys.ESCAPE:
+                break;
+        }
+    }
 }
