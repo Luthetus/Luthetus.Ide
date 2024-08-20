@@ -142,8 +142,8 @@ public partial class ContextSwitchDisplay : ComponentBase
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_LEFT:
+            {
             	var inGroupIndex = GetActiveGroupIndex();
-            	
             	if (inGroupIndex < 0)
             		return;
             		
@@ -165,6 +165,7 @@ public partial class ContextSwitchDisplay : ComponentBase
             		outGroup.StartInclusiveIndex + inGroupOffset,
             		outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
                 break;
+            }
             case KeyboardKeyFacts.MovementKeys.ARROW_DOWN:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_DOWN:
                 if (_activeIndex >= _flatMenuOptionList.Count - 1)
@@ -181,8 +182,30 @@ public partial class ContextSwitchDisplay : ComponentBase
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
-            	// TODO: Determine current column, ...
+            {
+            	var inGroupIndex = GetActiveGroupIndex();
+            	if (inGroupIndex < 0)
+            		return;
+            		
+            	var localActiveIndex = _activeIndex;
+            	
+            	// Move to right column
+            	var outGroupIndex = inGroupIndex + 1;
+            	if (outGroupIndex == _groupMenuTupleList.Count)
+            		outGroupIndex = 0;
+            		
+            	var outGroup = _groupMenuTupleList[outGroupIndex];
+            	
+            	// Set offset within right column relative to the previously held offset
+            	var inGroup = _groupMenuTupleList[inGroupIndex];
+            	var inGroupOffset = localActiveIndex - inGroup.StartInclusiveIndex;
+            	
+            	// If matching inGroupOffset results in out of bounds, use last valid index for the outGroup
+            	_activeIndex = Math.Min(
+            		outGroup.StartInclusiveIndex + inGroupOffset,
+            		outGroup.StartInclusiveIndex + outGroup.MenuOptionListLength - 1);
                 break;
+            }
             case KeyboardKeyFacts.MovementKeys.HOME:
                 _activeIndex = 0;
                 break;
