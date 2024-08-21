@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Groups.States;
@@ -41,12 +41,15 @@ public class TextEditorGroupApi : ITextEditorGroupApi
             textEditorViewModelKey));
     }
 
-    public void Register(Key<TextEditorGroup> textEditorGroupKey)
+    public void Register(Key<TextEditorGroup> textEditorGroupKey, Category? category = null)
     {
+    	category ??= new Category("main");
+    
         var textEditorGroup = new TextEditorGroup(
             textEditorGroupKey,
             Key<TextEditorViewModel>.Empty,
             ImmutableList<Key<TextEditorViewModel>>.Empty,
+            category,
             _textEditorService,
             _dispatcher,
             _dialogService,

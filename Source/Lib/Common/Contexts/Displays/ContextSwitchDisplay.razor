@@ -1,12 +1,47 @@
 @using Luthetus.Common.RazorLib.Menus.Displays
 
-<div class="luth_context-switch">
+<div class="luth_context-switch"
+	 style="display: flex; justify-content: space-evenly;"
+	 @ref="_contextSwitchHtmlElement"
+     @onclick:stopPropagation="true"
+     @ondblclick:stopPropagation="true"
+     @onkeydownwithpreventscroll:stopPropagation="true"
+     @onkeydown:stopPropagation="true"
+     @onkeydown:preventDefault="true"
+     @onkeydown="HandleOnKeyDownAsync"
+     @oncontextmenu:preventDefault="true"
+     @oncontextmenu:stopPropagation="true">
     
-    @{ var contextState = ContextStateWrap.Value; }
+    @{ var contextSwitchState = ContextSwitchStateWrap.Value; }
     
-    luth_context-switch
-
-    <div>
-        <MenuDisplay MenuRecord="_menu"/>
-    </div>
+    @if (_hasCalculatedGroupMenuTupleList)
+    {
+    	var flatBadIndex = 0;
+    	
+    	foreach (var tuple in _groupMenuTupleList)
+    	{
+    		var groupEndExclusiveIndexFlatList = flatBadIndex + tuple.Menu.MenuOptionList.Length;
+    		
+    		<div>
+    			<div style="background-color: var(--luth_ide_section-title-background-color);">
+    				@tuple.Title
+    			</div>
+    			
+    			<div>
+	    			@for (; flatBadIndex < groupEndExclusiveIndexFlatList; flatBadIndex++)
+		    		{
+		    			var index = flatBadIndex;
+		    			if (index >= _flatMenuOptionList.Count)
+		    				break;
+		    				
+		    			var menuOption = _flatMenuOptionList[index];
+		    			
+						<MenuOptionDisplay MenuOptionRecord="menuOption"
+			                               ActiveMenuOptionRecordIndex="_activeIndex"
+			                               Index="index"/>
+		    		}
+		    	</div>
+    		</div>
+    	}
+    }
 </div>

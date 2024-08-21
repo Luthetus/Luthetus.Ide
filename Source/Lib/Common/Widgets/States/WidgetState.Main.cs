@@ -1,0 +1,25 @@
+using System.Collections.Immutable;
+using Fluxor;
+using Luthetus.Common.RazorLib.Dynamics.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Widgets.Models;
+
+namespace Luthetus.Common.RazorLib.Widgets.States;
+
+/// <summary>
+/// This UI is similar, but not equivalent, to <see cref="DialogState"/>.<br/>
+///
+/// This UI:<br/>
+/// - Only one can be rendered at any given time<br/>
+/// - The <see cref="Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays.OutOfBoundsClickDisplay"/>
+///       will be rendered, so if the user clicks off, the widget will stop being rendered.<br/>
+/// - If the user onfocusout events from the widget, the widget will stop being rendered.<br/>
+/// </summary>
+[FeatureState]
+public partial record WidgetState(WidgetModel? Widget)
+{
+	public WidgetState() : this((WidgetModel?)null)
+    {
+        
+    }
+}

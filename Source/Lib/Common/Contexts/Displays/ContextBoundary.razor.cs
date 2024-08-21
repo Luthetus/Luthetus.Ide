@@ -74,17 +74,17 @@ public partial class ContextBoundary : ComponentBase
     		DispatchSetActiveContextStatesAction(new());
     }
     
-    public async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
+    public Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == "Shift" ||
             keyboardEventArgs.Key == "Control" ||
             keyboardEventArgs.Key == "Alt" ||
             keyboardEventArgs.Key == "Meta")
         {
-            return;
+            return Task.CompletedTask;
         }
 
-        await HandleKeymapArgumentAsync(keyboardEventArgs.ToKeymapArgument()).ConfigureAwait(false);
+        return HandleKeymapArgumentAsync(keyboardEventArgs.ToKeymapArgument());
     }
 
     public async Task HandleKeymapArgumentAsync(KeymapArgument keymapArgument)

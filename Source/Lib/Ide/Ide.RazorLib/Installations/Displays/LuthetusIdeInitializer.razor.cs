@@ -22,6 +22,7 @@ using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.Gits.Displays;
+using Luthetus.Ide.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
 
@@ -86,6 +87,20 @@ public partial class LuthetusIdeInitializer : ComponentBase
             });
             
         base.OnInitialized();
+	}
+	
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			if (LuthetusHostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
+			{
+				await JsRuntime.GetLuthetusIdeApi()
+					.PreventDefaultBrowserKeybindings();
+			}
+		}
+		
+		await base.OnAfterRenderAsync(firstRender);
 	}
 
     private void InitializePanelTabs()

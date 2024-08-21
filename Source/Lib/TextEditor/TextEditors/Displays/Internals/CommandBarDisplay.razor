@@ -16,6 +16,7 @@
 	           @bind="@renderBatchLocal.ViewModel.CommandBarValue"
 	           @bind:event="oninput"
 	           @ref="_commandBarDisplayElementReference"
-	           @onkeydown="HandleOnKeyDown"/>
+	           @onkeydown="HandleOnKeyDown"
+	           @onkeydown:stopPropagation="true"/>
 	</div> 
 }

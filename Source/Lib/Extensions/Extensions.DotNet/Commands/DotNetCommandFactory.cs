@@ -37,14 +37,14 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 		// NuGetPackageManagerContext
 		{
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-				new KeymapArgument("KeyN", false, true, true, Key<KeymapLayer>.Empty),
+				new KeymapArgument("n", "KeyN", false, true, true, false, Key<KeymapLayer>.Empty),
 				ConstructFocusContextElementCommand(
 					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager"));
 		}
 		// CSharpReplContext
 		{
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-				new KeymapArgument("KeyR", false, true, true, Key<KeymapLayer>.Empty),
+				new KeymapArgument("r", "KeyR", false, true, true, false, Key<KeymapLayer>.Empty),
 				ConstructFocusContextElementCommand(
 					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl"));
 		}
@@ -54,7 +54,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer");
 
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument("KeyS", false, true, true, Key<KeymapLayer>.Empty),
+					new KeymapArgument("s", "KeyS", false, true, true, false, Key<KeymapLayer>.Empty),
 					focusSolutionExplorerCommand);
 
 			// Set active solution explorer tree view node to be the
@@ -86,7 +86,7 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 					});
 
 				_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-						new KeymapArgument("KeyS", true, true, true, Key<KeymapLayer>.Empty),
+						new KeymapArgument("S", "KeyS", true, true, true, false, Key<KeymapLayer>.Empty),
 						focusTextEditorCommand);
 			}
 		}

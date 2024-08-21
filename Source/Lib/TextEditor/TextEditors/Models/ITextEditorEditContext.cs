@@ -26,7 +26,7 @@ public interface ITextEditorEditContext
     public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 
     /// <inheritdoc cref="ITextEditorEditContext"/>
-    public TextEditorModelModifier? GetModelModifier(ResourceUri? modelResourceUri, bool isReadonly = false);
+    public TextEditorModelModifier? GetModelModifier(ResourceUri modelResourceUri, bool isReadonly = false);
 
     /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorModelModifier? GetModelModifierByViewModelKey(Key<TextEditorViewModel> viewModelKey, bool isReadonly = false);
