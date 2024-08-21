@@ -63,7 +63,9 @@ public class CursorDriver
 	        : string.Empty;
     }
 
-    public string BlinkAnimationCssClass => string.Empty;
+    public string BlinkAnimationCssClass => _root.TextEditorService.ViewModelApi.CursorShouldBlink
+        ? "luth_te_blink"
+        : string.Empty;
 
     public string GetCursorStyleCss()
     {

@@ -29,26 +29,24 @@ public partial class TextEditorService : ITextEditorService
         public Key<TextEditorAuthenticatedAction> AuthenticatedActionKey { get; }
 
         public TextEditorModelModifier? GetModelModifier(
-            ResourceUri? modelResourceUri,
+            ResourceUri modelResourceUri,
             bool isReadonly = false)
         {
-            if (modelResourceUri is not null)
+        	if (modelResourceUri == ResourceUri.Empty)
+        		return null;
+        
+            if (!ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
             {
-                if (!ModelCache.TryGetValue(modelResourceUri, out var modelModifier))
-                {
-                    var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
-                    modelModifier = model is null ? null : new(model);
+                var model = TextEditorService.ModelApi.GetOrDefault(modelResourceUri);
+                modelModifier = model is null ? null : new(model);
 
-                    ModelCache.Add(modelResourceUri, modelModifier);
-                }
-
-                if (!isReadonly && modelModifier is not null)
-                    modelModifier.WasModified = true;
-
-                return modelModifier;
+                ModelCache.Add(modelResourceUri, modelModifier);
             }
 
-            return null;
+            if (!isReadonly && modelModifier is not null)
+                modelModifier.WasModified = true;
+
+            return modelModifier;
         }
 
         public TextEditorModelModifier? GetModelModifierByViewModelKey(
@@ -65,7 +63,7 @@ public partial class TextEditorService : ITextEditorService
                     ViewModelToModelResourceUriCache.Add(viewModelKey, modelResourceUri);
                 }
 
-                return GetModelModifier(modelResourceUri);
+                return GetModelModifier(modelResourceUri.Value);
             }
 
             return null;

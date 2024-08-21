@@ -1,0 +1,20 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@using Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays
+
+@{ var commandBarState = CommandBarStateWrap.Value; }
+
+@if (commandBarState.ShouldDisplay)
+{
+	<OutOfBoundsClickDisplay ZIndex="15"
+	                         OnMouseDownCallback="OnOutOfBoundsClick" />
+
+	<div class="luth_ide_command-bar">
+		<input @onkeydown="HandleOnKeyDown"
+			   @onkeydown:stopPropagation="true"
+			   type="text"
+			   id="@INPUT_HTML_ELEMENT_ID"
+		       class="luth_input"
+		       style="width: 100%; height: 100%;"/>
+	</div>
+}

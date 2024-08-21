@@ -5,7 +5,9 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -34,6 +36,14 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 	private string? _previousContent = string.Empty;
 	private Throttle _updateContentThrottle = new Throttle(TimeSpan.FromMilliseconds(333));
+	
+	private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
+	{
+		IncludeHeaderHelperComponent = false,
+		IncludeFooterHelperComponent = false,
+		IncludeGutterComponent = false,
+		ContextRecord = ContextFacts.TerminalContext,
+	};
 
 	protected override void OnParametersSet()
 	{

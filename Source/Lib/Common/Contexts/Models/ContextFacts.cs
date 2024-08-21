@@ -131,6 +131,12 @@ public static class ContextFacts
         "Dialog",
         "dialog",
         Keymap.Empty);
+        
+    public static readonly ContextRecord WidgetContext = new(
+        Key<ContextRecord>.NewKey(),
+        "Widget",
+        "widget",
+        Keymap.Empty);
     
     public static readonly ContextRecord DropdownContext = new(
         Key<ContextRecord>.NewKey(),
@@ -160,6 +166,7 @@ public static class ContextFacts
         TerminalContext,
         NotificationContext,
         DialogContext,
+        WidgetContext,
         DropdownContext,
     }.ToImmutableArray();
 }

@@ -4,8 +4,10 @@ using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 
@@ -33,6 +35,14 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	
 	private string _command;
 	private ITerminal? _previousTerminal = null;
+	
+	private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
+	{
+		IncludeHeaderHelperComponent = false,
+		IncludeFooterHelperComponent = false,
+		IncludeGutterComponent = false,
+		ContextRecord = ContextFacts.TerminalContext,
+	};
 	
 	protected override void OnParametersSet()
 	{

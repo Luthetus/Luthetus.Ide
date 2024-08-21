@@ -42,7 +42,10 @@ public class TextEditorTestBase
         ITextEditorService textEditorService) InitializeBackgroundTasks()
     {
         var backgroundTaskService = new BackgroundTaskService();
-        var hostingInformation = new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService);
+        var hostingInformation = new LuthetusHostingInformation(
+        	LuthetusHostingKind.UnitTestingSynchronous,
+        	LuthetusPurposeKind.TextEditor,
+        	backgroundTaskService);
 
         var services = new ServiceCollection()
             .AddScoped<ILoggerFactory, NullLoggerFactory>()

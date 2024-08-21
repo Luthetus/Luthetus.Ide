@@ -42,7 +42,62 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         _jsRuntime = jsRuntime;
         _dispatcher = dispatcher;
         _dialogService = dialogService;
-    }    
+    }
+    
+    private Task _cursorShouldBlinkTask = Task.CompletedTask;
+    private CancellationTokenSource _cursorShouldBlinkCancellationTokenSource = new();
+    private TimeSpan _blinkingCursorTaskDelay = TimeSpan.FromMilliseconds(1000);
+    
+    public bool CursorShouldBlink { get; private set; } = true;
+    public event Action? CursorShouldBlinkChanged;
+    
+    public void SetCursorShouldBlink(bool cursorShouldBlink)
+    {
+        if (!cursorShouldBlink)
+        {
+            if (CursorShouldBlink)
+            {
+                // Change true -> false THEREFORE: notify subscribers
+                CursorShouldBlink = cursorShouldBlink;
+                CursorShouldBlinkChanged?.Invoke();
+            }
+
+            // Single Threaded Applications flicker every "_blinkingCursorTaskDelay" event while holding a key down if this line is not included
+            _cursorShouldBlinkCancellationTokenSource.Cancel();
+
+            if (_cursorShouldBlinkTask.IsCompleted)
+            {
+                // Considering that just before entering this if block we cancel the cancellation token source. I want to ensure we get a new one if a new Task session beings.
+                _cursorShouldBlinkCancellationTokenSource = new();
+
+                _cursorShouldBlinkTask = Task.Run(async () =>
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            var cancellationToken = _cursorShouldBlinkCancellationTokenSource.Token;
+
+                            await Task
+                                .Delay(_blinkingCursorTaskDelay, cancellationToken)
+                                .ConfigureAwait(false);
+
+                            // Change false -> true THEREFORE: notify subscribers
+                            CursorShouldBlink = true;
+                            CursorShouldBlinkChanged?.Invoke();
+                            break;
+                        }
+                        catch (TaskCanceledException)
+                        {
+                            // Single Threaded Applications cannot exit the while loop unless they cancel the token themselves.
+                            _cursorShouldBlinkCancellationTokenSource.Cancel();
+                            _cursorShouldBlinkCancellationTokenSource = new();
+                        }
+                    }
+                });
+            }
+        }
+    }
 
     #region CREATE_METHODS
     public void Register(
@@ -517,9 +572,45 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 break;
             case KeyboardKeyFacts.MovementKeys.HOME:
                 if (keyboardEventArgs.CtrlKey)
+                {
                     cursorModifier.LineIndex = 0;
-
-                cursorModifier.SetColumnIndexAndPreferred(0);
+                    cursorModifier.SetColumnIndexAndPreferred(0);
+                }
+				else
+				{
+					var originalPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+					
+					var lineInformation = modelModifier.GetLineInformation(cursorModifier.LineIndex);
+					var lastValidPositionIndex = lineInformation.StartPositionIndexInclusive + lineInformation.LastValidColumnIndex;
+					
+					cursorModifier.ColumnIndex = 0; // This column index = 0 is needed for the while loop below.
+					var indentationPositionIndexExclusiveEnd = modelModifier.GetPositionIndex(cursorModifier);
+					
+					var cursorWithinIndentation = false;
+		
+					while (indentationPositionIndexExclusiveEnd < lastValidPositionIndex)
+					{
+						var possibleIndentationChar = modelModifier.RichCharacterList[indentationPositionIndexExclusiveEnd].Value;
+		
+						if (possibleIndentationChar == '\t' || possibleIndentationChar == ' ')
+						{
+							if (indentationPositionIndexExclusiveEnd == originalPositionIndex)
+								cursorWithinIndentation = true;
+						}
+						else
+						{
+							break;
+						}
+						
+						indentationPositionIndexExclusiveEnd++;
+					}
+					
+					if (originalPositionIndex == indentationPositionIndexExclusiveEnd)
+						cursorModifier.SetColumnIndexAndPreferred(0);
+					else
+						cursorModifier.SetColumnIndexAndPreferred(
+							indentationPositionIndexExclusiveEnd - lineInformation.StartPositionIndexInclusive);
+				}
 
                 break;
             case KeyboardKeyFacts.MovementKeys.END:

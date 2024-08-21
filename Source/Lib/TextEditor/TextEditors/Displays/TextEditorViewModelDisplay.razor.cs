@@ -22,6 +22,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Events.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -84,7 +85,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     // TODO: awkward public
     public PresentationAndSelectionDriver _presentationAndSelectionDriver;
     public CursorDriver _cursorDriver;
-
     
     private bool _thinksTouchIsOccurring;
     private DateTime? _touchStartDateTime = null;
@@ -121,22 +121,11 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
         ConstructRenderBatch();
 
-		// TODO: This line is why one cannot switch to a vim keymap, without needing to restart the IDE...
-		//       ...for the change to take effect.
-		//       |
-		//       In short, there is a sort of hack for "keymap overriding".
-		//       'Keymap = renderBatch.ViewModelDisplayOptions.KeymapOverride'
-		//       |
-		//	   This is done 'OnInitialized', which for the main editor only happens one when initially opening the app.
-		//       Therefore, one can never change their keymap for the main editor.
-		_componentData = new(
-			_textEditorHtmlElementId,
-			ViewModelDisplayOptions,
-			_storedRenderBatch.Options,
-			ServiceProvider);
+		SetComponentData();
 
         TextEditorStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
-        TextEditorOptionsStateWrap.StateChanged += GeneralOnStateChangedEventHandler;
+        TextEditorOptionsStateWrap.StateChanged += TextEditorOptionsStateWrap_StateChanged;
+        TextEditorService.ViewModelApi.CursorShouldBlinkChanged += ViewModel_CursorShouldBlinkChanged;
 
         base.OnInitialized();
     }
@@ -247,8 +236,31 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         _previousRenderBatch = _storedRenderBatch;
         _storedRenderBatch = renderBatch;
     }
+    
+    private void SetComponentData()
+    {
+		_componentData = new(
+			_textEditorHtmlElementId,
+			ViewModelDisplayOptions,
+			_storedRenderBatch.Options,
+			ServiceProvider);
+    }
 
     private async void GeneralOnStateChangedEventHandler(object? sender, EventArgs e) =>
+        await InvokeAsync(StateHasChanged);
+        
+    private async void TextEditorOptionsStateWrap_StateChanged(object? sender, EventArgs e)
+    {
+    	if (TextEditorOptionsStateWrap.Value.Options.Keymap.Key != _componentData.Options.Keymap.Key)
+    	{
+    		ConstructRenderBatch();
+    		SetComponentData();
+    	}
+    	
+    	await InvokeAsync(StateHasChanged);
+    }
+        
+    private async void ViewModel_CursorShouldBlinkChanged() =>
         await InvokeAsync(StateHasChanged);
 
     private void HandleTextEditorViewModelKeyChange()
@@ -313,17 +325,19 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs))
             return;
 
-        var resourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
-        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
+        var resourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri
+        	?? ResourceUri.Empty;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey
+        	?? Key<TextEditorViewModel>.Empty;
 
-        if (resourceUri is null || viewModelKey is null)
+        if (resourceUri == ResourceUri.Empty || viewModelKey == Key<TextEditorViewModel>.Empty)
 			return;
 
 		var onKeyDown = new OnKeyDownLateBatching(
 			_componentData,
             keyboardEventArgs,
             resourceUri,
-            viewModelKey.Value);
+            viewModelKey);
 
         TextEditorService.Post(onKeyDown);
 	}
@@ -352,17 +366,19 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
-        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
-        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri
+        	?? ResourceUri.Empty;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey
+        	?? Key<TextEditorViewModel>.Empty;
 
-        if (modelResourceUri is null || viewModelKey is null)
+        if (modelResourceUri == ResourceUri.Empty || viewModelKey == Key<TextEditorViewModel>.Empty)
             return;
 
         var onDoubleClick = new OnDoubleClick(
             mouseEventArgs,
 			_componentData,
             modelResourceUri,
-            viewModelKey.Value);
+            viewModelKey);
 
         TextEditorService.Post(onDoubleClick);
     }
@@ -371,12 +387,13 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     {
         _componentData.ThinksLeftMouseButtonIsDown = true;
 
-        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri
+        	?? ResourceUri.Empty;
         var viewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey);
 
-        var viewModelKey = viewModel?.ViewModelKey;
+        var viewModelKey = viewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
 
-        if (modelResourceUri is null || viewModelKey is null)
+        if (modelResourceUri == ResourceUri.Empty || viewModelKey == Key<TextEditorViewModel>.Empty)
             return;
 		
         if (viewModel is not null)
@@ -386,7 +403,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             mouseEventArgs,
 			_componentData,
             modelResourceUri,
-            viewModelKey.Value);
+            viewModelKey);
 
         TextEditorService.Post(onMouseDown);
     }
@@ -400,9 +417,10 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
         var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
 
-        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri
+        	?? ResourceUri.Empty;
         var viewModel = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey);
-        var viewModelKey = viewModel?.ViewModelKey;
+        var viewModelKey = viewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
 
         // MouseStoppedMovingEvent
 		if (viewModel is not null)
@@ -422,7 +440,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 							nameof(ContextMenu),
 							editContext =>
 							{
-								var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+								var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 			
 								viewModelModifier.ViewModel = viewModelModifier.ViewModel with 
 								{
@@ -453,7 +471,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 						editContext =>
 						{
 							var modelModifier = editContext.GetModelModifier(modelResourceUri);
-			                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+			                var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 			                var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
 			                var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 			
@@ -476,7 +494,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (!_componentData.ThinksLeftMouseButtonIsDown)
             return;
 
-        if (modelResourceUri is null || viewModelKey is null)
+        if (modelResourceUri == ResourceUri.Empty || viewModelKey == Key<TextEditorViewModel>.Empty)
             return;
 
         // Buttons is a bit flag '& 1' gets if left mouse button is held
@@ -486,7 +504,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 mouseEventArgs,
                 _componentData,
                 modelResourceUri,
-                viewModelKey.Value);
+                viewModelKey);
 
             TextEditorService.Post(onMouseMove);
         }
@@ -503,15 +521,16 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
-        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey
+        	?? Key<TextEditorViewModel>.Empty;
 
-        if (viewModelKey is null)
+        if (viewModelKey == Key<TextEditorViewModel>.Empty)
             return;
 
 		var onWheel = new OnWheel(
             wheelEventArgs,
             _componentData,
-            viewModelKey.Value);
+            viewModelKey);
 
         TextEditorService.Post(onWheel);
     }
@@ -606,19 +625,21 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
-        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
-        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri
+        	?? ResourceUri.Empty;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey
+        	?? Key<TextEditorViewModel>.Empty;
 
-        if (modelResourceUri is null || viewModelKey is null)
+        if (modelResourceUri == ResourceUri.Empty || viewModelKey == Key<TextEditorViewModel>.Empty)
             return;
 
         TextEditorService.PostRedundant(
             nameof(QueueRemeasureBackgroundTask),
 			modelResourceUri,
-			viewModelKey.Value,
+			viewModelKey,
             editContext =>
             {
-            	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+            	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
 				if (viewModelModifier is null)
 					return Task.CompletedTask;
@@ -635,20 +656,22 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private void QueueCalculateVirtualizationResultBackgroundTask(
 		ITextEditorRenderBatch localCurrentRenderBatch)
     {
-        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri;
-        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey;
+        var modelResourceUri = TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey)?.ResourceUri
+        	?? ResourceUri.Empty;
+        var viewModelKey = TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey)?.ViewModelKey
+        	?? Key<TextEditorViewModel>.Empty;
 
-        if (modelResourceUri is null || viewModelKey is null)
+        if (modelResourceUri == ResourceUri.Empty || viewModelKey == Key<TextEditorViewModel>.Empty)
             return;
 
         TextEditorService.PostRedundant(
             nameof(QueueCalculateVirtualizationResultBackgroundTask),
 			modelResourceUri,
-			viewModelKey.Value,
+			viewModelKey,
             editContext =>
             {
             	var modelModifier = editContext.GetModelModifier(modelResourceUri);
-            	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
+            	var viewModelModifier = editContext.GetViewModelModifier(viewModelKey);
 
 				if (modelModifier is null || viewModelModifier is null)
 					return Task.CompletedTask;
@@ -665,7 +688,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public void Dispose()
     {
         TextEditorStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
-        TextEditorOptionsStateWrap.StateChanged -= GeneralOnStateChangedEventHandler;
+        TextEditorOptionsStateWrap.StateChanged -= TextEditorOptionsStateWrap_StateChanged;
+		TextEditorService.ViewModelApi.CursorShouldBlinkChanged -= ViewModel_CursorShouldBlinkChanged;
 
         lock (_linkedViewModelLock)
         {

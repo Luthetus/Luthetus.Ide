@@ -200,14 +200,27 @@ public partial class TreeViewNodeDisplay : ComponentBase
             .ConfigureAwait(false);
     }
 
-    private async Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-        if (keyboardEventArgs.Key == "ContextMenu")
-        {
-            var mouseEventArgs = new MouseEventArgs { Button = -1 };
-            await ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType)
-                .ConfigureAwait(false);
-        }
+    	switch (keyboardEventArgs.Key)
+    	{
+    		case "ContextMenu":
+    		{
+    			var mouseEventArgs = new MouseEventArgs { Button = -1 };
+	            return ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType);
+    		}
+    		case ".":
+    		{
+    			if (keyboardEventArgs.CtrlKey)
+    			{
+    				var mouseEventArgs = new MouseEventArgs { Button = -1 };
+	            	return ManuallyPropagateOnContextMenu(mouseEventArgs, TreeViewContainer, TreeViewNoType);
+    			}
+    			break;
+    		}
+    	}
+    
+        return Task.CompletedTask;
     }
 
     private string GetShowDefaultCursorCssClass(bool isExpandable)
