@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Fix change keymap without having to reload
     - Track additionally, the 'Key' of a keyboard event args (previously only was tracking the 'Code')
     - Change ITextEditorWork implementations and ResourceUri to structs
+    - Fix various 'Vim' keybind bugs. It isn't fully functional yet.
 </details>
 
 ## [2.1.0] - 2024-08-15
