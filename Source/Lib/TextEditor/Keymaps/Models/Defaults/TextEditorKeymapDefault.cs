@@ -120,6 +120,12 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.DoNothingDiscard);
+        
+        Map.Add(new KeymapArgument("p", "KeyP")
+        {
+            CtrlKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.DoNothingDiscard);
 
         Map.Add(new KeymapArgument("F", "KeyF")
         {
