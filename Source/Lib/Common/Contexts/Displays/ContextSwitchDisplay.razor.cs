@@ -138,6 +138,18 @@ public partial class ContextSwitchDisplay : ComponentBase
             return;
         }
         
+        // TODO: Rewrite these hacky shenanigans that allow tab key event to move index
+        if (keyboardEventArgs.Key == "Tab")
+        {
+        	if (keyboardEventArgs.CtrlKey)
+        	{
+        		if (keyboardEventArgs.ShiftKey)
+        			keyboardEventArgs.Key = KeyboardKeyFacts.MovementKeys.ARROW_UP;
+        		else
+        			keyboardEventArgs.Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN;
+        	}
+        }
+        
         switch (keyboardEventArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
