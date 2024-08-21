@@ -1,0 +1,25 @@
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+@using Luthetus.Common.RazorLib.Contexts.Models
+@using Luthetus.Common.RazorLib.Contexts.Displays
+@using Luthetus.Common.RazorLib.OutOfBoundsClicks.Displays
+
+@{ var widgetState = WidgetStateWrap.Value; }
+
+@if (widgetState.Widget is not null)
+{
+	<OutOfBoundsClickDisplay ZIndex="9"
+	                         OnMouseDownCallback="RemoveWidget" />
+}
+
+<ContextBoundary @ref="_widgetContextBoundary"
+				 ContextRecord="ContextFacts.WidgetContext"
+                 ClassCssString="luth_widget-initializer">
+	<ChildContent></ChildContent>
+</ContextBoundary>
+
+@if (widgetState.Widget is not null)
+{
+	<WidgetDisplay Widget="widgetState.Widget"
+	               OnFocusInFunc="HandleOnFocusIn"
+	               OnFocusOutFunc="HandleOnFocusOut"/>
+}

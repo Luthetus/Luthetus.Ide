@@ -297,6 +297,8 @@ public class OnKeyDownLateBatching : ITextEditorWork
 	            }
 			}
 			
+			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+			
 			await EditContext.TextEditorService
 				.FinalizePost(EditContext)
 				.ConfigureAwait(false);

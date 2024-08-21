@@ -364,7 +364,10 @@ public partial class TextEditorOptionsStateReducerTests
 
         var serviceCollection = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusTextEditor(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
+            .AddLuthetusTextEditor(new LuthetusHostingInformation(
+            	LuthetusHostingKind.UnitTestingSynchronous,
+            	LuthetusPurposeKind.TextEditor,
+            	backgroundTaskService))
             .AddFluxor(options => options.ScanAssemblies(
                 typeof(LuthetusCommonConfig).Assembly,
                 typeof(LuthetusTextEditorConfig).Assembly));

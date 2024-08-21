@@ -77,6 +77,8 @@ public class OnMouseMove : ITextEditorWork
 
             primaryCursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
 		
+			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+		
 			await EditContext.TextEditorService
 				.FinalizePost(EditContext)
 				.ConfigureAwait(false);

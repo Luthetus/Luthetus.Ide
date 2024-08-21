@@ -113,6 +113,7 @@ public class CodeBlockBuilderTests
             genericArgumentsListingNode,
             null,
             inheritedTypeClauseNode,
+            openBraceToken: null,
             typeBodyCodeBlockNode);
     }
 }

@@ -17,4 +17,18 @@ public class LuthetusIdeJavaScriptInteropApi
     {
         _jsRuntime = jsRuntime;
     }
+    
+    /// <summary>
+    /// This function is intended to only be invoked
+	/// from C# when the LuthetusHostingKind is Photino.<br/><br/>
+	///
+	/// Because when running the native application,
+	/// the fact that, for example, 'F5' refreshes
+	/// the native application is very frustrating.
+    /// </summary>
+    public ValueTask PreventDefaultBrowserKeybindings()
+    {
+        return _jsRuntime.InvokeVoidAsync(
+            "luthetusIde.preventDefaultBrowserKeybindings");
+    }
 }

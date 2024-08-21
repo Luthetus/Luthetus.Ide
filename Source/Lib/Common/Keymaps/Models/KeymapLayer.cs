@@ -1,8 +1,8 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Keymaps.Models;
 
-public record KeymapLayer(
+public record struct KeymapLayer(
     Key<KeymapLayer> Key,
     string DisplayName,
     string InternalName)
