@@ -107,6 +107,19 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(true));
+        
+        Map.Add(new KeymapArgument("Tab", "Tab")
+        {
+            CtrlKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.DoNothingDiscard);
+        
+        Map.Add(new KeymapArgument("Tab", "Tab")
+        {
+            CtrlKey = true,
+            ShiftKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.DoNothingDiscard);
 
         Map.Add(new KeymapArgument("F", "KeyF")
         {
