@@ -1404,11 +1404,20 @@ public class TextEditorCommandDefaultFunctions
         IDispatcher dispatcher)
     {
         var dropdownKey = new Key<DropdownRecord>(viewModelModifier.ViewModel.ViewModelKey.Guid);
+        
+        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+        var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+        
+        if (cursorModifierBag is null || primaryCursor is null)
+        	return;
+        	
+        var topOffset = (primaryCursor.LineIndex + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+		var leftOffset = primaryCursor.ColumnIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
 		
 		var dropdownRecord = new DropdownRecord(
 			dropdownKey,
-			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectLeft,
-			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectTop,
+			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectLeft + leftOffset,
+			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectTop + topOffset,
 			typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),
 			new Dictionary<string, object?>
 			{
