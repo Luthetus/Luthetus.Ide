@@ -243,6 +243,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			_textEditorHtmlElementId,
 			ViewModelDisplayOptions,
 			_storedRenderBatch.Options,
+			Dispatcher,
 			ServiceProvider);
     }
 

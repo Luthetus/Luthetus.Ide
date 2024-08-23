@@ -1183,6 +1183,14 @@ public class TextEditorCommandDefaultFunctions
 
         if (EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
         {
+        	ShowAutocompleteMenu(
+        		editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        editContext.GetPrimaryCursorModifier(cursorModifierBag),
+		        componentData.Dispatcher);
+        
 			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 			{
 				MenuKind = MenuKind.AutoCompleteMenu
@@ -1415,7 +1423,23 @@ public class TextEditorCommandDefaultFunctions
     {
         var dropdownKey = new Key<DropdownRecord>(viewModelModifier.ViewModel.ViewModelKey.Guid);
         
-        leftOffset ??= primaryCursor.ColumnIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+        if (leftOffset is null)
+        {
+        	leftOffset = primaryCursor.ColumnIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+	        
+	        // Tab key column offset
+            var tabsOnSameRowBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
+                primaryCursor.LineIndex,
+                primaryCursor.ColumnIndex);
+
+            // 1 of the character width is already accounted for
+            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+            leftOffset += extraWidthPerTabKey *
+                tabsOnSameRowBeforeCursor *
+                viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+        }
+        
         topOffset ??= (primaryCursor.LineIndex + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
 		
 		var dropdownRecord = new DropdownRecord(
