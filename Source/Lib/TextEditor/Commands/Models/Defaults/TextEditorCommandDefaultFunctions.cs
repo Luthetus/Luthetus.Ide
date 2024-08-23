@@ -1446,6 +1446,37 @@ public class TextEditorCommandDefaultFunctions
 	        dispatcher,
 	        leftOffset: null,
 	        topOffset: null,
+	        typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu),
+	        new Dictionary<string, object?>
+			{
+				{
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.TextEditorModel),
+					modelModifier
+				},
+				{
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.TextEditorViewModel),
+					viewModelModifier.ViewModel
+				}
+			});
+	}
+	
+	public static void ShowAutocompleteMenu(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        IDispatcher dispatcher)
+    {
+    	ShowDropdown(
+    		editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        primaryCursor,
+	        dispatcher,
+	        leftOffset: null,
+	        topOffset: null,
 	        typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),
 	        new Dictionary<string, object?>
 			{
