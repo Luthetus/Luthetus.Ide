@@ -127,18 +127,24 @@ public class OnKeyDownLateBatching : ITextEditorWork
 						        modelModifier,
 						        viewModelModifier,
 						        cursorModifierBag);
-	
-							viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-							{
-								MenuKind = MenuKind.None
-							};
+						        
+						    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+						    {
+						    	TextEditorCommandDefaultFunctions.RemoveDropdown(
+							        EditContext,
+							        viewModelModifier,
+							        ComponentData.Dispatcher);
+						    }
 	                    }
 	                    break;
 	                case KeyboardEventArgsKind.ContextMenu:
-						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-						{
-							MenuKind = MenuKind.ContextMenu
-						};
+	                	TextEditorCommandDefaultFunctions.ShowContextMenu(
+					        EditContext,
+					        modelModifier,
+					        viewModelModifier,
+					        cursorModifierBag,
+					        primaryCursorModifier,
+					        ComponentData.Dispatcher);
 	                    break;
 	                case KeyboardEventArgsKind.Text:
 	                case KeyboardEventArgsKind.Other:
@@ -151,10 +157,13 @@ public class OnKeyDownLateBatching : ITextEditorWork
 	                            KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key ||
 	                            !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
 	                        {
-								viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-								{
-									MenuKind = MenuKind.None
-								};
+	                        	if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+	                        	{
+									TextEditorCommandDefaultFunctions.RemoveDropdown(
+								        EditContext,
+								        viewModelModifier,
+								        ComponentData.Dispatcher);
+								}
 	                        }
 	                    }
 	

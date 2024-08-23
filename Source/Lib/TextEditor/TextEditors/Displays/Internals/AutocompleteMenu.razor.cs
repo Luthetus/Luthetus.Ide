@@ -12,6 +12,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -23,6 +24,8 @@ public partial class AutocompleteMenu : ComponentBase
     private IAutocompleteService AutocompleteService { get; set; } = null!;
     [Inject]
     private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
+    [Inject]
+    private IDispatcher Dispatcher { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ITextEditorModel TextEditorModel { get; set; }
@@ -38,11 +41,8 @@ public partial class AutocompleteMenu : ComponentBase
     private ElementReference? _autocompleteMenuElementReference;
     private MenuDisplay? _autocompleteMenuComponent;
     
-    private int _renderCount = 1;
-
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
-    	_renderCount++;
         //if (TextEditorMenuShouldTakeFocusFunc.Invoke())
         //    _autocompleteMenuComponent?.SetFocusToFirstOptionInMenuAsync();
 
@@ -64,10 +64,13 @@ public partial class AutocompleteMenu : ComponentBase
 				{
 					var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
 
-					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
-						MenuKind = MenuKind.None
-					};
+						TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        Dispatcher);
+					}
 
 					return Task.CompletedTask;
 				});
@@ -89,10 +92,13 @@ public partial class AutocompleteMenu : ComponentBase
 				{
 					var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
 
-					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
-						MenuKind = MenuKind.None
-					};
+						TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        Dispatcher);
+					}
 
 					return Task.CompletedTask;
 				});
@@ -211,10 +217,13 @@ public partial class AutocompleteMenu : ComponentBase
 					{
 						var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
 	
-						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 						{
-							MenuKind = MenuKind.None
-						};
+							TextEditorCommandDefaultFunctions.RemoveDropdown(
+						        editContext,
+						        viewModelModifier,
+						        Dispatcher);
+						}
 
 						return Task.CompletedTask;
 					});

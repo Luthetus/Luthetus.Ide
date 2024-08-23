@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
@@ -68,10 +69,13 @@ public class OnMouseDown : ITextEditorWork
             if ((MouseEventArgs.Buttons & 1) != 1 && hasSelectedText)
                 return; // Not pressing the left mouse button so assume ContextMenu is desired result.
 
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+			if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 			{
-				MenuKind = MenuKind.None
-			};
+				TextEditorCommandDefaultFunctions.RemoveDropdown(
+			        EditContext,
+			        viewModelModifier,
+			        ComponentData.Dispatcher);
+			}
 
             // Remember the current cursor position prior to doing anything
             var inRowIndex = primaryCursorModifier.LineIndex;

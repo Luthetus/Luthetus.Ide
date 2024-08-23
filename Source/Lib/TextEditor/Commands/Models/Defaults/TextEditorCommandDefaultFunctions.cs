@@ -1190,11 +1190,6 @@ public class TextEditorCommandDefaultFunctions
 		        cursorModifierBag,
 		        editContext.GetPrimaryCursorModifier(cursorModifierBag),
 		        componentData.Dispatcher);
-        
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-				MenuKind = MenuKind.AutoCompleteMenu
-			};
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
         {
@@ -1284,10 +1279,13 @@ public class TextEditorCommandDefaultFunctions
 
         if (seenIsAutocompleteMenuInvoker)
         {
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-				MenuKind = MenuKind.AutoCompleteMenu
-			};
+        	ShowAutocompleteMenu(
+        		editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        editContext.GetPrimaryCursorModifier(cursorModifierBag),
+		        componentData.Dispatcher);
         }
 
         if (seenIsSyntaxHighlightingInvoker)
@@ -1408,6 +1406,8 @@ public class TextEditorCommandDefaultFunctions
     /// <summary>
     /// If left or top is left as null, it will be set to whatever the primary cursor's left or top is respectively.
     /// The left and top values are offsets from the text editor's bounding client rect.
+    ///
+    /// Use the method <see cref="RemoveDropdown"/> to un-render the dropdown programmatically.
     /// </summary>
     public static void ShowDropdown(
         ITextEditorEditContext editContext,
@@ -1453,6 +1453,20 @@ public class TextEditorCommandDefaultFunctions
         dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 	}
 	
+	public static void RemoveDropdown(
+        ITextEditorEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
+        IDispatcher dispatcher)
+    {
+    	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		{
+			MenuKind = MenuKind.None
+		};
+    
+		var dropdownKey = new Key<DropdownRecord>(viewModelModifier.ViewModel.ViewModelKey.Guid);
+		dispatcher.Dispatch(new DropdownState.DisposeAction(dropdownKey));
+	}
+	
 	public static void ShowContextMenu(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
@@ -1461,6 +1475,11 @@ public class TextEditorCommandDefaultFunctions
         TextEditorCursorModifier primaryCursor,
         IDispatcher dispatcher)
     {
+    	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		{
+			MenuKind = MenuKind.ContextMenu
+		};
+    
     	ShowDropdown(
     		editContext,
 	        modelModifier,
@@ -1492,6 +1511,11 @@ public class TextEditorCommandDefaultFunctions
         TextEditorCursorModifier primaryCursor,
         IDispatcher dispatcher)
     {
+    	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		{
+			MenuKind = MenuKind.AutoCompleteMenu
+		};
+    
     	ShowDropdown(
     		editContext,
 	        modelModifier,

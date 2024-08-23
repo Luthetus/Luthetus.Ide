@@ -90,10 +90,13 @@ public partial class ContextMenu : ComponentBase
 				{
 					var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
 
-					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
-						MenuKind = MenuKind.None
-					};
+						TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        Dispatcher);
+					}
 
 					return Task.CompletedTask;
 				});
@@ -115,10 +118,13 @@ public partial class ContextMenu : ComponentBase
 				{
 					var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
 
-					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
-						MenuKind = MenuKind.None
-					};
+						TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        Dispatcher);
+					}
 
 					return Task.CompletedTask;
 				});
@@ -173,10 +179,13 @@ public partial class ContextMenu : ComponentBase
 					{
 						var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
 	
-						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 						{
-							MenuKind = MenuKind.None
-						};
+							TextEditorCommandDefaultFunctions.RemoveDropdown(
+						        editContext,
+						        viewModelModifier,
+						        Dispatcher);
+						}
 
 						return Task.CompletedTask;
 					});
