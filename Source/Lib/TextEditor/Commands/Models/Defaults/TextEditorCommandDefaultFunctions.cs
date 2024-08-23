@@ -1396,4 +1396,33 @@ public class TextEditorCommandDefaultFunctions
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
+    
+    public static void ShowDropdown(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        IDispatcher dispatcher)
+    {
+        var dropdownKey = new Key<DropdownRecord>(viewModelModifier.ViewModel.ViewModelKey.Guid);
+		
+		var dropdownRecord = new DropdownRecord(
+			dropdownKey,
+			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectLeft,
+			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectTop,
+			typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),
+			new Dictionary<string, object?>
+			{
+				{
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.TextEditorModel),
+					modelModifier
+				},
+				{
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.TextEditorViewModel),
+					viewModelModifier.ViewModel
+				}
+			},
+			viewModelModifier.ViewModel.FocusAsync);
+
+        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+	}
 }

@@ -18,6 +18,9 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 	private IServiceProvider ServiceProvider { get; set; } = null!;
 	[Inject]
 	private IEnvironmentProvider EnvironmentProvider { get; set; } = null!;
+	
+	[CascadingParameter]
+    public DropdownRecord? Dropdown { get; set; }
 
 	[Parameter, EditorRequired]
 	public MouseEventArgs MouseEventArgs { get; set; } = null!;
@@ -27,15 +30,30 @@ public partial class SolutionVisualizationContextMenu : ComponentBase
 	public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 
 	private MenuRecord? _menuRecord = null;
+	private bool _htmlElementDimensionsChanged = false;
 
 	protected override async Task OnInitializedAsync()
 	{
 		// Usage of 'OnInitializedAsync' lifecycle method ensure the context menu is only rendered once.
 		// Otherwise, one might have the context menu's options change out from under them.
 		_menuRecord = await GetMenuRecord(MouseEventArgs).ConfigureAwait(false);
+		_htmlElementDimensionsChanged = true;
 		await InvokeAsync(StateHasChanged);
 
 		await base.OnInitializedAsync();
+	}
+	
+	protected override void OnAfterRender(bool firstRender)
+	{
+		var localDropdown = Dropdown;
+
+		if (localDropdown is not null && _htmlElementDimensionsChanged)
+		{
+			_htmlElementDimensionsChanged = false;
+			localDropdown.OnHtmlElementDimensionsChanged();
+		}
+		
+		base.OnAfterRender(firstRender);
 	}
 
 	private Task<MenuRecord> GetMenuRecord(MouseEventArgs mouseEventArgs)

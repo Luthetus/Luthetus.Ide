@@ -1,9 +1,14 @@
 @using Luthetus.Common.RazorLib.Menus.Displays
 @using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
-@{ var renderBatchLocal = RenderBatch; }
+@{
+	var modelLocal = TextEditorModel;
+	var viewModelLocal = TextEditorViewModel;
+}
 
-@if (renderBatchLocal is not null)
+_renderCount: @_renderCount
+
+@if (modelLocal is not null && viewModelLocal is not null)
 {
 	var iconDriver = new IconDriver(
 		AppOptionsStateWrap.Value.Options.IconSizeInPixels,
@@ -48,6 +53,5 @@
 	            </IconRenderFragment>
 	        </MenuDisplay>
 	    </CascadingValue>
-	
 	</div>
 }
