@@ -21,10 +21,9 @@
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
 
 @{
-    var renderBatchUnsafe = _storedRenderBatch;
-    
-    var renderBatchValidated = renderBatchUnsafe.IsValid ? new TextEditorRenderBatchValidated(renderBatchUnsafe) : null;
-    _storedRenderBatchValidated = renderBatchValidated;
+	var localStoredRenderBatchTuple = _storedRenderBatchTuple;
+    var renderBatchUnsafe = localStoredRenderBatchTuple.Unsafe;
+    var renderBatchValidated = localStoredRenderBatchTuple.Validated;
 
     var cssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
     var cssStyle = $"{renderBatchUnsafe.FontSizeInPixelsCssStyle} {renderBatchUnsafe.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";

@@ -16,7 +16,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public partial class AutocompleteMenu : ComponentBase
+public partial class AutocompleteMenu : ComponentBase, IDisposable
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
@@ -27,10 +27,12 @@ public partial class AutocompleteMenu : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
+	[Parameter, EditorRequired]
+	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
     [Parameter, EditorRequired]
-    public ITextEditorModel TextEditorModel { get; set; }
+    public ITextEditorModel TextEditorModel { get; set; } = null!;
     [Parameter, EditorRequired]
-    public TextEditorViewModel TextEditorViewModel { get; set; }
+    public TextEditorViewModel TextEditorViewModel { get; set; } = null!;
 
 	private static readonly MenuRecord NoResultsMenuRecord = new(
 		new MenuOptionRecord[]
@@ -41,12 +43,14 @@ public partial class AutocompleteMenu : ComponentBase
     private ElementReference? _autocompleteMenuElementReference;
     private MenuDisplay? _autocompleteMenuComponent;
     
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override void OnInitialized()
     {
-        //if (TextEditorMenuShouldTakeFocusFunc.Invoke())
-        //    _autocompleteMenuComponent?.SetFocusToFirstOptionInMenuAsync();
-
-        return base.OnAfterRenderAsync(firstRender);
+        TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged; 
+        base.OnInitialized();
+    }
+    
+    private async void OnRenderBatchChanged()
+    {
     }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
@@ -271,5 +275,10 @@ public partial class AutocompleteMenu : ComponentBase
 	            return Task.CompletedTask;
             });
 		return Task.CompletedTask;
+    }
+    
+    public void Dispose()
+    {
+    	TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
     }
 }

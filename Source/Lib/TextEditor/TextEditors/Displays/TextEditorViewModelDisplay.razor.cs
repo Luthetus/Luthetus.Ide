@@ -71,9 +71,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     // private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
     private TextEditorComponentData _componentData = null!;
-    private TextEditorRenderBatchUnsafe _storedRenderBatch = null!;
-    private TextEditorRenderBatchUnsafe? _previousRenderBatch;
-    private TextEditorRenderBatchValidated? _storedRenderBatchValidated;
+    private (TextEditorRenderBatchUnsafe Unsafe, TextEditorRenderBatchValidated? Validated)? _previousRenderBatchTuple;
+    public (TextEditorRenderBatchUnsafe Unsafe, TextEditorRenderBatchValidated? Validated) _storedRenderBatchTuple;
     private TextEditorViewModel? _linkedViewModel;
     
     private GutterDriver _gutterDriver;
@@ -101,6 +100,16 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private string ContentElementId => $"luth_te_text-editor-content_{_textEditorHtmlElementId}";
 
 	public TextEditorComponentData ComponentData => _componentData;
+	
+	/// <summary>
+	/// Any external UI that isn't a child component of this can subscribe to this event,
+	/// and then synchronize with what the text editor is rendering.<br/><br/>
+	///
+	/// A result of this, is that one can have 'extra' components that are low priority rendering.
+	/// Because one can throttle the rendering of those low priority components, and they
+	/// will be up to date eventually regardless of how long the throttle is.<br/><br/>
+	/// </summary>
+	public event Action? RenderBatchChanged;
 
     protected override void OnInitialized()
     {
@@ -146,24 +155,24 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (shouldRender)
             ConstructRenderBatch();
 
-        if (_storedRenderBatch?.ViewModel is not null && _storedRenderBatch?.Options is not null)
+        if (_storedRenderBatchTuple.Unsafe.ViewModel is not null && _storedRenderBatchTuple.Unsafe.Options is not null)
         {
-            var isFirstDisplay = _storedRenderBatch.ViewModel.DisplayTracker.ConsumeIsFirstDisplay();
+            var isFirstDisplay = _storedRenderBatchTuple.Unsafe.ViewModel.DisplayTracker.ConsumeIsFirstDisplay();
 
-            var previousOptionsRenderStateKey = _previousRenderBatch?.Options?.RenderStateKey ?? Key<RenderState>.Empty;
-            var currentOptionsRenderStateKey = _storedRenderBatch.Options.RenderStateKey;
+            var previousOptionsRenderStateKey = _previousRenderBatchTuple?.Unsafe?.Options?.RenderStateKey ?? Key<RenderState>.Empty;
+            var currentOptionsRenderStateKey = _storedRenderBatchTuple.Unsafe.Options.RenderStateKey;
 
 			if (previousOptionsRenderStateKey != currentOptionsRenderStateKey || isFirstDisplay)
             {
                 QueueRemeasureBackgroundTask(
-                    _storedRenderBatch,
+                    _storedRenderBatchTuple.Unsafe,
                     MeasureCharacterWidthAndRowHeightElementId,
                     COUNT_OF_TEST_CHARACTERS,
                     CancellationToken.None);
             }
 
             if (isFirstDisplay)
-				QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
+				QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatchTuple.Unsafe);
         }
 
         return shouldRender;
@@ -178,17 +187,17 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
                 .ConfigureAwait(false);
 
             QueueRemeasureBackgroundTask(
-                _storedRenderBatch,
+                _storedRenderBatchTuple.Unsafe,
                 MeasureCharacterWidthAndRowHeightElementId,
                 COUNT_OF_TEST_CHARACTERS,
                 CancellationToken.None);
 
-            QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatch);
+            QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatchTuple.Unsafe);
         }
 
-        if (_storedRenderBatch?.ViewModel is not null && _storedRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender)
+        if (_storedRenderBatchTuple.Unsafe.ViewModel is not null && _storedRenderBatchTuple.Unsafe.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender)
         {
-            _storedRenderBatch.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
+            _storedRenderBatchTuple.Unsafe.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender = false;
             // await FocusTextEditorAsync().ConfigureAwait(false);
         }
 
@@ -197,7 +206,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private void ConstructRenderBatch()
     {
-        var renderBatch = new TextEditorRenderBatchUnsafe(
+        var renderBatchUnsafe = new TextEditorRenderBatchUnsafe(
             TextEditorService.ViewModelApi.GetModelOrDefault(TextEditorViewModelKey),
             TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(x => x.ViewModelKey == TextEditorViewModelKey),
             TextEditorOptionsStateWrap.Value.Options,
@@ -206,35 +215,40 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             ViewModelDisplayOptions,
 			_componentData);
 
-        if (!string.IsNullOrWhiteSpace(renderBatch.Options?.CommonOptions?.FontFamily))
+        if (!string.IsNullOrWhiteSpace(renderBatchUnsafe.Options?.CommonOptions?.FontFamily))
         {
-            renderBatch = renderBatch with
+            renderBatchUnsafe = renderBatchUnsafe with
             {
-                FontFamily = renderBatch.Options!.CommonOptions!.FontFamily
+                FontFamily = renderBatchUnsafe.Options!.CommonOptions!.FontFamily
             };
         }
 
-        if (renderBatch.Options!.CommonOptions?.FontSizeInPixels is not null)
+        if (renderBatchUnsafe.Options!.CommonOptions?.FontSizeInPixels is not null)
         {
-            renderBatch = renderBatch with
+            renderBatchUnsafe = renderBatchUnsafe with
             {
-                FontSizeInPixels = renderBatch.Options!.CommonOptions.FontSizeInPixels
+                FontSizeInPixels = renderBatchUnsafe.Options!.CommonOptions.FontSizeInPixels
             };
         }
         
-        if (renderBatch.ViewModelDisplayOptions.KeymapOverride is not null)
+        if (renderBatchUnsafe.ViewModelDisplayOptions.KeymapOverride is not null)
         {
-            renderBatch = renderBatch with
+            renderBatchUnsafe = renderBatchUnsafe with
             {
-                Options = renderBatch.Options with
+                Options = renderBatchUnsafe.Options with
                 {
-                    Keymap = renderBatch.ViewModelDisplayOptions.KeymapOverride
+                    Keymap = renderBatchUnsafe.ViewModelDisplayOptions.KeymapOverride
 				}
             };
         }
 
-        _previousRenderBatch = _storedRenderBatch;
-        _storedRenderBatch = renderBatch;
+        _previousRenderBatchTuple = _storedRenderBatchTuple;
+        
+        _storedRenderBatchTuple =
+	        (renderBatchUnsafe,
+	        renderBatchUnsafe.IsValid ? new TextEditorRenderBatchValidated(renderBatchUnsafe) : null);
+        
+        RenderBatchChanged?.Invoke();
     }
     
     private void SetComponentData()
@@ -242,7 +256,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 		_componentData = new(
 			_textEditorHtmlElementId,
 			ViewModelDisplayOptions,
-			_storedRenderBatch.Options,
+			_storedRenderBatchTuple.Unsafe.Options,
 			Dispatcher,
 			ServiceProvider);
     }
