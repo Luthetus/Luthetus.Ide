@@ -1397,29 +1397,57 @@ public class TextEditorCommandDefaultFunctions
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
     
+    /// <summary>
+    /// If left or top is left as null, it will be set to whatever the primary cursor's left or top is respectively.
+    /// The left and top values are offsets from the text editor's bounding client rect.
+    /// </summary>
     public static void ShowDropdown(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
-        IDispatcher dispatcher)
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        IDispatcher dispatcher,
+        double? leftOffset,
+        double? topOffset,
+        Type componentType,
+        Dictionary<string, object?>? componentParameters)
     {
         var dropdownKey = new Key<DropdownRecord>(viewModelModifier.ViewModel.ViewModelKey.Guid);
         
-        var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
-        var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-        
-        if (cursorModifierBag is null || primaryCursor is null)
-        	return;
-        	
-        var topOffset = (primaryCursor.LineIndex + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
-		var leftOffset = primaryCursor.ColumnIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+        leftOffset ??= primaryCursor.ColumnIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+        topOffset ??= (primaryCursor.LineIndex + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
 		
 		var dropdownRecord = new DropdownRecord(
 			dropdownKey,
-			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectLeft + leftOffset,
-			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectTop + topOffset,
-			typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),
-			new Dictionary<string, object?>
+			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectLeft + leftOffset.Value,
+			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectTop + topOffset.Value,
+			componentType,
+			componentParameters,
+			viewModelModifier.ViewModel.FocusAsync);
+
+        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+	}
+	
+	public static void ShowContextMenu(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        IDispatcher dispatcher)
+    {
+    	ShowDropdown(
+    		editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        primaryCursor,
+	        dispatcher,
+	        leftOffset: null,
+	        topOffset: null,
+	        typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),
+	        new Dictionary<string, object?>
 			{
 				{
 					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.TextEditorModel),
@@ -1429,9 +1457,6 @@ public class TextEditorCommandDefaultFunctions
 					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.TextEditorViewModel),
 					viewModelModifier.ViewModel
 				}
-			},
-			viewModelModifier.ViewModel.FocusAsync);
-
-        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+			});
 	}
 }

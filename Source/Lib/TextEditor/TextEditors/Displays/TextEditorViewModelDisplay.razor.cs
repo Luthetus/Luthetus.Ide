@@ -351,15 +351,21 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			editContext =>
 			{
 				var viewModelModifier = editContext.GetViewModelModifier(localViewModelKey);
+				
 				var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
+				
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier.ViewModel);
+        		var primaryCursor = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-				if (modelModifier is null || viewModelModifier is null)
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursor is null)
 					return Task.CompletedTask;
 
-				TextEditorCommandDefaultFunctions.ShowDropdown(
+				TextEditorCommandDefaultFunctions.ShowContextMenu(
 			        editContext,
 			        modelModifier,
 			        viewModelModifier,
+			        cursorModifierBag,
+			        primaryCursor,
 			        Dispatcher);
 				
 				return Task.CompletedTask;
