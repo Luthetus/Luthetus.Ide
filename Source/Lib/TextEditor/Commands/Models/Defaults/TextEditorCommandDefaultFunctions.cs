@@ -1440,9 +1440,13 @@ public class TextEditorCommandDefaultFunctions
             leftOffset += extraWidthPerTabKey *
                 tabsOnSameRowBeforeCursor *
                 viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+                
+            leftOffset -= viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
         }
         
-        topOffset ??= (primaryCursor.LineIndex + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+        topOffset ??= (primaryCursor.LineIndex + 1) *
+        	viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight -
+        	viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop;
 		
 		var dropdownRecord = new DropdownRecord(
 			dropdownKey,
