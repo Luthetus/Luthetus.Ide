@@ -28,9 +28,7 @@ public partial class ContextMenu : ComponentBase
     private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public ITextEditorModel TextEditorModel { get; set; }
-    [Parameter, EditorRequired]
-    public TextEditorViewModel TextEditorViewModel { get; set; }
+	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 
     private ElementReference? _textEditorContextMenuElementReference;
 
@@ -59,17 +57,14 @@ public partial class ContextMenu : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private TextEditorCommandArgs ConstructCommandArgs(
-    	ITextEditorModel modelLocal,
-    	TextEditorViewModel viewModelLocal)
+    private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatchValidated renderBatch)
     {
-        var cursorSnapshotsList = new TextEditorCursor[] { viewModelLocal.PrimaryCursor }.ToImmutableArray();
+        var cursorSnapshotsList = new TextEditorCursor[] { renderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
 
         return new TextEditorCommandArgs(
-            modelLocal.ResourceUri,
-            viewModelLocal.ViewModelKey,
-            // TODO: TextEditorComponentData should not be passed as null (2024-08-23)
-			null,
+            renderBatch.Model.ResourceUri,
+            renderBatch.ViewModel.ViewModelKey,
+			TextEditorViewModelDisplay.ComponentData,
 			TextEditorService,
             ServiceProvider,
             null);
@@ -77,9 +72,8 @@ public partial class ContextMenu : ComponentBase
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return;
     	
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
@@ -88,7 +82,7 @@ public partial class ContextMenu : ComponentBase
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 
 					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
@@ -105,9 +99,8 @@ public partial class ContextMenu : ComponentBase
 
     private Task ReturnFocusToThisAsync()
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     		
         try
@@ -116,7 +109,7 @@ public partial class ContextMenu : ComponentBase
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 
 					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
@@ -164,9 +157,8 @@ public partial class ContextMenu : ComponentBase
 
     private Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     		
         _ = Task.Run(async () =>
@@ -177,7 +169,7 @@ public partial class ContextMenu : ComponentBase
 					nameof(ContextMenu),
 					editContext =>
 					{
-						var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
+						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 	
 						if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 						{
@@ -204,12 +196,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task CutMenuOption()
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     		
-        var commandArgs = ConstructCommandArgs(modelLocal, viewModelLocal);
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Cut),
@@ -224,12 +215,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task CopyMenuOption()
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        var commandArgs = ConstructCommandArgs(modelLocal, viewModelLocal);
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Copy),
@@ -244,12 +234,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task PasteMenuOption()
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     		
-        var commandArgs = ConstructCommandArgs(modelLocal, viewModelLocal);
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),
@@ -264,12 +253,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task GoToDefinitionOption()
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     		
-        var commandArgs = ConstructCommandArgs(modelLocal, viewModelLocal);
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),
@@ -284,12 +272,11 @@ public partial class ContextMenu : ComponentBase
     
     private Task QuickActionsSlashRefactors()
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        var commandArgs = ConstructCommandArgs(modelLocal, viewModelLocal);
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),

@@ -382,7 +382,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			        viewModelModifier,
 			        cursorModifierBag,
 			        primaryCursor,
-			        Dispatcher);
+			        Dispatcher,
+			        ComponentData);
 				
 				return Task.CompletedTask;
 			});

@@ -1475,7 +1475,8 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor,
-        IDispatcher dispatcher)
+        IDispatcher dispatcher,
+        TextEditorComponentData componentData)
     {
     	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 		{
@@ -1495,13 +1496,9 @@ public class TextEditorCommandDefaultFunctions
 	        new Dictionary<string, object?>
 			{
 				{
-					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.TextEditorModel),
-					modelModifier
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.TextEditorViewModelDisplay),
+					componentData.TextEditorViewModelDisplay
 				},
-				{
-					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.TextEditorViewModel),
-					viewModelModifier.ViewModel
-				}
 			});
 	}
 	
@@ -1532,7 +1529,7 @@ public class TextEditorCommandDefaultFunctions
 	        new Dictionary<string, object?>
 			{
 				{
-					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay),
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.TextEditorViewModelDisplay),
 					componentData.TextEditorViewModelDisplay
 				},
 			});

@@ -144,7 +144,8 @@ public class OnKeyDownLateBatching : ITextEditorWork
 					        viewModelModifier,
 					        cursorModifierBag,
 					        primaryCursorModifier,
-					        ComponentData.Dispatcher);
+					        ComponentData.Dispatcher,
+					        ComponentData);
 	                    break;
 	                case KeyboardEventArgsKind.Text:
 	                case KeyboardEventArgsKind.Other:
