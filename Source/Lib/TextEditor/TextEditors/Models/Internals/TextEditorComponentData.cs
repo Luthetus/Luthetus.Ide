@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -34,12 +35,14 @@ public class TextEditorComponentData
 		Guid textEditorHtmlElementId,
 		ViewModelDisplayOptions viewModelDisplayOptions,
 		TextEditorOptions options,
+		TextEditorViewModelDisplay textEditorViewModelDisplay,
 		IDispatcher dispatcher,
 		IServiceProvider serviceProvider)
 	{
 		TextEditorHtmlElementId = textEditorHtmlElementId;
 		ViewModelDisplayOptions = viewModelDisplayOptions;
 		Options = options;
+		TextEditorViewModelDisplay = textEditorViewModelDisplay;
 		Dispatcher = dispatcher;
 		ServiceProvider = serviceProvider;
 	}
@@ -56,6 +59,7 @@ public class TextEditorComponentData
 			Keymap = keymap
 		};
 
+		TextEditorViewModelDisplay = otherComponentData.TextEditorViewModelDisplay;
 		Dispatcher = otherComponentData.Dispatcher;
 		ServiceProvider = otherComponentData.ServiceProvider;
 	}
@@ -69,6 +73,7 @@ public class TextEditorComponentData
 
 	public Guid TextEditorHtmlElementId { get; }
 	public ViewModelDisplayOptions ViewModelDisplayOptions { get; }
+	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; }
 	public IDispatcher Dispatcher { get; }
 	public IServiceProvider ServiceProvider { get; }
 	public Task MouseStoppedMovingTask { get; set; } = Task.CompletedTask;

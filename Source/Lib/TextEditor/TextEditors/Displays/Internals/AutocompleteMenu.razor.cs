@@ -29,10 +29,6 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public ITextEditorModel TextEditorModel { get; set; } = null!;
-    [Parameter, EditorRequired]
-    public TextEditorViewModel TextEditorViewModel { get; set; } = null!;
 
 	private static readonly MenuRecord NoResultsMenuRecord = new(
 		new MenuOptionRecord[]
@@ -51,13 +47,13 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
     
     private async void OnRenderBatchChanged()
     {
+    	await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return;
     
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
@@ -66,7 +62,7 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 				nameof(AutocompleteMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 
 					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
@@ -83,18 +79,17 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 
     private Task ReturnFocusToThisAsync()
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
-    
+    		
         try
         {
             TextEditorService.PostUnique(
 				nameof(AutocompleteMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 
 					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
@@ -117,22 +112,19 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 
     private MenuRecord GetMenuRecord()
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
-    	{
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return NoResultsMenuRecord;
-    	}
     
         try
         {
-            var cursorList = new TextEditorCursor[] { viewModelLocal.PrimaryCursor }.ToImmutableArray();
+            var cursorList = new TextEditorCursor[] { renderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
 
             var primaryCursor = cursorList.First(x => x.IsPrimaryCursor);
 
             if (primaryCursor.ColumnIndex > 0)
             {
-                var word = modelLocal.ReadPreviousWordOrDefault(
+                var word = renderBatch.Model.ReadPreviousWordOrDefault(
                     primaryCursor.LineIndex,
                     primaryCursor.ColumnIndex);
 
@@ -148,17 +140,17 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 
                     // (2023-08-09) Looking into using an ICompilerService for autocompletion.
                     {
-                        var positionIndex = modelLocal.GetPositionIndex(primaryCursor);
+                        var positionIndex = renderBatch.Model.GetPositionIndex(primaryCursor);
 
                         var textSpan = new TextEditorTextSpan(
                             positionIndex,
                             positionIndex + 1,
                             0,
-                            modelLocal.ResourceUri,
-                            // TODO: modelLocal.GetAllText() probably isn't needed here. Maybe a useful optimization is to remove it somehow?
-                            modelLocal.GetAllText());
+                            renderBatch.Model.ResourceUri,
+                            // TODO: renderBatch.Model.GetAllText() probably isn't needed here. Maybe a useful optimization is to remove it somehow?
+                            renderBatch.Model.GetAllText());
 
-                        var compilerServiceAutocompleteEntryList = modelLocal.CompilerService.GetAutocompleteEntries(
+                        var compilerServiceAutocompleteEntryList = renderBatch.Model.CompilerService.GetAutocompleteEntries(
                             word,
                             textSpan);
 
@@ -175,7 +167,7 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
                         MenuOptionKind.Other,
                         () => SelectMenuOption(() =>
                         {
-                            InsertAutocompleteMenuOption(word, entry, viewModelLocal);
+                            InsertAutocompleteMenuOption(word, entry, renderBatch.ViewModel);
                             entry.SideEffectFunc?.Invoke();
                             return Task.CompletedTask;
                         }),
@@ -206,9 +198,8 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 
     private Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     
         _ = Task.Run(async () =>
@@ -219,7 +210,7 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 					nameof(AutocompleteMenu),
 					editContext =>
 					{
-						var viewModelModifier = editContext.GetViewModelModifier(viewModelLocal.ViewModelKey);
+						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 	
 						if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 						{
@@ -249,9 +240,8 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
         AutocompleteEntry autocompleteEntry,
         TextEditorViewModel viewModel)
     {
-    	var modelLocal = TextEditorModel;
-    	var viewModelLocal = TextEditorViewModel;
-    	if (modelLocal is null || viewModelLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     
         TextEditorService.PostUnique(

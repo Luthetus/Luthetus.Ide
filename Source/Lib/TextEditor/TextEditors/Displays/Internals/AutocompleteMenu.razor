@@ -1,12 +1,9 @@
 @using Luthetus.Common.RazorLib.Menus.Displays
 @using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
-@{
-	var modelLocal = TextEditorModel;
-	var viewModelLocal = TextEditorViewModel;
-}
+@{ var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated; }
 
-@if (modelLocal is not null && viewModelLocal is not null)
+@if (renderBatch is not null)
 {
 	var iconDriver = new IconDriver(
 		AppOptionsStateWrap.Value.Options.IconSizeInPixels,

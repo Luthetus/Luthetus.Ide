@@ -1189,7 +1189,8 @@ public class TextEditorCommandDefaultFunctions
 		        viewModelModifier,
 		        cursorModifierBag,
 		        editContext.GetPrimaryCursorModifier(cursorModifierBag),
-		        componentData.Dispatcher);
+		        componentData.Dispatcher,
+		        componentData);
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
         {
@@ -1285,7 +1286,8 @@ public class TextEditorCommandDefaultFunctions
 		        viewModelModifier,
 		        cursorModifierBag,
 		        editContext.GetPrimaryCursorModifier(cursorModifierBag),
-		        componentData.Dispatcher);
+		        componentData.Dispatcher,
+		        componentData);
         }
 
         if (seenIsSyntaxHighlightingInvoker)
@@ -1509,7 +1511,8 @@ public class TextEditorCommandDefaultFunctions
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursor,
-        IDispatcher dispatcher)
+        IDispatcher dispatcher,
+        TextEditorComponentData componentData)
     {
     	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 		{
@@ -1529,13 +1532,9 @@ public class TextEditorCommandDefaultFunctions
 	        new Dictionary<string, object?>
 			{
 				{
-					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.TextEditorModel),
-					modelModifier
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.TextEditorViewModelDisplay),
+					componentData.TextEditorViewModelDisplay
 				},
-				{
-					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.TextEditorViewModel),
-					viewModelModifier.ViewModel
-				}
 			});
 	}
 }
