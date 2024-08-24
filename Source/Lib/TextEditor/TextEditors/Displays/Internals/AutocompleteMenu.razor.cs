@@ -177,9 +177,10 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
                         MenuOptionKind.Other,
                         () => SelectMenuOption(() =>
                         {
-                            InsertAutocompleteMenuOption(word, entry, renderBatch.ViewModel);
-                            entry.SideEffectFunc?.Invoke();
-                            return Task.CompletedTask;
+                        	if (entry.AutocompleteEntryKind != AutocompleteEntryKind.Snippet)
+                            	InsertAutocompleteMenuOption(word, entry, renderBatch.ViewModel);
+                            	
+                            return entry.SideEffectFunc?.Invoke();
                         }),
                         WidgetParameterMap: new Dictionary<string, object?>
                         {
