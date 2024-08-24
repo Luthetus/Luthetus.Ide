@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
@@ -41,6 +42,7 @@ public partial interface ITextEditorService
 	public IState<AppDimensionState> AppDimensionStateWrap { get; }
 
 	public LuthetusTextEditorJavaScriptInteropApi JsRuntimeTextEditorApi { get; }
+	public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi { get; }
 	public IAutocompleteIndexer AutocompleteIndexer { get; }
 	public IAutocompleteService AutocompleteService { get; }
 	public LuthetusTextEditorConfig TextEditorConfig { get; }

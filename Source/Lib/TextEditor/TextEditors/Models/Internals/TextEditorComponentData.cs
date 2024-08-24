@@ -86,6 +86,8 @@ public class TextEditorComponentData
 	/// then move their mouse over the content div while holding the Left Mouse Button down.
 	/// </summary>
     public bool ThinksLeftMouseButtonIsDown { get; set; }
+    
+    public bool MenuShouldTakeFocus { get; set; }
 
 	public void ThrottleApplySyntaxHighlighting(TextEditorModelModifier modelModifier)
     {

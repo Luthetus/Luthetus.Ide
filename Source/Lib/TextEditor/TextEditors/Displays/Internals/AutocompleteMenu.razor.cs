@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
@@ -29,6 +30,13 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
+	
+	public const string HTML_ELEMENT_ID = "luth_te_autocomplete-menu-id";
+	
+	/*public static string GetHtmlElementId(Key<TextEditorViewModel> viewModelKey)
+	{
+		return $"luth_te_autocomplete-menu_{viewModelKey.Guid}";
+	}*/
 
 	private static readonly MenuRecord NoResultsMenuRecord = new(
 		new MenuOptionRecord[]
@@ -43,6 +51,22 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
     {
         TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged; 
         base.OnInitialized();
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+    	if (TextEditorViewModelDisplay.ComponentData.MenuShouldTakeFocus)
+    	{
+    		TextEditorViewModelDisplay.ComponentData.MenuShouldTakeFocus = false;
+    		
+    		/*await TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
+        		HTML_ELEMENT_ID,
+        		preventScroll: true);*/
+        		
+        	await _autocompleteMenuComponent.SetFocusToFirstOptionInMenuAsync();
+    	}
+    	
+    	await base.OnAfterRenderAsync(firstRender);
     }
     
     private async void OnRenderBatchChanged()
