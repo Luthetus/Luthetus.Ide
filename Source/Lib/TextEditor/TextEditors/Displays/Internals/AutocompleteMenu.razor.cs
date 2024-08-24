@@ -74,31 +74,16 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
     	await InvokeAsync(StateHasChanged).ConfigureAwait(false);
     }
 
-    private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
+    private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
     	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
     	if (renderBatch is null)
-    		return;
+    		return Task.CompletedTask;
     
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
-		{
-			TextEditorService.PostUnique(
-				nameof(AutocompleteMenu),
-				editContext =>
-				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
-
-					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
-					{
-						TextEditorCommandDefaultFunctions.RemoveDropdown(
-					        editContext,
-					        viewModelModifier,
-					        Dispatcher);
-					}
-
-					return Task.CompletedTask;
-				});
-		}
+			return ReturnFocusToThisAsync();
+			
+		return Task.CompletedTask;
     }
 
     private Task ReturnFocusToThisAsync()
@@ -125,7 +110,8 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 
 					return Task.CompletedTask;
 				});
-			return Task.CompletedTask;
+				
+			return renderBatch.ViewModel.FocusAsync();
         }
         catch (Exception e)
         {
@@ -244,7 +230,7 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 						        Dispatcher);
 						}
 
-						return Task.CompletedTask;
+						return renderBatch.ViewModel.FocusAsync();
 					});
 
                 await menuOptionAction.Invoke().ConfigureAwait(false);
@@ -256,7 +242,7 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
             }
         }, CancellationToken.None);
 
-        return Task.CompletedTask;
+        return renderBatch.ViewModel.FocusAsync();
     }
 
     private Task InsertAutocompleteMenuOption(
@@ -286,9 +272,11 @@ public partial class AutocompleteMenu : ComponentBase, IDisposable
 			        cursorModifierBag,
 			        autocompleteEntry.DisplayName.Substring(word.Length),
 			        CancellationToken.None);
-	            return Task.CompletedTask;
+			        
+	            return renderBatch.ViewModel.FocusAsync();
             });
-		return Task.CompletedTask;
+		
+		return renderBatch.ViewModel.FocusAsync();
     }
     
     public void Dispose()

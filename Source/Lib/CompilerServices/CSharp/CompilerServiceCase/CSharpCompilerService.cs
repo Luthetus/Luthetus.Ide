@@ -105,7 +105,11 @@ public sealed class CSharpCompilerService : CompilerService
                     AutocompleteEntryKind.Type,
                     () =>
                     {
-                        if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() == x.Key.NamespaceIdentifier ||
+                    	// TODO: The namespace code is buggy at the moment.
+                    	//       It is annoying how this keeps adding the wrong namespace.
+                    	//       Just have it do nothing for now. (2024-08-24)
+                    	// ===============================================================
+                        /*if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() == x.Key.NamespaceIdentifier ||
                             boundScope.CurrentUsingStatementNodeList.Any(usn => usn.NamespaceIdentifier.TextSpan.GetText() == x.Key.NamespaceIdentifier))
                         {
                             return Task.CompletedTask;
@@ -164,7 +168,7 @@ public sealed class CSharpCompilerService : CompilerService
                                 }
 
                                 return Task.CompletedTask;
-                            });
+                            });*/
 						return Task.CompletedTask;
                     });
             }));
