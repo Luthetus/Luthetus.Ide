@@ -19,7 +19,8 @@
 
 @if (widgetState.Widget is not null)
 {
-	<WidgetDisplay Widget="widgetState.Widget"
+	<WidgetDisplay @key="widgetState.Widget.Key"
+				   Widget="widgetState.Widget"
 	               OnFocusInFunc="HandleOnFocusIn"
 	               OnFocusOutFunc="HandleOnFocusOut"/>
 }
