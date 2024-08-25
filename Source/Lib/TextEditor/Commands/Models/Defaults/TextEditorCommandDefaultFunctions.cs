@@ -1454,7 +1454,10 @@ public class TextEditorCommandDefaultFunctions
 			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectTop + topOffset.Value,
 			componentType,
 			componentParameters,
-			viewModelModifier.ViewModel.FocusAsync);
+			viewModelModifier.ViewModel.FocusAsync)
+		{
+			ShouldShowOutOfBoundsClickDisplay = false
+		};
 
         dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
 	}
