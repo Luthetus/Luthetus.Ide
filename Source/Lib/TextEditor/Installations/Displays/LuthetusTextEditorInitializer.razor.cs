@@ -104,8 +104,6 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 							        		MenuOptionKind.Other,
 							        		OnClickFunc: () =>
 							        		{
-							        			Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
-							        		
 							        			return TextEditorService.OpenInEditorAsync(
 													absolutePath.Value,
 													true,

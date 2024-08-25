@@ -67,7 +67,6 @@ public partial class LuthetusCommonInitializer : ComponentBase
 					        		MenuOptionKind.Other,
 					        		OnClickFunc: () =>
 					        		{
-					        			Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
 					        			return Task.CompletedTask;
 					        		}));
 					        }

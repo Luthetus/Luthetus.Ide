@@ -55,6 +55,7 @@ public class CommandFactory : ICommandFactory
     }
 
     private WidgetModel? _contextSwitchWidget;
+    private WidgetModel? _commandBarWidget;
     
 	public IDialog? CodeSearchDialog { get; set; }
 
@@ -392,7 +393,13 @@ public class CommandFactory : ICommandFactory
 	            "Open: Command Bar", "open-command-bar", false,
 	            commandArgs =>
 				{
-                    _dispatcher.Dispatch(new CommandBarState.SetShouldDisplayAction(true));
+                    _commandBarWidget ??= new WidgetModel(
+                        typeof(Luthetus.Ide.RazorLib.CommandBars.Displays.CommandBarDisplay),
+                        componentParameterMap: null,
+                        cssClass: null,
+                        cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;");
+
+                    _dispatcher.Dispatch(new WidgetState.SetWidgetAction(_commandBarWidget));
                     return Task.CompletedTask;
 				});
 		
