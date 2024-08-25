@@ -11,6 +11,9 @@ public partial record WidgetState
             WidgetState inState,
             SetWidgetAction setWidgetAction)
         {
+        	if (setWidgetAction.Widget != inState.Widget)
+        		setWidgetAction.ResultedInChange = true;
+        
             return inState with 
             {
                 Widget = setWidgetAction.Widget,
