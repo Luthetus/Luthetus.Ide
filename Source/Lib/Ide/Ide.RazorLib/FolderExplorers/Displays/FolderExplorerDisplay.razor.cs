@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.Menus.Models;
@@ -28,6 +29,8 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private ITreeViewService TreeViewService { get; set; } = null!;
+    [Inject]
+    private ITextEditorService TextEditorService { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
@@ -52,11 +55,13 @@ public partial class FolderExplorerDisplay : ComponentBase, IDisposable
 
         _treeViewMouseEventHandler = new FolderExplorerTreeViewMouseEventHandler(
             IdeBackgroundTaskApi,
+            TextEditorService,
             TreeViewService,
 			BackgroundTaskService);
 
         _treeViewKeyboardEventHandler = new FolderExplorerTreeViewKeyboardEventHandler(
             IdeBackgroundTaskApi,
+            TextEditorService,
             MenuOptionsFactory,
             CommonComponentRenderers,
             TreeViewService,

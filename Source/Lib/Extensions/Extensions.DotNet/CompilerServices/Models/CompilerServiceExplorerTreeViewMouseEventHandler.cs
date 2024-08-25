@@ -11,9 +11,9 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 
 	public CompilerServiceExplorerTreeViewMouseEventHandler(
-		IdeBackgroundTaskApi ideBackgroundTaskApi,
-		ITreeViewService treeViewService,
-		IBackgroundTaskService backgroundTaskService)
+			IdeBackgroundTaskApi ideBackgroundTaskApi,
+			ITreeViewService treeViewService,
+			IBackgroundTaskService backgroundTaskService)
 		: base(treeViewService, backgroundTaskService)
 	{
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
@@ -21,12 +21,6 @@ public class CompilerServiceExplorerTreeViewMouseEventHandler : TreeViewMouseEve
 
 	public override Task OnDoubleClickAsync(TreeViewCommandArgs commandArgs)
 	{
-		base.OnDoubleClickAsync(commandArgs);
-
-		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewNamespacePath treeViewNamespacePath)
-			return Task.CompletedTask;
-
-		_ideBackgroundTaskApi.Editor.OpenInEditor(treeViewNamespacePath.Item.AbsolutePath, true);
-		return Task.CompletedTask;
+		return base.OnDoubleClickAsync(commandArgs);
 	}
 }
