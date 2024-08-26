@@ -5,6 +5,9 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
@@ -702,10 +705,77 @@ public class GitIdeApi
 			});
     }
     
+    private List<int> GetPlusMarkedLineIndexList(string gitLogDashPOutput)
+	{
+		var stringWalker = new StringWalker(new ResourceUri("/getPlusMarkedLineIndexList.txt"), gitLogDashPOutput);
+		var linesReadCount = 0;
+		
+		// The hunk header looks like:
+		// "@@ -1,6 +1,23 @@"
+		var atAtReadCount = 0;
+		var oldAndNewHaveEqualFirstLine = false;
+		int? sourceLineNumber = null;
+		
+		var isFirstCharacterOnLine = false;
+		
+		var plusMarkedLineIndexList = new List<int>();
+		
+		while (!stringWalker.IsEof)
+		{
+			if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+			{
+				if (stringWalker.CurrentCharacter == '\r' && stringWalker.NextCharacter == '\n')
+					_ = stringWalker.ReadCharacter();
+					
+				linesReadCount++;
+				isFirstCharacterOnLine = true;
+				
+				if (sourceLineNumber is not null)
+					sourceLineNumber++;
+			}
+			else if (linesReadCount == 4 && sourceLineNumber is null)
+			{
+				// Naively going to assume that the 5th line is always the start of the hunk header... for now
+				if (stringWalker.CurrentCharacter == '@' && stringWalker.NextCharacter == '@')
+				{
+					atAtReadCount++;
+					
+					if (atAtReadCount == 2)
+					{
+						if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.PeekCharacter(2)))
+						{
+							// If immediately after the hunk header there is a newline character,
+							// then the old and new text are NOT equal with respects to the first line.
+						}
+						else
+						{
+							// If after the hunk header there is NOT a newline character,
+							// then the old and new text are equal with respects to the first line.
+							//
+							// (Does modificaton imply deletion of old, and insertion of new?)
+							oldAndNewHaveEqualFirstLine = true;
+						}
+						
+						sourceLineNumber = 0;
+					}
+				}
+			}
+			else if (sourceLineNumber is not null)
+			{
+				if (isFirstCharacterOnLine && stringWalker.CurrentCharacter == '+')
+					plusMarkedLineIndexList.Add(sourceLineNumber.Value - 1);
+			}
+		
+			_ = stringWalker.ReadCharacter();
+		}
+		
+		return plusMarkedLineIndexList;
+	}
+    
     public void DiffFileEnqueue(
         GitRepo repoAtTimeOfRequest,
         string relativePathToFile,
-        Func<GitCliOutputParser, string, Task> callback)
+        Func<GitCliOutputParser, string, List<int>, Task> callback)
     {
         _backgroundTaskService.Enqueue(
             Key<IBackgroundTask>.NewKey(),
@@ -733,9 +803,12 @@ public class GitIdeApi
                 {
                 	ContinueWithFunc = parsedCommand =>
                 	{
+                		var plusMarkedLineIndexList = GetPlusMarkedLineIndexList(parsedCommand.OutputCache.ToString());
+                	
                 		return callback.Invoke(
                 			_gitCliOutputParser,
-                			parsedCommand.OutputCache.ToString());
+                			parsedCommand.OutputCache.ToString(),
+                			plusMarkedLineIndexList);
                 	}
                 };
                 	

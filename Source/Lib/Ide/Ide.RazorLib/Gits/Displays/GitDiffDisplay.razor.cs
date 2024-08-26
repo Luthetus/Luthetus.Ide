@@ -101,7 +101,7 @@ public partial class GitDiffDisplay : ComponentBase
         IdeBackgroundTaskApi.Git.DiffFileEnqueue(
             localGitState.Repo,
             localGitFile.RelativePathString,
-            (gitCliOutputParser, logFileContent) =>
+            (gitCliOutputParser, logFileContent, plusMarkedLineIndexList) =>
             {
             	return Task.CompletedTask;
             });
