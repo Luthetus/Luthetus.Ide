@@ -351,15 +351,17 @@ public partial class GitDiffDisplay : ComponentBase
 			            
 			            foreach (var lineIndex in plusMarkedLineIndexList)
 			            {
+			            	
 			            	var lineInformation = modelModifier.GetLineInformation(lineIndex);
+			            	
+			            	Console.WriteLine($"lineIndex: {lineIndex} | ({lineInformation.StartPositionIndexInclusive} to {lineInformation.UpperLineEnd.StartPositionIndexInclusive})");
 			            	
 			            	outResultTextSpanList.Add(new TextEditorTextSpan(
 			            		lineInformation.StartPositionIndexInclusive,
-			            		lineInformation.EndPositionIndexExclusive,
-							    (byte)TextEditorDiffDecorationKind.LongestCommonSubsequence,
+			            		lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+							    (byte)TextEditorDiffDecorationKind.Insertion,
 							    originalResourceUri,
-							    outPresentationModel.PendingCalculation.ContentAtRequest,
-							    "abc123"));
+							    outPresentationModel.PendingCalculation.ContentAtRequest));
 			            }
 			            
 			            modelModifier.CompletePendingCalculatePresentationModel(
