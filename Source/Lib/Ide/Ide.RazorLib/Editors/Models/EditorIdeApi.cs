@@ -275,14 +275,14 @@ public class EditorIdeApi
         }
     }
 
-    public Task<bool> TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
+    public async Task<bool> TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
     {
         _textEditorService.GroupApi.Register(EditorTextEditorGroupKey);
 
         var viewModel = _textEditorService.ViewModelApi.GetOrDefault(showViewModelArgs.ViewModelKey);
 
         if (viewModel is null)
-            return Task.FromResult(false);
+            return false;
 
         if (viewModel.Category == new Category("main") &&
             showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
@@ -297,7 +297,7 @@ public class EditorIdeApi
         if (showViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||
             showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         _textEditorService.GroupApi.AddViewModel(
@@ -308,17 +308,20 @@ public class EditorIdeApi
             showViewModelArgs.GroupKey,
             showViewModelArgs.ViewModelKey);
             
-        _textEditorService.PostUnique(nameof(TryShowViewModelFunc), editContext =>
+        if (showViewModelArgs.ShouldSetFocusToEditor)
         {
-        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
-        	
-        	viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender =
-        		showViewModelArgs.ShouldSetFocusToEditor;
-        	
-        	return Task.CompletedTask;
-        });
+        	_textEditorService.PostUnique(nameof(TryShowViewModelFunc), editContext =>
+	        {
+	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
+	        	
+	        	viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender =
+	        		showViewModelArgs.ShouldSetFocusToEditor;
+	        		
+	        	return viewModel.FocusAsync();
+	        });
+        }
 
-        return Task.FromResult(true);
+        return true;
     }
 
     private async Task CheckIfContentsWereModifiedAsync(
