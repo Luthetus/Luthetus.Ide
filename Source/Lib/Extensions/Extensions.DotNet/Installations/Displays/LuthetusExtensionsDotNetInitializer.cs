@@ -28,6 +28,7 @@ using Luthetus.Extensions.DotNet.TestExplorers.Displays;
 using Luthetus.Extensions.DotNet.Outputs.Displays;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
+using Luthetus.Extensions.DotNet.Commands;
 
 namespace Luthetus.Extensions.DotNet.Installations.Displays;
 
@@ -39,6 +40,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
+	[Inject]
+	private IDotNetCommandFactory DotNetCommandFactory { get; set; } = null!;
 	[Inject]
 	private IDialogService DialogService { get; set; } = null!;
 	[Inject]
@@ -76,6 +79,9 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 			() =>
 			{
 				InitializePanelTabs();
+				
+				DotNetCommandFactory.Initialize();
+				
                 return Task.CompletedTask;
             });
 			
