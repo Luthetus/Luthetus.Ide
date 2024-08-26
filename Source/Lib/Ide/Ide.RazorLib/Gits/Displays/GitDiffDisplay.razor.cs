@@ -8,11 +8,11 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -21,6 +21,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Gits.Models;
 using Luthetus.Ide.RazorLib.Gits.States;
@@ -94,15 +95,7 @@ public partial class GitDiffDisplay : ComponentBase
             localGitFile.RelativePathString,
             (gitCliOutputParser, logFileContent) =>
             {
-            	_createEditorsThrottle.Run(_ => { CreateEditorFromLog(gitCliOutputParser, localGitFile, logFileContent); return Task.CompletedTask; });
-            	return Task.CompletedTask;
-            });
-            
-        IdeBackgroundTaskApi.Git.DiffFileEnqueue(
-            localGitState.Repo,
-            localGitFile.RelativePathString,
-            (gitCliOutputParser, logFileContent, plusMarkedLineIndexList) =>
-            {
+            	_createEditorsThrottle.Run(_ => { CreateEditorFromLog(gitCliOutputParser, localGitState, localGitFile, logFileContent); return Task.CompletedTask; });
             	return Task.CompletedTask;
             });
     }
@@ -272,6 +265,7 @@ public partial class GitDiffDisplay : ComponentBase
 
     private async Task CreateEditorFromLog(
     	GitCliOutputParser gitCliOutputParser,
+    	GitState localGitState,
     	GitFile localGitFile,
     	string logFileContent)
     {
@@ -311,6 +305,74 @@ public partial class GitDiffDisplay : ComponentBase
     		
     	if (!(await TryCreateEditorOut(originalResourceUri, localGitFile.AbsolutePath)))
     		return;
+    		
+    	IdeBackgroundTaskApi.Git.DiffFileEnqueue(
+            localGitState.Repo,
+            localGitFile.RelativePathString,
+            (gitCliOutputParser, logFileContent, plusMarkedLineIndexList) =>
+            {
+            	Console.WriteLine("DiffFileEnqueue");
+            	
+            	TextEditorService.PostUnique(
+            		nameof(plusMarkedLineIndexList),
+            		editContext =>
+            		{
+            			Console.WriteLine("plusMarkedLineIndexList");
+            		
+            			var originalResourceUri = new ResourceUri(localGitFile.AbsolutePath.Value);
+            		
+            			var modelModifier = editContext.GetModelModifier(originalResourceUri);
+            			var viewModelModifier = editContext.GetViewModelModifier(OutViewModelKey);
+            			
+            			if (modelModifier is null || viewModelModifier is null)
+            			{
+            				Console.WriteLine("modelModifier is null || viewModelModifier is null");
+            				return Task.CompletedTask;
+            			}
+            				
+            			editContext.TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+			            	editContext,
+			                modelModifier,
+			                DiffPresentationFacts.OutPresentationKey,
+			                DiffPresentationFacts.EmptyOutPresentationModel);
+			                
+			            var outPresentationModel = modelModifier.PresentationModelList.First(
+			                x => x.TextEditorPresentationKey == DiffPresentationFacts.OutPresentationKey);
+			                
+			            if (outPresentationModel.PendingCalculation is null)
+			            {
+			            	Console.WriteLine("outPresentationModel.PendingCalculation is null");
+			                return Task.CompletedTask;
+			            }
+			            
+			            var outText = outPresentationModel.PendingCalculation.ContentAtRequest;
+			            
+			            var outResultTextSpanList = new List<TextEditorTextSpan>();
+			            
+			            foreach (var lineIndex in plusMarkedLineIndexList)
+			            {
+			            	var lineInformation = modelModifier.GetLineInformation(lineIndex);
+			            	
+			            	outResultTextSpanList.Add(new TextEditorTextSpan(
+			            		lineInformation.StartPositionIndexInclusive,
+			            		lineInformation.EndPositionIndexExclusive,
+							    (byte)TextEditorDiffDecorationKind.LongestCommonSubsequence,
+							    originalResourceUri,
+							    outPresentationModel.PendingCalculation.ContentAtRequest,
+							    "abc123"));
+			            }
+			            
+			            modelModifier.CompletePendingCalculatePresentationModel(
+			                DiffPresentationFacts.OutPresentationKey,
+			                DiffPresentationFacts.EmptyOutPresentationModel,
+			                outResultTextSpanList.ToImmutableArray());
+			            Console.WriteLine("modelModifier.CompletePendingCalculatePresentationModel");
+            			
+            			return Task.CompletedTask;
+            		});
+            		
+            	return Task.CompletedTask;
+            });
 
         await InvokeAsync(StateHasChanged);
     }
