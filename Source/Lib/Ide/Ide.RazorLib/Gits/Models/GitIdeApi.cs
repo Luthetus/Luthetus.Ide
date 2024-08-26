@@ -642,16 +642,6 @@ public class GitIdeApi
                 if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
 					return Task.CompletedTask;
 
-				// https://stackoverflow.com/a/75264653/14847452
-				// Git - finding the SHA1 of an individual file in the index
-				// =========================================================
-				// "Warning: if you need to get that SHA1 on too many files, you will get an error, because of a leak fixed with Git 2.40 (Q1 2023):" - VonC
-				//
-				// TODO: is it true that 'git hash-object ' could have a memory leak for versions earlier than Git v2.4?
-				
-				
-				
-				
 				// Example output:
 				/*
 				PS C:\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg> git log BlazorApp4NetCoreDbg/Pages/FetchData.razor
@@ -708,6 +698,48 @@ public class GitIdeApi
                 };
                 	
                 _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(logTerminalCommandRequest);
+				return Task.CompletedTask;
+			});
+    }
+    
+    public void DiffFileEnqueue(
+        GitRepo repoAtTimeOfRequest,
+        string relativePathToFile,
+        Func<GitCliOutputParser, string, Task> callback)
+    {
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git diff file",
+            () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+					return Task.CompletedTask;
+
+				var terminalCommandArgs = $"diff -p {relativePathToFile}";
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { terminalCommandArgs })
+                {
+                    HACK_ArgumentsString = terminalCommandArgs,
+                    Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
+				};
+
+                var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		return callback.Invoke(
+                			_gitCliOutputParser,
+                			parsedCommand.OutputCache.ToString());
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
 				return Task.CompletedTask;
 			});
     }

@@ -97,6 +97,14 @@ public partial class GitDiffDisplay : ComponentBase
             	_createEditorsThrottle.Run(_ => { CreateEditorFromLog(gitCliOutputParser, localGitFile, logFileContent); return Task.CompletedTask; });
             	return Task.CompletedTask;
             });
+            
+        IdeBackgroundTaskApi.Git.DiffFileEnqueue(
+            localGitState.Repo,
+            localGitFile.RelativePathString,
+            (gitCliOutputParser, logFileContent) =>
+            {
+            	return Task.CompletedTask;
+            });
     }
 
 	private async Task<bool> TryCreateEditorIn(string logFileContent, ResourceUri originalResourceUri)
