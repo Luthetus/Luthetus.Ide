@@ -88,8 +88,8 @@ public partial class GitDiffDisplay : ComponentBase
     {
         if (localGitState.Repo is null)
             return;
-
-        IdeBackgroundTaskApi.Git.LogFileEnqueue(
+            
+        IdeBackgroundTaskApi.Git.ShowFileEnqueue(
             localGitState.Repo,
             localGitFile.RelativePathString,
             (gitCliOutputParser, logFileContent) =>

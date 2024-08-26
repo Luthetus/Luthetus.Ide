@@ -625,4 +625,90 @@ public class GitIdeApi
 				return Task.CompletedTask;
 			});
     }
+    
+    public void ShowFileEnqueue(
+        GitRepo repoAtTimeOfRequest,
+        string relativePathToFile,
+        Func<GitCliOutputParser, string, Task> callback)
+    {
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git show file",
+            () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+					return Task.CompletedTask;
+
+				// https://stackoverflow.com/a/75264653/14847452
+				// Git - finding the SHA1 of an individual file in the index
+				// =========================================================
+				// "Warning: if you need to get that SHA1 on too many files, you will get an error, because of a leak fixed with Git 2.40 (Q1 2023):" - VonC
+				//
+				// TODO: is it true that 'git hash-object ' could have a memory leak for versions earlier than Git v2.4?
+				
+				
+				
+				
+				// Example output:
+				/*
+				PS C:\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg> git log BlazorApp4NetCoreDbg/Pages/FetchData.razor
+				commit 87c2893b1006defc36770c166ab13fdbc6b7f959
+				Author: Luthetus <45454132+huntercfreeman@users.noreply.github.com>
+				Date:   Fri May 3 16:15:17 2024 -0400
+				
+				    Abc123 3
+				*/
+				
+				var skipTextLength = "commit ".Length;
+				var takeTextLength = "87c2893b1006defc36770c166ab13fdbc6b7f959".Length;
+				
+				var logTerminalCommandArgs = $"log -p {relativePathToFile}";
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { logTerminalCommandArgs })
+                {
+                    HACK_ArgumentsString = logTerminalCommandArgs,
+                    Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
+				};
+
+                var logTerminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = gitHashParsedCommand =>
+                	{
+                		var hash = gitHashParsedCommand.OutputCache
+                			.ToString()
+                			.Substring(skipTextLength, takeTextLength)
+                			.Trim();
+                	
+                		var showTerminalCommandRequest = new TerminalCommandRequest(
+                			$"git show {hash}:{relativePathToFile}",
+                			localGitState.Repo.AbsolutePath.Value)
+                		{
+                			ContinueWithFunc = parsedCommand =>
+                			{
+                				var output = parsedCommand.OutputCache.ToString();
+                			
+                				if (output.StartsWith("ï»¿"))
+                					output = output["ï»¿".Length..];
+                			
+                				return callback.Invoke(
+		                			_gitCliOutputParser,
+		                			output);
+                			}
+                		};
+                		
+                		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(showTerminalCommandRequest);
+                		return Task.CompletedTask;
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(logTerminalCommandRequest);
+				return Task.CompletedTask;
+			});
+    }
 }
