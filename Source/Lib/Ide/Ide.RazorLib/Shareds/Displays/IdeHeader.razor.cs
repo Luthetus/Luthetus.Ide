@@ -302,28 +302,57 @@ public partial class IdeHeader : ComponentBase
             var menuOptionPanel = new MenuOptionRecord(
 				panel.Title,
                 MenuOptionKind.Delete,
-                () => 
+                async () => 
 				{
 					var panelGroup = panel.TabGroup as PanelGroup;
 
 					if (panelGroup is not null)
 					{
 						Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(panelGroup.Key, panel.Key));
+						
+						var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
+						
+						if (contextRecord is not null)
+						{
+							var command = CommandFactory.ConstructFocusContextElementCommand(
+						        contextRecord,
+						        nameof(CommandFactory.ConstructFocusContextElementCommand),
+						        nameof(CommandFactory.ConstructFocusContextElementCommand));
+						        
+						    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
+						}
 					}
 					else
 					{
-						//if (dialogState.DialogList.Any(x => x.Key == panel.Key))
-						//{
-						//	Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(panel.Key));
-						//}
-						//else
+						var existingDialog = dialogState.DialogList.FirstOrDefault(
+							x => x.DynamicViewModelKey == panel.DynamicViewModelKey);
+						
+						if (existingDialog is not null)
+						{
+							Dispatcher.Dispatch(new DialogState.SetActiveDialogKeyAction(existingDialog.DynamicViewModelKey));
+							
+							await JsRuntimeCommonApi
+				                .FocusHtmlElementById(existingDialog.DialogFocusPointHtmlElementId)
+				                .ConfigureAwait(false);
+						}
+						else
 						{
 							Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(PanelFacts.LeftPanelGroupKey, panel, true));
 							Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(PanelFacts.LeftPanelGroupKey, panel.Key));
+							
+							var contextRecord = ContextFacts.AllContextsList.FirstOrDefault(x => x.ContextKey == panel.ContextRecordKey);
+						
+							if (contextRecord is not null)
+							{
+								var command = CommandFactory.ConstructFocusContextElementCommand(
+							        contextRecord,
+							        nameof(CommandFactory.ConstructFocusContextElementCommand),
+							        nameof(CommandFactory.ConstructFocusContextElementCommand));
+							        
+							    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
+							}
 						}
 					}
-
-                    return Task.CompletedTask;
 				});
 
             menuOptionsList.Add(menuOptionPanel);
