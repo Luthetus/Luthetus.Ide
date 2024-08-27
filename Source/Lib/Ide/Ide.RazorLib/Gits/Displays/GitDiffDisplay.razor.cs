@@ -359,7 +359,7 @@ public partial class GitDiffDisplay : ComponentBase
 			            	outResultTextSpanList.Add(new TextEditorTextSpan(
 			            		lineInformation.StartPositionIndexInclusive,
 			            		lineInformation.UpperLineEnd.StartPositionIndexInclusive,
-							    (byte)TextEditorDiffDecorationKind.Insertion,
+							    (byte)TextEditorDiffDecorationKind.InsertionLine,
 							    originalResourceUri,
 							    outPresentationModel.PendingCalculation.ContentAtRequest));
 			            }

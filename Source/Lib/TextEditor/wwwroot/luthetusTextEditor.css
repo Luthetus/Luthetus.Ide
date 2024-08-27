@@ -281,6 +281,12 @@
     position: absolute;
 }
 
+.luth_te_diff-insertion-line {
+    background-color: var(--luth_te_diff-insertion-line-background-color);
+    position: absolute;
+    width: 100% !important;
+}
+
 .luth_te_diff-deletion {
     background-color: var(--luth_te_diff-deletion-background-color);
     position: absolute;
@@ -503,6 +509,7 @@
     --luth_te_text-selection-background-color: #ADD6FF;
     --luth_te_diff-longest-common-subsequence-background-color: #ffb3f1;
     --luth_te_diff-insertion-background-color: #b5ff82;
+    --luth_te_diff-insertion-line-background-color: #b5ff82;
     --luth_te_diff-deletion-background-color: blue;
     --luth_te_diff-modification-background-color: yellow;
     --luth_te_semantic-diagnostic-error-background-color: red;
@@ -586,6 +593,7 @@
     --luth_te_text-selection-background-color: #245B82;
     --luth_te_diff-longest-common-subsequence-background-color: #7e0077;
     --luth_te_diff-insertion-background-color: green;
+    --luth_te_diff-insertion-line-background-color: rgb(25 65 25);
     --luth_te_diff-deletion-background-color: blue;
     --luth_te_diff-modification-background-color: yellow;
     --luth_te_semantic-diagnostic-error-background-color: rgb(200, 70, 70);
@@ -669,6 +677,7 @@
     --luth_te_text-selection-background-color: #1E557D;
     --luth_te_diff-longest-common-subsequence-background-color: #7e0077;
     --luth_te_diff-insertion-background-color: green;
+    --luth_te_diff-insertion-line-background-color: rgb(25 65 25);
     --luth_te_diff-deletion-background-color: blue;
     --luth_te_diff-modification-background-color: yellow;
     --luth_te_semantic-diagnostic-error-background-color: rgb(200, 70, 70);
@@ -752,6 +761,7 @@
     --luth_te_text-selection-background-color: rgb(188, 217, 255);
     --luth_te_diff-longest-common-subsequence-background-color: #ffb3f1;
     --luth_te_diff-insertion-background-color: #b5ff82;
+    --luth_te_diff-insertion-line-background-color: #b5ff82;
     --luth_te_diff-deletion-background-color: blue;
     --luth_te_diff-modification-background-color: yellow;
     --luth_te_semantic-diagnostic-error-background-color: red;
