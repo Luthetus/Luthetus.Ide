@@ -79,9 +79,7 @@ public static class TextEditorModelExtensionMethods
     {
         var line = model.GetLineInformation(lineIndex);
 
-#if DEBUG
         model.AssertColumnIndex(line, columnIndex);
-#endif
 
         var tabs = model.TabKeyPositionList
             .SkipWhile(positionIndex => positionIndex < line.StartPositionIndexInclusive)
@@ -112,9 +110,7 @@ public static class TextEditorModelExtensionMethods
     {
         var line = model.GetLineInformation(lineIndex);
 
-#if DEBUG
         model.AssertColumnIndex(line, columnIndex);
-#endif
 
         return line.StartPositionIndexInclusive + columnIndex;
     }
@@ -135,9 +131,7 @@ public static class TextEditorModelExtensionMethods
     /// </summary>
     public static char GetCharacter(this ITextEditorModel model, int positionIndex)
     {
-#if DEBUG
         model.AssertPositionIndex(positionIndex);
-#endif
 
         if (positionIndex == model.CharCount)
             return ParserFacts.END_OF_FILE;
@@ -150,10 +144,8 @@ public static class TextEditorModelExtensionMethods
     /// </summary>
     public static string GetString(this ITextEditorModel model, int positionIndex, int count)
     {
-#if DEBUG
         model.AssertPositionIndex(positionIndex);
         model.AssertCount(count);
-#endif
 
         return new string(model.RichCharacterList
             .Skip(positionIndex)
@@ -164,9 +156,7 @@ public static class TextEditorModelExtensionMethods
 
     public static string GetLineTextRange(this ITextEditorModel model, int lineIndex, int count)
     {
-#if DEBUG
         model.AssertCount(count);
-#endif
 
         var startPositionIndexInclusive = model.GetPositionIndex(lineIndex, 0);
         var lastLineIndexExclusive = lineIndex + count;
@@ -313,9 +303,7 @@ public static class TextEditorModelExtensionMethods
     /// </remarks>
     public static LineInformation GetLineInformation(this ITextEditorModel model, int lineIndex)
     {
-#if DEBUG
         model.AssertLineIndex(lineIndex);
-#endif
 
         LineEnd GetLineEndLower(int lineIndex)
         {
@@ -356,9 +344,7 @@ public static class TextEditorModelExtensionMethods
 
     public static LineInformation GetLineInformationFromPositionIndex(this ITextEditorModel model, int positionIndex)
     {
-#if DEBUG
         model.AssertPositionIndex(positionIndex);
-#endif
 
         int GetLineIndexFromPositionIndex()
         {
@@ -457,9 +443,7 @@ public static class TextEditorModelExtensionMethods
 
     public static CharacterKind GetCharacterKind(this ITextEditorModel model, int positionIndex)
     {
-#if DEBUG
         model.AssertPositionIndex(positionIndex);
-#endif
 
         if (positionIndex == model.CharCount)
             return CharacterKind.Bad;
