@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.Contexts.Models;
+using Luthetus.Common.RazorLib.Installations.Models;
 
 namespace Luthetus.Common.RazorLib.Dropdowns.Displays;
 
@@ -20,6 +21,8 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 	public IState<AppDimensionState> AppDimensionStateWrap { get; set; } = null!;
 	[Inject]
 	public IDispatcher Dispatcher { get; set; } = null!;
+	[Inject]
+	private LuthetusHostingInformation LuthetusHostingInformation { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public DropdownRecord Dropdown { get; set; } = null!;
@@ -72,8 +75,20 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 			// Force the initial invocation (as opposed to waiting for the event)
 			await RemeasureAndRerender();
 		}
-		else if (_hasPendingEvent)
+		else if (LuthetusHostingInformation.LuthetusPurposeKind == LuthetusPurposeKind.Ide && _hasPendingEvent)
 		{
+			/*
+			'LuthetusPurposeKind.Ide' hack for Text Editor NuGet Package (2024-08-28)
+			========================================================================
+			The dropdown currently relies on the html element id: 'ContextFacts.GlobalContext.ContextElementId'.
+			
+			This element id is used by the IDE, but its unlikely to appear in someone's app who is using the
+			text editor NuGet package.
+			
+			TODO: Add a configuration option that allows the currently hardcoded, 'ContextFacts.GlobalContext.ContextElementId',
+			      to instead be specified as other values.
+			*/
+		
 			if (_isOffScreenHorizontally || _isOffScreenVertically)
 			{
 				lock (_hasPendingEventLock)
