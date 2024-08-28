@@ -199,6 +199,12 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.QuickActionsSlashRefactor);
+        
+        Map.Add(new KeymapArgument("j", "KeyJ")
+        {
+            CtrlKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.DEBUG_BreakLineEndings);
     }
 
     private void AddDefaultAltModifiedKeymap()

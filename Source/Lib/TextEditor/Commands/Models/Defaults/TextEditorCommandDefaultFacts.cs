@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -723,5 +724,88 @@ public static class TextEditorCommandDefaultFacts
             }
             
             return;
+        });
+        
+    /// <summary>
+    /// It is thought that:
+    ///
+    /// The line endings break when an edit is made to a partition,
+    /// but an exception is thrown which results in the text editor model's state reverting to the original state.
+    ///
+    /// Yet somehow the partition is still changed?
+    ///
+    /// ============================================================
+    ///
+    /// The bug has been reproduced.
+    /// ----------------------------
+    /// - File has CRLF line endings.
+    /// - Post to the ITextEditorService
+    ///   	- Insert '\n' with line end preference.
+    ///   	- Throw an exception
+    /// - Make a second Post to the ITextEditorService
+    ///   	- Insert the letter 'j'
+    ///
+    /// Need to continue looking in to the bug to determine the more general steps to reproduce it.
+    ///
+    /// For example, its thought that inserting specifically letter 'j' on the final step is irrelevant,
+    /// 	just that one needs to insert any text.
+    /// 
+    /// ============================================================
+    ///
+    /// It was discovered that, the final step which describes an insertion
+    /// is only necessary because it triggers the virtualization result to be re-calculated.
+    ///
+    /// As a result, any action by the user which would re-calculate the virtualization result
+    /// can be performed at that step.
+    ///
+    /// For example, the keybind: { Ctrl + ArrowUp }, will cause the editor to think it has been scrolled
+    /// (whether the scrollTop actually changes is not currently checked).
+    /// This goes on to then re-calculate the virtualization result.
+    /// </summary>
+    public static readonly TextEditorCommand DEBUG_BreakLineEndings_ORIGINAL = new(
+        "DEBUG_BreakLineEndings", "defaults_DEBUG_BreakLineEndings", false, true, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+            
+            var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+            var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+                
+            modelModifier.Insert(
+            	"\n",
+		        cursorModifierBag);
+		        
+		    throw new LuthetusTextEditorException(nameof(DEBUG_BreakLineEndings));
+		        
+		    return Task.CompletedTask;
+        });
+    
+    public static readonly TextEditorCommand DEBUG_BreakLineEndings = new(
+        "DEBUG_BreakLineEndings", "defaults_DEBUG_BreakLineEndings", false, true, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+            
+            var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+            var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+                
+            modelModifier.Insert(
+            	"\r\n",
+		        cursorModifierBag,
+		        useLineEndKindPreference: false);
+		        
+		    throw new LuthetusTextEditorException(nameof(DEBUG_BreakLineEndings));
+		        
+		    return Task.CompletedTask;
         });
 }
