@@ -78,29 +78,18 @@ public class EditorIdeApi
         _serviceProvider = serviceProvider;
     }
 
-    public void OpenInEditor(
-        IAbsolutePath? absolutePath,
-        bool shouldSetFocusToEditor,
-        Key<TextEditorGroup>? editorTextEditorGroupKey = null)
-    {
-        _backgroundTaskService.Enqueue(
-            Key<IBackgroundTask>.NewKey(),
-            ContinuousBackgroundTaskWorker.GetQueueKey(),
-            "OpenInEditor",
-            async () => await OpenInEditorAsync(
-                absolutePath,
-                shouldSetFocusToEditor,
-                editorTextEditorGroupKey));
-    }
-
     public void ShowInputFile()
     {
         _ideBackgroundTaskApi.InputFile.RequestInputFileStateForm(
             "TextEditor",
             absolutePath =>
             {
-                OpenInEditor(absolutePath, true);
-				return Task.CompletedTask;
+                return _textEditorService.OpenInEditorAsync(
+					absolutePath.Value,
+					true,
+					null,
+					new Category("main"),
+					Key<TextEditorViewModel>.NewKey());
             },
             absolutePath =>
             {
@@ -286,14 +275,14 @@ public class EditorIdeApi
         }
     }
 
-    public Task<bool> TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
+    public async Task<bool> TryShowViewModelFunc(TryShowViewModelArgs showViewModelArgs)
     {
         _textEditorService.GroupApi.Register(EditorTextEditorGroupKey);
 
         var viewModel = _textEditorService.ViewModelApi.GetOrDefault(showViewModelArgs.ViewModelKey);
 
         if (viewModel is null)
-            return Task.FromResult(false);
+            return false;
 
         if (viewModel.Category == new Category("main") &&
             showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
@@ -308,7 +297,7 @@ public class EditorIdeApi
         if (showViewModelArgs.ViewModelKey == Key<TextEditorViewModel>.Empty ||
             showViewModelArgs.GroupKey == Key<TextEditorGroup>.Empty)
         {
-            return Task.FromResult(false);
+            return false;
         }
 
         _textEditorService.GroupApi.AddViewModel(
@@ -319,53 +308,20 @@ public class EditorIdeApi
             showViewModelArgs.GroupKey,
             showViewModelArgs.ViewModelKey);
             
-        _textEditorService.PostUnique(nameof(TryShowViewModelFunc), editContext =>
+        if (showViewModelArgs.ShouldSetFocusToEditor)
         {
-        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
-        	
-        	viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender =
-        		showViewModelArgs.ShouldSetFocusToEditor;
-        	
-        	return Task.CompletedTask;
-        });
+        	_textEditorService.PostUnique(nameof(TryShowViewModelFunc), editContext =>
+	        {
+	        	var viewModelModifier = editContext.GetViewModelModifier(showViewModelArgs.ViewModelKey);
+	        	
+	        	viewModelModifier.ViewModel.UnsafeState.ShouldSetFocusAfterNextRender =
+	        		showViewModelArgs.ShouldSetFocusToEditor;
+	        		
+	        	return viewModel.FocusAsync();
+	        });
+        }
 
-        return Task.FromResult(true);
-    }
-
-    private async Task OpenInEditorAsync(
-        IAbsolutePath? absolutePath,
-        bool shouldSetFocusToEditor,
-        Key<TextEditorGroup>? editorTextEditorGroupKey = null)
-    {
-        editorTextEditorGroupKey ??= EditorTextEditorGroupKey;
-
-        if (absolutePath is null || absolutePath.IsDirectory)
-            return;
-
-        _textEditorService.GroupApi.Register(editorTextEditorGroupKey.Value);
-
-        var resourceUri = new ResourceUri(absolutePath.Value);
-
-        await RegisterModelFunc(new RegisterModelArgs(
-                resourceUri,
-                _serviceProvider))
-            .ConfigureAwait(false);
-
-        var viewModelKey = await TryRegisterViewModelFunc(new TryRegisterViewModelArgs(
-                Key<TextEditorViewModel>.NewKey(),
-                resourceUri,
-                new Category("main"),
-                shouldSetFocusToEditor,
-                _serviceProvider))
-            .ConfigureAwait(false);
-
-        _textEditorService.GroupApi.AddViewModel(
-            editorTextEditorGroupKey.Value,
-            viewModelKey);
-
-        _textEditorService.GroupApi.SetActiveViewModel(
-            editorTextEditorGroupKey.Value,
-            viewModelKey);
+        return true;
     }
 
     private async Task CheckIfContentsWereModifiedAsync(

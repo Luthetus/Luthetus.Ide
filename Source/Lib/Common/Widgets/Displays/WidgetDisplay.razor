@@ -1,4 +1,7 @@
-<div class="luth_widget"
+@{ var widgetLocal = Widget; }
+
+<div class="luth_widget @widgetLocal.CssClass"
+	 style="@widgetLocal.CssStyle"
 	 id="@WIDGET_HTML_ELEMENT_ID"
      tabindex="-1"
 	 @onfocusin="HandleOnFocusIn"
@@ -6,10 +9,11 @@
      @onfocusout="HandleOnFocusOut"
      @onfocusout:stopPropagation="true"
      @onmousedown="HandleOnMouseDown"
-     @onmousedown:stopPropagation="true">
+     @onmousedown:stopPropagation="true"
+     @onkeydown="HandleOnKeyDown">
      
-	<CascadingValue Value="Widget">
-        <DynamicComponent Type="Widget.ComponentType"
-                          Parameters="Widget.ComponentParameterMap" />
+	<CascadingValue Value="widgetLocal">
+        <DynamicComponent Type="widgetLocal.ComponentType"
+                          Parameters="widgetLocal.ComponentParameterMap" />
     </CascadingValue>
 </div>

@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   <summary>Click to show changes</summary>
 
 	### Fixed
+    - Fix: line endings breaking due to a Post to the ITextEditorService which makes an edit,
+      but then throws an exception within the same Post.
+    - Fix: Gutter width changes causing the text editor measurements to be incorrect.
+    - Use more recent dropdown code for text editor autocomplete and context menu.
+	  The newer dropdown code moves itself so it stays on screen (if it initially rendered offscreen).
+    - Fix: return focus to text editor after picking a menu option in autocomplete or context menu.
+    - Start code snippet logic.
 	- Home keybind understands indentation
 	- Fix cursor blinking
     - Fix change keymap without having to reload

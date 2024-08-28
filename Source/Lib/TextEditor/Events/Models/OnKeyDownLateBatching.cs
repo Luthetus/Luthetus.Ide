@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -113,11 +114,12 @@ public class OnKeyDownLateBatching : ITextEditorWork
 	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
 	                        viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
 	                    {
-							// Labeling any ITextEditorEditContext -> JavaScript interop or Blazor StateHasChanged.
-							// Reason being, these are likely to be huge optimizations (2024-05-29).
-							//
-							// TODO: Uncomment and deal with this line of code (2024-06-08).
-	                        // await _events.CursorDisplay.SetFocusToActiveMenuAsync().ConfigureAwait(false);
+	                    	// TODO: Focusing the menu from here isn't working?
+	                    	await EditContext.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(
+	                    		AutocompleteMenu.HTML_ELEMENT_ID,
+	                    		preventScroll: true);
+	                    		
+	                    	ComponentData.MenuShouldTakeFocus = true;
 	                    }
 	                    else
 	                    {
@@ -127,18 +129,25 @@ public class OnKeyDownLateBatching : ITextEditorWork
 						        modelModifier,
 						        viewModelModifier,
 						        cursorModifierBag);
-	
-							viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-							{
-								MenuKind = MenuKind.None
-							};
+						        
+						    if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+						    {
+						    	TextEditorCommandDefaultFunctions.RemoveDropdown(
+							        EditContext,
+							        viewModelModifier,
+							        ComponentData.Dispatcher);
+						    }
 	                    }
 	                    break;
 	                case KeyboardEventArgsKind.ContextMenu:
-						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-						{
-							MenuKind = MenuKind.ContextMenu
-						};
+	                	TextEditorCommandDefaultFunctions.ShowContextMenu(
+					        EditContext,
+					        modelModifier,
+					        viewModelModifier,
+					        cursorModifierBag,
+					        primaryCursorModifier,
+					        ComponentData.Dispatcher,
+					        ComponentData);
 	                    break;
 	                case KeyboardEventArgsKind.Text:
 	                case KeyboardEventArgsKind.Other:
@@ -151,10 +160,13 @@ public class OnKeyDownLateBatching : ITextEditorWork
 	                            KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key ||
 	                            !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
 	                        {
-								viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-								{
-									MenuKind = MenuKind.None
-								};
+	                        	if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
+	                        	{
+									TextEditorCommandDefaultFunctions.RemoveDropdown(
+								        EditContext,
+								        viewModelModifier,
+								        ComponentData.Dispatcher);
+								}
 	                        }
 	                    }
 	

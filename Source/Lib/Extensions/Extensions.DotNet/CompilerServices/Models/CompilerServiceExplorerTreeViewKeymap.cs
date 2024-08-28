@@ -81,13 +81,6 @@ public class CompilerServiceExplorerTreeViewKeyboardEventHandler : TreeViewKeybo
 
 	private void InvokeOpenInEditor(TreeViewCommandArgs commandArgs, bool shouldSetFocusToEditor)
 	{
-		var activeNode = commandArgs.TreeViewContainer.ActiveNode;
-
-		if (activeNode is not TreeViewNamespacePath treeViewNamespacePath)
-			return;
-
-		_ideBackgroundTaskApi.Editor.OpenInEditor(
-			treeViewNamespacePath.Item.AbsolutePath,
-			shouldSetFocusToEditor);
+		return;
 	}
 }

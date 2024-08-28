@@ -5,7 +5,7 @@
 
 @{ var dropdownState = DropdownStateWrap.Value; }
 
-@if (dropdownState.DropdownList.Count > 0)
+@if (dropdownState.DropdownList.Count > 0 && dropdownState.DropdownList.Any(x => x.ShouldShowOutOfBoundsClickDisplay))
 {
 	<OutOfBoundsClickDisplay ZIndex="15"
 	                         OnMouseDownCallback="ClearActiveKeyList" />

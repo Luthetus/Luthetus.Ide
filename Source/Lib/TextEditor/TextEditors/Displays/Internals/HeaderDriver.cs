@@ -49,11 +49,6 @@ public class HeaderDriver
 
 	public string _reloadButtonHtmlElementId = "luth_te_text-editor-header-reload-button";
 	
-	public LuthetusCommonJavaScriptInteropApi? _jsRuntimeCommonApi;
-    
-    public LuthetusCommonJavaScriptInteropApi JsRuntimeCommonApi =>
-    	_jsRuntimeCommonApi ??= _root.JsRuntime.GetLuthetusCommonApi();
-
     public TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatchValidated renderBatchLocal)
     {
         var cursorSnapshotsList = new TextEditorCursor[] { renderBatchLocal.ViewModel.PrimaryCursor }.ToImmutableArray();
@@ -284,7 +279,7 @@ public class HeaderDriver
         
         var dropdownKey = Key<DropdownRecord>.NewKey();
         
-        var buttonDimensions = await JsRuntimeCommonApi
+        var buttonDimensions = await _root.TextEditorService.JsRuntimeCommonApi
 			.MeasureElementById(_reloadButtonHtmlElementId)
 			.ConfigureAwait(false);
 			
@@ -332,7 +327,7 @@ public class HeaderDriver
 					menu
 				}
 			},
-			async () => await JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
+			async () => await _root.TextEditorService.JsRuntimeCommonApi.FocusHtmlElementById(_reloadButtonHtmlElementId));
 
         _root.Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
     }

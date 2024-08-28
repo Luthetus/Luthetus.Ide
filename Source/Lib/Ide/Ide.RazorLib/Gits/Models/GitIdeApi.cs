@@ -5,6 +5,9 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
@@ -618,6 +621,194 @@ public class GitIdeApi
                 		return callback.Invoke(
                 			_gitCliOutputParser,
                 			parsedCommand.OutputCache.ToString());
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(terminalCommandRequest);
+				return Task.CompletedTask;
+			});
+    }
+    
+    public void ShowFileEnqueue(
+        GitRepo repoAtTimeOfRequest,
+        string relativePathToFile,
+        Func<GitCliOutputParser, string, Task> callback)
+    {
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git show file",
+            () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+					return Task.CompletedTask;
+
+				// Example output:
+				/*
+				PS C:\Users\hunte\Repos\Demos\BlazorApp4NetCoreDbg> git log BlazorApp4NetCoreDbg/Pages/FetchData.razor
+				commit 87c2893b1006defc36770c166ab13fdbc6b7f959
+				Author: Luthetus <45454132+huntercfreeman@users.noreply.github.com>
+				Date:   Fri May 3 16:15:17 2024 -0400
+				
+				    Abc123 3
+				*/
+				
+				var skipTextLength = "commit ".Length;
+				var takeTextLength = "87c2893b1006defc36770c166ab13fdbc6b7f959".Length;
+				
+				var logTerminalCommandArgs = $"log -p {relativePathToFile}";
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { logTerminalCommandArgs })
+                {
+                    HACK_ArgumentsString = logTerminalCommandArgs,
+                    Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
+				};
+
+                var logTerminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = gitHashParsedCommand =>
+                	{
+                		var hash = gitHashParsedCommand.OutputCache
+                			.ToString()
+                			.Substring(skipTextLength, takeTextLength)
+                			.Trim();
+                	
+                		var showTerminalCommandRequest = new TerminalCommandRequest(
+                			$"git show {hash}:{relativePathToFile}",
+                			localGitState.Repo.AbsolutePath.Value)
+                		{
+                			ContinueWithFunc = parsedCommand =>
+                			{
+                				var output = parsedCommand.OutputCache.ToString();
+                			
+                				if (output.StartsWith("ï»¿"))
+                					output = output["ï»¿".Length..];
+                			
+                				return callback.Invoke(
+		                			_gitCliOutputParser,
+		                			output);
+                			}
+                		};
+                		
+                		_terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(showTerminalCommandRequest);
+                		return Task.CompletedTask;
+                	}
+                };
+                	
+                _terminalStateWrap.Value.TerminalMap[TerminalFacts.GENERAL_KEY].EnqueueCommand(logTerminalCommandRequest);
+				return Task.CompletedTask;
+			});
+    }
+    
+    private List<int> GetPlusMarkedLineIndexList(string gitLogDashPOutput)
+	{
+		var stringWalker = new StringWalker(new ResourceUri("/getPlusMarkedLineIndexList.txt"), gitLogDashPOutput);
+		var linesReadCount = 0;
+		
+		// The hunk header looks like:
+		// "@@ -1,6 +1,23 @@"
+		var atAtReadCount = 0;
+		var oldAndNewHaveEqualFirstLine = false;
+		int? sourceLineNumber = null;
+		
+		var isFirstCharacterOnLine = false;
+		
+		var plusMarkedLineIndexList = new List<int>();
+		
+		while (!stringWalker.IsEof)
+		{
+			if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.CurrentCharacter))
+			{
+				if (stringWalker.CurrentCharacter == '\r' && stringWalker.NextCharacter == '\n')
+					_ = stringWalker.ReadCharacter();
+					
+				linesReadCount++;
+				isFirstCharacterOnLine = true;
+				
+				if (sourceLineNumber is not null)
+					sourceLineNumber++;
+			}
+			else if (linesReadCount == 4 && sourceLineNumber is null)
+			{
+				// Naively going to assume that the 5th line is always the start of the hunk header... for now
+				if (stringWalker.CurrentCharacter == '@' && stringWalker.NextCharacter == '@')
+				{
+					atAtReadCount++;
+					
+					if (atAtReadCount == 2)
+					{
+						if (WhitespaceFacts.LINE_ENDING_CHARACTER_LIST.Contains(stringWalker.PeekCharacter(2)))
+						{
+							// If immediately after the hunk header there is a newline character,
+							// then the old and new text are NOT equal with respects to the first line.
+						}
+						else
+						{
+							// If after the hunk header there is NOT a newline character,
+							// then the old and new text are equal with respects to the first line.
+							//
+							// (Does modificaton imply deletion of old, and insertion of new?)
+							oldAndNewHaveEqualFirstLine = true;
+						}
+						
+						sourceLineNumber = 0;
+					}
+				}
+			}
+			else if (sourceLineNumber is not null)
+			{
+				if (isFirstCharacterOnLine && stringWalker.CurrentCharacter == '+')
+					plusMarkedLineIndexList.Add(sourceLineNumber.Value - 1);
+			}
+		
+			_ = stringWalker.ReadCharacter();
+		}
+		
+		return plusMarkedLineIndexList;
+	}
+    
+    public void DiffFileEnqueue(
+        GitRepo repoAtTimeOfRequest,
+        string relativePathToFile,
+        Func<GitCliOutputParser, string, List<int>, Task> callback)
+    {
+        _backgroundTaskService.Enqueue(
+            Key<IBackgroundTask>.NewKey(),
+            ContinuousBackgroundTaskWorker.GetQueueKey(),
+            "git diff file",
+            () =>
+            {
+                var localGitState = _gitStateWrap.Value;
+
+                if (localGitState.Repo is null || localGitState.Repo != repoAtTimeOfRequest)
+					return Task.CompletedTask;
+
+				var terminalCommandArgs = $"diff -p {relativePathToFile}";
+                var formattedCommand = new FormattedCommand(
+                    GitCliFacts.TARGET_FILE_NAME,
+                    new string[] { terminalCommandArgs })
+                {
+                    HACK_ArgumentsString = terminalCommandArgs,
+                    Tag = GitCliOutputParser.TagConstants.LogFileEnqueue
+				};
+
+                var terminalCommandRequest = new TerminalCommandRequest(
+                	formattedCommand.Value,
+                	localGitState.Repo.AbsolutePath.Value)
+                {
+                	ContinueWithFunc = parsedCommand =>
+                	{
+                		var plusMarkedLineIndexList = GetPlusMarkedLineIndexList(parsedCommand.OutputCache.ToString());
+                	
+                		return callback.Invoke(
+                			_gitCliOutputParser,
+                			parsedCommand.OutputCache.ToString(),
+                			plusMarkedLineIndexList);
                 	}
                 };
                 	

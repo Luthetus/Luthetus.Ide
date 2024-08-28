@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Keys.Models;
+
 namespace Luthetus.Common.RazorLib.Widgets.Models;
 
 public class WidgetModel
@@ -18,4 +20,5 @@ public class WidgetModel
     public Dictionary<string, object?>? ComponentParameterMap { get; }
     public string CssClass { get; }
     public string CssStyle { get; }
+    public Key<WidgetModel> Key { get; init; } = Key<WidgetModel>.NewKey();
 }

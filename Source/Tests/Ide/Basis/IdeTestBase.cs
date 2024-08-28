@@ -19,7 +19,7 @@ public class IdeTestBase
 
         var serviceCollection = new ServiceCollection()
             .AddScoped<IJSRuntime, DoNothingJsRuntime>()
-            .AddLuthetusIdeRazorLibServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, backgroundTaskService))
+            .AddLuthetusIdeRazorLibServices(new LuthetusHostingInformation(LuthetusHostingKind.UnitTestingSynchronous, LuthetusPurposeKind.Ide, backgroundTaskService))
             .AddFluxor(options => options.ScanAssemblies(
                 typeof(LuthetusCommonConfig).Assembly,
                 typeof(LuthetusTextEditorConfig).Assembly,

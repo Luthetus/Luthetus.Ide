@@ -280,6 +280,7 @@ ul.luth_indent-child-content {
     --luth_dialog-display-button-entry-padding: 3px;
     --luth_dialog-display-toolbar-padding: 0 7px;
     --luth_dialog-display-body-padding: 0 7px;
+    --luth_widget-display-z-index: 13; /* dialog:10, active-dialog:11, widget-out-of-bounds-click:12, widget:13 */
     --luth_dropdown-display-z-index: 20;
     --luth_dropdown-display-default-background-box-shadow-blur-radius: 2px;
     --luth_drag-initializer-z-index: 30;

@@ -3,9 +3,6 @@ using Fluxor;
 namespace Luthetus.Ide.RazorLib.CommandBars.States;
 
 [FeatureState]
-public partial record CommandBarState(bool ShouldDisplay)
+public partial record CommandBarState()
 {
-	public CommandBarState() : this(false)
-	{
-	}
 }

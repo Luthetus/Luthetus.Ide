@@ -24,7 +24,6 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
-	private LuthetusCommonJavaScriptInteropApi? _commonJavaScriptInteropApi;
 	private MouseEventArgs? _mouseDownEventArgs;
 
     private readonly Guid VERTICAL_scrollbarGuid = Guid.NewGuid();
@@ -44,8 +43,6 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 
     private string HORIZONTAL_ScrollbarElementId => $"luth_te_{HORIZONTAL_scrollbarGuid}";
     private string HORIZONTAL_ScrollbarSliderElementId => $"luth_te_{HORIZONTAL_scrollbarGuid}-slider";
-
-	private LuthetusCommonJavaScriptInteropApi CommonJavaScriptInteropApi => _commonJavaScriptInteropApi ??= JsRuntime.GetLuthetusCommonApi();
 	
 	private Func<MouseEventArgs, MouseEventArgs, Task>? _dragEventHandler = null;
 
@@ -143,7 +140,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
         HORIZONTAL_thinksLeftMouseButtonIsDown = true;
 		HORIZONTAL_scrollLeftOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollLeft;
 
-		var scrollbarBoundingClientRect = await CommonJavaScriptInteropApi
+		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
 			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
@@ -177,7 +174,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
         VERTICAL_thinksLeftMouseButtonIsDown = true;
 		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollTop;
 
-		var scrollbarBoundingClientRect = await CommonJavaScriptInteropApi
+		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
 			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
