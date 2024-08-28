@@ -124,7 +124,9 @@ public partial class TextEditorModelModifier
         var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
         var initialCursorLineIndex = cursorModifier.LineIndex;
 
+#if DEBUG
         this.AssertPositionIndex(initialCursorPositionIndex);
+#endif
 
         bool isTab = false;
         bool isCarriageReturn = false;
@@ -242,8 +244,12 @@ public partial class TextEditorModelModifier
             for (var i = initialCursorLineIndex; i < LineEndList.Count; i++)
             {
                 var rowEndingTuple = LineEndList[i];
-                rowEndingTuple.StartPositionIndexInclusive += lineEndingsChangedValueBuilder.Length;
-                rowEndingTuple.EndPositionIndexExclusive += lineEndingsChangedValueBuilder.Length;
+
+                LineEndList[i] = rowEndingTuple with
+                {
+                    StartPositionIndexInclusive = rowEndingTuple.StartPositionIndexInclusive + lineEndingsChangedValueBuilder.Length,
+                    EndPositionIndexExclusive = rowEndingTuple.EndPositionIndexExclusive + lineEndingsChangedValueBuilder.Length,
+                };
             }
         }
 
@@ -473,7 +479,9 @@ public partial class TextEditorModelModifier
             cursorModifier.SelectionEndingPositionIndex = 0;
 		}
 
+#if DEBUG
         this.AssertPositionIndex(positionIndex);
+#endif
 
         (int? index, int count) lineEndPositionLazyRemoveRange = (null, 0);
         (int? index, int count) tabPositionLazyRemoveRange = (null, 0);
@@ -628,8 +636,12 @@ public partial class TextEditorModelModifier
             for (var i = initialLineIndex; i < LineEndList.Count; i++)
             {
                 var lineEnd = LineEndList[i];
-                lineEnd.StartPositionIndexInclusive -= charCount;
-                lineEnd.EndPositionIndexExclusive -= charCount;
+
+                LineEndList[i] = lineEnd with
+                {
+                    StartPositionIndexInclusive = lineEnd.StartPositionIndexInclusive - charCount,
+                    EndPositionIndexExclusive = lineEnd.EndPositionIndexExclusive - charCount,
+                };
             }
         }
 

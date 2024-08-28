@@ -33,6 +33,8 @@ public partial class TestExplorerContextMenu : ComponentBase
 
 	[CascadingParameter]
 	public TestExplorerRenderBatchValidated RenderBatch { get; set; } = null!;
+	[CascadingParameter]
+    public DropdownRecord? Dropdown { get; set; }
 
 	[Parameter, EditorRequired]
 	public TreeViewCommandArgs TreeViewCommandArgs { get; set; } = null!;
@@ -40,17 +42,32 @@ public partial class TestExplorerContextMenu : ComponentBase
 	public static readonly Key<DropdownRecord> ContextMenuEventDropdownKey = Key<DropdownRecord>.NewKey();
 	public static readonly Key<TerminalCommandRequest> DotNetTestByFullyQualifiedNameFormattedTerminalCommandRequestKey = Key<TerminalCommandRequest>.NewKey();
 
-	// TODO: If one changes from 'OnInitializedAsync' an infinite loop is very likely to occur (2024-06-29)
 	private MenuRecord? _menuRecord = null;
+	
+	private bool _htmlElementDimensionsChanged = false;
 
 	protected override async Task OnInitializedAsync()
 	{
 		// Usage of 'OnInitializedAsync' lifecycle method ensure the context menu is only rendered once.
 		// Otherwise, one might have the context menu's options change out from under them.
 		_menuRecord = await GetMenuRecord(TreeViewCommandArgs).ConfigureAwait(false);
+		_htmlElementDimensionsChanged = true;
 		await InvokeAsync(StateHasChanged);
 
 		await base.OnInitializedAsync();
+	}
+	
+	protected override void OnAfterRender(bool firstRender)
+	{
+		var localDropdown = Dropdown;
+
+		if (localDropdown is not null && _htmlElementDimensionsChanged)
+		{
+			_htmlElementDimensionsChanged = false;
+			localDropdown.OnHtmlElementDimensionsChanged();
+		}
+		
+		base.OnAfterRender(firstRender);
 	}
 
 	private async Task<MenuRecord> GetMenuRecord(TreeViewCommandArgs commandArgs, bool isRecursiveCall = false)

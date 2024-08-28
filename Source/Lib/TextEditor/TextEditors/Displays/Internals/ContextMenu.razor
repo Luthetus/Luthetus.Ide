@@ -1,8 +1,8 @@
 @using Luthetus.Common.RazorLib.Menus.Displays
 
-@{ var renderBatchLocal = RenderBatch; }
+@{ var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated; }
 
-@if (renderBatchLocal is not null)
+@if (renderBatch is not null)
 {
 	<div @ref="_textEditorContextMenuElementReference"
 	     tab-index="-1"

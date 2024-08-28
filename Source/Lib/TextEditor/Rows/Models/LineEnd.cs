@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.Rows.Models;
 
-public record LineEnd
+public record struct LineEnd
 {
     public static readonly LineEnd StartOfFile = new(0, 0, LineEndKind.StartOfFile);
 
@@ -18,15 +18,15 @@ public record LineEnd
     /// Given: "Hello World!\nAbc123"<br/>
     /// Then: \n starts inclusively at position index 12
     /// </summary>
-    public int StartPositionIndexInclusive { get; set; }
+    public int StartPositionIndexInclusive { get; init; }
     /// <summary>
     /// Given: "Hello World!\nAbc123"<br/>
     /// Then: \n ends exclusively at position index 13
     /// </summary>
-    public int EndPositionIndexExclusive { get; set; }
+    public int EndPositionIndexExclusive { get; init; }
     /// <summary>
     /// Given: "Hello World!\nAbc123"<br/>
     /// Then: \n is <see cref="LineEndKind.LineFeed"/>
     /// </summary>
-    public LineEndKind LineEndKind { get; set; }
+    public LineEndKind LineEndKind { get; init; }
 }

@@ -35,6 +35,7 @@ public record DropdownRecord
 	public Type ComponentType { get; init; }
 	public Dictionary<string, object?>? ComponentParameterMap { get; init; }
 	public Func<Task>? RestoreFocusOnClose { get; init; }
+	public bool ShouldShowOutOfBoundsClickDisplay { get; init; } = true;
 
 	/// <summary>
 	/// Invoke this event via the method: <see cref="OnHtmlElementDimensionsChanged"/>.

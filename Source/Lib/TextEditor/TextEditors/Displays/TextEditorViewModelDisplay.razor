@@ -21,10 +21,9 @@
 @using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
 
 @{
-    var renderBatchUnsafe = _storedRenderBatch;
-    
-    var renderBatchValidated = renderBatchUnsafe.IsValid ? new TextEditorRenderBatchValidated(renderBatchUnsafe) : null;
-    _storedRenderBatchValidated = renderBatchValidated;
+	var localStoredRenderBatchTuple = _storedRenderBatchTuple;
+    var renderBatchUnsafe = localStoredRenderBatchTuple.Unsafe;
+    var renderBatchValidated = localStoredRenderBatchTuple.Validated;
 
     var cssClass = $"luth_te_text-editor-css-wrapper {TextEditorService.ThemeCssClassString} {ViewModelDisplayOptions.WrapperClassCssString}";
     var cssStyle = $"{renderBatchUnsafe.FontSizeInPixelsCssStyle} {renderBatchUnsafe.FontFamilyCssStyle} {GetGlobalHeightInPixelsStyling()} {ViewModelDisplayOptions.WrapperStyleCssString}";
@@ -305,43 +304,6 @@
 					<div class="luth_te_text-editor-caret-row"
 					     style="@_cursorDriver.GetCaretRowStyleCss()">
 					</div>
-					
-					@if (_cursorDriver._renderBatch.ViewModel.MenuKind != MenuKind.None && _cursorDriver.GetIncludeContextMenuHelperComponent(_cursorDriver._renderBatch))
-					{
-					    <div @onkeydown:stopPropagation="true"
-					         @onmousedown:stopPropagation="true"
-					         @onmousemove:stopPropagation="true"
-					         class="luth_te_text-editor-context-menu"
-					         style="@_cursorDriver.GetMenuStyleCss()">
-					
-					        <CascadingValue Name="TextEditorMenuShouldTakeFocusFunc"
-					                        Value="_cursorDriver.TextEditorMenuShouldTakeFocus">
-					            @switch (_cursorDriver._renderBatch.ViewModel.MenuKind)
-					            {
-					                case MenuKind.ContextMenu:
-				                        if (_cursorDriver._renderBatch.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride is not null)
-							            {
-							                @_cursorDriver._renderBatch.ViewModelDisplayOptions.ContextMenuRenderFragmentOverride(_cursorDriver._renderBatch)
-							            }
-							            else
-							            {
-							                <ContextMenu RenderBatch="_cursorDriver._renderBatch"/>
-							            }
-					                    break;
-					                case MenuKind.AutoCompleteMenu:
-					                    if (_cursorDriver._renderBatch.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride is not null)
-							            {
-							                @_cursorDriver._renderBatch.ViewModelDisplayOptions.AutoCompleteMenuRenderFragmentOverride(_cursorDriver._renderBatch)
-							            }
-							            else
-							            {
-							                <AutocompleteMenu RenderBatch="_cursorDriver._renderBatch"/>
-							            }
-					                    break;
-					            }
-					        </CascadingValue>
-					    </div>
-					}
 				</div>
 			    @* RowSection.razor Close *@
 			

@@ -3,12 +3,13 @@ using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Extensions.DotNet.DotNetSolutions.States;
-using Luthetus.Extensions.DotNet.Namespaces.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.Editors.Models;
+using Luthetus.Ide.RazorLib.Commands;
+using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.Namespaces.Models;
 
 namespace Luthetus.Extensions.DotNet.Commands;
 
@@ -17,16 +18,18 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 	private readonly ITextEditorService _textEditorService;
 	private readonly ITreeViewService _treeViewService;
 	private readonly IEnvironmentProvider _environmentProvider;
+	private readonly ICommandFactory _commandFactory;
 
 	public DotNetCommandFactory(
         ITextEditorService textEditorService,
         ITreeViewService treeViewService,
-		IEnvironmentProvider environmentProvider)
+		IEnvironmentProvider environmentProvider,
+		ICommandFactory commandFactory)
 	{
 		_textEditorService = textEditorService;
         _treeViewService = treeViewService;
 		_environmentProvider = environmentProvider;
-
+		_commandFactory = commandFactory;
     }
 
 	private List<TreeViewNoType> _nodeList = new();
@@ -38,19 +41,19 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 		{
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
 				new KeymapArgument("n", "KeyN", false, true, true, false, Key<KeymapLayer>.Empty),
-				ConstructFocusContextElementCommand(
+				_commandFactory.ConstructFocusContextElementCommand(
 					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager"));
 		}
 		// CSharpReplContext
 		{
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
 				new KeymapArgument("r", "KeyR", false, true, true, false, Key<KeymapLayer>.Empty),
-				ConstructFocusContextElementCommand(
+				_commandFactory.ConstructFocusContextElementCommand(
 					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl"));
 		}
 		// SolutionExplorerContext
 		{
-			var focusSolutionExplorerCommand = ConstructFocusContextElementCommand(
+			var focusSolutionExplorerCommand = _commandFactory.ConstructFocusContextElementCommand(
 				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer");
 
 			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
@@ -90,14 +93,6 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 						focusTextEditorCommand);
 			}
 		}
-	}
-
-	public CommandNoType ConstructFocusContextElementCommand(
-		ContextRecord contextRecord,
-		string displayName,
-		string internalIdentifier)
-	{
-		throw new NotImplementedException("(2024-05-02)");
 	}
 
     private async Task PerformGetFlattenedTree()

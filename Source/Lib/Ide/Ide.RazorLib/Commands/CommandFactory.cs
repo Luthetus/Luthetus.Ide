@@ -19,7 +19,9 @@ using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Installations.Displays;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Installations.Displays;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
 using Luthetus.Ide.RazorLib.Editors.Models;
 using Luthetus.Ide.RazorLib.CommandBars.States;
@@ -30,6 +32,7 @@ public class CommandFactory : ICommandFactory
 {
     private readonly IState<PanelState> _panelStateWrap;
     private readonly IState<ContextState> _contextStateWrap;
+    private readonly IState<ContextSwitchState> _contextSwitchStateWrap;
     private readonly ITextEditorService _textEditorService;
     private readonly ITreeViewService _treeViewService;
     private readonly IEnvironmentProvider _environmentProvider;
@@ -42,6 +45,7 @@ public class CommandFactory : ICommandFactory
 		IEnvironmentProvider environmentProvider,
         IState<PanelState> panelStateWrap,
         IState<ContextState> contextStateWrap,
+        IState<ContextSwitchState> contextSwitchStateWrap,
         IDispatcher dispatcher,
 		IJSRuntime jsRuntime)
     {
@@ -50,11 +54,13 @@ public class CommandFactory : ICommandFactory
 		_environmentProvider = environmentProvider;
         _panelStateWrap = panelStateWrap;
         _contextStateWrap = contextStateWrap;
+        _contextSwitchStateWrap = contextSwitchStateWrap;
         _dispatcher = dispatcher;
 		_jsRuntime = jsRuntime;
     }
 
     private WidgetModel? _contextSwitchWidget;
+    private WidgetModel? _commandBarWidget;
     
 	public IDialog? CodeSearchDialog { get; set; }
 
@@ -361,6 +367,16 @@ public class CommandFactory : ICommandFactory
 						() => Task.CompletedTask);
 			
 			        // _dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+			        
+			        if (_contextStateWrap.Value.FocusedContextHeirarchy.NearestAncestorKey ==
+			        	    ContextFacts.TextEditorContext.ContextKey)
+			        {
+			        	_contextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = LuthetusTextEditorInitializer.ContextSwitchGroupKey;
+			        }
+			        else
+			        {
+			        	_contextSwitchStateWrap.Value.FocusInitiallyContextSwitchGroupKey = LuthetusCommonInitializer.ContextSwitchGroupKey;
+			        }
 				
                     _contextSwitchWidget ??= new WidgetModel(
                         typeof(ContextSwitchDisplay),
@@ -392,7 +408,13 @@ public class CommandFactory : ICommandFactory
 	            "Open: Command Bar", "open-command-bar", false,
 	            commandArgs =>
 				{
-                    _dispatcher.Dispatch(new CommandBarState.SetShouldDisplayAction(true));
+                    _commandBarWidget ??= new WidgetModel(
+                        typeof(Luthetus.Ide.RazorLib.CommandBars.Displays.CommandBarDisplay),
+                        componentParameterMap: null,
+                        cssClass: null,
+                        cssStyle: "width: 80vw; height: 5em; left: 10vw; top: 0;");
+
+                    _dispatcher.Dispatch(new WidgetState.SetWidgetAction(_commandBarWidget));
                     return Task.CompletedTask;
 				});
 		

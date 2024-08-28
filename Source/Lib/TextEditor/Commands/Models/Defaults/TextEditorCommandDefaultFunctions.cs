@@ -1183,10 +1183,14 @@ public class TextEditorCommandDefaultFunctions
 
         if (EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
         {
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-				MenuKind = MenuKind.AutoCompleteMenu
-			};
+        	ShowAutocompleteMenu(
+        		editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        editContext.GetPrimaryCursorModifier(cursorModifierBag),
+		        componentData.Dispatcher,
+		        componentData);
         }
         else if (EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
         {
@@ -1276,10 +1280,14 @@ public class TextEditorCommandDefaultFunctions
 
         if (seenIsAutocompleteMenuInvoker)
         {
-			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-			{
-				MenuKind = MenuKind.AutoCompleteMenu
-			};
+        	ShowAutocompleteMenu(
+        		editContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        editContext.GetPrimaryCursorModifier(cursorModifierBag),
+		        componentData.Dispatcher,
+		        componentData);
         }
 
         if (seenIsSyntaxHighlightingInvoker)
@@ -1396,4 +1404,141 @@ public class TextEditorCommandDefaultFunctions
 
         // TODO: Measure the tooltip, and reposition if it would go offscreen.
     }
+    
+    /// <summary>
+    /// If left or top is left as null, it will be set to whatever the primary cursor's left or top is respectively.
+    /// The left and top values are offsets from the text editor's bounding client rect.
+    ///
+    /// Use the method <see cref="RemoveDropdown"/> to un-render the dropdown programmatically.
+    /// </summary>
+    public static void ShowDropdown(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        IDispatcher dispatcher,
+        double? leftOffset,
+        double? topOffset,
+        Type componentType,
+        Dictionary<string, object?>? componentParameters)
+    {
+        var dropdownKey = new Key<DropdownRecord>(viewModelModifier.ViewModel.ViewModelKey.Guid);
+        
+        if (leftOffset is null)
+        {
+        	leftOffset = primaryCursor.ColumnIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+	        
+	        // Tab key column offset
+            var tabsOnSameRowBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
+                primaryCursor.LineIndex,
+                primaryCursor.ColumnIndex);
+
+            // 1 of the character width is already accounted for
+            var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+            leftOffset += extraWidthPerTabKey *
+                tabsOnSameRowBeforeCursor *
+                viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+                
+            leftOffset -= viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
+        }
+        
+        topOffset ??= (primaryCursor.LineIndex + 1) *
+        	viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight -
+        	viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop;
+		
+		var dropdownRecord = new DropdownRecord(
+			dropdownKey,
+			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectLeft + leftOffset.Value,
+			viewModelModifier.ViewModel.TextEditorDimensions.BoundingClientRectTop + topOffset.Value,
+			componentType,
+			componentParameters,
+			viewModelModifier.ViewModel.FocusAsync)
+		{
+			ShouldShowOutOfBoundsClickDisplay = false
+		};
+
+        dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
+	}
+	
+	public static void RemoveDropdown(
+        ITextEditorEditContext editContext,
+        TextEditorViewModelModifier viewModelModifier,
+        IDispatcher dispatcher)
+    {
+    	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		{
+			MenuKind = MenuKind.None
+		};
+    
+		var dropdownKey = new Key<DropdownRecord>(viewModelModifier.ViewModel.ViewModelKey.Guid);
+		dispatcher.Dispatch(new DropdownState.DisposeAction(dropdownKey));
+	}
+	
+	public static void ShowContextMenu(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        IDispatcher dispatcher,
+        TextEditorComponentData componentData)
+    {
+    	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		{
+			MenuKind = MenuKind.ContextMenu
+		};
+    
+    	ShowDropdown(
+    		editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        primaryCursor,
+	        dispatcher,
+	        leftOffset: null,
+	        topOffset: null,
+	        typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu),
+	        new Dictionary<string, object?>
+			{
+				{
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.ContextMenu.TextEditorViewModelDisplay),
+					componentData.TextEditorViewModelDisplay
+				},
+			});
+	}
+	
+	public static void ShowAutocompleteMenu(
+        ITextEditorEditContext editContext,
+        TextEditorModelModifier modelModifier,
+        TextEditorViewModelModifier viewModelModifier,
+        CursorModifierBagTextEditor cursorModifierBag,
+        TextEditorCursorModifier primaryCursor,
+        IDispatcher dispatcher,
+        TextEditorComponentData componentData)
+    {
+    	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		{
+			MenuKind = MenuKind.AutoCompleteMenu
+		};
+    
+    	ShowDropdown(
+    		editContext,
+	        modelModifier,
+	        viewModelModifier,
+	        cursorModifierBag,
+	        primaryCursor,
+	        dispatcher,
+	        leftOffset: null,
+	        topOffset: null,
+	        typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu),
+	        new Dictionary<string, object?>
+			{
+				{
+					nameof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.AutocompleteMenu.TextEditorViewModelDisplay),
+					componentData.TextEditorViewModelDisplay
+				},
+			});
+	}
 }

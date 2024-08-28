@@ -224,7 +224,8 @@ public partial class ContextSwitchDisplay : ComponentBase
             case KeyboardKeyFacts.MovementKeys.END:
                 _activeIndex = _flatMenuOptionList.Count - 1;
                 break;
-            case KeyboardKeyFacts.MetaKeys.ESCAPE:
+            case "Enter":
+				Dispatcher.Dispatch(new WidgetState.SetWidgetAction(null));
                 break;
         }
     }

@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
@@ -27,7 +28,7 @@ public partial class ContextMenu : ComponentBase
     private IServiceProvider ServiceProvider { get; set; } = null!;
 
     [Parameter, EditorRequired]
-    public TextEditorRenderBatchValidated? RenderBatch { get; set; }
+	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 
     private ElementReference? _textEditorContextMenuElementReference;
 
@@ -56,14 +57,14 @@ public partial class ContextMenu : ComponentBase
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatchValidated renderBatchLocal)
+    private TextEditorCommandArgs ConstructCommandArgs(TextEditorRenderBatchValidated renderBatch)
     {
-        var cursorSnapshotsList = new TextEditorCursor[] { renderBatchLocal.ViewModel.PrimaryCursor }.ToImmutableArray();
+        var cursorSnapshotsList = new TextEditorCursor[] { renderBatch.ViewModel.PrimaryCursor }.ToImmutableArray();
 
         return new TextEditorCommandArgs(
-            renderBatchLocal.Model.ResourceUri,
-            renderBatchLocal.ViewModel.ViewModelKey,
-			renderBatchLocal.ComponentData,
+            renderBatch.Model.ResourceUri,
+            renderBatch.ViewModel.ViewModelKey,
+			TextEditorViewModelDisplay.ComponentData,
 			TextEditorService,
             ServiceProvider,
             null);
@@ -71,8 +72,8 @@ public partial class ContextMenu : ComponentBase
 
     private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
-    	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return;
     	
         if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key)
@@ -81,12 +82,15 @@ public partial class ContextMenu : ComponentBase
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 
-					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
-						MenuKind = MenuKind.None
-					};
+						TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        Dispatcher);
+					}
 
 					return Task.CompletedTask;
 				});
@@ -95,8 +99,8 @@ public partial class ContextMenu : ComponentBase
 
     private Task ReturnFocusToThisAsync()
     {
-    	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     		
         try
@@ -105,12 +109,15 @@ public partial class ContextMenu : ComponentBase
 				nameof(ContextMenu),
 				editContext =>
 				{
-					var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+					var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 
-					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+					if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 					{
-						MenuKind = MenuKind.None
-					};
+						TextEditorCommandDefaultFunctions.RemoveDropdown(
+					        editContext,
+					        viewModelModifier,
+					        Dispatcher);
+					}
 
 					return Task.CompletedTask;
 				});
@@ -150,10 +157,10 @@ public partial class ContextMenu : ComponentBase
 
     private Task SelectMenuOption(Func<Task> menuOptionAction)
     {
-    	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
-    	
+    		
         _ = Task.Run(async () =>
         {
             try
@@ -162,12 +169,15 @@ public partial class ContextMenu : ComponentBase
 					nameof(ContextMenu),
 					editContext =>
 					{
-						var viewModelModifier = editContext.GetViewModelModifier(renderBatchLocal.ViewModel.ViewModelKey);
+						var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
 	
-						viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+						if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 						{
-							MenuKind = MenuKind.None
-						};
+							TextEditorCommandDefaultFunctions.RemoveDropdown(
+						        editContext,
+						        viewModelModifier,
+						        Dispatcher);
+						}
 
 						return Task.CompletedTask;
 					});
@@ -186,11 +196,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task CutMenuOption()
     {
-    	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
-    	
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
+    		
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Cut),
@@ -205,11 +215,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task CopyMenuOption()
     {
-    	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.Copy),
@@ -224,11 +234,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task PasteMenuOption()
     {
-    	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
-    	
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
+    		
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),
@@ -243,11 +253,11 @@ public partial class ContextMenu : ComponentBase
 
     private Task GoToDefinitionOption()
     {
-    	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
-    	
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
+    		
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),
@@ -262,11 +272,11 @@ public partial class ContextMenu : ComponentBase
     
     private Task QuickActionsSlashRefactors()
     {
-    	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	if (renderBatch is null)
     		return Task.CompletedTask;
     	
-        var commandArgs = ConstructCommandArgs(renderBatchLocal);
+        var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
             nameof(TextEditorCommandDefaultFacts.PasteCommand),

@@ -92,12 +92,14 @@ public partial class MenuOptionDisplay : ComponentBase
     {
         if (MenuOptionRecord.OnClickFunc is not null)
         {
-            await MenuOptionRecord.OnClickFunc.Invoke();
+            var localDropdown = Dropdown;
+            
             Dispatcher.Dispatch(new DropdownState.ClearAction());
-
-			var localDropdown = Dropdown;
+			
 			if (localDropdown is not null)
             	Dispatcher.Dispatch(new DropdownState.DisposeAction(localDropdown.Key));
+            	
+            await MenuOptionRecord.OnClickFunc.Invoke().ConfigureAwait(false);
         }
 
 		var localSubMenu = MenuOptionRecord.SubMenu;
