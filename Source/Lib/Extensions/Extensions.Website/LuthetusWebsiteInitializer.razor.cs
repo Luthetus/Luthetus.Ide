@@ -139,7 +139,12 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
             InitialSolutionFacts.BLAZOR_CRUD_APP_WASM_PROGRAM_CS_ABSOLUTE_FILE_PATH,
             false);
 
-        IdeBackgroundTaskApi.Editor.OpenInEditor(absolutePath, false);
+        await TextEditorService.OpenInEditorAsync(
+			absolutePath.Value,
+			false,
+			null,
+			new Category("main"),
+			Key<TextEditorViewModel>.NewKey());
     }
 
     private async Task ParseSolutionAsync()
