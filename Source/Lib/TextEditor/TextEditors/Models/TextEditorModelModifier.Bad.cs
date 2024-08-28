@@ -267,8 +267,12 @@ public partial class TextEditorModelModifier
                 if (previousCharacter == KeyboardKeyFacts.WhitespaceCharacters.CARRIAGE_RETURN)
                 {
                     var lineEnding = LineEndList[rowIndex - 1];
-                    lineEnding.EndPositionIndexExclusive++;
-                    lineEnding.LineEndKind = LineEndKind.CarriageReturnLineFeed;
+
+                    LineEndList[rowIndex - 1] = lineEnding with
+					{
+						EndPositionIndexExclusive = lineEnding.EndPositionIndexExclusive + 1,
+                        LineEndKind = LineEndKind.CarriageReturnLineFeed
+					};
 
                     carriageReturnCount--;
                     carriageReturnLinefeedCount++;
@@ -315,8 +319,11 @@ public partial class TextEditorModelModifier
             if (endOfFile.LineEndKind != LineEndKind.EndOfFile)
                 throw new LuthetusTextEditorException($"The text editor model is malformed; the final entry of {nameof(_lineEndList)} must be the {nameof(LineEndKind)}.{nameof(LineEndKind.EndOfFile)}");
 
-            endOfFile.StartPositionIndexInclusive = content.Length;
-            endOfFile.EndPositionIndexExclusive = content.Length;
+            _lineEndList[^1] = endOfFile with
+			{
+				StartPositionIndexInclusive = content.Length,
+				EndPositionIndexExclusive = content.Length,
+			};
         }
 
         CheckRowEndingPositions(true);

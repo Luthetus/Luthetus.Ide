@@ -242,8 +242,12 @@ public partial class TextEditorModelModifier
             for (var i = initialCursorLineIndex; i < LineEndList.Count; i++)
             {
                 var rowEndingTuple = LineEndList[i];
-                rowEndingTuple.StartPositionIndexInclusive += lineEndingsChangedValueBuilder.Length;
-                rowEndingTuple.EndPositionIndexExclusive += lineEndingsChangedValueBuilder.Length;
+
+                LineEndList[i] = rowEndingTuple with
+                {
+                    StartPositionIndexInclusive = rowEndingTuple.StartPositionIndexInclusive + lineEndingsChangedValueBuilder.Length,
+                    EndPositionIndexExclusive = rowEndingTuple.EndPositionIndexExclusive + lineEndingsChangedValueBuilder.Length,
+                };
             }
         }
 
@@ -628,8 +632,12 @@ public partial class TextEditorModelModifier
             for (var i = initialLineIndex; i < LineEndList.Count; i++)
             {
                 var lineEnd = LineEndList[i];
-                lineEnd.StartPositionIndexInclusive -= charCount;
-                lineEnd.EndPositionIndexExclusive -= charCount;
+
+                LineEndList[i] = lineEnd with
+                {
+                    StartPositionIndexInclusive = lineEnd.StartPositionIndexInclusive - charCount,
+                    EndPositionIndexExclusive = lineEnd.EndPositionIndexExclusive - charCount,
+                };
             }
         }
 
