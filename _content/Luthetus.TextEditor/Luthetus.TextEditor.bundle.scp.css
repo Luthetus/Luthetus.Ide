@@ -47,6 +47,14 @@
 .luth_web_dirty-text-editor-models-interactive-icon[b-l3pw0a2hp7] {
     position: relative;
 }
+/* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/AutocompleteMenu.razor.rz.scp.css */
+.luth_ide_text-editor-autocomplete-menu:focus[b-ja5la8rm0r] {
+
+	width: 500px;
+	height: 500px;
+	background-color: aqua;
+
+}
 /* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/FindOverlayDisplay.razor.rz.scp.css */
 .luth_te_find-overlay[b-vqz5xh3qbb] {
     overflow: hidden;

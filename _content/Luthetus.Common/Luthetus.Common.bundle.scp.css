@@ -509,7 +509,7 @@ button.luth_polymorphic-tab.luth_drag.luth_active[b-y15tx19giz] {
 	height: 60vh;
 	left: 20vw;
 	top: 20vh;
-	z-index: var(--luth_dialog-display-z-index);
+	z-index: var(--luth_widget-display-z-index);
     color: var(--luth_secondary-foreground-color);
     background-color: var(--luth_secondary-background-color);
     box-shadow: 0 0 var(--luth_dialog-display-box-shadow-blur-radius) var(--luth_primary-box-shadow-color);

@@ -24,12 +24,8 @@
     }
 /* _content/Luthetus.Ide.RazorLib/CommandBars/Displays/CommandBarDisplay.razor.rz.scp.css */
 .luth_ide_command-bar[b-s12ovybllc] {
-    z-index: var(--luth_drag-initializer-z-index);
-    width: 80vw;
-    height: 5em;
-    position: fixed;
-    left: 10vw;
-    top: 0;
+	width: 100%;
+	height: 100%;
 }
 /* _content/Luthetus.Ide.RazorLib/Editors/Displays/EditorDisplay.razor.rz.scp.css */
 .luth_ide_editor-display[b-i4x75t8qdj] {
