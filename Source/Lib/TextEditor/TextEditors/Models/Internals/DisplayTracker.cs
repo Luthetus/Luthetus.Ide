@@ -85,7 +85,7 @@ public class DisplayTracker : IDisposable
         }
 
 		if (becameDisplayed)
-			_ = Task.Run(PostScrollAndRemeasure);
+			PostScrollAndRemeasure();
     }
 
     public void DecrementLinks()
@@ -124,18 +124,18 @@ public class DisplayTracker : IDisposable
         }
     }
 
-    private async void AppDimensionStateWrap_StateChanged(object? sender, EventArgs e)
+    private void AppDimensionStateWrap_StateChanged(object? sender, EventArgs e)
     {
-		await PostScrollAndRemeasure();
+		PostScrollAndRemeasure();
     }
 
-	private Task PostScrollAndRemeasure()
+	public void PostScrollAndRemeasure()
 	{
 		var model = _textEditorService.ModelApi.GetOrDefault(_resourceUri);
         var viewModel = _textEditorService.ViewModelApi.GetOrDefault(_viewModelKey);
 
         if (model is null || viewModel is null)
-            return Task.CompletedTask;
+            return;
 
 		// The 'Remeasure' command as of this comment
 		// does not use the 'commandArgs' parameter
@@ -178,7 +178,6 @@ public class DisplayTracker : IDisposable
 
 				return Task.CompletedTask;
 			});
-		return Task.CompletedTask;
 	}
 
     public void Dispose()

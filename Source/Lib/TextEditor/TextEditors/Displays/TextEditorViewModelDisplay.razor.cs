@@ -70,6 +70,8 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private readonly object _linkedViewModelLock = new();
     // private readonly ThrottleAvailability _throttleAvailabilityShouldRender = new(TimeSpan.FromMilliseconds(30));
 
+	private double _previousGutterWidthInPixels = 0;
+
     private TextEditorComponentData _componentData = null!;
     private (TextEditorRenderBatchUnsafe Unsafe, TextEditorRenderBatchValidated? Validated)? _previousRenderBatchTuple;
     public (TextEditorRenderBatchUnsafe Unsafe, TextEditorRenderBatchValidated? Validated) _storedRenderBatchTuple;
@@ -174,6 +176,24 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
             if (isFirstDisplay)
 				QueueCalculateVirtualizationResultBackgroundTask(_storedRenderBatchTuple.Unsafe);
         }
+        
+        // Check if the gutter width changed. If so, re-measure text editor.
+        var viewModel = _storedRenderBatchTuple.Validated?.ViewModel;
+        var gutterWidthInPixels = _storedRenderBatchTuple.Validated?.GutterWidthInPixels;
+        
+        if (viewModel is not null && gutterWidthInPixels is not null)
+		{
+			if (_previousGutterWidthInPixels >= 0 && gutterWidthInPixels >= 0)
+			{
+	        	var absoluteValueDifference = Math.Abs(_previousGutterWidthInPixels - gutterWidthInPixels.Value);
+	        	
+	        	if (absoluteValueDifference >= 0.5)
+	        	{
+	        		_previousGutterWidthInPixels = gutterWidthInPixels.Value;
+	        		viewModel.DisplayTracker.PostScrollAndRemeasure();
+	        	}
+			}
+		}
 
         return shouldRender;
     }

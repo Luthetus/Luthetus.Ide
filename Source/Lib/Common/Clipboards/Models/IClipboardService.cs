@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Clipboards.Models;
+namespace Luthetus.Common.RazorLib.Clipboards.Models;
 
 public interface IClipboardService
 {
