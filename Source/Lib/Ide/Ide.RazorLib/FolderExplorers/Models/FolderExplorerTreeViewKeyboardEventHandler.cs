@@ -7,6 +7,9 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.States;
 using Luthetus.Ide.RazorLib.Menus.Models;
@@ -18,6 +21,7 @@ namespace Luthetus.Ide.RazorLib.FolderExplorers.Models;
 public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventHandler
 {
     private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
+    private readonly ITextEditorService _textEditorService;
     private readonly IMenuOptionsFactory _menuOptionsFactory;
     private readonly ICommonComponentRenderers _commonComponentRenderers;
     private readonly ITreeViewService _treeViewService;
@@ -26,6 +30,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
 
     public FolderExplorerTreeViewKeyboardEventHandler(
             IdeBackgroundTaskApi ideBackgroundTaskApi,
+            ITextEditorService textEditorService,
             IMenuOptionsFactory menuOptionsFactory,
             ICommonComponentRenderers commonComponentRenderers,
             ITreeViewService treeViewService,
@@ -35,6 +40,7 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         : base(treeViewService, backgroundTaskService)
     {
         _ideBackgroundTaskApi = ideBackgroundTaskApi;
+        _textEditorService = textEditorService;
         _menuOptionsFactory = menuOptionsFactory;
         _commonComponentRenderers = commonComponentRenderers;
         _treeViewService = treeViewService;
@@ -212,11 +218,12 @@ public class FolderExplorerTreeViewKeyboardEventHandler : TreeViewKeyboardEventH
         if (activeNode is not TreeViewAbsolutePath treeViewAbsolutePath)
             return Task.CompletedTask;
 
-        _ideBackgroundTaskApi.Editor.OpenInEditor(
-			treeViewAbsolutePath.Item,
-			shouldSetFocusToEditor);
-
-		return Task.CompletedTask;
+		return _textEditorService.OpenInEditorAsync(
+			treeViewAbsolutePath.Item.Value,
+			shouldSetFocusToEditor,
+			cursorPositionIndex: null,
+			new Category("main"),
+			Key<TextEditorViewModel>.NewKey());
     }
 
     private async Task ReloadTreeViewModel(TreeViewNoType? treeViewModel)

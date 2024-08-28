@@ -1,8 +1,4 @@
 .luth_ide_command-bar {
-    z-index: var(--luth_drag-initializer-z-index);
-    width: 80vw;
-    height: 5em;
-    position: fixed;
-    left: 10vw;
-    top: 0;
+	width: 100%;
+	height: 100%;
 }

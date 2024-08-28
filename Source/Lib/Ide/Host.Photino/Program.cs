@@ -113,7 +113,7 @@ class Program
 		    if (specialFolderUserProfile == "C:\\Users\\hunte")
                 app.MainWindow.SetLeft(1_355);
             else if (specialFolderUserProfile == "/home/hunter")
-                app.MainWindow.SetLeft(1_100).SetTop(100).SetHeight(1900);
+                app.MainWindow.SetLeft(1_200).SetTop(100).SetHeight(1900);
         }
 
         AppDomain.CurrentDomain.UnhandledException += (sender, error) =>

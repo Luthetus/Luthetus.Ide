@@ -13,7 +13,7 @@ public partial class MenuDisplay : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
-    [CascadingParameter(Name = "ReturnFocusToParentFuncAsync")]
+    [CascadingParameter(Name="ReturnFocusToParentFuncAsync")]
     public Func<Task>? ReturnFocusToParentFuncAsync { get; set; }
 	[CascadingParameter]
     public DropdownRecord? Dropdown { get; set; }
@@ -44,18 +44,6 @@ public partial class MenuDisplay : ComponentBase
 	///       then the actual is passed in afterwards when the async task completes.
 	/// </summary>
 	private MenuRecord? _previousMenuRecord;
-
-	protected override void OnParametersSet()
-	{
-		var localDropdown = Dropdown;
-
-		if (localDropdown is not null &&
-			!Object.ReferenceEquals(_previousMenuRecord, MenuRecord))
-		{
-			_previousMenuRecord = MenuRecord;
-			localDropdown.OnHtmlElementDimensionsChanged();
-		}
-	}
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
