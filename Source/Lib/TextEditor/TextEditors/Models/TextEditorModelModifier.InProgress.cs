@@ -124,9 +124,7 @@ public partial class TextEditorModelModifier
         var initialCursorPositionIndex = this.GetPositionIndex(cursorModifier);
         var initialCursorLineIndex = cursorModifier.LineIndex;
 
-#if DEBUG
         this.AssertPositionIndex(initialCursorPositionIndex);
-#endif
 
         bool isTab = false;
         bool isCarriageReturn = false;
@@ -479,9 +477,7 @@ public partial class TextEditorModelModifier
             cursorModifier.SelectionEndingPositionIndex = 0;
 		}
 
-#if DEBUG
         this.AssertPositionIndex(positionIndex);
-#endif
 
         (int? index, int count) lineEndPositionLazyRemoveRange = (null, 0);
         (int? index, int count) tabPositionLazyRemoveRange = (null, 0);
