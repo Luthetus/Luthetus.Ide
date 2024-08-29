@@ -309,7 +309,29 @@ public class OnKeyDownLateBatching : ITextEditorWork
 	            }
 			}
 			
+			// TODO: Do this code first so the user gets immediate UI feedback in the event that
+			//       their keydown code takes a long time?
 			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+			
+			if (modelModifier.LineCount < modelModifier.PreviousLineCount)
+			{
+				var difference = modelModifier.PreviousLineCount - modelModifier.LineCount;
+			
+				EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+		            EditContext,
+			        viewModelModifier,
+			        -1 * difference * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+			}
+			
+			if (modelModifier.MostCharactersOnASingleLineTuple.lineLength < modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength)
+			{
+				var difference = modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength - modelModifier.MostCharactersOnASingleLineTuple.lineLength;
+				
+				EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+		            EditContext,
+			        viewModelModifier,
+			        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+			}
 			
 			await EditContext.TextEditorService
 				.FinalizePost(EditContext)

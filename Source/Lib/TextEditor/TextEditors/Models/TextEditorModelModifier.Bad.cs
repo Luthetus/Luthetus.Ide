@@ -59,7 +59,7 @@ public partial class TextEditorModelModifier
             if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key)
             {
                 Delete(
-                    cursorModifierBag,
+                	cursorModifierBag,
                     1,
                     keyboardEventArgs.CtrlKey,
                     DeleteKind.Backspace,

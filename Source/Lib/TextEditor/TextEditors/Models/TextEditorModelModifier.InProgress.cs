@@ -364,19 +364,19 @@ public partial class TextEditorModelModifier
             _mostCharactersOnASingleLineTuple ??= _textEditorModel.MostCharactersOnASingleLineTuple;
 		}
 	
-	        for (var cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
-	        {
-	            var cursorModifier = cursorModifierBag.List[cursorIndex];
+        for (var cursorIndex = cursorModifierBag.List.Count - 1; cursorIndex >= 0; cursorIndex--)
+        {
+            var cursorModifier = cursorModifierBag.List[cursorIndex];
 
-				var initialPositionIndex = this.GetPositionIndex(cursorModifier);
-	
-	            var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
-	
-	            if (tuple is null)
-	            {
-	                SetIsDirtyTrue();
-	                return;
-				}
+			var initialPositionIndex = this.GetPositionIndex(cursorModifier);
+
+            var tuple = DeleteMetadata(columnCount, cursorModifier, expandWord, deleteKind, cancellationToken);
+
+            if (tuple is null)
+            {
+                SetIsDirtyTrue();
+                return;
+			}
 
             var (positionIndex, charCount) = tuple.Value;
 
