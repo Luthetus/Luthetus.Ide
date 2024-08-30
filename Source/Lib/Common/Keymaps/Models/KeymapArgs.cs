@@ -94,6 +94,13 @@ public struct KeymapArgs
 //
 // As well, don't just use a KeyboardEventArgs type itself because we need more data attached to the KeymapArgs
 // such as the LayerKey.
+//
+// A confusing situation: how to deal with a keybinds which don't "care" about various properties.
+// If I want to use a Dictionary to map from a KeymapArgs to a CommandNoType,
+// every one of the properties must match if I implement the comparison logic in a simple way (just compare 1 to 1 the properties).
+//
+// But, for some keybinds I might only want to specify that someone be pressing { Ctrl + c }, and that I do not care
+// about the value of 'Location' or 'Repeat'.
 
     /// <summary>
     /// The key value of the key represented by the event.
