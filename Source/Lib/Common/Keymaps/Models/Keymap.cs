@@ -9,7 +9,7 @@ namespace Luthetus.Common.RazorLib.Keymaps.Models;
 public class Keymap : IKeymap
 {
     private readonly object _syncRoot = new();
-    private readonly Dictionary<KeymapArgs, CommandNoType> _map = new();
+    private readonly Dictionary<IKeymapArgs, CommandNoType> _map = new();
 
     public Keymap(Key<Keymap> key, string displayName)
     {
@@ -20,7 +20,7 @@ public class Keymap : IKeymap
     public Key<Keymap> Key { get; } = Key<Keymap>.Empty;
     public string DisplayName { get; } = string.Empty;
     
-    public bool TryRegister(KeymapArgs args, CommandNoType command)
+    public bool TryRegister(IKeymapArgs args, CommandNoType command)
     {
         lock (_syncRoot)
         {
@@ -28,7 +28,7 @@ public class Keymap : IKeymap
         }
     }
     
-    public bool TryMap(KeymapArgs args, out CommandNoType command)
+    public bool TryMap(IKeymapArgs args, out CommandNoType command)
     {
         lock (_syncRoot)
         { 
@@ -39,7 +39,7 @@ public class Keymap : IKeymap
         }
     }
 
-    public List<KeyValuePair<KeymapArgs, CommandNoType>> GetKeyValuePairList()
+    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetKeyValuePairList()
     {
         lock (_syncRoot)
         {

@@ -1,53 +1,30 @@
-﻿using Luthetus.Common.RazorLib.Exceptions;
+﻿using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Keymaps.Models;
 
-/// <summary>
-/// The idea behind this class is entirely based on the 'event.key' vs 'event.code' for a given keyboard event.
-/// It is desired to use the 'event.key' sometimes, whereas other times the 'event.code'.
-/// So, these corresponding properties on this type were made nullable.
-/// It still is incredibly clumsy because the goal is that 1 of them isn't null, yet both will forever be "nullable".
-/// 
-/// Most of this type is the copy and pasted source code of 'KeyboardEventArgs.cs'
-/// https://github.com/dotnet/aspnetcore/blob/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Components/Web/src/Web/KeyboardEventArgs.cs
-/// 
-/// The difference being that the copy and pasted code was changed to be nullable and immutable,
-/// and some extra code was added.
-/// </summary>
-public struct Keybind : IKeymapArgs
+public interface IKeymapArgs : ICommandArgs
 {
-    public Keybind(
-        Key<KeymapLayer> layerKey,
-        string? key,
-        string? code,
-        float location,
-        bool repeat,
-        bool ctrlKey,
-        bool shiftKey,
-        bool altKey,
-        bool metaKey,
-        string type)
-    {
-        LayerKey = layerKey;
-        Key = key;
-        Code = code;
-        Location = location;
-        Repeat = repeat;
-        CtrlKey = ctrlKey;
-        ShiftKey = shiftKey;
-        AltKey = altKey;
-        MetaKey = metaKey;
-        Type = type;
-
-        if (Key is null && Code is null)
-            throw new LuthetusCommonException("Key is null && Code is null; must pick only one to provide");
-        
-        if (Key is not null && Code is not null)
-            throw new LuthetusCommonException("Key is null && Code is null; must pick only one to provide");
-    }
-
     public Key<KeymapLayer> LayerKey { get; }
+
+    #region Copy_Paste_KeyboardEventArgs_Source_Code
+    // https://github.com/dotnet/aspnetcore/blob/3f1acb59718cadf111a0a796681e3d3509bb3381/src/Components/Web/src/Web/KeyboardEventArgs.cs
+    //
+    // Copy and paste all of KeyboardEventArgs.cs instead of composing a property on KeymapArgs which is of type KeyboardEventArgs.
+    // This is because KeyboardEventArgs is a class, and I presume its easier on the garbage collector, for me to immediately
+    // move the data to a struct, and lose reference to the class. Rather than carrying the classes reference everywhere.
+    //
+    // As well, don't just use a KeyboardEventArgs type itself because we need more data attached to the KeymapArgs
+    // such as the LayerKey.
+    //
+    // There are minor changes that were made to the copy and pasted code.
+    //
+    // A confusing situation: how to deal with a keybinds which don't "care" about various properties.
+    // If I want to use a Dictionary to map from a KeymapArgs to a CommandNoType,
+    // every one of the properties must match if I implement the comparison logic in a simple way (just compare 1 to 1 the properties).
+    //
+    // But, for some keybinds I might only want to specify that someone be pressing { Ctrl + c }, and that I do not care
+    // about the value of 'Location' or 'Repeat'.
 
     /// <summary>
     /// The key value of the key represented by the event.
@@ -96,5 +73,6 @@ public struct Keybind : IKeymapArgs
     /// <summary>
     /// Gets or sets the type of the event.
     /// </summary>
-    public string Type { get; }
+    public string? Type { get; }
+    #endregion
 }

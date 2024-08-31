@@ -8,18 +8,18 @@ public class KeymapDoNothing : IKeymap
     public Key<Keymap> Key => Key<Keymap>.Empty;
     public string DisplayName => nameof(KeymapDoNothing);
     
-    public bool TryRegister(KeymapArgs args, CommandNoType command)
+    public bool TryRegister(IKeymapArgs args, CommandNoType command)
     {
         return false;
     }
     
-    public bool TryMap(KeymapArgs args, out CommandNoType command)
+    public bool TryMap(IKeymapArgs args, out CommandNoType command)
     {
         command = CommonCommand.Empty;
         return false;
     }
 
-    public List<KeyValuePair<KeymapArgs, CommandNoType>> GetKeyValuePairList()
+    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetKeyValuePairList()
     {
         return new();
     }
