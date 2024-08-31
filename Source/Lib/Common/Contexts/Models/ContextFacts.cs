@@ -10,7 +10,7 @@ public static class ContextFacts
         Key<ContextRecord>.NewKey(),
         "Global",
         "global",
-        IKeymap.Empty);
+        new Keymap(Key<Keymap>.NewKey(), "Global"));
 
     public static readonly ContextRecord ActiveContextsContext = new(
         Key<ContextRecord>.NewKey(),
