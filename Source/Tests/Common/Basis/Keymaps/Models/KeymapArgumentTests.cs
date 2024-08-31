@@ -23,18 +23,20 @@ public class KeymapArgumentTests
             var altKey = false;
             var keymapLayerKey = Key<KeymapLayer>.Empty;
 
-            var keymapArgument = new KeymapArgument(
-                code,
-                shiftKey,
-                ctrlKey,
-                altKey,
-                keymapLayerKey);
+            var keymapArgs = new KeymapArgs()
+            {
+                Code = code,
+                ShiftKey = shiftKey,
+                CtrlKey = ctrlKey,
+                AltKey = altKey,
+                LayerKey = keymapLayerKey
+            };
 
-            Assert.Equal(code, keymapArgument.Code);
-            Assert.Equal(shiftKey, keymapArgument.ShiftKey);
-            Assert.Equal(ctrlKey, keymapArgument.CtrlKey);
-            Assert.Equal(altKey, keymapArgument.AltKey);
-            Assert.Equal(keymapLayerKey, keymapArgument.LayerKey);
+            Assert.Equal(code, keymapArgs.Code);
+            Assert.Equal(shiftKey, keymapArgs.ShiftKey);
+            Assert.Equal(ctrlKey, keymapArgs.CtrlKey);
+            Assert.Equal(altKey, keymapArgs.AltKey);
+            Assert.Equal(keymapLayerKey, keymapArgs.LayerKey);
         }
 
         // With modifiers (shift key, etc...)
@@ -45,18 +47,20 @@ public class KeymapArgumentTests
             var altKey = true;
             var keymapLayerKey = Key<KeymapLayer>.Empty;
 
-            var keymapArgument = new KeymapArgument(
-                code,
-                shiftKey,
-                ctrlKey,
-                altKey,
-                keymapLayerKey);
+            var keymapArgs = new KeymapArgs()
+            {
+                Code = code,
+                ShiftKey = shiftKey,
+                CtrlKey = ctrlKey,
+                AltKey = altKey,
+                LayerKey = keymapLayerKey
+            };
 
-            Assert.Equal(code, keymapArgument.Code);
-            Assert.Equal(shiftKey, keymapArgument.ShiftKey);
-            Assert.Equal(ctrlKey, keymapArgument.CtrlKey);
-            Assert.Equal(altKey, keymapArgument.AltKey);
-            Assert.Equal(keymapLayerKey, keymapArgument.LayerKey);
+            Assert.Equal(code, keymapArgs.Code);
+            Assert.Equal(shiftKey, keymapArgs.ShiftKey);
+            Assert.Equal(ctrlKey, keymapArgs.CtrlKey);
+            Assert.Equal(altKey, keymapArgs.AltKey);
+            Assert.Equal(keymapLayerKey, keymapArgs.LayerKey);
         }
     }
     
@@ -68,12 +72,15 @@ public class KeymapArgumentTests
     {
         var code = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE;
 
-        var keymapArgument = new KeymapArgument(code);
+        var keymapArgs = new KeymapArgs()
+        {
+            Code = code
+        };
 
-        Assert.Equal(code, keymapArgument.Code);
-        Assert.False(keymapArgument.ShiftKey);
-        Assert.False(keymapArgument.CtrlKey);
-        Assert.False(keymapArgument.AltKey);
-        Assert.Equal(Key<KeymapLayer>.Empty, keymapArgument.LayerKey);
+        Assert.Equal(code, keymapArgs.Code);
+        Assert.False(keymapArgs.ShiftKey);
+        Assert.False(keymapArgs.CtrlKey);
+        Assert.False(keymapArgs.AltKey);
+        Assert.Equal(Key<KeymapLayer>.Empty, keymapArgs.LayerKey);
     }
 }

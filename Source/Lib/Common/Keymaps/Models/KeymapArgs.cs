@@ -1,5 +1,7 @@
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components.Web;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Luthetus.Common.RazorLib.Keymaps.Models;
 
@@ -64,7 +66,7 @@ namespace Luthetus.Common.RazorLib.Keymaps.Models;
 ///
 /// Maybe it could be done with a custom Blazor event that originates from an 'onkeydown' event.
 /// </summary>
-public struct KeymapArgs
+public record struct KeymapArgs : ICommandArgs
 {
 	public KeymapArgs()
 	{
@@ -150,5 +152,5 @@ public struct KeymapArgs
     /// Gets or sets the type of the event.
     /// </summary>
     public string Type { get; set; } = default!;
-#endregion
+    #endregion
 }

@@ -13,6 +13,9 @@ namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
 public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
 {
+    private readonly object _syncRoot = new();
+    private readonly Dictionary<KeymapArgs, CommandNoType> _map = new();
+
     public TextEditorKeymapDefault()
         : base(new Key<Keymap>(Guid.Parse("4aaca759-c2c7-4e6f-9d9f-f3d17172df16")),
                "Default")
@@ -47,161 +50,213 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
     {
         AddDefaultCtrlAltModifiedKeymap();
 
-        Map.Add(new KeymapArgument("x", "KeyX")
+        _map.Add(new KeymapArgs()
         {
+            Key = "x",
+            Code = "KeyX",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.Cut);
 
-        Map.Add(new KeymapArgument("c", "KeyC")
+        _map.Add(new KeymapArgs()
         {
+            Key = "c",
+            Code = "KeyC",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.Copy);
 
-        Map.Add(new KeymapArgument("v", "KeyV")
+        _map.Add(new KeymapArgs()
         {
+            Key = "v",
+            Code = "KeyV",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.PasteCommand);
 
-        Map.Add(new KeymapArgument("s", "KeyS")
+        _map.Add(new KeymapArgs()
         {
+            Key = "s",
+            Code = "KeyS",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.TriggerSave);
 
-        Map.Add(new KeymapArgument("a", "KeyA")
+        _map.Add(new KeymapArgs()
         {
+            Key = "a",
+            Code = "KeyA",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.SelectAll);
 
-        Map.Add(new KeymapArgument("z", "KeyZ")
+        _map.Add(new KeymapArgs()
         {
+            Key = "z",
+            Code = "KeyZ",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.Undo);
 
-        Map.Add(new KeymapArgument("y", "KeyY")
+        _map.Add(new KeymapArgs()
         {
+            Key = "y",
+            Code = "KeyY",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.Redo);
 
-        Map.Add(new KeymapArgument("d", "KeyD")
+        _map.Add(new KeymapArgs()
         {
+            Key = "d",
+            Code = "KeyD",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.Duplicate);
 
-        Map.Add(new KeymapArgument("]", "BracketRight")
+        _map.Add(new KeymapArgs()
         {
+            Key = "]",
+            Code = "BracketRight",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(false));
 
-        Map.Add(new KeymapArgument("}", "BracketRight")
+        _map.Add(new KeymapArgs()
         {
+            Key = "}",
+            Code = "BracketRight",
             CtrlKey = true,
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.GoToMatchingCharacterFactory(true));
         
-        Map.Add(new KeymapArgument("Tab", "Tab")
+        _map.Add(new KeymapArgs()
         {
+            Key = "Tab",
+            Code = "Tab",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.DoNothingDiscard);
         
-        Map.Add(new KeymapArgument("Tab", "Tab")
+        _map.Add(new KeymapArgs()
         {
+            Key = "Tab",
+            Code = "Tab",
             CtrlKey = true,
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.DoNothingDiscard);
         
-        Map.Add(new KeymapArgument("p", "KeyP")
+        _map.Add(new KeymapArgs()
         {
+            Key = "p",
+            Code = "KeyP",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.DoNothingDiscard);
 
-        Map.Add(new KeymapArgument("F", "KeyF")
+        _map.Add(new KeymapArgs()
         {
+            Key = "F",
+            Code = "KeyF",
             CtrlKey = true,
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ShowFindAllDialog);
 
-        Map.Add(new KeymapArgument("ArrowDown", "ArrowDown")
+        _map.Add(new KeymapArgs()
         {
+            Key = "ArrowDown",
+            Code = "ArrowDown",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ScrollLineDown);
 
-        Map.Add(new KeymapArgument("ArrowUp", "ArrowUp")
+        _map.Add(new KeymapArgs()
         {
+            Key = "ArrowUp",
+            Code = "ArrowUp",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ScrollLineUp);
 
-        Map.Add(new KeymapArgument("PageDown", "PageDown")
+        _map.Add(new KeymapArgs()
         {
+            Key = "PageDown",
+            Code = "PageDown",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.CursorMovePageBottom);
 
-        Map.Add(new KeymapArgument("PageUp", "PageUp")
+        _map.Add(new KeymapArgs()
         {
+            Key = "PageUp",
+            Code = "PageUp",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.CursorMovePageTop);
 
-        Map.Add(new KeymapArgument("Enter", KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+        _map.Add(new KeymapArgs()
         {
+            Key = "Enter",
+            Code = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.NewLineAbove);
         
-        Map.Add(new KeymapArgument(" ", KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE)
+        _map.Add(new KeymapArgs()
         {
+            Key = " ",
+            Code = KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.DoNothingDiscard);
         
-        Map.Add(new KeymapArgument(",", "Comma")
+        _map.Add(new KeymapArgs()
         {
+            Key = ",",
+            Code = "Comma",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.DoNothingDiscard);
         
-        Map.Add(new KeymapArgument("/", "Slash")
+        _map.Add(new KeymapArgs()
         {
+            Key = "/",
+            Code = "Slash",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ShowTooltipByCursorPosition);
         
-        Map.Add(new KeymapArgument("f", "KeyF")
+        _map.Add(new KeymapArgs()
         {
+            Key = "f",
+            Code = "KeyF",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ShowFindOverlay);
         
-        Map.Add(new KeymapArgument("r", "KeyR")
+        _map.Add(new KeymapArgs()
         {
+            Key = "r",
+            Code = "KeyR",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.RefreshSyntaxHighlighting);
         
-        Map.Add(new KeymapArgument(".", "Period")
+        _map.Add(new KeymapArgs()
         {
+            Key = ".",
+            Code = "Period",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.QuickActionsSlashRefactor);
         
-        Map.Add(new KeymapArgument("j", "KeyJ")
+        _map.Add(new KeymapArgs()
         {
+            Key = "j",
+            Code = "KeyJ",
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.DEBUG_BreakLineEndings);
@@ -209,28 +264,36 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
 
     private void AddDefaultAltModifiedKeymap()
     {
-    	Map.Add(new KeymapArgument("ArrowDown", "ArrowDown")
+    	_map.Add(new KeymapArgs()
         {
-        	AltKey = true,
+            Key = "ArrowDown",
+            Code = "ArrowDown",
+            AltKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.MoveLineDown);
     
-        Map.Add(new KeymapArgument("ArrowUp", "ArrowUp")
+        _map.Add(new KeymapArgs()
         {
-        	AltKey = true,
+            Key = "ArrowUp",
+            Code = "ArrowUp",
+            AltKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.MoveLineUp);
     }
 
     private void AddDefaultHasSelectionLayerModifiedKeymap()
     {
-        Map.Add(new KeymapArgument("Tab", KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
+        _map.Add(new KeymapArgs()
         {
+            Key = "Tab",
+            Code = KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
             LayerKey = TextEditorKeymapDefaultFacts.HasSelectionLayer.Key
         }, TextEditorCommandDefaultFacts.IndentMore);
 
-        Map.Add(new KeymapArgument("Tab", KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
+        _map.Add(new KeymapArgs()
         {
+            Key = "Tab",
+            Code = KeyboardKeyFacts.WhitespaceCodes.TAB_CODE,
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.HasSelectionLayer.Key
         }, TextEditorCommandDefaultFacts.IndentLess);
@@ -243,8 +306,10 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
         {
             var character = (char)i;
 
-            _ = Map.TryAdd(new KeymapArgument($"{character}", $"Key{character}")
+            _ = _map.TryAdd(new KeymapArgs()
             {
+                Key = $"{character}",
+                Code = $"Key{character}",
                 ShiftKey = true,
                 CtrlKey = true,
                 AltKey = true,
@@ -257,8 +322,10 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
         {
             var character = (char)i;
 
-            _ = Map.TryAdd(new KeymapArgument($"{character}", $"Key{char.ToUpperInvariant(character)}")
+            _ = _map.TryAdd(new KeymapArgs()
             {
+                Key = $"{character}",
+                Code = $"Key{char.ToUpperInvariant(character)}",
                 CtrlKey = true,
                 AltKey = true,
                 LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
@@ -268,35 +335,45 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
 
     private void AddDefaultMiscKeymap()
     {
-    	Map.Add(new KeymapArgument("F7", "F7")
+    	_map.Add(new KeymapArgs()
         {
+            Key = "F7",
+            Code = "F7",
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.RelatedFilesQuickPick);
     
-        Map.Add(new KeymapArgument("F12", "F12")
+        _map.Add(new KeymapArgs()
         {
+            Key = "F12",
+            Code = "F12",
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.GoToDefinition);
 
-        Map.Add(new KeymapArgument("Enter", KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+        _map.Add(new KeymapArgs()
         {
+            Key = "Enter",
+            Code = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE,
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.NewLineBelow);
 
-        Map.Add(new KeymapArgument("PageDown", "PageDown")
+        _map.Add(new KeymapArgs()
         {
+            Key = "PageDown",
+            Code = "PageDown",
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ScrollPageDown);
 
-        Map.Add(new KeymapArgument("PageUp", "PageUp")
+        _map.Add(new KeymapArgs()
         {
+            Key = "PageUp",
+            Code = "PageUp",
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.ScrollPageUp);
     }
 
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
+	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgs keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
 	{
-        return Map.TryGetValue(keymapArgument, out command);
+        return _map.TryGetValue(keymapArgument, out command);
 	}
 }

@@ -28,30 +28,13 @@ public class KeymapTests
     }
 
     /// <summary>
-    /// <see cref="Keymap()"/>
-    /// <br/>----<br/>
-    /// <see cref="Keymap.Key"/>
-    /// <see cref="Keymap.DisplayName"/>
-    /// </summary>
-    [Fact]
-    public void ConstructorB()
-    {
-#pragma warning disable CS0618 // Type or member is obsolete
-        var keymap = new Keymap();
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        Assert.Equal(Key<Keymap>.Empty, keymap.Key);
-        Assert.Equal(string.Empty, keymap.DisplayName);
-    }
-
-    /// <summary>
     /// <see cref="Keymap.Empty"/>
     /// </summary>
     [Fact]
     public void Empty()
     {
-        Assert.Equal(Key<Keymap>.Empty, Keymap.Empty.Key);
-        Assert.Equal(string.Empty, Keymap.Empty.DisplayName);
+        Assert.Equal(Key<Keymap>.Empty, IKeymap.Empty.Key);
+        Assert.Equal(string.Empty, IKeymap.Empty.DisplayName);
     }
 
     /// <summary>
@@ -65,11 +48,19 @@ public class KeymapTests
 
         var keymap = new Keymap(Key<Keymap>.NewKey(), "Unit Test");
 
-        var keymapArgument = new KeymapArgument("KeyF", false, true, true, Key<KeymapLayer>.Empty);
+        var keymapArgs = new KeymapArgs
+        {
+            Code = "KeyF",
+            ShiftKey = false,
+            CtrlKey = true,
+            AltKey = true,
+            MetaKey = false,
+            LayerKey = Key<KeymapLayer>.Empty
+        };
         
-        _ = keymap.Map.TryAdd(keymapArgument, inCommand);
+        _ = keymap.TryRegister(keymapArgs, inCommand);
 
-        var outCommand = keymap.Map[keymapArgument];
+        var success = keymap.TryMap(keymapArgs, out var outCommand);
 
         Assert.Equal(inCommand, outCommand);
         Assert.Equal(inCommand.DisplayName, outCommand.DisplayName);

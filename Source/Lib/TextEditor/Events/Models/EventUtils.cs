@@ -29,7 +29,7 @@ public static class EventUtils
             hasSelection,
             textEditorService,
             out Key<KeymapLayer> layerKey,
-            out KeymapArgument keymapArgument,
+            out KeymapArgs keymapArgument,
             out var success,
             out command);
 
@@ -90,13 +90,13 @@ public static class EventUtils
         bool hasSelection,
         ITextEditorService textEditorService,
         out Key<KeymapLayer> layerKey,
-        out KeymapArgument keymapArgument,
+        out KeymapArgs keymapArgument,
         out bool success,
         out CommandNoType command)
     {
         layerKey = ((ITextEditorKeymap)componentData.Options.Keymap!).GetLayer(hasSelection);
 
-        keymapArgument = keyboardEventArgs.ToKeymapArgument() with
+        keymapArgument = new KeymapArgs(keyboardEventArgs)
         {
             LayerKey = layerKey
         };
@@ -109,12 +109,11 @@ public static class EventUtils
 
         if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
         {
+            keymapArgument.LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key;
+
             _ = ((ITextEditorKeymap)componentData.Options.Keymap!).TryMap(
                 keyboardEventArgs,
-                keymapArgument with
-                {
-                    LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
-                },
+                keymapArgument,
                 componentData,
                 out command);
         }

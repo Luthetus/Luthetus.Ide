@@ -7,7 +7,7 @@ public record ContextRecord(
     Key<ContextRecord> ContextKey,
     string DisplayNameFriendly,
     string ContextNameInternal,
-    Keymap Keymap)
+    IKeymap Keymap)
 {
     public string ContextElementId => $"luth_ide_context-{ContextKey.Guid}";
 }

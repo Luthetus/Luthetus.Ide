@@ -68,10 +68,13 @@ public class CommandFactory : ICommandFactory
     {
         // ActiveContextsContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("a", "KeyA", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "a",
+                    Code = "KeyA",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -79,10 +82,14 @@ public class CommandFactory : ICommandFactory
         }
         // BackgroundServicesContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("b", "KeyB", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "b",
+                    Code = "KeyB",
+                    LayerKey = Key<KeymapLayer>.Empty,
+
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -90,10 +97,14 @@ public class CommandFactory : ICommandFactory
         }
         // CompilerServiceExplorerContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("C", "KeyC", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	ShiftKey = true,
+                    Key = "C",
+                    Code = "KeyC",
+                    LayerKey = Key<KeymapLayer>.Empty,
+
+                    ShiftKey = true,
                 	CtrlKey = true,
                 	AltKey = true,
                 },
@@ -102,10 +113,13 @@ public class CommandFactory : ICommandFactory
         }
         // CompilerServiceEditorContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("c", "KeyC", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "c",
+                    Code = "KeyC",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -113,10 +127,13 @@ public class CommandFactory : ICommandFactory
         }
         // DialogDisplayContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("d", "KeyD", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "d",
+                    Code = "KeyD",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -124,10 +141,13 @@ public class CommandFactory : ICommandFactory
         }
         // EditorContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("E", "KeyE", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	ShiftKey = true,
+                    Key = "E",
+                    Code = "KeyE",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    ShiftKey = true,
                 	CtrlKey = true,
                 	AltKey = true,
                 },
@@ -136,10 +156,13 @@ public class CommandFactory : ICommandFactory
         }
         // FolderExplorerContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("f", "KeyF", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "f",
+                    Code = "KeyF",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -147,10 +170,13 @@ public class CommandFactory : ICommandFactory
         }
         // GitContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("g", "KeyG", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "g",
+                    Code = "KeyG",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -158,10 +184,13 @@ public class CommandFactory : ICommandFactory
         }
         // GlobalContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("g", "KeyG", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "g",
+                    Code = "KeyG",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -169,10 +198,13 @@ public class CommandFactory : ICommandFactory
         }
         // MainLayoutFooterContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("f", "KeyF", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "f",
+                    Code = "KeyF",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -180,10 +212,13 @@ public class CommandFactory : ICommandFactory
         }
         // MainLayoutHeaderContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("h", "KeyH", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "h",
+                    Code = "KeyH",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -191,10 +226,13 @@ public class CommandFactory : ICommandFactory
         }
         // ErrorListContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("e", "KeyE", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "e",
+                    Code = "KeyE",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -202,10 +240,13 @@ public class CommandFactory : ICommandFactory
         }
         // OutputContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("o", "KeyO", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "o",
+                    Code = "KeyO",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -213,10 +254,13 @@ public class CommandFactory : ICommandFactory
         }
 		// TerminalContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("t", "KeyT", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "t",
+                    Code = "KeyT",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -224,10 +268,13 @@ public class CommandFactory : ICommandFactory
         }
         // TestExplorerContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("T", "KeyT", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	ShiftKey = true,
+                    Key = "T",
+                    Code = "KeyT",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    ShiftKey = true,
                 	CtrlKey = true,
                 	AltKey = true,
                 },
@@ -236,10 +283,13 @@ public class CommandFactory : ICommandFactory
         }
         // TextEditorContext
         {
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                new KeymapArgument("t", "KeyT", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                new KeymapArgs()
                 {
-                	CtrlKey = true,
+                    Key = "t",
+                    Code = "KeyT",
+                    LayerKey = Key<KeymapLayer>.Empty,
+                    CtrlKey = true,
                 	AltKey = true,
                 },
                 ConstructFocusContextElementCommand(
@@ -267,8 +317,13 @@ public class CommandFactory : ICommandFactory
                         .ConfigureAwait(false);
                 });
 
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-                    new KeymapArgument("Escape", "Escape", Key<KeymapLayer>.Empty),
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+                    new KeymapArgs()
+                    {
+                        Key = "Escape",
+                        Code = "Escape",
+                        LayerKey = Key<KeymapLayer>.Empty
+                    },
                     focusTextEditorCommand);
         }
 
@@ -282,10 +337,13 @@ public class CommandFactory : ICommandFactory
 		            return Task.CompletedTask;
 				});
 
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-	                new KeymapArgument("F", "KeyF", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+	                new KeymapArgs()
 	                {
-	                	ShiftKey = true,
+                        Key = "F",
+                        Code = "KeyF",
+                        LayerKey = Key<KeymapLayer>.Empty,
+                        ShiftKey = true,
 	                	CtrlKey = true,
 	                },
 	                openFindDialogCommand);
@@ -312,10 +370,13 @@ public class CommandFactory : ICommandFactory
                     return Task.CompletedTask;
 				});
 
-            _ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-	                new KeymapArgument(",", "Comma", Key<KeymapLayer>.Empty)
+            _ = ContextFacts.GlobalContext.Keymap.TryRegister(
+	                new KeymapArgs()
 	                {
-	                	CtrlKey = true,
+                        Key = ",",
+                        Code = "Comma",
+                        LayerKey = Key<KeymapLayer>.Empty,
+                        CtrlKey = true,
 	                },
 	                openCodeSearchDialogCommand);
         }
@@ -387,17 +448,23 @@ public class CommandFactory : ICommandFactory
                     _dispatcher.Dispatch(new WidgetState.SetWidgetAction(_contextSwitchWidget));
 				});
 
-			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument("Tab", "Tab", Key<KeymapLayer>.Empty)
+			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+					new KeymapArgs()
 					{
-						CtrlKey = true,
+                        Key = "Tab",
+                        Code = "Tab",
+                        LayerKey = Key<KeymapLayer>.Empty,
+                        CtrlKey = true,
 					},
 					openContextSwitchDialogCommand);
 					
-			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument("/", "Slash", Key<KeymapLayer>.Empty)
+			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+					new KeymapArgs()
 					{
-						CtrlKey = true,
+                        Key = "/",
+                        Code = "Slash",
+                        LayerKey = Key<KeymapLayer>.Empty,
+                        CtrlKey = true,
 						AltKey = true,
 					},
 					openContextSwitchDialogCommand);
@@ -418,10 +485,13 @@ public class CommandFactory : ICommandFactory
                     return Task.CompletedTask;
 				});
 		
-			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument("p", "KeyP", Key<KeymapLayer>.Empty)
+			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+					new KeymapArgs()
 					{
-						CtrlKey = true,
+                        Key = "p",
+                        Code = "KeyP",
+                        LayerKey = Key<KeymapLayer>.Empty,
+                        CtrlKey = true,
 					},
 					openCommandBarCommand);
 		}

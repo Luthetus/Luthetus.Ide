@@ -1,3 +1,5 @@
+using Luthetus.Common.RazorLib.Keys.Models;
+
 namespace Luthetus.Common.RazorLib.Keymaps.Models;
 
 public class KeymapJsonDto
@@ -13,8 +15,8 @@ public class KeymapJsonDto
 		DisplayName = displayName;
 	}
 
-	/// <summary>Unique identifier for the keymap</summary>
+	/// <inheritdoc cref="Keymap.Key"/>
 	public Key<Keymap> Key { get; }
-	/// <summary>User facing name for the keymap</summary>
+    /// <inheritdoc cref="Keymap.DisplayName"/>
     public string DisplayName { get; }
 }

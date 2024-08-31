@@ -2,7 +2,7 @@
 
 <div class="luth_ide_keymap">
     @{
-        var keymapKvpsList = Keymap.Map
+        var keymapKvpsList = Keymap.GetKeyValuePairList()
             .OrderBy(x => x.Value.DisplayName)
             .ToArray();
     }

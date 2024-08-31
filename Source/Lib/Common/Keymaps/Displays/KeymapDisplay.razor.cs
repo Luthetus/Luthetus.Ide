@@ -6,5 +6,5 @@ namespace Luthetus.Common.RazorLib.Keymaps.Displays;
 public partial class KeymapDisplay : ComponentBase
 {
     [Parameter, EditorRequired]
-    public Keymap Keymap { get; set; } = null!;
+    public IKeymap Keymap { get; set; } = null!;
 }

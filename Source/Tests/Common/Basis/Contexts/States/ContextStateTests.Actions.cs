@@ -110,7 +110,7 @@ public class ContextStateActionsTests
     public void SetContextKeymapAction()
     {
         var contextRecordKey = ContextFacts.GlobalContext.ContextKey;
-        var keymap = Keymap.Empty;
+        var keymap = IKeymap.Empty;
 
         var setContextKeymapAction = new ContextState.SetContextKeymapAction(
             contextRecordKey,
