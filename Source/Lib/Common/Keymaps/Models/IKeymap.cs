@@ -10,9 +10,10 @@ public interface IKeymap
 	/// <summary>User facing name for the keymap</summary>
     public string DisplayName { get; }
 
-	public bool TryRegister(IKeymapArgs args, CommandNoType command);
-    public bool TryMap(IKeymapArgs args, out CommandNoType command);
-	public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetKeyValuePairList();
+    public bool TryRegister(IKeymapArgs args, CommandNoType command);
+    public (List<Keybind>? keyMatchList, List<Keybind>? codeMatchList) MapAll(IKeymapArgs args);
+    public bool MapFirstOrDefault(IKeymapArgs args, out CommandNoType? command);
+    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetKeyValuePairList();
 
     public static readonly IKeymap Empty = new KeymapDoNothing();
 }

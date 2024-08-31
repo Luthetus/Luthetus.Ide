@@ -38,7 +38,7 @@ public class KeymapTests
     }
 
     /// <summary>
-    /// <see cref="Keymap.Map"/>
+    /// <see cref="Keymap.MapAll"/>
     /// </summary>
     [Fact]
     public void Map()

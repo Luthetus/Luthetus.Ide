@@ -1,4 +1,5 @@
-﻿using Luthetus.Common.RazorLib.Exceptions;
+﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Exceptions;
 using Luthetus.Common.RazorLib.Keys.Models;
 
 namespace Luthetus.Common.RazorLib.Keymaps.Models;
@@ -15,86 +16,14 @@ namespace Luthetus.Common.RazorLib.Keymaps.Models;
 /// The difference being that the copy and pasted code was changed to be nullable and immutable,
 /// and some extra code was added.
 /// </summary>
-public struct Keybind : IKeymapArgs
+public readonly struct Keybind
 {
-    public Keybind(
-        Key<KeymapLayer> layerKey,
-        string? key,
-        string? code,
-        float location,
-        bool repeat,
-        bool ctrlKey,
-        bool shiftKey,
-        bool altKey,
-        bool metaKey,
-        string type)
+    public Keybind(IKeymapArgs keymapArgs, CommandNoType commandNoType)
     {
-        LayerKey = layerKey;
-        Key = key;
-        Code = code;
-        Location = location;
-        Repeat = repeat;
-        CtrlKey = ctrlKey;
-        ShiftKey = shiftKey;
-        AltKey = altKey;
-        MetaKey = metaKey;
-        Type = type;
-
-        if (Key is null && Code is null)
-            throw new LuthetusCommonException("Key is null && Code is null; must pick only one to provide");
-        
-        if (Key is not null && Code is not null)
-            throw new LuthetusCommonException("Key is null && Code is null; must pick only one to provide");
+        KeymapArgs = keymapArgs;
+        CommandNoType = commandNoType;
     }
 
-    public Key<KeymapLayer> LayerKey { get; }
-
-    /// <summary>
-    /// The key value of the key represented by the event.
-    /// If the value has a printed representation, this attribute's value is the same as the char attribute.
-    /// Otherwise, it's one of the key value strings specified in 'Key values'.
-    /// If the key can't be identified, this is the string "Unidentified"
-    /// </summary>
-    public string? Key { get; }
-
-    /// <summary>
-    /// Holds a string that identifies the physical key being pressed.
-    /// The value is not affected by the current keyboard layout or modifier state, so a particular key will always return the same value.
-    /// </summary>
-    public string? Code { get; }
-
-    /// <summary>
-    /// The location of the key on the device.
-    /// </summary>
-    public float Location { get; }
-
-    /// <summary>
-    /// true if a key has been depressed long enough to trigger key repetition, otherwise false.
-    /// </summary>
-    public bool Repeat { get; }
-
-    /// <summary>
-    /// true if the control key was down when the event was fired. false otherwise.
-    /// </summary>
-    public bool CtrlKey { get; }
-
-    /// <summary>
-    /// true if the shift key was down when the event was fired. false otherwise.
-    /// </summary>
-    public bool ShiftKey { get; }
-
-    /// <summary>
-    /// true if the alt key was down when the event was fired. false otherwise.
-    /// </summary>
-    public bool AltKey { get; }
-
-    /// <summary>
-    /// true if the meta key was down when the event was fired. false otherwise.
-    /// </summary>
-    public bool MetaKey { get; }
-
-    /// <summary>
-    /// Gets or sets the type of the event.
-    /// </summary>
-    public string Type { get; }
+    public IKeymapArgs KeymapArgs { get; }
+    public CommandNoType CommandNoType { get; }
 }

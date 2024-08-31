@@ -991,7 +991,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                 TextEditorCommand? modifiedCommand = null;
 
-                var success = _textEditorKeymapDefault.TryMap(keymapArgument, out var command);
+                var success = _textEditorKeymapDefault.MapFirstOrDefault(keymapArgument, out var command);
                 modifiedCommand = command as TextEditorCommand;
 
                 if (modifiedCommand is null)

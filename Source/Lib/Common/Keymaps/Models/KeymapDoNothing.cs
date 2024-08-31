@@ -7,15 +7,25 @@ public class KeymapDoNothing : IKeymap
 {
     public Key<Keymap> Key => Key<Keymap>.Empty;
     public string DisplayName => nameof(KeymapDoNothing);
-    
+
     public bool TryRegister(IKeymapArgs args, CommandNoType command)
     {
         return false;
     }
-    
-    public bool TryMap(IKeymapArgs args, out CommandNoType command)
+
+    public (bool KeyWasRegistered, bool CodeWasRegistered) TryRegisterRequireBothKeyAndCodeEquality(IKeymapArgs args, CommandNoType command)
     {
-        command = CommonCommand.Empty;
+        return (false, false);
+    }
+
+    public (List<Keybind>? keyMatchList, List<Keybind>? codeMatchList) MapAll(IKeymapArgs args)
+    {
+        return (null, null);
+    }
+
+    public bool MapFirstOrDefault(IKeymapArgs args, out CommandNoType? command)
+    {
+        command = null;
         return false;
     }
 

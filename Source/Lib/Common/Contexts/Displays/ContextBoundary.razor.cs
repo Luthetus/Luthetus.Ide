@@ -89,7 +89,7 @@ public partial class ContextBoundary : ComponentBase
 
     public async Task HandleKeymapArgumentAsync(KeymapArgs keymapArgs)
     {
-        var success = ContextRecord.Keymap.TryMap(keymapArgs, out var command);
+        var success = ContextRecord.Keymap.MapFirstOrDefault(keymapArgs, out var command);
 
         if (success && command is not null)
             await command.CommandFunc(keymapArgs).ConfigureAwait(false);
