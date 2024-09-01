@@ -23,7 +23,7 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 /// To construct a non-struct collection is probably a massive performance hit considering the extremely rapid
 /// turn over of this type while holding down a keyboard key.
 /// </summary>
-public class OnKeyDownLateBatching : ITextEditorWork
+public struct OnKeyDownLateBatching : ITextEditorWork
 {
 	public const int MAX_BATCH_SIZE = 6;
 	public const string NAME_ZERO = $"{nameof(OnKeyDownLateBatching)}_0";
