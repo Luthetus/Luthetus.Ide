@@ -1,5 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keymaps.Models;
-using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
+﻿using Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
 namespace Luthetus.TextEditor.Tests.Basis.Keymaps.Models.Vims;
 

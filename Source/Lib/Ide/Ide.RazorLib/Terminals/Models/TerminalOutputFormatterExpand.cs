@@ -15,7 +15,6 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
-using Luthetus.Ide.RazorLib.Terminals.Displays;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
