@@ -7,8 +7,10 @@
 th {
     padding: 0 10px;
     color: var(--luth_te_string-literal-foreground-color);
+    border-bottom: 1px solid var(--luth_primary-border-color);
 }
 
 td {
     padding: 0 10px;
+    border-right: 1px solid var(--luth_primary-border-color);
 }
