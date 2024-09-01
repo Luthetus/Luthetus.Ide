@@ -25,7 +25,7 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 /// </summary>
 public struct OnKeyDownLateBatching : ITextEditorWork
 {
-	public const int MAX_BATCH_SIZE = 6;
+	public const int MAX_BATCH_SIZE = 8;
 	public const string NAME_ZERO = $"{nameof(OnKeyDownLateBatching)}_0";
 	public const string NAME_ONE = $"{nameof(OnKeyDownLateBatching)}_1";
 	public const string NAME_TWO = $"{nameof(OnKeyDownLateBatching)}_2";
@@ -33,6 +33,8 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 	public const string NAME_FOUR = $"{nameof(OnKeyDownLateBatching)}_4";
 	public const string NAME_FIVE = $"{nameof(OnKeyDownLateBatching)}_5";
 	public const string NAME_SIX = $"{nameof(OnKeyDownLateBatching)}_6";
+	public const string NAME_SEVEN = $"{nameof(OnKeyDownLateBatching)}_7";
+	public const string NAME_EIGHT = $"{nameof(OnKeyDownLateBatching)}_8";
 	public const string NAME_DEFAULT = nameof(OnKeyDownLateBatching);
 
 	public OnKeyDownLateBatching(
@@ -68,6 +70,8 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 		4 => NAME_FOUR,
 		5 => NAME_FIVE,
 		6 => NAME_SIX,
+		7 => NAME_SEVEN,
+		8 => NAME_EIGHT,
 		_ => NAME_DEFAULT
     };
 
@@ -90,27 +94,10 @@ public struct OnKeyDownLateBatching : ITextEditorWork
     {
 		if (upstreamEvent is OnKeyDownLateBatching upstreamOnKeyDownLateBatching)
 		{
-			if (BatchHasAvailability)
-			{
-				// TODO: There exists an instrusive thought that somehow a for loop over 1 element is slower than...
-				// ...checking if its only 1 element, and just immediately adding it.
-				//
-				// There is no data to back this up at the moment, its just an intrusive thought
-				// that I feel compelled to type out. Probably can delete this nonsense.
-				if (BatchLength == 1)
-				{
-                    upstreamOnKeyDownLateBatching.AddToBatch(KeymapArgsList[0]);
-                }
-				else
-				{
-					for (int i = 0; i < BatchLength; i++)
-					{
-                        upstreamOnKeyDownLateBatching.AddToBatch(KeymapArgsList[i]);
-					}
-				}
+			if (BatchLength == 1 && upstreamOnKeyDownLateBatching.BatchHasAvailability)
+				upstreamOnKeyDownLateBatching.AddToBatch(KeymapArgsList[0]);
 
-                return upstreamOnKeyDownLateBatching;
-            }
+            return upstreamOnKeyDownLateBatching;
 		}
 
 		return null;
