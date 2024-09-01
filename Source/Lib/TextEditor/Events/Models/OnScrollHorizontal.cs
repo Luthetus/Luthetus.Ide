@@ -7,7 +7,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnScrollHorizontal : ITextEditorWork
+public struct OnScrollHorizontal : ITextEditorWork
 {
     public OnScrollHorizontal(
         double scrollLeft,

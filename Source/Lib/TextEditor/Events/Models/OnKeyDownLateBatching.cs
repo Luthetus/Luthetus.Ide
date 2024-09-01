@@ -33,7 +33,7 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 	public const string NAME_FOUR = $"{nameof(OnKeyDownLateBatching)}_4";
 	public const string NAME_FIVE = $"{nameof(OnKeyDownLateBatching)}_5";
 	public const string NAME_SIX = $"{nameof(OnKeyDownLateBatching)}_6";
-
+	public const string NAME_DEFAULT = nameof(OnKeyDownLateBatching);
 
 	public OnKeyDownLateBatching(
 		TextEditorComponentData componentData,
@@ -51,7 +51,6 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; private set; } = nameof(OnKeyDownLateBatching);
 	public KeymapArgs[] KeymapArgsList { get; } = new KeymapArgs[MAX_BATCH_SIZE];
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
@@ -59,6 +58,18 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 	public TextEditorComponentData ComponentData { get; set; }
 	public int BatchLength { get; set; }
 	public bool BatchHasAvailability => BatchLength < MAX_BATCH_SIZE;
+
+    public string Name => BatchLength switch
+    {
+		0 => NAME_ZERO,
+        1 => NAME_ONE,
+        2 => NAME_TWO,
+		3 => NAME_THREE,
+		4 => NAME_FOUR,
+		5 => NAME_FIVE,
+		6 => NAME_SIX,
+		_ => NAME_DEFAULT
+    };
 
 	/// <summary>
 	/// Global variable used during <see cref="HandleEvent"/> to
@@ -109,31 +120,6 @@ public struct OnKeyDownLateBatching : ITextEditorWork
     {
 		try
 		{
-			switch (BatchLength)
-			{
-				case 0:
-					Name = NAME_ZERO;
-					break;
-                case 1:
-                    Name = NAME_ONE;
-                    break;
-                case 2:
-                    Name = NAME_TWO;
-                    break;
-                case 3:
-                    Name = NAME_THREE;
-                    break;
-                case 4:
-                    Name = NAME_FOUR;
-                    break;
-                case 5:
-                    Name = NAME_FIVE;
-                    break;
-                case 6:
-                    Name = NAME_SIX;
-                    break;
-            }
-
             var modelModifier = EditContext.GetModelModifier(ResourceUri);
             var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
             var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
