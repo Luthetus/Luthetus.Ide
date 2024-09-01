@@ -1,0 +1,14 @@
+.luth_ide_keymap {
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid var(--luth_primary-border-color);
+}
+
+th {
+    padding: 0 10px;
+    color: var(--luth_te_string-literal-foreground-color);
+}
+
+td {
+    padding: 0 10px;
+}

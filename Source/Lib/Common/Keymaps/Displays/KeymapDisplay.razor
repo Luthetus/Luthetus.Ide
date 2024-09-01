@@ -3,18 +3,15 @@
 <div class="luth_ide_keymap">
     @{
         var keyKeymapKvpsList = Keymap.GetKeyKeyValuePairList()
-            .OrderBy(x => x.Value.DisplayName)
-            .ToArray();
-
-        var codeKeymapKvpsList = Keymap.GetCodeKeyValuePairList()
-            .OrderBy(x => x.Value.DisplayName)
+            .OrderByDescending(x => x.Key.LayerKey.Guid)
+            .ThenBy(x => x.Value.DisplayName)
             .ToArray();
     }
 
     <table>
         <thead>
             <tr>
-                <th style="padding-right: 10px;">
+                <th>
                     Command
                 </th>
                 <th>
@@ -127,7 +124,6 @@
 
                 <tr class="luth_ide_keymap-entry">
                     <td class="luth_ide_keymap-entry-argument"
-                        style="padding-right: 10px;"
                         title="@commandNoType.InternalIdentifier">
 
                         @commandNoType.DisplayName
