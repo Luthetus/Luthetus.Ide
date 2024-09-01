@@ -1,3 +1,4 @@
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -11,7 +12,7 @@ namespace Luthetus.Common.RazorLib.Keymaps.Models;
 ///     event.key == Escape
 ///     BUT 
 ///     event.code == CapsLock
-public struct KeymapArgs : IKeymapArgs
+public struct KeymapArgs : ICommandArgs
 {
 	public KeymapArgs()
 	{

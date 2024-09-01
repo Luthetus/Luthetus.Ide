@@ -21,7 +21,7 @@ public class Keymap : IKeymap
     public Key<Keymap> Key { get; } = Key<Keymap>.Empty;
     public string DisplayName { get; } = string.Empty;
     
-    public bool TryRegister(IKeymapArgs args, CommandNoType command)
+    public bool TryRegister(KeymapArgs args, CommandNoType command)
     {
         lock (_syncRoot)
         {
@@ -47,7 +47,7 @@ public class Keymap : IKeymap
         return true;
     }
 
-    public (List<Keybind>? keyMatchList, List<Keybind>? codeMatchList) MapAll(IKeymapArgs args)
+    public (List<Keybind>? keyMatchList, List<Keybind>? codeMatchList) MapAll(KeymapArgs args)
     {
         List<Keybind>? keyMatchList = null;
         List<Keybind>? codeMatchList = null;
@@ -64,7 +64,7 @@ public class Keymap : IKeymap
         return (keyMatchList, codeMatchList);
     }
 
-    public bool MapFirstOrDefault(IKeymapArgs args, out CommandNoType? command)
+    public bool MapFirstOrDefault(KeymapArgs args, out CommandNoType? command)
     {
         List<Keybind>? keyMatchList = null;
         List<Keybind>? codeMatchList = null;
@@ -106,18 +106,18 @@ public class Keymap : IKeymap
         return false;
     }
 
-    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetKeyValuePairList()
+    public List<KeyValuePair<KeymapArgs, CommandNoType>> GetKeyValuePairList()
     {
-        var combinedList = new List<KeyValuePair<IKeymapArgs, CommandNoType>>();
+        var combinedList = new List<KeyValuePair<KeymapArgs, CommandNoType>>();
 
         lock (_syncRoot)
         {
             var mapKeyList = _mapKey.Values
-                .SelectMany(x => x.Select(y => new KeyValuePair<IKeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
+                .SelectMany(x => x.Select(y => new KeyValuePair<KeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
                 .ToList();
 
             var mapCodeList = _mapCode.Values
-                .SelectMany(x => x.Select(y => new KeyValuePair<IKeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
+                .SelectMany(x => x.Select(y => new KeyValuePair<KeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
                 .ToList();
             
             combinedList.AddRange(mapKeyList);
@@ -127,22 +127,22 @@ public class Keymap : IKeymap
         return combinedList;
     }
 
-    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetKeyKeyValuePairList()
+    public List<KeyValuePair<KeymapArgs, CommandNoType>> GetKeyKeyValuePairList()
     {
         lock (_syncRoot)
         {
             return _mapKey.Values
-                .SelectMany(x => x.Select(y => new KeyValuePair<IKeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
+                .SelectMany(x => x.Select(y => new KeyValuePair<KeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
                 .ToList();
         }
     }
 
-    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetCodeKeyValuePairList()
+    public List<KeyValuePair<KeymapArgs, CommandNoType>> GetCodeKeyValuePairList()
     {
         lock (_syncRoot)
         {
             return _mapCode.Values
-                .SelectMany(x => x.Select(y => new KeyValuePair<IKeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
+                .SelectMany(x => x.Select(y => new KeyValuePair<KeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
                 .ToList();
         }
     }

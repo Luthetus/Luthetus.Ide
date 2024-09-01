@@ -16,12 +16,12 @@ namespace Luthetus.Common.RazorLib.Keymaps.Models;
 /// </summary>
 public readonly struct Keybind
 {
-    public Keybind(IKeymapArgs keymapArgs, CommandNoType commandNoType)
+    public Keybind(KeymapArgs keymapArgs, CommandNoType commandNoType)
     {
         KeymapArgs = keymapArgs;
         CommandNoType = commandNoType;
     }
 
-    public IKeymapArgs KeymapArgs { get; }
+    public KeymapArgs KeymapArgs { get; }
     public CommandNoType CommandNoType { get; }
 }
