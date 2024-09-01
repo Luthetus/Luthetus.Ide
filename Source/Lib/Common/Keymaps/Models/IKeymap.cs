@@ -14,6 +14,8 @@ public interface IKeymap
     public (List<Keybind>? keyMatchList, List<Keybind>? codeMatchList) MapAll(IKeymapArgs args);
     public bool MapFirstOrDefault(IKeymapArgs args, out CommandNoType? command);
     public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetKeyValuePairList();
+    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetKeyKeyValuePairList();
+    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetCodeKeyValuePairList();
 
     public static readonly IKeymap Empty = new KeymapDoNothing();
 }

@@ -17,6 +17,8 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.FindAlls.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.Common.RazorLib.Keymaps.States;
+using Luthetus.TextEditor.RazorLib.Keymaps.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.Installations.Displays;
 
@@ -121,6 +123,8 @@ public partial class LuthetusTextEditorInitializer : ComponentBase
 								
 							return Task.FromResult(menu);
 						})));
+
+                Dispatcher.Dispatch(new KeymapState.RegisterKeymapLayerAction(TextEditorKeymapDefaultFacts.HasSelectionLayer));
             });
             
         base.OnInitialized();

@@ -33,4 +33,14 @@ public class KeymapDoNothing : IKeymap
     {
         return new();
     }
+
+    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetKeyKeyValuePairList()
+    {
+        return new();
+    }
+
+    public List<KeyValuePair<IKeymapArgs, CommandNoType>> GetCodeKeyValuePairList()
+    {
+        return new();
+    }
 }
