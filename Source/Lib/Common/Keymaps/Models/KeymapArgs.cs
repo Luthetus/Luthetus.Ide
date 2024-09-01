@@ -48,10 +48,11 @@ public struct KeymapArgs : ICommandArgs
         if (obj is not KeymapArgs keymapArgs)
             return false;
 
+		// NOTE: One cannot use the 'Equals' method to check if both the Key and Code are equal,
+		//       as this method only ensures one of the two were equal.
         return
             (LayerKey == keymapArgs.LayerKey) &&
-            (Key is null || Key == keymapArgs.Key) &&
-            (Code is null || Code == keymapArgs.Code) &&
+            ((Key is not null && Key == keymapArgs.Key) || (Code is not null && Code == keymapArgs.Code)) &&
             (CtrlKey == keymapArgs.CtrlKey) &&
             (ShiftKey == keymapArgs.ShiftKey) &&
             (AltKey == keymapArgs.AltKey) &&
