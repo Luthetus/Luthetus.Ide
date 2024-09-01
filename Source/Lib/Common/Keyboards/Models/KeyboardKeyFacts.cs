@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Exceptions;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.Common.RazorLib.Keyboards.Models;
 
@@ -9,6 +10,11 @@ public static class KeyboardKeyFacts
     public static bool IsMetaKey(KeyboardEventArgs keyboardEventArgs)
     {
         return IsMetaKey(keyboardEventArgs.Key, keyboardEventArgs.Code);
+    }
+    
+    public static bool IsMetaKey(KeymapArgs keymapArgs)
+    {
+        return IsMetaKey(keymapArgs.Key, keymapArgs.Code);
     }
 
     public static bool IsMetaKey(string key, string code)
@@ -162,6 +168,15 @@ public static class KeyboardKeyFacts
             keyboardEventArgs.Code,
             keyboardEventArgs.ShiftKey,
             keyboardEventArgs.AltKey);
+    }
+    
+    public static bool CheckIsContextMenuEvent(KeymapArgs keymapArgs)
+    {
+        return CheckIsContextMenuEvent(
+            keymapArgs.Key,
+            keymapArgs.Code,
+            keymapArgs.ShiftKey,
+            keymapArgs.AltKey);
     }
 
     public static bool IsMovementKey(string key)

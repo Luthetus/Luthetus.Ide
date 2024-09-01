@@ -966,7 +966,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             });
     }
 
-    private TextEditorCommand BuildMovementCommand(KeymapArgs keymapArgument, string key)
+    private TextEditorCommand BuildMovementCommand(KeymapArgs keymapArgs, string key)
     {
         var commandDisplayName = $"Vim::{key}";
 
@@ -983,7 +983,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                 if (ActiveVimMode == VimMode.Visual || ActiveVimMode == VimMode.VisualLine)
                 {
-                    keymapArgument = keymapArgument with
+                    keymapArgs = keymapArgs with
                     {
                         ShiftKey = true
                     };
@@ -991,18 +991,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                 TextEditorCommand? modifiedCommand = null;
 
-                var success = _textEditorKeymapDefault.MapFirstOrDefault(keymapArgument, out var command);
+                var success = _textEditorKeymapDefault.MapFirstOrDefault(keymapArgs, out var command);
                 modifiedCommand = command as TextEditorCommand;
 
                 if (modifiedCommand is null)
                 {
-                    var keyboardEventArgs = new KeyboardEventArgs
-                    {
-                        Key = key,
-                        ShiftKey = keymapArgument.ShiftKey,
-                        CtrlKey = keymapArgument.CtrlKey
-                    };
-
                     modifiedCommand = new TextEditorCommand(
                         "MoveCursor", "MoveCursor", false, true, TextEditKind.None, null,
                         interfaceCommandArgs =>
@@ -1018,7 +1011,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 				                return Task.CompletedTask;
 
                             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                            	keyboardEventArgs,
+                                new KeymapArgs
+                                {
+                                    Key = key,
+                                    ShiftKey = keymapArgs.ShiftKey,
+                                    CtrlKey = keymapArgs.CtrlKey
+                                },
 						        commandArgs.EditContext,
 						        modelModifier,
 						        viewModelModifier,
@@ -1086,7 +1084,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
         }
     }
 
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgs keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
+	public bool TryMap(KeymapArgs keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
 	{
 		return _map.TryGetValue(keymapArgument, out command);
 	}

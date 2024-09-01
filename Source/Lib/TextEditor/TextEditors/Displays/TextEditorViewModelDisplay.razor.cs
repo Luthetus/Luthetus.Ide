@@ -22,6 +22,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
@@ -370,7 +371,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
 		var onKeyDown = new OnKeyDownLateBatching(
 			_componentData,
-            keyboardEventArgs,
+            new KeymapArgs(keyboardEventArgs),
             resourceUri,
             viewModelKey);
 

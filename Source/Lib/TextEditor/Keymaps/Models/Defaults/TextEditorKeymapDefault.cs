@@ -369,7 +369,7 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
         }, TextEditorCommandDefaultFacts.ScrollPageUp);
     }
 
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgs keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
+	public bool TryMap(KeymapArgs keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
 	{
         return MapFirstOrDefault(keymapArgument, out command);
     }

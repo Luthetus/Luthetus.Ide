@@ -44,5 +44,5 @@ public interface ITextEditorKeymap
 	///         -bool TryMap(KeyboardEventArgs args, out Command command)
 	///		  Could be made, such that 'TryMap' would have a reference to the 'KeyboardEventArgs'
 	/// </summary>
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgs keymapArgument, TextEditorComponentData componentData, out CommandNoType? command);
+	public bool TryMap(KeymapArgs keymapArgument, TextEditorComponentData componentData, out CommandNoType? command);
 }

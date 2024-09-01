@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -50,27 +51,27 @@ public partial class TextEditorModelModifier
     }
 
 	public void HandleKeyboardEvent(
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
         CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken)
     {
-        if (KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
+        if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
         {
-            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key)
+            if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
             {
                 Delete(
                 	cursorModifierBag,
                     1,
-                    keyboardEventArgs.CtrlKey,
+                    keymapArgs.CtrlKey,
                     DeleteKind.Backspace,
                     cancellationToken);
             }
-            else if (KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+            else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
             {
                 Delete(
                     cursorModifierBag,
                     1,
-                    keyboardEventArgs.CtrlKey,
+                    keymapArgs.CtrlKey,
                     DeleteKind.Delete,
                     cancellationToken);
             }
@@ -85,9 +86,9 @@ public partial class TextEditorModelModifier
                     cursorModifierBag.ViewModelKey,
                     new List<TextEditorCursorModifier> { cursor });
 
-                var valueToInsert = keyboardEventArgs.Key.First().ToString();
+                var valueToInsert = keymapArgs.Key.First().ToString();
 
-                if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
+                if (keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE)
 				{
                     valueToInsert = LineEndKindPreference.AsCharacters();
 					
@@ -111,7 +112,7 @@ public partial class TextEditorModelModifier
 
 					valueToInsert += indentationBuilder.ToString();
 				}
-                else if (keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
+                else if (keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.TAB_CODE)
 				{
                     valueToInsert = "\t";
 				}
@@ -174,15 +175,15 @@ public partial class TextEditorModelModifier
         CursorModifierBagTextEditor cursorModifierBag,
         CancellationToken cancellationToken)
     {
-        var keyboardEventArgs = motionKind switch
+        var keymapArgs = motionKind switch
         {
-            MotionKind.Backspace => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.BACKSPACE },
-            MotionKind.Delete => new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
+            MotionKind.Backspace => new KeymapArgs { Key = KeyboardKeyFacts.MetaKeys.BACKSPACE },
+            MotionKind.Delete => new KeymapArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
             _ => throw new LuthetusTextEditorException($"The {nameof(MotionKind)}: {motionKind} was not recognized.")
         };
 
         HandleKeyboardEvent(
-            keyboardEventArgs,
+            keymapArgs,
             cursorModifierBag,
             CancellationToken.None);
     }
@@ -204,7 +205,7 @@ public partial class TextEditorModelModifier
             for (var deleteIndex = 0; deleteIndex < count; deleteIndex++)
             {
                 HandleKeyboardEvent(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Code = KeyboardKeyFacts.MetaKeys.DELETE,
                         Key = KeyboardKeyFacts.MetaKeys.DELETE,

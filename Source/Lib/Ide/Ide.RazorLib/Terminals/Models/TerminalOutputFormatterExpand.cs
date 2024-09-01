@@ -15,6 +15,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -185,7 +186,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
                     return Task.CompletedTask;
 
                 _textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Code = KeyboardKeyFacts.MovementKeys.END,
                         Key = KeyboardKeyFacts.MovementKeys.END,

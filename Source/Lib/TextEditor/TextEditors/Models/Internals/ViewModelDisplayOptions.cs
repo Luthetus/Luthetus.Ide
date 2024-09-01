@@ -28,7 +28,7 @@ public class ViewModelDisplayOptions
         TextEditorModelModifier,
         TextEditorViewModelModifier,
         CursorModifierBagTextEditor,
-        KeyboardEventArgs,
+        KeymapArgs,
 		TextEditorComponentData,
         Task>?
         AfterOnKeyDownAsync { get; set; }
@@ -46,8 +46,9 @@ public class ViewModelDisplayOptions
         TextEditorModelModifier,
         TextEditorViewModelModifier,
         CursorModifierBagTextEditor,
-        List<KeyboardEventArgs>,
-		TextEditorComponentData,
+        KeymapArgs[], // batchKeymapArgsList
+        int, // batchKeymapArgsListLength
+        TextEditorComponentData,
         Task>?
         AfterOnKeyDownRangeAsync { get; set; }
 
