@@ -45,10 +45,10 @@
 		
 		// Consecutive events of this kind are batched.
 		var onKeyDown = (OnKeyDownLateBatching)queue.BackgroundTaskList.Single();
-		Assert.Equal(2, onKeyDown.KeyboardEventArgsList.Count);
+		Assert.Equal(2, onKeyDown.KeymapArgsList.Count);
 		Assert.Equal(upstreamOnKeyDown, onKeyDown);
-		Assert.Equal(upstreamOnKeyDown.KeyboardEventArgsList[0], onKeyDown.KeyboardEventArgsList[0]);
-		Assert.Equal(downstreamOnKeyDown.KeyboardEventArgsList.Single(), onKeyDown.KeyboardEventArgsList[1]);
+		Assert.Equal(upstreamOnKeyDown.KeymapArgsList[0], onKeyDown.KeymapArgsList[0]);
+		Assert.Equal(downstreamOnKeyDown.KeymapArgsList.Single(), onKeyDown.KeymapArgsList[1]);
         
 		var backgroundTasksHandle = SharedInitializationForTests.StartBackgroundTasks(this);
 		await backgroundTasksHandle.Stop();

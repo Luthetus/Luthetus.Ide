@@ -25,12 +25,12 @@ public class ContextRecordTests
             key,
             displayNameFriendly,
             contextNameInternal,
-            Keymap.Empty);
+            IKeymap.Empty);
 
         Assert.Equal(key, contextRecord.ContextKey);
         Assert.Equal(displayNameFriendly, contextRecord.DisplayNameFriendly);
         Assert.Equal(contextNameInternal, contextRecord.ContextNameInternal);
-        Assert.Equal(Keymap.Empty, contextRecord.Keymap);
+        Assert.Equal(IKeymap.Empty, contextRecord.Keymap);
         Assert.Equal($"luth_ide_context-{key.Guid}", contextRecord.ContextElementId);
     }
 }

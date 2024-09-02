@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -93,7 +94,7 @@ public interface ITextEditorModelApi
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
         CancellationToken cancellationToken);
 
     /// <summary>
@@ -110,7 +111,7 @@ public interface ITextEditorModelApi
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
         CancellationToken cancellationToken);
 
     public void DeleteTextByRange(

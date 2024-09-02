@@ -44,9 +44,9 @@
 			<input type="text"
 				   style="width: calc(100% - @(workingDirectoryTextWidth)ch); height: 100%;"
 				   title="Command"
-				   readonly
-				   disabled
-				   value="manual input is disabled until tested thoroughly" />
+				   @bind="CommandUiInputBinding"
+				   @bind:event="oninput"
+				   @onkeydown="HandleOnKeyDown" />
 		</div>
 	}
 </div>

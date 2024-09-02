@@ -11,7 +11,6 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.TestExplorers.States;

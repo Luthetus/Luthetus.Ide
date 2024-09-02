@@ -39,15 +39,33 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 	{
 		// NuGetPackageManagerContext
 		{
-			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-				new KeymapArgument("n", "KeyN", false, true, true, false, Key<KeymapLayer>.Empty),
+			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+				new KeymapArgs
+				{
+					Key = "n",
+					Code = "KeyN",
+					ShiftKey = false,
+					CtrlKey = true,
+					AltKey = true,
+					MetaKey = false,
+					LayerKey = Key<KeymapLayer>.Empty,
+				},
 				_commandFactory.ConstructFocusContextElementCommand(
 					ContextFacts.NuGetPackageManagerContext, "Focus: NuGetPackageManager", "focus-nu-get-package-manager"));
 		}
 		// CSharpReplContext
 		{
-			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-				new KeymapArgument("r", "KeyR", false, true, true, false, Key<KeymapLayer>.Empty),
+			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+				new KeymapArgs
+				{
+					Key = "r",
+					Code = "KeyR",
+					ShiftKey = false,
+					CtrlKey = true,
+					AltKey = true,
+					MetaKey = false,
+					LayerKey = Key<KeymapLayer>.Empty,
+				},
 				_commandFactory.ConstructFocusContextElementCommand(
 					ContextFacts.SolutionExplorerContext, "Focus: C# REPL", "focus-c-sharp-repl"));
 		}
@@ -56,8 +74,17 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 			var focusSolutionExplorerCommand = _commandFactory.ConstructFocusContextElementCommand(
 				ContextFacts.SolutionExplorerContext, "Focus: SolutionExplorer", "focus-solution-explorer");
 
-			_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-					new KeymapArgument("s", "KeyS", false, true, true, false, Key<KeymapLayer>.Empty),
+			_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+					new KeymapArgs
+					{
+						Key = "s",
+						Code = "KeyS",
+						ShiftKey = false,
+						CtrlKey = true,
+						AltKey = true,
+						MetaKey = false,
+						LayerKey = Key<KeymapLayer>.Empty,
+					},
 					focusSolutionExplorerCommand);
 
 			// Set active solution explorer tree view node to be the
@@ -88,8 +115,17 @@ public class DotNetCommandFactory : IDotNetCommandFactory
 							.ConfigureAwait(false);
 					});
 
-				_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-						new KeymapArgument("S", "KeyS", true, true, true, false, Key<KeymapLayer>.Empty),
+				_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+						new KeymapArgs
+						{
+							Key = "S",
+							Code = "KeyS",
+							CtrlKey = true,
+							ShiftKey = true,
+							AltKey = true,
+							MetaKey = false,
+							LayerKey = Key<KeymapLayer>.Empty,
+						},
 						focusTextEditorCommand);
 			}
 		}

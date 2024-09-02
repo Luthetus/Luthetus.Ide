@@ -11,7 +11,6 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;

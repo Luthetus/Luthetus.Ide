@@ -1,10 +1,8 @@
 using System.Text;
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
-using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 
 namespace Luthetus.Extensions.DotNet.CommandLines.Models;

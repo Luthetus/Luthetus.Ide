@@ -1,4 +1,5 @@
 using System.Text;
+using System.Collections.Immutable;
 using CliWrap.EventStream;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -11,6 +12,8 @@ public class TerminalInteractive : ITerminalInteractive
 	public const string RESERVED_TARGET_FILENAME_PREFIX = "Luthetus_";
 
 	private readonly ITerminal _terminal;
+	private readonly object _syncRoot = new();
+	private readonly List<TerminalCommandRequest> _terminalCommandRequestHistory = new();
 
 	public TerminalInteractive(ITerminal terminal)
 	{
@@ -26,6 +29,15 @@ public class TerminalInteractive : ITerminalInteractive
 	
 	public async Task<TerminalCommandParsed?> TryHandleCommand(TerminalCommandRequest terminalCommandRequest)
 	{
+		// Store in history
+		lock (_syncRoot)
+		{
+			if (_terminalCommandRequestHistory.Count > 10)
+				_terminalCommandRequestHistory.Clear();
+				
+			_terminalCommandRequestHistory.Insert(0, terminalCommandRequest);
+		}
+	
 		var parsedCommand = Parse(terminalCommandRequest);
 		
 		// To set the working directory, is not mutually exclusive
@@ -74,6 +86,14 @@ public class TerminalInteractive : ITerminalInteractive
 
         if (_previousWorkingDirectory != _workingDirectory)
             WorkingDirectoryChanged?.Invoke();
+	}
+	
+	public ImmutableList<TerminalCommandRequest> GetTerminalCommandRequestHistory()
+	{
+		lock (_syncRoot)
+		{
+			return _terminalCommandRequestHistory.ToImmutableList();
+		}
 	}
 	
 	public TerminalCommandParsed Parse(TerminalCommandRequest terminalCommandRequest)

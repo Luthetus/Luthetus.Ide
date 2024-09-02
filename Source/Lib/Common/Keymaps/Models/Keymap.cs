@@ -1,12 +1,16 @@
-﻿using Luthetus.Common.RazorLib.Commands.Models;
+using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
-using System.Text.Json.Serialization;
 
 namespace Luthetus.Common.RazorLib.Keymaps.Models;
 
-public class Keymap
+/// <summary>
+/// TODO: Chords as part of keymaps (i.e: ({ Ctrl + '[' } + { Ctrl + 's' }) to focus solution explorer
+/// </summary>
+public class Keymap : IKeymap
 {
-    public static readonly Keymap Empty = new Keymap(Key<Keymap>.Empty, string.Empty);
+    protected readonly object _syncRoot = new();
+    protected readonly Dictionary<string, List<Keybind>> _mapKey = new();
+    protected readonly Dictionary<string, List<Keybind>> _mapCode = new();
 
     public Keymap(Key<Keymap> key, string displayName)
     {
@@ -14,38 +18,132 @@ public class Keymap
         DisplayName = displayName;
     }
 
-    /// <summary>This constructor is used for JSON deserialization</summary>
-    [Obsolete("This constructor is used for JSON deserialization")]
-    public Keymap()
+    public Key<Keymap> Key { get; } = Key<Keymap>.Empty;
+    public string DisplayName { get; } = string.Empty;
+    
+    public bool TryRegister(KeymapArgs args, CommandNoType command)
     {
+        lock (_syncRoot)
+        {
+            var keybind = new Keybind(args, command);
+
+            if (args.Key is not null)
+            {
+                if (!_mapKey.ContainsKey(args.Key))
+                    _mapKey.Add(args.Key, new());
+
+                _mapKey[args.Key].Add(keybind);
+            }
+
+            if (args.Code is not null)
+            {
+                if (!_mapCode.ContainsKey(args.Code))
+                    _mapCode.Add(args.Code, new());
+
+                _mapCode[args.Code].Add(keybind);
+            }
+        }
+
+        return true;
     }
 
-	/// <summary>
-	/// TODO: This dictionary typed property is an implementation detail and should be...
-	///       ...hidden behind an interface.
-	///       |
-	///       Further details: An integrated terminal is currently being written.
-	///       The keymap for the integrated terminal is intended to capture the
-	///       keyboard event args.
-	///       ...
-	///       This would allow the integrated terminal to then check if the cursor
-	///       is on the final line of the text editor or not.
-	///       ...
-	///       If the cursor is on the final line, then write out the text,
-	///       otherwise treat the text editor as readonly because the cursor
-	///       is at 'history'
-	///       ...
-	///       But, with all this said, one cannot 'delay' the insertion of the text,
-	///       because the integrated terminal when intercepting the keystroke does not have
-	///       access to the keyboard event.
-	///       ...
-	///       If an interface IKeymap existed, then the methods:
-	///         -bool TryRegister(KeyboardEventArgs args, Command command)
-	///         -bool TryMap(KeyboardEventArgs args, out Command command)
-	///		  Could be made, such that 'TryMap' would have a reference to the 'KeyboardEventArgs'
-	/// </summary>
-	[property: JsonIgnore]
-    public Dictionary<KeymapArgument, CommandNoType> Map { get; set; } = new();
-    public Key<Keymap> Key { get; set; } = Key<Keymap>.Empty;
-    public string DisplayName { get; set; } = string.Empty;
+    public (List<Keybind>? keyMatchList, List<Keybind>? codeMatchList) MapAll(KeymapArgs args)
+    {
+        List<Keybind>? keyMatchList = null;
+        List<Keybind>? codeMatchList = null;
+
+        lock (_syncRoot)
+        {
+            if (args.Key is not null)
+                _ = _mapKey.TryGetValue(args.Key, out keyMatchList);
+
+            if (args.Code is not null)
+                _ = _mapKey.TryGetValue(args.Code, out codeMatchList);
+        }
+
+        return (keyMatchList, codeMatchList);
+    }
+
+    public bool MapFirstOrDefault(KeymapArgs args, out CommandNoType? command)
+    {
+        List<Keybind>? keyMatchList = null;
+        List<Keybind>? codeMatchList = null;
+
+        lock (_syncRoot)
+        {
+            if (args.Key is not null)
+                _ = _mapKey.TryGetValue(args.Key, out keyMatchList);
+
+            if (args.Code is not null)
+                _ = _mapKey.TryGetValue(args.Code, out codeMatchList);
+        }
+
+        if (keyMatchList is not null)
+        {
+            foreach (var keybind in keyMatchList)
+            {
+                if (keybind.KeymapArgs == args)
+                {
+                    command = keybind.CommandNoType;
+                    return true;
+                }
+            }
+        }
+
+        if (codeMatchList is not null)
+        {
+            foreach (var keybind in codeMatchList)
+            {
+                if (keybind.KeymapArgs == args)
+                {
+                    command = keybind.CommandNoType;
+                    return true;
+                }
+            }
+        }
+
+        command = null;
+        return false;
+    }
+
+    public List<KeyValuePair<KeymapArgs, CommandNoType>> GetKeyValuePairList()
+    {
+        var combinedList = new List<KeyValuePair<KeymapArgs, CommandNoType>>();
+
+        lock (_syncRoot)
+        {
+            var mapKeyList = _mapKey.Values
+                .SelectMany(x => x.Select(y => new KeyValuePair<KeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
+                .ToList();
+
+            var mapCodeList = _mapCode.Values
+                .SelectMany(x => x.Select(y => new KeyValuePair<KeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
+                .ToList();
+            
+            combinedList.AddRange(mapKeyList);
+            combinedList.AddRange(mapCodeList);
+        }
+
+        return combinedList;
+    }
+
+    public List<KeyValuePair<KeymapArgs, CommandNoType>> GetKeyKeyValuePairList()
+    {
+        lock (_syncRoot)
+        {
+            return _mapKey.Values
+                .SelectMany(x => x.Select(y => new KeyValuePair<KeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
+                .ToList();
+        }
+    }
+
+    public List<KeyValuePair<KeymapArgs, CommandNoType>> GetCodeKeyValuePairList()
+    {
+        lock (_syncRoot)
+        {
+            return _mapCode.Values
+                .SelectMany(x => x.Select(y => new KeyValuePair<KeymapArgs, CommandNoType>(y.KeymapArgs, y.CommandNoType)))
+                .ToList();
+        }
+    }
 }

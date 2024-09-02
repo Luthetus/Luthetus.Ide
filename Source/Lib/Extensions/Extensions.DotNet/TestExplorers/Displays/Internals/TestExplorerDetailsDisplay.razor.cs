@@ -12,7 +12,6 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Models;
-using Luthetus.Extensions.DotNet.TestExplorers.States;
 using Luthetus.Extensions.DotNet.TestExplorers.Models;
 
 namespace Luthetus.Extensions.DotNet.TestExplorers.Displays.Internals;

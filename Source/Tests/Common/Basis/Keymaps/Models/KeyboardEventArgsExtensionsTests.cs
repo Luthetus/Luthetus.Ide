@@ -23,7 +23,7 @@ public class KeyboardEventArgsExtensionsTests
                 Code = KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
             };
 
-            var keymapArgument = keyboardEventArgs.ToKeymapArgument();
+            var keymapArgument = new KeymapArgs(keyboardEventArgs);
 
             Assert.Equal(keyboardEventArgs.Code, keymapArgument.Code);
             Assert.Equal(keyboardEventArgs.ShiftKey, keymapArgument.ShiftKey);
@@ -42,7 +42,7 @@ public class KeyboardEventArgsExtensionsTests
                 AltKey = true,
             };
 
-            var keymapArgument = keyboardEventArgs.ToKeymapArgument();
+            var keymapArgument = new KeymapArgs(keyboardEventArgs);
 
             Assert.Equal(keyboardEventArgs.Code, keymapArgument.Code);
             Assert.Equal(keyboardEventArgs.ShiftKey, keymapArgument.ShiftKey);

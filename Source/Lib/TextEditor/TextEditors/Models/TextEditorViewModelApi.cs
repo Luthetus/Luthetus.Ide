@@ -14,6 +14,7 @@ using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -296,14 +297,14 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void MoveCursor(
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
 		ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag)
     {
         MoveCursorUnsafe(
-        	keyboardEventArgs,
+            keymapArgs,
 	        editContext,
 	        modelModifier,
 	        viewModelModifier,
@@ -314,7 +315,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     }
 
     public void MoveCursorUnsafe(
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -323,7 +324,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         var shouldClearSelection = false;
 
-        if (keyboardEventArgs.ShiftKey)
+        if (keymapArgs.ShiftKey)
         {
             if (cursorModifier.SelectionAnchorPositionIndex is null ||
                 cursorModifier.SelectionEndingPositionIndex == cursorModifier.SelectionAnchorPositionIndex)
@@ -342,11 +343,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
         int lengthOfLine = 0; // This variable is used in multiple switch cases.
 
-        switch (keyboardEventArgs.Key)
+        switch (keymapArgs.Key)
         {
             case KeyboardKeyFacts.MovementKeys.ARROW_LEFT:
                 if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) &&
-                    !keyboardEventArgs.ShiftKey)
+                    !keymapArgs.ShiftKey)
                 {
                     var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
@@ -377,7 +378,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     }
                     else
                     {
-                        if (keyboardEventArgs.CtrlKey)
+                        if (keymapArgs.CtrlKey)
                         {
                         	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                                 cursorModifier.LineIndex,
@@ -390,7 +391,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                             }
                             else
                             {
-                            	if (!keyboardEventArgs.AltKey) // Move by character kind
+                            	if (!keymapArgs.AltKey) // Move by character kind
                             	{
                             		cursorModifier.SetColumnIndexAndPreferred(columnIndexOfCharacterWithDifferingKind);
                             	}
@@ -468,7 +469,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 break;
             case KeyboardKeyFacts.MovementKeys.ARROW_RIGHT:
-                if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && !keyboardEventArgs.ShiftKey)
+                if (TextEditorSelectionHelper.HasSelectedText(cursorModifier) && !keymapArgs.ShiftKey)
                 {
                     var selectionBounds = TextEditorSelectionHelper.GetSelectionBounds(cursorModifier);
 
@@ -503,7 +504,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                     }
                     else if (cursorModifier.ColumnIndex != lengthOfLine)
                     {
-                        if (keyboardEventArgs.CtrlKey)
+                        if (keymapArgs.CtrlKey)
                         {
                         	var columnIndexOfCharacterWithDifferingKind = modelModifier.GetColumnIndexOfCharacterWithDifferingKind(
                                 cursorModifier.LineIndex,
@@ -516,7 +517,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                             }
                             else
                             {
-                            	if (!keyboardEventArgs.AltKey) // Move by character kind
+                            	if (!keymapArgs.AltKey) // Move by character kind
                             	{
                             		cursorModifier.SetColumnIndexAndPreferred(
                                     	columnIndexOfCharacterWithDifferingKind);
@@ -571,7 +572,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 break;
             case KeyboardKeyFacts.MovementKeys.HOME:
-                if (keyboardEventArgs.CtrlKey)
+                if (keymapArgs.CtrlKey)
                 {
                     cursorModifier.LineIndex = 0;
                     cursorModifier.SetColumnIndexAndPreferred(0);
@@ -614,7 +615,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
                 break;
             case KeyboardKeyFacts.MovementKeys.END:
-                if (keyboardEventArgs.CtrlKey)
+                if (keymapArgs.CtrlKey)
                     cursorModifier.LineIndex = modelModifier.LineCount - 1;
 
                 lengthOfLine = modelModifier.GetLineLength(cursorModifier.LineIndex);
@@ -624,13 +625,13 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
                 break;
         }
 
-        if (keyboardEventArgs.ShiftKey)
+        if (keymapArgs.ShiftKey)
         {
             cursorModifier.SelectionEndingPositionIndex = modelModifier.GetPositionIndex(
                 cursorModifier.LineIndex,
                 cursorModifier.ColumnIndex);
         }
-        else if (!keyboardEventArgs.ShiftKey && shouldClearSelection)
+        else if (!keymapArgs.ShiftKey && shouldClearSelection)
         {
             // The active selection is needed, and cannot be touched until the end.
             cursorModifier.SelectionAnchorPositionIndex = null;

@@ -57,9 +57,11 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public int EditBlockIndex => _editBlockIndex ?? _textEditorModel.EditBlockIndex;
     public bool IsDirty => _isDirty;
     public (int lineIndex, int lineLength) MostCharactersOnASingleLineTuple => _mostCharactersOnASingleLineTuple ?? _textEditorModel.MostCharactersOnASingleLineTuple;
+    public (int lineIndex, int lineLength) PreviousMostCharactersOnASingleLineTuple => _textEditorModel.MostCharactersOnASingleLineTuple;
     public Key<RenderState> RenderStateKey => _renderStateKey ?? _textEditorModel.RenderStateKey;
 
     public int LineCount => LineEndList.Count;
+    public int PreviousLineCount => _textEditorModel.LineEndList.Count;
     public int CharCount => _richCharacterList.Length;
 
 	/// <summary>

@@ -404,7 +404,9 @@ await builder.Build().RunAsync();
 
         textEditorService.ModelApi.RegisterCustom(model);
 
-        cSharpCompilerService.RegisterResource(model.ResourceUri);
+        cSharpCompilerService.RegisterResource(
+            model.ResourceUri,
+            shouldTriggerResourceWasModified: true);
 
         var viewModelKey = Key<TextEditorViewModel>.NewKey();
 

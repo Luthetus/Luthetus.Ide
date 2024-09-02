@@ -1,3 +1,5 @@
+using System.Collections.Immutable;
+
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 /// <summary>State (i.e.: working directory)</summary>
@@ -9,6 +11,7 @@ public interface ITerminalInteractive : IDisposable
 	public event Action? WorkingDirectoryChanged;
 	
 	public void SetWorkingDirectory(string workingDirectoryAbsolutePathString);
+	public ImmutableList<TerminalCommandRequest> GetTerminalCommandRequestHistory();
 	
 	/// <summary>
 	/// Some terminal commands will map to "interactive" commands that are

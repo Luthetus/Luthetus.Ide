@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnDoubleClick : ITextEditorWork
+public struct OnDoubleClick : ITextEditorWork
 {
     public OnDoubleClick(
         MouseEventArgs mouseEventArgs,

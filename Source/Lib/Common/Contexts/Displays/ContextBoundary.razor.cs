@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
-using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.States;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
@@ -84,17 +83,17 @@ public partial class ContextBoundary : ComponentBase
             return Task.CompletedTask;
         }
 
-        return HandleKeymapArgumentAsync(keyboardEventArgs.ToKeymapArgument());
+        return HandleKeymapArgumentAsync(new (keyboardEventArgs));
     }
 
-    public async Task HandleKeymapArgumentAsync(KeymapArgument keymapArgument)
+    public async Task HandleKeymapArgumentAsync(KeymapArgs keymapArgs)
     {
-        var success = ContextRecord.Keymap.Map.TryGetValue(keymapArgument, out var command);
+        var success = ContextRecord.Keymap.MapFirstOrDefault(keymapArgs, out var command);
 
         if (success && command is not null)
-            await command.CommandFunc(new CommonCommandArgs()).ConfigureAwait(false);
+            await command.CommandFunc(keymapArgs).ConfigureAwait(false);
         else if (ParentContextBoundary is not null)
-            await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgument).ConfigureAwait(false);
+            await ParentContextBoundary.HandleKeymapArgumentAsync(keymapArgs).ConfigureAwait(false);
     }
 
     public ImmutableArray<Key<ContextRecord>> GetContextBoundaryHeirarchy(List<Key<ContextRecord>> contextRecordKeyList)

@@ -161,7 +161,7 @@ public class ContextStateReducerTests
         var globalContext = contextStateWrap.Value.AllContextsList.Single(
             x => x.ContextKey == ContextFacts.GlobalContext.ContextKey);
 
-        Assert.Equal(Keymap.Empty, globalContext.Keymap);
+        Assert.Equal(IKeymap.Empty, globalContext.Keymap);
 
         var command = new CommonCommand(
             "Test SetContextKeymap Action", "test-set-context-keymap-action", false,
@@ -169,8 +169,15 @@ public class ContextStateReducerTests
 
         var keymap = new Keymap(Key<Keymap>.NewKey(), "Unit Test");
 
-        _ = keymap.Map.TryAdd(
-                new KeymapArgument("KeyF", false, true, true, Key<KeymapLayer>.Empty),
+        _ = keymap.TryRegister(
+                new KeymapArgs
+                {
+                    Code = "KeyF",
+                    ShiftKey = false,
+                    CtrlKey = true,
+                    AltKey = true,
+                    LayerKey = Key<KeymapLayer>.Empty,
+                },
                 command);
 
         var setContextKeymapAction = new ContextState.SetContextKeymapAction(
@@ -182,7 +189,7 @@ public class ContextStateReducerTests
         globalContext = contextStateWrap.Value.AllContextsList.Single(
             x => x.ContextKey == ContextFacts.GlobalContext.ContextKey);
 
-        Assert.NotEqual(Keymap.Empty, globalContext.Keymap);
+        Assert.NotEqual(IKeymap.Empty, globalContext.Keymap);
         Assert.Equal(keymap, globalContext.Keymap);
     }
 
