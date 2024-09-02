@@ -172,7 +172,7 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.4.0 </em> (2024-09-01)</div>
+                <div>v <em class="luth_em">0.9.4.0 </em> (2024-09-02)</div>
                 <ul>
                     <li>
                         Home key has indentation logic
@@ -240,7 +240,7 @@
                     	Text editor's OnKeyDownLateBatching event uses a fixed size array for batching events, rather than what previously
 					        was a List&lt;T&gt;. This is expected to be a large optimization, as it tends that high turnover 'class' objects bring
 					        performance issues due to the garbage collection overhead. As well, it tends to be the case that no more than
-					        3 or 4 keyboard events ever get batched together. So the fixed size array is '6' keyboard events can be made into
+					        3 or 4 keyboard events ever get batched together. So the fixed size array is '8' keyboard events can be made into
 					        a single batch.
                     </li>
                 </ul>

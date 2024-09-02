@@ -5,7 +5,7 @@ All notable changes to the `Luthetus.TextEditor` repository will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.4.0] - 2024-09-01
+## [2.4.0] - 2024-09-02
 <details>
   <summary>Click to show changes</summary>
 
@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Text editor's OnKeyDownLateBatching event uses a fixed size array for batching events, rather than what previously
           was a List<T>. This is expected to be a large optimization, as it tends that high turnover 'class' objects bring
           performance issues due to the garbage collection overhead. As well, it tends to be the case that no more than
-          3 or 4 keyboard events ever get batched together. So the fixed size array is '6' keyboard events can be made into
+          3 or 4 keyboard events ever get batched together. So the fixed size array is '8' keyboard events can be made into
           a single batch.
 </details>
 
