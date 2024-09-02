@@ -9,7 +9,7 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnMouseMove : ITextEditorWork
+public struct OnMouseMove : ITextEditorWork
 {
     public OnMouseMove(
         MouseEventArgs mouseEventArgs,

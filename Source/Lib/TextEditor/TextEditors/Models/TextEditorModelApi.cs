@@ -8,6 +8,7 @@ using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -154,20 +155,20 @@ public class TextEditorModelApi : ITextEditorModelApi
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
         CancellationToken cancellationToken)
     {
-        modelModifier.HandleKeyboardEvent(keyboardEventArgs, cursorModifierBag, cancellationToken);
+        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag, cancellationToken);
     }
 
     public void HandleKeyboardEventUnsafe(
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
         CancellationToken cancellationToken)
     {
-        modelModifier.HandleKeyboardEvent(keyboardEventArgs, cursorModifierBag, cancellationToken);
+        modelModifier.HandleKeyboardEvent(keymapArgs, cursorModifierBag, cancellationToken);
     }
 
     public void DeleteTextByRange(

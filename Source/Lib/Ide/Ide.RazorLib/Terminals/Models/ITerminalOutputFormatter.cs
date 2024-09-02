@@ -1,5 +1,3 @@
-using Luthetus.Ide.RazorLib.Exceptions;
-
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
 /// <summary>

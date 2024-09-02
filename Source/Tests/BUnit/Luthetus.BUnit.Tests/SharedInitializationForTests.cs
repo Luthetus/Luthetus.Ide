@@ -17,6 +17,7 @@ public static class SharedInitializationForTests
 	{
 		var hostingInformation = new LuthetusHostingInformation(
 			LuthetusHostingKind.UnitTestingAsync,
+			LuthetusPurposeKind.Ide,
 			new BackgroundTaskService());
 		
 		ctx.Services.AddLuthetusIdeRazorLibServices(hostingInformation);

@@ -5,7 +5,27 @@ All notable changes to the `Luthetus.TextEditor` repository will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.2.0] - ????-??-??
+## [2.4.0] - 2024-09-02
+<details>
+  <summary>Click to show changes</summary>
+
+	### Fixed
+    - Fix: deletion of lines will now scroll by the amount of lines deleted.
+           Previously, this was breaking the virtualization result until one triggered a re-calculation.
+    - Fix: Keybinds first try to match on a JavaScript 'event.key' so to speak. Then, as a fallback
+           they will now try to match on 'event.code' so to speak.
+           Previously, on Ubuntu, if one remapped the CapsLock key to Escape, it would not work
+           in the IDE at various places. This has been fixed.
+    - Text editor events now use structs to transmit event data. This is expected to be a large optimization,
+          as it tends that high turnover 'class' objects bring performance issues due to the garbage collection overhead.
+    - Text editor's OnKeyDownLateBatching event uses a fixed size array for batching events, rather than what previously
+          was a List<T>. This is expected to be a large optimization, as it tends that high turnover 'class' objects bring
+          performance issues due to the garbage collection overhead. As well, it tends to be the case that no more than
+          3 or 4 keyboard events ever get batched together. So the fixed size array is '8' keyboard events can be made into
+          a single batch.
+</details>
+
+## [2.3.0] - 2024-08-27
 <details>
   <summary>Click to show changes</summary>
 
@@ -17,6 +37,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 	  The newer dropdown code moves itself so it stays on screen (if it initially rendered offscreen).
     - Fix: return focus to text editor after picking a menu option in autocomplete or context menu.
     - Start code snippet logic.
+</details>
+
+## [2.2.0] - 2024-08-20
+<details>
+  <summary>Click to show changes</summary>
+
+	### Fixed
 	- Home keybind understands indentation
 	- Fix cursor blinking
     - Fix change keymap without having to reload

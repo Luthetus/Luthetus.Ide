@@ -451,18 +451,45 @@ public partial class IdeHeader : ComponentBase
 	/// </summary>
 	private void AddAltKeymap()
 	{
-		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-		        new KeymapArgument("f", "KeyF", false, false, true, false, Key<KeymapLayer>.Empty),
+		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		        new KeymapArgs()
+				{
+					Key = "f",
+					Code = "KeyF",
+					ShiftKey = false,
+					CtrlKey = false,
+					AltKey = true,
+					MetaKey = false,
+					LayerKey = Key<KeymapLayer>.Empty,
+				},
 		        new CommonCommand("Open File Dropdown", "open-file-dropdown", false,
 		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonFileId, _buttonFileElementReference, IdeHeaderState.DropdownKeyFile, IdeHeaderStateWrap.Value.MenuFile)));
 		        
-		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-		        new KeymapArgument("t", "KeyT", false, false, true, false, Key<KeymapLayer>.Empty),
+		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		        new KeymapArgs
+				{
+					Key = "t",
+					Code = "KeyT",
+					ShiftKey = false, 
+					CtrlKey = false,
+					AltKey = true,
+					MetaKey = false,
+					LayerKey = Key<KeymapLayer>.Empty,
+				},
 		        new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false,
 		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonToolsId, _buttonToolsElementReference, IdeHeaderState.DropdownKeyTools, IdeHeaderStateWrap.Value.MenuTools)));
 		        	
-		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-		        new KeymapArgument("v", "KeyV", false, false, true, false, Key<KeymapLayer>.Empty),
+		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+		        new KeymapArgs
+				{
+					Key = "v",
+					Code = "KeyV",
+					ShiftKey = false,
+					CtrlKey = false,
+					AltKey = true,
+					MetaKey = false,
+					LayerKey = Key<KeymapLayer>.Empty,
+				},
 		        new CommonCommand("Open View Dropdown", "open-view-dropdown", false,
 		        	commandArgs => 
 		        	{
@@ -470,8 +497,17 @@ public partial class IdeHeader : ComponentBase
 		        		return RenderDropdownOnClick(IdeHeaderState.ButtonViewId, _buttonViewElementReference, IdeHeaderState.DropdownKeyView, IdeHeaderStateWrap.Value.MenuView);
 		        	}));
 
-		_ = ContextFacts.GlobalContext.Keymap.Map.TryAdd(
-	        new KeymapArgument("r", "KeyR", false, false, true, false, Key<KeymapLayer>.Empty),
+		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
+	        new KeymapArgs
+			{
+				Key = "r",
+				Code = "KeyR",
+				ShiftKey = false,
+				CtrlKey = false,
+				AltKey = true,
+				MetaKey = false,
+				LayerKey = Key<KeymapLayer>.Empty,
+			},
 	        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false,
 	        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun)));
 	}

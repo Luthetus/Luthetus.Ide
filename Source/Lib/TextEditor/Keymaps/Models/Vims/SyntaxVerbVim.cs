@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
 public static class SyntaxVerbVim
 {
-    public static bool TryLex(KeymapArgument keymapArgument, bool hasTextSelection, out VimGrammarToken? vimGrammarToken)
+    public static bool TryLex(KeymapArgs keymapArgument, bool hasTextSelection, out VimGrammarToken? vimGrammarToken)
     {
         // Suppress unused parameter warnings because these will likely be used once further Vim emulation is implemented.
         _ = hasTextSelection;
@@ -51,7 +51,7 @@ public static class SyntaxVerbVim
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
         ImmutableArray<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
-        KeymapArgument keymapArgument,
+        KeymapArgs keymapArgument,
         bool hasTextSelection,
         out TextEditorCommand? textEditorCommand)
     {

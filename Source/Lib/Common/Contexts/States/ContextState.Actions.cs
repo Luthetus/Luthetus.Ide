@@ -11,5 +11,5 @@ public partial record ContextState
     public record IsSelectingInspectableContextHeirarchyAction(bool Value);
     public record SetInspectedContextHeirarchyAction(ContextHeirarchy? InspectedContextHeirarchy);
     public record AddInspectableContextAction(InspectableContext InspectableContext);
-    public record SetContextKeymapAction(Key<ContextRecord> ContextKey, Keymap Keymap);
+    public record SetContextKeymapAction(Key<ContextRecord> ContextKey, IKeymap Keymap);
 }

@@ -18,6 +18,9 @@ namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
 public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 {
+    private readonly object _syncRoot = new();
+    private readonly Dictionary<KeymapArgs, CommandNoType> _map = new();
+
     public TextEditorKeymapVim()
         : base(new Key<Keymap>(Guid.Parse("d2122a7a-5a88-4d31-af20-5486a36e9c0c")),
                "Vim")
@@ -93,8 +96,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
     {
         // "Escape"
         {
-            Map.Add(new KeymapArgument("Escape", "Escape")
+            _map.Add(new KeymapArgs()
             {
+                Key = "Escape",
+                Code = "Escape",
                 LayerKey = keymapLayerKey
             }, TextEditorCommandDefaultFacts.ClearTextSelection);
         }
@@ -119,8 +124,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 					return Task.CompletedTask;
                 });
 
-            Map.Add(new KeymapArgument("i", "KeyI")
+            _map.Add(new KeymapArgs()
             {
+                Key = "i",
+                Code = "KeyI",
                 LayerKey = keymapLayerKey
             }, command);
         }
@@ -163,8 +170,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     return Task.CompletedTask;
                 });
 
-            Map.Add(new KeymapArgument("v", "KeyV")
+            _map.Add(new KeymapArgs()
             {
+                Key = "v",
+                Code = "KeyV",
                 LayerKey = keymapLayerKey
             }, command);
         }
@@ -210,8 +219,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     return Task.CompletedTask;
                 });
 
-            Map.Add(new KeymapArgument("V", "KeyV")
+            _map.Add(new KeymapArgs()
             {
+                Key = "V",
+                Code = "KeyV",
                 ShiftKey = true,
                 LayerKey = keymapLayerKey
             }, command);
@@ -243,8 +254,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     return Task.CompletedTask;
                 });
 
-            Map.Add(new KeymapArgument(":", "Semicolon")
+            _map.Add(new KeymapArgs()
             {
+                Key = ":",
+                Code = "Semicolon",
                 ShiftKey = true,
                 LayerKey = keymapLayerKey
             }, command);
@@ -278,8 +291,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     return Task.CompletedTask;
                 });
 
-            Map.Add(new KeymapArgument("u", "KeyU")
+            _map.Add(new KeymapArgs()
             {
+                Key = "u",
+                Code = "KeyU",
                 LayerKey = keymapLayerKey
             }, command);
         }
@@ -312,8 +327,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                     return Task.CompletedTask;
                 });
 
-            Map.Add(new KeymapArgument("r", "KeyR")
+            _map.Add(new KeymapArgs()
             {
+                Key = "r",
+                Code = "KeyR",
                 CtrlKey = true,
                 LayerKey = keymapLayerKey
             }, command);
@@ -327,8 +344,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 commandDisplayName, "vim-o", false, true, TextEditKind.None, null,
                 TextEditorCommandVimFacts.Verbs.NewLineBelowCommand.CommandFunc);
 
-            Map.Add(new KeymapArgument("o", "KeyO")
+            _map.Add(new KeymapArgs()
             {
+                Key = "o",
+                Code = "KeyO",
                 LayerKey = keymapLayerKey
             }, command);
         }
@@ -341,8 +360,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 commandDisplayName, "vim-O", false, true, TextEditKind.None, null,
                 TextEditorCommandVimFacts.Verbs.NewLineAboveCommand.CommandFunc);
 
-            Map.Add(new KeymapArgument("O", "KeyO")
+            _map.Add(new KeymapArgs()
             {
+                Key = "O",
+                Code = "KeyO",
                 ShiftKey = true,
                 LayerKey = keymapLayerKey
             }, command);
@@ -356,8 +377,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 commandDisplayName, "vim-e", false, false, TextEditKind.None, null,
                 TextEditorCommandDefaultFacts.ScrollLineDown.CommandFunc);
 
-            Map.Add(new KeymapArgument("e", "KeyE")
+            _map.Add(new KeymapArgs()
             {
+                Key = "e",
+                Code = "KeyE",
                 CtrlKey = true,
                 LayerKey = keymapLayerKey
             }, command);
@@ -371,8 +394,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 commandDisplayName, "vim-y", false, false, TextEditKind.None, null,
                 TextEditorCommandDefaultFacts.ScrollLineUp.CommandFunc);
 
-            Map.Add(new KeymapArgument("y", "KeyY")
+            _map.Add(new KeymapArgs()
             {
+                Key = "y",
+                Code = "KeyY",
                 CtrlKey = true,
                 LayerKey = keymapLayerKey
             }, command);
@@ -385,15 +410,17 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var character = (char)i;
 
-                var keymapArgument = new KeymapArgument($"{character}", $"Digit{character}")
+                var keymapArgument = new KeymapArgs()
                 {
+                    Key = $"{character}",
+                    Code = $"Digit{character}",
                     LayerKey = keymapLayerKey
                 };
 
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::{character}", $"vim-{character}");
 
                 // We only want to fill the remaining empty keybinds.
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
 
             // 65 to 90 provides capital letters (both sides inclusive) (ASCII)
@@ -401,8 +428,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var character = (char)i;
 
-                var keymapArgument = new KeymapArgument($"{character}", $"Key{character}")
+                var keymapArgument = new KeymapArgs()
                 {
+                    Key = $"{character}",
+                    Code = $"Key{character}",
                     ShiftKey = true,
                     LayerKey = keymapLayerKey
                 };
@@ -410,7 +439,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::{character}", $"vim-{character}");
 
                 // We only want to fill the remaining empty keybinds.
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
 
             // 97 to 122 provides lowercase letters (both sides inclusive) (ASCII)
@@ -418,207 +447,390 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             {
                 var character = (char)i;
 
-                var keymapArgument = new KeymapArgument($"{character}", $"Key{char.ToUpperInvariant(character)}")
+                var keymapArgument = new KeymapArgs()
                 {
+                    Key = $"{character}",
+                    Code = $"Key{char.ToUpperInvariant(character)}",
                     LayerKey = keymapLayerKey
                 };
 
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::{character}", $"vim-{character}");
 
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
 
             // ` = Backquote 
             {
-                var keymapArgument = new KeymapArgument("`", "Backquote") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "`",
+                    Code = "Backquote",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::`", $"vim-`");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // ~ = Shift + Backquote
             {
-                var keymapArgument = new KeymapArgument("~", "Backquote") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "~",
+                    Code = "Backquote",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::~", $"vim-~");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // ! = Shift + Digit1
             {
-                var keymapArgument = new KeymapArgument("!", "Digit1") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "!",
+                    Code = "Digit1",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::!", $"vim-!");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // @ = Shift + Digit2
             {
-                var keymapArgument = new KeymapArgument("@", "Digit2") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "@",
+                    Code = "Digit2",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::@", $"vim-@");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // # = Shift + Digit3
             {
-                var keymapArgument = new KeymapArgument("#", "Digit3") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "#",
+                    Code = "Digit3",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::#", $"vim-#");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // $ = Shift + Digit4
             {
-                var keymapArgument = new KeymapArgument("$", "Digit4") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "$",
+                    Code = "Digit4",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::$", $"vim-$");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // % = Shift + Digit5
             {
-                var keymapArgument = new KeymapArgument("%", "Digit5") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "%",
+                    Code = "Digit5",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::%", $"vim-%");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // ^ = Shift + Digit6
             {
-                var keymapArgument = new KeymapArgument("^", "Digit6") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "^",
+                    Code = "Digit6",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::^", $"vim-^");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // & = Shift + Digit7
             {
-                var keymapArgument = new KeymapArgument("&", "Digit7") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "&",
+                    Code = "Digit7",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::&", $"vim-&");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // * = Shift + Digit8
             {
-                var keymapArgument = new KeymapArgument("*", "Digit8") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "*",
+                    Code = "Digit8",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::*", $"vim-*");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // ( = Shift + Digit9
             {
-                var keymapArgument = new KeymapArgument("(", "Digit9") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "(",
+                    Code = "Digit9",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::(", $"vim-(");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // ) = Shift + Digit0
             {
-                var keymapArgument = new KeymapArgument(")", "Digit0") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = ")",
+                    Code = "Digit0",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::)", $"vim-)");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // - = Minus
             {
-                var keymapArgument = new KeymapArgument("-", "Minus") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "-",
+                    Code = "Minus",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::-", $"vim--");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // _ = Shift + Minus
             {
-                var keymapArgument = new KeymapArgument("_", "Minus") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "_",
+                    Code = "Minus",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::_", $"vim-_");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // = = Equal
             {
-                var keymapArgument = new KeymapArgument("=", "Equal") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "=",
+                    Code = "Equal",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::=", $"vim-=");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // + = Shift + Equal
             {
-                var keymapArgument = new KeymapArgument("+", "Equal") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "+",
+                    Code = "Equal",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::+", $"vim-+");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // [ = BracketLeft
             {
-                var keymapArgument = new KeymapArgument("[", "BracketLeft") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "[",
+                    Code = "BracketLeft",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::[", $"vim-[");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // { = Shift + BracketLeft
             {
-                var keymapArgument = new KeymapArgument("{", "BracketLeft") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "{",
+                    Code = "BracketLeft",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::{{", $"vim-}}");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // ] = BracketRight
             {
-                var keymapArgument = new KeymapArgument("]", "BracketRight") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "]",
+                    Code = "BracketRight",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::]", $"vim-]");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // } = Shift + BracketRight
             {
-                var keymapArgument = new KeymapArgument("}", "BracketRight") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "}",
+                    Code = "BracketRight",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::}}", $"vim-}}");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // \ = Backslash
             {
-                var keymapArgument = new KeymapArgument("\\", "Backslash") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "\\",
+                    Code = "Backslash",
+                    LayerKey = keymapLayerKey 
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::\\", $"vim-\\");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // | = Shift + Backslash
             {
-                var keymapArgument = new KeymapArgument("|", "Backslash") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "|",
+                    Code = "Backslash",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::|", $"vim-|");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // ; = Semicolon
             {
-                var keymapArgument = new KeymapArgument(";", "Semicolon") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = ";",
+                    Code = "Semicolon",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::;", $"vim-;");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // : = Shift + Semicolon
             {
-                var keymapArgument = new KeymapArgument(":", "Semicolon") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = ":",
+                    Code = "Semicolon",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim:::", $"vim-:");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // ' = Quote
             {
-                var keymapArgument = new KeymapArgument("'", "Quote") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "'",
+                    Code = "Quote",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::'", $"vim-'");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // " = Shift + Quote
             {
-                var keymapArgument = new KeymapArgument("\"", "Quote") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "\"",
+                    Code = "Quote",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::\"", $"vim-\"");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // , = Comma
             {
-                var keymapArgument = new KeymapArgument(",", "Comma") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = ",",
+                    Code = "Comma",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::,", $"vim-,");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // < = Shift + Comma
             {
-                var keymapArgument = new KeymapArgument("<", "Comma") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "<",
+                    Code = "Comma",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::<", $"vim-<");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // . = Period
             {
-                var keymapArgument = new KeymapArgument(".", "Period") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = ".",
+                    Code = "Period",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::.", $"vim-.");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // > = Shift + Period
             {
-                var keymapArgument = new KeymapArgument(">", "Period") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = ">",
+                    Code = "Period",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::>", $"vim->");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // / = Slash
             {
-                var keymapArgument = new KeymapArgument("/", "Slash") { LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "/",
+                    Code = "Slash",
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::/", $"vim-/");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
             // ? = Shift + Slash
             {
-                var keymapArgument = new KeymapArgument("?", "Slash") { ShiftKey = true, LayerKey = keymapLayerKey };
+                var keymapArgument = new KeymapArgs()
+                {
+                    Key = "?",
+                    Code = "Slash",
+                    ShiftKey = true,
+                    LayerKey = keymapLayerKey
+                };
                 var command = BuildCommandTextEditor(keymapArgument, $"Vim::?", $"vim-?");
-                _ = Map.TryAdd(keymapArgument, command);
+                _ = _map.TryAdd(keymapArgument, command);
             }
         }
     }
@@ -643,8 +855,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 return Task.CompletedTask;
             });
 
-        Map.Add(new KeymapArgument("Escape", "Escape")
+        _map.Add(new KeymapArgs()
         {
+            Key = "Escape",
+            Code = "Escape",
             LayerKey = TextEditorKeymapVimFacts.InsertLayer.Key
         }, escapeCommand);
     }
@@ -656,29 +870,41 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
     private void AddMiscLayer()
     {
-        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgument("ArrowLeft", "ArrowLeft")
+        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgs()
         {
+            Key = "ArrowLeft",
+            Code = "ArrowLeft",
             LayerKey = TextEditorKeymapVimFacts.InsertLayer.Key,
         }, "ArrowLeft");
 
-        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgument("ArrowDown", "ArrowDown")
+        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgs()
         {
+            Key = "ArrowDown",
+            Code = "ArrowDown",
             LayerKey = TextEditorKeymapVimFacts.InsertLayer.Key,
         }, "ArrowDown");
-        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgument("ArrowUp", "ArrowUp")
+        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgs()
         {
+            Key = "ArrowUp",
+            Code = "ArrowUp",
             LayerKey = TextEditorKeymapVimFacts.InsertLayer.Key,
         }, "ArrowUp");
-        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgument("ArrowRight", "ArrowRight")
+        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgs()
         {
+            Key = "ArrowRight",
+            Code = "ArrowRight",
             LayerKey = TextEditorKeymapVimFacts.InsertLayer.Key,
         }, "ArrowRight");
-        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgument("Home", "Home")
+        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgs()
         {
+            Key = "Home",
+            Code = "Home",
             LayerKey = TextEditorKeymapVimFacts.InsertLayer.Key,
         }, "Home");
-        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgument("End", "End")
+        BuildModifiedMovementCommandsFromUnmodified(new KeymapArgs()
         {
+            Key = "End",
+            Code = "End",
             LayerKey = TextEditorKeymapVimFacts.InsertLayer.Key,
         }, "End");
 
@@ -690,8 +916,10 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 commandDisplayName, "vim-PageDown", false, true, TextEditKind.None, null,
                 TextEditorCommandDefaultFacts.ScrollPageDown.CommandFunc);
 
-            Map.Add(new KeymapArgument("PageDown", "PageDown")
+            _map.Add(new KeymapArgs()
             {
+                Key = "PageDown",
+                Code = "PageDown",
                 LayerKey = TextEditorKeymapVimFacts.InsertLayer.Key
             }, escapeCommand);
         }
@@ -704,14 +932,16 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
                 commandDisplayName, "vim-PageUp", false, true, TextEditKind.None, null,
                 TextEditorCommandDefaultFacts.ScrollPageUp.CommandFunc);
 
-            Map.Add(new KeymapArgument("PageUp", "PageUp")
+            _map.Add(new KeymapArgs()
             {
+                Key = "PageUp",
+                Code = "PageUp",
                 LayerKey = TextEditorKeymapVimFacts.InsertLayer.Key
             }, escapeCommand);
         }
     }
 
-    private TextEditorCommand BuildCommandTextEditor(KeymapArgument keymapArgument, string displayName, string internalIdentifier)
+    private TextEditorCommand BuildCommandTextEditor(KeymapArgs keymapArgument, string displayName, string internalIdentifier)
     {
         return new TextEditorCommand(
             displayName, internalIdentifier, false, true, TextEditKind.None, null,
@@ -736,7 +966,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             });
     }
 
-    private TextEditorCommand BuildMovementCommand(KeymapArgument keymapArgument, string key)
+    private TextEditorCommand BuildMovementCommand(KeymapArgs keymapArgs, string key)
     {
         var commandDisplayName = $"Vim::{key}";
 
@@ -753,7 +983,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                 if (ActiveVimMode == VimMode.Visual || ActiveVimMode == VimMode.VisualLine)
                 {
-                    keymapArgument = keymapArgument with
+                    keymapArgs = keymapArgs with
                     {
                         ShiftKey = true
                     };
@@ -761,17 +991,11 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 
                 TextEditorCommand? modifiedCommand = null;
 
-                modifiedCommand = (TextEditorCommand?)_textEditorKeymapDefault.Map[keymapArgument];
+                var success = _textEditorKeymapDefault.MapFirstOrDefault(keymapArgs, out var command);
+                modifiedCommand = command as TextEditorCommand;
 
                 if (modifiedCommand is null)
                 {
-                    var keyboardEventArgs = new KeyboardEventArgs
-                    {
-                        Key = key,
-                        ShiftKey = keymapArgument.ShiftKey,
-                        CtrlKey = keymapArgument.CtrlKey
-                    };
-
                     modifiedCommand = new TextEditorCommand(
                         "MoveCursor", "MoveCursor", false, true, TextEditKind.None, null,
                         interfaceCommandArgs =>
@@ -787,7 +1011,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
 				                return Task.CompletedTask;
 
                             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                            	keyboardEventArgs,
+                                new KeymapArgs
+                                {
+                                    Key = key,
+                                    ShiftKey = keymapArgs.ShiftKey,
+                                    CtrlKey = keymapArgs.CtrlKey
+                                },
 						        commandArgs.EditContext,
 						        modelModifier,
 						        viewModelModifier,
@@ -810,14 +1039,14 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             });
     }
 
-    private void BuildModifiedMovementCommandsFromUnmodified(KeymapArgument keymapArgument, string key)
+    private void BuildModifiedMovementCommandsFromUnmodified(KeymapArgs keymapArgument, string key)
     {
         // Unmodified
         {
             var unmodifiedKeymapArgument = keymapArgument;
 
             var arrowLeftCommand = BuildMovementCommand(unmodifiedKeymapArgument, key);
-            Map.Add(unmodifiedKeymapArgument, arrowLeftCommand);
+            _map.Add(unmodifiedKeymapArgument, arrowLeftCommand);
         }
 
         // Shift
@@ -828,7 +1057,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             };
 
             var arrowLeftCommand = BuildMovementCommand(shiftKeymapArgument, key);
-            Map.Add(shiftKeymapArgument, arrowLeftCommand);
+            _map.Add(shiftKeymapArgument, arrowLeftCommand);
         }
 
         // Ctrl
@@ -839,7 +1068,7 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             };
 
             var arrowLeftCommand = BuildMovementCommand(ctrlKeymapArgument, key);
-            Map.Add(ctrlKeymapArgument, arrowLeftCommand);
+            _map.Add(ctrlKeymapArgument, arrowLeftCommand);
         }
 
         // Shift + Ctrl
@@ -851,12 +1080,12 @@ public class TextEditorKeymapVim : Keymap, ITextEditorKeymap
             };
 
             var arrowLeftCommand = BuildMovementCommand(shiftCtrlKeymapArgument, key);
-            Map.Add(shiftCtrlKeymapArgument, arrowLeftCommand);
+            _map.Add(shiftCtrlKeymapArgument, arrowLeftCommand);
         }
     }
 
-	public bool TryMap(KeyboardEventArgs keyboardEventArgs, KeymapArgument keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
+	public bool TryMap(KeymapArgs keymapArgument, TextEditorComponentData componentData, out CommandNoType? command)
 	{
-		return Map.TryGetValue(keymapArgument, out command);
+		return _map.TryGetValue(keymapArgument, out command);
 	}
 }

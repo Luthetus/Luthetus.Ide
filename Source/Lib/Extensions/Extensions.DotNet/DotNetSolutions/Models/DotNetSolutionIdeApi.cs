@@ -22,7 +22,6 @@ using Luthetus.CompilerServices.DotNetSolution.Models;
 using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
 using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
-using Luthetus.Ide.RazorLib.CommandLines.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;

@@ -21,6 +21,7 @@ public class ExtensionsDotNetTestBase
         
         var hostingInformation = new LuthetusHostingInformation(
         	LuthetusHostingKind.UnitTestingSynchronous,
+            LuthetusPurposeKind.Ide,
         	backgroundTaskService);
 
         var serviceCollection = new ServiceCollection()
