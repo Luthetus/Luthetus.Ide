@@ -168,6 +168,23 @@ TODO: Decide if 'OutlineInitializer.razor' is an improvement,
         transform: rotate(360deg);
     }
 }
+/* _content/Luthetus.Common/Keymaps/Displays/KeymapDisplay.razor.rz.scp.css */
+.luth_ide_keymap[b-p2lop1d64c] {
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid var(--luth_primary-border-color);
+}
+
+th[b-p2lop1d64c] {
+    padding: 0 10px;
+    color: var(--luth_te_string-literal-foreground-color);
+    border-bottom: 1px solid var(--luth_primary-border-color);
+}
+
+td[b-p2lop1d64c] {
+    padding: 0 10px;
+    border-right: 1px solid var(--luth_primary-border-color);
+}
 /* _content/Luthetus.Common/Menus/Displays/MenuDisplay.razor.rz.scp.css */
 .luth_menu-display:focus[b-rt9ao2ck5z] {
     outline: solid var(--luth_menu-display-focus-outline-size) var(--luth_outline-with-focus-color);
