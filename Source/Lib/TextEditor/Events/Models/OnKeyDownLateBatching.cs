@@ -13,54 +13,91 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnKeyDownLateBatching : ITextEditorWork
+/// <summary>
+/// Use an array with a fixed size to optimize this, usually there are only about 3-5 events that end up batched.
+/// To construct a non-struct collection is probably a massive performance hit considering the extremely rapid
+/// turn over of this type while holding down a keyboard key.
+/// </summary>
+public struct OnKeyDownLateBatching : ITextEditorWork
 {
-    public OnKeyDownLateBatching(
-			TextEditorComponentData componentData,
-	        KeyboardEventArgs keyboardEventArgs,
-	        ResourceUri resourceUri,
-	        Key<TextEditorViewModel> viewModelKey)
-		: this(componentData, new List<KeyboardEventArgs>() { keyboardEventArgs }, resourceUri, viewModelKey)
-    {
-    }
+	public const int MAX_BATCH_SIZE = 8;
+	public const string NAME_ZERO = $"{nameof(OnKeyDownLateBatching)}_0";
+	public const string NAME_ONE = $"{nameof(OnKeyDownLateBatching)}_1";
+	public const string NAME_TWO = $"{nameof(OnKeyDownLateBatching)}_2";
+	public const string NAME_THREE = $"{nameof(OnKeyDownLateBatching)}_3";
+	public const string NAME_FOUR = $"{nameof(OnKeyDownLateBatching)}_4";
+	public const string NAME_FIVE = $"{nameof(OnKeyDownLateBatching)}_5";
+	public const string NAME_SIX = $"{nameof(OnKeyDownLateBatching)}_6";
+	public const string NAME_SEVEN = $"{nameof(OnKeyDownLateBatching)}_7";
+	public const string NAME_EIGHT = $"{nameof(OnKeyDownLateBatching)}_8";
+	public const string NAME_DEFAULT = nameof(OnKeyDownLateBatching);
 
 	public OnKeyDownLateBatching(
 		TextEditorComponentData componentData,
-        List<KeyboardEventArgs> keyboardEventArgsList,
-        ResourceUri resourceUri,
-        Key<TextEditorViewModel> viewModelKey)
+	    KeymapArgs keymapArgs,
+	    ResourceUri resourceUri,
+	    Key<TextEditorViewModel> viewModelKey)
     {
-		ComponentData = componentData;
+        ComponentData = componentData;
 
-        KeyboardEventArgsList = keyboardEventArgsList;
+		AddToBatch(keymapArgs);
+
         ResourceUri = resourceUri;
         ViewModelKey = viewModelKey;
     }
 
     public Key<IBackgroundTask> BackgroundTaskKey { get; } = Key<IBackgroundTask>.NewKey();
     public Key<IBackgroundTaskQueue> QueueKey { get; } = ContinuousBackgroundTaskWorker.GetQueueKey();
-    public string Name { get; private set; } = nameof(OnKeyDownLateBatching);
-    public List<KeyboardEventArgs> KeyboardEventArgsList { get; }
+	public KeymapArgs[] KeymapArgsList { get; } = new KeymapArgs[MAX_BATCH_SIZE];
 	public ResourceUri ResourceUri { get; }
     public Key<TextEditorViewModel> ViewModelKey { get; }
 	public ITextEditorEditContext EditContext { get; set; }
 	public TextEditorComponentData ComponentData { get; set; }
+	public int BatchLength { get; set; }
+	public bool BatchHasAvailability => BatchLength < MAX_BATCH_SIZE;
+
+    public string Name => BatchLength switch
+    {
+		0 => NAME_ZERO,
+        1 => NAME_ONE,
+        2 => NAME_TWO,
+		3 => NAME_THREE,
+		4 => NAME_FOUR,
+		5 => NAME_FIVE,
+		6 => NAME_SIX,
+		7 => NAME_SEVEN,
+		8 => NAME_EIGHT,
+		_ => NAME_DEFAULT
+    };
 
 	/// <summary>
 	/// Global variable used during <see cref="HandleEvent"/> to
-	/// iterate over <see cref="KeyboardEventArgsList"/>
+	/// iterate over <see cref="KeymapArgsList"/>
 	/// </summary>
 	private int _index;
+
+	public void AddToBatch(KeymapArgs keymapArgs)
+	{
+		if (!BatchHasAvailability)
+			throw new LuthetusTextEditorException($"{nameof(BatchLength)} >= {nameof(MAX_BATCH_SIZE)}");
+
+		KeymapArgsList[BatchLength] = keymapArgs;
+        BatchLength++;
+    }
 
     public IBackgroundTask? BatchOrDefault(IBackgroundTask upstreamEvent)
     {
 		if (upstreamEvent is OnKeyDownLateBatching upstreamOnKeyDownLateBatching)
 		{
-			upstreamOnKeyDownLateBatching.KeyboardEventArgsList.AddRange(KeyboardEventArgsList);
-			return upstreamOnKeyDownLateBatching;
+			if (BatchLength == 1 && upstreamOnKeyDownLateBatching.BatchHasAvailability)
+				upstreamOnKeyDownLateBatching.AddToBatch(KeymapArgsList[0]);
+
+            return upstreamOnKeyDownLateBatching;
 		}
 
 		return null;
@@ -70,8 +107,6 @@ public class OnKeyDownLateBatching : ITextEditorWork
     {
 		try
 		{
-			Name += $"_{KeyboardEventArgsList.Count}";
-
             var modelModifier = EditContext.GetModelModifier(ResourceUri);
             var viewModelModifier = EditContext.GetViewModelModifier(ViewModelKey);
             var cursorModifierBag = EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
@@ -82,20 +117,24 @@ public class OnKeyDownLateBatching : ITextEditorWork
 
 			_index = 0;
 
-			for (; _index < KeyboardEventArgsList.Count; _index++)
+			for (; _index < BatchLength; _index++)
 			{
-				var keyboardEventArgs = KeyboardEventArgsList[_index];
+				var keymapArgs = KeymapArgsList[_index];
 
 	            var definiteHasSelection = TextEditorSelectionHelper.HasSelectedText(primaryCursorModifier);
 	
-	            var definiteKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
-	                ComponentData, keyboardEventArgs, definiteHasSelection, EditContext.TextEditorService, out var command);
+	            var definiteKeyboardEventArgsKind = EventUtils.GetKeymapArgsKind(
+	                ComponentData,
+					keymapArgs,
+					definiteHasSelection,
+					EditContext.TextEditorService,
+					out var command);
 	
 	            var shouldInvokeAfterOnKeyDownAsync = false;
 	
 	            switch (definiteKeyboardEventArgsKind)
 	            {
-	                case KeyboardEventArgsKind.Command:
+	                case KeymapArgsKind.Command:
 	                    shouldInvokeAfterOnKeyDownAsync = true;
 
 						var commandArgs = new TextEditorCommandArgs(
@@ -110,8 +149,8 @@ public class OnKeyDownLateBatching : ITextEditorWork
                             .Invoke(commandArgs)
                             .ConfigureAwait(false);
 	                    break;
-	                case KeyboardEventArgsKind.Movement:
-	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keyboardEventArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keyboardEventArgs.Key) &&
+	                case KeymapArgsKind.Movement:
+	                    if ((KeyboardKeyFacts.MovementKeys.ARROW_DOWN == keymapArgs.Key || KeyboardKeyFacts.MovementKeys.ARROW_UP == keymapArgs.Key) &&
 	                        viewModelModifier.ViewModel.MenuKind == MenuKind.AutoCompleteMenu)
 	                    {
 	                    	// TODO: Focusing the menu from here isn't working?
@@ -124,7 +163,7 @@ public class OnKeyDownLateBatching : ITextEditorWork
 	                    else
 	                    {
 	                        EditContext.TextEditorService.ViewModelApi.MoveCursor(
-                        		keyboardEventArgs,
+                        		keymapArgs,
 						        EditContext,
 						        modelModifier,
 						        viewModelModifier,
@@ -139,7 +178,7 @@ public class OnKeyDownLateBatching : ITextEditorWork
 						    }
 	                    }
 	                    break;
-	                case KeyboardEventArgsKind.ContextMenu:
+	                case KeymapArgsKind.ContextMenu:
 	                	TextEditorCommandDefaultFunctions.ShowContextMenu(
 					        EditContext,
 					        modelModifier,
@@ -149,16 +188,16 @@ public class OnKeyDownLateBatching : ITextEditorWork
 					        ComponentData.Dispatcher,
 					        ComponentData);
 	                    break;
-	                case KeyboardEventArgsKind.Text:
-	                case KeyboardEventArgsKind.Other:
+	                case KeymapArgsKind.Text:
+	                case KeymapArgsKind.Other:
 	                    shouldInvokeAfterOnKeyDownAsync = true;
 	
-	                    if (!EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
+	                    if (!EventUtils.IsAutocompleteMenuInvoker(keymapArgs))
 	                    {
-	                        if (KeyboardKeyFacts.MetaKeys.ESCAPE == keyboardEventArgs.Key ||
-	                            KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key ||
-	                            KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key ||
-	                            !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
+	                        if (KeyboardKeyFacts.MetaKeys.ESCAPE == keymapArgs.Key ||
+	                            KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key ||
+	                            KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key ||
+	                            !KeyboardKeyFacts.IsMetaKey(keymapArgs))
 	                        {
 	                        	if (viewModelModifier.ViewModel.MenuKind != MenuKind.None)
 	                        	{
@@ -175,24 +214,24 @@ public class OnKeyDownLateBatching : ITextEditorWork
 							TooltipViewModel = null
 						};
 
-						if (definiteKeyboardEventArgsKind == KeyboardEventArgsKind.Text)
+						if (definiteKeyboardEventArgsKind == KeymapArgsKind.Text)
 						{
 							// Batch contiguous insertions
-							var contiguousInsertionBuilder = new StringBuilder(keyboardEventArgs.Key);
+							var contiguousInsertionBuilder = new StringBuilder(keymapArgs.Key);
 							var innerIndex = _index + 1;
 
-							for (; innerIndex < KeyboardEventArgsList.Count; innerIndex++)
+							for (; innerIndex < BatchLength; innerIndex++)
 							{
-								var innerKeyboardEventArgs = KeyboardEventArgsList[innerIndex];
+								var innerKeyboardEventArgs = KeymapArgsList[innerIndex];
 
-								var innerKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
+								var innerKeyboardEventArgsKind = EventUtils.GetKeymapArgsKind(
 									ComponentData,
 									innerKeyboardEventArgs,
 									definiteHasSelection,
 									EditContext.TextEditorService,
 									out _);
 
-								if (innerKeyboardEventArgsKind == KeyboardEventArgsKind.Text)
+								if (innerKeyboardEventArgsKind == KeymapArgsKind.Text)
 								{
 									contiguousInsertionBuilder.Append(innerKeyboardEventArgs.Key);
 									_index++;
@@ -210,19 +249,19 @@ public class OnKeyDownLateBatching : ITextEditorWork
 						}
 						else
 						{
-							if (KeyboardKeyFacts.IsMetaKey(keyboardEventArgs))
+							if (KeyboardKeyFacts.IsMetaKey(keymapArgs))
 			                {
 								// Batch contiguous backspace or delete events
 								var eventCounter = 1;
 								var innerIndex = _index + 1;
 	
-								for (; innerIndex < KeyboardEventArgsList.Count; innerIndex++)
+								for (; innerIndex < BatchLength; innerIndex++)
 								{
-									var innerKeyboardEventArgs = KeyboardEventArgsList[innerIndex];
+									var innerKeymapArgs = KeymapArgsList[innerIndex];
 	
-									var innerKeyboardEventArgsKind = EventUtils.GetKeyboardEventArgsKind(
+									var innerKeymapArgsKind = EventUtils.GetKeymapArgsKind(
 										ComponentData,
-										innerKeyboardEventArgs,
+										innerKeymapArgs,
 										definiteHasSelection,
 										EditContext.TextEditorService,
 										out _);
@@ -233,7 +272,7 @@ public class OnKeyDownLateBatching : ITextEditorWork
 									// It should delete-word eventCounter times, but instead it is
 									// doing delete-word 1 time regardless of the counter, and
 									// eats any events attempted to batch as if they never fired.
-									if (!definiteHasSelection && !keyboardEventArgs.CtrlKey && KeyAndModifiersAreEqual(keyboardEventArgs, innerKeyboardEventArgs))
+									if (!definiteHasSelection && !keymapArgs.CtrlKey && KeyAndModifiersAreEqual(keymapArgs, innerKeymapArgs))
 									{
 										eventCounter++;
 										_index++;
@@ -244,21 +283,21 @@ public class OnKeyDownLateBatching : ITextEditorWork
 									}
 								}
 
-			                    if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keyboardEventArgs.Key)
+			                    if (KeyboardKeyFacts.MetaKeys.BACKSPACE == keymapArgs.Key)
 			                    {
 			                        modelModifier.Delete(
 			                            cursorModifierBag,
 			                            eventCounter,
-			                            keyboardEventArgs.CtrlKey,
+			                            keymapArgs.CtrlKey,
 			                            TextEditorModelModifier.DeleteKind.Backspace,
 			                            CancellationToken.None);
 			                    }
-			                    else if (KeyboardKeyFacts.MetaKeys.DELETE == keyboardEventArgs.Key)
+			                    else if (KeyboardKeyFacts.MetaKeys.DELETE == keymapArgs.Key)
 			                    {
 			                        modelModifier.Delete(
 			                            cursorModifierBag,
 			                            eventCounter,
-			                            keyboardEventArgs.CtrlKey,
+			                            keymapArgs.CtrlKey,
 			                            TextEditorModelModifier.DeleteKind.Delete,
 			                            CancellationToken.None);
 			                    }
@@ -269,7 +308,7 @@ public class OnKeyDownLateBatching : ITextEditorWork
 									EditContext,
 							        modelModifier,
 							        cursorModifierBag,
-							        keyboardEventArgs,
+							        keymapArgs,
 							        CancellationToken.None);
 							}
 						}
@@ -291,7 +330,7 @@ public class OnKeyDownLateBatching : ITextEditorWork
 						        modelModifier,
 						        viewModelModifier,
 						        cursorModifierBag,
-						        keyboardEventArgs,
+						        keymapArgs,
 								ComponentData)
 	                        .ConfigureAwait(false);
 			        }
@@ -302,14 +341,36 @@ public class OnKeyDownLateBatching : ITextEditorWork
 						        modelModifier,
 						        viewModelModifier,
 						        cursorModifierBag,
-						        keyboardEventArgs,
+						        keymapArgs,
 								ComponentData)
 	                        .ConfigureAwait(false);
 					}
 	            }
 			}
 			
+			// TODO: Do this code first so the user gets immediate UI feedback in the event that
+			//       their keydown code takes a long time?
 			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
+			
+			if (modelModifier.LineCount < modelModifier.PreviousLineCount)
+			{
+				var difference = modelModifier.PreviousLineCount - modelModifier.LineCount;
+			
+				EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+		            EditContext,
+			        viewModelModifier,
+			        -1 * difference * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+			}
+			
+			if (modelModifier.MostCharactersOnASingleLineTuple.lineLength < modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength)
+			{
+				var difference = modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength - modelModifier.MostCharactersOnASingleLineTuple.lineLength;
+				
+				EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+		            EditContext,
+			        viewModelModifier,
+			        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+			}
 			
 			await EditContext.TextEditorService
 				.FinalizePost(EditContext)
@@ -334,7 +395,7 @@ public class OnKeyDownLateBatching : ITextEditorWork
 		}
     }
 
-    private bool KeyAndModifiersAreEqual(KeyboardEventArgs x, KeyboardEventArgs y)
+    private bool KeyAndModifiersAreEqual(KeymapArgs x, KeymapArgs y)
     {
         return
             x.Key == y.Key &&

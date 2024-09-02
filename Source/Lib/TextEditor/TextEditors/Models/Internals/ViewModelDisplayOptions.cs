@@ -1,10 +1,8 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
-using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -30,7 +28,7 @@ public class ViewModelDisplayOptions
         TextEditorModelModifier,
         TextEditorViewModelModifier,
         CursorModifierBagTextEditor,
-        KeyboardEventArgs,
+        KeymapArgs,
 		TextEditorComponentData,
         Task>?
         AfterOnKeyDownAsync { get; set; }
@@ -48,8 +46,9 @@ public class ViewModelDisplayOptions
         TextEditorModelModifier,
         TextEditorViewModelModifier,
         CursorModifierBagTextEditor,
-        List<KeyboardEventArgs>,
-		TextEditorComponentData,
+        KeymapArgs[], // batchKeymapArgsList
+        int, // batchKeymapArgsListLength
+        TextEditorComponentData,
         Task>?
         AfterOnKeyDownRangeAsync { get; set; }
 

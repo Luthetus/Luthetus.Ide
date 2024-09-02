@@ -4,6 +4,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
@@ -67,7 +68,7 @@ public interface ITextEditorViewModelApi
     public Task FocusPrimaryCursorAsync(string primaryCursorContentId);
 
     public void MoveCursor(
-    	KeyboardEventArgs keyboardEventArgs,
+    	KeymapArgs keymapArgs,
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
@@ -84,7 +85,7 @@ public interface ITextEditorViewModelApi
     /// the cursor key would come back as the cursor not existing.
     /// </summary>
     public void MoveCursorUnsafe(
-    	KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
         ITextEditorEditContext editContext,
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,

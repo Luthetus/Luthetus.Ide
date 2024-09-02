@@ -35,6 +35,7 @@ public class CSharpCompilerServiceTestsBase
 
         var hostingInformation = new LuthetusHostingInformation(
             LuthetusHostingKind.UnitTestingSynchronous,
+            LuthetusPurposeKind.TextEditor,
             new BackgroundTaskServiceSynchronous());
 
         services.AddLuthetusCommonServices(hostingInformation, commonOptions =>

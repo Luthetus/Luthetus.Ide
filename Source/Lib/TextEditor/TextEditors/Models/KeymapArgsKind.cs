@@ -1,6 +1,6 @@
 ﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
-public enum KeyboardEventArgsKind
+public enum KeymapArgsKind
 {
     None,
 

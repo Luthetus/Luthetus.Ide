@@ -11,7 +11,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
-public class OnMouseDown : ITextEditorWork
+public struct OnMouseDown : ITextEditorWork
 {
     public OnMouseDown(
         MouseEventArgs mouseEventArgs,

@@ -14,7 +14,7 @@ namespace Luthetus.TextEditor.RazorLib.Keymaps.Models.Vims;
 
 public static class SyntaxTextObjectVim
 {
-    public static bool TryLex(KeymapArgument keymapArgument, bool hasTextSelection, out VimGrammarToken? vimGrammarToken)
+    public static bool TryLex(KeymapArgs keymapArgument, bool hasTextSelection, out VimGrammarToken? vimGrammarToken)
     {
         if (!keymapArgument.CtrlKey)
         {
@@ -66,7 +66,7 @@ public static class SyntaxTextObjectVim
                 return Task.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-        		new KeyboardEventArgs
+        		new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                     ShiftKey = commandArgs.ShiftKey
@@ -95,7 +95,7 @@ public static class SyntaxTextObjectVim
                 return Task.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-            	new KeyboardEventArgs
+            	new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
                     ShiftKey = commandArgs.ShiftKey
@@ -124,7 +124,7 @@ public static class SyntaxTextObjectVim
                 return Task.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                new KeyboardEventArgs
+                new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
                     ShiftKey = commandArgs.ShiftKey
@@ -153,7 +153,7 @@ public static class SyntaxTextObjectVim
                 return Task.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                new KeyboardEventArgs
+                new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                     ShiftKey = commandArgs.ShiftKey
@@ -182,7 +182,7 @@ public static class SyntaxTextObjectVim
                 return Task.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                new KeyboardEventArgs
+                new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.END,
                     ShiftKey = commandArgs.ShiftKey
@@ -211,7 +211,7 @@ public static class SyntaxTextObjectVim
                 return Task.CompletedTask;
 
             commandArgs.TextEditorService.ViewModelApi.MoveCursor(
-                new KeyboardEventArgs
+                new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.HOME,
                     ShiftKey = commandArgs.ShiftKey
@@ -227,7 +227,7 @@ public static class SyntaxTextObjectVim
     public static bool TryParse(TextEditorKeymapVim textEditorKeymapVim,
         ImmutableArray<VimGrammarToken> sentenceSnapshotList,
         int indexInSentence,
-        KeymapArgument keymapArgument,
+        KeymapArgs keymapArgument,
         bool hasTextSelection,
         out TextEditorCommand? textEditorCommand)
     {

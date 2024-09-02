@@ -16,42 +16,73 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 
 public static class EventUtils
 {
-    public static KeyboardEventArgsKind GetKeyboardEventArgsKind(
+    public static KeymapArgsKind GetKeymapArgsKind(
 		TextEditorComponentData componentData,
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
         bool hasSelection,
         ITextEditorService textEditorService,
         out CommandNoType command)
     {
-        var eventIsCommand = CheckIfKeyboardEventArgsMapsToCommand(
+        var eventIsCommand = CheckIfKeymapArgsMapsToCommand(
 			componentData,
-            keyboardEventArgs,
+            keymapArgs,
             hasSelection,
             textEditorService,
             out Key<KeymapLayer> layerKey,
-            out KeymapArgument keymapArgument,
             out var success,
             out command);
 
-        var eventIsMovement = CheckIfKeyboardEventArgsMapsToMovement(keyboardEventArgs, command);
+        var eventIsMovement = CheckIfKeyboardEventArgsMapsToMovement(keymapArgs, command);
 
-        var eventIsContextMenu = KeyboardKeyFacts.CheckIsContextMenuEvent(keyboardEventArgs);
+        var eventIsContextMenu = KeyboardKeyFacts.CheckIsContextMenuEvent(keymapArgs);
 
         if (eventIsMovement)
-            return KeyboardEventArgsKind.Movement;
+            return KeymapArgsKind.Movement;
 
         if (eventIsContextMenu)
-            return KeyboardEventArgsKind.ContextMenu;
+            return KeymapArgsKind.ContextMenu;
 
         if (eventIsCommand)
-            return KeyboardEventArgsKind.Command;
+            return KeymapArgsKind.Command;
 
-        if (keyboardEventArgs.Key.Length == 1)
-            return KeyboardEventArgsKind.Text;
+        if (keymapArgs.Key.Length == 1)
+            return KeymapArgsKind.Text;
 
-        return KeyboardEventArgsKind.Other;
+        return KeymapArgsKind.Other;
     }
 
+    public static bool IsKeyboardEventArgsNoise(KeymapArgs keymapArgs)
+    {
+        if (keymapArgs.Key == "Shift" ||
+            keymapArgs.Key == "Control" ||
+            keymapArgs.Key == "Alt" ||
+            keymapArgs.Key == "Meta")
+        {
+            return true;
+        }
+
+		// TODO: See following code block (its commented out).
+		//       The commented out hack was not a good idea,
+		//       This comment is here as a reminder not to repeat
+		//       this bad solution.
+		//       |
+		//       i.e.: this is not yet fixed, but don't fix it the way thats commented out below.
+		//             Once this is fixed, then delete this comment.
+		//       |
+		//       The issue was { Ctrl + Alt + (ArrowRight || ArrowLeft) }
+		//       to perform "camel case movement of the cursor".
+		// {
+	        //if (keyboardEventArgs.CtrlKey && keyboardEventArgs.AltKey)
+	        //{
+	        //    // TODO: This if is a hack to fix the keybind: { Ctrl + Alt + S } causing...
+	        //    // ...an 's' to be written out when using Vim keymap.
+	        //    return true;
+	        //}
+        // }
+
+        return false;
+    }
+    
     public static bool IsKeyboardEventArgsNoise(KeyboardEventArgs keyboardEventArgs)
     {
         if (keyboardEventArgs.Key == "Shift" ||
@@ -84,70 +115,63 @@ public static class EventUtils
         return false;
     }
 
-    public static bool CheckIfKeyboardEventArgsMapsToCommand(
+    public static bool CheckIfKeymapArgsMapsToCommand(
 		TextEditorComponentData componentData,
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
         bool hasSelection,
         ITextEditorService textEditorService,
         out Key<KeymapLayer> layerKey,
-        out KeymapArgument keymapArgument,
         out bool success,
         out CommandNoType command)
     {
         layerKey = ((ITextEditorKeymap)componentData.Options.Keymap!).GetLayer(hasSelection);
 
-        keymapArgument = keyboardEventArgs.ToKeymapArgument() with
-        {
-            LayerKey = layerKey
-        };
+        keymapArgs.LayerKey = layerKey;
 
         success = ((ITextEditorKeymap)componentData.Options.Keymap!).TryMap(
-            keyboardEventArgs,
-            keymapArgument,
+            keymapArgs,
             componentData,
             out command);
 
-        if (!success && keymapArgument.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
+        if (!success && keymapArgs.LayerKey != TextEditorKeymapDefaultFacts.DefaultLayer.Key)
         {
+            keymapArgs.LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key;
+
             _ = ((ITextEditorKeymap)componentData.Options.Keymap!).TryMap(
-                keyboardEventArgs,
-                keymapArgument with
-                {
-                    LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key,
-                },
+                keymapArgs,
                 componentData,
                 out command);
         }
 
-        if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keyboardEventArgs.Code && keyboardEventArgs.ShiftKey)
+        if (KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE == keymapArgs.Code && keymapArgs.ShiftKey)
             command = TextEditorCommandDefaultFacts.NewLineBelow;
 
         return command is not null;
     }
 
-    public static bool CheckIfKeyboardEventArgsMapsToMovement(KeyboardEventArgs keyboardEventArgs, CommandNoType command)
+    public static bool CheckIfKeyboardEventArgsMapsToMovement(KeymapArgs keymapArgs, CommandNoType command)
     {
-        return KeyboardKeyFacts.IsMovementKey(keyboardEventArgs.Key) && command is null;
+        return KeyboardKeyFacts.IsMovementKey(keymapArgs.Key) && command is null;
     }
 
-	public static bool IsAutocompleteMenuInvoker(KeyboardEventArgs keyboardEventArgs)
+	public static bool IsAutocompleteMenuInvoker(KeymapArgs keymapArgs)
     {
         // Is {Ctrl + Space} or LetterOrDigit was hit without Ctrl being held
-        return keyboardEventArgs.CtrlKey &&
-                   keyboardEventArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
-               !keyboardEventArgs.CtrlKey &&
-                   !KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) &&
-                   !KeyboardKeyFacts.IsMetaKey(keyboardEventArgs);
+        return keymapArgs.CtrlKey &&
+                   keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
+               !keymapArgs.CtrlKey &&
+                   !KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code) &&
+                   !KeyboardKeyFacts.IsMetaKey(keymapArgs);
     }
 
-	public static bool IsSyntaxHighlightingInvoker(KeyboardEventArgs keyboardEventArgs)
+	public static bool IsSyntaxHighlightingInvoker(KeymapArgs keymapArgs)
     {
-        return keyboardEventArgs.Key == ";" ||
-               KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
-               keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "s" ||
-               keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "v" ||
-               keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "z" ||
-               keyboardEventArgs.CtrlKey && keyboardEventArgs.Key == "y";
+        return keymapArgs.Key == ";" ||
+               KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code) ||
+               keymapArgs.CtrlKey && keymapArgs.Key == "s" ||
+               keymapArgs.CtrlKey && keymapArgs.Key == "v" ||
+               keymapArgs.CtrlKey && keymapArgs.Key == "z" ||
+               keymapArgs.CtrlKey && keymapArgs.Key == "y";
     }
 
     /// <summary>
@@ -155,11 +179,11 @@ public static class EventUtils
     /// are to be 1 character long, as well either whitespace or punctuation.
     /// Therefore 1 character behind might be a word that can be indexed.
     /// </summary>
-    public static bool IsAutocompleteIndexerInvoker(KeyboardEventArgs keyboardEventArgs)
+    public static bool IsAutocompleteIndexerInvoker(KeymapArgs keymapArgs)
     {
-        return (KeyboardKeyFacts.IsWhitespaceCode(keyboardEventArgs.Code) ||
-                    KeyboardKeyFacts.IsPunctuationCharacter(keyboardEventArgs.Key.First())) &&
-                !keyboardEventArgs.CtrlKey;
+        return (KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code) ||
+                    KeyboardKeyFacts.IsPunctuationCharacter(keymapArgs.Key.First())) &&
+                !keymapArgs.CtrlKey;
     }
 
 	public static async Task<(int rowIndex, int columnIndex)> CalculateRowAndColumnIndex(

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Fluxor;
@@ -33,8 +34,18 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 
 	private readonly Throttle _throttle = new Throttle(TimeSpan.FromMilliseconds(700));
 	
-	private string _command;
+	private string _command = string.Empty;
+	
+	/// <summary>
+	/// Accidentally hitting ArrowUp and losing the command you are typing out,
+	/// then ArrowDown will restore what you were typing through this field.
+	/// </summary>
+	private string _cachedCommand = string.Empty;
+	
+	private int _indexHistory;
+	
 	private ITerminal? _previousTerminal = null;
+	private ImmutableList<TerminalCommandRequest>? _terminalCommandRequestHistory;
 	
 	private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
@@ -43,6 +54,30 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 		IncludeGutterComponent = false,
 		ContextRecord = ContextFacts.TerminalContext,
 	};
+	
+	private string CommandUiInputBinding
+	{
+		get => _command;
+		set
+		{
+			_command = value;
+			
+			// If not browsing history, cache what the user is typing
+			//
+			// This means that while the '_cachedCommand' protects against
+			// accidental pressing of the ArrowUp key,
+			//
+			// If one is modifying a command that was populated into the
+			// input element by browsing history,
+			// then until the enter key is pressed to stop browsing history,
+			// nothing will be cached and an accidental ArrowUp here could lose information.
+			//
+			// But, the priority for protecting against lost information by accidental ArrowUp
+			// is on an original newly being typed command, not the history.
+			if (_terminalCommandRequestHistory is null)
+				_cachedCommand = value;
+		}
+	}
 	
 	protected override void OnParametersSet()
 	{
@@ -74,18 +109,83 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 			// The invocation here is to reload the text since the terminal changed.
 			OnWriteOutput();
 		}
-	
 		
 		base.OnParametersSet();
+	}
+	
+	private TerminalCommandRequest? GetTerminalCommandRequestAtIndexHistory(
+		int indexLocal,
+		ImmutableList<TerminalCommandRequest> historyLocal)
+	{
+		if (indexLocal < historyLocal.Count)
+			return historyLocal[indexLocal];
+			
+		return null;
 	}
 	
 	private void HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
 	{
 		if (keyboardEventArgs.Code == "Enter")
 		{
+			var commandLocal = _command;
+			_terminalCommandRequestHistory = null;
+			_indexHistory = 0;
+		
 			Terminal.EnqueueCommand(new TerminalCommandRequest(
-				commandText: _command,
+				commandText: commandLocal,
 				workingDirectory: null));
+		}
+		else if (keyboardEventArgs.Key == "ArrowUp")
+		{
+			if (_terminalCommandRequestHistory is null)
+			{
+				_terminalCommandRequestHistory = Terminal.TerminalInteractive.GetTerminalCommandRequestHistory();
+				_indexHistory = 0;
+				
+				var commandAtIndex = GetTerminalCommandRequestAtIndexHistory(
+					_indexHistory,
+					_terminalCommandRequestHistory);
+					
+				if (commandAtIndex is not null)
+					_command = commandAtIndex.CommandText;
+			}
+			else
+			{
+				if (_indexHistory < _terminalCommandRequestHistory.Count - 1)
+					_indexHistory++;
+					
+				var commandAtIndex = GetTerminalCommandRequestAtIndexHistory(
+					_indexHistory,
+					_terminalCommandRequestHistory);
+					
+				if (commandAtIndex is not null)
+					_command = commandAtIndex.CommandText;
+			}
+		}
+		else if (keyboardEventArgs.Key == "ArrowDown")
+		{
+			if (_terminalCommandRequestHistory is not null)
+			{
+				if (_indexHistory == 0)
+				{
+					_command = _cachedCommand;
+					_terminalCommandRequestHistory = null;
+				}
+				else
+				{
+					if (_indexHistory < 0)
+						_indexHistory = 0;
+					else
+						_indexHistory--;
+						
+					var commandAtIndex = GetTerminalCommandRequestAtIndexHistory(
+						_indexHistory,
+						_terminalCommandRequestHistory);
+						
+					if (commandAtIndex is not null)
+						_command = commandAtIndex.CommandText;
+				}
+			}
 		}
 	}
 	

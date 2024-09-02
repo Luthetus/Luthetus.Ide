@@ -30,6 +30,7 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -80,7 +81,7 @@ public class TextEditorCommandDefaultFunctions
         await viewModelModifier.ViewModel.FocusAsync().ConfigureAwait(false);
 
         modelModifier.HandleKeyboardEvent(
-            new KeyboardEventArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
+            new KeymapArgs { Key = KeyboardKeyFacts.MetaKeys.DELETE },
             cursorModifierBag,
             CancellationToken.None);
     }
@@ -715,11 +716,11 @@ public class TextEditorCommandDefaultFunctions
 
         while (true)
         {
-            KeyboardEventArgs keyboardEventArgs;
+            KeymapArgs keymapArgs;
 
             if (directionToFindMatchingPunctuationCharacter == -1)
             {
-                keyboardEventArgs = new KeyboardEventArgs
+                keymapArgs = new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                     ShiftKey = commandArgs.ShouldSelectText,
@@ -727,7 +728,7 @@ public class TextEditorCommandDefaultFunctions
             }
             else
             {
-                keyboardEventArgs = new KeyboardEventArgs
+                keymapArgs = new KeymapArgs
                 {
                     Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                     ShiftKey = commandArgs.ShouldSelectText,
@@ -735,7 +736,7 @@ public class TextEditorCommandDefaultFunctions
             }
 
             editContext.TextEditorService.ViewModelApi.MoveCursorUnsafe(
-        		keyboardEventArgs,
+        		keymapArgs,
 		        editContext,
 		        modelModifier,
 		        viewModelModifier,
@@ -1145,11 +1146,11 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        KeyboardEventArgs keyboardEventArgs,
+        KeymapArgs keymapArgs,
 		TextEditorComponentData componentData)
     {
         // Indexing can be invoked and this method still check for syntax highlighting and such
-        if (EventUtils.IsAutocompleteIndexerInvoker(keyboardEventArgs))
+        if (EventUtils.IsAutocompleteIndexerInvoker(keymapArgs))
         {
             try
             {
@@ -1181,7 +1182,7 @@ public class TextEditorCommandDefaultFunctions
             }
         }
 
-        if (EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
+        if (EventUtils.IsAutocompleteMenuInvoker(keymapArgs))
         {
         	ShowAutocompleteMenu(
         		editContext,
@@ -1192,7 +1193,7 @@ public class TextEditorCommandDefaultFunctions
 		        componentData.Dispatcher,
 		        componentData);
         }
-        else if (EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
+        else if (EventUtils.IsSyntaxHighlightingInvoker(keymapArgs))
         {
             componentData.ThrottleApplySyntaxHighlighting(modelModifier);
         }
@@ -1222,7 +1223,8 @@ public class TextEditorCommandDefaultFunctions
         TextEditorModelModifier modelModifier,
         TextEditorViewModelModifier viewModelModifier,
         CursorModifierBagTextEditor cursorModifierBag,
-        List<KeyboardEventArgs> keyboardEventArgsList,
+        KeymapArgs[] batchKeymapArgsList,
+        int batchKeymapArgsListLength,
 		TextEditorComponentData componentData,
 		ViewModelDisplayOptions viewModelDisplayOptions)
     {
@@ -1233,8 +1235,9 @@ public class TextEditorCommandDefaultFunctions
 		        modelModifier,
 		        viewModelModifier,
 		        cursorModifierBag,
-		        keyboardEventArgsList,
-				componentData);
+                batchKeymapArgsList,
+                batchKeymapArgsListLength,
+                componentData);
             return;
         }
 
@@ -1242,14 +1245,16 @@ public class TextEditorCommandDefaultFunctions
         var seenIsAutocompleteMenuInvoker = false;
         var seenIsSyntaxHighlightingInvoker = false;
 
-        foreach (var keyboardEventArgs in keyboardEventArgsList)
+        for (int i = 0; i < batchKeymapArgsListLength; i++)
         {
-            if (!seenIsAutocompleteIndexerInvoker && EventUtils.IsAutocompleteIndexerInvoker(keyboardEventArgs))
+            var keymapArgs = batchKeymapArgsList[i];
+
+            if (!seenIsAutocompleteIndexerInvoker && EventUtils.IsAutocompleteIndexerInvoker(keymapArgs))
                 seenIsAutocompleteIndexerInvoker = true;
 
-            if (!seenIsAutocompleteMenuInvoker && EventUtils.IsAutocompleteMenuInvoker(keyboardEventArgs))
+            if (!seenIsAutocompleteMenuInvoker && EventUtils.IsAutocompleteMenuInvoker(keymapArgs))
                 seenIsAutocompleteMenuInvoker = true;
-            else if (!seenIsSyntaxHighlightingInvoker && EventUtils.IsSyntaxHighlightingInvoker(keyboardEventArgs))
+            else if (!seenIsSyntaxHighlightingInvoker && EventUtils.IsSyntaxHighlightingInvoker(keymapArgs))
                 seenIsSyntaxHighlightingInvoker = true;
         }
 
