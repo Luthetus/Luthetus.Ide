@@ -25,7 +25,7 @@ namespace Luthetus.TextEditor.RazorLib.Events.Models;
 /// </summary>
 public struct OnKeyDownLateBatching : ITextEditorWork
 {
-	public const int MAX_BATCH_SIZE = 4;
+	public const int MAX_BATCH_SIZE = 8;
 	public const string NAME_ZERO = $"{nameof(OnKeyDownLateBatching)}_0";
 	public const string NAME_ONE = $"{nameof(OnKeyDownLateBatching)}_1";
 	public const string NAME_TWO = $"{nameof(OnKeyDownLateBatching)}_2";
