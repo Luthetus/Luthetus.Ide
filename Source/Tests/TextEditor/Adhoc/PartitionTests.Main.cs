@@ -10,10 +10,13 @@ using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Misc;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -48,18 +51,81 @@ public partial class PartitionTests
 			partitionSize: 4_096);
 			
 		test.TextEditorService.ModelApi.RegisterCustom(model);
-		
-		test.TextEditorService.PostUnique(
-			nameof(PartitionTests),
-			editContext =>
+
+		var uniqueTextEditorWork = new UniqueTextEditorWork(
+            nameof(PartitionTests),
+            editContext =>
 			{
-				// Console.WriteLine($"\n\n{model.GetAllText()}\n\n");
-				Console.WriteLine($"\n\nAppleSoupBanana\n\n");
-				return Task.CompletedTask;
+				try
+				{
+					// length: 27085 lines: 756
+					var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+	
+		            if (modelModifier is null)
+		            {
+		            	Console.WriteLine("modelModifier is null");
+		                return Task.CompletedTask;
+		            }
+		            
+		            // Ln: 40 Col: 2 Pos: 1880
+		            var openBraceMatchList = modelModifier.FindMatches("{");
+		            
+		            // Ln: 755 Col: 1 Pos: 27084
+		            var closeBraceMatchList = modelModifier.FindMatches("}");
+		            
+		            var openBodyBraceTextSpan = openBraceMatchList.First();
+		            var closeBodyBraceTextSpan = closeBraceMatchList.Last();
+		            
+		            var cursor = new TextEditorCursor(isPrimaryCursor: true);
+		            var cursorModifier = new TextEditorCursorModifier(cursor);
+		            
+		            // Ln: 40 Col: 2 Pos: 1880
+		            
+		            Console.WriteLine($"\n");
+		            // Ln: 40 Col: 2 Pos: 1880
+		            Console.WriteLine($"openBodyBraceTextSpan.EndingIndexExclusive: {openBodyBraceTextSpan.EndingIndexExclusive}");
+		            // Ln: 755 Col: 1 Pos: 27084
+		            Console.WriteLine($"closeBodyBraceTextSpan.StartingIndexInclusive: {closeBodyBraceTextSpan.StartingIndexInclusive}");
+		            Console.WriteLine($"\n");
+		            
+		            cursorModifier.SelectionAnchorPositionIndex = openBodyBraceTextSpan.EndingIndexExclusive;
+		            cursorModifier.SelectionEndingPositionIndex = closeBodyBraceTextSpan.StartingIndexInclusive;
+		            
+		            var openBraceLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
+		            	openBodyBraceTextSpan.EndingIndexExclusive);
+		            Console.WriteLine($"openBraceLineAndColumnIndices.lineIndex: {openBraceLineAndColumnIndices.lineIndex}");
+		            Console.WriteLine($"openBraceLineAndColumnIndices.columnIndex: {openBraceLineAndColumnIndices.columnIndex}");
+		            
+		            var closeBraceLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
+		            	closeBodyBraceTextSpan.StartingIndexInclusive);
+		            Console.WriteLine($"closeBraceLineAndColumnIndices.lineIndex: {closeBraceLineAndColumnIndices.lineIndex}");
+		            Console.WriteLine($"closeBraceLineAndColumnIndices.columnIndex: {closeBraceLineAndColumnIndices.columnIndex}");
+		            	
+		            cursorModifier.LineIndex = closeBraceLineAndColumnIndices.lineIndex;
+		            cursorModifier.ColumnIndex = closeBraceLineAndColumnIndices.columnIndex;
+		            
+		            var cursorModifierBag = new CursorModifierBagTextEditor(
+				        Key<TextEditorViewModel>.Empty,
+				        new List<TextEditorCursorModifier> { cursorModifier });
+		            
+		            modelModifier.Delete(
+				        cursorModifierBag,
+				        columnCount: 1, // Delete the selection, odd to give 0?
+				        expandWord: false,
+				        TextEditorModelModifier.DeleteKind.Delete);
+				
+					Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
+					//Console.WriteLine($"\n\nAppleSoupBanana\n\n");
+					return Task.CompletedTask;
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+					return Task.CompletedTask;
+				}
 			});
-		
-		await Task.Yield();
-		await Task.Delay(100);
+			
+		await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
 		
 		throw new NotImplementedException("In progress of writing this test");
 	}
@@ -159,6 +225,9 @@ public partial class PartitionTests
 						$"but was {storageService.GetType().Name}");
 			}
 		}
+		
+		var store = testContext.ServiceProvider.GetRequiredService<IStore>();
+        store.InitializeAsync().Wait();
 	
 		return testContext;
 	}
