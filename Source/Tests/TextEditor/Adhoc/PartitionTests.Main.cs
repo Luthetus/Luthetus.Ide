@@ -58,7 +58,6 @@ public partial class PartitionTests
 			{
 				try
 				{
-					// length: 27085 lines: 756
 					var modelModifier = editContext.GetModelModifier(model.ResourceUri);
 	
 		            if (modelModifier is null)
@@ -67,10 +66,7 @@ public partial class PartitionTests
 		                return Task.CompletedTask;
 		            }
 		            
-		            // Ln: 40 Col: 2 Pos: 1880
 		            var openBraceMatchList = modelModifier.FindMatches("{");
-		            
-		            // Ln: 755 Col: 1 Pos: 27084
 		            var closeBraceMatchList = modelModifier.FindMatches("}");
 		            
 		            var openBodyBraceTextSpan = openBraceMatchList.First();
@@ -79,27 +75,11 @@ public partial class PartitionTests
 		            var cursor = new TextEditorCursor(isPrimaryCursor: true);
 		            var cursorModifier = new TextEditorCursorModifier(cursor);
 		            
-		            // Ln: 40 Col: 2 Pos: 1880
-		            
-		            Console.WriteLine($"\n");
-		            // Ln: 40 Col: 2 Pos: 1880
-		            Console.WriteLine($"openBodyBraceTextSpan.EndingIndexExclusive: {openBodyBraceTextSpan.EndingIndexExclusive}");
-		            // Ln: 755 Col: 1 Pos: 27084
-		            Console.WriteLine($"closeBodyBraceTextSpan.StartingIndexInclusive: {closeBodyBraceTextSpan.StartingIndexInclusive}");
-		            Console.WriteLine($"\n");
-		            
 		            cursorModifier.SelectionAnchorPositionIndex = openBodyBraceTextSpan.EndingIndexExclusive;
 		            cursorModifier.SelectionEndingPositionIndex = closeBodyBraceTextSpan.StartingIndexInclusive;
 		            
-		            var openBraceLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-		            	openBodyBraceTextSpan.EndingIndexExclusive);
-		            Console.WriteLine($"openBraceLineAndColumnIndices.lineIndex: {openBraceLineAndColumnIndices.lineIndex}");
-		            Console.WriteLine($"openBraceLineAndColumnIndices.columnIndex: {openBraceLineAndColumnIndices.columnIndex}");
-		            
 		            var closeBraceLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
 		            	closeBodyBraceTextSpan.StartingIndexInclusive);
-		            Console.WriteLine($"closeBraceLineAndColumnIndices.lineIndex: {closeBraceLineAndColumnIndices.lineIndex}");
-		            Console.WriteLine($"closeBraceLineAndColumnIndices.columnIndex: {closeBraceLineAndColumnIndices.columnIndex}");
 		            	
 		            cursorModifier.LineIndex = closeBraceLineAndColumnIndices.lineIndex;
 		            cursorModifier.ColumnIndex = closeBraceLineAndColumnIndices.columnIndex;
@@ -133,8 +113,8 @@ public partial class PartitionTests
 				        expandWord: false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 				
-					Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
-					//Console.WriteLine($"\n\nAppleSoupBanana\n\n");
+					// Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
+					Console.WriteLine($"\n\nAppleSoupBanana\n\n");
 					return Task.CompletedTask;
 				}
 				catch (Exception e)
