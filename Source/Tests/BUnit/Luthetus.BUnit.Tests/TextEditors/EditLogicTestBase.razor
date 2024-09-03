@@ -113,10 +113,10 @@
 		textEditorService.ModelApi.RegisterCustom(inModel);
 		textEditorService.ViewModelApi.Register(viewModelKey, inModel.ResourceUri, new Category("UnitTests"));
 
-		JSInterop.SetupVoid("luthetusTextEditor.disposeTextEditorCursorIntersectionObserver", _ => true);
-		JSInterop.SetupVoid("luthetusTextEditor.initializeTextEditorCursorIntersectionObserver", _ => true);
-		JSInterop.SetupVoid("luthetusTextEditor.initializeVirtualizationIntersectionObserver", _ => true);
 		JSInterop.SetupVoid("luthetusTextEditor.preventDefaultOnWheelEvents", _ => true);
+		
+		// Stuck?
+		// JSInterop.SetupVoid("luthetusTextEditor.setScrollPosition", _ => true);
 
 		TextEditorViewModelDisplay? refTextEditorViewModelDisplay = null;
 
