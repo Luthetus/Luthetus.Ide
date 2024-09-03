@@ -129,6 +129,107 @@ public partial class PartitionTests
 		throw new NotImplementedException("In progress of writing this test");
 	}
 	
+	/// <summary>
+	/// Second, smaller example
+	/// </summary>
+	[Fact]
+	public async Task Bbb()
+	{
+		var test = TestInitialize();
+		
+		var modelList = test.TextEditorService.TextEditorStateWrap.Value.ModelList;
+		Assert.Equal(0, modelList.Count);
+		
+		var model = new TextEditorModel(
+			new ResourceUri("/unitTesting.cs"),
+	        DateTime.UtcNow,
+	        ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            @"namespace BlazorApp4NetCoreDbg.Persons;
+
+public class Abc
+{
+	
+}
+".ReplaceLineEndings("\r\n"),
+	        decorationMapper: null,
+	        compilerService: null,
+			partitionSize: 4_096);
+			
+		test.TextEditorService.ModelApi.RegisterCustom(model);
+
+		Exception? exception = null;
+
+		var uniqueTextEditorWork = new UniqueTextEditorWork(
+            nameof(PartitionTests),
+            editContext =>
+			{
+				try
+				{
+					var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+	
+		            if (modelModifier is null)
+		            {
+		            	Console.WriteLine("modelModifier is null");
+		                return Task.CompletedTask;
+		            }
+		            
+		            var cursor = new TextEditorCursor(isPrimaryCursor: true);
+		            var cursorModifier = new TextEditorCursorModifier(cursor);
+		            
+		            cursorModifier.LineIndex = 2;
+		            cursorModifier.ColumnIndex = 8;
+
+		            var cursorPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+
+		            cursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
+		            cursorModifier.SelectionEndingPositionIndex = cursorPositionIndex + 2;
+
+                    // Select the "la" of "class" on the line "public class Abc"
+
+                    var cursorModifierBag = new CursorModifierBagTextEditor(
+				        Key<TextEditorViewModel>.Empty,
+				        new List<TextEditorCursorModifier> { cursorModifier });
+
+                    modelModifier.Delete(
+				        cursorModifierBag,
+				        columnCount: 0, // Delete the selection, odd to give 0?
+				        expandWord: false,
+				        TextEditorModelModifier.DeleteKind.Delete);
+				
+					Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
+
+					var expectedText = @"namespace BlazorApp4NetCoreDbg.Persons;
+
+public css Abc
+{
+	
+}
+".ReplaceLineEndings("\r\n");
+
+					var actualText = modelModifier.GetAllText();
+
+                    Assert.Equal(expectedText, actualText);
+
+					// Console.WriteLine($"\n\nAppleSoupBanana\n\n");
+					return Task.CompletedTask;
+				}
+				catch (Exception e)
+				{
+					exception = e;
+
+                    Console.WriteLine(e);
+					return Task.CompletedTask;
+				}
+			});
+			
+		await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+
+		if (exception is not null)
+			throw exception;
+		
+		throw new NotImplementedException("In progress of writing this test");
+	}
+	
 	public class TestContext
 	{
 		public TestContext(LuthetusHostingInformation hostingInformation, IServiceProvider serviceProvider)

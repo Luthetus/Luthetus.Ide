@@ -305,7 +305,12 @@ public partial class TextEditorModelModifier : ITextEditorModel
             if (sumPartitionCount + partition.Count > globalPositionIndex)
             {
                 var relativePositionIndex = globalPositionIndex - sumPartitionCount;
-                var relativeDeleteCount = partition.RichCharacterList.Count - relativePositionIndex;
+                
+                var ableToDeleteCount = partition.RichCharacterList.Count - relativePositionIndex;
+
+                var relativeDeleteCount = ableToDeleteCount < argTargetDeleteCount
+                    ? ableToDeleteCount
+                    : argTargetDeleteCount;
 
                 globalPositionIndex += relativeDeleteCount;
                 sumGlobalDeleteCount += relativeDeleteCount;
