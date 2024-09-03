@@ -110,7 +110,7 @@ public partial class PartitionTests
 		            
 		            modelModifier.Delete(
 				        cursorModifierBag,
-				        columnCount: 1, // Delete the selection, odd to give 0?
+				        columnCount: 0, // Delete the selection, odd to give 0?
 				        expandWord: false,
 				        TextEditorModelModifier.DeleteKind.Delete);
 				
