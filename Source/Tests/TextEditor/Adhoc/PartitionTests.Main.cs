@@ -107,8 +107,27 @@ public partial class PartitionTests
 		            var cursorModifierBag = new CursorModifierBagTextEditor(
 				        Key<TextEditorViewModel>.Empty,
 				        new List<TextEditorCursorModifier> { cursorModifier });
-		            
-		            modelModifier.Delete(
+
+                    // The text that is attempted to delete is actually correct.
+                    // In TextEditorModelModifier.InProgress.cs in the method 'Delete(...)'
+                    // The following variable is gotten:
+                    //     'var textRemoved = this.GetString(positionIndex, charCount);'
+                    //
+                    // And if one manually selects the text in DotNetSolutionIdeApi.cs at the positions
+                    // that this text is deleting, and copy and paste it and compare the two,
+                    // its equal.
+                    //
+                    // So, is it a miscalculation of metadata or is it a miscalculation of the partitions?
+                    //
+                    // Its suspected to be a miscalculation of the partitions at the moment.
+                    // Because when you delete the text in the IDE, the amount of line numbers seems
+                    // reasonable (although I should check if its exactly correct).
+                    //
+                    // The only "off" detail is the gibberish that appears.
+                    //
+                    // If the partitions are being miscalculated, the path would be to look at
+                    // TextEditorModelModifier.Partitions.cs the method 'void __RemoveRange(int globalPositionIndex, int count)'
+                    modelModifier.Delete(
 				        cursorModifierBag,
 				        columnCount: 0, // Delete the selection, odd to give 0?
 				        expandWord: false,
