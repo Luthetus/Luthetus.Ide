@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
@@ -11,6 +13,7 @@ using Luthetus.Common.RazorLib.Misc;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
@@ -28,7 +31,7 @@ public partial class PartitionTests
 	/// and fix them when there is a better mood.
 	/// </summary>
 	[Fact]
-	public void Aaa()
+	public async Task Aaa()
 	{
 		var test = TestInitialize();
 		
@@ -39,27 +42,46 @@ public partial class PartitionTests
 			new ResourceUri("/unitTesting.cs"),
 	        DateTime.UtcNow,
 	        ExtensionNoPeriodFacts.C_SHARP_CLASS,
-	        string content,
+	        SAMPLE_CASE_THAT_HAS_LINE_ENDINGS_BREAK_BUG,
 	        decorationMapper: null,
 	        compilerService: null,
-			int partitionSize = 4_096);
+			partitionSize: 4_096);
 			
 		test.TextEditorService.ModelApi.RegisterCustom(model);
+		
+		test.TextEditorService.PostUnique(
+			nameof(PartitionTests),
+			editContext =>
+			{
+				// Console.WriteLine($"\n\n{model.GetAllText()}\n\n");
+				Console.WriteLine($"\n\nAppleSoupBanana\n\n");
+				return Task.CompletedTask;
+			});
+		
+		await Task.Yield();
+		await Task.Delay(100);
 		
 		throw new NotImplementedException("In progress of writing this test");
 	}
 	
 	public class TestContext
 	{
-		public TestContext(IServiceProvider serviceProvider)
+		public TestContext(LuthetusHostingInformation hostingInformation, IServiceProvider serviceProvider)
 		{
+			HostingInformation = hostingInformation;
 			ServiceProvider = serviceProvider;
 			
 			TextEditorService = ServiceProvider.GetRequiredService<ITextEditorService>();
+			ContinuousBackgroundTaskWorker = ServiceProvider.GetRequiredService<ContinuousBackgroundTaskWorker>();
+			
+			HostingInformation.StartBackgroundTaskWorkers(serviceProvider);
 		}
 	
-		public ITextEditorService TextEditorService { get; }
+		public LuthetusHostingInformation HostingInformation { get; }
 		public IServiceProvider ServiceProvider { get; }
+		
+		public ITextEditorService TextEditorService { get; }
+		public ContinuousBackgroundTaskWorker ContinuousBackgroundTaskWorker { get; }
 	}
 	
 	public TestContext TestInitialize()
@@ -73,6 +95,7 @@ public partial class PartitionTests
 		
 		services
 			.AddLuthetusTextEditor(hostingInformation)
+			.AddScoped<ILoggerFactory, NullLoggerFactory>()
 			.AddScoped<IJSRuntime, DoNothingJsRuntime>();
             
 		// If one doesn't use a LuthetusPurposeKind of Photino,
@@ -96,7 +119,7 @@ public partial class PartitionTests
 			typeof(LuthetusCommonConfig).Assembly,
 			typeof(LuthetusTextEditorConfig).Assembly));
 		
-		var testContext = new TestContext(services.BuildServiceProvider());
+		var testContext = new TestContext(hostingInformation, services.BuildServiceProvider());
 		
 		// Check various services that should be InMemory implementations.
 		{	
