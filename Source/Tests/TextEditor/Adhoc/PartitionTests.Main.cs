@@ -10,10 +10,11 @@ using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.Common.RazorLib.Misc;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
-public class PartitionTests
+public partial class PartitionTests
 {
 	/// <summary>
 	/// When a deletion of text spans multiple partitions it seems to sometimes break the line endings.
@@ -33,6 +34,17 @@ public class PartitionTests
 		
 		var modelList = test.TextEditorService.TextEditorStateWrap.Value.ModelList;
 		Assert.Equal(0, modelList.Count);
+		
+		var model = new TextEditorModel(
+			new ResourceUri("/unitTesting.cs"),
+	        DateTime.UtcNow,
+	        ExtensionNoPeriodFacts.C_SHARP_CLASS,
+	        string content,
+	        decorationMapper: null,
+	        compilerService: null,
+			int partitionSize = 4_096);
+			
+		test.TextEditorService.ModelApi.RegisterCustom(model);
 		
 		throw new NotImplementedException("In progress of writing this test");
 	}
