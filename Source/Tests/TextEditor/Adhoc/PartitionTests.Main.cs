@@ -127,6 +127,15 @@ public partial class PartitionTests
 		await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
 		
 		throw new NotImplementedException("In progress of writing this test");
+
+		// I'm making this comment quite a bit into having been working on this. After making the Bbb method
+		// If I open a file with partition size 4,098; then if the file has more than that in characters
+		// then the partition will split into 2048 characters so I can put the cursor such that it deletes
+		// the character at position index 2047 and the character at 2048 which  would index wise be the second partition
+		// I'm doing something along these lines and it consistently is breakinng the line endings,
+		// moreso though I'm making sure I include a line ending from each partition in the text selection before deleting.
+		//
+		// You don't even need the line endings I did it just simply with a contiguous string of letters or digits and it broke.
 	}
 	
 	/// <summary>
@@ -153,7 +162,7 @@ public class Abc
 ".ReplaceLineEndings("\r\n"),
 	        decorationMapper: null,
 	        compilerService: null,
-			partitionSize: 4_096);
+			partitionSize: 4);
 			
 		test.TextEditorService.ModelApi.RegisterCustom(model);
 
@@ -175,16 +184,19 @@ public class Abc
 		            
 		            var cursor = new TextEditorCursor(isPrimaryCursor: true);
 		            var cursorModifier = new TextEditorCursorModifier(cursor);
-		            
-		            cursorModifier.LineIndex = 2;
-		            cursorModifier.ColumnIndex = 8;
+
+                    //
+					cursorModifier.LineIndex = 3;
+                    cursorModifier.ColumnIndex = 0;
+                    var testPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+
+                    cursorModifier.LineIndex = 2;
+		            cursorModifier.ColumnIndex = 16;
 
 		            var cursorPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
 
-		            cursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
+                    cursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
 		            cursorModifier.SelectionEndingPositionIndex = cursorPositionIndex + 2;
-
-                    // Select the "la" of "class" on the line "public class Abc"
 
                     var cursorModifierBag = new CursorModifierBagTextEditor(
 				        Key<TextEditorViewModel>.Empty,
@@ -200,8 +212,7 @@ public class Abc
 
 					var expectedText = @"namespace BlazorApp4NetCoreDbg.Persons;
 
-public css Abc
-{
+public class Abc{
 	
 }
 ".ReplaceLineEndings("\r\n");

@@ -187,6 +187,36 @@ public partial class TextEditorModelModifier : ITextEditorModel
         var firstUnevenSplit = PartitionSize / 2 + PartitionSize % 2;
         var secondUnevenSplit = PartitionSize / 2;
 
+        // Validate multi-byte characters go on same partition (i.e.: '\r\n')
+        {
+            // firstUnevenSplit is a count so -1 to make it an index
+            if (originalPartition.RichCharacterList[firstUnevenSplit - 1].Value == '\r')
+            {
+                if (originalPartition.RichCharacterList[(firstUnevenSplit - 1) + 1].Value == '\n')
+                {
+                    firstUnevenSplit += 1;
+                    secondUnevenSplit -= 1;
+                }
+            }
+
+            // TODO: If the partition to split ends in '\r' and the cause for the split
+            //       is to create space in order to insert a '\n',
+            //       |
+            //       Then this works out as a "happy accident" of sorts.
+            //       This is not ideal, it should be more concrete than "oops it worked".
+            //       |
+            //       The reason it works is because a split won't check if the next partition
+            //       has space (? source needed) and will always move the '\r' to the new partition,
+            //       then return to the insert and put the '\n' immediately after.
+
+            // One of the reasons for not having a multi-byte character span multiple partitions,
+            // is that if a partition has capacity 4,096 but a count of 2,048,
+            // one cannot insert between the bytes of a multi-byte character
+            // so the first partition with only half its capacity used, would be unable to be used
+            // any further than 2,048 because it would mean writing between its multi-byte character
+            // than spans into the next partition.
+        }
+
         // Replace old
         {
             var partition = new TextEditorPartition(originalPartition.RichCharacterList

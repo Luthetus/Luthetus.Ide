@@ -22,12 +22,19 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// </summary>
 public partial class TextEditorModelModifier : ITextEditorModel
 {
+    /// <summary>
+    /// <see cref="__SplitIntoTwoPartitions(int)"/> will divide by 2 and give the first split the remainder,
+    /// then add 1 to the first split if there is a multibyte scenario.
+    /// Therefore partition size of 3 would infinitely try to split itself.
+    /// </summary>
+    public const int MINIMUM_PARTITION_SIZE = 4;
+
     private readonly TextEditorModel _textEditorModel;
 
     public TextEditorModelModifier(TextEditorModel model)
     {
-        if (model.PartitionSize < 2)
-            throw new LuthetusTextEditorException($"{nameof(model)}.{nameof(PartitionSize)} must be >= 2");
+        if (model.PartitionSize < MINIMUM_PARTITION_SIZE)
+            throw new LuthetusTextEditorException($"{nameof(model)}.{nameof(PartitionSize)} must be >= {MINIMUM_PARTITION_SIZE}");
 
         PartitionSize = model.PartitionSize;
         WasDirty = model.IsDirty;
