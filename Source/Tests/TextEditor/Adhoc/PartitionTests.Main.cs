@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -20,136 +21,504 @@ using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.Tests.Adhoc;
 
+/// <summary>
+/// When a deletion of text spans multiple partitions it seems to sometimes break the line endings.
+/// </summary>
 public partial class PartitionTests
 {
+	/*
+	// Pasting the __RemoveRange here so I can try and identify
+	// case by case what is happening and break each case into a [Fact]
+	//
+	// The '__RemoveRange' is poorly written. I vaguely remember
+	// writing it.
+	//
+	// I was tired, and burnt out.
+	//
+	// 
+	
+	public void __RemoveRange(int globalPositionIndex, int count)
+    {
+        int deletedCount = 0;
+
+        // The inner for loop needs to remember its place when the while loop, loops.
+        int i = 0;
+        int rememberCountBeforeRemoveFromPartition = 0;
+        int indexOfPartitionWithContent = -1;
+        int relativePositionIndex = -1;
+        int runningCount = 0;
+
+        while (true)
+        {
+            if (globalPositionIndex >= CharCount)
+                return;
+
+            for (; i < _partitionList.Count; i++)
+            {
+                TextEditorPartition? partition = _partitionList[i];
+
+                if (runningCount + partition.Count > globalPositionIndex)
+                {
+                    // This is the partition we want to modify.
+                    relativePositionIndex = globalPositionIndex - runningCount;
+                    indexOfPartitionWithContent = i;
+                    rememberCountBeforeRemoveFromPartition = partition.Count;
+                    break;
+                }
+                else
+                {
+                    runningCount += partition.Count;
+                }
+            }
+
+            if (indexOfPartitionWithContent == -1)
+                throw new LuthetusTextEditorException("if (indexOfPartitionWithContent == -1)");
+
+            if (relativePositionIndex == -1)
+                throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
+
+            // At this point, the first partition with some, or all, of the content to remove has been found.
+            //
+            // Outside of the while loop all the 'for' loop variables were declared.
+            // This lets us remove from this partition, while continuing to loop
+            // over further partitions, in the case that there was more content to remove,
+            // that was on other partitions.
+            //
+            // With the variable 'rememberCountBeforeRemoveFromPartition' we can store the
+            // current count of richCharacters in the partition, prior to removing anything.
+            // This is useful, because the for loop can continue as though nothing happened.
+            {
+                var inPartition = _partitionList[indexOfPartitionWithContent];
+
+                var ableToDeleteCount = inPartition.RichCharacterList.Count - relativePositionIndex;
+
+                var countToDelete = ableToDeleteCount < count
+                    ? ableToDeleteCount
+                    : count;
+
+                globalPositionIndex += rememberCountBeforeRemoveFromPartition;
+                runningCount += rememberCountBeforeRemoveFromPartition;
+                deletedCount += countToDelete;
+                count -= countToDelete;
+
+                var outPartition = inPartition.RemoveRange(relativePositionIndex, countToDelete);
+
+                _partitionList = _partitionList.SetItem(
+                    indexOfPartitionWithContent,
+                    outPartition);
+            }
+
+            if (count == 0)
+                return;
+            if (i == _partitionList.Count)
+                return;
+            if (deletedCount == count)
+                return;
+        }
+    }
+	*/
+
+/*
+[abcd][efgh][ijkl][mnop][qrst][uvwx][yz]
+
+[abcd]
+	insert e
+[ab][cdef]
+	insert g
+[abc][cd][efg]
+
+-------------------
+
+PartitionSize = 4
+"\r\n\r\n\r\n"
+
+[\r\n\r\n]
+	insert \r
+[\r\n][\r\n\r\n]
+
+*/	
+
 	/// <summary>
-	/// When a deletion of text spans multiple partitions it seems to sometimes break the line endings.
-	///
-	/// Why do I name things 'Aaa' on occassion?
-	///
-	/// "What Do You Do When You Can't Do Anything"
-	/// https://youtu.be/JRqB2pm33IM?si=UhQxGhT8HcETN4xa
-	///
-	/// By using the name 'Aaa' consistently in this situations, I can easily find these naming scenarios
-	/// and fix them when there is a better mood.
+	/// Its thought that line ending only text is best to be using for these tests.
+	/// Since in specific, here we are testing why the line ending tracking is breaking.
 	/// </summary>
 	[Fact]
-	public async Task Aaa()
+	public async Task Only_CarriageReturnLineFeed_Delete()
 	{
 		var test = TestInitialize();
 		
-		var modelList = test.TextEditorService.TextEditorStateWrap.Value.ModelList;
-		Assert.Equal(0, modelList.Count);
+		var sourceText = "\r\n\r\n\r\n";
 		
+		var modelList = test.TextEditorService.TextEditorStateWrap.Value.ModelList;
+
 		var model = new TextEditorModel(
-			new ResourceUri("/unitTesting.cs"),
-	        DateTime.UtcNow,
-	        ExtensionNoPeriodFacts.C_SHARP_CLASS,
-	        SAMPLE_CASE_THAT_HAS_LINE_ENDINGS_BREAK_BUG,
-	        decorationMapper: null,
-	        compilerService: null,
-			partitionSize: 4_096);
-			
+			new ResourceUri($"/unitTesting.cs"),
+			DateTime.UtcNow,
+			ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            sourceText,
+			decorationMapper: null,
+			compilerService: null,
+			partitionSize: 4);
+
 		test.TextEditorService.ModelApi.RegisterCustom(model);
 
+		Exception? exception = null;
+
 		var uniqueTextEditorWork = new UniqueTextEditorWork(
-            nameof(PartitionTests),
-            editContext =>
+			nameof(PartitionTests),
+			editContext =>
 			{
 				try
 				{
 					var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-	
-		            if (modelModifier is null)
-		            {
-		            	Console.WriteLine("modelModifier is null");
-		                return Task.CompletedTask;
-		            }
-		            
-		            var openBraceMatchList = modelModifier.FindMatches("{");
-		            var closeBraceMatchList = modelModifier.FindMatches("}");
-		            
-		            var openBodyBraceTextSpan = openBraceMatchList.First();
-		            var closeBodyBraceTextSpan = closeBraceMatchList.Last();
-		            
-		            var cursor = new TextEditorCursor(isPrimaryCursor: true);
-		            var cursorModifier = new TextEditorCursorModifier(cursor);
-		            
-		            cursorModifier.SelectionAnchorPositionIndex = openBodyBraceTextSpan.EndingIndexExclusive;
-		            cursorModifier.SelectionEndingPositionIndex = closeBodyBraceTextSpan.StartingIndexInclusive;
-		            
-		            var closeBraceLineAndColumnIndices = modelModifier.GetLineAndColumnIndicesFromPositionIndex(
-		            	closeBodyBraceTextSpan.StartingIndexInclusive);
-		            	
-		            cursorModifier.LineIndex = closeBraceLineAndColumnIndices.lineIndex;
-		            cursorModifier.ColumnIndex = closeBraceLineAndColumnIndices.columnIndex;
-		            
-		            var cursorModifierBag = new CursorModifierBagTextEditor(
-				        Key<TextEditorViewModel>.Empty,
-				        new List<TextEditorCursorModifier> { cursorModifier });
 
-                    // The text that is attempted to delete is actually correct.
-                    // In TextEditorModelModifier.InProgress.cs in the method 'Delete(...)'
-                    // The following variable is gotten:
-                    //     'var textRemoved = this.GetString(positionIndex, charCount);'
-                    //
-                    // And if one manually selects the text in DotNetSolutionIdeApi.cs at the positions
-                    // that this text is deleting, and copy and paste it and compare the two,
-                    // its equal.
-                    //
-                    // So, is it a miscalculation of metadata or is it a miscalculation of the partitions?
-                    //
-                    // Its suspected to be a miscalculation of the partitions at the moment.
-                    // Because when you delete the text in the IDE, the amount of line numbers seems
-                    // reasonable (although I should check if its exactly correct).
-                    //
-                    // The only "off" detail is the gibberish that appears.
-                    //
-                    // If the partitions are being miscalculated, the path would be to look at
-                    // TextEditorModelModifier.Partitions.cs the method 'void __RemoveRange(int globalPositionIndex, int count)'
-                    modelModifier.Delete(
-				        cursorModifierBag,
-				        columnCount: 0, // Delete the selection, odd to give 0?
-				        expandWord: false,
-				        TextEditorModelModifier.DeleteKind.Delete);
-				
-					// Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
-					Console.WriteLine($"\n\nAppleSoupBanana\n\n");
-					return Task.CompletedTask;
+					if (modelModifier is null)
+					{
+						Console.WriteLine("modelModifier is null");
+						return Task.CompletedTask;
+					}
+					
+					// The cursor uses line and column indices
+					//
+					// But the selection uses position indices.
+					//
+					// These position indices are dangerous, because one might accidentally
+					// use an index that is among a multi-byte character.
+					//
+					// When using the MoveCursor and etc, 
+					
+					LogAndNonScientificallyAssertPartitionList(modelModifier, "[\\r\\n][\\r\\n\\r\\n]");
+					
+					// "\r\n\r\n\r\n";
+					// "[\r\n][\r\n\r\n]"
+					//   ^^^^^^^^^^
+					//
+					// Delete the letter above the '^'.
+					//
+					// So, delete the only line ending in partition 1
+					// and the first line ending in partition 2.
+					//
+					// Do this by selecting the text then insert an enter key.
+					
+					var cursor = new TextEditorCursor(isPrimaryCursor: true);
+					var cursorModifier = new TextEditorCursorModifier(cursor);
+					
+					cursorModifier.SelectionAnchorPositionIndex = 0;
+					cursorModifier.SelectionEndingPositionIndex = 4;
+					
+					cursorModifier.LineIndex = 2;
+					cursorModifier.ColumnIndex = 0;
+					
+					var cursorModifierBag = new CursorModifierBagTextEditor(
+						Key<TextEditorViewModel>.Empty,
+						new List<TextEditorCursorModifier> { cursorModifier });
+					
+					modelModifier.Delete(
+						cursorModifierBag,
+						columnCount: 0, // Delete the selection, odd to give 0?
+						expandWord: false,
+						TextEditorModelModifier.DeleteKind.Backspace);
+					
+					LogAndNonScientificallyAssertPartitionList(modelModifier, "[][\\r\\n]");
+					
+                    return Task.CompletedTask;
 				}
 				catch (Exception e)
 				{
-					Console.WriteLine(e);
+					exception = e;
 					return Task.CompletedTask;
 				}
 			});
-			
-		await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
-		
-		throw new NotImplementedException("In progress of writing this test");
 
-		// I'm making this comment quite a bit into having been working on this. After making the Bbb method
-		// If I open a file with partition size 4,098; then if the file has more than that in characters
-		// then the partition will split into 2048 characters so I can put the cursor such that it deletes
-		// the character at position index 2047 and the character at 2048 which  would index wise be the second partition
-		// I'm doing something along these lines and it consistently is breakinng the line endings,
-		// moreso though I'm making sure I include a line ending from each partition in the text selection before deleting.
-		//
-		// You don't even need the line endings I did it just simply with a contiguous string of letters or digits and it broke.
+		await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+
+		if (exception is not null)
+			throw exception;
 	}
 	
 	/// <summary>
-	/// Second, smaller example
+	/// Its thought that line ending only text is best to be using for these tests.
+	/// Since in specific, here we are testing why the line ending tracking is breaking.
 	/// </summary>
 	[Fact]
-	public async Task Bbb()
+	public async Task Only_CarriageReturnLineFeed_Backspace()
+	{
+		var test = TestInitialize();
+		
+		var sourceText = "\r\n\r\n\r\n";
+		
+		var modelList = test.TextEditorService.TextEditorStateWrap.Value.ModelList;
+
+		var model = new TextEditorModel(
+			new ResourceUri($"/unitTesting.cs"),
+			DateTime.UtcNow,
+			ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            sourceText,
+			decorationMapper: null,
+			compilerService: null,
+			partitionSize: 4);
+
+		test.TextEditorService.ModelApi.RegisterCustom(model);
+
+		Exception? exception = null;
+
+		var uniqueTextEditorWork = new UniqueTextEditorWork(
+			nameof(PartitionTests),
+			editContext =>
+			{
+				try
+				{
+					var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+
+					if (modelModifier is null)
+					{
+						Console.WriteLine("modelModifier is null");
+						return Task.CompletedTask;
+					}
+					
+					// The cursor uses line and column indices
+					//
+					// But the selection uses position indices.
+					//
+					// These position indices are dangerous, because one might accidentally
+					// use an index that is among a multi-byte character.
+					//
+					// When using the MoveCursor and etc, 
+					
+					LogAndNonScientificallyAssertPartitionList(modelModifier, "[\\r\\n][\\r\\n\\r\\n]");
+					
+					// "\r\n\r\n\r\n";
+					// "[\r\n][\r\n\r\n]"
+					//   ^^^^^^^^^^
+					//
+					// Delete the letter above the '^'.
+					//
+					// So, delete the only line ending in partition 1
+					// and the first line ending in partition 2.
+					//
+					// Do this by selecting the text then insert an enter key.
+					
+					var cursor = new TextEditorCursor(isPrimaryCursor: true);
+					var cursorModifier = new TextEditorCursorModifier(cursor);
+					
+					cursorModifier.SelectionAnchorPositionIndex = 0;
+					cursorModifier.SelectionEndingPositionIndex = 4;
+					
+					cursorModifier.LineIndex = 2;
+					cursorModifier.ColumnIndex = 0;
+					
+					var cursorModifierBag = new CursorModifierBagTextEditor(
+						Key<TextEditorViewModel>.Empty,
+						new List<TextEditorCursorModifier> { cursorModifier });
+						
+					modelModifier.Delete(
+						cursorModifierBag,
+						columnCount: 0, // Delete the selection, odd to give 0?
+						expandWord: false,
+						TextEditorModelModifier.DeleteKind.Delete);
+					
+					LogAndNonScientificallyAssertPartitionList(modelModifier, "[][\\r\\n]");
+					
+                    return Task.CompletedTask;
+				}
+				catch (Exception e)
+				{
+					exception = e;
+					return Task.CompletedTask;
+				}
+			});
+
+		await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+
+		if (exception is not null)
+			throw exception;
+	}
+	
+	[Fact]
+	public async Task Only_CarriageReturnLineFeed_Insert()
+	{
+		var test = TestInitialize();
+		
+		var sourceText = "\r\n\r\n\r\n";
+		
+		var modelList = test.TextEditorService.TextEditorStateWrap.Value.ModelList;
+
+		var model = new TextEditorModel(
+			new ResourceUri($"/unitTesting.cs"),
+			DateTime.UtcNow,
+			ExtensionNoPeriodFacts.C_SHARP_CLASS,
+            sourceText,
+			decorationMapper: null,
+			compilerService: null,
+			partitionSize: 4);
+
+		test.TextEditorService.ModelApi.RegisterCustom(model);
+
+		Exception? exception = null;
+
+		var uniqueTextEditorWork = new UniqueTextEditorWork(
+			nameof(PartitionTests),
+			editContext =>
+			{
+				try
+				{
+					var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+
+					if (modelModifier is null)
+					{
+						Console.WriteLine("modelModifier is null");
+						return Task.CompletedTask;
+					}
+					
+					// The cursor uses line and column indices
+					//
+					// But the selection uses position indices.
+					//
+					// These position indices are dangerous, because one might accidentally
+					// use an index that is among a multi-byte character.
+					//
+					// When using the MoveCursor and etc, 
+					
+					LogAndNonScientificallyAssertPartitionList(modelModifier, "[\\r\\n][\\r\\n\\r\\n]");
+					
+					// "\r\n\r\n\r\n";
+					// "[\r\n][\r\n\r\n]"
+					//   ^^^^^^^^^^
+					//
+					// Delete the letter above the '^'.
+					//
+					// So, delete the only line ending in partition 1
+					// and the first line ending in partition 2.
+					//
+					// Do this by selecting the text then insert an enter key.
+					
+					var cursor = new TextEditorCursor(isPrimaryCursor: true);
+					var cursorModifier = new TextEditorCursorModifier(cursor);
+					
+					cursorModifier.SelectionAnchorPositionIndex = 0;
+					cursorModifier.SelectionEndingPositionIndex = 4;
+					
+					cursorModifier.LineIndex = 2;
+					cursorModifier.ColumnIndex = 0;
+					
+					var cursorModifierBag = new CursorModifierBagTextEditor(
+						Key<TextEditorViewModel>.Empty,
+						new List<TextEditorCursorModifier> { cursorModifier });
+					
+					modelModifier.Insert(
+				        "\r\n",
+				        cursorModifierBag,
+				        useLineEndKindPreference: false);
+					
+					LogAndNonScientificallyAssertPartitionList(modelModifier, "[\\r\\n][\\r\\n]");
+					
+                    return Task.CompletedTask;
+				}
+				catch (Exception e)
+				{
+					exception = e;
+					return Task.CompletedTask;
+				}
+			});
+
+		await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+
+		if (exception is not null)
+			throw exception;
+	}
+	
+	/// <summary>
+	/// I can wrap my head around my unit test much easier if I
+	/// type the partitions out like:
+	///
+	/// Given:
+	/// 	PartitionSize: = 4
+	/// 	Input text: "\r\n\r\n\r\n"
+	///
+	/// Then:
+	/// 	"[\r\n][\r\n\r\n]"
+	/// , is how am visualizing the partition.
+	///
+	/// So if I can assert my visualization it makes creation of good tests easier,
+	/// then if my visualization introduces inaccuracies I can add a more
+	/// 1 to 1 assertion by iterating over the partitions and asserting the richCharacter.Value.
+	/// </summary>
+	public void LogAndNonScientificallyAssertPartitionList(
+		ITextEditorModel model,
+		string expectedVisualizationText)
+	{
+		/*
+[abcd][efgh][ijkl][mnop][qrst][uvwx][yz]
+
+[abcd]
+	insert e
+[ab][cdef]
+	insert g
+[abc][cd][efg]
+
+-------------------
+
+PartitionSize = 4
+"\r\n\r\n\r\n"
+
+[\r\n\r\n]
+	insert \r
+[\r\n][\r\n\r\n]
+
+*/	
+		var actualVisualizationTextBuilder = new StringBuilder();
+		
+		Console.WriteLine("\n\nLogPartition_START\n");
+		
+		foreach (var partition in model.PartitionList)
+		{
+			actualVisualizationTextBuilder.Append('[');
+			foreach (var richCharacter in partition.RichCharacterList)
+			{
+				if (richCharacter.Value == '\r')
+				{
+					actualVisualizationTextBuilder.Append("\\r");
+				}
+				else if (richCharacter.Value == '\n')
+				{
+					actualVisualizationTextBuilder.Append("\\n");
+				}
+				else if (richCharacter.Value == '\t')
+				{
+					actualVisualizationTextBuilder.Append("\\t");
+				}
+				else
+				{
+					actualVisualizationTextBuilder.Append(richCharacter.Value);
+				}
+			}
+			actualVisualizationTextBuilder.Append(']');
+		}
+		
+		var actualVisualizationText = actualVisualizationTextBuilder.ToString();
+		Console.Write(actualVisualizationText);
+		
+		Console.WriteLine("\n\nLogPartition_END\n\n");
+		
+		Assert.Equal(expectedVisualizationText, actualVisualizationText);
+	}
+
+	/// <summary>
+	/// This test isn't the most useful thing for determining errors.
+	/// But it is quite interesting to see the different partition sizes and when it fails.
+	///
+	/// Then drill into a more specific unit test once an issue is found here
+	/// is the way I'd look at this unit test if its ever even used.
+	/// </summary>
+	[Fact]
+	public async Task Large_Throughput_Test()
 	{
 		var test = TestInitialize();
 
-        // "\r" fails on indexPartitionSize: 9;
-        // "\n" fails on indexPartitionSize: 9;
-        // "\r\n" fails on indexPartitionSize: 7;
-        string lineEndings = "\n";
+        // "\r" fails on indexPartitionSize: 93;
+        // "\n" fails on indexPartitionSize: 93;
+        // "\r\n" fails on indexPartitionSize: Does not fail;
+        string lineEndings = "\r\n";
 
 		var testText = @"public class Person
 {
@@ -234,16 +603,11 @@ public partial class PartitionTests
 						var actualText = modelModifier.GetAllText();
 
 						Assert.Equal(expectedText, actualText);
-
-                        // Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
-                        // Console.WriteLine($"\n\nAppleSoupBanana\n\n");
                         return Task.CompletedTask;
 					}
 					catch (Exception e)
 					{
 						exception = e;
-
-						Console.WriteLine(e);
 						return Task.CompletedTask;
 					}
 				});
@@ -255,16 +619,6 @@ public partial class PartitionTests
         }
 		
 		throw new NotImplementedException("In progress of writing this test");
-
-		// I think I'm just going in circles at this point.
-		// I'm exhausted and just should sleep.
-		//
-		// What I'm doing at the moment is extremely un-wise anyhow.
-		// I'm just sort of smashing my head against the keyboard then running the test and
-		// throwing my hands in the air like "Why does my code not work".
-		//
-		// Tomorrow I need to break down the partition logic into cases conceptually in pseudo code or just written out.
-		// Then I can create a new [Fact] method for each case of what the partition is supposed to do.
 	}
 	
 	public class TestContext

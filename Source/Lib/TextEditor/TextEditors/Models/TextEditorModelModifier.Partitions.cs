@@ -319,8 +319,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
     /// </summary>
     public void __RemoveRange(int globalPositionIndex, int count)
     {
-        int deletedCount = 0;
-
         // The inner for loop needs to remember its place when the while loop, loops.
         int i = 0;
         int rememberCountBeforeRemoveFromPartition = 0;
@@ -330,6 +328,8 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         while (true)
         {
+        	Console.WriteLine($"if (globalPositionIndex >= CharCount)");
+        	Console.WriteLine($"if ({globalPositionIndex} >= {CharCount})");
             if (globalPositionIndex >= CharCount)
                 return;
 
@@ -337,6 +337,10 @@ public partial class TextEditorModelModifier : ITextEditorModel
             {
                 TextEditorPartition? partition = _partitionList[i];
 
+				Console.WriteLine("if (runningCount + partition.Count > globalPositionIndex)");
+				Console.WriteLine($"if ({runningCount} + {partition.Count} > {globalPositionIndex})");
+				Console.WriteLine($"if ({runningCount + partition.Count} > {globalPositionIndex})");
+				Console.WriteLine($"count: {count}");
                 if (runningCount + partition.Count > globalPositionIndex)
                 {
                     // This is the partition we want to modify.
@@ -375,10 +379,11 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 var countToDelete = ableToDeleteCount < count
                     ? ableToDeleteCount
                     : count;
+                    
+                Console.WriteLine($"countToDelete: {countToDelete}");
 
                 globalPositionIndex += rememberCountBeforeRemoveFromPartition;
                 runningCount += rememberCountBeforeRemoveFromPartition;
-                deletedCount += countToDelete;
                 count -= countToDelete;
 
                 var outPartition = inPartition.RemoveRange(relativePositionIndex, countToDelete);
@@ -388,12 +393,16 @@ public partial class TextEditorModelModifier : ITextEditorModel
                     outPartition);
             }
 
-            if (count == 0)
+            if (count <= 0)
+            {
+            	Console.WriteLine("count == 0");
                 return;
+            }
             if (i == _partitionList.Count)
+            {
+            	Console.WriteLine("i == _partitionList.Count");
                 return;
-            if (deletedCount == count)
-                return;
+            }
         }
     }
 
