@@ -319,7 +319,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
     /// </summary>
     public void __RemoveRange(int argStartGlobalPositionIndex, int argTargetDeleteCount)
     {
-        var localPartitionList = _partitionList;
         var sumGlobalDeleteCount = 0;
         var sumPartitionCount = 0;
         var globalPositionIndex = argStartGlobalPositionIndex;
@@ -327,9 +326,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
         if (globalPositionIndex >= CharCount)
             return;
 
-        for (int i = 0; i < localPartitionList.Count; i++)
+        for (int i = 0; i < _partitionList.Count; i++)
         {
-            var partition = localPartitionList[i];
+            var partition = _partitionList[i];
 
             // TODO: '>' or '>=' ... If the partition.Count == 0, this if statement won't be entered.
             if (sumPartitionCount + partition.Count > globalPositionIndex)
@@ -346,7 +345,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 sumGlobalDeleteCount += relativeDeleteCount;
 
                 // The "combining" of fragmented partitions into a single partition isn't being done within
-                // this method, so the indices of the '_partitionList' should always match the 'localPartitionList'
+                // this method, so the indices should be fine.
                 _partitionList = _partitionList.SetItem(
                     i,
                     partition.RemoveRange(relativePositionIndex, relativeDeleteCount));

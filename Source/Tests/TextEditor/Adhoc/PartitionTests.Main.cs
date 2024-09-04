@@ -145,98 +145,111 @@ public partial class PartitionTests
 	public async Task Bbb()
 	{
 		var test = TestInitialize();
-		
-		var modelList = test.TextEditorService.TextEditorStateWrap.Value.ModelList;
-		Assert.Equal(0, modelList.Count);
-		
-		var model = new TextEditorModel(
-			new ResourceUri("/unitTesting.cs"),
-	        DateTime.UtcNow,
-	        ExtensionNoPeriodFacts.C_SHARP_CLASS,
-            @"namespace BlazorApp4NetCoreDbg.Persons;
 
-public class Abc
+		var testText = @"public class Person
 {
-	
-}
-".ReplaceLineEndings("\r\n"),
-	        decorationMapper: null,
-	        compilerService: null,
-			partitionSize: 4);
-			
-		test.TextEditorService.ModelApi.RegisterCustom(model);
+	public Person(string firstName, string lastName)
+	{
+		FirstName = firstName;
+		LastName = lastName;
+	}
 
-		Exception? exception = null;
-
-		var uniqueTextEditorWork = new UniqueTextEditorWork(
-            nameof(PartitionTests),
-            editContext =>
-			{
-				try
-				{
-					var modelModifier = editContext.GetModelModifier(model.ResourceUri);
-	
-		            if (modelModifier is null)
-		            {
-		            	Console.WriteLine("modelModifier is null");
-		                return Task.CompletedTask;
-		            }
-		            
-		            var cursor = new TextEditorCursor(isPrimaryCursor: true);
-		            var cursorModifier = new TextEditorCursorModifier(cursor);
-
-                    //
-					cursorModifier.LineIndex = 3;
-                    cursorModifier.ColumnIndex = 0;
-                    var testPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
-
-                    cursorModifier.LineIndex = 2;
-		            cursorModifier.ColumnIndex = 16;
-
-		            var cursorPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
-
-                    cursorModifier.SelectionAnchorPositionIndex = cursorPositionIndex;
-		            cursorModifier.SelectionEndingPositionIndex = cursorPositionIndex + 2;
-
-                    var cursorModifierBag = new CursorModifierBagTextEditor(
-				        Key<TextEditorViewModel>.Empty,
-				        new List<TextEditorCursorModifier> { cursorModifier });
-
-                    modelModifier.Delete(
-				        cursorModifierBag,
-				        columnCount: 0, // Delete the selection, odd to give 0?
-				        expandWord: false,
-				        TextEditorModelModifier.DeleteKind.Delete);
-				
-					Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
-
-					var expectedText = @"namespace BlazorApp4NetCoreDbg.Persons;
-
-public class Abc{
-	
+	public string FirstName { get; set }
+	public string LastName { get; set; }
 }
 ".ReplaceLineEndings("\r\n");
 
-					var actualText = modelModifier.GetAllText();
 
-                    Assert.Equal(expectedText, actualText);
+        for (int indexPartitionSize = 4; indexPartitionSize < testText.Length + 1; indexPartitionSize++)
+		{
+			var modelList = test.TextEditorService.TextEditorStateWrap.Value.ModelList;
 
-					// Console.WriteLine($"\n\nAppleSoupBanana\n\n");
-					return Task.CompletedTask;
-				}
-				catch (Exception e)
+			var model = new TextEditorModel(
+				new ResourceUri($"/unitTesting_{indexPartitionSize}.cs"),
+				DateTime.UtcNow,
+				ExtensionNoPeriodFacts.C_SHARP_CLASS,
+                testText,
+				decorationMapper: null,
+				compilerService: null,
+				partitionSize: indexPartitionSize);
+
+			test.TextEditorService.ModelApi.RegisterCustom(model);
+
+			Exception? exception = null;
+
+			var uniqueTextEditorWork = new UniqueTextEditorWork(
+				nameof(PartitionTests),
+				editContext =>
 				{
-					exception = e;
+					try
+					{
+						var modelModifier = editContext.GetModelModifier(model.ResourceUri);
 
-                    Console.WriteLine(e);
-					return Task.CompletedTask;
-				}
-			});
-			
-		await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+						if (modelModifier is null)
+						{
+							Console.WriteLine("modelModifier is null");
+							return Task.CompletedTask;
+						}
 
-		if (exception is not null)
-			throw exception;
+						var cursor = new TextEditorCursor(isPrimaryCursor: true);
+						var cursorModifier = new TextEditorCursorModifier(cursor);
+
+						cursorModifier.LineIndex = 2;
+						cursorModifier.ColumnIndex = 0;
+						var startLineIndexTwoPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+
+						cursorModifier.LineIndex = 3;
+						cursorModifier.ColumnIndex = 0;
+						var startLineIndexThreePositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+
+						cursorModifier.SelectionAnchorPositionIndex = startLineIndexTwoPositionIndex;
+						cursorModifier.SelectionEndingPositionIndex = startLineIndexThreePositionIndex;
+
+						var cursorModifierBag = new CursorModifierBagTextEditor(
+							Key<TextEditorViewModel>.Empty,
+							new List<TextEditorCursorModifier> { cursorModifier });
+
+						modelModifier.Delete(
+							cursorModifierBag,
+							columnCount: 0, // Delete the selection, odd to give 0?
+							expandWord: false,
+							TextEditorModelModifier.DeleteKind.Delete);
+
+						Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
+
+						var expectedText = @"public class Person
+{
+	{
+		FirstName = firstName;
+		LastName = lastName;
+	}
+
+	public string FirstName { get; set }
+	public string LastName { get; set; }
+}
+".ReplaceLineEndings("\r\n");
+
+						var actualText = modelModifier.GetAllText();
+
+						Assert.Equal(expectedText, actualText);
+
+						// Console.WriteLine($"\n\nAppleSoupBanana\n\n");
+						return Task.CompletedTask;
+					}
+					catch (Exception e)
+					{
+						exception = e;
+
+						Console.WriteLine(e);
+						return Task.CompletedTask;
+					}
+				});
+
+			await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+
+			if (exception is not null)
+				throw new Exception($"indexPartitionSize: {indexPartitionSize}; " + exception.Message);
+        }
 		
 		throw new NotImplementedException("In progress of writing this test");
 	}
