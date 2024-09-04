@@ -219,8 +219,6 @@ public partial class PartitionTests
 							expandWord: false,
 							TextEditorModelModifier.DeleteKind.Delete);
 
-						Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
-
 						var expectedText = @"public class Person
 {
 	{
@@ -237,8 +235,9 @@ public partial class PartitionTests
 
 						Assert.Equal(expectedText, actualText);
 
-						// Console.WriteLine($"\n\nAppleSoupBanana\n\n");
-						return Task.CompletedTask;
+                        // Console.WriteLine($"\n\n{modelModifier.GetAllText()}\n\n");
+                        // Console.WriteLine($"\n\nAppleSoupBanana\n\n");
+                        return Task.CompletedTask;
 					}
 					catch (Exception e)
 					{
@@ -256,6 +255,16 @@ public partial class PartitionTests
         }
 		
 		throw new NotImplementedException("In progress of writing this test");
+
+		// I think I'm just going in circles at this point.
+		// I'm exhausted and just should sleep.
+		//
+		// What I'm doing at the moment is extremely un-wise anyhow.
+		// I'm just sort of smashing my head against the keyboard then running the test and
+		// throwing my hands in the air like "Why does my code not work".
+		//
+		// Tomorrow I need to break down the partition logic into cases conceptually in pseudo code or just written out.
+		// Then I can create a new [Fact] method for each case of what the partition is supposed to do.
 	}
 	
 	public class TestContext
