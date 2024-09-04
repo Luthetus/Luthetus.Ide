@@ -146,6 +146,11 @@ public partial class PartitionTests
 	{
 		var test = TestInitialize();
 
+        // "\r" fails on indexPartitionSize: 9;
+        // "\n" fails on indexPartitionSize: 9;
+        // "\r\n" fails on indexPartitionSize: 7;
+        string lineEndings = "\n";
+
 		var testText = @"public class Person
 {
 	public Person(string firstName, string lastName)
@@ -157,8 +162,7 @@ public partial class PartitionTests
 	public string FirstName { get; set }
 	public string LastName { get; set; }
 }
-".ReplaceLineEndings("\r\n");
-
+".ReplaceLineEndings(lineEndings);
 
         for (int indexPartitionSize = 4; indexPartitionSize < testText.Length + 1; indexPartitionSize++)
 		{
@@ -227,7 +231,7 @@ public partial class PartitionTests
 	public string FirstName { get; set }
 	public string LastName { get; set; }
 }
-".ReplaceLineEndings("\r\n");
+".ReplaceLineEndings(lineEndings);
 
 						var actualText = modelModifier.GetAllText();
 
