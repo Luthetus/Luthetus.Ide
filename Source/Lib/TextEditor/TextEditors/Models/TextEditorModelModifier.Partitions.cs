@@ -328,19 +328,14 @@ public partial class TextEditorModelModifier : ITextEditorModel
 
         while (true)
         {
-        	Console.WriteLine($"if (globalPositionIndex >= CharCount)");
-        	Console.WriteLine($"if ({globalPositionIndex} >= {CharCount})");
             if (globalPositionIndex >= CharCount)
                 return;
 
             for (; i < _partitionList.Count; i++)
             {
-                TextEditorPartition? partition = _partitionList[i];
+            	// Console.WriteLine($"i: {i}");
+                var partition = _partitionList[i];
 
-				Console.WriteLine("if (runningCount + partition.Count > globalPositionIndex)");
-				Console.WriteLine($"if ({runningCount} + {partition.Count} > {globalPositionIndex})");
-				Console.WriteLine($"if ({runningCount + partition.Count} > {globalPositionIndex})");
-				Console.WriteLine($"count: {count}");
                 if (runningCount + partition.Count > globalPositionIndex)
                 {
                     // This is the partition we want to modify.
@@ -379,8 +374,6 @@ public partial class TextEditorModelModifier : ITextEditorModel
                 var countToDelete = ableToDeleteCount < count
                     ? ableToDeleteCount
                     : count;
-                    
-                Console.WriteLine($"countToDelete: {countToDelete}");
 
                 globalPositionIndex += rememberCountBeforeRemoveFromPartition;
                 runningCount += rememberCountBeforeRemoveFromPartition;
@@ -394,15 +387,9 @@ public partial class TextEditorModelModifier : ITextEditorModel
             }
 
             if (count <= 0)
-            {
-            	Console.WriteLine("count == 0");
                 return;
-            }
             if (i == _partitionList.Count)
-            {
-            	Console.WriteLine("i == _partitionList.Count");
                 return;
-            }
         }
     }
 
