@@ -38,13 +38,9 @@ I believe there needs to exist an IDE that is not proprietary software, and not 
 
 ## Donations:
 
-I am currently working full time on this project, and live with my parents.
+I'm in progress of removing references to myself but I need to explain the changes I'm making. I will be getting a full time job so I can ensure funding for this project.
 
-My hope is to reach an income of $800 a month (equal to a job that pays $5 an hour).
-
-The main two avenues I have in mind are
-- Tutoring (email me hunterfreemandev@gmail.com | $20/hour paid via paypal is preferable but I'm open to other offers)
-- And this donation button.
+Thank you to everyone who has supported the project financially up to this point. It allowed me a great length of time to get a jumpstart on things and get the ball rolling. As I said, I'll be getting a full time job myself, so I can ensure funding. But if anyone would like to donate, the button is still here.
 
 [![Donate with PayPal](https://raw.githubusercontent.com/Luthetus/paypal-donate-button_Fork/master/paypal-donate-button.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RCG8QN3KL623Y)
 
@@ -64,4 +60,4 @@ There is a README.md for each of the libraries to aid in installation:
 You may be interested in visiting my [youtube channel](https://www.youtube.com/channel/UCzhWhqYVP40as1MFUesQM9w). I make videos about this repository there.
 
 ## About me (Hunter Freeman)
-- IN PROGRESS: Remove references to myself from documentation and source code.
+- IN PROGRESS: Remove references to myself from documentation and source code. I'm not stepping away from the code. Instead I just feel it inappropriate to include direct references to myself in the documentation / source code.
