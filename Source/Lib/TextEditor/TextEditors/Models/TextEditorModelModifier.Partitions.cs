@@ -303,6 +303,60 @@ public partial class TextEditorModelModifier : ITextEditorModel
         }
     }
 
+    public void __RemoveRange(int targetGlobalPositionIndex, int targetDeleteCount)
+    {
+        var foundTargetGlobalPositionIndex = false;
+        // The 'searchGlobalPositionIndex' is no longer updated after 'foundTargetGlobalPositionIndex' is true
+        // It is just being used to find where the data that should be deleted starts.
+        var searchGlobalPositionIndex = 0;
+        var runningDeleteCount = 0;
+
+        for (int partitionIndex = 0; partitionIndex < PartitionList.Count; partitionIndex++)
+        {
+            var partition = PartitionList[partitionIndex];
+            var relativePositionIndex = 0;
+
+            if (!foundTargetGlobalPositionIndex)
+            {
+                // It is '>' specifically, because '0 + partition.Count' is a count, therefore the
+                // largest index that could exist in the partition is 1 less than the partition.Count.
+                if (searchGlobalPositionIndex + partition.Count > targetGlobalPositionIndex)
+                {
+                    foundTargetGlobalPositionIndex = true;
+                    relativePositionIndex = targetGlobalPositionIndex - searchGlobalPositionIndex;
+                }
+                else
+                {
+                    searchGlobalPositionIndex += partition.Count;
+                    continue;
+                }
+            }
+
+            // This section of code is dependent on the condition branch above it having performed
+            // a 'continue' if it was entered, but still didn't find the 'targetGlobalPositionIndex'
+
+            var availableDeletes = partition.Count - relativePositionIndex;
+            var remainingDeletes = targetDeleteCount - runningDeleteCount;
+
+            var deletes = availableDeletes < remainingDeletes
+                ? availableDeletes
+                : remainingDeletes;
+
+            // WARNING: The code does not currently alter the _partitionList in any way other than this 'SetItem'...
+            //          ...invocation, with regards to this method.
+            //          If one adds other alterations to the _partitionList in this method,
+            //          check if this logic would break.
+            _partitionList = _partitionList.SetItem(
+                partitionIndex,
+                partition.RemoveRange(relativePositionIndex, deletes));
+
+            runningDeleteCount += deletes;
+
+            if (runningDeleteCount >= targetDeleteCount)
+                break;
+        }
+    }
+
     /// <summary>
     /// This method modifies the <see cref="TextEditorPartition"/>.
     /// The method only understands singular char values, 
@@ -317,81 +371,81 @@ public partial class TextEditorModelModifier : ITextEditorModel
     /// then that is a count of 2 here. Even though for the text
     /// editor, it would describe "\r\n" as a count of 1.
     /// </summary>
-    public void __RemoveRange(int globalPositionIndex, int count)
-    {
-        // The inner for loop needs to remember its place when the while loop, loops.
-        int i = 0;
-        int rememberCountBeforeRemoveFromPartition = 0;
-        int indexOfPartitionWithContent = -1;
-        int relativePositionIndex = -1;
-        int runningCount = 0;
-
-        while (true)
-        {
-            if (globalPositionIndex >= CharCount)
-                return;
-
-            for (; i < _partitionList.Count; i++)
-            {
-            	// Console.WriteLine($"i: {i}");
-                var partition = _partitionList[i];
-
-                if (runningCount + partition.Count > globalPositionIndex)
-                {
-                    // This is the partition we want to modify.
-                    relativePositionIndex = globalPositionIndex - runningCount;
-                    indexOfPartitionWithContent = i;
-                    rememberCountBeforeRemoveFromPartition = partition.Count;
-                    break;
-                }
-                else
-                {
-                    runningCount += partition.Count;
-                }
-            }
-
-            if (indexOfPartitionWithContent == -1)
-                throw new LuthetusTextEditorException("if (indexOfPartitionWithContent == -1)");
-
-            if (relativePositionIndex == -1)
-                throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
-
-            // At this point, the first partition with some, or all, of the content to remove has been found.
-            //
-            // Outside of the while loop all the 'for' loop variables were declared.
-            // This lets us remove from this partition, while continuing to loop
-            // over further partitions, in the case that there was more content to remove,
-            // that was on other partitions.
-            //
-            // With the variable 'rememberCountBeforeRemoveFromPartition' we can store the
-            // current count of richCharacters in the partition, prior to removing anything.
-            // This is useful, because the for loop can continue as though nothing happened.
-            {
-                var inPartition = _partitionList[indexOfPartitionWithContent];
-
-                var ableToDeleteCount = inPartition.RichCharacterList.Count - relativePositionIndex;
-
-                var countToDelete = ableToDeleteCount < count
-                    ? ableToDeleteCount
-                    : count;
-
-                globalPositionIndex += rememberCountBeforeRemoveFromPartition;
-                runningCount += rememberCountBeforeRemoveFromPartition;
-                count -= countToDelete;
-
-                var outPartition = inPartition.RemoveRange(relativePositionIndex, countToDelete);
-
-                _partitionList = _partitionList.SetItem(
-                    indexOfPartitionWithContent,
-                    outPartition);
-            }
-
-            if (count <= 0)
-                return;
-            if (i == _partitionList.Count)
-                return;
-        }
-    }
+    //public void __RemoveRange(int globalPositionIndex, int count)
+    //{
+    //    // The inner for loop needs to remember its place when the while loop, loops.
+    //    int i = 0;
+    //    int rememberCountBeforeRemoveFromPartition = 0;
+    //    int indexOfPartitionWithContent = -1;
+    //    int relativePositionIndex = -1;
+    //    int runningCount = 0;
+    //
+    //    while (true)
+    //    {
+    //        if (globalPositionIndex >= CharCount)
+    //            return;
+    //
+    //        for (; i < _partitionList.Count; i++)
+    //        {
+    //        	// Console.WriteLine($"i: {i}");
+    //            var partition = _partitionList[i];
+    //
+    //            if (runningCount + partition.Count > globalPositionIndex)
+    //            {
+    //                // This is the partition we want to modify.
+    //                relativePositionIndex = globalPositionIndex - runningCount;
+    //                indexOfPartitionWithContent = i;
+    //                rememberCountBeforeRemoveFromPartition = partition.Count;
+    //                break;
+    //            }
+    //            else
+    //            {
+    //                runningCount += partition.Count;
+    //            }
+    //        }
+    //
+    //        if (indexOfPartitionWithContent == -1)
+    //            throw new LuthetusTextEditorException("if (indexOfPartitionWithContent == -1)");
+    //
+    //        if (relativePositionIndex == -1)
+    //            throw new LuthetusTextEditorException("if (relativePositionIndex == -1)");
+    //
+    //        // At this point, the first partition with some, or all, of the content to remove has been found.
+    //        //
+    //        // Outside of the while loop all the 'for' loop variables were declared.
+    //        // This lets us remove from this partition, while continuing to loop
+    //        // over further partitions, in the case that there was more content to remove,
+    //        // that was on other partitions.
+    //        //
+    //        // With the variable 'rememberCountBeforeRemoveFromPartition' we can store the
+    //        // current count of richCharacters in the partition, prior to removing anything.
+    //        // This is useful, because the for loop can continue as though nothing happened.
+    //        {
+    //            var inPartition = _partitionList[indexOfPartitionWithContent];
+    //
+    //            var ableToDeleteCount = inPartition.RichCharacterList.Count - relativePositionIndex;
+    //
+    //            var countToDelete = ableToDeleteCount < count
+    //                ? ableToDeleteCount
+    //                : count;
+    //
+    //            globalPositionIndex += rememberCountBeforeRemoveFromPartition;
+    //            runningCount += rememberCountBeforeRemoveFromPartition;
+    //            count -= countToDelete;
+    //
+    //            var outPartition = inPartition.RemoveRange(relativePositionIndex, countToDelete);
+    //
+    //            _partitionList = _partitionList.SetItem(
+    //                indexOfPartitionWithContent,
+    //                outPartition);
+    //        }
+    //
+    //        if (count <= 0)
+    //            return;
+    //        if (i == _partitionList.Count)
+    //            return;
+    //    }
+    //}
 
     /*public void __RemoveRange(int argStartGlobalPositionIndex, int argTargetDeleteCount)
     {

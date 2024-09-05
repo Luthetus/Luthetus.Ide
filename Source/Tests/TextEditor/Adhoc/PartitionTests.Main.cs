@@ -318,7 +318,44 @@ public partial class PartitionTests
 	[Fact]
 	public async Task ThreePartitionEdit_Delete()
 	{
-		var test = TestInitialize();
+        // Input
+        // =====
+        // var sourceText = "\r\n\r\n\r\n\r\n";
+        // partitionSize: 4
+
+        // Build Partition
+        // ===============
+        // []
+        // [\r]
+        // [\r\n]
+        // [\r\n\r]
+        // [\r\n\r\n]
+        // Attempt to insert '\r'
+        // Cause a split
+        // [\r\n][\r\n]
+        // Again, attempt to insert '\r'
+        // [\r\n][\r\n\r]
+        // [\r\n][\r\n\r\n]
+        // Attempt to insert '\r'
+        // Cause a split
+        // [\r\n][\r\n][\r\n]
+        // Again, attempt to insert '\r'
+        // [\r\n][\r\n][\r\n\r\n]
+
+        // Delete Text via text selection, then delete key
+        // ===============================================
+        // "[\r\n][\r\n][\r\n\r\n]"
+        //   ^^^^^^^^^^^^^^^^
+
+        // Method invocation should look like:
+        // ===================================
+        // __RemoveRange(0, 6);
+
+        // End Result:
+        // ===========
+        // "[][][\r\n]"
+
+        var test = TestInitialize();
 		
 		var sourceText = "\r\n\r\n\r\n\r\n";
 		
