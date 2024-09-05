@@ -32,6 +32,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\Lib\Ide\Ide.RazorLib\Luthetus.Ide.RazorLib.csproj" />
+	  <ProjectReference Include="..\..\..\Lib\Extensions\Extensions.Config\Luthetus.Extensions.Config.csproj" />
 	</ItemGroup>
 
 

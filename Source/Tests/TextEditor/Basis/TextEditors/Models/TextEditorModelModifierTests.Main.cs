@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Decorations.Models;
@@ -1048,7 +1049,7 @@ public partial class TextEditorModelModifierTests : TextEditorTestBase
         Assert.Equal(0, cursorModifier.ColumnIndex);
 
         modelModifier.HandleKeyboardEvent(
-            new KeyboardEventArgs
+            new KeymapArgs
             {
                 Key = KeyboardKeyFacts.WhitespaceCharacters.NEW_LINE.ToString(),
                 Code = KeyboardKeyFacts.WhitespaceCodes.ENTER_CODE
