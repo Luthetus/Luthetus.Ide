@@ -462,7 +462,7 @@ public partial class PartitionTests
 	/// then if my visualization introduces inaccuracies I can add a more
 	/// 1 to 1 assertion by iterating over the partitions and asserting the richCharacter.Value.
 	/// </summary>
-	public void LogAndNonScientificallyAssertPartitionList(
+	private void LogAndNonScientificallyAssertPartitionList(
 		ITextEditorModel model,
 		string expectedVisualizationText)
 	{
@@ -623,18 +623,18 @@ PartitionSize = 4
 								TextEditorModelModifier.DeleteKind.Delete);
 	
 							var expectedText = @"public class Person
+{
 	{
-		{
-			FirstName = firstName;
-			LastName = lastName;
-		}
-	
-		public string FirstName { get; set }
-		public string LastName { get; set; }
+		FirstName = firstName;
+		LastName = lastName;
 	}
-	".ReplaceLineEndings(lineEnding);
-	
-							var actualText = modelModifier.GetAllText();
+
+	public string FirstName { get; set }
+	public string LastName { get; set; }
+}
+".ReplaceLineEndings(lineEnding);
+
+                            var actualText = modelModifier.GetAllText();
 	
 							Assert.Equal(expectedText, actualText);
 	                        return Task.CompletedTask;
