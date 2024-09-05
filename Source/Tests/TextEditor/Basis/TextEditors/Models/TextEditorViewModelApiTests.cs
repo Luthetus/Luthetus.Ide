@@ -7,6 +7,7 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib;
@@ -207,7 +208,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void MoveCursor()
@@ -216,7 +217,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// </summary>
     [Fact]
     public void MoveCursor_SelectText()
@@ -244,7 +245,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Select 1 character
                 textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                         ShiftKey = true,
@@ -263,7 +264,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
@@ -294,7 +295,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 // Select 3 characters
                 {
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -304,7 +305,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                         viewModelModifier,
                         cursorModifierBag);
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -314,7 +315,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 						viewModelModifier,
 						cursorModifierBag);
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -333,7 +334,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Move left, no shift key.
                 textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                     },
@@ -351,7 +352,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
@@ -386,7 +387,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // If one has the cursor start at (lineIndex 0, columnIndex 0), this isn't possible.
                     {
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -395,7 +396,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 					        viewModelModifier,
 					        cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -404,7 +405,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                             viewModelModifier,
                             cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -423,7 +424,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // Now one can select left, to get a small selection ending position.
                     {
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -433,7 +434,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                             viewModelModifier,
                             cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -443,7 +444,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                             viewModelModifier,
                             cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -463,7 +464,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Move left, no shift key.
                 textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                     },
@@ -481,7 +482,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
@@ -512,7 +513,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 // Select 3 characters
                 {
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -522,7 +523,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 						viewModelModifier,
 						cursorModifierBag);
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -532,7 +533,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 						viewModelModifier,
 						cursorModifierBag);
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -551,7 +552,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Move left, no shift key.
                 textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
                     },
@@ -569,7 +570,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
@@ -604,7 +605,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // If one has the cursor start at (lineIndex 0, columnIndex 0), this isn't possible.
                     {
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -613,7 +614,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -622,7 +623,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -641,7 +642,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // Now one can select left, to get a small selection ending position.
                     {
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -651,7 +652,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -661,7 +662,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -681,7 +682,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Move left, no shift key.
                 textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_DOWN,
                     },
@@ -699,7 +700,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
@@ -730,7 +731,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 // Select 3 characters
                 {
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -740,7 +741,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 						viewModelModifier,
 						cursorModifierBag);
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -750,7 +751,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 						viewModelModifier,
 						cursorModifierBag);
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -769,7 +770,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Move left, no shift key.
                 textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
                     },
@@ -790,7 +791,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
@@ -825,7 +826,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // If one has the cursor start at (lineIndex 0, columnIndex 0), this isn't possible.
                     {
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -834,7 +835,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -843,7 +844,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -862,7 +863,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // Now one can select left, to get a small selection ending position.
                     {
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -872,7 +873,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -882,7 +883,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -902,7 +903,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Move left, no shift key.
                 textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_UP,
                     },
@@ -920,7 +921,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionAnchorPosition refers to the anchor position being smaller than the ending position.
     /// </summary>
@@ -951,7 +952,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                 // Select 3 characters
                 {
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -961,7 +962,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 						viewModelModifier,
 						cursorModifierBag);
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -971,7 +972,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 						viewModelModifier,
 						cursorModifierBag);
                     textEditorService.ViewModelApi.MoveCursor(
-                        new KeyboardEventArgs
+                        new KeymapArgs
                         {
                             Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             ShiftKey = true,
@@ -990,7 +991,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Move right, no shift key.
                 textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                     },
@@ -1008,7 +1009,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursor(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel})"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursor(KeymapArgs, ResourceUri, Key{TextEditorViewModel})"/>
     /// ----------
     /// SmallSelectionEndingPosition refers to the ending position being smaller than the anchor.
     /// </summary>
@@ -1043,7 +1044,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // If one has the cursor start at (lineIndex 0, columnIndex 0), this isn't possible.
                     {
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -1052,7 +1053,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -1061,7 +1062,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                             },
@@ -1080,7 +1081,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
                     // Now one can select left, to get a small selection ending position.
                     {
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -1090,7 +1091,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -1100,7 +1101,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 							viewModelModifier,
 							cursorModifierBag);
                         textEditorService.ViewModelApi.MoveCursor(
-                            new KeyboardEventArgs
+                            new KeymapArgs
                             {
                                 Key = KeyboardKeyFacts.MovementKeys.ARROW_LEFT,
                                 ShiftKey = true,
@@ -1120,7 +1121,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
 
                 // Move right, no shift key.
                 textEditorService.ViewModelApi.MoveCursor(
-                    new KeyboardEventArgs
+                    new KeymapArgs
                     {
                         Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
                     },
@@ -1138,7 +1139,7 @@ public class TextEditorViewModelApiTests : TextEditorTestBase
     }
 
     /// <summary>
-    /// <see cref="TextEditorViewModelApi.MoveCursorUnsafe(KeyboardEventArgs, ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
+    /// <see cref="TextEditorViewModelApi.MoveCursorUnsafe(KeymapArgs, ResourceUri, Key{TextEditorViewModel}, TextEditorCursorModifier)"/>
     /// </summary>
     [Fact]
     public void MoveCursorUnsafe()

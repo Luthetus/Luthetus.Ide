@@ -6,6 +6,8 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.Misc;
+using Luthetus.Common.RazorLib.Keyboards.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
 using Luthetus.TextEditor.RazorLib.Rows.Models;
@@ -431,7 +433,7 @@ public class TextEditorModelApiTests
     }
 
     /// <summary>
-    /// <see cref="TextEditorModelApi.HandleKeyboardEvent(ResourceUri, Key{TextEditorViewModel}, KeyboardEventArgs, CancellationToken)"/>
+    /// <see cref="TextEditorModelApi.HandleKeyboardEvent(ResourceUri, Key{TextEditorViewModel}, KeymapArgs, CancellationToken)"/>
     /// </summary>
     [Fact]
     public void HandleKeyboardEventEnqueue()
@@ -449,7 +451,7 @@ public class TextEditorModelApiTests
 
         var key = "a";
 
-        var keyboardEventArgs = new KeyboardEventArgs
+        var keymapArgs = new KeymapArgs
         {
             Key = key
         };
@@ -469,7 +471,7 @@ public class TextEditorModelApiTests
                     editContext,
 					modelModifier,
 					cursorModifierBag,
-                    keyboardEventArgs,
+                    keymapArgs,
                     CancellationToken.None);
                 return Task.CompletedTask;
             });

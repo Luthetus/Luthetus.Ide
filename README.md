@@ -64,4 +64,4 @@ There is a README.md for each of the libraries to aid in installation:
 You may be interested in visiting my [youtube channel](https://www.youtube.com/channel/UCzhWhqYVP40as1MFUesQM9w). I make videos about this repository there.
 
 ## About me (Hunter Freeman)
-- https://github.com/Luthetus/Luthetus.About
+- IN PROGRESS: Remove references to myself from documentation and source code.

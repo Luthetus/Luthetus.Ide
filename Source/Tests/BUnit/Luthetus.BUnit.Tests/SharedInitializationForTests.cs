@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Clipboards.Models;
 using Luthetus.Common.RazorLib.Storages.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
+using Luthetus.Extensions.Config.Installations.Models;
 
 namespace Luthetus.BUnit.Tests;
 
@@ -21,11 +22,13 @@ public static class SharedInitializationForTests
 			new BackgroundTaskService());
 		
 		ctx.Services.AddLuthetusIdeRazorLibServices(hostingInformation);
-		
+		ctx.Services.AddLuthetusConfigServices(hostingInformation);
+
 		ctx.Services.AddFluxor(options => options.ScanAssemblies(
 			typeof(LuthetusCommonConfig).Assembly,
 			typeof(LuthetusTextEditorConfig).Assembly,
-			typeof(LuthetusIdeConfig).Assembly));
+			typeof(LuthetusIdeConfig).Assembly,
+            typeof(Luthetus.Extensions.DotNet.Installations.Models.ServiceCollectionExtensions).Assembly));
 
 		// Overwrite some services.
 		//

@@ -7,6 +7,7 @@
 @using Luthetus.Common.RazorLib.Keys.Models
 @using Luthetus.Common.RazorLib.Notifications.Displays
 @using Luthetus.Common.RazorLib.Notifications.Models
+@using Luthetus.Common.RazorLib.Keymaps.Models
 @using Luthetus.TextEditor.RazorLib
 @using Luthetus.TextEditor.RazorLib.Events.Models
 @using Luthetus.TextEditor.RazorLib.Installations.Models
@@ -28,14 +29,14 @@
 
 		var upstreamOnKeyDown = new OnKeyDownLateBatching(
 	        testData.ComponentData,
-	        new KeyboardEventArgs { Key = "a", Code = "KeyA" },
+	        new KeymapArgs { Key = "a", Code = "KeyA" },
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(upstreamOnKeyDown);
 
 		var downstreamOnKeyDown = new OnKeyDownLateBatching(
 	        testData.ComponentData,
-	        new KeyboardEventArgs { Key = "b", Code = "KeyB" },
+	        new KeymapArgs { Key = "b", Code = "KeyB" },
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(downstreamOnKeyDown);
@@ -45,7 +46,7 @@
 		
 		// Consecutive events of this kind are batched.
 		var onKeyDown = (OnKeyDownLateBatching)queue.BackgroundTaskList.Single();
-		Assert.Equal(2, onKeyDown.KeymapArgsList.Count);
+		Assert.Equal(2, onKeyDown.KeymapArgsList.Length);
 		Assert.Equal(upstreamOnKeyDown, onKeyDown);
 		Assert.Equal(upstreamOnKeyDown.KeymapArgsList[0], onKeyDown.KeymapArgsList[0]);
 		Assert.Equal(downstreamOnKeyDown.KeymapArgsList.Single(), onKeyDown.KeymapArgsList[1]);
@@ -76,7 +77,7 @@
 
 		var downstreamOnKeyDown = new OnKeyDownLateBatching(
 	        testData.ComponentData,
-	        new KeyboardEventArgs { Key = "a", Code = "KeyA" },
+	        new KeymapArgs { Key = "a", Code = "KeyA" },
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
 		testData.TextEditorService.Post(downstreamOnKeyDown);
@@ -105,7 +106,7 @@
 
 		var onKeyDown = new OnKeyDownLateBatching(
 	        testData.ComponentData,
-	        new KeyboardEventArgs { Key = "a", Code = "KeyA" },
+	        new KeymapArgs { Key = "a", Code = "KeyA" },
 	        testData.InModel.ResourceUri,
 	        testData.ViewModelKey);
   
