@@ -655,8 +655,174 @@ PartitionSize = 4
 	        }
 	    }
 	}
-	
-	public class TestContext
+
+    [Fact]
+    public async Task Another_Large_Throughput_Test()
+    {
+        var test = TestInitialize();
+
+        var lineEndingList = new[] { "\r\n", "\r", "\n", };
+
+        for (int lineEndingIndex = 0; lineEndingIndex < lineEndingList.Length; lineEndingIndex++)
+        {
+            var lineEnding = lineEndingList[lineEndingIndex];
+
+            var lineEndingText = "a";
+
+            if (lineEnding == "\r")
+                lineEndingText = "\\r";
+            else if (lineEnding == "\n")
+                lineEndingText = "\\n";
+            else if (lineEnding == "\r\n")
+                lineEndingText = "\\r\\n";
+
+            var testText = SAMPLE_CASE_THAT_HAS_LINE_ENDINGS_BREAK_BUG.ReplaceLineEndings(lineEnding);
+
+            for (int indexPartitionSize = 0; indexPartitionSize < 12; indexPartitionSize++)
+            {
+				if (indexPartitionSize == 0)
+					indexPartitionSize = 2000;
+				else if (indexPartitionSize == 1)
+                    indexPartitionSize = 2001;
+				else if (indexPartitionSize == 2)
+                    indexPartitionSize = 2002;
+				else if (indexPartitionSize == 3)
+                    indexPartitionSize = 2003;
+				else if (indexPartitionSize == 4)
+                    indexPartitionSize = 2004;
+				else if (indexPartitionSize == 5)
+                    indexPartitionSize = 2005;
+                else if (indexPartitionSize == 6)
+                    indexPartitionSize = 2006;
+                else if (indexPartitionSize == 7)
+                    indexPartitionSize = 2007;
+                else if (indexPartitionSize == 8)
+                    indexPartitionSize = 2008;
+                else if (indexPartitionSize == 9)
+                    indexPartitionSize = 2009;
+                else if (indexPartitionSize == 10)
+                    indexPartitionSize = 2010;
+                else if (indexPartitionSize == 11)
+                    indexPartitionSize = 4_098;
+
+                var modelList = test.TextEditorService.TextEditorStateWrap.Value.ModelList;
+
+                var model = new TextEditorModel(
+                    new ResourceUri($"/unitTesting_{lineEndingText}_{indexPartitionSize}.cs"),
+                    DateTime.UtcNow,
+                    ExtensionNoPeriodFacts.C_SHARP_CLASS,
+                    testText,
+                    decorationMapper: null,
+                    compilerService: null,
+                    partitionSize: indexPartitionSize);
+
+                test.TextEditorService.ModelApi.RegisterCustom(model);
+
+                Exception? exception = null;
+
+                var uniqueTextEditorWork = new UniqueTextEditorWork(
+                    nameof(PartitionTests),
+                    editContext =>
+                    {
+                        try
+                        {
+                            var modelModifier = editContext.GetModelModifier(model.ResourceUri);
+
+                            if (modelModifier is null)
+                            {
+                                Console.WriteLine("modelModifier is null");
+                                return Task.CompletedTask;
+                            }
+
+                            var cursor = new TextEditorCursor(isPrimaryCursor: true);
+                            var cursorModifier = new TextEditorCursorModifier(cursor);
+
+                            cursorModifier.LineIndex = 39;
+                            cursorModifier.ColumnIndex = 1;
+                            var anchorPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+
+                            cursorModifier.LineIndex = 754;
+                            cursorModifier.ColumnIndex = 0;
+                            var endingPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
+
+                            cursorModifier.SelectionAnchorPositionIndex = anchorPositionIndex;
+                            cursorModifier.SelectionEndingPositionIndex = endingPositionIndex;
+
+                            var cursorModifierBag = new CursorModifierBagTextEditor(
+                                Key<TextEditorViewModel>.Empty,
+                                new List<TextEditorCursorModifier> { cursorModifier });
+
+                            modelModifier.Delete(
+                                cursorModifierBag,
+                                columnCount: 0, // Delete the selection, odd to give 0?
+                                expandWord: false,
+                                TextEditorModelModifier.DeleteKind.Delete);
+
+                            var expectedText = @"using System.Collections.Immutable;
+using System.Runtime.InteropServices;
+using Fluxor;
+using CliWrap.EventStream;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Namespaces.Models;
+using Luthetus.Common.RazorLib.Storages.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.CompilerServices.DotNetSolution.Models.Project;
+using Luthetus.CompilerServices.DotNetSolution.Models;
+using Luthetus.CompilerServices.DotNetSolution.SyntaxActors;
+using Luthetus.CompilerServices.DotNetSolution.CompilerServiceCase;
+using Luthetus.Ide.RazorLib.CodeSearches.States;
+using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
+using Luthetus.Ide.RazorLib.Terminals.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.StartupControls.Models;
+using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Extensions.DotNet.DotNetSolutions.States;
+using Luthetus.Extensions.DotNet.CompilerServices.States;
+using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
+using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
+using Luthetus.Extensions.DotNet.CommandLines.Models;
+
+namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
+
+public class DotNetSolutionIdeApi
+{}
+".ReplaceLineEndings(lineEnding);
+
+                            var actualText = modelModifier.GetAllText();
+
+                            Assert.Equal(expectedText, actualText);
+                            return Task.CompletedTask;
+                        }
+                        catch (Exception e)
+                        {
+                            exception = e;
+                            return Task.CompletedTask;
+                        }
+                    });
+
+                await test.TextEditorService.PostAsync(uniqueTextEditorWork).ConfigureAwait(false);
+
+
+
+                if (exception is not null)
+                    throw new Exception($"lineEndingText: {lineEndingText}; indexPartitionSize: {indexPartitionSize}; " + exception.Message);
+            }
+        }
+    }
+
+    public class TestContext
 	{
 		public TestContext(LuthetusHostingInformation hostingInformation, IServiceProvider serviceProvider)
 		{
