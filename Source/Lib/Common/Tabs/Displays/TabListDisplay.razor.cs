@@ -10,7 +10,7 @@ using Luthetus.Common.RazorLib.Notifications.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
-public partial class TabListDisplay : ComponentBase
+public partial class TabListDisplay : ComponentBase, IDisposable
 {
 	[Inject]
 	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
@@ -22,6 +22,10 @@ public partial class TabListDisplay : ComponentBase
 	
 	[Parameter]
 	public string CssClassString { get; set; } = string.Empty;
+	
+	private readonly object _disposeLock = new();
+	
+	private bool _disposed;
 
     public async Task NotifyStateChangedAsync()
 	{
@@ -115,7 +119,30 @@ public partial class TabListDisplay : ComponentBase
 		// but this object reference was still available.
 		try
 		{
-			await InvokeAsync(StateHasChanged);
+			await InvokeAsync(() =>
+			{
+				lock (_disposeLock)
+		    	{
+		    		if (!_disposed)
+		    		{
+		    			StateHasChanged();
+		    		}
+		    		else
+		    		{
+			    		var title = $"{nameof(TabListDisplay)} race condition occurred.\n";
+						var message = "the issue was prevented";
+					
+						NotificationHelper.DispatchError(
+					        title,
+					        message,
+					        CommonComponentRenderers,
+					        Dispatcher,
+					        TimeSpan.FromSeconds(6));
+					
+						Console.WriteLine(title + message);
+		    		}
+		    	}
+			});
 		}
 		catch (Exception e)
 		{
@@ -151,5 +178,13 @@ public partial class TabListDisplay : ComponentBase
 
         Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
         return Task.CompletedTask;
+    }
+    
+    public void Dispose()
+    {
+    	lock (_disposeLock)
+    	{
+    		_disposed = true;
+    	}
     }
 }
