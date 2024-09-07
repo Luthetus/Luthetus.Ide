@@ -39,10 +39,7 @@ public class TreeViewHelperCSharpProject
 					cSharpProjectTreeView.FileSystemProvider,
 					cSharpProjectTreeView.EnvironmentProvider,
 					true,
-					false)
-				{
-					TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-				};
+					false);
 			});
 
 		var uniqueDirectories = UniqueFileFacts.GetUniqueFilesByContainerFileExtension(ExtensionNoPeriodFacts.C_SHARP_PROJECT);
@@ -79,10 +76,7 @@ public class TreeViewHelperCSharpProject
 					cSharpProjectTreeView.FileSystemProvider,
 					cSharpProjectTreeView.EnvironmentProvider,
 					false,
-					false)
-				{
-					TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-				};
+					false);
 			});
 
 		var cSharpProjectDependenciesTreeViewNode = new TreeViewCSharpProjectDependencies(
@@ -92,15 +86,14 @@ public class TreeViewHelperCSharpProject
 			cSharpProjectTreeView.FileSystemProvider,
 			cSharpProjectTreeView.EnvironmentProvider,
 			true,
-			false)
-		{
-			TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-		};
-
-		return new TreeViewNoType[] { cSharpProjectDependenciesTreeViewNode }
-			.Union(foundUniqueDirectories)
-			.Union(foundDefaultDirectories)
-			.Union(childFileTreeViewModels)
-			.ToList();
+			false);
+	    
+	    var result = new List<TreeViewNoType>();
+	    result.Add(cSharpProjectDependenciesTreeViewNode);
+	    result.AddRange(foundUniqueDirectories);
+	    result.AddRange(foundDefaultDirectories);
+	    result.AddRange(childFileTreeViewModels);
+	    
+	    return result;
 	}
 }

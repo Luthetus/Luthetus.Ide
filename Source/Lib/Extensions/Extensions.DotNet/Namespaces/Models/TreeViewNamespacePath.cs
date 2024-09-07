@@ -63,12 +63,17 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
 
     public override async Task LoadChildListAsync()
     {
+    	// Codebehinds: Children need to
+    	// - new instance
+		// - try map to old instance
+		// - opportunity for child to do something (like take siblings as their children)
+    
         try
         {
             var previousChildren = new List<TreeViewNoType>(ChildList);
-
             var newChildList = new List<TreeViewNoType>();
 
+			// new instance
             if (Item.AbsolutePath.IsDirectory)
             {
                 newChildList = await TreeViewHelperNamespacePathDirectory.LoadChildrenAsync(this).ConfigureAwait(false);
@@ -88,8 +93,52 @@ public class TreeViewNamespacePath : TreeViewWithType<NamespacePath>
                 }
             }
 
+			// try map to old instance
             ChildList = newChildList;
             LinkChildren(previousChildren, ChildList);
+            
+            // opportunity for child to do something (like take siblings as their children)
+            {
+	            var shouldPermitChildToTakeSiblingsAsChildren = false;
+	            
+	            if (Item.AbsolutePath.IsDirectory)
+	            {
+	                shouldPermitChildToTakeSiblingsAsChildren = true;
+	            }
+	            else
+	            {
+	                switch (Item.AbsolutePath.ExtensionNoPeriod)
+	                {
+	                    case ExtensionNoPeriodFacts.C_SHARP_PROJECT:
+	                        shouldPermitChildToTakeSiblingsAsChildren = true;
+	                        break;
+	                }
+	            }
+	            
+	            if (shouldPermitChildToTakeSiblingsAsChildren)
+	            {
+	            	// Codebehind logic
+					var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(newChildList);
+			
+					// Note that this loops over the original, and passes the copy
+			        foreach (var child in newChildList)
+			        {
+			            child.RemoveRelatedFilesFromParent(copyOfChildrenToFindRelatedFiles);
+			        }
+			
+			        // The parent directory gets what is left over after the
+			        // children take their respective 'code behinds'
+			        newChildList = copyOfChildrenToFindRelatedFiles;
+			        
+			        // This time, 'LinkChildren(...)' is invoked
+			        // in order to wire up the 'TreeViewNoType.IndexAmongSiblings'.
+			        // 
+			        // This index is used by the keyboard events to move
+			        // throughout the tree view.
+		            ChildList = newChildList;
+		            LinkChildren(ChildList, ChildList);
+	            }
+	        }
         }
         catch (Exception exception)
         {

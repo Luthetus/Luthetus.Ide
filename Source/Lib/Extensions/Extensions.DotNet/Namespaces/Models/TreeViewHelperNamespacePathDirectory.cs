@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Namespaces.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Extensions.DotNet.Namespaces.Models;
@@ -34,10 +34,7 @@ public class TreeViewHelperNamespacePathDirectory
                     directoryTreeView.FileSystemProvider,
                     directoryTreeView.EnvironmentProvider,
                     true,
-                    false)
-                {
-                    TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-                };
+                    false);
             });
 
         var filePathStringsList = await directoryTreeView.FileSystemProvider.Directory
@@ -59,23 +56,13 @@ public class TreeViewHelperNamespacePathDirectory
                     directoryTreeView.FileSystemProvider,
                     directoryTreeView.EnvironmentProvider,
                     false,
-                    false)
-                {
-                    TreeViewChangedKey = Key<TreeViewChanged>.NewKey()
-                };
+                    false);
             }).ToList();
 
-        var copyOfChildrenToFindRelatedFiles = new List<TreeViewNoType>(childFileTreeViewModels);
-
-        foreach (var child in childFileTreeViewModels)
-        {
-            child.RemoveRelatedFilesFromParent(copyOfChildrenToFindRelatedFiles);
-        }
-
-        // The parent directory gets what is left over after the
-        // children take their respective 'code behinds'
-        childFileTreeViewModels = copyOfChildrenToFindRelatedFiles;
-
-        return childDirectoryTreeViewModels.Union(childFileTreeViewModels).ToList();
+		var result = new List<TreeViewNoType>();
+		result.AddRange(childDirectoryTreeViewModels);
+		result.AddRange(childFileTreeViewModels);
+		
+        return result;
     }
 }
