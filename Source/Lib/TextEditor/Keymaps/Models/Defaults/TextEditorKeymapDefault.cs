@@ -45,8 +45,6 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
 
     private void AddDefaultCtrlModifiedKeymap()
     {
-        AddDefaultCtrlAltModifiedKeymap();
-
         TryRegister(new KeymapArgs()
         {
             Key = "x",
@@ -144,14 +142,6 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.DoNothingDiscard);
-        
-        TryRegister(new KeymapArgs()
-        {
-            Key = "p",
-            Code = "KeyP",
-            CtrlKey = true,
-            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
-        }, TextEditorCommandDefaultFacts.DoNothingDiscard);
 
         TryRegister(new KeymapArgs()
         {
@@ -201,22 +191,6 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.NewLineAbove);
-        
-        TryRegister(new KeymapArgs()
-        {
-            Key = " ",
-            Code = KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE,
-            CtrlKey = true,
-            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
-        }, TextEditorCommandDefaultFacts.DoNothingDiscard);
-        
-        TryRegister(new KeymapArgs()
-        {
-            Key = ",",
-            Code = "Comma",
-            CtrlKey = true,
-            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
-        }, TextEditorCommandDefaultFacts.DoNothingDiscard);
         
         TryRegister(new KeymapArgs()
         {
@@ -294,40 +268,6 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             ShiftKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.HasSelectionLayer.Key
         }, TextEditorCommandDefaultFacts.IndentLess);
-    }
-
-    private void AddDefaultCtrlAltModifiedKeymap()
-    {
-        // 65 to 90 provides capital letters (both sides inclusive) (ASCII)
-        for (int i = 65; i <= 90; i++)
-        {
-            var character = (char)i;
-
-            _ = TryRegister(new KeymapArgs()
-            {
-                Key = $"{character}",
-                Code = $"Key{character}",
-                ShiftKey = true,
-                CtrlKey = true,
-                AltKey = true,
-                LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
-            }, TextEditorCommandDefaultFacts.DoNothingDiscard);
-        }
-
-        // 97 to 122 provides lowercase letters (both sides inclusive) (ASCII)
-        for (int i = 97; i <= 122; i++)
-        {
-            var character = (char)i;
-
-            _ = TryRegister(new KeymapArgs()
-            {
-                Key = $"{character}",
-                Code = $"Key{char.ToUpperInvariant(character)}",
-                CtrlKey = true,
-                AltKey = true,
-                LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
-            }, TextEditorCommandDefaultFacts.DoNothingDiscard);
-        }
     }
 
     private void AddDefaultMiscKeymap()
