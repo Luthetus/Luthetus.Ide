@@ -1,15 +1,35 @@
 @using Luthetus.Common.RazorLib.Dropdowns.Displays
 @using Luthetus.Common.RazorLib.Dropdowns.Models
+@using Luthetus.Common.RazorLib.Notifications.Models
 
-<div class="luth_polymorphic-tab-list @CssClassString">
-
-	@{ var localTabList = TabList; }
-
-	<CascadingValue Name="@nameof(TabDisplay.HandleTabButtonOnContextMenu)" Value="HandleTabButtonOnContextMenu">
-		@foreach (var tab in localTabList)
-		{
-			<TabDisplay @key="tab.DynamicViewModelKey"
-						Tab="tab"/>
-		}
-	</CascadingValue>
-</div>
+<ErrorBoundary Context="error">
+	<ChildContent>
+		<div class="luth_polymorphic-tab-list @CssClassString">
+		
+			@{ var localTabList = TabList; }
+		
+			<CascadingValue Name="@nameof(TabDisplay.HandleTabButtonOnContextMenu)" Value="HandleTabButtonOnContextMenu">
+				@foreach (var tab in localTabList)
+				{
+					<TabDisplay @key="tab.DynamicViewModelKey"
+								Tab="tab"/>
+				}
+			</CascadingValue>
+		</div>
+	</ChildContent>
+    <ErrorContent>
+    	@{
+	    	var title = $"{nameof(TabListDisplay)} race condition occurred.\n";
+			var message = error.ToString();
+		
+			NotificationHelper.DispatchError(
+		        title,
+		        message,
+		        CommonComponentRenderers,
+		        Dispatcher,
+		        TimeSpan.FromSeconds(6));
+		
+			Console.WriteLine(title + message);
+    	}
+    </ErrorContent>
+</ErrorBoundary>
