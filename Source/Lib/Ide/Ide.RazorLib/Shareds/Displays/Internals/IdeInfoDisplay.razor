@@ -172,10 +172,22 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.6.0 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.5.1 </em> (2024-09-07)</div>
                 <ul>
                     <li>
-                        WIP_DESCRIPTION
+                        Fix tab drag off text editor group sometimes cause fatal exception due
+                        to null reference exception.
+                    </li>
+                    <li>
+                        Fix text erroneously written out when holding non-shift modifier(s).
+                        (i.e.: { 'Ctrl' + 'c' } to copy writing out the letter 'c' to the text editor)
+                    </li>
+                    <li>
+                        Given the change "Fix text erroneously written out when holding non-shift modifier(s)."
+                        all previously added hacks to fix this have been removed for the more correct implementation.
+                    </li>
+                    <li>
+                        Add: DropdownHelper.cs, less code duplication of dropdown logic.
                     </li>
                 </ul>
             </div>
