@@ -87,6 +87,18 @@ public partial class MenuOptionDisplay : ComponentBase
 
         await base.OnParametersSetAsync();
     }
+    
+    private Task RenderDropdownAsync(MenuRecord localSubMenu)
+    {
+    	return DropdownHelper.RenderDropdownAsync(
+    		Dispatcher,
+    		JsRuntime.GetLuthetusCommonApi(),
+			_menuOptionHtmlElementId,
+			DropdownOrientation.Right,
+			_subMenuDropdownKey,
+			localSubMenu,
+			FocusElementReference);
+    }
 
     private async Task HandleOnClick()
     {
@@ -108,7 +120,7 @@ public partial class MenuOptionDisplay : ComponentBase
             if (HasSubmenuActive)
                 Dispatcher.Dispatch(new DropdownState.DisposeAction(_subMenuDropdownKey));
             else
-				await RenderDropdownOnClick(localSubMenu);
+				await RenderDropdownAsync(localSubMenu);
         }
 
         if (MenuOptionRecord.WidgetRendererType is not null)
@@ -116,31 +128,6 @@ public partial class MenuOptionDisplay : ComponentBase
             _shouldDisplayWidget = !_shouldDisplayWidget;
         }
     }
-
-	private async Task RenderDropdownOnClick(MenuRecord localSubMenu)
-	{
-		var jsRuntimeCommonApi = JsRuntime.GetLuthetusCommonApi();
-
-		var buttonDimensions = await jsRuntimeCommonApi
-			.MeasureElementById(_menuOptionHtmlElementId)
-			.ConfigureAwait(false);
-
-		var dropdownRecord = new DropdownRecord(
-			_subMenuDropdownKey,
-			buttonDimensions.LeftInPixels + buttonDimensions.WidthInPixels,
-			buttonDimensions.TopInPixels,
-			typeof(MenuDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(MenuDisplay.MenuRecord),
-					localSubMenu
-				}
-			},
-			FocusElementReference);
-
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-	}
 
     private Task HandleOnKeyDown(KeyboardEventArgs keyboardEventArgs)
     {
@@ -150,7 +137,7 @@ public partial class MenuOptionDisplay : ComponentBase
             case KeyboardKeyFacts.AlternateMovementKeys.ARROW_RIGHT:
 				var localSubMenu = MenuOptionRecord.SubMenu;
                 if (localSubMenu is not null)
-                    return RenderDropdownOnClick(localSubMenu);
+                    return RenderDropdownAsync(localSubMenu);
                 break;
         }
 
