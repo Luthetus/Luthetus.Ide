@@ -800,8 +800,12 @@ public class TextEditorCommandDefaultFunctions
 		
 		siblingFileStringList = siblingFileStringList.OrderBy(x => x).ToArray();
 		
-		foreach (var file in siblingFileStringList)
+		var initialActiveMenuOptionRecordIndex = -1;
+		
+		for (int i = 0; i < siblingFileStringList.Length; i++)
 		{
+			var file = siblingFileStringList[i];
+			
 			var siblingAbsolutePath = environmentProvider.AbsolutePathFactory(file, false);
 			
 			menuOptionList.Add(new MenuOptionRecord(
@@ -813,6 +817,9 @@ public class TextEditorCommandDefaultFunctions
 					null,
 					new Category("main"),
 					Key<TextEditorViewModel>.NewKey())));
+					
+			if (siblingAbsolutePath.NameWithExtension == resourceAbsolutePath.NameWithExtension)
+				initialActiveMenuOptionRecordIndex = i;
 		}
 		
 		MenuRecord menu;
@@ -832,6 +839,10 @@ public class TextEditorCommandDefaultFunctions
 				{
 					nameof(MenuDisplay.MenuRecord),
 					menu
+				},
+				{
+					nameof(MenuDisplay.InitialActiveMenuOptionRecordIndex),
+					initialActiveMenuOptionRecordIndex
 				}
 			},
 			// TODO: this callback when the dropdown closes is suspect.
