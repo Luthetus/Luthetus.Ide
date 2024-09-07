@@ -56,14 +56,18 @@ public class TreeViewHelperRazorMarkup
 			razorMarkupTreeView.Item.AbsolutePath.NameWithExtension + '.' + ExtensionNoPeriodFacts.CSS
 		};
 
-		var relatedFiles = siblingsAndSelfTreeViews.Where(x =>
+		var relatedFiles = siblingsAndSelfTreeViews
+			.Where(x =>
 				x.UntypedItem is NamespacePath namespacePath &&
 				matches.Contains(namespacePath.AbsolutePath.NameWithExtension))
+			.OrderBy(x =>
+				(x.UntypedItem as NamespacePath)?.AbsolutePath.NameWithExtension ?? string.Empty)
 			.ToArray();
 
 		if (!relatedFiles.Any())
 			return;
 
+		// TODO: use 'TreeViewNoType.LinkChildren(List<TreeViewNoType> previousChildList, List<TreeViewNoType> nextChildList)'?
 		for (var index = 0; index < relatedFiles.Length; index++)
 		{
 			var relatedFile = relatedFiles[index];
@@ -78,7 +82,6 @@ public class TreeViewHelperRazorMarkup
 		}
 
 		razorMarkupTreeView.IsExpandable = true;
-
 		razorMarkupTreeView.TreeViewChangedKey = Key<TreeViewChanged>.NewKey();
 	}
 }
