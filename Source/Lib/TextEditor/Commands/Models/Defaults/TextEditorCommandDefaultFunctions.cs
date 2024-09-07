@@ -798,6 +798,8 @@ public class TextEditorCommandDefaultFunctions
 		
 		var menuOptionList = new List<MenuOptionRecord>();
 		
+		siblingFileStringList = siblingFileStringList.OrderBy(x => x).ToArray();
+		
 		foreach (var file in siblingFileStringList)
 		{
 			var siblingAbsolutePath = environmentProvider.AbsolutePathFactory(file, false);
