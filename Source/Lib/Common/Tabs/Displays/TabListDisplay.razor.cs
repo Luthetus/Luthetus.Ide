@@ -117,9 +117,9 @@ public partial class TabListDisplay : ComponentBase, IDisposable
 		//
 		// Maybe the underlying ComponentBase RenderHandle, or such, logic was disposed/null'd out
 		// but this object reference was still available.
-		try
+		await InvokeAsync(() =>
 		{
-			await InvokeAsync(() =>
+			try
 			{
 				lock (_disposeLock)
 		    	{
@@ -142,22 +142,22 @@ public partial class TabListDisplay : ComponentBase, IDisposable
 						Console.WriteLine(title + message);
 		    		}
 		    	}
-			});
-		}
-		catch (Exception e)
-		{
-			var title = $"{nameof(TabListDisplay)} race condition occurred.\n";
-			var message = e.ToString();
-		
-			NotificationHelper.DispatchError(
-		        title,
-		        message,
-		        CommonComponentRenderers,
-		        Dispatcher,
-		        TimeSpan.FromSeconds(6));
-		
-			Console.WriteLine(title + message);
-		}
+		    }
+		    catch (Exception e)
+			{
+				var title = $"{nameof(TabListDisplay)} race condition occurred.\n";
+				var message = e.ToString();
+			
+				NotificationHelper.DispatchError(
+			        title,
+			        message,
+			        CommonComponentRenderers,
+			        Dispatcher,
+			        TimeSpan.FromSeconds(6));
+			
+				Console.WriteLine(title + message);
+			}
+		});
 	}
 
 	private Task HandleTabButtonOnContextMenu(TabContextMenuEventArgs tabContextMenuEventArgs)
