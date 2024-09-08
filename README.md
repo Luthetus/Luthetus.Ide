@@ -1,5 +1,6 @@
 # Luthetus.Ide (In Development)
-![Example GIF](./Images/Ide/Gifs/ide_readme.gif)
+![Example GIF](./Images/Ide/Gifs/9.5.1BetterGif.gif)
+Gif length is 1 minute 35 seconds
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
