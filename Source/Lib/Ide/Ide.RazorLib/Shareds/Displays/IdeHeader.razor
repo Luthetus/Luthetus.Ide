@@ -27,7 +27,7 @@
         </button>
 
 		<button @ref="_buttonToolsElementReference"
-                @onclick="async () => await RenderDropdownOnClick(IdeHeaderState.ButtonToolsId, _buttonToolsElementReference, IdeHeaderState.DropdownKeyTools, IdeHeaderStateWrap.Value.MenuTools)"
+                @onclick="RenderToolsDropdownOnClick"
 			    id="@IdeHeaderState.ButtonToolsId"
                 class="luth_button"
                 style="margin-left: 15px;">
@@ -35,7 +35,7 @@
         </button>
 
 		<button @ref="_buttonViewElementReference"
-                @onclick="async () => { InitializeMenuView(); await RenderDropdownOnClick(IdeHeaderState.ButtonViewId, _buttonViewElementReference, IdeHeaderState.DropdownKeyView, IdeHeaderStateWrap.Value.MenuView); }"
+                @onclick="RenderViewDropdownOnClick"
 			    id="@IdeHeaderState.ButtonViewId"
                 class="luth_button"
                 style="margin-left: 15px;">
@@ -43,7 +43,7 @@
          </button>
 
 		<button @ref="_buttonRunElementReference"
-                @onclick="async () => { await RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun); }"
+                @onclick="RenderRunDropdownOnClick"
 			    id="@IdeHeaderState.ButtonRunId"
 				class="luth_button"
                 style="margin-left: 15px;">

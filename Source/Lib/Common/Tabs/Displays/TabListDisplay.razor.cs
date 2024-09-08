@@ -5,11 +5,15 @@ using Luthetus.Common.RazorLib.Dropdowns.States;
 using Luthetus.Common.RazorLib.Dropdowns.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Notifications.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
 public partial class TabListDisplay : ComponentBase
 {
+	[Inject]
+	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -18,7 +22,7 @@ public partial class TabListDisplay : ComponentBase
 	
 	[Parameter]
 	public string CssClassString { get; set; } = string.Empty;
-
+	
     public async Task NotifyStateChangedAsync()
 	{
 		await InvokeAsync(StateHasChanged);
