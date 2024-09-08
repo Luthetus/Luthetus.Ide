@@ -69,7 +69,62 @@ public partial class StartupControlDisplay : FluxorComponent
     
     	if (isExecuting)
     	{
-    		await RenderDropdownOnClick();
+    		var menuOptionList = new List<MenuOptionRecord>();
+			
+			menuOptionList.Add(new MenuOptionRecord(
+				"View Output",
+			    MenuOptionKind.Other,
+			    OnClickFunc: async () => 
+				{
+					var success = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
+	
+	                if (!success)
+	                {
+	                    Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
+	                        ContextFacts.OutputContext.ContextKey));
+	
+	                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
+	                }
+				}));
+			    
+			menuOptionList.Add(new MenuOptionRecord(
+				"View Terminal",
+			    MenuOptionKind.Other,
+			    OnClickFunc: async () => 
+				{
+					var success = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
+	
+	                if (!success)
+	                {
+	                    Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
+	                        ContextFacts.TerminalContext.ContextKey));
+	
+	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
+	                }
+				}));
+			    
+			menuOptionList.Add(new MenuOptionRecord(
+				"Stop Execution",
+			    MenuOptionKind.Other,
+			    OnClickFunc: () =>
+			    {
+			    	var localStartupControlState = StartupControlStateWrap.Value;
+			    	
+			    	if (localStartupControlState.ActiveStartupControl is null)
+			    		return Task.CompletedTask;
+			    		
+			    	return localStartupControlState.ActiveStartupControl.StopButtonOnClickTask
+			    		.Invoke(localStartupControlState.ActiveStartupControl);
+			    }));
+			    
+			await DropdownHelper.RenderDropdownAsync(
+    			Dispatcher,
+    			JsRuntimeCommonApi,
+				_startButtonElementId,
+				DropdownOrientation.Bottom,
+				_startButtonDropdownKey,
+				new MenuRecord(menuOptionList.ToImmutableArray()),
+				_startButtonElementReference);
 		}
         else
         {
@@ -78,77 +133,6 @@ public partial class StartupControlDisplay : FluxorComponent
 	        	.ConfigureAwait(false);
         }
     }
-    
-    private async Task RenderDropdownOnClick()
-	{
-		var buttonDimensions = await JsRuntimeCommonApi
-			.MeasureElementById(_startButtonElementId)
-			.ConfigureAwait(false);
-			
-		var menuOptionList = new List<MenuOptionRecord>();
-		
-		menuOptionList.Add(new MenuOptionRecord(
-			"View Output",
-		    MenuOptionKind.Other,
-		    OnClickFunc: async () => 
-			{
-				var success = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
-
-                if (!success)
-                {
-                    Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
-                        ContextFacts.OutputContext.ContextKey));
-
-                    _ = await TrySetFocus(ContextFacts.OutputContext).ConfigureAwait(false);
-                }
-			}));
-		    
-		menuOptionList.Add(new MenuOptionRecord(
-			"View Terminal",
-		    MenuOptionKind.Other,
-		    OnClickFunc: async () => 
-			{
-				var success = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
-
-                if (!success)
-                {
-                    Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
-                        ContextFacts.TerminalContext.ContextKey));
-
-                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
-                }
-			}));
-		    
-		menuOptionList.Add(new MenuOptionRecord(
-			"Stop Execution",
-		    MenuOptionKind.Other,
-		    OnClickFunc: () =>
-		    {
-		    	var localStartupControlState = StartupControlStateWrap.Value;
-		    	
-		    	if (localStartupControlState.ActiveStartupControl is null)
-		    		return Task.CompletedTask;
-		    		
-		    	return localStartupControlState.ActiveStartupControl.StopButtonOnClickTask
-		    		.Invoke(localStartupControlState.ActiveStartupControl);
-		    }));
-
-		var dropdownRecord = new DropdownRecord(
-			_startButtonDropdownKey,
-			buttonDimensions.LeftInPixels,
-			buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
-			typeof(MenuDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(MenuDisplay.MenuRecord),
-					new MenuRecord(menuOptionList.ToImmutableArray())
-				}
-			},
-			() => RestoreFocusToElementReference(_startButtonElementReference));
-
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-	}
 	
 	private async Task<bool> TrySetFocus(ContextRecord contextRecord)
     {

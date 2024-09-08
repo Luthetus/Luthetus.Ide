@@ -1,12 +1,29 @@
-@{ var localTabViewModel = Tab; }
+@using Luthetus.Common.RazorLib.Notifications.Models;
 
-<button class="luth_polymorphic-tab luth_button luth_unselectable @IsActiveCssClass @localTabViewModel.TabGroup.GetDynamicCss(localTabViewModel) @GetIsBeingDraggedCssClassString() @CssClassString"
+@{
+	var localTabViewModel = Tab;
+	var localTabGroup = localTabViewModel.TabGroup;
+	
+	if (localTabGroup is null)
+	{
+		NotificationHelper.DispatchError(
+	        "TabGroup was null",
+	        "TabGroup was null",
+	        CommonComponentRenderers,
+	        Dispatcher,
+	        TimeSpan.FromSeconds(6));
+	}
+	
+	var dynamicCss = localTabGroup?.GetDynamicCss(localTabViewModel);
+}
+
+<button class="luth_polymorphic-tab luth_button luth_unselectable @IsActiveCssClass @dynamicCss @GetIsBeingDraggedCssClassString() @CssClassString"
 		style="@GetDraggableCssStyleString() @CssStyleString"
 		id="@HtmlId"
         title="@localTabViewModel.TitleVerbose"
 		@ref="_tabButtonElementReference"
 		@onclick:stopPropagation="true"
-		@onclick="e => localTabViewModel.TabGroup.OnClickAsync(localTabViewModel, e)"
+		@onclick="e => OnClick(localTabViewModel, e)"
 		@onmousedown:stopPropagation="true"
 		@onmousedown:preventDefault="true"
         @onmousedown="HandleOnMouseDownAsync"

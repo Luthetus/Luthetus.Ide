@@ -1,5 +1,6 @@
 # Luthetus.Ide (In Development)
-![Example GIF](./Images/Ide/Gifs/ide_readme.gif)
+![Example GIF](./Images/Ide/Gifs/9.5.1BetterGif.gif)
+Gif length is 1 minute 35 seconds
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
@@ -56,8 +57,6 @@ There is a README.md for each of the libraries to aid in installation:
 - [Luthetus.TextEditor](./Docs/TextEditor/README.md)
 - [Luthetus.CompilerServices](./Docs/CompilerServices/README.md)
 
-## My Youtube Videos
-You may be interested in visiting my [youtube channel](https://www.youtube.com/channel/UCzhWhqYVP40as1MFUesQM9w). I make videos about this repository there.
+## Youtube Videos
+There are videos about the IDE here: [youtube channel](https://www.youtube.com/channel/UCzhWhqYVP40as1MFUesQM9w).
 
-## About me (Hunter Freeman)
-- IN PROGRESS: Remove references to myself from documentation and source code. I'm not stepping away from the code. Instead I just feel it inappropriate to include direct references to myself in the documentation / source code.

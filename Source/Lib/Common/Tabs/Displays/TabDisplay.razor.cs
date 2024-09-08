@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Tabs.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 
 namespace Luthetus.Common.RazorLib.Tabs.Displays;
 
@@ -26,6 +27,8 @@ public partial class TabDisplay : ComponentBase, IDisposable
     private IJSRuntime JsRuntime { get; set; } = null!;
 	[Inject]
 	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
+	[Inject]
+	private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
 
 	[CascadingParameter(Name=nameof(HandleTabButtonOnContextMenu)), EditorRequired]
 	public Func<TabContextMenuEventArgs, Task>? HandleTabButtonOnContextMenu { get; set; }
@@ -95,13 +98,31 @@ public partial class TabDisplay : ComponentBase, IDisposable
             }
         }
     }
+    
+    private async Task OnClick(ITab localTabViewModel, MouseEventArgs e)
+    {
+    	if (IsBeingDragged)
+			return;
+		
+		var localTabGroup = localTabViewModel.TabGroup;
+		if (localTabGroup is null)
+			return;
+			
+		await localTabGroup.OnClickAsync(localTabViewModel, e).ConfigureAwait(false);
+    }
 
 	private async Task CloseTabOnClickAsync()
 	{
 		if (IsBeingDragged)
 			return;
+			
+		var localTabViewModel = Tab;
 
-        await Tab.TabGroup.CloseAsync(Tab).ConfigureAwait(false);
+        var localTabGroup = localTabViewModel.TabGroup;
+		if (localTabGroup is null)
+			return;
+        
+        await localTabGroup.CloseAsync(Tab).ConfigureAwait(false);
 	}
 
 	private async Task HandleOnMouseDownAsync(MouseEventArgs mouseEventArgs)

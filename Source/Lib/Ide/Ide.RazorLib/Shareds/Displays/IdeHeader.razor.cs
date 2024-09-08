@@ -419,33 +419,6 @@ public partial class IdeHeader : ComponentBase
         return Task.CompletedTask;
     }
 
-	private async Task RenderDropdownOnClick(
-		string id,
-		ElementReference? elementReference,
-		Key<DropdownRecord> key,
-		MenuRecord menu)
-	{
-		var buttonDimensions = await JsRuntimeCommonApi
-			.MeasureElementById(id)
-			.ConfigureAwait(false);
-
-		var dropdownRecord = new DropdownRecord(
-			key,
-			buttonDimensions.LeftInPixels,
-			buttonDimensions.TopInPixels + buttonDimensions.HeightInPixels,
-			typeof(MenuDisplay),
-			new Dictionary<string, object?>
-			{
-				{
-					nameof(MenuDisplay.MenuRecord),
-					menu
-				}
-			},
-			() => RestoreFocusToElementReference(elementReference));
-
-        Dispatcher.Dispatch(new DropdownState.RegisterAction(dropdownRecord));
-	}
-
 	/// <summary>
 	/// Add option to allow a user to disable the alt keymap to access to the header button dropdowns.
 	/// </summary>
@@ -462,8 +435,7 @@ public partial class IdeHeader : ComponentBase
 					MetaKey = false,
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
-		        new CommonCommand("Open File Dropdown", "open-file-dropdown", false,
-		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonFileId, _buttonFileElementReference, IdeHeaderState.DropdownKeyFile, IdeHeaderStateWrap.Value.MenuFile)));
+		        new CommonCommand("Open File Dropdown", "open-file-dropdown", false, _ => RenderFileDropdownOnClick()));
 		        
 		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 		        new KeymapArgs
@@ -476,8 +448,7 @@ public partial class IdeHeader : ComponentBase
 					MetaKey = false,
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
-		        new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false,
-		        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonToolsId, _buttonToolsElementReference, IdeHeaderState.DropdownKeyTools, IdeHeaderStateWrap.Value.MenuTools)));
+		        new CommonCommand("Open Tools Dropdown", "open-tools-dropdown", false, _ => RenderToolsDropdownOnClick()));
 		        	
 		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 		        new KeymapArgs
@@ -490,12 +461,7 @@ public partial class IdeHeader : ComponentBase
 					MetaKey = false,
 					LayerKey = Key<KeymapLayer>.Empty,
 				},
-		        new CommonCommand("Open View Dropdown", "open-view-dropdown", false,
-		        	commandArgs => 
-		        	{
-		        		InitializeMenuView();
-		        		return RenderDropdownOnClick(IdeHeaderState.ButtonViewId, _buttonViewElementReference, IdeHeaderState.DropdownKeyView, IdeHeaderStateWrap.Value.MenuView);
-		        	}));
+		        new CommonCommand("Open View Dropdown", "open-view-dropdown", false, _ => RenderViewDropdownOnClick()));
 
 		_ = ContextFacts.GlobalContext.Keymap.TryRegister(
 	        new KeymapArgs
@@ -508,12 +474,56 @@ public partial class IdeHeader : ComponentBase
 				MetaKey = false,
 				LayerKey = Key<KeymapLayer>.Empty,
 			},
-	        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false,
-	        	commandArgs => RenderDropdownOnClick(IdeHeaderState.ButtonRunId, _buttonRunElementReference, IdeHeaderState.DropdownKeyRun, IdeHeaderStateWrap.Value.MenuRun)));
+	        new CommonCommand("Open Run Dropdown", "open-run-dropdown", false, _ => RenderRunDropdownOnClick()));
 	}
 	
 	private Task RenderFileDropdownOnClick()
 	{
-		return RenderDropdownOnClick(IdeHeaderState.ButtonFileId, _buttonFileElementReference, IdeHeaderState.DropdownKeyFile, IdeHeaderStateWrap.Value.MenuFile);
+		return DropdownHelper.RenderDropdownAsync(
+			Dispatcher,
+			JsRuntimeCommonApi,
+			IdeHeaderState.ButtonFileId,
+			DropdownOrientation.Bottom,
+			IdeHeaderState.DropdownKeyFile,
+			IdeHeaderStateWrap.Value.MenuFile,
+			_buttonFileElementReference);
+	}
+	
+	private Task RenderToolsDropdownOnClick()
+	{
+		return DropdownHelper.RenderDropdownAsync(
+			Dispatcher,
+			JsRuntimeCommonApi,
+			IdeHeaderState.ButtonToolsId,
+			DropdownOrientation.Bottom,
+			IdeHeaderState.DropdownKeyTools,
+			IdeHeaderStateWrap.Value.MenuTools,
+			_buttonToolsElementReference);
+	}
+	
+	private Task RenderViewDropdownOnClick()
+	{
+		InitializeMenuView();
+		
+		return DropdownHelper.RenderDropdownAsync(
+			Dispatcher,
+			JsRuntimeCommonApi,
+			IdeHeaderState.ButtonViewId,
+			DropdownOrientation.Bottom,
+			IdeHeaderState.DropdownKeyView,
+			IdeHeaderStateWrap.Value.MenuView,
+			_buttonViewElementReference);
+	}
+	
+	private Task RenderRunDropdownOnClick()
+	{
+		 return DropdownHelper.RenderDropdownAsync(
+			Dispatcher,
+			JsRuntimeCommonApi,
+		    IdeHeaderState.ButtonRunId,
+			DropdownOrientation.Bottom,
+			IdeHeaderState.DropdownKeyRun,
+			IdeHeaderStateWrap.Value.MenuRun,
+			_buttonRunElementReference);
 	}
 }
