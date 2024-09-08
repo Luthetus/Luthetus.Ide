@@ -62,8 +62,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
 		if (localTabListDisplay is not null)
         {
-			await localTabListDisplay
-                .NotifyStateChangedAsync()
+			await InvokeAsync(async () => await localTabListDisplay.NotifyStateChangedAsync())
                 .ConfigureAwait(false);
         }
 	}

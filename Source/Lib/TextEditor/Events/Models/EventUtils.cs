@@ -46,7 +46,13 @@ public static class EventUtils
             return KeymapArgsKind.Command;
 
         if (keymapArgs.Key.Length == 1)
-            return KeymapArgsKind.Text;
+        {
+        	// Only write text if no modifiers (other than shift) were held at the time of the event.
+        	if (!keymapArgs.CtrlKey && !keymapArgs.AltKey && !keymapArgs.MetaKey)
+        		return KeymapArgsKind.Text;
+        	else
+        		return KeymapArgsKind.None;
+        }
 
         return KeymapArgsKind.Other;
     }
