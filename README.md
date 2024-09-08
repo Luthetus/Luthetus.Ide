@@ -99,6 +99,7 @@ Given: &lt;App/&gt;, the '.razor' pseudo code has the following as App's descend
 			- InteractiveIconUi
                 - [GitInteractiveIconDisplay.razor](/Source/Lib/Ide/Ide.RazorLib/Gits/Displays/GitInteractiveIconDisplay.razor) | [.cs](/Source/Lib/Ide/Ide.RazorLib/Gits/Displays/GitInteractiveIconDisplay.razor.cs)
                 - [DirtyResourceUriInteractiveIconDisplay.razor](/Source/Lib/TextEditor/Edits/Displays/DirtyResourceUriInteractiveIconDisplay.razor) | [.cs](/Source/Lib/TextEditor/Edits/Displays/DirtyResourceUriInteractiveIconDisplay.razor.cs) | [.css](/Source/Lib/TextEditor/Edits/Displays/DirtyResourceUriInteractiveIconDisplay.razor.css)
+                - [NotificationsInteractiveIconDisplay.razor](/Source/Lib/Common/Notifications/Displays/NotificationsInteractiveIconDisplay.razor) | [.cs](/Source/Lib/Common/Notifications/Displays/NotificationsInteractiveIconDisplay.razor.cs) | [.css](/Source/Lib/Common/Notifications/Displays/NotificationsInteractiveIconDisplay.razor.css)
 		- PanelGroupBody
 			- DynamicComponent | [learn.microsoft.com](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/dynamiccomponent?view=aspnetcore-8.0)
 
