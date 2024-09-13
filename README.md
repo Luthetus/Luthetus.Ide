@@ -55,7 +55,6 @@ Given: &lt;App/&gt;, the '.razor' pseudo code has the following as App's descend
         - AppOptions.SetActiveThemeRecordKey(default);
         - AppOptions.SetFromLocalStorageAsync();
         - AddToContextSwitch(this); // 'Ctrl' + 'Tab' keybind
-    }
     - [&lt;DragInitializer/&gt;](/Source/Lib/Common/Drags/Displays/DragInitializer.razor) | [codebehind](/Source/Lib/Common/Drags/Displays/DragInitializer.razor.cs) | [css](/Source/Lib/Common/Drags/Displays/DragInitializer.razor.css)
     - [&lt;DialogInitializer/&gt;](/Source/Lib/Common/Dialogs/Displays/DialogInitializer.razor) | [codebehind](/Source/Lib/Common/Dialogs/Displays/DialogInitializer.razor.cs)
     - [&lt;WidgetInitializer/&gt;](/Source/Lib/Common/Widgets/Displays/WidgetInitializer.razor) | [codebehind](/Source/Lib/Common/Widgets/Displays/WidgetInitializer.razor.cs)
