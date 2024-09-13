@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
@@ -20,7 +20,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-        <PackageReference Include="Photino.Blazor" Version="2.6.0" />
+        <PackageReference Include="Photino.Blazor" Version="3.1.9" />
     </ItemGroup>
 
     <ItemGroup>
