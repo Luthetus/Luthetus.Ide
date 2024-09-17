@@ -29,6 +29,6 @@ public partial class TerminalGroupDisplay : FluxorComponent
     
     private void ClearTerminalOnClick(Key<ITerminal> terminalKey)
     {
-    	TerminalStateWrap.Value.TerminalMap[terminalKey]?.EnqueueClear();
+    	TerminalStateWrap.Value.TerminalMap[terminalKey]?.ClearFireAndForget();
     }
 }

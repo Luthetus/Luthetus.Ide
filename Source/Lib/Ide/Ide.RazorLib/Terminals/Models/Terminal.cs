@@ -68,9 +68,18 @@ public class Terminal : ITerminal
 			() => HandleCommand(terminalCommandRequest));
     }
     
-    public void EnqueueClear()
+    public void ClearEnqueue()
     {
     	EnqueueCommand(new TerminalCommandRequest("clear", null));
+    }
+    
+    public void ClearFireAndForget()
+    {
+    	_ = Task.Run(() =>
+    	{
+    		TerminalOutput.ClearOutput();
+    		return Task.CompletedTask;
+    	});
     }
 
     private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
