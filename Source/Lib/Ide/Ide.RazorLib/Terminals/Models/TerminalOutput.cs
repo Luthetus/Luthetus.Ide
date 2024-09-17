@@ -134,6 +134,24 @@ public class TerminalOutput : ITerminalOutput
 		OnWriteOutput?.Invoke();
 	}
 	
+	public void ClearOutputExceptMostRecentCommand()
+	{
+		lock (_listLock)
+		{
+			var rememberLastCommand = _parsedCommandList.LastOrDefault();
+			
+			_parsedCommandList.Clear();
+			
+			if (rememberLastCommand is not null &&
+				rememberLastCommand.OutputCache.GetLength() < TerminalOutputFacts.MAX_OUTPUT_LENGTH)
+			{
+				_parsedCommandList.Add(rememberLastCommand);
+			}
+		}
+
+		OnWriteOutput?.Invoke();
+	}
+	
 	public void ClearHistoryWhenExistingOutputTooLong()
 	{
 		lock (_listLock)

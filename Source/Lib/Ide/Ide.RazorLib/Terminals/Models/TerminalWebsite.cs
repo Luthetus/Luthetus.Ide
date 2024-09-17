@@ -75,9 +75,19 @@ public class TerminalWebsite : ITerminal
     
     public void ClearFireAndForget()
     {
+    	var localHasExecutingProcess = HasExecutingProcess;
+    
     	_ = Task.Run(() =>
     	{
-    		TerminalOutput.ClearOutput();
+    		if (localHasExecutingProcess)
+    		{
+    			TerminalOutput.ClearOutputExceptMostRecentCommand();
+    		}
+    		else
+    		{
+    			TerminalOutput.ClearOutput();
+    		}
+    		
     		return Task.CompletedTask;
     	});
     }

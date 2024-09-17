@@ -20,6 +20,9 @@ public interface ITerminalOutput : IDisposable
 	/// <summary>Guaranteed to clear the output</summary>
 	public void ClearOutput();
 	
+	/// <summary>Guaranteed to clear the output, but will keep the most recent command</summary>
+	public void ClearOutputExceptMostRecentCommand();
+	
 	/// <summary>Conditionally clear the output</summary>
 	public void ClearHistoryWhenExistingOutputTooLong();
 	
