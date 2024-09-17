@@ -1,7 +1,8 @@
+using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 
@@ -12,15 +13,8 @@ public partial class InputTextEditorUseMonospaceOptimizations : FluxorComponent
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;
 
-    [CascadingParameter(Name = "InputElementCssClass")]
-    public string CascadingInputElementCssClass { get; set; } = string.Empty;
-
-    [Parameter]
-    public string TopLevelDivElementCssClassString { get; set; } = string.Empty;
-    [Parameter]
-    public string InputElementCssClassString { get; set; } = string.Empty;
-    [Parameter]
-    public string LabelElementCssClassString { get; set; } = string.Empty;
+   [Parameter]
+    public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     public bool UseMonospaceOptimizations
     {

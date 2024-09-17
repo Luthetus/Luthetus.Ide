@@ -1,11 +1,6 @@
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div class="luth_te_text-editor-input luth_te_text-editor-input-new-lines @TextEditorService.ThemeCssClassString @TopLevelDivElementCssClassString">
-    <span class="@LabelElementCssClassString">
-        Show NewLines:&nbsp;
-    </span>
-    
-    <input class="@CascadingInputElementCssClass @InputElementCssClassString" 
-           type="checkbox" 
-           @bind="GlobalShowNewlines" />
-</div>
+<input class="luth_input luth_te_text-editor-input-new-lines @InputViewModel.CssClass"
+	   style="@InputViewModel.CssStyle"
+       type="checkbox"
+       @bind="GlobalShowNewlines" />

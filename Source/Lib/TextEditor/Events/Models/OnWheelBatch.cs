@@ -63,6 +63,13 @@ public struct OnWheelBatch : ITextEditorWork
                 }
             }
 
+			// See this quoted comment from OnWheel.cs
+			// =======================================
+			// 	"TODO: Why was this made as 'if' 'else' whereas the OnWheelBatch...
+			// 	      ...is doing 'if' 'if'.
+			// 	      |
+			// 	      The OnWheelBatch doesn't currently batch horizontal with vertical
+			// 	      the OnWheel events have to be the same axis to batch."
             if (horizontalMutateScrollPositionByPixels is not null)
             {
                 EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(

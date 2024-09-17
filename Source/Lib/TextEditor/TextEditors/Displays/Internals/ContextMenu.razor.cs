@@ -259,7 +259,7 @@ public partial class ContextMenu : ComponentBase
         var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.PasteCommand),
+            nameof(TextEditorCommandDefaultFacts.GoToDefinition),
             editContext =>
             {
                 commandArgs.EditContext = editContext;
@@ -278,7 +278,7 @@ public partial class ContextMenu : ComponentBase
         var commandArgs = ConstructCommandArgs(renderBatch);
 
         TextEditorService.PostUnique(
-            nameof(TextEditorCommandDefaultFacts.PasteCommand),
+            nameof(TextEditorCommandDefaultFacts.QuickActionsSlashRefactor),
             editContext =>
             {
                 commandArgs.EditContext = editContext;

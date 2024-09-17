@@ -1,27 +1,22 @@
-﻿@using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.Common.RazorLib.Keys.Models;
 @using Luthetus.Common.RazorLib.Keymaps.Models;
 @using Luthetus.TextEditor.RazorLib.Keymaps.Models;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div class="luth_te_text-editor-input-keymap @TextEditorService.ThemeCssClassString @TopLevelDivElementCssClassString">
-    <span class="@LabelElementCssClassString">
-        Keymap:&nbsp;
-    </span>
-
-    <select @onchange="SelectedKeymapChanged"
-            class="@InputElementCssClassString">
-        @{
-            var keymapsList = TextEditorKeymapFacts.AllKeymapsList;
-            var chosenKeymap = TextEditorOptionsStateWrap.Value.Options.Keymap;
-            
-            foreach (var keymap in keymapsList)
-            {
-                <option value="@keymap.Key.Guid.ToString()"
-                        selected="@((chosenKeymap?.Key ?? Key<Keymap>.Empty) == keymap.Key)">
-                    @keymap.DisplayName
-                </option>
-            }
+<select @onchange="SelectedKeymapChanged"
+        class="luth_select luth_te_text-editor-input-keymap @InputViewModel.CssClass"
+	    style="@InputViewModel.CssStyle">
+    @{
+        var keymapsList = TextEditorKeymapFacts.AllKeymapsList;
+        var chosenKeymap = TextEditorOptionsStateWrap.Value.Options.Keymap;
+        
+        foreach (var keymap in keymapsList)
+        {
+            <option value="@keymap.Key.Guid.ToString()"
+                    selected="@((chosenKeymap?.Key ?? Key<Keymap>.Empty) == keymap.Key)">
+                @keymap.DisplayName
+            </option>
         }
-    </select>
-</div>
+    }
+</select>
