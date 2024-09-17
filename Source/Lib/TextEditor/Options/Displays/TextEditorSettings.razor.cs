@@ -1,6 +1,6 @@
-﻿using Fluxor.Blazor.Web.Components;
-using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Microsoft.AspNetCore.Components;
+using Fluxor.Blazor.Web.Components;
+using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 

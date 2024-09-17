@@ -1,10 +1,5 @@
-﻿@{ var appOptionsState = AppOptionsService.AppOptionsStateWrap.Value; }
+@{ var appOptionsState = AppOptionsService.AppOptionsStateWrap.Value; }
 
-<div class="luth_settings-input luth_input-app-options-font-family @CssClassString"
-     style="@CssStyleString">
-    
-    Font-Family:&nbsp;
-
-    <input class="luth_input"
-           @bind="FontFamily"/>
-</div>
+<input class="luth_input luth_input-font-family @InputViewModel.CssClass"
+	   style="@InputViewModel.CssStyle"
+       @bind="FontFamily"/>
