@@ -13,9 +13,7 @@ public partial class InputAppTheme : IDisposable
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter]
-    public string CssClassString { get; set; } = string.Empty;
-    [Parameter]
-    public string CssStyleString { get; set; } = string.Empty;
+    public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     protected override void OnInitialized()
     {

@@ -75,10 +75,7 @@ public class Terminal : ITerminal
 
     private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
-    	if (TerminalOutput.GetParsedCommandListCount() > 10)
-    	{
-            TerminalOutput.ClearOutput();
-        }
+    	TerminalOutput.ClearHistoryWhenExistingOutputTooLong();
     
     	var parsedCommand = await TerminalInteractive.TryHandleCommand(terminalCommandRequest);
     	ActiveTerminalCommandParsed = parsedCommand;

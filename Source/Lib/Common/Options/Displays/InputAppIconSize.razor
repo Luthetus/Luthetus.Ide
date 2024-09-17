@@ -1,9 +1,4 @@
-<div class="luth_settings-input luth_input-app-options-icon-size @CssClassString"
-     style="@CssStyleString">
-    
-    Icon-Size (px):&nbsp;
-
-    <input type="number"
-           class="luth_input"
-           @bind="IconSizeInPixels"/>
-</div>
+<input type="number"
+       class="luth_input luth_input-icon-size @InputViewModel.CssClass"
+	   style="@InputViewModel.CssStyle"
+       @bind="IconSizeInPixels"/>

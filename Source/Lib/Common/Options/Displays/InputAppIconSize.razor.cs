@@ -10,9 +10,7 @@ public partial class InputAppIconSize : ComponentBase, IDisposable
     private IAppOptionsService AppOptionsService { get; set; } = null!;
 
     [Parameter]
-    public string CssClassString { get; set; } = string.Empty;
-    [Parameter]
-    public string CssStyleString { get; set; } = string.Empty;
+    public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     private int IconSizeInPixels
     {

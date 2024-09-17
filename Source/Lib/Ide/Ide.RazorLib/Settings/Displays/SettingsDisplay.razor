@@ -12,10 +12,24 @@
             
             <div class="luth_ide_settings-scope-border"></div>
             
-            <InputAppFontSize/>
-            <InputAppFontFamily/>
-            <InputAppIconSize/>
-            <InputAppTheme/>
+            <table>
+            	<tr>
+            		<td>Font Size</td>
+            		<td> <InputAppFontSize/> </td>
+            	</tr>
+            	<tr>
+            		<td>Font Family</td>
+            		<td> <InputAppFontFamily/> </td>
+            	</tr>
+            	<tr>
+            		<td>Icon Size</td>
+            		<td> <InputAppIconSize/> </td>
+            	</tr>
+            	<tr>
+            		<td>App Theme</td>
+            		<td> <InputAppTheme/> </td>
+            	</tr>
+            </table>
         </div>
     </div>
     
@@ -36,6 +50,19 @@
             <InputTextEditorShowWhitespace/>
             <InputTextEditorTheme/>
             <InputTextEditorKeymap/>
+        </div>
+    </div>
+    
+    <div class="luth_ide_settings-scope">
+        <div class="luth_ide_settings-scope-title luth_ide_larger-font-size">
+            IDE Settings
+        </div>
+        
+        <div class="luth_ide_settings-scope-body luth_indent-child-content">
+            
+            <div class="luth_ide_settings-scope-border"></div>
+            
+            <IdeSettingsDisplay/>
         </div>
     </div>
 </div>
