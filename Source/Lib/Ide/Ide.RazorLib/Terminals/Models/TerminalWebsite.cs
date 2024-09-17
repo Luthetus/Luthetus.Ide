@@ -152,6 +152,21 @@ public class TerminalWebsite : ITerminal
 		CancellationToken cancellationToken)
 	{
 		TerminalOutput.WriteOutput(parsedCommand, new StartedCommandEvent(-1));
+		
+		TerminalOutput.WriteOutput(
+			parsedCommand, new StandardErrorCommandEvent("run source locally for terminal"));
+			
+		return Task.CompletedTask;
+	}
+	
+	/* This method is in progress
+	
+	private Task ExecuteWebsiteCliAsync(
+		TerminalCommandParsed parsedCommand,
+		Action<CommandEvent> handleOutputAction,
+		CancellationToken cancellationToken)
+	{
+		TerminalOutput.WriteOutput(parsedCommand, new StartedCommandEvent(-1));
 	
 		switch (parsedCommand.TargetFileName)
 		{
@@ -159,14 +174,12 @@ public class TerminalWebsite : ITerminal
 				return DotNetWebsiteCliAsync(parsedCommand, handleOutputAction, cancellationToken);
 		}
 		
-		//TerminalOutput.WriteOutput(
-		//	parsedCommand, new StandardErrorCommandEvent("run source locally for terminal"));
-		
 		TerminalOutput.WriteOutput(
 			parsedCommand,
 			new StandardErrorCommandEvent($"Target file name: '{parsedCommand.TargetFileName}' was not recognized."));
 		return Task.CompletedTask;
 	}
+	*/
 	
 	private Task DotNetWebsiteCliAsync(
 		TerminalCommandParsed parsedCommand,
