@@ -134,6 +134,53 @@ public class TerminalOutput : ITerminalOutput
 		OnWriteOutput?.Invoke();
 	}
 	
+	public void ClearOutputExceptMostRecentCommand()
+	{
+		lock (_listLock)
+		{
+			var rememberLastCommand = _parsedCommandList.LastOrDefault();
+			
+			_parsedCommandList.Clear();
+			
+			if (rememberLastCommand is not null &&
+				rememberLastCommand.OutputCache.GetLength() < TerminalOutputFacts.MAX_OUTPUT_LENGTH)
+			{
+				_parsedCommandList.Add(rememberLastCommand);
+			}
+		}
+
+		OnWriteOutput?.Invoke();
+	}
+	
+	public void ClearHistoryWhenExistingOutputTooLong()
+	{
+		lock (_listLock)
+		{
+			var sumOutputLength = _parsedCommandList.Sum(x => x.OutputCache.GetLength());
+
+			if (sumOutputLength > TerminalOutputFacts.MAX_OUTPUT_LENGTH ||
+				_parsedCommandList.Count > TerminalOutputFacts.MAX_COMMAND_COUNT)
+			{
+				var rememberLastCommand = _parsedCommandList.LastOrDefault();
+			
+				_parsedCommandList.Clear();
+				
+				if (rememberLastCommand is not null &&
+					rememberLastCommand.OutputCache.GetLength() < TerminalOutputFacts.OUTPUT_LENGTH_PADDING)
+				{
+					// It feels odd to clear the entire terminal when there is too much text output
+					// that has accumulated.
+					//
+					// So, keep the most recent command's output,
+					// unless its output length is greater than or equal to the TerminalOutputFacts.OUTPUT_LENGTH_PADDING.
+					_parsedCommandList.Add(rememberLastCommand);
+				}
+			}
+		}
+
+		OnWriteOutput?.Invoke();
+	}
+	
     public void Dispose()
     {
     	foreach (var outputFormatter in OutputFormatterList)

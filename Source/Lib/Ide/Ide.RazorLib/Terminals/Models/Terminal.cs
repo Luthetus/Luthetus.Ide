@@ -68,17 +68,33 @@ public class Terminal : ITerminal
 			() => HandleCommand(terminalCommandRequest));
     }
     
-    public void EnqueueClear()
+    public void ClearEnqueue()
     {
     	EnqueueCommand(new TerminalCommandRequest("clear", null));
+    }
+    
+    public void ClearFireAndForget()
+    {
+    	var localHasExecutingProcess = HasExecutingProcess;
+    
+    	_ = Task.Run(() =>
+    	{
+    		if (localHasExecutingProcess)
+    		{
+    			TerminalOutput.ClearOutputExceptMostRecentCommand();
+    		}
+    		else
+    		{
+    			TerminalOutput.ClearOutput();
+    		}
+    		
+    		return Task.CompletedTask;
+    	});
     }
 
     private async Task HandleCommand(TerminalCommandRequest terminalCommandRequest)
     {
-    	if (TerminalOutput.GetParsedCommandListCount() > 10)
-    	{
-            TerminalOutput.ClearOutput();
-        }
+    	TerminalOutput.ClearHistoryWhenExistingOutputTooLong();
     
     	var parsedCommand = await TerminalInteractive.TryHandleCommand(terminalCommandRequest);
     	ActiveTerminalCommandParsed = parsedCommand;

@@ -58,6 +58,14 @@ public class StringBuilderCache
 		}
 	}
 	
+	public int GetLength()
+	{
+		lock (_syncRoot)
+		{
+			return _outputBuilder.Length;
+		}
+	}
+	
 	public override string ToString()
 	{
 		lock (_syncRoot)

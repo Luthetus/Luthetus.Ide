@@ -8,6 +8,7 @@ using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -223,8 +224,25 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 					
 					modelModifier.SetContent(outputFormatted.Text);
 					
-					primaryCursorModifier.LineIndex = 0;
-					primaryCursorModifier.SetColumnIndexAndPreferred(0);
+					var lineIndexOriginal = primaryCursorModifier.LineIndex;
+					var columnIndexOriginal = primaryCursorModifier.ColumnIndex;
+					
+					// Move Cursor, try to preserve the current cursor position.
+					{
+						if (primaryCursorModifier.LineIndex > modelModifier.LineCount - 1)
+							primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
+						
+						var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+						
+						if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+							primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+							
+						if (lineIndexOriginal != primaryCursorModifier.LineIndex ||
+							columnIndexOriginal != primaryCursorModifier.ColumnIndex)
+						{
+							viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+						}
+					}
 					
 					var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(
 						terminalOutputFormatterExpand.TextEditorModelResourceUri);
@@ -249,7 +267,6 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 							outputFormatted.TextSpanList);
 					}
 					
-					viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 					return Task.CompletedTask;
 				});
 			return Task.CompletedTask;

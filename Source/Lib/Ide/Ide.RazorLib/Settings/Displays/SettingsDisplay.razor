@@ -12,10 +12,24 @@
             
             <div class="luth_ide_settings-scope-border"></div>
             
-            <InputAppFontSize/>
-            <InputAppFontFamily/>
-            <InputAppIconSize/>
-            <InputAppTheme/>
+            <table>
+            	<tr>
+            		<td>Font-Size (px):</td>
+            		<td> <InputAppFontSize/> </td>
+            	</tr>
+            	<tr>
+            		<td>Font-Family:</td>
+            		<td> <InputAppFontFamily/> </td>
+            	</tr>
+            	<tr>
+            		<td>Icon-Size (px):</td>
+            		<td> <InputAppIconSize/> </td>
+            	</tr>
+            	<tr>
+            		<td>Theme:</td>
+            		<td> <InputAppTheme/> </td>
+            	</tr>
+            </table>
         </div>
     </div>
     
@@ -29,13 +43,50 @@
             <div class="luth_ide_settings-scope-border"></div>
             
             <TextEditorSettingsPreview/>
-            <InputTextEditorFontSize/>
-            <InputTextEditorFontFamily/>
-            <InputTextEditorCursorWidth/>
-            <InputTextEditorShowNewLines/>
-            <InputTextEditorShowWhitespace/>
-            <InputTextEditorTheme/>
-            <InputTextEditorKeymap/>
+            
+            <table>
+            	<tr>
+            		<td>Font-Size (px):</td>
+            		<td> <InputTextEditorFontSize/> </td>
+            	</tr>
+            	<tr>
+            		<td>Font-Family:</td>
+            		<td> <InputTextEditorFontFamily/> </td>
+            	</tr>
+            	<tr>
+            		<td>Cursor-Width (px):</td>
+            		<td> <InputTextEditorCursorWidth/> </td>
+            	</tr>
+            	<tr>
+            		<td>Show NewLines:</td>
+            		<td> <InputTextEditorShowNewLines/> </td>
+            	</tr>
+            	<tr>
+            		<td>Show Whitespace:</td>
+            		<td> <InputTextEditorShowWhitespace/> </td>
+            	</tr>
+            	<tr>
+            		<td>Theme:</td>
+            		<td> <InputTextEditorTheme/> </td>
+            	</tr>
+            	<tr>
+            		<td>Keymap:</td>
+            		<td> <InputTextEditorKeymap/> </td>
+            	</tr>
+            </table>
+        </div>
+    </div>
+    
+    <div class="luth_ide_settings-scope">
+        <div class="luth_ide_settings-scope-title luth_ide_larger-font-size">
+            IDE Settings
+        </div>
+        
+        <div class="luth_ide_settings-scope-body luth_indent-child-content">
+            
+            <div class="luth_ide_settings-scope-border"></div>
+            
+            <IdeSettingsDisplay/>
         </div>
     </div>
 </div>

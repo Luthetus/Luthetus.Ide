@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
+using Luthetus.Common.RazorLib.Options.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 
@@ -8,9 +9,7 @@ public partial class InputTextEditorFontFamily : ComponentBase, IDisposable
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter]
-    public string CssClassString { get; set; } = string.Empty;
-    [Parameter]
-    public string CssStyleString { get; set; } = string.Empty;
+    public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     public string FontFamily
     {

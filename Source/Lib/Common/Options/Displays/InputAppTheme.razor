@@ -1,42 +1,36 @@
-﻿@using Luthetus.Common.RazorLib.Themes.Models;
+@using Luthetus.Common.RazorLib.Themes.Models;
 
-<div class="luth_settings-input luth_input-app-options-theme @CssClassString"
-     style="@CssStyleString">
+@{
+    var themeState = ThemeRecordsCollectionService.ThemeStateWrap.Value;
+    var appOptionsState = AppOptionsService.AppOptionsStateWrap.Value;
 
-    @{
-        var themeState = ThemeRecordsCollectionService.ThemeStateWrap.Value;
-        var appOptionsState = AppOptionsService.AppOptionsStateWrap.Value;
-
-        var themesInScopeList = themeState.ThemeList
-            .Where(x => x.ThemeScopeList.Contains(ThemeScope.App))
-            .ToArray();
-    }
-
-    Theme:&nbsp;
-    
-    <select @onchange="OnThemeSelectChanged" class="luth_select">
-
-        @{
-            var isActiveValid = CheckIsActiveValid(
-                themesInScopeList,
-                appOptionsState.Options.ThemeKey);
-        }
-
-        <option value="@Guid.Empty.ToString()"
-                selected="@isActiveValid">
-            Select a Theme
-        </option>
+    var themesInScopeList = themeState.ThemeList
+        .Where(x => x.ThemeScopeList.Contains(ThemeScope.App))
+        .ToArray();
         
-        @foreach (var theme in themesInScopeList)
-        {
-            var isActiveSelection = CheckIsActiveSelection(
-                theme.Key,
-                appOptionsState.Options.ThemeKey);
+    var isActiveValid = CheckIsActiveValid(
+        themesInScopeList,
+        appOptionsState.Options.ThemeKey);
+}
+    
+<select @onchange="OnThemeSelectChanged"
+		class="luth_select luth_select-theme @InputViewModel.CssClass"
+	    style="@InputViewModel.CssStyle">
 
-            <option value="@theme.Key.Guid.ToString()"
-                    selected="@isActiveSelection">
-                @theme.DisplayName
-            </option>
-        }
-    </select>
-</div>
+    <option value="@Guid.Empty.ToString()"
+            selected="@isActiveValid">
+        Select a Theme
+    </option>
+    
+    @foreach (var theme in themesInScopeList)
+    {
+        var isActiveSelection = CheckIsActiveSelection(
+            theme.Key,
+            appOptionsState.Options.ThemeKey);
+
+        <option value="@theme.Key.Guid.ToString()"
+                selected="@isActiveSelection">
+            @theme.DisplayName
+        </option>
+    }
+</select>

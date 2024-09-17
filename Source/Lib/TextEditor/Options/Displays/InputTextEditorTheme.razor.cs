@@ -1,10 +1,11 @@
-﻿using Fluxor;
+using Microsoft.AspNetCore.Components;
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Themes.Models;
+using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.Options.States;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.TextEditor.RazorLib.Options.Displays;
 
@@ -18,11 +19,7 @@ public partial class InputTextEditorTheme : FluxorComponent
     private ITextEditorService TextEditorService { get; set; } = null!;
 
     [Parameter]
-    public string TopLevelDivElementCssClassString { get; set; } = string.Empty;
-    [Parameter]
-    public string InputElementCssClassString { get; set; } = string.Empty;
-    [Parameter]
-    public string LabelElementCssClassString { get; set; } = string.Empty;
+    public InputViewModel InputViewModel { get; set; } = InputViewModel.Empty;
 
     private void SelectedThemeChanged(ChangeEventArgs changeEventArgs)
     {

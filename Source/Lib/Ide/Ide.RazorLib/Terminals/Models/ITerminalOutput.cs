@@ -16,7 +16,16 @@ public interface ITerminalOutput : IDisposable
 	public event Action? OnWriteOutput;
 	
 	public void WriteOutput(TerminalCommandParsed terminalCommandParsed, CommandEvent commandEvent);
+	
+	/// <summary>Guaranteed to clear the output</summary>
 	public void ClearOutput();
+	
+	/// <summary>Guaranteed to clear the output, but will keep the most recent command</summary>
+	public void ClearOutputExceptMostRecentCommand();
+	
+	/// <summary>Conditionally clear the output</summary>
+	public void ClearHistoryWhenExistingOutputTooLong();
+	
 	public ITerminalOutputFormatted GetOutputFormatted(string terminalOutputFormatterName);
 	public TerminalCommandParsed? GetParsedCommandOrDefault(Key<TerminalCommandRequest> terminalCommandRequestKey);
 	public ImmutableList<TerminalCommandParsed> GetParsedCommandList();
