@@ -1,7 +1,18 @@
 @using Luthetus.Ide.RazorLib.Terminals.Models
 
 <div class="luth_ide_ide-specific-settings">
-	<div>Terminal-@(nameof(TerminalOutputFacts.MAX_COMMAND_COUNT)):&nbsp;@($"{TerminalOutputFacts.MAX_COMMAND_COUNT:N0}")</div>
-	<div>Terminal-@(nameof(TerminalOutputFacts.MAX_OUTPUT_LENGTH)):&nbsp;@($"{TerminalOutputFacts.MAX_OUTPUT_LENGTH:N0}")</div>
-	<div>Terminal-@(nameof(TerminalOutputFacts.OUTPUT_LENGTH_PADDING)):&nbsp;@($"{TerminalOutputFacts.OUTPUT_LENGTH_PADDING:N0}")</div>
+	<table>
+    	<tr>
+    		<td>Max Command Count History:</td>
+    		<td>@($"{TerminalOutputFacts.MAX_COMMAND_COUNT:N0}")</td>
+    	</tr>
+    	<tr>
+	    	<td>Max Character Length History:</td>
+    		<td>@($"{TerminalOutputFacts.MAX_OUTPUT_LENGTH:N0}")</td>
+    	</tr>
+    	<tr>
+    		<td>When Cleared Keep Last Command If Length Smaller:</td>
+    		<td>@($"{TerminalOutputFacts.OUTPUT_LENGTH_PADDING:N0}")</td>
+    	</tr>
+    </table>
 </div>

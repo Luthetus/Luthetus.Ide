@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.Common.RazorLib.Options.States;
-using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Common.RazorLib.Options.Displays;
 
