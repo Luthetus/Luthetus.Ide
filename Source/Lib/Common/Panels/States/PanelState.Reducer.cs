@@ -1,4 +1,5 @@
 using Fluxor;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
@@ -171,6 +172,55 @@ public partial record PanelState
             {
                 DragEventArgs = setDragEventArgsAction.DragEventArgs
             };
+        }
+        
+        [ReducerMethod]
+        public static PanelState ReduceInitializeResizeHandleDimensionUnitAction(
+            PanelState inState,
+            InitializeResizeHandleDimensionUnitAction initializeResizeHandleDimensionUnitAction)
+        {
+            var inPanelGroup = inState.PanelGroupList.FirstOrDefault(
+                x => x.Key == initializeResizeHandleDimensionUnitAction.PanelGroupKey);
+
+            if (inPanelGroup is null)
+                return inState;
+                
+            if (initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW ||
+            	initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+            {
+            	return inState;
+            }
+                
+			if (initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose == DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
+            {
+            	var heightDimensionAttribute = inPanelGroup.ElementDimensions.DimensionAttributeList.FirstOrDefault(
+            		x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+            		
+            	if (heightDimensionAttribute is null)
+            		return inState;
+            		
+				var existingDimensionUnit = heightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+	            if (existingDimensionUnit is not null)
+	            	return inState;
+            		
+            	heightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            }
+            else if (initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN)
+            {
+            	var widthDimensionAttribute = inPanelGroup.ElementDimensions.DimensionAttributeList.FirstOrDefault(
+            		x => x.DimensionAttributeKind == DimensionAttributeKind.Width);
+            		
+            	if (widthDimensionAttribute is null)
+            		return inState;
+            		
+            	var existingDimensionUnit = widthDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+	            if (existingDimensionUnit is not null)
+	            	return inState;
+            		
+            	widthDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            }
+            
+            return inState;
         }
     }
 }

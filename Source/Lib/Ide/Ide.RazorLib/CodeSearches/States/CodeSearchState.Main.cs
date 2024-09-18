@@ -41,11 +41,12 @@ public partial record CodeSearchState(
 					DimensionUnitKind = DimensionUnitKind.Percentage
 				},
 				new DimensionUnit
-				{
-					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-					DimensionUnitKind = DimensionUnitKind.Pixels,
-					DimensionOperatorKind = DimensionOperatorKind.Subtract
-				},
+	            {
+	                Value = 0,
+	                DimensionUnitKind = DimensionUnitKind.Pixels,
+	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+	                Purpose = DimensionUnitFacts.Purposes.OFFSET,
+	            },
 			});
         }
 
@@ -54,19 +55,20 @@ public partial record CodeSearchState(
             var bottomContentHeight = BottomContentElementDimensions.DimensionAttributeList.Single(
 				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
 
-				bottomContentHeight.DimensionUnitList.AddRange(new[]
-				{
+			bottomContentHeight.DimensionUnitList.AddRange(new[]
+			{
 				new DimensionUnit
 				{
 					Value = 60,
 					DimensionUnitKind = DimensionUnitKind.Percentage
 				},
 				new DimensionUnit
-				{
-					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
-					DimensionUnitKind = DimensionUnitKind.Pixels,
-					DimensionOperatorKind = DimensionOperatorKind.Subtract
-				},
+	            {
+	                Value = 0,
+	                DimensionUnitKind = DimensionUnitKind.Pixels,
+	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+	                Purpose = DimensionUnitFacts.Purposes.OFFSET,
+	            },
 			});
         }
     }

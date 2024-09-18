@@ -1,6 +1,7 @@
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
 namespace Luthetus.Common.RazorLib.Panels.States;
 
@@ -19,4 +20,6 @@ public partial record PanelState
     public record SetPanelTabAsActiveByContextRecordKeyAction(Key<ContextRecord> ContextRecordKey);
 
     public record SetDragEventArgsAction((IPanelTab PanelTab, PanelGroup PanelGroup)? DragEventArgs);
+    
+    public record InitializeResizeHandleDimensionUnitAction(Key<PanelGroup> PanelGroupKey, DimensionUnit DimensionUnit);
 }

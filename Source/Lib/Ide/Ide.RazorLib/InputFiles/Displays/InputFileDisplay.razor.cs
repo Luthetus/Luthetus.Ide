@@ -9,6 +9,7 @@ using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
@@ -28,6 +29,8 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
     private ITreeViewService TreeViewService { get; set; } = null!;
     [Inject]
     private IState<InputFileState> InputFileStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IFileSystemProvider FileSystemProvider { get; set; } = null!;
     [Inject]
@@ -148,7 +151,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             },
             new DimensionUnit
             {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
@@ -166,7 +169,7 @@ public partial class InputFileDisplay : FluxorComponent, IInputFileRendererType
             },
             new DimensionUnit
             {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }

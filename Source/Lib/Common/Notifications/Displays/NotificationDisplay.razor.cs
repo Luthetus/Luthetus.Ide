@@ -32,8 +32,10 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 	[Parameter, EditorRequired]
     public Func<INotification, Task> OnFocusOutFunc { get; set; } = null!;
 
-	private const int WIDTH_IN_PIXELS = 350;
-    private const int HEIGHT_IN_PIXELS = 125;
+	//private const int WIDTH_IN_PIXELS = 350;
+	private const int WIDTH_IN_FONT_WIDTH = 40;
+    // private const int HEIGHT_IN_PIXELS = 125;
+    private const int HEIGHT_IN_FONT_HEIGHT = 8;
     private const int RIGHT_OFFSET_IN_PIXELS = 15;
     private const int BOTTOM_OFFSET_IN_PIXELS = 15;
 
@@ -72,8 +74,6 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
 
             if (localNotification.NotificationOverlayLifespan is not null)
             {
-                // ICommonBackgroundTaskQueue does not work well here because
-                // this Task does not need to be tracked.
                 _ = Task.Run(async () =>
                 {
                     try
@@ -101,19 +101,23 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
     {
         var styleBuilder = new StringBuilder();
 
-        var widthInPixelsInvariantCulture = WIDTH_IN_PIXELS.ToCssValue();
-        var heightInPixelsInvariantCulture = HEIGHT_IN_PIXELS.ToCssValue();
+        var widthInFontWidthInvariantCulture = WIDTH_IN_FONT_WIDTH.ToCssValue();
+        //var widthInPixelsInvariantCulture = WIDTH_IN_PIXELS.ToCssValue();
+        var heightInFontHeightInvariantCulture = HEIGHT_IN_FONT_HEIGHT.ToCssValue();
+        //var heightInPixelsInvariantCulture = HEIGHT_IN_PIXELS.ToCssValue();
 
-        styleBuilder.Append($" width: {widthInPixelsInvariantCulture}px;");
-        styleBuilder.Append($" height: {heightInPixelsInvariantCulture}px;");
+        styleBuilder.Append($" width: {widthInFontWidthInvariantCulture}ch;");
+        styleBuilder.Append($" height: {heightInFontHeightInvariantCulture}em;");
 
         var rightOffsetInPixelsInvariantCulture = RIGHT_OFFSET_IN_PIXELS.ToCssValue();
 
         styleBuilder.Append($" right: {rightOffsetInPixelsInvariantCulture}px;");
 
-        var bottomOffsetDueToHeight = HEIGHT_IN_PIXELS * Index;
+        var bottomOffsetDueToHeightInFontHeight = HEIGHT_IN_FONT_HEIGHT * Index;
+        //var bottomOffsetDueToHeight = HEIGHT_IN_FONT_HEIGHT * Index;
 
-        var bottomOffsetDueToBottomOffset = BOTTOM_OFFSET_IN_PIXELS * (1 + Index);
+        var bottomOffsetDueToBottomOffsetInPixels = BOTTOM_OFFSET_IN_PIXELS * (1 + Index);
+        //var bottomOffsetDueToBottomOffset = BOTTOM_OFFSET_IN_PIXELS * (1 + Index);
 
         // The bottom panel has:
         //     height="calc(var(--luth_ide_panel-tabs-font-size) + var(--luth_ide_panel-tabs-margin) + var(--luth_ide_panel-tabs-bug-are-not-aligning-need-to-fix-todo))"
@@ -128,11 +132,12 @@ public partial class NotificationDisplay : ComponentBase, IDisposable
         // to include the bottom panel height in the calculation.
         var panelBottomHeight = "0.85em + 4px + 0.7em";
 
-        var totalBottomOffset = bottomOffsetDueToHeight + bottomOffsetDueToBottomOffset;
+        var bottomOffsetDueToHeightInFontHeightInvariantCulture = bottomOffsetDueToHeightInFontHeight.ToCssValue();
+        var bottomOffsetDueToBottomOffsetInPixelsInvariantCulture = bottomOffsetDueToBottomOffsetInPixels.ToCssValue();
 
-        var totalBottomOffsetInvariantCulture = totalBottomOffset.ToCssValue();
+        //var totalBottomOffsetInvariantCulture = totalBottomOffset.ToCssValue();
 
-        styleBuilder.Append($" bottom: calc({totalBottomOffsetInvariantCulture}px + {panelBottomHeight}) ;");
+        styleBuilder.Append($" bottom: calc({bottomOffsetDueToHeightInFontHeightInvariantCulture}em + {bottomOffsetDueToBottomOffsetInPixelsInvariantCulture}px + {panelBottomHeight}) ;");
 
         return styleBuilder.ToString();
     }

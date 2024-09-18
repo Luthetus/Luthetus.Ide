@@ -51,10 +51,11 @@ public partial record PanelState(
             },
             new DimensionUnit
             {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                Value = 0,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
+                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+                Purpose = DimensionUnitFacts.Purposes.OFFSET,
+            },
         });
 
         return leftPanelGroup;
@@ -80,10 +81,11 @@ public partial record PanelState(
             },
             new DimensionUnit
             {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                Value = 0,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
-            }
+                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+                Purpose = DimensionUnitFacts.Purposes.OFFSET,
+            },
         });
 
         return rightPanelGroup;
@@ -109,9 +111,10 @@ public partial record PanelState(
             },
             new DimensionUnit
             {
-                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+                Value = 0,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
-                DimensionOperatorKind = DimensionOperatorKind.Subtract
+                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+                Purpose = DimensionUnitFacts.Purposes.OFFSET,
             },
             new DimensionUnit
             {

@@ -2,15 +2,18 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
-using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Themes.States;
 using Luthetus.Common.RazorLib.Contexts.Displays;
 using Luthetus.Common.RazorLib.Panels.Models;
+using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Common.RazorLib.Options.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -20,6 +23,7 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
+using Luthetus.Ide.RazorLib.CodeSearches.States;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 using Luthetus.Ide.RazorLib.JsRuntimes.Models;
 
@@ -36,6 +40,8 @@ public partial class LuthetusIdeInitializer : ComponentBase
 {
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -80,7 +86,17 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 	else if (terminalKey == TerminalFacts.EXECUTION_KEY)
                 		AddExecutionTerminal();
                 }
+                
+                Dispatcher.Dispatch(new CodeSearchState.InitializeResizeHandleDimensionUnitAction(
+					new DimensionUnit
+		            {
+		                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+		                DimensionUnitKind = DimensionUnitKind.Pixels,
+		                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+		                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW,
+		            }));
 
+				InitializePanelResizeHandleDimensionUnit();
                 InitializePanelTabs();
                 CommandFactory.Initialize();
             });
@@ -102,6 +118,57 @@ public partial class LuthetusIdeInitializer : ComponentBase
 		await base.OnAfterRenderAsync(firstRender);
 	}
 
+	private void InitializePanelResizeHandleDimensionUnit()
+	{
+		// Left
+		{
+			var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value);
+        	leftPanel.Dispatcher = Dispatcher;
+		
+			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
+				leftPanel.Key,
+				new DimensionUnit
+	            {
+	                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+	                DimensionUnitKind = DimensionUnitKind.Pixels,
+	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+	                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN,
+	            }));
+		}
+		
+		// Right
+		{
+			var rightPanel = PanelFacts.GetTopRightPanelGroup(PanelStateWrap.Value);
+        	rightPanel.Dispatcher = Dispatcher;
+		
+			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
+				rightPanel.Key,
+				new DimensionUnit
+	            {
+	                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+	                DimensionUnitKind = DimensionUnitKind.Pixels,
+	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+	                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN,
+	            }));
+		}
+		
+		// Bottom
+		{
+			var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelStateWrap.Value);
+        	bottomPanel.Dispatcher = Dispatcher;
+		
+			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
+				bottomPanel.Key,
+				new DimensionUnit
+	            {
+	                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+	                DimensionUnitKind = DimensionUnitKind.Pixels,
+	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+	                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW,
+	            }));
+		}
+	}
+
     private void InitializePanelTabs()
     {
         InitializeLeftPanelTabs();
@@ -112,7 +179,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
     private void InitializeLeftPanelTabs()
     {
         var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value);
-        leftPanel.Dispatcher = Dispatcher;        
+        leftPanel.Dispatcher = Dispatcher;
 
         // gitPanel
         var gitPanel = new Panel(
@@ -170,6 +237,15 @@ public partial class LuthetusIdeInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(terminalGroupPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, terminalGroupPanel, false));
+		// This UI has resizable parts that need to be initialized.
+        Dispatcher.Dispatch(new TerminalGroupState.InitializeResizeHandleDimensionUnitAction(
+            new DimensionUnit
+            {
+                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN,
+            }));
 
 		// activeContextsPanel
         var activeContextsPanel = new Panel(
