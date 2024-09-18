@@ -24,6 +24,7 @@ public interface IAppOptionsService
     public void SetTheme(ThemeRecord theme, bool updateStorage = true);
     public void SetFontFamily(string? fontFamily, bool updateStorage = true);
     public void SetFontSize(int fontSizeInPixels, bool updateStorage = true);
+    public void SetResizeHandleHeight(int resizeHandleHeightInPixels, bool updateStorage = true);
     public void SetIconSize(int iconSizeInPixels, bool updateStorage = true);
     public Task SetFromLocalStorageAsync();
     public void WriteToStorage();

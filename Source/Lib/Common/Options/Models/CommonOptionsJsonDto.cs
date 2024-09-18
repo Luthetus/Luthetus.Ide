@@ -1,4 +1,4 @@
-﻿using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Themes.Models;
 
 namespace Luthetus.Common.RazorLib.Options.Models;
@@ -10,11 +10,17 @@ namespace Luthetus.Common.RazorLib.Options.Models;
 public record CommonOptionsJsonDto(
     int? FontSizeInPixels,
     int? IconSizeInPixels,
+    int? ResizeHandleHeightInPixels,
     Key<ThemeRecord>? ThemeKey,
     string? FontFamily)
 {
     public CommonOptionsJsonDto()
-        : this(null, null, null, null)
+        : this(
+        	FontSizeInPixels: null,
+        	IconSizeInPixels: null,
+        	ResizeHandleHeightInPixels: null,
+        	ThemeKey: null,
+        	FontFamily: null)
     {
     }
 
@@ -22,6 +28,7 @@ public record CommonOptionsJsonDto(
         : this(
               options.FontSizeInPixels,
               options.IconSizeInPixels,
+              options.ResizeHandleHeightInPixels,
               options.ThemeKey,
               options.FontFamily)
     {

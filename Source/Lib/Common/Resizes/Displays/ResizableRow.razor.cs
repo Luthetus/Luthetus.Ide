@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.Options.States;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
 
@@ -12,6 +13,8 @@ public partial class ResizableRow : ComponentBase, IDisposable
 {
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -21,8 +24,6 @@ public partial class ResizableRow : ComponentBase, IDisposable
     public ElementDimensions BottomElementDimensions { get; set; } = null!;
     [Parameter, EditorRequired]
     public Func<Task> ReRenderFuncAsync { get; set; } = null!;
-
-    public const double RESIZE_HANDLE_HEIGHT_IN_PIXELS = 4;
 
     private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;

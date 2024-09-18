@@ -20,6 +20,7 @@ using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
@@ -45,6 +46,8 @@ public partial class IdeHeader : ComponentBase
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<IdeHeaderState> IdeHeaderStateWrap { get; set; } = null!;
+	[Inject]
+	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]

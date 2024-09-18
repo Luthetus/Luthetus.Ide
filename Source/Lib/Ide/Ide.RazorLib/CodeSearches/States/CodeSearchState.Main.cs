@@ -42,7 +42,7 @@ public partial record CodeSearchState(
 				},
 				new DimensionUnit
 				{
-					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+					Value = Luthetus.Common.RazorLib.Options.States.AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
 					DimensionUnitKind = DimensionUnitKind.Pixels,
 					DimensionOperatorKind = DimensionOperatorKind.Subtract
 				},
@@ -54,8 +54,8 @@ public partial record CodeSearchState(
             var bottomContentHeight = BottomContentElementDimensions.DimensionAttributeList.Single(
 				da => da.DimensionAttributeKind == DimensionAttributeKind.Height);
 
-				bottomContentHeight.DimensionUnitList.AddRange(new[]
-				{
+			bottomContentHeight.DimensionUnitList.AddRange(new[]
+			{
 				new DimensionUnit
 				{
 					Value = 60,
@@ -63,7 +63,7 @@ public partial record CodeSearchState(
 				},
 				new DimensionUnit
 				{
-					Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+					Value = Luthetus.Common.RazorLib.Options.States.AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
 					DimensionUnitKind = DimensionUnitKind.Pixels,
 					DimensionOperatorKind = DimensionOperatorKind.Subtract
 				},

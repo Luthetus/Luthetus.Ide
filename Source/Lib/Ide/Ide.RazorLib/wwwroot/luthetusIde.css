@@ -12,7 +12,6 @@ input[type="checkbox"]{
 }
 
 .luth_ide_header {
-    border-bottom: var(--luth_ide_header-border-bottom-size) solid var(--luth_primary-border-color);
     height: var(--luth_ide_header-height);
     background-color: var(--luth_ide_header-background-color);
 }

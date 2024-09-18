@@ -9,9 +9,14 @@
 @using Luthetus.Ide.RazorLib.StartupControls.Displays
 @using Luthetus.Ide.RazorLib.Shareds.States;
 
+@{
+	var borderBottomHeight =  AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels;
+	var contextBoundaryCssStyle = $"display: flex; justify-content: space-between; border-bottom: {borderBottomHeight}px solid var(--luth_primary-border-color);";
+}
+
 <ContextBoundary ContextRecord="ContextFacts.MainLayoutHeaderContext"
                  ClassCssString="luth_ide_header"
-                 StyleCssString="display: flex; justify-content: space-between;">
+                 StyleCssString="@contextBoundaryCssStyle">
     
     <div class="luth_ide_header-left-content"
          style="display: flex;">

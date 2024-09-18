@@ -109,7 +109,7 @@ public partial record PanelState(
             },
             new DimensionUnit
             {
-                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+                Value = Luthetus.Common.RazorLib.Options.States.AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             },
