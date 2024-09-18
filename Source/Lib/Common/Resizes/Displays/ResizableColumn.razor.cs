@@ -31,8 +31,14 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
+        AppOptionsStateWrap.StateChanged += OnAppOptionsStateChanged;
 
         base.OnInitialized();
+    }
+    
+    private async void OnAppOptionsStateChanged(object? sender, EventArgs e)
+    {
+    	await InvokeAsync(StateHasChanged);
     }
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
@@ -97,5 +103,6 @@ public partial class ResizableColumn : ComponentBase, IDisposable
     public void Dispose()
     {
         DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
+        AppOptionsStateWrap.StateChanged -= OnAppOptionsStateChanged;
     }
 }
