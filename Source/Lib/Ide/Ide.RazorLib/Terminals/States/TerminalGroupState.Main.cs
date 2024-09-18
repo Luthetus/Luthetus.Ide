@@ -25,9 +25,10 @@ public partial record TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
                 },
                 new DimensionUnit
                 {
-                    Value = Luthetus.Common.RazorLib.Options.States.AppOptionsState.DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                    Value = 0,
                     DimensionUnitKind = DimensionUnitKind.Pixels,
-                    DimensionOperatorKind = DimensionOperatorKind.Subtract
+                    DimensionOperatorKind = DimensionOperatorKind.Subtract,
+                    Purpose = DimensionUnitFacts.Purposes.OFFSET,
                 },
             });
         }
@@ -46,9 +47,10 @@ public partial record TerminalGroupState(Key<ITerminal> ActiveTerminalKey)
                 },
                 new DimensionUnit
                 {
-                    Value = Luthetus.Common.RazorLib.Options.States.AppOptionsState.DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                    Value = 0,
                     DimensionUnitKind = DimensionUnitKind.Pixels,
-                    DimensionOperatorKind = DimensionOperatorKind.Subtract
+                    DimensionOperatorKind = DimensionOperatorKind.Subtract,
+                    Purpose = DimensionUnitFacts.Purposes.OFFSET,
                 },
             });
         }
