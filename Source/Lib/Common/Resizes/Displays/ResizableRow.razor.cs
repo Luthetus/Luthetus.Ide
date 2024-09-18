@@ -5,6 +5,7 @@ using Luthetus.Common.RazorLib.Drags.Displays;
 using Luthetus.Common.RazorLib.Resizes.Models;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Dimensions.States;
+using Luthetus.Common.RazorLib.Options.States;
 
 namespace Luthetus.Common.RazorLib.Resizes.Displays;
 
@@ -12,6 +13,8 @@ public partial class ResizableRow : ComponentBase, IDisposable
 {
     [Inject]
     private IState<DragState> DragStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
 
@@ -22,16 +25,20 @@ public partial class ResizableRow : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public Func<Task> ReRenderFuncAsync { get; set; } = null!;
 
-    public const double RESIZE_HANDLE_HEIGHT_IN_PIXELS = 4;
-
     private Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task>? _dragEventHandler;
     private MouseEventArgs? _previousDragMouseEventArgs;
 
     protected override void OnInitialized()
     {
         DragStateWrap.StateChanged += DragStateWrapOnStateChanged;
+        AppOptionsStateWrap.StateChanged += OnAppOptionsStateChanged;
 
         base.OnInitialized();
+    }
+    
+    private async void OnAppOptionsStateChanged(object? sender, EventArgs e)
+    {
+    	await InvokeAsync(StateHasChanged);
     }
 
     private async void DragStateWrapOnStateChanged(object? sender, EventArgs e)
@@ -96,5 +103,6 @@ public partial class ResizableRow : ComponentBase, IDisposable
     public void Dispose()
     {
         DragStateWrap.StateChanged -= DragStateWrapOnStateChanged;
+        AppOptionsStateWrap.StateChanged -= OnAppOptionsStateChanged;
     }
 }

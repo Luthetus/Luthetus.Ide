@@ -1,6 +1,7 @@
-﻿using Fluxor;
-using Luthetus.Ide.RazorLib.CodeSearches.Models;
 using System.Collections.Immutable;
+using Fluxor;
+using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.Ide.RazorLib.CodeSearches.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.States;
 
@@ -66,6 +67,47 @@ public partial record CodeSearchState
             {
                 ResultList = ImmutableList<string>.Empty
             };
+        }
+        
+        [ReducerMethod]
+        public static CodeSearchState ReduceInitializeResizeHandleDimensionUnitAction(
+            CodeSearchState inState,
+            InitializeResizeHandleDimensionUnitAction initializeResizeHandleDimensionUnitAction)
+        {
+            if (initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose != DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW)
+            	return inState;
+            
+            // TopContentElementDimensions
+            {
+            	var heightDimensionAttribute = inState.TopContentElementDimensions.DimensionAttributeList.FirstOrDefault(
+            		x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+            		
+            	if (heightDimensionAttribute is null)
+            		return inState;
+            		
+            	var existingDimensionUnit = heightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+	            if (existingDimensionUnit is not null)
+	            	return inState;
+            		
+            	heightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            }
+            
+            // BottomContentElementDimensions
+            {
+            	var heightDimensionAttribute = inState.BottomContentElementDimensions.DimensionAttributeList.FirstOrDefault(
+            		x => x.DimensionAttributeKind == DimensionAttributeKind.Height);
+            		
+            	if (heightDimensionAttribute is null)
+            		return inState;
+            		
+            	var existingDimensionUnit = heightDimensionAttribute.DimensionUnitList.FirstOrDefault(x => x.Purpose == initializeResizeHandleDimensionUnitAction.DimensionUnit.Purpose);
+	            if (existingDimensionUnit is not null)
+	            	return inState;
+            		
+            	heightDimensionAttribute.DimensionUnitList.Add(initializeResizeHandleDimensionUnitAction.DimensionUnit);
+            }
+            
+            return inState;
         }
     }
 }

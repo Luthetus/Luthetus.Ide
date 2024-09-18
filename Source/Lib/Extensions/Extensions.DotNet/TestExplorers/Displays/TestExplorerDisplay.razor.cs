@@ -66,7 +66,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 				},
 				new DimensionUnit
 				{
-					Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+					Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
 					DimensionUnitKind = DimensionUnitKind.Pixels,
 					DimensionOperatorKind = DimensionOperatorKind.Subtract
 				}
@@ -87,7 +87,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 				},
 				new DimensionUnit
 				{
-					Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+					Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
 					DimensionUnitKind = DimensionUnitKind.Pixels,
 					DimensionOperatorKind = DimensionOperatorKind.Subtract
 				}
