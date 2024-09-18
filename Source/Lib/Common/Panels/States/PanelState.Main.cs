@@ -51,7 +51,7 @@ public partial record PanelState(
             },
             new DimensionUnit
             {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                Value = Luthetus.Common.RazorLib.Options.States.AppOptionsState.DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }
@@ -80,7 +80,7 @@ public partial record PanelState(
             },
             new DimensionUnit
             {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                Value = Luthetus.Common.RazorLib.Options.States.AppOptionsState.DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }

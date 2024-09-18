@@ -155,6 +155,20 @@ public class AppOptionsService : IAppOptionsService
             WriteToStorage();
     }
 
+    public void SetResizeHandleWidth(int resizeHandleWidthInPixels, bool updateStorage = true)
+    {
+        _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
+        {
+            Options = inState.Options with
+            {
+                ResizeHandleWidthInPixels = resizeHandleWidthInPixels
+            }
+        }));
+
+        if (updateStorage)
+            WriteToStorage();
+    }
+
     public void SetResizeHandleHeight(int resizeHandleHeightInPixels, bool updateStorage = true)
     {
         _dispatcher.Dispatch(new AppOptionsState.WithAction(inState => inState with
@@ -208,6 +222,9 @@ public class AppOptionsService : IAppOptionsService
 
         if (optionsJson.FontSizeInPixels is not null)
             SetFontSize(optionsJson.FontSizeInPixels.Value, false);
+            
+        if (optionsJson.ResizeHandleWidthInPixels is not null)
+            SetResizeHandleWidth(optionsJson.ResizeHandleWidthInPixels.Value, false);
             
         if (optionsJson.ResizeHandleHeightInPixels is not null)
             SetResizeHandleHeight(optionsJson.ResizeHandleHeightInPixels.Value, false);

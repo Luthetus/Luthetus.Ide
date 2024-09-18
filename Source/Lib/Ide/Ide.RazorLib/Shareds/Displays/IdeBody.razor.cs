@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Resizes.Displays;
 using Luthetus.Common.RazorLib.StateHasChangedBoundaries.Displays;
+using Luthetus.Common.RazorLib.Options.States;
 using Microsoft.AspNetCore.Components;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
@@ -11,6 +12,8 @@ public partial class IdeBody : ComponentBase
 {
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 
     [Parameter, EditorRequired]
     public ElementDimensions BodyElementDimensions { get; set; } = null!;
@@ -34,7 +37,7 @@ public partial class IdeBody : ComponentBase
             },
             new DimensionUnit
             {
-                Value = ResizableColumn.RESIZE_HANDLE_WIDTH_IN_PIXELS / 2,
+                Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             }

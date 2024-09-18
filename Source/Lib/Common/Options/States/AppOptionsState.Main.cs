@@ -16,9 +16,13 @@ public partial record AppOptionsState(CommonOptions Options)
     public const int DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS = 4;
     public const int MINIMUM_RESIZE_HANDLE_HEIGHT_IN_PIXELS = 4;
     
+    public const int DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS = 4;
+    public const int MINIMUM_RESIZE_HANDLE_WIDTH_IN_PIXELS = 4;
+    
     public static readonly CommonOptions DefaultCommonOptions = new(
         FontSizeInPixels: DEFAULT_FONT_SIZE_IN_PIXELS,
         IconSizeInPixels: DEFAULT_ICON_SIZE_IN_PIXELS,
+        ResizeHandleWidthInPixels: DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS,
         ResizeHandleHeightInPixels: DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS,
         ThemeKey: ThemeFacts.VisualStudioDarkThemeClone.Key,
         FontFamily: null,

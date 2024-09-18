@@ -15,6 +15,7 @@ public partial class TextEditorOptionsState
             new CommonOptions(
                 DEFAULT_FONT_SIZE_IN_PIXELS,
                 DEFAULT_ICON_SIZE_IN_PIXELS,
+                Luthetus.Common.RazorLib.Options.States.AppOptionsState.DEFAULT_RESIZE_HANDLE_WIDTH_IN_PIXELS,
                 Luthetus.Common.RazorLib.Options.States.AppOptionsState.DEFAULT_RESIZE_HANDLE_HEIGHT_IN_PIXELS,
                 ThemeFacts.VisualStudioDarkThemeClone.Key,
                 FontFamily: null,
