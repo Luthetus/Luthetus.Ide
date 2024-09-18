@@ -23,6 +23,7 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
+using Luthetus.Ide.RazorLib.CodeSearches.States;
 using Luthetus.Ide.RazorLib.Gits.Displays;
 using Luthetus.Ide.RazorLib.JsRuntimes.Models;
 
@@ -85,6 +86,15 @@ public partial class LuthetusIdeInitializer : ComponentBase
                 	else if (terminalKey == TerminalFacts.EXECUTION_KEY)
                 		AddExecutionTerminal();
                 }
+                
+                Dispatcher.Dispatch(new CodeSearchState.InitializeResizeHandleDimensionUnitAction(
+					new DimensionUnit
+		            {
+		                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+		                DimensionUnitKind = DimensionUnitKind.Pixels,
+		                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+		                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW,
+		            }));
 
 				InitializePanelResizeHandleDimensionUnit();
                 InitializePanelTabs();
@@ -144,6 +154,18 @@ public partial class LuthetusIdeInitializer : ComponentBase
 		
 		// Bottom
 		{
+			var bottomPanel = PanelFacts.GetBottomPanelGroup(PanelStateWrap.Value);
+        	bottomPanel.Dispatcher = Dispatcher;
+		
+			Dispatcher.Dispatch(new PanelState.InitializeResizeHandleDimensionUnitAction(
+				bottomPanel.Key,
+				new DimensionUnit
+	            {
+	                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
+	                DimensionUnitKind = DimensionUnitKind.Pixels,
+	                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+	                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_ROW,
+	            }));
 		}
 	}
 
