@@ -2,7 +2,7 @@
 @using Luthetus.Common.RazorLib.Dimensions.Models
 
 <div class="luth_resize-row"
-     style="height: @(RESIZE_HANDLE_HEIGHT_IN_PIXELS.ToCssValue())px;"
+     style="height: @(AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels.ToCssValue())px;"
      @onmousedown="() => SubscribeToDragEvent(DragEventHandlerResizeHandleAsync)">
     
 </div>

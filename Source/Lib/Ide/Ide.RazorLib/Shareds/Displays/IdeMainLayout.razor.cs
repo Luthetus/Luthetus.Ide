@@ -67,7 +67,7 @@ public partial class IdeMainLayout : LayoutComponentBase, IDisposable
             },
             new DimensionUnit
             {
-                Value = ResizableRow.RESIZE_HANDLE_HEIGHT_IN_PIXELS / 2,
+                Value = AppOptionsStateWrap.Value.Options.ResizeHandleHeightInPixels / 2,
                 DimensionUnitKind = DimensionUnitKind.Pixels,
                 DimensionOperatorKind = DimensionOperatorKind.Subtract
             },
