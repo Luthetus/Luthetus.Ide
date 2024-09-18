@@ -36,7 +36,7 @@ using Luthetus.Ide.RazorLib.Shareds.States;
 
 namespace Luthetus.Ide.RazorLib.Shareds.Displays;
 
-public partial class IdeHeader : ComponentBase
+public partial class IdeHeader : ComponentBase, IDisposable
 {
     [Inject]
     private IState<PanelState> PanelStateWrap { get; set; } = null!;
@@ -86,6 +86,8 @@ public partial class IdeHeader : ComponentBase
 
 	protected override void OnInitialized()
 	{
+		AppOptionsStateWrap.StateChanged += OnAppOptionsStateChanged;
+	
 		BackgroundTaskService.Enqueue(
 			Key<IBackgroundTask>.NewKey(),
 			ContinuousBackgroundTaskWorker.GetQueueKey(),
@@ -528,5 +530,15 @@ public partial class IdeHeader : ComponentBase
 			IdeHeaderState.DropdownKeyRun,
 			IdeHeaderStateWrap.Value.MenuRun,
 			_buttonRunElementReference);
+	}
+	
+	private async void OnAppOptionsStateChanged(object? sender, EventArgs e)
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+	
+	public void Dispose()
+	{
+		AppOptionsStateWrap.StateChanged -= OnAppOptionsStateChanged;
 	}
 }
