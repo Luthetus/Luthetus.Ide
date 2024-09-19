@@ -963,6 +963,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				topBoundary,
 				bottomBoundary);
 
+			viewModelModifier.ScrollWasModified = true;
+						
 			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 			{
 				VirtualizationResult = virtualizationResult,
