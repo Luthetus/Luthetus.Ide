@@ -204,7 +204,7 @@ public partial class TextEditorService : ITextEditorService
                 return;
 
 			viewModelModifierNeedRenderList.Add(viewModelModifier);
-
+			
             var successCursorModifierBag = editContext.CursorModifierBagCache.TryGetValue(
                 viewModelModifier.ViewModel.ViewModelKey,
                 out var cursorModifierBag);
@@ -235,9 +235,23 @@ public partial class TextEditorService : ITextEditorService
 				        cursorModifier);
             	}
             }
+            
+            // This if expression exists below, to check if 'CalculateVirtualizationResult(...)' should be invoked.
+            //
+            // But, note that these cannot be combined at the bottom, we need to check if an edit
+            // reduced the scrollWidth or scrollHeight of the editor's content.
+            // 
+            // This is done here, so that the 'ScrollWasModified' bool can be set, and downstream if statements will be entered,
+            // which go on to scroll the editor..
+            if (viewModelModifier.ShouldReloadVirtualizationResult)
+			{
+				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier);
+			}
 
             if (viewModelModifier.ScrollWasModified)
             {
+            	// TODO: If the API is self validating then this explicit final validation wouldn't be needed?
+            	/*
             	var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
             
             	validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions.WithSetScrollLeft(
@@ -247,11 +261,12 @@ public partial class TextEditorService : ITextEditorService
             	validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
         			(int)validateScrollbarDimensions.ScrollTop,
         			viewModelModifier.ViewModel.TextEditorDimensions);
-            
+        			
             	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
 					ScrollbarDimensions = validateScrollbarDimensions
 				};
+				*/
             
                 await JsRuntimeTextEditorApi
 		            .SetScrollPosition(
@@ -275,7 +290,6 @@ public partial class TextEditorService : ITextEditorService
             	{
             		var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
             		var firstEntryTop = firstEntry.Index * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
-
             		
             		if (viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop < firstEntryTop)
             		{
@@ -323,7 +337,7 @@ public partial class TextEditorService : ITextEditorService
             }
 
 			if (viewModelModifier.ShouldReloadVirtualizationResult)
-			{
+			{			
 				// TODO: This 'CalculateVirtualizationResultFactory' invocation is horrible for performance.
 	            editContext.TextEditorService.ViewModelApi.CalculateVirtualizationResult(
 	            	editContext,
@@ -338,6 +352,96 @@ public partial class TextEditorService : ITextEditorService
                 modelModifierNeedRenderList,
 				viewModelModifierNeedRenderList));
         }
+	}
+	
+	private void ValidateMaximumScrollLeftAndScrollTop(ITextEditorEditContext editContext, TextEditorViewModelModifier viewModelModifier)
+	{
+		var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
+    	
+    	if (modelModifier is null)
+    		return;
+		
+		var originalScrollWidth = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth;
+		var originalScrollHeight = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollHeight;
+	
+		var totalWidth = (int)Math.Ceiling(modelModifier.MostCharactersOnASingleLineTuple.lineLength *
+			viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+
+		// Account for any tab characters on the 'MostCharactersOnASingleLineTuple'
+		//
+		// TODO: This code is not fully correct...
+		//       ...if the longest line is 50 non-tab characters,
+		//       and the second longest line is 49 tab characters,
+		//       this code will erroneously take the '50' non-tab characters
+		//       to be the longest line.
+		{
+			var lineIndex = modelModifier.MostCharactersOnASingleLineTuple.lineIndex;
+			var longestLineInformation = modelModifier.GetLineInformation(lineIndex);
+
+			var tabCountOnLongestLine = modelModifier.GetTabCountOnSameLineBeforeCursor(
+				longestLineInformation.Index,
+				longestLineInformation.LastValidColumnIndex);
+
+			// 1 of the character width is already accounted for
+			var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
+
+			totalWidth += (int)Math.Ceiling(extraWidthPerTabKey *
+				tabCountOnLongestLine *
+				viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+		}
+
+		var totalHeight = (int)Math.Ceiling(modelModifier.LineEndList.Count *
+			viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+
+		// Add vertical margin so the user can scroll beyond the final line of content
+		int marginScrollHeight;
+		{
+			var percentOfMarginScrollHeightByPageUnit = 0.4;
+
+			marginScrollHeight = (int)Math.Ceiling(viewModelModifier.ViewModel.TextEditorDimensions.Height * percentOfMarginScrollHeightByPageUnit);
+			totalHeight += marginScrollHeight;
+		}
+
+		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		{
+			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions with
+			{
+				ScrollWidth = totalWidth,
+				ScrollHeight = totalHeight,
+				MarginScrollHeight = marginScrollHeight
+			},
+		};
+		
+		var changeOccurred = false;
+		var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
+		
+		if (originalScrollWidth > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth)
+		{
+			changeOccurred = true;
+		
+			validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions.WithSetScrollLeft(
+				(int)validateScrollbarDimensions.ScrollLeft,
+				viewModelModifier.ViewModel.TextEditorDimensions);
+		}
+		
+		if (originalScrollHeight > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollHeight)
+		{
+			changeOccurred = true;
+		
+			validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
+				(int)validateScrollbarDimensions.ScrollTop,
+				viewModelModifier.ViewModel.TextEditorDimensions);
+		}
+		
+		if (changeOccurred)
+		{
+			viewModelModifier.ScrollWasModified = true;
+			
+			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+			{
+				ScrollbarDimensions = validateScrollbarDimensions
+			};
+		}
 	}
 	
 	public async Task OpenInEditorAsync(

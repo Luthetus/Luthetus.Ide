@@ -962,8 +962,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				rightBoundary,
 				topBoundary,
 				bottomBoundary);
-
-			viewModelModifier.ScrollWasModified = true;
 						
 			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 			{
