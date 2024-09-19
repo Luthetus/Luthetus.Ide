@@ -352,24 +352,30 @@ public struct OnKeyDownLateBatching : ITextEditorWork
 			//       their keydown code takes a long time?
 			EditContext.TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
 			
-			if (modelModifier.LineCount < modelModifier.PreviousLineCount)
+			// This code is wrong.
+			// It isn't about the line count or the "most characters on a single line"
+			// It simply is whether the maximum scrollLeft or scrollTop has been reduced.
+			// In which case you match the new and smaller maximum.
 			{
-				var difference = modelModifier.PreviousLineCount - modelModifier.LineCount;
-			
-				EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
-		            EditContext,
-			        viewModelModifier,
-			        -1 * difference * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
-			}
-			
-			if (modelModifier.MostCharactersOnASingleLineTuple.lineLength < modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength)
-			{
-				var difference = modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength - modelModifier.MostCharactersOnASingleLineTuple.lineLength;
+				/*if (modelModifier.LineCount < modelModifier.PreviousLineCount)
+				{
+					var difference = modelModifier.PreviousLineCount - modelModifier.LineCount;
 				
-				EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
-		            EditContext,
-			        viewModelModifier,
-			        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+					EditContext.TextEditorService.ViewModelApi.MutateScrollVerticalPosition(
+			            EditContext,
+				        viewModelModifier,
+				        -1 * difference * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+				}
+				
+				if (modelModifier.MostCharactersOnASingleLineTuple.lineLength < modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength)
+				{
+					var difference = modelModifier.PreviousMostCharactersOnASingleLineTuple.lineLength - modelModifier.MostCharactersOnASingleLineTuple.lineLength;
+					
+					EditContext.TextEditorService.ViewModelApi.MutateScrollHorizontalPosition(
+			            EditContext,
+				        viewModelModifier,
+				        -1 * viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth);
+				}*/
 			}
 			
 			await EditContext.TextEditorService

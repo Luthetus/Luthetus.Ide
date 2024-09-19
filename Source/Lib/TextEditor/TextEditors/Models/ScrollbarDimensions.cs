@@ -16,10 +16,10 @@ public record ScrollbarDimensions(
     double ScrollHeight,
     double MarginScrollHeight)
 {
-	public ScrollbarDimensions MutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollLeft((int)Math.Ceiling(ScrollLeft + pixels), textEditorDimensions);
+	public ScrollbarDimensions WithMutateScrollLeft(int pixels, TextEditorDimensions textEditorDimensions) =>
+		WithSetScrollLeft((int)Math.Ceiling(ScrollLeft + pixels), textEditorDimensions);
 
-	public ScrollbarDimensions SetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
+	public ScrollbarDimensions WithSetScrollLeft(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollLeft = Math.Max(0, pixels);
 		var maxScrollLeft = (int)Math.Max(0, ScrollWidth - textEditorDimensions.Width);
@@ -30,10 +30,10 @@ public record ScrollbarDimensions(
 		return this with { ScrollLeft = resultScrollLeft };
 	}
 
-	public ScrollbarDimensions MutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
-		SetScrollTop((int)Math.Ceiling(ScrollTop + pixels), textEditorDimensions);
+	public ScrollbarDimensions WithMutateScrollTop(int pixels, TextEditorDimensions textEditorDimensions) =>
+		WithSetScrollTop((int)Math.Ceiling(ScrollTop + pixels), textEditorDimensions);
 
-	public ScrollbarDimensions SetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
+	public ScrollbarDimensions WithSetScrollTop(int pixels, TextEditorDimensions textEditorDimensions)
 	{
 		var resultScrollTop = Math.Max(0, pixels);
 		var maxScrollTop = (int)Math.Max(0, ScrollHeight - textEditorDimensions.Height);

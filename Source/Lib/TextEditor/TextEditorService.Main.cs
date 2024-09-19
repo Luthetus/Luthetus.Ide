@@ -238,15 +238,15 @@ public partial class TextEditorService : ITextEditorService
 
             if (viewModelModifier.ScrollWasModified)
             {
-            	// The 'SetScroll...' methods validate the resulting value,
-            	// so setting each dimension to itself will trigger the validation.
-            	var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-            		.SetScrollLeft(
-            			(int)viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft,
-            			viewModelModifier.ViewModel.TextEditorDimensions)
-            		.SetScrollTop(
-            			(int)viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop,
-            			viewModelModifier.ViewModel.TextEditorDimensions);
+            	var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
+            
+            	validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions.WithSetScrollLeft(
+        			(int)validateScrollbarDimensions.ScrollLeft,
+        			viewModelModifier.ViewModel.TextEditorDimensions);
+            			
+            	validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
+        			(int)validateScrollbarDimensions.ScrollTop,
+        			viewModelModifier.ViewModel.TextEditorDimensions);
             
             	viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
