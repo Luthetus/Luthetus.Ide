@@ -5,6 +5,17 @@ All notable changes to the `Luthetus.TextEditor` repository will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.6.0] - 2024-09-05
+<details>
+  <summary>Click to show changes</summary>
+
+	### Fixed
+    - Fix: text erroneously written out when holding non-shift modifier(s).
+      	(i.e.: { 'Ctrl' + 'c' } to copy writing out the letter 'c' to the text editor)
+    - Fix: maximum scrollWidth and scrollHeight becoming smaller (and how this impacts scrollLeft and scrollTop)
+    - Fix: negative scrollLeft and negative scrollTop
+</details>
+
 ## [2.5.0] - 2024-09-05
 <details>
   <summary>Click to show changes</summary>

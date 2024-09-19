@@ -192,7 +192,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 			{
 				ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-					.SetScrollLeft((int)Math.Floor(scrollLeftInPixels.Value), viewModelModifier.ViewModel.TextEditorDimensions)
+					.WithSetScrollLeft((int)Math.Floor(scrollLeftInPixels.Value), viewModelModifier.ViewModel.TextEditorDimensions)
 			};
 		}
 
@@ -201,7 +201,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 			{
 				ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-					.SetScrollTop((int)Math.Floor(scrollTopInPixels.Value), viewModelModifier.ViewModel.TextEditorDimensions)
+					.WithSetScrollTop((int)Math.Floor(scrollTopInPixels.Value), viewModelModifier.ViewModel.TextEditorDimensions)
 			};
 		}
     }
@@ -216,7 +216,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         viewModelModifier.ViewModel = viewModelModifier.ViewModel with
         {
 			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-				.MutateScrollTop((int)Math.Ceiling(pixels), viewModelModifier.ViewModel.TextEditorDimensions)
+				.WithMutateScrollTop((int)Math.Ceiling(pixels), viewModelModifier.ViewModel.TextEditorDimensions)
         };
     }
 
@@ -230,7 +230,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 		viewModelModifier.ViewModel = viewModelModifier.ViewModel with
         {
 			ScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions
-				.MutateScrollLeft((int)Math.Ceiling(pixels), viewModelModifier.ViewModel.TextEditorDimensions)
+				.WithMutateScrollLeft((int)Math.Ceiling(pixels), viewModelModifier.ViewModel.TextEditorDimensions)
         };
     }
 
@@ -962,7 +962,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				rightBoundary,
 				topBoundary,
 				bottomBoundary);
-
+						
 			viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 			{
 				VirtualizationResult = virtualizationResult,
