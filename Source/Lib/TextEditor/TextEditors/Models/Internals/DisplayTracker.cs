@@ -162,22 +162,49 @@ public class DisplayTracker : IDisposable
 
 				// This virtualization result calculation is intentionally posted from within a post,
 				// in order to ensure that the preceeding remeasure is executed and the state is updated first
-				_textEditorService.PostRedundant(
-	                nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResult),
-					model.ResourceUri,
-	                viewModel.ViewModelKey,
-	                editContext =>
-	                {
-	                	_textEditorService.ViewModelApi.CalculateVirtualizationResult(
-	                		editContext,
-					        modelModifier,
-					        viewModelModifier,
-					        CancellationToken.None);
-		                return Task.CompletedTask;
-		            });
-
+				PostCalculateVirtualizationResult();
 				return Task.CompletedTask;
 			});
+	}
+	
+	/// <summary>
+	/// This method used to be inlined as an inner-post within the <see cref="PostScrollAndRemeasure"/> method.
+	///
+	/// But, a bug was found today (2024-09-20), that the outer scope's modelModifier and viewModelModifier were
+	/// being re-used in that inner-post.
+	///
+	/// If one wants to do an inner-post, they need to re-capture a reference to a modelModifier and viewModelModifier,
+	/// because they are posting with a different edit context.
+	///
+	/// Keeping this inner post as its own method ensures the variables don't intermix accidentally.
+	/// </summary>
+	public void PostCalculateVirtualizationResult()
+	{
+		var model = _textEditorService.ModelApi.GetOrDefault(_resourceUri);
+        var viewModel = _textEditorService.ViewModelApi.GetOrDefault(_viewModelKey);
+
+        if (model is null || viewModel is null)
+            return;
+	
+		_textEditorService.PostRedundant(
+	        nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResult),
+			model.ResourceUri,
+	        viewModel.ViewModelKey,
+	        editContext =>
+	        {
+	        	var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
+				
+	            if (modelModifier is null || viewModelModifier is null)
+	                return Task.CompletedTask;
+	        
+	        	_textEditorService.ViewModelApi.CalculateVirtualizationResult(
+	        		editContext,
+			        modelModifier,
+			        viewModelModifier,
+			        CancellationToken.None);
+	            return Task.CompletedTask;
+	        });
 	}
 
     public void Dispose()
