@@ -26,7 +26,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 	/// <summary>
 	/// Unit of measurement is pixels (px).
 	/// </summary>
-	private const int DISTANCE_TO_RESET_SCROLL_POSITION = 200;
+	private const int DISTANCE_TO_RESET_SCROLL_POSITION = 300;
 
 	private MouseEventArgs? _mouseDownEventArgs;
 
