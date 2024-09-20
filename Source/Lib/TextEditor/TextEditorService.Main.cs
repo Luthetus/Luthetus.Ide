@@ -437,7 +437,6 @@ public partial class TextEditorService : ITextEditorService
 			},
 		};
 		
-		
 		var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
 		
 		if (originalScrollWidth > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth ||
@@ -454,6 +453,21 @@ public partial class TextEditorService : ITextEditorService
 			validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
 				(int)validateScrollbarDimensions.ScrollTop,
 				viewModelModifier.ViewModel.TextEditorDimensions);
+			
+			// The scrollLeft currently does not have any margin. Therefore subtracting the margin isn't needed.
+			//
+			// For scrollTop however, if one does not subtract the MarginScrollHeight in the case of
+			// 'textEditorDimensionsChanged'
+			//
+			// Then a "void" will render at the top portion of the text editor, seemingly the size
+			// of the MarginScrollHeight.
+			if (textEditorDimensionsChanged &&
+				viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop)
+			{
+				validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
+					(int)validateScrollbarDimensions.ScrollTop - (int)validateScrollbarDimensions.MarginScrollHeight,
+					viewModelModifier.ViewModel.TextEditorDimensions);
+			}
 		}
 		
 		var changeOccurred =
