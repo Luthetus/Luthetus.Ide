@@ -245,7 +245,7 @@ public partial class TextEditorService : ITextEditorService
             // which go on to scroll the editor.
             if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
-				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier);
+				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: false);
 			}
 
             if (viewModelModifier.ScrollWasModified)
@@ -354,10 +354,33 @@ public partial class TextEditorService : ITextEditorService
         }
 	}
 	
-	public void ValidateMaximumScrollLeftAndScrollTop(ITextEditorEditContext editContext, TextEditorViewModelModifier viewModelModifier)
-	{
-		Console.WriteLine("ValidateMaximumScrollLeftAndScrollTop enter");
-	
+	/// <summary>
+	/// The argument 'bool textEditorDimensionsChanged' was added on (2024-09-20).
+	/// 
+	/// The issue is that this method was originally written for fixing the scrollLeft or scrollTop
+	/// when the scrollWidth or scrollHeight changed to a smaller value.
+	///
+	/// The if statements therefore check that the originalScrollWidth was higher,
+	/// because some invokers of this method won't need to take time doing this calculation.
+	///
+	/// For example, a pure insertion of text won't need to run this method. So the if statements
+	/// allow for a quick exit.
+	///
+	/// But, it was discovered that this same logic is needed when the text editor width changes.
+	///
+	/// The text editor width changing results in a very specific event firing. So if we could
+	/// just have a bool here to say, "I'm that specific event" then we can know that the width changed.
+	/// 
+	/// Because we cannot track the before and after of the width from this method since it already was changed.
+	/// We need the specific event to instead tell us that it had changed.
+	/// 
+	/// So, the bool is a bit hacky.
+	/// </summary>
+	public void ValidateMaximumScrollLeftAndScrollTop(
+		ITextEditorEditContext editContext,
+		TextEditorViewModelModifier viewModelModifier,
+		bool textEditorDimensionsChanged)
+	{	
 		var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
     	
     	if (modelModifier is null)
@@ -417,28 +440,20 @@ public partial class TextEditorService : ITextEditorService
 		
 		var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
 		
-		if (originalScrollWidth > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth)
+		if (originalScrollWidth > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth ||
+			textEditorDimensionsChanged)
 		{
-			Console.WriteLine("case1");
 			validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions.WithSetScrollLeft(
 				(int)validateScrollbarDimensions.ScrollLeft,
 				viewModelModifier.ViewModel.TextEditorDimensions);
 		}
-		else
-		{
-			Console.WriteLine("case2");
-		}
 		
-		if (originalScrollHeight > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollHeight)
+		if (originalScrollHeight > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollHeight ||
+			textEditorDimensionsChanged)
 		{
-			Console.WriteLine("case1");
 			validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
 				(int)validateScrollbarDimensions.ScrollTop,
 				viewModelModifier.ViewModel.TextEditorDimensions);
-		}
-		else
-		{
-			Console.WriteLine("case2");
 		}
 		
 		var changeOccurred =
@@ -454,8 +469,6 @@ public partial class TextEditorService : ITextEditorService
 				ScrollbarDimensions = validateScrollbarDimensions
 			};
 		}
-		
-		Console.WriteLine("ValidateMaximumScrollLeftAndScrollTop leave");
 	}
 	
 	public async Task OpenInEditorAsync(

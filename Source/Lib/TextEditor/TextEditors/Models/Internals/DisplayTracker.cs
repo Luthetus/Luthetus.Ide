@@ -171,57 +171,24 @@ public class DisplayTracker : IDisposable
 				
 	            if (modelModifier is null || viewModelModifier is null)
 	                return;
-	
-				// When the UI is resized, it is currently 'onmouseup'.
-				//
-				// In otherwords, if click and drag on a resize handle
-				// will invoke one or many 'onmousemove'
-				//
-				// Then once 'onmouseup' occurs no more 'onmousemove' will occur.
-				//
-				// This leads one to believe that the UI will be ready for measurement
-				// at the moment of this code block being executed.
-				//
-				// (as the 'onmousemove' fire the UI updates automatically, it doesn't wait for the 'onmouseup').
-				//
-				// But, what was just described is related to the intra-app resizing (the resizable UI that is written with Blazor).
-				// 
-				// Is it true that all user agents will "notify this method" only after the UI has re-rendered to be
-				// resized?
 				
 				var textEditorMeasurements = await _textEditorService.ViewModelApi
 					.GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
 					.ConfigureAwait(false);
-					
-				Console.WriteLine($"textEditorWidth: {viewModelModifier.ViewModel.TextEditorDimensions.Width} -> {textEditorMeasurements.Width}");
-				
-				
-				
-				/*
-				double ScrollLeft,
-			    double ScrollTop,
-			    double ScrollWidth,
-			    double ScrollHeight,
-			    double MarginScrollHeight)
-			    */
 		
 				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 				{
 					TextEditorDimensions = textEditorMeasurements
 				};
 				
-				//viewModelModifier.ScrollWasModified = true;
-				//viewModelModifier.ShouldReloadVirtualizationResult = true;
+				viewModelModifier.ShouldReloadVirtualizationResult = true;
 				
 				var originalScrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
 				var originalScrollWidth = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth;
 				
-				((TextEditorService)_textEditorService).ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier);
-				
-				Console.WriteLine($"scrollLeft: {originalScrollLeft} -> {viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft}");
-				Console.WriteLine($"scrollWidth: {originalScrollWidth} -> {viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth}");
-				
-				PostCalculateVirtualizationResult();
+				((TextEditorService)_textEditorService).ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: true);
+								
+				// PostCalculateVirtualizationResult();
 			});
 	}
 	
