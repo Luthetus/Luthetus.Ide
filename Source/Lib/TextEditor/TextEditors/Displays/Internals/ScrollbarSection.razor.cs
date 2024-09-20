@@ -174,7 +174,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollTop;
 
 		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
-			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
+			.MeasureElementById(VERTICAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
 		// Drag far left to reset scroll to original
