@@ -164,16 +164,14 @@ public class DisplayTracker : IDisposable
 			nameof(AppDimensionStateWrap_StateChanged),
 			model.ResourceUri,
             viewModel.ViewModelKey,
-			editContext =>
+			async editContext =>
 			{
 				var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
 				
 	            if (modelModifier is null || viewModelModifier is null)
-	                return Task.CompletedTask;
+	                return;
 	
-				viewModelModifier.ScrollWasModified = true;
-				
 				// When the UI is resized, it is currently 'onmouseup'.
 				//
 				// In otherwords, if click and drag on a resize handle
@@ -191,26 +189,39 @@ public class DisplayTracker : IDisposable
 				// Is it true that all user agents will "notify this method" only after the UI has re-rendered to be
 				// resized?
 				
-				TextEditorCommandDefaultFunctions.TriggerRemeasure(
-	                editContext,
-	                viewModelModifier,
-	                commandArgs);
-	                
-	            // A big issue is that I'm confusing the font size event with the resize event.
-	            // The question to answer:
-	            // 	Does the font size event invoke this method?
-	            // 
-	            // I realize now, the reason I subconsciously was conflating the font-size event and resize of UI event
-	            // is because 'TextEditorViewModelApi.RemeasureAsync(...)' measures both things.
-	            //
-	            // It is however the case that this method is "invoking" 'TextEditorViewModelApi.RemeasureAsync(...)'
-	            // for reasons nothing to do with font-size, but because the UI was resized.
-	            
-
-				// This virtualization result calculation is intentionally posted from within a post,
-				// in order to ensure that the preceeding remeasure is executed and the state is updated first
+				var textEditorMeasurements = await _textEditorService.ViewModelApi
+					.GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
+					.ConfigureAwait(false);
+					
+				Console.WriteLine($"textEditorWidth: {viewModelModifier.ViewModel.TextEditorDimensions.Width} -> {textEditorMeasurements.Width}");
+				
+				
+				
+				/*
+				double ScrollLeft,
+			    double ScrollTop,
+			    double ScrollWidth,
+			    double ScrollHeight,
+			    double MarginScrollHeight)
+			    */
+		
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+					TextEditorDimensions = textEditorMeasurements
+				};
+				
+				//viewModelModifier.ScrollWasModified = true;
+				//viewModelModifier.ShouldReloadVirtualizationResult = true;
+				
+				var originalScrollLeft = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft;
+				var originalScrollWidth = viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth;
+				
+				((TextEditorService)_textEditorService).ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier);
+				
+				Console.WriteLine($"scrollLeft: {originalScrollLeft} -> {viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft}");
+				Console.WriteLine($"scrollWidth: {originalScrollWidth} -> {viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth}");
+				
 				PostCalculateVirtualizationResult();
-				return Task.CompletedTask;
 			});
 	}
 	

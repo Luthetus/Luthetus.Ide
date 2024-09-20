@@ -242,9 +242,7 @@ public partial class TextEditorService : ITextEditorService
             // reduced the scrollWidth or scrollHeight of the editor's content.
             // 
             // This is done here, so that the 'ScrollWasModified' bool can be set, and downstream if statements will be entered,
-            // which go on to scroll the editor..
-            Console.WriteLine("if (viewModelModifier.ShouldReloadVirtualizationResult)");
-            Console.WriteLine($"if ({viewModelModifier.ShouldReloadVirtualizationResult})");
+            // which go on to scroll the editor.
             if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
 				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier);
@@ -356,8 +354,10 @@ public partial class TextEditorService : ITextEditorService
         }
 	}
 	
-	private void ValidateMaximumScrollLeftAndScrollTop(ITextEditorEditContext editContext, TextEditorViewModelModifier viewModelModifier)
+	public void ValidateMaximumScrollLeftAndScrollTop(ITextEditorEditContext editContext, TextEditorViewModelModifier viewModelModifier)
 	{
+		Console.WriteLine("ValidateMaximumScrollLeftAndScrollTop enter");
+	
 		var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
     	
     	if (modelModifier is null)
@@ -414,26 +414,36 @@ public partial class TextEditorService : ITextEditorService
 			},
 		};
 		
-		var changeOccurred = false;
+		
 		var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
 		
 		if (originalScrollWidth > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth)
 		{
-			changeOccurred = true;
-		
+			Console.WriteLine("case1");
 			validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions.WithSetScrollLeft(
 				(int)validateScrollbarDimensions.ScrollLeft,
 				viewModelModifier.ViewModel.TextEditorDimensions);
 		}
+		else
+		{
+			Console.WriteLine("case2");
+		}
 		
 		if (originalScrollHeight > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollHeight)
 		{
-			changeOccurred = true;
-		
+			Console.WriteLine("case1");
 			validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
 				(int)validateScrollbarDimensions.ScrollTop,
 				viewModelModifier.ViewModel.TextEditorDimensions);
 		}
+		else
+		{
+			Console.WriteLine("case2");
+		}
+		
+		var changeOccurred =
+			viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft != validateScrollbarDimensions.ScrollLeft ||
+			viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop;
 		
 		if (changeOccurred)
 		{
@@ -444,6 +454,8 @@ public partial class TextEditorService : ITextEditorService
 				ScrollbarDimensions = validateScrollbarDimensions
 			};
 		}
+		
+		Console.WriteLine("ValidateMaximumScrollLeftAndScrollTop leave");
 	}
 	
 	public async Task OpenInEditorAsync(
