@@ -85,7 +85,22 @@ public class DisplayTracker : IDisposable
         }
 
 		if (becameDisplayed)
+		{
+			// TODO: If the 'AppDimensionStateWrap_StateChanged(...)' is invoking 'PostScrollAndRemeasure()' too...
+			//       ... and it is believed that it is being done there to measure the UI, as the
+			//       newly sized font wouldn't be guaranteed to have been rendered in time,
+			//       then why is this invoked here.
+			//       |
+			//       The response is that the very first render of the text editor will ignore the view model,
+			//       and only serves to measure the font size.
+			//       |
+			//       As a result when a view model becomes displayed, the text editor will already know the font-size.
+			//       And it will just "be available" and this invocation is less of a re-measure, and more of a
+			//       setting of what the current font measurements are on the view model being displayed.
+			
+			// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
 			PostScrollAndRemeasure();
+		}
     }
 
     public void DecrementLinks()
@@ -126,6 +141,10 @@ public class DisplayTracker : IDisposable
 
     private void AppDimensionStateWrap_StateChanged(object? sender, EventArgs e)
     {
+    	// The UI was resized, and therefore the text-editor measurements need to be re-measured.
+    	//
+    	// The font-size is theoretically un-changed,
+    	// but will be measured anyway just because its part of the same method that does the text-editor measurements.
 		PostScrollAndRemeasure();
     }
 
@@ -155,10 +174,38 @@ public class DisplayTracker : IDisposable
 	
 				viewModelModifier.ScrollWasModified = true;
 				
+				// When the UI is resized, it is currently 'onmouseup'.
+				//
+				// In otherwords, if click and drag on a resize handle
+				// will invoke one or many 'onmousemove'
+				//
+				// Then once 'onmouseup' occurs no more 'onmousemove' will occur.
+				//
+				// This leads one to believe that the UI will be ready for measurement
+				// at the moment of this code block being executed.
+				//
+				// (as the 'onmousemove' fire the UI updates automatically, it doesn't wait for the 'onmouseup').
+				//
+				// But, what was just described is related to the intra-app resizing (the resizable UI that is written with Blazor).
+				// 
+				// Is it true that all user agents will "notify this method" only after the UI has re-rendered to be
+				// resized?
+				
 				TextEditorCommandDefaultFunctions.TriggerRemeasure(
 	                editContext,
 	                viewModelModifier,
 	                commandArgs);
+	                
+	            // A big issue is that I'm confusing the font size event with the resize event.
+	            // The question to answer:
+	            // 	Does the font size event invoke this method?
+	            // 
+	            // I realize now, the reason I subconsciously was conflating the font-size event and resize of UI event
+	            // is because 'TextEditorViewModelApi.RemeasureAsync(...)' measures both things.
+	            //
+	            // It is however the case that this method is "invoking" 'TextEditorViewModelApi.RemeasureAsync(...)'
+	            // for reasons nothing to do with font-size, but because the UI was resized.
+	            
 
 				// This virtualization result calculation is intentionally posted from within a post,
 				// in order to ensure that the preceeding remeasure is executed and the state is updated first
@@ -197,12 +244,15 @@ public class DisplayTracker : IDisposable
 				
 	            if (modelModifier is null || viewModelModifier is null)
 	                return Task.CompletedTask;
-	        
-	        	_textEditorService.ViewModelApi.CalculateVirtualizationResult(
+	                
+	        	/* _textEditorService.ViewModelApi.CalculateVirtualizationResult(
 	        		editContext,
 			        modelModifier,
 			        viewModelModifier,
-			        CancellationToken.None);
+			        CancellationToken.None);*/
+			    
+			    viewModelModifier.ShouldReloadVirtualizationResult = true;    
+			    
 	            return Task.CompletedTask;
 	        });
 	}

@@ -243,6 +243,8 @@ public partial class TextEditorService : ITextEditorService
             // 
             // This is done here, so that the 'ScrollWasModified' bool can be set, and downstream if statements will be entered,
             // which go on to scroll the editor..
+            Console.WriteLine("if (viewModelModifier.ShouldReloadVirtualizationResult)");
+            Console.WriteLine($"if ({viewModelModifier.ShouldReloadVirtualizationResult})");
             if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
 				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier);
