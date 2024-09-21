@@ -14,6 +14,7 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Dialogs.States;
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Displays;
 
@@ -24,7 +25,7 @@ namespace Luthetus.Common.RazorLib.Installations.Displays;
 /// 	this type might be one of the first types they interact with. So, the redundancy of namespace
 /// 	and type containing 'Luthetus' feels reasonable here.
 /// </remarks>
-public partial class LuthetusCommonInitializer : ComponentBase
+public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 {
     [Inject]
     private LuthetusCommonConfig CommonConfig { get; set; } = null!;
@@ -44,6 +45,8 @@ public partial class LuthetusCommonInitializer : ComponentBase
     private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
     private IJSRuntime JsRuntime { get; set; } = null!;
+    [Inject]
+    private BrowserResizeInterop BrowserResizeInterop { get; set; } = null!;
     
     public static Key<ContextSwitchGroup> ContextSwitchGroupKey { get; } = Key<ContextSwitchGroup>.NewKey();
     
@@ -150,6 +153,14 @@ public partial class LuthetusCommonInitializer : ComponentBase
 		base.OnInitialized();
 	}
 	
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			BrowserResizeInterop.SubscribeWindowSizeChanged(JsRuntimeCommonApi);
+		}
+	}
+	
 	/// <summary>
 	/// TODO: BAD: Code duplication from 'Luthetus.Ide.RazorLib.Commands.CommandFactory'
 	/// </summary>
@@ -179,5 +190,10 @@ public partial class LuthetusCommonInitializer : ComponentBase
                 .TryFocusHtmlElementById(contextRecord.ContextElementId)
                 .ConfigureAwait(false);
         }
+    }
+    
+    public void Dispose()
+    {
+    	BrowserResizeInterop.DisposeWindowSizeChanged(JsRuntimeCommonApi);
     }
 }

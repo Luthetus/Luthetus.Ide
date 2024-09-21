@@ -1,4 +1,6 @@
 <input type="number"
        class="luth_input luth_input-app-options-font-size @InputViewModel.CssClass"
 	   style="@InputViewModel.CssStyle"
-       @bind="FontSizeInPixels"/>
+       @bind="FontSizeInPixels"
+       @onfocus="HandleOnFocus"
+       @onblur="HandleOnBlur"/>

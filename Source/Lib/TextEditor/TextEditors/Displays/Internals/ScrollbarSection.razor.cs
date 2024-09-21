@@ -23,6 +23,11 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
     [Parameter, EditorRequired]
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
+	/// <summary>
+	/// Unit of measurement is pixels (px).
+	/// </summary>
+	private const int DISTANCE_TO_RESET_SCROLL_POSITION = 300;
+
 	private MouseEventArgs? _mouseDownEventArgs;
 
     private readonly Guid VERTICAL_scrollbarGuid = Guid.NewGuid();
@@ -146,7 +151,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 		// Drag far up to reset scroll to original
 		var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
 		var distanceBetweenTopEditorAndTopScrollbar = scrollbarBoundingClientRect.TopInPixels - textEditorDimensions.BoundingClientRectTop;
-		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - (distanceBetweenTopEditorAndTopScrollbar / 2);
+		HORIZONTAL_clientYThresholdToResetScrollLeftPosition = scrollbarBoundingClientRect.TopInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
 
 		// Subscribe to the drag events
 		//
@@ -174,13 +179,13 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 		VERTICAL_scrollTopOnMouseDown = renderBatchLocal.ViewModel.ScrollbarDimensions.ScrollTop;
 
 		var scrollbarBoundingClientRect = await TextEditorService.JsRuntimeCommonApi
-			.MeasureElementById(HORIZONTAL_ScrollbarElementId)
+			.MeasureElementById(VERTICAL_ScrollbarElementId)
 			.ConfigureAwait(false);
 
 		// Drag far left to reset scroll to original
 		var textEditorDimensions = renderBatchLocal.ViewModel.TextEditorDimensions;
 		var distanceBetweenLeftEditorAndLeftScrollbar = scrollbarBoundingClientRect.LeftInPixels - textEditorDimensions.BoundingClientRectLeft;
-		VERTICAL_clientXThresholdToResetScrollTopPosition = scrollbarBoundingClientRect.LeftInPixels - (distanceBetweenLeftEditorAndLeftScrollbar / 2);
+		VERTICAL_clientXThresholdToResetScrollTopPosition = scrollbarBoundingClientRect.LeftInPixels - DISTANCE_TO_RESET_SCROLL_POSITION;
 
 		// Subscribe to the drag events
 		//

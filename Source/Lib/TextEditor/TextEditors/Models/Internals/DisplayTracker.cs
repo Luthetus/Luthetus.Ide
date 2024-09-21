@@ -85,7 +85,22 @@ public class DisplayTracker : IDisposable
         }
 
 		if (becameDisplayed)
+		{
+			// TODO: If the 'AppDimensionStateWrap_StateChanged(...)' is invoking 'PostScrollAndRemeasure()' too...
+			//       ... and it is believed that it is being done there to measure the UI, as the
+			//       newly sized font wouldn't be guaranteed to have been rendered in time,
+			//       then why is this invoked here.
+			//       |
+			//       The response is that the very first render of the text editor will ignore the view model,
+			//       and only serves to measure the font size.
+			//       |
+			//       As a result when a view model becomes displayed, the text editor will already know the font-size.
+			//       And it will just "be available" and this invocation is less of a re-measure, and more of a
+			//       setting of what the current font measurements are on the view model being displayed.
+			
+			// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
 			PostScrollAndRemeasure();
+		}
     }
 
     public void DecrementLinks()
@@ -126,6 +141,10 @@ public class DisplayTracker : IDisposable
 
     private void AppDimensionStateWrap_StateChanged(object? sender, EventArgs e)
     {
+    	// The UI was resized, and therefore the text-editor measurements need to be re-measured.
+    	//
+    	// The font-size is theoretically un-changed,
+    	// but will be measured anyway just because its part of the same method that does the text-editor measurements.
 		PostScrollAndRemeasure();
     }
 
@@ -145,38 +164,27 @@ public class DisplayTracker : IDisposable
 			nameof(AppDimensionStateWrap_StateChanged),
 			model.ResourceUri,
             viewModel.ViewModelKey,
-			editContext =>
+			async editContext =>
 			{
 				var modelModifier = editContext.GetModelModifier(viewModel.ResourceUri);
 				var viewModelModifier = editContext.GetViewModelModifier(viewModel.ViewModelKey);
 				
 	            if (modelModifier is null || viewModelModifier is null)
-	                return Task.CompletedTask;
-	
-				viewModelModifier.ScrollWasModified = true;
+	                return;
 				
-				TextEditorCommandDefaultFunctions.TriggerRemeasure(
-	                editContext,
-	                viewModelModifier,
-	                commandArgs);
-
-				// This virtualization result calculation is intentionally posted from within a post,
-				// in order to ensure that the preceeding remeasure is executed and the state is updated first
-				_textEditorService.PostRedundant(
-	                nameof(TextEditorService.ViewModelApi.CalculateVirtualizationResult),
-					model.ResourceUri,
-	                viewModel.ViewModelKey,
-	                editContext =>
-	                {
-	                	_textEditorService.ViewModelApi.CalculateVirtualizationResult(
-	                		editContext,
-					        modelModifier,
-					        viewModelModifier,
-					        CancellationToken.None);
-		                return Task.CompletedTask;
-		            });
-
-				return Task.CompletedTask;
+				var textEditorMeasurements = await _textEditorService.ViewModelApi
+					.GetTextEditorMeasurementsAsync(viewModelModifier.ViewModel.BodyElementId)
+					.ConfigureAwait(false);
+		
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+				{
+					TextEditorDimensions = textEditorMeasurements
+				};
+				
+				viewModelModifier.ShouldReloadVirtualizationResult = true;
+				
+				// TODO: Where does the method: 'ValidateMaximumScrollLeftAndScrollTop(...)' belong?
+				((TextEditorService)_textEditorService).ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: true);
 			});
 	}
 

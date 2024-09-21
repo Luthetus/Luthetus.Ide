@@ -6,6 +6,7 @@ using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Notifications.Displays;
 using Luthetus.Common.RazorLib.TreeViews.Displays.Utils;
 using Luthetus.Common.RazorLib.WatchWindows.Displays;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
 namespace Luthetus.Common.RazorLib.Installations.Models;
 
@@ -55,7 +56,8 @@ public static class ServiceCollectionExtensions
             .AddSingleton(hostingInformation.BackgroundTaskService)
             .AddSingleton<ICommonComponentRenderers>(_ => _commonRendererTypes)
             .AddCommonFactories(hostingInformation, commonConfig)
-            .AddScoped<CommonBackgroundTaskApi>();
+            .AddScoped<CommonBackgroundTaskApi>()
+            .AddScoped<BrowserResizeInterop>();
 
         return services;
     }
