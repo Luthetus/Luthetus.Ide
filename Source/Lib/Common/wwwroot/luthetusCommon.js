@@ -20,7 +20,7 @@ const luthetusCommonOnWindowSizeChanged = luthetusCommonDebounce(() => {
 	localBrowserResizeInteropDotNetObjectReference
 		.invokeMethodAsync("OnBrowserResize")
 		.then(data => data);
-}, 500);
+}, 300);
 
 window.luthetusCommon = {
 	browserResizeInteropDotNetObjectReference: null,
