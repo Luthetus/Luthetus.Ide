@@ -1,4 +1,25 @@
 window.luthetusCommon = {
+	browserResizeInteropDotNetObjectReference: null,
+    subscribeWindowSizeChanged: function (browserResizeInteropDotNetObjectReference) {
+    	luthetusCommon.browserResizeInteropDotNetObjectReference = browserResizeInteropDotNetObjectReference;
+        window.addEventListener("resize", luthetusCommon.onWindowSizeChanged);
+    },
+    disposeWindowSizeChanged: function () {
+    	luthetusCommon.browserResizeInteropDotNetObjectReference = null;
+        window.removeEventListener("resize", luthetusCommon.onWindowSizeChanged);
+    },
+    onWindowSizeChanged: function () {
+        // https://github.com/chrissainty/BlazorBrowserResize/blob/master/BrowserResize/BrowserResize/wwwroot/js/browser-resize.js
+        var localBrowserResizeInteropDotNetObjectReference = luthetusCommon.browserResizeInteropDotNetObjectReference;
+        
+        if (!localBrowserResizeInteropDotNetObjectReference) {
+        	return;
+        }
+        
+		localBrowserResizeInteropDotNetObjectReference
+			.invokeMethodAsync("OnBrowserResize")
+			.then(data => data);
+    },
     focusHtmlElementById: function (elementId, preventScroll) {
         let element = document.getElementById(elementId);
 
