@@ -31,8 +31,7 @@ public class BrowserResizeInterop
 	[JSInvokable]
     public void OnBrowserResize()
     {
-    	Console.WriteLine("_dispatcher.Dispatch(new AppDimensionState.NotifyUserAgentResizeAction());");
-        _dispatcher.Dispatch(new AppDimensionState.NotifyUserAgentResizeAction());
+		_dispatcher.Dispatch(new AppDimensionState.NotifyUserAgentResizeAction());
     }
     
     /// <summary>

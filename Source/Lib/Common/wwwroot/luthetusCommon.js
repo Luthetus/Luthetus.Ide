@@ -1,24 +1,37 @@
+// https://stackoverflow.com/questions/75988682/debounce-in-javascript
+// https://stackoverflow.com/a/75988895/19310517
+const luthetusCommonDebounce = (callback, wait) => {
+  let timeoutId = null;
+  return (...args) => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      callback(...args);
+    }, wait);
+  };
+}
+
+const luthetusCommonOnWindowSizeChanged = luthetusCommonDebounce(() => {
+    var localBrowserResizeInteropDotNetObjectReference = luthetusCommon.browserResizeInteropDotNetObjectReference;
+
+    if (!localBrowserResizeInteropDotNetObjectReference) {
+    	return;
+    }
+    
+	localBrowserResizeInteropDotNetObjectReference
+		.invokeMethodAsync("OnBrowserResize")
+		.then(data => data);
+}, 500);
+
 window.luthetusCommon = {
 	browserResizeInteropDotNetObjectReference: null,
     subscribeWindowSizeChanged: function (browserResizeInteropDotNetObjectReference) {
+    	// https://github.com/chrissainty/BlazorBrowserResize/blob/master/BrowserResize/BrowserResize/wwwroot/js/browser-resize.js
     	luthetusCommon.browserResizeInteropDotNetObjectReference = browserResizeInteropDotNetObjectReference;
-        window.addEventListener("resize", luthetusCommon.onWindowSizeChanged);
+        window.addEventListener("resize", luthetusCommonOnWindowSizeChanged);
     },
     disposeWindowSizeChanged: function () {
     	luthetusCommon.browserResizeInteropDotNetObjectReference = null;
-        window.removeEventListener("resize", luthetusCommon.onWindowSizeChanged);
-    },
-    onWindowSizeChanged: function () {
-        // https://github.com/chrissainty/BlazorBrowserResize/blob/master/BrowserResize/BrowserResize/wwwroot/js/browser-resize.js
-        var localBrowserResizeInteropDotNetObjectReference = luthetusCommon.browserResizeInteropDotNetObjectReference;
-        
-        if (!localBrowserResizeInteropDotNetObjectReference) {
-        	return;
-        }
-        
-		localBrowserResizeInteropDotNetObjectReference
-			.invokeMethodAsync("OnBrowserResize")
-			.then(data => data);
+        window.removeEventListener("resize", luthetusCommonOnWindowSizeChanged);
     },
     focusHtmlElementById: function (elementId, preventScroll) {
         let element = document.getElementById(elementId);
