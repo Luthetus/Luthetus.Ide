@@ -12,4 +12,9 @@ public partial record AppDimensionState
 	/// nothing needs to be used as a parameter, its just a way to notify.
 	/// </summary>
 	public record NotifyIntraAppResizeAction;
+	
+	/// <summary>
+	/// This action is for resizing that is done to the "user agent" / "window" / "document".
+	/// </summary>
+	public record NotifyUserAgentResizeAction;
 }
