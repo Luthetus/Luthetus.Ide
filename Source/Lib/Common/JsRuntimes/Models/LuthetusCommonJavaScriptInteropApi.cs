@@ -1,5 +1,6 @@
 using Microsoft.JSInterop;
 using Luthetus.Common.RazorLib.JavaScriptObjects.Models;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 
 namespace Luthetus.Common.RazorLib.JsRuntimes.Models;
 
@@ -19,6 +20,19 @@ public class LuthetusCommonJavaScriptInteropApi
         _jsRuntime = jsRuntime;
     }
 
+    public ValueTask SubscribeWindowSizeChanged(DotNetObjectReference<BrowserResizeInterop> browserResizeInteropDotNetObjectReference)
+    {
+        return _jsRuntime.InvokeVoidAsync(
+            "luthetusCommon.subscribeWindowSizeChanged",
+            browserResizeInteropDotNetObjectReference);
+    }
+
+    public ValueTask DisposeWindowSizeChanged()
+    {
+        return _jsRuntime.InvokeVoidAsync(
+            "luthetusCommon.disposeWindowSizeChanged");
+    }
+    
     public ValueTask FocusHtmlElementById(string elementId, bool preventScroll = false)
     {
         return _jsRuntime.InvokeVoidAsync(

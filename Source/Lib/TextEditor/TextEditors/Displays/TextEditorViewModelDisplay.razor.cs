@@ -694,7 +694,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 			        viewModelModifier,
 			        localMeasureCharacterWidthAndRowHeightElementId,
 	                countOfTestCharacters,
-			        CancellationToken.None);                
+			        CancellationToken.None);
 	        });
     }
 

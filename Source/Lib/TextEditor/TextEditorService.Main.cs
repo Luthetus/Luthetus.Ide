@@ -242,10 +242,10 @@ public partial class TextEditorService : ITextEditorService
             // reduced the scrollWidth or scrollHeight of the editor's content.
             // 
             // This is done here, so that the 'ScrollWasModified' bool can be set, and downstream if statements will be entered,
-            // which go on to scroll the editor..
+            // which go on to scroll the editor.
             if (viewModelModifier.ShouldReloadVirtualizationResult)
 			{
-				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier);
+				ValidateMaximumScrollLeftAndScrollTop(editContext, viewModelModifier, textEditorDimensionsChanged: false);
 			}
 
             if (viewModelModifier.ScrollWasModified)
@@ -354,8 +354,33 @@ public partial class TextEditorService : ITextEditorService
         }
 	}
 	
-	private void ValidateMaximumScrollLeftAndScrollTop(ITextEditorEditContext editContext, TextEditorViewModelModifier viewModelModifier)
-	{
+	/// <summary>
+	/// The argument 'bool textEditorDimensionsChanged' was added on (2024-09-20).
+	/// 
+	/// The issue is that this method was originally written for fixing the scrollLeft or scrollTop
+	/// when the scrollWidth or scrollHeight changed to a smaller value.
+	///
+	/// The if statements therefore check that the originalScrollWidth was higher,
+	/// because some invokers of this method won't need to take time doing this calculation.
+	///
+	/// For example, a pure insertion of text won't need to run this method. So the if statements
+	/// allow for a quick exit.
+	///
+	/// But, it was discovered that this same logic is needed when the text editor width changes.
+	///
+	/// The text editor width changing results in a very specific event firing. So if we could
+	/// just have a bool here to say, "I'm that specific event" then we can know that the width changed.
+	/// 
+	/// Because we cannot track the before and after of the width from this method since it already was changed.
+	/// We need the specific event to instead tell us that it had changed.
+	/// 
+	/// So, the bool is a bit hacky.
+	/// </summary>
+	public void ValidateMaximumScrollLeftAndScrollTop(
+		ITextEditorEditContext editContext,
+		TextEditorViewModelModifier viewModelModifier,
+		bool textEditorDimensionsChanged)
+	{	
 		var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
     	
     	if (modelModifier is null)
@@ -412,26 +437,42 @@ public partial class TextEditorService : ITextEditorService
 			},
 		};
 		
-		var changeOccurred = false;
 		var validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions;
 		
-		if (originalScrollWidth > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth)
+		if (originalScrollWidth > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollWidth ||
+			textEditorDimensionsChanged)
 		{
-			changeOccurred = true;
-		
 			validateScrollbarDimensions = viewModelModifier.ViewModel.ScrollbarDimensions.WithSetScrollLeft(
 				(int)validateScrollbarDimensions.ScrollLeft,
 				viewModelModifier.ViewModel.TextEditorDimensions);
 		}
 		
-		if (originalScrollHeight > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollHeight)
+		if (originalScrollHeight > viewModelModifier.ViewModel.ScrollbarDimensions.ScrollHeight ||
+			textEditorDimensionsChanged)
 		{
-			changeOccurred = true;
-		
 			validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
 				(int)validateScrollbarDimensions.ScrollTop,
 				viewModelModifier.ViewModel.TextEditorDimensions);
+			
+			// The scrollLeft currently does not have any margin. Therefore subtracting the margin isn't needed.
+			//
+			// For scrollTop however, if one does not subtract the MarginScrollHeight in the case of
+			// 'textEditorDimensionsChanged'
+			//
+			// Then a "void" will render at the top portion of the text editor, seemingly the size
+			// of the MarginScrollHeight.
+			if (textEditorDimensionsChanged &&
+				viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop)
+			{
+				validateScrollbarDimensions = validateScrollbarDimensions.WithSetScrollTop(
+					(int)validateScrollbarDimensions.ScrollTop - (int)validateScrollbarDimensions.MarginScrollHeight,
+					viewModelModifier.ViewModel.TextEditorDimensions);
+			}
 		}
+		
+		var changeOccurred =
+			viewModelModifier.ViewModel.ScrollbarDimensions.ScrollLeft != validateScrollbarDimensions.ScrollLeft ||
+			viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop != validateScrollbarDimensions.ScrollTop;
 		
 		if (changeOccurred)
 		{
