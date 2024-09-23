@@ -1,0 +1,16 @@
+<div class="luth_ide_add-integrated-terminal">
+	<input class="luth_ide_input luth_ide_input-text"
+		   placeholder="_pathToShellExecutable"
+		   @bind="_pathToShellExecutable"
+		   @bind:event="oninput"/>
+	
+	<input class="luth_ide_input luth_ide_input-text"
+		   placeholder="_integratedTerminalDisplayName"
+		   @bind="_integratedTerminalDisplayName"
+		   @bind:event="oninput"/>
+		   
+	<button class="luth_button"
+			@onclick="SubmitOnClick">
+		Submit
+	</button>
+</div>
