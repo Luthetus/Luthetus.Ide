@@ -11,7 +11,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
     {
         RootDirectoryAbsolutePath = new AbsolutePath("/", true, this);
         HomeDirectoryAbsolutePath = new AbsolutePath("/Repos/", true, this);
-        TempDirectoryAbsolutePath = new AbsolutePath("/Temp/", true, this);
+        ApplicationDataRoamingDirectoryAbsolutePath = new AbsolutePath("/AppData/Roaming/", true, this);
         
         ProtectedPathList = ProtectedPathList.Add(
             new(RootDirectoryAbsolutePath.Value,
@@ -35,8 +35,8 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         }
         
         ProtectedPathList = ProtectedPathList.Add(new(
-        	TempDirectoryAbsolutePath.Value,
-            TempDirectoryAbsolutePath.IsDirectory));
+        	ApplicationDataRoamingDirectoryAbsolutePath.Value,
+            ApplicationDataRoamingDirectoryAbsolutePath.IsDirectory));
 
         // Redundantly hardcode some obvious cases for protection.
         {
@@ -48,7 +48,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
 
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
-    public IAbsolutePath TempDirectoryAbsolutePath { get; }
+    public IAbsolutePath ApplicationDataRoamingDirectoryAbsolutePath { get; }
     public string DriveExecutingFromNoDirectorySeparator { get; } = string.Empty;
     public ImmutableHashSet<SimplePath> DeletionPermittedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
     public ImmutableHashSet<SimplePath> ProtectedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;

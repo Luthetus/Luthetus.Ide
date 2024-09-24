@@ -19,8 +19,8 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
             true,
             this);
             
-        TempDirectoryAbsolutePath = new AbsolutePath(
-            System.IO.Path.GetTempPath(),
+        ApplicationDataRoamingDirectoryAbsolutePath = new AbsolutePath(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             true,
             this);
 
@@ -46,8 +46,8 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
         }
         
         ProtectedPathList = ProtectedPathList.Add(new(
-        	TempDirectoryAbsolutePath.Value,
-            TempDirectoryAbsolutePath.IsDirectory));
+        	ApplicationDataRoamingDirectoryAbsolutePath.Value,
+            ApplicationDataRoamingDirectoryAbsolutePath.IsDirectory));
 
         // Redundantly hardcode some obvious cases for protection.
         {
@@ -95,7 +95,7 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
 
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
-	public IAbsolutePath TempDirectoryAbsolutePath { get; }
+	public IAbsolutePath ApplicationDataRoamingDirectoryAbsolutePath { get; }
 
     public string DriveExecutingFromNoDirectorySeparator { get; }
 
