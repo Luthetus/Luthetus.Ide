@@ -6,6 +6,7 @@ public partial interface IEnvironmentProvider
 {
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
+    public IAbsolutePath TempDirectoryAbsolutePath { get; }
     /// <summary>
     /// If one is executing the program from the absolute path "C:\Programs\..." then this is "C:".
     /// This property is needed in order to disambiguate when given:<br/>

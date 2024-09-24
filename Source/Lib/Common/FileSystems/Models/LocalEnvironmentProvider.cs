@@ -9,20 +9,45 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
 
     public LocalEnvironmentProvider()
     {
-        RootDirectoryAbsolutePath = new AbsolutePath("/", true, this);
+        RootDirectoryAbsolutePath = new AbsolutePath(
+        	"/",
+        	true,
+        	this);
 
         HomeDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             true,
             this);
+            
+        TempDirectoryAbsolutePath = new AbsolutePath(
+            System.IO.Path.GetTempPath(),
+            true,
+            this);
 
-        ProtectedPathList = ProtectedPathList.Add(
-            new(RootDirectoryAbsolutePath.Value,
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	RootDirectoryAbsolutePath.Value,
             RootDirectoryAbsolutePath.IsDirectory));
 
-        ProtectedPathList = ProtectedPathList.Add(
-            new(HomeDirectoryAbsolutePath.Value,
-            HomeDirectoryAbsolutePath.IsRootDirectory));
+		// TODO: Why is 'IsRootDirectory' being used here?...
+		//       ...Meanwhile others like this use 'IsDirectory'. Typo?
+		{
+			// TODO: I will add the 'IsDirectory' version in addition to the existing, 'IsRootDirectory'...
+	        //       ...I think the 'IsRootDirectory' one was a typo, but I don't want to take a risk
+	        //       when it comes to protecting the home directory path.
+	        //       In the end its harmless to have the path in the protected list as a directory and not as one.
+	        ProtectedPathList = ProtectedPathList.Add(new(
+	        	HomeDirectoryAbsolutePath.Value,
+	            HomeDirectoryAbsolutePath.IsDirectory));
+			
+			// TODO: This is the 'IsRootDirectory' version. And 'IsRootDirectory' is 'false'. Remove this?
+	        ProtectedPathList = ProtectedPathList.Add(new(
+	        	HomeDirectoryAbsolutePath.Value,
+	            HomeDirectoryAbsolutePath.IsRootDirectory));
+        }
+        
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	TempDirectoryAbsolutePath.Value,
+            TempDirectoryAbsolutePath.IsDirectory));
 
         // Redundantly hardcode some obvious cases for protection.
         {
@@ -65,12 +90,12 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
                 // This code is intended to be an extra level of caution.
                 // it trys to add the current drive to the protected path list if possible.
             }
-
         }
     }
 
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
+	public IAbsolutePath TempDirectoryAbsolutePath { get; }
 
     public string DriveExecutingFromNoDirectorySeparator { get; }
 
