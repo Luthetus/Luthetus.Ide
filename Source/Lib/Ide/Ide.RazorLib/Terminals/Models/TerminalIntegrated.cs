@@ -43,6 +43,7 @@ public class TerminalIntegrated : ITerminal
 	
 	private CancellationTokenSource _commandCancellationTokenSource = new();
 	private Task? _shellTask;
+	private Command? _shellCliWrapCommand;
 
 	public string DisplayName { get; }
 	public ITerminalInteractive TerminalInteractive { get; }
@@ -182,7 +183,7 @@ public class TerminalIntegrated : ITerminal
     
     public void Start()
     {
-		var cliWrapCommand = Cli
+		_shellCliWrapCommand = Cli
 			.Wrap(_pathToShellExecutable)
 			.WithWorkingDirectory(_environmentProvider.HomeDirectoryAbsolutePath.Value);
 
@@ -190,7 +191,7 @@ public class TerminalIntegrated : ITerminal
 		{
 			_shellTask = Task.Run(async () =>
 			{
-				await cliWrapCommand
+				await _shellCliWrapCommand
 					.Observe(_commandCancellationTokenSource.Token)
 					.ForEachAsync(HandleOutput);
 			});

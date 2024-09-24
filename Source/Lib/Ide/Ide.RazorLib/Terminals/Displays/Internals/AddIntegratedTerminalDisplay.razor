@@ -1,14 +1,29 @@
 <div class="luth_ide_add-integrated-terminal">
-	<input class="luth_ide_input luth_ide_input-text"
-		   placeholder="_pathToShellExecutable"
-		   @bind="_pathToShellExecutable"
-		   @bind:event="oninput"/>
+	<table>
+		<tr>
+			<td>
+				@nameof(_pathToShellExecutable)
+			</td>
+			<td>
+				<input class="luth_ide_input luth_ide_input-text"
+					   placeholder="_pathToShellExecutable"
+					   @bind="_pathToShellExecutable"
+					   @bind:event="oninput"/>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				@nameof(_integratedTerminalDisplayName)
+			</td>
+			<td>
+				<input class="luth_ide_input luth_ide_input-text"
+					   placeholder="_integratedTerminalDisplayName"
+					   @bind="_integratedTerminalDisplayName"
+					   @bind:event="oninput"/>
+			</td>
+		</tr>
+	</table>
 	
-	<input class="luth_ide_input luth_ide_input-text"
-		   placeholder="_integratedTerminalDisplayName"
-		   @bind="_integratedTerminalDisplayName"
-		   @bind:event="oninput"/>
-		   
 	<button class="luth_button"
 			@onclick="SubmitOnClick">
 		Submit
