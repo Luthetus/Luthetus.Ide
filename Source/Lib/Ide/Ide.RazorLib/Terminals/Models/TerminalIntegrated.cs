@@ -183,17 +183,40 @@ public class TerminalIntegrated : ITerminal
     
     public void Start()
     {
-		_shellCliWrapCommand = Cli
-			.Wrap(_pathToShellExecutable)
-			.WithWorkingDirectory(_environmentProvider.HomeDirectoryAbsolutePath.Value);
-
-		try
+    	try
 		{
 			_shellTask = Task.Run(async () =>
 			{
+				var terminalCommandRequest = new TerminalCommandRequest(
+		    		$"{_pathToShellExecutable} -i",
+					_environmentProvider.HomeDirectoryAbsolutePath.Value);
+		    	
+		    	var parsedCommand = await TerminalInteractive.TryHandleCommand(terminalCommandRequest);
+		    	ActiveTerminalCommandParsed = parsedCommand;
+		
+				if (parsedCommand is null)
+					return;
+					
+				TerminalOutput.WriteOutput(
+					parsedCommand,
+					new StartedCommandEvent(-1));
+					
+				_shellCliWrapCommand = Cli
+					.Wrap(parsedCommand.TargetFileName)
+					.WithWorkingDirectory(terminalCommandRequest.WorkingDirectory);
+		
+				if (!string.IsNullOrWhiteSpace(parsedCommand.Arguments))
+					_shellCliWrapCommand = _shellCliWrapCommand.WithArguments(parsedCommand.Arguments);
+		    
+				Console.WriteLine("before shell");
+				
+				Console.WriteLine($"System.IO.Path.GetTempPath(): {System.IO.Path.GetTempPath()}");
+				
 				await _shellCliWrapCommand
 					.Observe(_commandCancellationTokenSource.Token)
 					.ForEachAsync(HandleOutput);
+					
+				Console.WriteLine("after shell");
 			});
 		}
 		catch (Exception e)
