@@ -61,16 +61,23 @@ public class NativeAppDataService : IAppDataService
 		var options = new JsonSerializerOptions { WriteIndented = true };
 	
 		await _fileSystemProvider.File.WriteAllTextAsync(
-		        GetFilePath(appData.AssemblyNameFullyQualified),
+		        GetFilePath(appData.AssemblyName, appData.TypeName, appData.UniqueIdentifier),
 		        JsonSerializer.Serialize(appData, options))
 	        .ConfigureAwait(false);
+	    
+	    // TODO: This will update cache, but in a bad, round-about way. This is bad it reads for no reason we already have it.    
+	    await ReadAppDataAsync<AppData>(appData.AssemblyName, appData.TypeName, appData.UniqueIdentifier, forceRefreshCache: true);
 	}
 	
-	public async Task<AppData?> ReadAppDataAsync<AppData>(string assemblyNameFullyQualified, bool refreshCache)
+	public async Task<AppData?> ReadAppDataAsync<AppData>(
+			string assemblyName,
+			string typeName,
+			string? uniqueIdentifier,
+			bool forceRefreshCache)
 		where AppData : IAppData
 	{
 		var appData = default(AppData);
-		var path = GetFilePath(assemblyNameFullyQualified);
+		var path = GetFilePath(assemblyName, typeName, uniqueIdentifier);
 		
 		try
 		{
@@ -78,11 +85,11 @@ public class NativeAppDataService : IAppDataService
 	
 			lock (_cacheLock)
 			{
-				success = _appDataMap.TryGetValue(assemblyNameFullyQualified, out var interfaceAppData);
+				success = _appDataMap.TryGetValue(assemblyName, out var interfaceAppData);
 				appData = (AppData)interfaceAppData;
 			}
 			
-			if (!success || refreshCache)
+			if (!success || forceRefreshCache)
 			{
 				var appDataJson = await _fileSystemProvider.File
 					.ReadAllTextAsync(path)
@@ -92,30 +99,37 @@ public class NativeAppDataService : IAppDataService
 				
 				lock (_cacheLock)
 				{
-					if (_appDataMap.ContainsKey(assemblyNameFullyQualified))
-						_appDataMap[assemblyNameFullyQualified] = appData;
+					if (_appDataMap.ContainsKey(assemblyName))
+						_appDataMap[assemblyName] = appData;
 					else
-						_appDataMap.Add(assemblyNameFullyQualified, appData);
+						_appDataMap.Add(assemblyName, appData);
 				}
 			}
 		}
 		catch (Exception e)
 		{
-			NotificationHelper.DispatchError(
+			/*NotificationHelper.DispatchError(
 		        $"{nameof(NativeAppDataService)}.{nameof(ReadAppDataAsync)}",
 		        e.ToString(),
 		        _commonComponentRenderers,
 		        _dispatcher,
-		        TimeSpan.FromSeconds(5));
+		        TimeSpan.FromSeconds(5));*/
+		        
+		    Console.WriteLine(e);
 		}
 	
 		return appData;
 	}
 	
-	public string GetFilePath(string assemblyNameFullyQualified)
+	public string GetFilePath(string assemblyName, string typeName, string uniqueIdentifier)
 	{
+		var relativePath = IAppData.CreateRelativePathNoLeadingDelimiter(
+			assemblyName,
+			typeName,
+			uniqueIdentifier);
+		
 		return _environmentProvider.JoinPaths(
 	    	_environmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
-	    	$"{assemblyNameFullyQualified}.json");
+	    	relativePath);
 	}
 }

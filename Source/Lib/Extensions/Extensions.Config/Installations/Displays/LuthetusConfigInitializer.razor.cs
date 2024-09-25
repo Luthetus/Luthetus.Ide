@@ -42,7 +42,8 @@ public partial class LuthetusConfigInitializer : ComponentBase
         if (firstRender)
         {
         	var dotNetAppData = await AppDataService
-        		.ReadAppDataAsync<DotNetAppData>(typeof(DotNetAppData).Assembly.GetName().Name, refreshCache: false)
+        		.ReadAppDataAsync<DotNetAppData>(
+        			DotNetAppData.AssemblyName, DotNetAppData.TypeName, uniqueIdentifier: null, forceRefreshCache: false)
         		.ConfigureAwait(false);
         		
         	await SetSolution(dotNetAppData).ConfigureAwait(false);
