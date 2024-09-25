@@ -373,9 +373,7 @@ public partial class SolutionExplorerContextMenu : ComponentBase
 				MenuOptionKind.Other,
 				() =>
 				{
-					// SingleOrDefault here is intentional, one can start a project many different ways.
-					// But current support for this does not exist. So in this situation don't continue, for now.
-					var startupControl = StartupControlStateWrap.Value.StartupControlList.SingleOrDefault(
+					var startupControl = StartupControlStateWrap.Value.StartupControlList.FirstOrDefault(
 						x => x.StartupProjectAbsolutePath.Value == treeViewModel.Item.AbsolutePath.Value);
 						
 					if (startupControl is null)
