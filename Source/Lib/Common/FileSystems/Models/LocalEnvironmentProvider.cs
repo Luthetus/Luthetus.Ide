@@ -5,7 +5,12 @@ namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public class LocalEnvironmentProvider : IEnvironmentProvider
 {
-	public const string SafeRelativeDirectory = "Luthetus/";
+	#if DEBUG
+    public const string SafeRelativeDirectory = "Luthetus/Debug/";
+	#else
+    public const string SafeRelativeDirectory = "Luthetus/Release/";
+	#endif
+	
 
     private readonly object _pathLock = new();
 
