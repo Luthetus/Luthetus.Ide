@@ -5,38 +5,50 @@ namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public class InMemoryEnvironmentProvider : IEnvironmentProvider
 {
+	public const string SafeRelativeDirectory = "Luthetus/";
+
     private readonly object _pathLock = new();
 
     public InMemoryEnvironmentProvider()
     {
         RootDirectoryAbsolutePath = new AbsolutePath("/", true, this);
         HomeDirectoryAbsolutePath = new AbsolutePath("/Repos/", true, this);
-        ApplicationDataRoamingDirectoryAbsolutePath = new AbsolutePath("/AppData/Roaming/", true, this);
+        ActualRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Roaming/", true, this);
+        ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath("/AppData/Local/", true, this);
         
-        ProtectedPathList = ProtectedPathList.Add(
-            new(RootDirectoryAbsolutePath.Value,
-            RootDirectoryAbsolutePath.IsDirectory));
-
-        // TODO: Why is 'IsRootDirectory' being used here?...
-		//       ...Meanwhile others like this use 'IsDirectory'. Typo?
-		{
-			// TODO: I will add the 'IsDirectory' version in addition to the existing, 'IsRootDirectory'...
-	        //       ...I think the 'IsRootDirectory' one was a typo, but I don't want to take a risk
-	        //       when it comes to protecting the home directory path.
-	        //       In the end its harmless to have the path in the protected list as a directory and not as one.
-	        ProtectedPathList = ProtectedPathList.Add(new(
-	        	HomeDirectoryAbsolutePath.Value,
-	            HomeDirectoryAbsolutePath.IsDirectory));
-			
-			// TODO: This is the 'IsRootDirectory' version. And 'IsRootDirectory' is 'false'. Remove this?
-	        ProtectedPathList = ProtectedPathList.Add(new(
-	        	HomeDirectoryAbsolutePath.Value,
-	            HomeDirectoryAbsolutePath.IsRootDirectory));
-        }
+        SafeRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
+        	JoinPaths(ActualRoamingApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
+        	true,
+        	this);
+        	
+        SafeLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
+        	JoinPaths(SafeLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
+        	true,
+        	this);
         
         ProtectedPathList = ProtectedPathList.Add(new(
-        	ApplicationDataRoamingDirectoryAbsolutePath.Value,
-            ApplicationDataRoamingDirectoryAbsolutePath.IsDirectory));
+        	RootDirectoryAbsolutePath.Value,
+            RootDirectoryAbsolutePath.IsDirectory));
+
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	HomeDirectoryAbsolutePath.Value,
+            HomeDirectoryAbsolutePath.IsDirectory));
+        
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	ActualRoamingApplicationDataDirectoryAbsolutePath.Value,
+            ActualRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
+            
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	ActualLocalApplicationDataDirectoryAbsolutePath.Value,
+            ActualLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
+            
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+            SafeRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
+            
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	SafeLocalApplicationDataDirectoryAbsolutePath.Value,
+            SafeLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
 
         // Redundantly hardcode some obvious cases for protection.
         {
@@ -48,7 +60,10 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
 
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
-    public IAbsolutePath ApplicationDataRoamingDirectoryAbsolutePath { get; }
+    public IAbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
+    public IAbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
+    public IAbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
+    public IAbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
     public string DriveExecutingFromNoDirectorySeparator { get; } = string.Empty;
     public ImmutableHashSet<SimplePath> DeletionPermittedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
     public ImmutableHashSet<SimplePath> ProtectedPathList { get; private set; } = ImmutableHashSet<SimplePath>.Empty;
