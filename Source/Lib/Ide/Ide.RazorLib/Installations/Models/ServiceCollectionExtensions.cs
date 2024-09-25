@@ -15,6 +15,7 @@ using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Displays;
 using Luthetus.Ide.RazorLib.Gits.Models;
+using Luthetus.Ide.RazorLib.AppDatas.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -82,6 +83,11 @@ public static class ServiceCollectionExtensions
                 },
             });
         }
+        
+        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
+        	services.AddScoped<IAppDataService, NativeAppDataService>();
+        else
+        	services.AddScoped<IAppDataService, DoNothingAppDataService>();
 
         services
             .AddSingleton(ideConfig)

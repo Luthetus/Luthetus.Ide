@@ -305,7 +305,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							TextEditorService,
 							CompilerServiceRegistry,
 							DialogService,
-						       JsRuntime,
+						    JsRuntime,
 							Dispatcher)),
 					BackgroundTaskService,
 					CommonComponentRenderers,

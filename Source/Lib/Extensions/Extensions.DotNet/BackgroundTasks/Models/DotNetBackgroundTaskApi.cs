@@ -11,6 +11,7 @@ using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
 using Luthetus.Extensions.DotNet.CompilerServices.Models;
@@ -25,6 +26,7 @@ public class DotNetBackgroundTaskApi
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IStorageService _storageService;
+	private readonly IAppDataService _appDataService;
     private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
 	private readonly ICompilerServiceRegistry _compilerServiceRegistry;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
@@ -45,6 +47,7 @@ public class DotNetBackgroundTaskApi
 		IBackgroundTaskService backgroundTaskService,
         IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
         IStorageService storageService,
+        IAppDataService appDataService,
 		ICompilerServiceRegistry compilerServiceRegistry,
 		IDotNetComponentRenderers dotNetComponentRenderers,
 		IIdeComponentRenderers ideComponentRenderers,
@@ -63,6 +66,7 @@ public class DotNetBackgroundTaskApi
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_backgroundTaskService = backgroundTaskService;
 		_storageService = storageService;
+		_appDataService = appDataService;
         _compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
         _dotNetComponentRenderers = dotNetComponentRenderers;
 		_ideComponentRenderers = ideComponentRenderers;
@@ -114,6 +118,7 @@ public class DotNetBackgroundTaskApi
 			_ideBackgroundTaskApi,
 			_backgroundTaskService,
 			_storageService,
+			_appDataService,
 			_compilerServiceExplorerStateWrap,
             _dotNetComponentRenderers,
             _ideComponentRenderers,

@@ -5,24 +5,70 @@ namespace Luthetus.Common.RazorLib.FileSystems.Models;
 
 public class LocalEnvironmentProvider : IEnvironmentProvider
 {
+	#if DEBUG
+    public const string SafeRelativeDirectory = "Luthetus/Debug/";
+	#else
+    public const string SafeRelativeDirectory = "Luthetus/Release/";
+	#endif
+	
+
     private readonly object _pathLock = new();
 
     public LocalEnvironmentProvider()
     {
-        RootDirectoryAbsolutePath = new AbsolutePath("/", true, this);
+        RootDirectoryAbsolutePath = new AbsolutePath(
+        	"/",
+        	true,
+        	this);
 
         HomeDirectoryAbsolutePath = new AbsolutePath(
             Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
             true,
             this);
+            
+        ActualRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            true,
+            this);
+            
+        SafeRoamingApplicationDataDirectoryAbsolutePath = new AbsolutePath(
+            JoinPaths(ActualRoamingApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
+            true,
+            this);
+            
+        ActualLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            true,
+            this);
+        
+        SafeLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
+            JoinPaths(ActualLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
+            true,
+            this);
 
-        ProtectedPathList = ProtectedPathList.Add(
-            new(RootDirectoryAbsolutePath.Value,
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	RootDirectoryAbsolutePath.Value,
             RootDirectoryAbsolutePath.IsDirectory));
 
-        ProtectedPathList = ProtectedPathList.Add(
-            new(HomeDirectoryAbsolutePath.Value,
-            HomeDirectoryAbsolutePath.IsRootDirectory));
+		ProtectedPathList = ProtectedPathList.Add(new(
+        	HomeDirectoryAbsolutePath.Value,
+            HomeDirectoryAbsolutePath.IsDirectory));
+        
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	ActualRoamingApplicationDataDirectoryAbsolutePath.Value,
+            ActualRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
+            
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	ActualLocalApplicationDataDirectoryAbsolutePath.Value,
+            ActualLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
+            
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+            SafeRoamingApplicationDataDirectoryAbsolutePath.IsDirectory));
+            
+        ProtectedPathList = ProtectedPathList.Add(new(
+        	SafeLocalApplicationDataDirectoryAbsolutePath.Value,
+            SafeLocalApplicationDataDirectoryAbsolutePath.IsDirectory));
 
         // Redundantly hardcode some obvious cases for protection.
         {
@@ -65,12 +111,15 @@ public class LocalEnvironmentProvider : IEnvironmentProvider
                 // This code is intended to be an extra level of caution.
                 // it trys to add the current drive to the protected path list if possible.
             }
-
         }
     }
 
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
+	public IAbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
+	public IAbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
+	public IAbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
+	public IAbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
 
     public string DriveExecutingFromNoDirectorySeparator { get; }
 
