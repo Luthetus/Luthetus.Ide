@@ -59,7 +59,7 @@ public partial class AddIntegratedTerminalDisplay : ComponentBase
         		
         			if (output.StartsWith(identifierText))
         			{
-        				_pathToShellExecutable = output.Substring(identifierText.Length);
+        				_pathToShellExecutable = output.Substring(identifierText.Length).Trim();
         				
         				if (string.IsNullOrWhiteSpace(_integratedTerminalDisplayName))
         					_integratedTerminalDisplayName = "Bash";

@@ -183,9 +183,9 @@ public class TerminalIntegrated : ITerminal
     
     public void Start()
     {
-    	try
+    	_shellTask = Task.Run(async () =>
 		{
-			_shellTask = Task.Run(async () =>
+			try
 			{
 				var terminalCommandRequest = new TerminalCommandRequest(
 		    		$"{_pathToShellExecutable} -i",
@@ -210,19 +210,17 @@ public class TerminalIntegrated : ITerminal
 		    
 				Console.WriteLine("before shell");
 				
-				Console.WriteLine($"System.IO.Path.GetTempPath(): {System.IO.Path.GetTempPath()}");
-				
 				await _shellCliWrapCommand
 					.Observe(_commandCancellationTokenSource.Token)
 					.ForEachAsync(HandleOutput);
 					
 				Console.WriteLine("after shell");
-			});
-		}
-		catch (Exception e)
-		{
-			NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
-		}
+			}
+			catch (Exception e)
+			{
+				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
+			}
+		});
     }
 
 	private void DispatchNewStateKey()
