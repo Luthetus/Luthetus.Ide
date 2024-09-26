@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
+namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <summary>The constants do not start with a period</summary>
 public static class ExtensionNoPeriodFacts
@@ -17,6 +17,7 @@ public static class ExtensionNoPeriodFacts
     public const string TYPE_SCRIPT = "ts";
     public const string MARK_DOWN = "md";
     public const string F_SHARP = "fs";
+    public const string PYTHON = "py";
     public const string C = "c";
     public const string H = "h";
     public const string CPP = "cpp";

@@ -91,6 +91,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luthetus.Extensions.DotNet.Tests", "Source\Tests\Extensions\Extensions.DotNet.Tests\Luthetus.Extensions.DotNet.Tests.csproj", "{8DDFD39F-382A-4B01-B4D3-4DF5D5B1D5E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.CompilerServices.Python", "Source\Lib\CompilerServices\Python\Luthetus.CompilerServices.Python.csproj", "{173471CC-20B6-4341-AEF6-D548C9C7FBC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -245,6 +247,10 @@ Global
 		{8DDFD39F-382A-4B01-B4D3-4DF5D5B1D5E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DDFD39F-382A-4B01-B4D3-4DF5D5B1D5E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DDFD39F-382A-4B01-B4D3-4DF5D5B1D5E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{173471CC-20B6-4341-AEF6-D548C9C7FBC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{173471CC-20B6-4341-AEF6-D548C9C7FBC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{173471CC-20B6-4341-AEF6-D548C9C7FBC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{173471CC-20B6-4341-AEF6-D548C9C7FBC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -291,6 +297,7 @@ Global
 		{EF3787E7-7DF8-44FB-BE41-E1BDBC921044} = {E8EBE70E-4CAA-4C44-B442-0FA275887018}
 		{E68250C7-CE5B-4427-A332-8F8A2296549A} = {10712494-6403-4614-ADAD-0A3FA4451F0F}
 		{8DDFD39F-382A-4B01-B4D3-4DF5D5B1D5E5} = {E68250C7-CE5B-4427-A332-8F8A2296549A}
+		{173471CC-20B6-4341-AEF6-D548C9C7FBC1} = {195D2EF7-3938-4BF8-B483-170AD8FF5B84}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6045BB8B-0C60-4077-93C3-16BA09C8FC27}

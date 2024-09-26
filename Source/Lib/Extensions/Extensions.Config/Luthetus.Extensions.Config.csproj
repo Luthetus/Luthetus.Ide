@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\CompilerServices\Razor\Luthetus.CompilerServices.Razor.csproj" />
     <ProjectReference Include="..\..\CompilerServices\TypeScript\Luthetus.CompilerServices.TypeScript.csproj" />
     <ProjectReference Include="..\..\CompilerServices\Xml\Luthetus.CompilerServices.Xml.csproj" />
+    <ProjectReference Include="..\..\CompilerServices\Python\Luthetus.CompilerServices.Python.csproj" />
   </ItemGroup>
 
 </Project>
