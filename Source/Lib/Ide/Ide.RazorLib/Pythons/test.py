@@ -9,8 +9,7 @@ print(f"parent: {os.getpid()}")
 ptmx, secondary = os.openpty()
 
 pid = os.fork()
-if not pid:
-	print(f"child: {pid}")
+if pid == 0:
 	print(f"child: {os.getpid()}")
 	os.close(ptmx)
 	os.setsid()
@@ -23,12 +22,11 @@ if not pid:
 	os.close(secondary)
 	os.close(s)
 	with open('/tmp/file.txt', "w") as f:
-		for l in sys.stdin:
-			f.write(l)
-			f.flush()
+    	for l in sys.stdin:
+        	f.write(l)
+        	f.flush()
 	time.sleep(999999)
 else:
-	print(f"asdfg: {pid}")
 	os.close(secondary)
 	os.write(ptmx, b"text\n")
 	os.waitpid(-1,0)
