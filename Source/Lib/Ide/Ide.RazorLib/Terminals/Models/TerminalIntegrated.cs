@@ -1,4 +1,5 @@
 using System.Reactive.Linq;
+using System.Text;
 using CliWrap;
 using CliWrap.EventStream;
 using Fluxor;
@@ -185,6 +186,10 @@ public class TerminalIntegrated : ITerminal
     {
     	_shellTask = Task.Run(async () =>
 		{
+			var bufferStdIn = new StringBuilder("abc");
+			var bufferStdOut = new StringBuilder();
+			var bufferStdError = new StringBuilder();
+		
 			try
 			{
 				var terminalCommandRequest = new TerminalCommandRequest(
@@ -201,9 +206,14 @@ public class TerminalIntegrated : ITerminal
 					parsedCommand,
 					new StartedCommandEvent(-1));
 					
-				_shellCliWrapCommand = Cli
+				var pipeFilePath = _environmentProvider.JoinPaths(
+					_environmentProvider.SafeRoamingApplicationDataDirectoryAbsolutePath.Value,
+					"terminal-test.txt");
+					
+				_shellCliWrapCommand = "abc" | Cli
 					.Wrap(parsedCommand.TargetFileName)
-					.WithWorkingDirectory(terminalCommandRequest.WorkingDirectory);
+					.WithWorkingDirectory(terminalCommandRequest.WorkingDirectory) |
+					(PipeTarget.ToStringBuilder(bufferStdOut), PipeTarget.ToStringBuilder(bufferStdError));
 		
 				if (!string.IsNullOrWhiteSpace(parsedCommand.Arguments))
 					_shellCliWrapCommand = _shellCliWrapCommand.WithArguments(parsedCommand.Arguments);
@@ -211,14 +221,19 @@ public class TerminalIntegrated : ITerminal
 				Console.WriteLine("before shell");
 				
 				await _shellCliWrapCommand
-					.Observe(_commandCancellationTokenSource.Token)
-					.ForEachAsync(HandleOutput);
+					.ExecuteAsync(_commandCancellationTokenSource.Token);
 					
 				Console.WriteLine("after shell");
 			}
 			catch (Exception e)
 			{
+				Console.WriteLine("exception shell");
 				NotificationHelper.DispatchError("Terminal Exception", e.ToString(), _commonComponentRenderers, _dispatcher, TimeSpan.FromSeconds(14));
+			}
+			finally
+			{
+				Console.WriteLine($"bufferStdOut: {bufferStdOut}");
+				Console.WriteLine($"bufferStdError: {bufferStdError}");
 			}
 		});
     }
