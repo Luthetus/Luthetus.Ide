@@ -4,6 +4,7 @@ using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Extensions.Git.ComponentRenderers.Models;
 using Luthetus.Extensions.Git.Displays;
 using Luthetus.Extensions.Git.Models;
+using Luthetus.Extensions.Git.BackgroundTasks.Models;
 
 namespace Luthetus.Extensions.Git.Installations.Models;
 
@@ -15,7 +16,9 @@ public static class ServiceCollectionExtensions
 		Func<LuthetusIdeConfig, LuthetusIdeConfig>? configure = null)
 	{
 		return services
-			.AddScoped<GitCliOutputParser>();
+			.AddScoped<GitCliOutputParser>()
+			.AddScoped<GitTreeViews>(_ => _gitTreeViews)
+			.AddScoped<GitBackgroundTaskApi>();
 	}
 
 	private static readonly GitTreeViews _gitTreeViews = new(
