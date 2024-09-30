@@ -420,7 +420,7 @@ public class GitCliOutputParser
         if (localRepo is null)
             return new();
 
-        _origin ??= outputEntire.Trim();
+        _origin = outputEntire.Trim();
         
         return new();
     }
@@ -431,7 +431,7 @@ public class GitCliOutputParser
 		if (localRepo is null)
 			return new();
 
-		_branch ??= outputEntire.Trim();
+		_branch = outputEntire.Trim();
 
         return new();
     }
