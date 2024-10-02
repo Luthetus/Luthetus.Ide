@@ -16,7 +16,7 @@ public partial class SyntaxTextSpanDisplay : ComponentBase
 	private ITextEditorService TextEditorService { get; set; } = null!;
 
 	[Parameter, EditorRequired]
-	public TextEditorTextSpan TextSpan { get; set; } = null!;
+	public TextEditorTextSpan TextSpan { get; set; } = default!;
 
 	private (TextEditorTextSpan TextEditorTextSpan, string GetTextResult) _textSpanTuple;
 
