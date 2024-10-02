@@ -38,8 +38,8 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 	
 	private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
-		HeaderComponent = null,
-		IncludeFooterHelperComponent = false,
+		HeaderComponentType = null,
+		FooterComponentType = null,
 		IncludeGutterComponent = false,
 		ContextRecord = ContextFacts.TerminalContext,
 	};

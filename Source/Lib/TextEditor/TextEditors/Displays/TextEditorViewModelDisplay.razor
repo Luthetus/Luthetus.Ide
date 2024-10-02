@@ -33,12 +33,12 @@
 <div class="@cssClass" style="@cssStyle">
 
 	@{
-		var headerComponent = renderBatchUnsafe.ViewModelDisplayOptions.HeaderComponent;
+		var headerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.HeaderComponentType;
 	
-	    if (headerComponent is not null && renderBatchValidated is not null)
+	    if (headerComponentType is not null && renderBatchValidated is not null)
 	    {
 	    	<ShouldRenderBoundary>
-	    		<DynamicComponent Type="headerComponent"
+	    		<DynamicComponent Type="headerComponentType"
 	    						  Parameters="DependentComponentParameters"/>
 	    	</ShouldRenderBoundary>
 	    }
@@ -216,190 +216,16 @@
 	        <div>The @nameof(TextEditorOptions) was null</div>
 	    }
     </div>
-
-    @if (renderBatchUnsafe.ViewModelDisplayOptions.IncludeFooterHelperComponent &&
-    	 renderBatchValidated is not null)
-    {
-    	_footerDriver.GetRenderFragment(renderBatchValidated);
     
-        <div class="luth_te_text-editor-footer @TextEditorService.ThemeCssClassString">
-		    <div class="luth_te_text-editor-footer-listing">
-		        @{
-		            var model = _footerDriver._renderBatch.Model;
-		            var viewModel = _footerDriver._renderBatch.ViewModel;
-		            var options = _footerDriver._renderBatch.Options;
-		
-		            if (model is not null && viewModel is not null)
-		            {
-		                if (options is not null && options.Keymap is TextEditorKeymapVim keymapVim)
-		                {
-		                    var activeVimMode = keymapVim.ActiveVimMode;
-		                    var pendingSentenceList = keymapVim.VimSentence.PendingSentenceList;
-		                    var mostRecentSyntacticallyCompleteSentence = keymapVim.VimSentence.MostRecentSyntacticallyCompleteSentence;
-		
-		                    var sentenceToDisplay = pendingSentenceList.Length == 0
-		                        ? mostRecentSyntacticallyCompleteSentence
-		                        : pendingSentenceList;
-		
-		                    <div class="luth_te_text-editor-footer-entry">
-		                        <div class="luth_te_text-editor-footer-name-value-pair">
-		                            <div class="luth_te_text-editor-footer-name">
-		                                Vim:
-		                            </div>
-		                            <div class="luth_te_text-editor-footer-value" title="Mode: @activeVimMode">
-		                                @activeVimMode,&nbsp;
-		                            </div>
-		                        </div>
-		
-		                        <div class="luth_te_text-editor-footer-name-value-pair">
-		                            <div class="luth_te_text-editor-footer-value">
-		                                @{
-		                                    var sentenceBuilder = new StringBuilder();
-		
-		                                    foreach (var vimToken in sentenceToDisplay)
-		                                    {
-		                                        sentenceBuilder.Append(KeyboardKeyFacts.ConvertCodeToKey(
-		                                            vimToken.KeymapArgument.Code));
-		                                    }
-		
-		                                    var minAndMaxCharacters = 4;
-		                                    for (int i = minAndMaxCharacters - sentenceBuilder.Length; i > 0; i--)
-		                                    {
-		                                        sentenceBuilder.Append(' ');
-		                                    }
-		
-		                                    var sentence = sentenceBuilder.ToString();
-		
-		                                    if (sentence.Length > minAndMaxCharacters)
-		                                    {
-		                                        var elipsisString = "...";
-		
-		                                        sentence = sentence[..(minAndMaxCharacters - elipsisString.Length)];
-		                                        sentence += elipsisString;
-		                                    }
-		
-		                                    sentence = sentence.EscapeHtml();
-		                                }
-		
-		                                @((MarkupString)('{' + sentence + '}'))
-		                            </div>
-		                        </div>
-		                    </div>
-		                }
-		
-		                if (!string.IsNullOrWhiteSpace(model.FileExtension))
-		                {
-		                    <div class="luth_te_text-editor-footer-entry">
-		                        @model.FileExtension
-		                    </div>
-		                }
-		
-		                <div class="luth_te_text-editor-footer-entry">
-		                    <div class="luth_te_text-editor-footer-name-value-pair">
-		                        <div class="luth_te_text-editor-footer-name">
-		                            length:
-		                        </div>
-		                        <div class="luth_te_text-editor-footer-value"
-		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
-		                            @($"{model.DocumentLength}")
-		                        </div>
-		                    </div>
-		
-		                    <div class="luth_te_text-editor-footer-name-value-pair">
-		                        <div class="luth_te_text-editor-footer-name">
-		                            lines:
-		                        </div>
-		                        <div class="luth_te_text-editor-footer-value"
-		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
-		                            @($"{model.LineCount}")
-		                        </div>
-		                    </div>
-		                </div>
-		
-		                <div class="luth_te_text-editor-footer-entry">
-		                    <div class="luth_te_text-editor-footer-name-value-pair">
-		                        <div class="luth_te_text-editor-footer-name">
-		                            Ln:
-		                        </div>
-		
-		                        @{
-		                            var rowNumber = viewModel.PrimaryCursor.LineIndex + 1;
-		                        }
-		
-		                        <div class="luth_te_text-editor-footer-value"
-		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.LineCount)">
-		                            @($"{rowNumber}")
-		                        </div>
-		                    </div>
-		
-		                    <div class="luth_te_text-editor-footer-name-value-pair">
-		                        <div class="luth_te_text-editor-footer-name">
-		                            Col:
-		                        </div>
-		
-		                        @{
-		                            var columnNumber = viewModel.PrimaryCursor.ColumnIndex + 1;
-		                        }
-		
-		                        <div class="luth_te_text-editor-footer-value"
-		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.MostCharactersOnASingleLineTuple.lineLength)">
-		                            @($"{columnNumber}")
-		                        </div>
-		                    </div>
-		
-		                    <div class="luth_te_text-editor-footer-name-value-pair">
-		                        <div class="luth_te_text-editor-footer-name">
-		                            Pos:
-		                        </div>
-		
-		                        @{
-		                            var positionNumber = _footerDriver.GetPositionNumber(model, viewModel);
-		                        }
-		
-		                        <div class="luth_te_text-editor-footer-value"
-		                             style="@_footerDriver.StyleMinWidthFromMaxLengthOfValue(model.DocumentLength)">
-		                            @($"{positionNumber}")
-		                        </div>
-		                    </div>
-		                </div>
-		
-		                <div class="luth_te_text-editor-footer-entry">
-		                    @if (model.OnlyLineEndKind is null)
-		                    {
-		                        <text>has:mixed </text>
-		                    }
-		                    else
-		                    {
-		                        <text>has:@model.OnlyLineEndKind.Value.AsFriendlyName() </text>
-		                    }
-		
-		                    use:
-		                    <select @onchange="_footerDriver.SelectRowEndingKindOnChange">
-		                        @foreach (var rowEndingKind in LineEndKind.LineFeed.GetRowEndingsUserAllowedToUse())
-		                        {
-		                            <option value="@rowEndingKind.ToString()"
-		                                    selected="@(model.LineEndKindPreference == rowEndingKind)">
-		                                @rowEndingKind.AsFriendlyName()
-		                            </option>
-		                        }
-		                    </select>
-		                </div>
-		            }
-		            else
-		            {
-		                <div class="luth_te_text-editor-footer-entry luth_te_text-editor-footer-file-sizing">
-		                    @if (model is null)
-		                    {
-		                        <div>The @nameof(TextEditorModel) was null</div>
-		                    }
-		                    else if (viewModel is not null)
-		                    {
-		                        <div>The @nameof(TextEditorViewModel) was null</div>
-		                    }
-		                </div>
-		            }
-		        }
-		    </div>
-		</div>
+    @{
+		var footerComponentType = renderBatchUnsafe.ViewModelDisplayOptions.FooterComponentType;
+	
+	    if (footerComponentType is not null && renderBatchValidated is not null)
+	    {
+	    	<ShouldRenderBoundary>
+	    		<DynamicComponent Type="footerComponentType"
+	    						  Parameters="DependentComponentParameters"/>
+	    	</ShouldRenderBoundary>
+	    }
     }
 </div>

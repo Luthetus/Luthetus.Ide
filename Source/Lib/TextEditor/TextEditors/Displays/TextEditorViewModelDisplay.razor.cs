@@ -81,7 +81,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public VirtualizationDriver _gutterVirtualizationDriver;
     private BodyDriver _bodyDriver;
     public VirtualizationDriver _bodyVirtualizationDriver;
-    private FooterDriver _footerDriver;
     // TODO: awkward public
     public PresentationAndSelectionDriver _presentationAndSelectionDriver;
     public CursorDriver _cursorDriver;
@@ -134,7 +133,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     		this,
     		useHorizontalVirtualization: true,
     		useVerticalVirtualization: true);
-    	_footerDriver = new(this);
     	_presentationAndSelectionDriver = new(this);
     	_cursorDriver = new(this);
     

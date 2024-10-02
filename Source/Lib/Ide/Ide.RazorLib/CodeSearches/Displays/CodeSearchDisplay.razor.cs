@@ -54,7 +54,7 @@ public partial class CodeSearchDisplay : FluxorComponent
 
 	private readonly ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
-		HeaderComponent = null,
+		HeaderComponentType = null,
 	};
 
     private string InputValue
