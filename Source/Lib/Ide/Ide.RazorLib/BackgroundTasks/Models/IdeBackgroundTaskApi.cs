@@ -15,8 +15,6 @@ using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.FolderExplorers.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
-using Luthetus.Ide.RazorLib.Gits.Models;
-using Luthetus.Ide.RazorLib.Gits.States;
 
 namespace Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 
@@ -33,8 +31,6 @@ public class IdeBackgroundTaskApi
     private readonly ITextEditorService _textEditorService;
     private readonly ICompilerServiceRegistry _compilerServiceRegistry;
     private readonly IState<TerminalState> _terminalStateWrap;
-    private readonly IState<GitState> _gitStateWrap;
-	private readonly GitCliOutputParser _gitCliOutputParser;
 	private readonly IDecorationMapperRegistry _decorationMapperRegistry;
 	private readonly IDialogService _dialogService;
 	private readonly IJSRuntime _jsRuntime;
@@ -51,8 +47,6 @@ public class IdeBackgroundTaskApi
         IFileSystemProvider fileSystemProvider,
         ITextEditorService textEditorService,
         IState<TerminalState> terminalStateWrap,
-        IState<GitState> gitStateWrap,
-        GitCliOutputParser gitCliOutputParser,
         IDecorationMapperRegistry decorationMapperRegistry,
         IDialogService dialogService,
         IJSRuntime jsRuntime,
@@ -69,8 +63,6 @@ public class IdeBackgroundTaskApi
         _textEditorService = textEditorService;
         _compilerServiceRegistry = compilerServiceRegistry;
         _terminalStateWrap = terminalStateWrap;
-        _gitStateWrap = gitStateWrap;
-		_gitCliOutputParser = gitCliOutputParser;
 		_decorationMapperRegistry = decorationMapperRegistry;
 		_dialogService = dialogService;
 		_jsRuntime = jsRuntime;
@@ -112,21 +104,10 @@ public class IdeBackgroundTaskApi
             _ideComponentRenderers,
             _backgroundTaskService,
             _dispatcher);
-
-		Git = new GitIdeApi(
-			this,
-			_terminalStateWrap,
-			_gitStateWrap,
-			_gitCliOutputParser,
-			_environmentProvider,
-			_backgroundTaskService,
-            _commonComponentRenderers,
-			_dispatcher);
     }
     
     public EditorIdeApi Editor { get; }
     public FileSystemIdeApi FileSystem { get; }
     public FolderExplorerIdeApi FolderExplorer { get; }
     public InputFileIdeApi InputFile { get; }
-    public GitIdeApi Git { get; }
 }

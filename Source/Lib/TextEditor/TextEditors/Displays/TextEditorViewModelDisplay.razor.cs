@@ -81,11 +81,11 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     public VirtualizationDriver _gutterVirtualizationDriver;
     private BodyDriver _bodyDriver;
     public VirtualizationDriver _bodyVirtualizationDriver;
-    private HeaderDriver _headerDriver;
-    private FooterDriver _footerDriver;
     // TODO: awkward public
     public PresentationAndSelectionDriver _presentationAndSelectionDriver;
     public CursorDriver _cursorDriver;
+    
+    private Dictionary<string, object?> DependentComponentParameters;
     
     private bool _thinksTouchIsOccurring;
     private DateTime? _touchStartDateTime = null;
@@ -115,6 +115,14 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     protected override void OnInitialized()
     {
+    	DependentComponentParameters = new()
+    	{
+    		{
+    			nameof(TextEditorViewModelDisplay),
+    			this
+    		}
+    	};
+    
     	_gutterDriver = new(this);
     	_gutterVirtualizationDriver = new(
     		this,
@@ -125,8 +133,6 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     		this,
     		useHorizontalVirtualization: true,
     		useVerticalVirtualization: true);
-    	_headerDriver = new(this);
-    	_footerDriver = new(this);
     	_presentationAndSelectionDriver = new(this);
     	_cursorDriver = new(this);
     

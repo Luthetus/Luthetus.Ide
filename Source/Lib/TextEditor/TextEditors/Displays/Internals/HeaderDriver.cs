@@ -21,6 +21,8 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 /// <summary>
 /// The header has @onclick events in the UI and as such could not be made into a RenderFragment.
 /// Instead, the UI was inlined into the <see cref="TextEditorViewModelDisplay"/>.
+///
+/// TODO: Move this back into <see cref="TextEditorDefaultHeaderDisplay"/>. This was made into the Driver idea, then made back into a component.
 /// </summary>
 public class HeaderDriver
 {

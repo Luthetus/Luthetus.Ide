@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.CompilerServices.Python;
 using Luthetus.CompilerServices.C;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharpProject.CompilerServiceCase;
@@ -44,6 +45,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         TypeScriptCompilerService = new TypeScriptCompilerService(textEditorService);
         XmlCompilerService = new XmlCompilerService(textEditorService);
         CCompilerService = new CCompilerService(textEditorService);
+        PythonCompilerService = new PythonCompilerService(textEditorService);
         TerminalCompilerService = new TerminalCompilerService(textEditorService, terminalStateWrap);
         DefaultCompilerService = new CompilerService(textEditorService);
 
@@ -61,6 +63,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
         _map.Add(ExtensionNoPeriodFacts.F_SHARP, FSharpCompilerService);
         _map.Add(ExtensionNoPeriodFacts.DOT_NET_SOLUTION, DotNetSolutionCompilerService);
         _map.Add(ExtensionNoPeriodFacts.C, CCompilerService);
+        _map.Add(ExtensionNoPeriodFacts.PYTHON, PythonCompilerService);
         _map.Add(ExtensionNoPeriodFacts.H, CCompilerService);
         _map.Add(ExtensionNoPeriodFacts.CPP, CCompilerService);
         _map.Add(ExtensionNoPeriodFacts.HPP, CCompilerService);
@@ -78,6 +81,7 @@ public class CompilerServiceRegistry : ICompilerServiceRegistry
     public TypeScriptCompilerService TypeScriptCompilerService { get; }
     public XmlCompilerService XmlCompilerService { get; }
     public CCompilerService CCompilerService { get; }
+    public PythonCompilerService PythonCompilerService { get; }
     public TerminalCompilerService TerminalCompilerService { get; }
     public CompilerService DefaultCompilerService { get; }
 

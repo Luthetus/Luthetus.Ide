@@ -5,12 +5,19 @@ using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Displays;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Ide.RazorLib.AppDatas.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
+using Luthetus.Ide.RazorLib.Shareds.States;
+using Luthetus.Extensions.Git.Displays;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.AppDatas.Models;
 
@@ -34,15 +41,33 @@ public partial class LuthetusConfigInitializer : ComponentBase
 	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
 	[Inject]
 	private IAppDataService AppDataService { get; set; } = null!;
+	[Inject]
+	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+
+	protected override void OnInitialized()
+	{
+		BackgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			nameof(LuthetusConfigInitializer),
+			() =>
+			{
+				InitializeFooterJustifyEndComponents();
+                return Task.CompletedTask;
+            });
+			
+		base.OnInitialized();
+	}
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
         	var dotNetAppData = await AppDataService
-        		.ReadAppDataAsync<DotNetAppData>(typeof(DotNetAppData).Assembly.GetName().Name, refreshCache: false)
+        		.ReadAppDataAsync<DotNetAppData>(
+        			DotNetAppData.AssemblyName, DotNetAppData.TypeName, uniqueIdentifier: null, forceRefreshCache: false)
         		.ConfigureAwait(false);
         		
         	await SetSolution(dotNetAppData).ConfigureAwait(false);
@@ -139,5 +164,38 @@ public partial class LuthetusConfigInitializer : ComponentBase
 			Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));	
         }
         */
+    }
+    
+    private void InitializeFooterJustifyEndComponents()
+    {
+    	Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+    		new FooterJustifyEndComponent(
+    			Key<FooterJustifyEndComponent>.NewKey(),
+				typeof(GitInteractiveIconDisplay),
+				new Dictionary<string, object?>
+				{
+					{
+						nameof(GitInteractiveIconDisplay.CssStyleString),
+						"margin-right: 15px;"
+					}
+				})));
+				
+		Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+    		new FooterJustifyEndComponent(
+    			Key<FooterJustifyEndComponent>.NewKey(),
+				typeof(DirtyResourceUriInteractiveIconDisplay),
+				new Dictionary<string, object?>
+				{
+					{
+						nameof(GitInteractiveIconDisplay.CssStyleString),
+						"margin-right: 15px;"
+					}
+				})));
+				
+		Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+    		new FooterJustifyEndComponent(
+    			Key<FooterJustifyEndComponent>.NewKey(),
+				typeof(NotificationsInteractiveIconDisplay),
+				ComponentParameterMap: null)));
     }
 }

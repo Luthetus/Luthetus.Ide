@@ -8,7 +8,11 @@ public class DoNothingAppDataService : IAppDataService
 		return Task.CompletedTask;
 	}
 	
-	public Task<AppData?> ReadAppDataAsync<AppData>(string assemblyNameFullyQualified, bool refreshCache)
+	public Task<AppData?> ReadAppDataAsync<AppData>(
+			string assemblyName,
+			string typeName,
+			string? uniqueIdentifier,
+			bool forceRefreshCache)
 		where AppData : IAppData
 	{
 		return Task.FromResult(default(AppData));
