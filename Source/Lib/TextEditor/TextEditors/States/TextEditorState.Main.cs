@@ -49,6 +49,14 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 ///     base.OnInitialized();
 /// }
 /// ```
+///
+/// ImmutableList shouldn't be used here, (at least not the way it currently is).
+/// Every time we want to get a specific TextEditorModel via their ResourceUri,
+/// then this code is used: ModelList.GetFirstOrDefault(x => x.ResourceUri == resourceUri).
+/// This was the way things were for a few reasons. One because not enough files were being processed
+/// by the IDE for it to matter. Two because ImmutableList is a tree datastructure internally.
+/// But, that "two" point is completely pointless if one isn't searching by a hash.
+/// It likely is just iterating the tree and checking the predicate until it finds true. (2024-10-02)
 /// </summary>
 [FeatureState]
 public partial record TextEditorState(

@@ -11,6 +11,7 @@ using Luthetus.Common.RazorLib.Dimensions.States;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Dialogs.Models;
 using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
@@ -22,7 +23,6 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays;
 
