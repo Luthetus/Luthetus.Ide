@@ -14,7 +14,7 @@ public partial class TextEditorDefaultFooterDisplay : ComponentBase, ITextEditor
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 
-	private static readonly Throttle _throttleRender = new(TimeSpan.FromMilliseconds(333));
+	private static readonly Throttle _throttleRender = new(TimeSpan.FromMilliseconds(250));
 
 	private FooterDriver _footerDriver;
 	

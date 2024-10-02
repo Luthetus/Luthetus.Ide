@@ -16,7 +16,7 @@ public partial class TextEditorDefaultHeaderDisplay : ComponentBase, ITextEditor
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 
-	private static readonly Throttle _throttleRender = new(TimeSpan.FromMilliseconds(333));
+	private static readonly Throttle _throttleRender = new(TimeSpan.FromMilliseconds(1_000));
 
 	private HeaderDriver _headerDriver;
 
