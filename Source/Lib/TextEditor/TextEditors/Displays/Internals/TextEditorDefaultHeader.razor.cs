@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Fluxor;
 using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Reactives.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
@@ -14,6 +15,8 @@ public partial class TextEditorDefaultHeader : ComponentBase, IDisposable
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 
+	private readonly Throttle _throttleRender = new(TimeSpan.FromMilliseconds(1_000));
+
 	private HeaderDriver _headerDriver;
 
 	protected override void OnInitialized()
@@ -26,9 +29,12 @@ public partial class TextEditorDefaultHeader : ComponentBase, IDisposable
         base.OnInitialized();
     }
 
-	private async void OnRenderBatchChanged()
+	private void OnRenderBatchChanged()
     {
-    	await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+    	_throttleRender.Run(async _ =>
+    	{
+    		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+    	});
     }
 
 	public void Dispose()
