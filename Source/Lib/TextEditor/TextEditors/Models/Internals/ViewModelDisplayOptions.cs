@@ -55,6 +55,9 @@ public class ViewModelDisplayOptions
 
     /// <summary>
     /// If set to null then no header will render.
+    ///
+    /// If overriden to non-null, the component is expected to have
+    /// CSS style attribute height="var(--luth_te_text-editor-header-height)"
     /// </summary>
     public Type? HeaderComponentType { get; set; } = typeof(TextEditorDefaultHeaderDisplay);
 
@@ -65,6 +68,9 @@ public class ViewModelDisplayOptions
 
     /// <summary>
     /// If set to null then no footer will render.
+    ///
+    /// If overriden to non-null, the component is expected to have
+    /// CSS style attribute height="var(--luth_te_text-editor-footer-height)"
     /// </summary>
     public Type? FooterComponentType { get; set; } = typeof(TextEditorDefaultFooterDisplay);
 
