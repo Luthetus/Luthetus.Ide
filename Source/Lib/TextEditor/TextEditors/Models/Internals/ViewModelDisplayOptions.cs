@@ -55,7 +55,7 @@ public class ViewModelDisplayOptions
     /// <summary>
     /// If set to false the <see cref="Displays.Internals.Header"/> will NOT render above the text editor.
     /// </summary>
-    public bool IncludeHeaderHelperComponent { get; set; } = true;
+    public Type? HeaderComponent { get; set; } = typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.TextEditorDefaultHeader);
 
     /// <summary>
     /// <see cref="HeaderButtonKinds"/> contains the enum value that represents a button displayed in the optional component: <see cref="TextEditorHeader"/>.

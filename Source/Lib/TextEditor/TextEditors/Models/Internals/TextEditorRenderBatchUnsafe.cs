@@ -34,7 +34,7 @@ public record TextEditorRenderBatchUnsafe(
         // Start with a calc statement and a value of 100%
         var heightBuilder = new StringBuilder("height: calc(100%");
 
-        if (ViewModelDisplayOptions.IncludeHeaderHelperComponent)
+        if (ViewModelDisplayOptions.HeaderComponent is not null)
             heightBuilder.Append(" - var(--luth_te_text-editor-header-height)");
 
         if (ViewModelDisplayOptions.IncludeFooterHelperComponent)

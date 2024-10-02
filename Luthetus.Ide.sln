@@ -95,6 +95,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.CompilerServices.P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.Extensions.Git", "Source\Lib\Extensions\Extensions.Git\Luthetus.Extensions.Git.csproj", "{D6BAAD2B-D6B8-4322-BD50-A9657DD7676F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Luthetus.Extensions.Git.Tests", "Source\Tests\Extensions\Luthetus.Extensions.Git.Tests\Luthetus.Extensions.Git.Tests.csproj", "{089ECADF-8864-4707-9CEA-6B5B2ADBA398}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -257,6 +259,10 @@ Global
 		{D6BAAD2B-D6B8-4322-BD50-A9657DD7676F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6BAAD2B-D6B8-4322-BD50-A9657DD7676F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6BAAD2B-D6B8-4322-BD50-A9657DD7676F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{089ECADF-8864-4707-9CEA-6B5B2ADBA398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{089ECADF-8864-4707-9CEA-6B5B2ADBA398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{089ECADF-8864-4707-9CEA-6B5B2ADBA398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{089ECADF-8864-4707-9CEA-6B5B2ADBA398}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -305,6 +311,7 @@ Global
 		{8DDFD39F-382A-4B01-B4D3-4DF5D5B1D5E5} = {E68250C7-CE5B-4427-A332-8F8A2296549A}
 		{173471CC-20B6-4341-AEF6-D548C9C7FBC1} = {195D2EF7-3938-4BF8-B483-170AD8FF5B84}
 		{D6BAAD2B-D6B8-4322-BD50-A9657DD7676F} = {E8EBE70E-4CAA-4C44-B442-0FA275887018}
+		{089ECADF-8864-4707-9CEA-6B5B2ADBA398} = {E68250C7-CE5B-4427-A332-8F8A2296549A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6045BB8B-0C60-4077-93C3-16BA09C8FC27}

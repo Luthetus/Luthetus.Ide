@@ -26,7 +26,7 @@ public partial class TextEditorSettingsPreview : ComponentBase
     {
         WrapperStyleCssString = "height: var(--luth_te_text-editor-content-min-height);",
         TextEditorStyleCssString = "height: 100%;",
-        IncludeHeaderHelperComponent = false,
+        HeaderComponent = null,
         IncludeFooterHelperComponent = false,
         AfterOnKeyDownAsync = (_, _, _, _, _, _) => Task.CompletedTask,
     };

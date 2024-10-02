@@ -50,7 +50,7 @@ public partial class TerminalOutputTextEditorExpandDisplay : ComponentBase, IDis
 	
 	private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
-		IncludeHeaderHelperComponent = false,
+		HeaderComponent = null,
 		IncludeFooterHelperComponent = false,
 		IncludeGutterComponent = false,
 		ContextRecord = ContextFacts.TerminalContext,
