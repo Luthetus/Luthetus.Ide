@@ -23,16 +23,14 @@ public partial class DragInitializer : FluxorComponent
 
     private IDropzone? _onMouseOverDropzone = null;
 
-    private DragState.WithAction ConstructClearDragStateAction()
+    private void DispatchClearDragStateAction()
     {
 		_onMouseOverDropzone = null;
-
-        return new DragState.WithAction(inState => inState with
-        {
-            ShouldDisplay = false,
-            MouseEventArgs = null,
-			Drag = null,
-        });
+		
+        Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsAndDragSetAction(
+        	false,
+            null,
+			null));
     }
 
     private void DispatchSetDragStateActionOnMouseMove(MouseEventArgs mouseEventArgs)
@@ -40,17 +38,9 @@ public partial class DragInitializer : FluxorComponent
         Throttle.Run(_ =>
         {
             if ((mouseEventArgs.Buttons & 1) != 1)
-            {
-                Dispatcher.Dispatch(ConstructClearDragStateAction());
-            }
+                DispatchClearDragStateAction();
             else
-            {
-                Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-                {
-                    ShouldDisplay = true,
-                    MouseEventArgs = mouseEventArgs,
-                }));
-            }
+                Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, mouseEventArgs));
 
             return Task.CompletedTask;
         });
@@ -63,7 +53,7 @@ public partial class DragInitializer : FluxorComponent
 
         Throttle.Run(async _ =>
         {
-            Dispatcher.Dispatch(ConstructClearDragStateAction());
+            DispatchClearDragStateAction();
 
             var draggableViewModel = dragState.Drag;
             if (draggableViewModel is not null)

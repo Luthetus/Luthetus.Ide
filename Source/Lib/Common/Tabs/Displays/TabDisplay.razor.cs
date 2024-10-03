@@ -264,12 +264,7 @@ public partial class TabDisplay : ComponentBase, IDisposable
 
         _dragEventHandler = DragEventHandlerAsync;
 
-        Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-        {
-            ShouldDisplay = true,
-            MouseEventArgs = null,
-			Drag = draggable,
-        }));
+		Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsAndDragSetAction(true, null, draggable));
     }
 
 	private Task DragEventHandlerAsync(
