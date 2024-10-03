@@ -6,6 +6,9 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
+/// <summary>
+/// TODO: Move this back into <see cref="TextEditorDefaultFooter"/>. This was made into the Driver idea, then made back into a component.
+/// </summary>
 public class FooterDriver
 {
 	public readonly TextEditorViewModelDisplay _root;

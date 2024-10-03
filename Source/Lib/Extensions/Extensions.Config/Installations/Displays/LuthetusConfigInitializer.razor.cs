@@ -5,12 +5,21 @@ using Fluxor;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
-using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Notifications.Displays;
+using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Edits.Displays;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.InputFiles.States;
 using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Ide.RazorLib.AppDatas.Models;
+using Luthetus.Ide.RazorLib.Shareds.Models;
+using Luthetus.Ide.RazorLib.Shareds.States;
+using Luthetus.Extensions.Git.Displays;
+using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
+using Luthetus.Extensions.DotNet.AppDatas.Models;
 
 namespace Luthetus.Extensions.Config.Installations.Displays;
 
@@ -30,131 +39,163 @@ public partial class LuthetusConfigInitializer : ComponentBase
     private DotNetBackgroundTaskApi DotNetBackgroundTaskApi { get; set; } = null!;
 	[Inject]
 	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+	[Inject]
+	private IAppDataService AppDataService { get; set; } = null!;
+	[Inject]
+	private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private IDispatcher Dispatcher { get; set; } = null!;
+
+	protected override void OnInitialized()
+	{
+		BackgroundTaskService.Enqueue(
+			Key<IBackgroundTask>.NewKey(),
+			ContinuousBackgroundTaskWorker.GetQueueKey(),
+			nameof(LuthetusConfigInitializer),
+			() =>
+			{
+				InitializeFooterJustifyEndComponents();
+                return Task.CompletedTask;
+            });
+			
+		base.OnInitialized();
+	}
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await HACK_PersonalSettings().ConfigureAwait(false);
+        	var dotNetAppData = await AppDataService
+        		.ReadAppDataAsync<DotNetAppData>(
+        			DotNetAppData.AssemblyName, DotNetAppData.TypeName, uniqueIdentifier: null, forceRefreshCache: false)
+        		.ConfigureAwait(false);
+        		
+        	await SetSolution(dotNetAppData).ConfigureAwait(false);
         }
 
         await base.OnAfterRenderAsync(firstRender);
     }
-
-    /// <summary>
-    /// Personal settings to have closing and reopening the IDE be exactly the state I want while developing.
-    /// </summary>
-    private async Task HACK_PersonalSettings()
+    
+    private async Task SetSolution(DotNetAppData dotNetAppData)
     {
-        string? slnPersonalPath = null;
-        string? projectPersonalPath = null;
-#if DEBUG
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+    	var solutionMostRecent = dotNetAppData?.SolutionMostRecent;
+    
+    	if (solutionMostRecent is null)
+    		return;
+    
+    	var slnAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+            solutionMostRecent,
+            false);
+
+        DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(slnAbsolutePath);
+
+        var parentDirectory = slnAbsolutePath.ParentDirectory;
+        if (parentDirectory is not null)
         {
-            slnPersonalPath = "/home/hunter/Repos/BlazorCrudApp/BlazorCrudApp.sln";
-            projectPersonalPath = "/home/hunter/Repos/BlazorCrudApp/BlazorCrudApp.ServerSide/BlazorCrudApp.ServerSide.csproj";
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            slnPersonalPath = "C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg.sln";
-            projectPersonalPath = "C:\\Users\\hunte\\Repos\\Demos\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg\\BlazorApp4NetCoreDbg.csproj";
-        }
-#else
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-        {
-            slnPersonalPath = "/home/hunter/Repos/Luthetus.Ide_Fork/Luthetus.Ide.sln";
-        }
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            slnPersonalPath = "C:\\Users\\hunte\\Repos\\Luthetus.Ide_Fork\\Luthetus.Ide.sln";
-        }
-#endif
-        if (!string.IsNullOrWhiteSpace(slnPersonalPath) &&
-            await FileSystemProvider.File.ExistsAsync(slnPersonalPath).ConfigureAwait(false))
-        {
-            var slnAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
-                slnPersonalPath,
+            var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+                parentDirectory.Value,
+                true);
+
+            var pseudoRootNode = new TreeViewAbsolutePath(
+                parentDirectoryAbsolutePath,
+                IdeComponentRenderers,
+                CommonComponentRenderers,
+                FileSystemProvider,
+                EnvironmentProvider,
+                true,
                 false);
 
-            DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(slnAbsolutePath);
+            await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-            var parentDirectory = slnAbsolutePath.ParentDirectory;
-            if (parentDirectory is not null)
+            var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildList.ToArray());
+
+            foreach (var child in adhocRootNode.ChildList)
             {
-                var parentDirectoryAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
-                    parentDirectory.Value,
-                    true);
+                child.IsExpandable = false;
+            }
 
-                var pseudoRootNode = new TreeViewAbsolutePath(
-                    parentDirectoryAbsolutePath,
-                    IdeComponentRenderers,
-                    CommonComponentRenderers,
-                    FileSystemProvider,
-                    EnvironmentProvider,
+            var activeNode = adhocRootNode.ChildList.FirstOrDefault();
+
+            if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
+            {
+                TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
+                    InputFileContent.TreeViewContainerKey,
+                    adhocRootNode,
+                    activeNode is null
+                        ? ImmutableList<TreeViewNoType>.Empty
+                        : new TreeViewNoType[] { activeNode }.ToImmutableList()));
+            }
+            else
+            {
+                TreeViewService.SetRoot(InputFileContent.TreeViewContainerKey, adhocRootNode);
+
+                TreeViewService.SetActiveNode(
+                    InputFileContent.TreeViewContainerKey,
+                    activeNode,
                     true,
                     false);
-
-                await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
-
-                var adhocRootNode = TreeViewAdhoc.ConstructTreeViewAdhoc(pseudoRootNode.ChildList.ToArray());
-
-                foreach (var child in adhocRootNode.ChildList)
-                {
-                    child.IsExpandable = false;
-                }
-
-                var activeNode = adhocRootNode.ChildList.FirstOrDefault();
-
-                if (!TreeViewService.TryGetTreeViewContainer(InputFileContent.TreeViewContainerKey, out var treeViewContainer))
-                {
-                    TreeViewService.RegisterTreeViewContainer(new TreeViewContainer(
-                        InputFileContent.TreeViewContainerKey,
-                        adhocRootNode,
-                        activeNode is null
-                            ? ImmutableList<TreeViewNoType>.Empty
-                            : new TreeViewNoType[] { activeNode }.ToImmutableList()));
-                }
-                else
-                {
-                    TreeViewService.SetRoot(InputFileContent.TreeViewContainerKey, adhocRootNode);
-
-                    TreeViewService.SetActiveNode(
-                        InputFileContent.TreeViewContainerKey,
-                        activeNode,
-                        true,
-                        false);
-                }
-                await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
-
-                var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
-                    pseudoRootNode,
-                    IdeComponentRenderers,
-                    CommonComponentRenderers,
-                    FileSystemProvider,
-                    EnvironmentProvider);
-
-                Dispatcher.Dispatch(setOpenedTreeViewModelAction);
             }
+            await pseudoRootNode.LoadChildListAsync().ConfigureAwait(false);
 
-            if (!string.IsNullOrWhiteSpace(projectPersonalPath) &&
-                await FileSystemProvider.File.ExistsAsync(projectPersonalPath).ConfigureAwait(false))
-            {
-                var projectAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
-                    projectPersonalPath,
-                    false);
+            var setOpenedTreeViewModelAction = new InputFileState.SetOpenedTreeViewModelAction(
+                pseudoRootNode,
+                IdeComponentRenderers,
+                CommonComponentRenderers,
+                FileSystemProvider,
+                EnvironmentProvider);
 
-                // SingleOrDefault here is intentional, one can start a project many different ways.
-				// But current support for this does not exist. So in this situation don't continue, for now.
-				var startupControl = StartupControlStateWrap.Value.StartupControlList.SingleOrDefault(
-					x => x.StartupProjectAbsolutePath.Value == projectAbsolutePath.Value);
-					
-				if (startupControl is null)
-					return;
-				
-				Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));	
-            }
+            Dispatcher.Dispatch(setOpenedTreeViewModelAction);
         }
+
+		/*
+        if (!string.IsNullOrWhiteSpace(projectPersonalPath) &&
+            await FileSystemProvider.File.ExistsAsync(projectPersonalPath).ConfigureAwait(false))
+        {
+            var projectAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
+                projectPersonalPath,
+                false);
+
+			var startupControl = StartupControlStateWrap.Value.StartupControlList.FirstOrDefault(
+				x => x.StartupProjectAbsolutePath.Value == projectAbsolutePath.Value);
+				
+			if (startupControl is null)
+				return;
+			
+			Dispatcher.Dispatch(new StartupControlState.SetActiveStartupControlKeyAction(startupControl.Key));	
+        }
+        */
+    }
+    
+    private void InitializeFooterJustifyEndComponents()
+    {
+    	Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+    		new FooterJustifyEndComponent(
+    			Key<FooterJustifyEndComponent>.NewKey(),
+				typeof(GitInteractiveIconDisplay),
+				new Dictionary<string, object?>
+				{
+					{
+						nameof(GitInteractiveIconDisplay.CssStyleString),
+						"margin-right: 15px;"
+					}
+				})));
+				
+		Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+    		new FooterJustifyEndComponent(
+    			Key<FooterJustifyEndComponent>.NewKey(),
+				typeof(DirtyResourceUriInteractiveIconDisplay),
+				new Dictionary<string, object?>
+				{
+					{
+						nameof(GitInteractiveIconDisplay.CssStyleString),
+						"margin-right: 15px;"
+					}
+				})));
+				
+		Dispatcher.Dispatch(new IdeMainLayoutState.RegisterFooterJustifyEndComponentAction(
+    		new FooterJustifyEndComponent(
+    			Key<FooterJustifyEndComponent>.NewKey(),
+				typeof(NotificationsInteractiveIconDisplay),
+				ComponentParameterMap: null)));
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.Keymaps.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -53,9 +54,12 @@ public class ViewModelDisplayOptions
         AfterOnKeyDownRangeAsync { get; set; }
 
     /// <summary>
-    /// If set to false the <see cref="Displays.Internals.Header"/> will NOT render above the text editor.
+    /// If set to null then no header will render.
+    ///
+    /// If overriden to non-null, the component is expected to have
+    /// CSS style attribute height="var(--luth_te_text-editor-header-height)"
     /// </summary>
-    public bool IncludeHeaderHelperComponent { get; set; } = true;
+    public Type? HeaderComponentType { get; set; } = typeof(TextEditorDefaultHeaderDisplay);
 
     /// <summary>
     /// <see cref="HeaderButtonKinds"/> contains the enum value that represents a button displayed in the optional component: <see cref="TextEditorHeader"/>.
@@ -63,9 +67,12 @@ public class ViewModelDisplayOptions
     public ImmutableArray<HeaderButtonKind>? HeaderButtonKinds { get; set; }
 
     /// <summary>
-    /// If set to false the <see cref="Displays.Internals.TextEditorFooter"/> will NOT render below the text editor.
+    /// If set to null then no footer will render.
+    ///
+    /// If overriden to non-null, the component is expected to have
+    /// CSS style attribute height="var(--luth_te_text-editor-footer-height)"
     /// </summary>
-    public bool IncludeFooterHelperComponent { get; set; } = true;
+    public Type? FooterComponentType { get; set; } = typeof(TextEditorDefaultFooterDisplay);
 
     /// <summary>
     /// If set to false: the <see cref="Displays.Internals.GutterSection"/> will NOT render. (i.e. line numbers will not render)

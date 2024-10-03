@@ -24,7 +24,6 @@ using Luthetus.Ide.RazorLib.Terminals.Displays;
 using Luthetus.Ide.RazorLib.FolderExplorers.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.CodeSearches.States;
-using Luthetus.Ide.RazorLib.Gits.Displays;
 using Luthetus.Ide.RazorLib.JsRuntimes.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Displays;
@@ -181,20 +180,6 @@ public partial class LuthetusIdeInitializer : ComponentBase
         var leftPanel = PanelFacts.GetTopLeftPanelGroup(PanelStateWrap.Value);
         leftPanel.Dispatcher = Dispatcher;
 
-        // gitPanel
-        var gitPanel = new Panel(
-            "Git Changes",
-            Key<Panel>.NewKey(),
-            Key<IDynamicViewModel>.NewKey(),
-            ContextFacts.GitContext.ContextKey,
-            typeof(GitDisplay),
-            null,
-            Dispatcher,
-            DialogService,
-            JsRuntime);
-        Dispatcher.Dispatch(new PanelState.RegisterPanelAction(gitPanel));
-        Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(leftPanel.Key, gitPanel, false));
-
         // folderExplorerPanel
         var folderExplorerPanel = new Panel(
 			"Folder Explorer",
@@ -305,7 +290,7 @@ public partial class LuthetusIdeInitializer : ComponentBase
 							TextEditorService,
 							CompilerServiceRegistry,
 							DialogService,
-						       JsRuntime,
+						    JsRuntime,
 							Dispatcher)),
 					BackgroundTaskService,
 					CommonComponentRenderers,

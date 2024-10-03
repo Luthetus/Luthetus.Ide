@@ -4,15 +4,12 @@ public class IdeTreeViews
 {
     public IdeTreeViews(
         Type treeViewNamespacePathRendererType,
-        Type treeViewAbsolutePathRendererType,
-        Type treeViewGitFileRendererType)
+        Type treeViewAbsolutePathRendererType)
     {
         TreeViewNamespacePathRendererType = treeViewNamespacePathRendererType;
         TreeViewAbsolutePathRendererType = treeViewAbsolutePathRendererType;
-        TreeViewGitFileRendererType = treeViewGitFileRendererType;
     }
 
     public Type TreeViewNamespacePathRendererType { get; }
     public Type TreeViewAbsolutePathRendererType { get; }
-    public Type TreeViewGitFileRendererType { get; }
 }

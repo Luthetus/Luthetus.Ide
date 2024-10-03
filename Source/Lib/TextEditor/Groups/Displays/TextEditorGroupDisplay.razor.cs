@@ -74,7 +74,7 @@ public partial class TextEditorGroupDisplay : ComponentBase, IDisposable
 
 		foreach (var viewModelKey in textEditorGroup.ViewModelKeyList)
 		{
-            var viewModel = textEditorState.ViewModelList.FirstOrDefault(x => x.ViewModelKey == viewModelKey);
+            var viewModel = textEditorState.ViewModelGetOrDefault(viewModelKey);
             
             if (viewModel is not null)
             {

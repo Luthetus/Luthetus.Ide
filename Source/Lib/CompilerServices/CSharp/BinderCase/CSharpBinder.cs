@@ -141,7 +141,7 @@ public partial class CSharpBinder : IBinder
                 $" for types: {leftExpressionNode.ConstructTextSpanRecursively().GetText()}" +
                 $" and {rightExpressionNode.ConstructTextSpanRecursively().GetText()}";
 
-            parserModel.DiagnosticBag.ReportTodoException(problematicTextSpan, errorMessage);
+            parserModel.DiagnosticBag.ReportTodoException(problematicTextSpan.Value, errorMessage);
         }
 
         return new BinaryOperatorNode(

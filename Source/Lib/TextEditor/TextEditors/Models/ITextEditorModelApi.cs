@@ -31,11 +31,14 @@ public interface ITextEditorModelApi
 
     #region READ_METHODS
     /// <summary>
+	/// Returns a shallow copy
+	///
     /// One should store the result of invoking this method in a variable, then reference that variable.
     /// If one continually invokes this, there is no guarantee that the data had not changed
     /// since the previous invocation.
     /// </summary>
-    public ImmutableList<TextEditorModel> GetModels();
+    public Dictionary<ResourceUri, TextEditorModel> GetModels();
+    public int GetModelsCount();
     public TextEditorModel? GetOrDefault(ResourceUri resourceUri);
     public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
     public string? GetAllText(ResourceUri resourceUri);

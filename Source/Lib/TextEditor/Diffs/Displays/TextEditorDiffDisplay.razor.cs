@@ -6,8 +6,10 @@ using Luthetus.Common.RazorLib.Dynamics.Models;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.TextEditor.RazorLib.Diffs.States;
 using Luthetus.TextEditor.RazorLib.Diffs.Models;
+using Luthetus.TextEditor.RazorLib.Diffs.Displays.Internals;
 using Luthetus.TextEditor.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.States;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Diffs.Displays;
 
@@ -59,6 +61,11 @@ public partial class TextEditorDiffDisplay : ComponentBase, IDisposable
     private TextEditorDiffResult? _mostRecentDiffResult;
 
     private Throttle _throttleDiffCalculation = new(TimeSpan.FromMilliseconds(1_000));
+    
+    private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
+	{
+		HeaderComponentType = typeof(TextEditorDiffHeaderDisplay),
+	};
 
     protected override void OnInitialized()
     {

@@ -36,7 +36,7 @@
         }
 
         @if (!useDevelopmentDisplay)
-        {
+        {        
             <IdeHeader/>
 
             <StateHasChangedBoundary @ref="_bodyAndFooterStateHasChangedBoundaryComponent">
@@ -53,9 +53,13 @@
                               ReRenderSelfAndAdjacentElementDimensionsFunc="_bodyAndFooterStateHasChangedBoundaryComponent.InvokeStateHasChangedAsync">
 
                     <JustifyEndRenderFragment>
-                        <Luthetus.Ide.RazorLib.Gits.Displays.GitInteractiveIconDisplay CssStyleString="margin-right: 15px;"/>
-                        <Luthetus.TextEditor.RazorLib.Edits.Displays.DirtyResourceUriInteractiveIconDisplay CssStyleString="margin-right: 15px;"/>
-                        <Luthetus.Common.RazorLib.Notifications.Displays.NotificationsInteractiveIconDisplay/>
+                    	@{ var ideMainLayoutState = IdeMainLayoutStateWrap.Value; }
+                    	
+                    	@foreach (var footerJustifyEndComponent in ideMainLayoutState.FooterJustifyEndComponentList)
+                    	{
+                    		<DynamicComponent Type="footerJustifyEndComponent.ComponentType"
+                    						  Parameters="footerJustifyEndComponent.ComponentParameterMap"/>
+                    	}
                     </JustifyEndRenderFragment>
                 </PanelGroupDisplay>
             </StateHasChangedBoundary>

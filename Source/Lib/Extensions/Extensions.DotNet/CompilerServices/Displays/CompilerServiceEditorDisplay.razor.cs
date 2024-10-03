@@ -73,9 +73,12 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 				x => x.GroupKey == EditorIdeApi.EditorTextEditorGroupKey);
 
 			var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
-
-			var viewModel = localTextEditorState.ViewModelList.FirstOrDefault(
-				x => x.ViewModelKey == activeViewModelKey);
+			
+			var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefaultThreadSafe(
+				activeViewModelKey);
+				
+			var viewModel = model_viewmodel_tuple.ViewModel;
+			var textEditorModel = model_viewmodel_tuple.Model;
 
 			var interfaceCompilerServiceResource = viewModel is null
 				? null
@@ -84,10 +87,6 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 			var cSharpResource = interfaceCompilerServiceResource is null
 				? null
 				: (CSharpResource)interfaceCompilerServiceResource;
-
-			var textEditorModel = viewModel is null
-				? null
-				: localTextEditorState.ModelList.FirstOrDefault(x => x.ResourceUri == viewModel.ResourceUri);
 
 			int? primaryCursorPositionIndex = textEditorModel is null || viewModel is null
 				? null

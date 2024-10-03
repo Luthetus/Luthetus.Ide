@@ -37,6 +37,7 @@ public class DecorationMapperRegistry : IDecorationMapperRegistry
         _map.Add(ExtensionNoPeriodFacts.TYPE_SCRIPT, GenericDecorationMapper);
         _map.Add(ExtensionNoPeriodFacts.F_SHARP, GenericDecorationMapper);
         _map.Add(ExtensionNoPeriodFacts.C, GenericDecorationMapper);
+        _map.Add(ExtensionNoPeriodFacts.PYTHON, GenericDecorationMapper);
         _map.Add(ExtensionNoPeriodFacts.H, GenericDecorationMapper);
         _map.Add(ExtensionNoPeriodFacts.CPP, GenericDecorationMapper);
         _map.Add(ExtensionNoPeriodFacts.HPP, GenericDecorationMapper);

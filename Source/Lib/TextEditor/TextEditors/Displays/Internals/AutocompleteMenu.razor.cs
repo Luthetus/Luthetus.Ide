@@ -16,7 +16,7 @@ using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public partial class AutocompleteMenu : ComponentBase, IDisposable
+public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
     private ITextEditorService TextEditorService { get; set; } = null!;

@@ -6,7 +6,6 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.Ide.RazorLib.ComponentRenderers.Models;
 using Luthetus.Ide.RazorLib.FileSystems.Models;
-using Luthetus.Ide.RazorLib.Gits.Displays;
 using Luthetus.Ide.RazorLib.Menus.Models;
 using Luthetus.Ide.RazorLib.InputFiles.Displays;
 using Luthetus.Ide.RazorLib.FileSystems.Displays;
@@ -14,7 +13,7 @@ using Luthetus.Ide.RazorLib.FormsGenerics.Displays;
 using Luthetus.Ide.RazorLib.Commands;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Namespaces.Displays;
-using Luthetus.Ide.RazorLib.Gits.Models;
+using Luthetus.Ide.RazorLib.AppDatas.Models;
 
 namespace Luthetus.Ide.RazorLib.Installations.Models;
 
@@ -82,6 +81,11 @@ public static class ServiceCollectionExtensions
                 },
             });
         }
+        
+        if (hostingInformation.LuthetusHostingKind == LuthetusHostingKind.Photino)
+        	services.AddScoped<IAppDataService, NativeAppDataService>();
+        else
+        	services.AddScoped<IAppDataService, DoNothingAppDataService>();
 
         services
             .AddSingleton(ideConfig)
@@ -89,22 +93,19 @@ public static class ServiceCollectionExtensions
             .AddScoped<IdeBackgroundTaskApi>()
             .AddScoped<ICommandFactory, CommandFactory>()
             .AddScoped<IMenuOptionsFactory, MenuOptionsFactory>()
-            .AddScoped<IFileTemplateProvider, FileTemplateProvider>()
-			.AddScoped<GitCliOutputParser>();
+            .AddScoped<IFileTemplateProvider, FileTemplateProvider>();
 
         return services;
     }
 
     private static readonly IdeTreeViews _ideTreeViews = new(
         typeof(TreeViewNamespacePathDisplay),
-        typeof(TreeViewAbsolutePathDisplay),
-        typeof(TreeViewGitFileDisplay));
+        typeof(TreeViewAbsolutePathDisplay));
 
     private static readonly IdeComponentRenderers _ideComponentRenderers = new(
         typeof(BooleanPromptOrCancelDisplay),
         typeof(FileFormDisplay),
         typeof(DeleteFileFormDisplay),
-        typeof(GitChangesDisplay),
         typeof(InputFileDisplay),
         _ideTreeViews);
 }

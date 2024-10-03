@@ -1,0 +1,23 @@
+using Microsoft.AspNetCore.Components;
+using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
+using Luthetus.Extensions.Git.States;
+using Luthetus.Extensions.Git.BackgroundTasks.Models;
+
+namespace Luthetus.Extensions.Git.Displays;
+
+public partial class GitBranchCheckoutDisplay : ComponentBase
+{
+    [Inject]
+    private GitBackgroundTaskApi GitBackgroundTaskApi { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public GitState GitState { get; set; } = null!;
+
+    private void SetActiveBranchOnClick(GitState localGitState, string branchName)
+    {
+        if (localGitState.Repo is null)
+            return;
+
+        GitBackgroundTaskApi.Git.BranchSetEnqueue(localGitState.Repo, branchName);
+    }
+}

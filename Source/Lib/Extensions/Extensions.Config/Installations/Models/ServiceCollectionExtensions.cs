@@ -1,11 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Luthetus.Common.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Decorations.Models;
 using Luthetus.Ide.RazorLib.Installations.Models;
 using Luthetus.Extensions.DotNet.Installations.Models;
 using Luthetus.Extensions.Config.CompilerServices;
 using Luthetus.Extensions.Config.Decorations;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.Decorations.Models;
+using Luthetus.Extensions.Git.Installations.Models;
 
 namespace Luthetus.Extensions.Config.Installations.Models;
 
@@ -18,6 +19,7 @@ public static class ServiceCollectionExtensions
     {
         return services
             .AddLuthetusExtensionsDotNetServices(hostingInformation, configure)
+            .AddLuthetusExtensionsGitServices(hostingInformation, configure)
             .AddScoped<ICompilerServiceRegistry, CompilerServiceRegistry>()
             .AddScoped<IDecorationMapperRegistry, DecorationMapperRegistry>();
     }

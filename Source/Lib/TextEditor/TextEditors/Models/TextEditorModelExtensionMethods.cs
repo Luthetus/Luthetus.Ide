@@ -44,7 +44,7 @@ public static class TextEditorModelExtensionMethods
     /// A count of 1 returns lines[startingLineIndex] only.<br/>
     /// A count of 2 returns lines[startingLineIndex] and lines[startingLineIndex + 1].<br/>
     /// </param>
-    public static List<List<RichCharacter>> GetLineRichCharacterRange(this ITextEditorModel model, int startingLineIndex, int count)
+    public static RichCharacter[][] GetLineRichCharacterRange(this ITextEditorModel model, int startingLineIndex, int count)
     {
         var lineCountAvailable = model.LineEndList.Count - startingLineIndex;
 
@@ -53,10 +53,12 @@ public static class TextEditorModelExtensionMethods
             : lineCountAvailable;
 
         var endingLineIndexExclusive = startingLineIndex + lineCountToReturn;
-        var lineList = new List<List<RichCharacter>>();
+        var lineList = new RichCharacter[lineCountToReturn][];
 
         if (lineCountToReturn < 0 || startingLineIndex < 0 || endingLineIndexExclusive < 0)
             return lineList;
+
+		var addIndex = 0;
 
         for (var i = startingLineIndex; i < endingLineIndexExclusive; i++)
         {
@@ -64,12 +66,13 @@ public static class TextEditorModelExtensionMethods
             var startOfLineInclusive = model.GetLineInformation(i).StartPositionIndexInclusive;
             var endOfLineExclusive = model.LineEndList[i].EndPositionIndexExclusive;
 
+			// TODO: LINQ used in a hot path (the virtualization invokes this method)
             var line = model.RichCharacterList
                 .Skip(startOfLineInclusive)
                 .Take(endOfLineExclusive - startOfLineInclusive)
-                .ToList();
+                .ToArray();
 
-            lineList.Add(line);
+            lineList[addIndex++] = line;
         }
 
         return lineList;
