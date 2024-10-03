@@ -60,63 +60,63 @@ public class RazorResource : CompilerServiceResource
             switch (symbol.SymbolKindString)
             {
                 case "TypeSymbol":
-                    mappedTextSpan = mappedTextSpan with
+                    mappedTextSpan = mappedTextSpan.Value with
                     {
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType
                     };
 
-                    mappedSymbol = new TypeSymbol(mappedTextSpan);
+                    mappedSymbol = new TypeSymbol(mappedTextSpan.Value);
                     break;
                 case "ConstructorSymbol":
-                    mappedTextSpan = mappedTextSpan with
+                    mappedTextSpan = mappedTextSpan.Value with
                     {
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType
                     };
 
-                    mappedSymbol = new ConstructorSymbol(mappedTextSpan);
+                    mappedSymbol = new ConstructorSymbol(mappedTextSpan.Value);
                     break;
                 case "FunctionSymbol":
-                    mappedTextSpan = mappedTextSpan with
+                    mappedTextSpan = mappedTextSpan.Value with
                     {
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageMethod
                     };
 
-                    mappedSymbol = new FunctionSymbol(mappedTextSpan);
+                    mappedSymbol = new FunctionSymbol(mappedTextSpan.Value);
                     break;
                 case "VariableSymbol":
-                    mappedTextSpan = mappedTextSpan with
+                    mappedTextSpan = mappedTextSpan.Value with
                     {
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageVariable
                     };
 
-                    mappedSymbol = new VariableSymbol(mappedTextSpan);
+                    mappedSymbol = new VariableSymbol(mappedTextSpan.Value);
                     break;
                 case "PropertySymbol":
-                    mappedTextSpan = mappedTextSpan with
+                    mappedTextSpan = mappedTextSpan.Value with
                     {
                         DecorationByte = (byte)HtmlDecorationKind.None
                     };
 
-                    mappedSymbol = new PropertySymbol(mappedTextSpan);
+                    mappedSymbol = new PropertySymbol(mappedTextSpan.Value);
                     break;
                 case "StringInterpolationSymbol":
-                    mappedTextSpan = mappedTextSpan with
+                    mappedTextSpan = mappedTextSpan.Value with
                     {
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageStringLiteral
                     };
 
-                    mappedSymbol = new StringInterpolationSymbol(mappedTextSpan);
+                    mappedSymbol = new StringInterpolationSymbol(mappedTextSpan.Value);
                     break;
                 case "NamespaceSymbol":
-                    mappedTextSpan = mappedTextSpan with
+                    mappedTextSpan = mappedTextSpan.Value with
                     {
                         DecorationByte = (byte)HtmlDecorationKind.None
                     };
 
-                    mappedSymbol = new NamespaceSymbol(mappedTextSpan);
+                    mappedSymbol = new NamespaceSymbol(mappedTextSpan.Value);
                     break;
                 default:
-                    mappedTextSpan = mappedTextSpan with
+                    mappedTextSpan = mappedTextSpan.Value with
                     {
                         DecorationByte = (byte)HtmlDecorationKind.None
                     };

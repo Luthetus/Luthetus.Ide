@@ -1030,28 +1030,26 @@ public class TextEditorCommandDefaultFunctions
         var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 
         var positionIndex = modelModifier.GetPositionIndex(primaryCursorModifier);
+        
         var wordTextSpan = modelModifier.GetWordTextSpan(positionIndex);
-
         if (wordTextSpan is null)
             return;
 
-        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(wordTextSpan);
-
+        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(wordTextSpan.Value);
         if (definitionTextSpan is null)
             return;
 
-        var definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.ResourceUri);
-
+        var definitionModel = commandArgs.TextEditorService.ModelApi.GetOrDefault(definitionTextSpan.Value.ResourceUri);
         if (definitionModel is null)
         {
             if (commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc is not null)
             {
                 commandArgs.TextEditorService.TextEditorConfig.RegisterModelFunc.Invoke(
-                    new RegisterModelArgs(definitionTextSpan.ResourceUri, commandArgs.ServiceProvider));
+                    new RegisterModelArgs(definitionTextSpan.Value.ResourceUri, commandArgs.ServiceProvider));
 
-                var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.ResourceUri);
+                var definitionModelModifier = editContext.GetModelModifier(definitionTextSpan.Value.ResourceUri);
 
-                if (definitionModel is null)
+                if (definitionModel is null) // TODO: Should this be null checking instead: 'definitionModelModifier'?
                     return;
             }
             else
@@ -1060,7 +1058,7 @@ public class TextEditorCommandDefaultFunctions
             }
         }
 
-        var definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
+        var definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.Value.ResourceUri);
 
         if (!definitionViewModels.Any())
         {
@@ -1068,12 +1066,12 @@ public class TextEditorCommandDefaultFunctions
             {
                 commandArgs.TextEditorService.TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
                     Key<TextEditorViewModel>.NewKey(),
-                    definitionTextSpan.ResourceUri,
+                    definitionTextSpan.Value.ResourceUri,
                     new Category("main"),
                     true,
                     commandArgs.ServiceProvider));
 
-                definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.ResourceUri);
+                definitionViewModels = commandArgs.TextEditorService.ModelApi.GetViewModelsOrEmpty(definitionTextSpan.Value.ResourceUri);
 
                 if (!definitionViewModels.Any())
                     return;
@@ -1093,8 +1091,8 @@ public class TextEditorCommandDefaultFunctions
         if (definitionViewModelModifier is null || definitionCursorModifierBag is null || definitionPrimaryCursorModifier is null)
             return;
 
-        var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.StartingIndexInclusive);
-        var columnIndex = definitionTextSpan.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
+        var rowData = definitionModel.GetLineInformationFromPositionIndex(definitionTextSpan.Value.StartingIndexInclusive);
+        var columnIndex = definitionTextSpan.Value.StartingIndexInclusive - rowData.StartPositionIndexInclusive;
 
         definitionPrimaryCursorModifier.SelectionAnchorPositionIndex = null;
         definitionPrimaryCursorModifier.LineIndex = rowData.Index;

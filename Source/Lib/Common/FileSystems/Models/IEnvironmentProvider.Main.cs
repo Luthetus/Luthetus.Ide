@@ -6,6 +6,19 @@ public partial interface IEnvironmentProvider
 {
     public IAbsolutePath HomeDirectoryAbsolutePath { get; }
     public IAbsolutePath RootDirectoryAbsolutePath { get; }
+    
+    /// <summary>
+    /// The <see cref="ActualRoamingApplicationDataDirectoryAbsolutePath"/>
+    /// but with "/Luthetus/" appended.
+    /// </summary>
+    public IAbsolutePath SafeRoamingApplicationDataDirectoryAbsolutePath { get; }
+    /// <summary>
+    /// The <see cref="ActualLocalApplicationDataDirectoryAbsolutePath"/>
+    /// but with "/Luthetus/" appended.
+    /// </summary>
+    public IAbsolutePath SafeLocalApplicationDataDirectoryAbsolutePath { get; }
+    public IAbsolutePath ActualRoamingApplicationDataDirectoryAbsolutePath { get; }
+    public IAbsolutePath ActualLocalApplicationDataDirectoryAbsolutePath { get; }
     /// <summary>
     /// If one is executing the program from the absolute path "C:\Programs\..." then this is "C:".
     /// This property is needed in order to disambiguate when given:<br/>

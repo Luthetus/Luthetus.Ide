@@ -172,6 +172,44 @@
         Recent Changes:
 		<div>
 			<div>
+                <div>v <em class="luth_em">0.9.6.5 </em> (2024-10-03)</div>
+                <ul>
+                	<li>
+                        On startup, re-open the last open '.sln' file
+                    </li>
+					<li>Horizontally virtualize on a line by line basis, and only if the individual line is long.</li>
+					<li>Virtualization result is an array of lines (was a list)</li>
+					<li>Change: SetModelAndViewModelRangeAction to a struct</li>
+					<li>Change: TextEditorTextSpan to record-struct</li>
+					<li>
+						TextEditorState.Main.cs uses private-mutable dictionaries to store
+						text editor models/viewmodels.
+						(They used to be ImmutableList(s))
+					</li>
+                	<li>
+                        Add: IAppDataService.cs
+                    </li>
+                    <li>
+						TextEditor: Add: ITextEditorDependentComponent.cs
+							("low priority" rendering of accessory components to the text editor).
+						Render header throttled at 1 second.
+						Render footer throttled at 250 milliseconds.
+					</li>
+                    <li>
+						Move git to its own project
+					</li>
+					<li>
+						Add: FooterJustifyEndComponent.cs
+					</li>
+					<li>
+						Fix: Git origin/branch only settable once
+					</li>
+                    <li>
+						Add: Simple PythonCompilerService
+					</li>
+                </ul>
+            </div>
+			<div>
                 <div>v <em class="luth_em">0.9.6.4 </em> (2024-09-21)</div>
                 <ul>
                 	<li>

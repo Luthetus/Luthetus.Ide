@@ -38,8 +38,8 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 	
 	private ViewModelDisplayOptions _textEditorViewModelDisplayOptions = new()
 	{
-		IncludeHeaderHelperComponent = false,
-		IncludeFooterHelperComponent = false,
+		HeaderComponentType = null,
+		FooterComponentType = null,
 		IncludeGutterComponent = false,
 		ContextRecord = ContextFacts.TerminalContext,
 	};
@@ -112,7 +112,7 @@ public partial class TestExplorerDetailsDisplay : ComponentBase
 
 			for (int i = 0; i < newDecorationTextSpanList.Count; i++)
 			{
-				TextEditorTextSpan? textSpan = newDecorationTextSpanList[i];
+				var textSpan = newDecorationTextSpanList[i];
 				newDecorationTextSpanList[i] = textSpan with
 				{
 					SourceText = newContent

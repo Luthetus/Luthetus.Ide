@@ -28,11 +28,13 @@ using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
 using Luthetus.Ide.RazorLib.StartupControls.States;
+using Luthetus.Ide.RazorLib.AppDatas.Models;
 using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.CompilerServices.States;
 using Luthetus.Extensions.DotNet.Websites.ProjectTemplates.Models;
 using Luthetus.Extensions.DotNet.ComponentRenderers.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
+using Luthetus.Extensions.DotNet.AppDatas.Models;
 
 namespace Luthetus.Extensions.DotNet.DotNetSolutions.Models;
 
@@ -41,6 +43,7 @@ public class DotNetSolutionIdeApi
 	private readonly IdeBackgroundTaskApi _ideBackgroundTaskApi;
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly IStorageService _storageService;
+	private readonly IAppDataService _appDataService;
 	private readonly IState<CompilerServiceExplorerState> _compilerServiceExplorerStateWrap;
 	private readonly IDotNetComponentRenderers _dotNetComponentRenderers;
 	private readonly IIdeComponentRenderers _ideComponentRenderers;
@@ -63,6 +66,7 @@ public class DotNetSolutionIdeApi
 		IdeBackgroundTaskApi ideBackgroundTaskApi,
 		IBackgroundTaskService backgroundTaskService,
 		IStorageService storageService,
+		IAppDataService appDataService,
 		IState<CompilerServiceExplorerState> compilerServiceExplorerStateWrap,
         IDotNetComponentRenderers dotNetComponentRenderers,
         IIdeComponentRenderers ideComponentRenderers,
@@ -81,6 +85,7 @@ public class DotNetSolutionIdeApi
 		_ideBackgroundTaskApi = ideBackgroundTaskApi;
 		_backgroundTaskService = backgroundTaskService;
 		_storageService = storageService;
+		_appDataService = appDataService;
 		_compilerServiceExplorerStateWrap = compilerServiceExplorerStateWrap;
 		_compilerServiceRegistry = compilerServiceRegistry;
         _dotNetComponentRenderers = dotNetComponentRenderers;
@@ -269,6 +274,28 @@ Execution Terminal"));
 				_terminalStateWrap.Value.TerminalMap[TerminalFacts.EXECUTION_KEY].EnqueueCommand(terminalCommandRequest);
 			}
 		}
+		
+		// _appDataService.WriteAppDataAsync
+		_ = Task.Run(() =>
+		{
+			try
+			{
+				return _appDataService.WriteAppDataAsync(new DotNetAppData
+				{
+					SolutionMostRecent = solutionAbsolutePath.Value
+				});
+			}
+			catch (Exception e)
+			{
+				NotificationHelper.DispatchError(
+			        $"ERROR: nameof(_appDataService.WriteAppDataAsync)",
+			        e.ToString(),
+			        _commonComponentRenderers,
+			        _dispatcher,
+			        TimeSpan.FromSeconds(5));
+			    return Task.CompletedTask;
+			}
+		});
 
 		await ParseSolution(dotNetSolutionModel.Key).ConfigureAwait(false);
 

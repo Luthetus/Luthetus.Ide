@@ -112,7 +112,7 @@ public static class TestExplorerHelper
 					TimeSpan.FromSeconds(5));
 			}
 
-			if (definitionTextSpan is null)
+			if (definitionTextSpan == default)
 			{
 				NotificationHelper.DispatchInformative(
 					nameof(TestExplorerTreeViewMouseEventHandler),

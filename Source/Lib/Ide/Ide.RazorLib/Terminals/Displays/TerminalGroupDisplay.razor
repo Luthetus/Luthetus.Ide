@@ -47,63 +47,73 @@
 
         <div class="luth_ide_terminal-tabs"
              style="@terminalGroupDisplayState.TabsElementDimensions.StyleString">
-            @for (var i = 0; i < TerminalFacts.WELL_KNOWN_KEYS.Length; i++)
+             
+            @*
+            Pause working on the integrated terminal for now.
+            =================================================
+            <button class="luth_button"
+            		style="margin-bottom: 15px;"
+            		@onclick="AddIntegratedTerminalOnClick">
+            	Add Integrated Terminal
+            </button>
+            *@
+            
+            @{
+            	var terminalList = terminalState.TerminalMap.Values
+            		.OrderByDescending(x => TerminalFacts.WELL_KNOWN_KEYS.Contains(x.Key))
+            		.ToArray();
+            }
+             
+            @for (var i = 0; i < terminalList.Length; i++)
             {
                 var index = i;
-                var wellKnownTerminalKey = TerminalFacts.WELL_KNOWN_KEYS[index];
+                var terminal = terminalList[index];
 
-                var success = terminalState.TerminalMap.TryGetValue(
-                    wellKnownTerminalKey,
-                    out var terminal);
+                string isActiveCssClass = string.Empty;
+                if ((activeTerminal?.Key ?? Key<ITerminal>.Empty) == terminal.Key)
+                    isActiveCssClass = "luth_active";
 
-                if (success && terminal is not null)
-                {
-                    string isActiveCssClass = string.Empty;
-                    if ((activeTerminal?.Key ?? Key<ITerminal>.Empty) == terminal.Key)
-                        isActiveCssClass = "luth_active";
+                <button class="luth_button @isActiveCssClass"
+                        @onclick="() => DispatchSetActiveTerminalAction(terminal.Key)">
 
-                    <button class="luth_button @isActiveCssClass"
-                            @onclick="() => DispatchSetActiveTerminalAction(terminal.Key)">
+                    @terminal.DisplayName
 
-                        @terminal.DisplayName
+                    @{ var isKillProcessDisabled = !terminal.HasExecutingProcess; }
 
-                        @{ var isKillProcessDisabled = !terminal.HasExecutingProcess; }
-
-                        <button class="luth_button"
-                                disabled=@isKillProcessDisabled
-                                @onclick="() => terminal.KillProcess()"
-                                @onclick:stopPropagation="true">
-                            Kill
-                        </button>
-                        
-                        <button class="luth_button"
-                        	    title="Clear inactive history"
-                                @onclick="() => ClearTerminalOnClick(wellKnownTerminalKey)"
-                                @onclick:stopPropagation="true">
-                            Clear
-                        </button>
-
-                        <div style="margin-left: 15px;">
-                        
-                        	@{
-                        		var iconDriver = new IconDriver(
-									AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-									AppOptionsStateWrap.Value.Options.IconSizeInPixels);
-                        	}
-                        
-                            @if (terminal.HasExecutingProcess)
-                            {
-                                @IconLoadingFragment.Render(iconDriver)
-                            }
-                            else
-                            {
-                                @IconBlankFragment.Render(iconDriver)
-                            }
-                        </div>
+                    <button class="luth_button"
+                            disabled=@isKillProcessDisabled
+                            @onclick="() => terminal.KillProcess()"
+                            @onclick:stopPropagation="true">
+                        Kill
                     </button>
-                }
+                    
+                    <button class="luth_button"
+                    	    title="Clear inactive history"
+                            @onclick="() => ClearTerminalOnClick(terminal.Key)"
+                            @onclick:stopPropagation="true">
+                        Clear
+                    </button>
 
-                if (i != TerminalFacts.WELL_KNOWN_KEYS.Length - 1)
+                    <div style="margin-left: 15px;">
+                    
+                    	@{
+                    		var iconDriver = new IconDriver(
+								AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+								AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+                    	}
+                    
+                        @if (terminal.HasExecutingProcess)
+                        {
+                            @IconLoadingFragment.Render(iconDriver)
+                        }
+                        else
+                        {
+                            @IconBlankFragment.Render(iconDriver)
+                        }
+                    </div>
+                </button>
+
+                if (i != terminalList.Length - 1)
                 {
                     <text>
                         &nbsp;

@@ -5,6 +5,7 @@ using Fluxor;
 using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.Keyboards.Models;
 using Luthetus.Common.RazorLib.Clipboards.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
@@ -13,7 +14,7 @@ using Luthetus.TextEditor.RazorLib.Installations.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-public partial class ContextMenu : ComponentBase
+public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 {
     [Inject]
     private IClipboardService ClipboardService { get; set; } = null!;
@@ -286,5 +287,11 @@ public partial class ContextMenu : ComponentBase
                     .Invoke(commandArgs);
             });
         return Task.CompletedTask;
+    }
+    
+    public void Dispose()
+    {
+    	// This component isn't subscribing to the text editor render batch changing event.
+    	return;
     }
 }
