@@ -743,39 +743,7 @@ public class ParseDefaultKeywords
         ISyntaxToken consumedStorageModifierToken,
         CSharpParserModel model)
     {
-		// Given: public class MyClass<T> { }
-		// Then: MyClass
-		IdentifierToken identifierToken;
-		// Retrospective: What is the purpose of this 'if (contextualKeyword) logic'?
-        if (UtilityApi.IsContextualKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind))
-        {
-            var contextualKeywordToken = (KeywordContextualToken)model.TokenWalker.Consume();
-            // Take the contextual keyword as an identifier
-            identifierToken = new IdentifierToken(contextualKeywordToken.TextSpan);
-        }
-        else
-        {
-            identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-        }
-
-		// Given: public class MyClass<T> { }
-		// Then: <T>
-        GenericArgumentsListingNode? genericArgumentsListingNode = null;
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-        {
-            ParseTypes.HandleGenericArguments(
-                (OpenAngleBracketToken)model.TokenWalker.Consume(),
-                model);
-
-            genericArgumentsListingNode = (GenericArgumentsListingNode?)model.SyntaxStack.Pop();
-        }
-
-		// TODO: Fix nullability spaghetti code
-        var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(consumedStorageModifierToken);
-        if (storageModifierKind is null)
-            return;
-
-		// Given: public partial class MyClass { }
+    	// Given: public partial class MyClass { }
 		// Then: partial
         var hasPartialModifier = false;
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax is ISyntaxToken syntaxToken)
@@ -786,8 +754,8 @@ public class ParseDefaultKeywords
                 hasPartialModifier = true;
             }
         }
-
-		// TODO: Fix; the code that parses the accessModifierKind is a mess
+    
+    	// TODO: Fix; the code that parses the accessModifierKind is a mess
 		//
 		// Given: public class MyClass { }
 		// Then: public
@@ -829,6 +797,45 @@ public class ParseDefaultKeywords
                     }
                 }
             }
+        }
+    
+    	// TODO: Fix nullability spaghetti code
+        var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(consumedStorageModifierToken);
+        if (storageModifierKind is null)
+            return;
+        if (storageModifierKind == StorageModifierKind.Record &&
+        	model.TokenWalker.Current.SyntaxKind == SyntaxKind.StructTokenKeyword)
+        {
+        	var structKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+        	storageModifierKind = StorageModifierKind.RecordStruct;
+        }
+    
+		// Given: public class MyClass<T> { }
+		// Then: MyClass
+		IdentifierToken identifierToken;
+		// Retrospective: What is the purpose of this 'if (contextualKeyword) logic'?
+		// Response: maybe it is because 'var' contextual keyword is allowed to be a class name?
+        if (UtilityApi.IsContextualKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind))
+        {
+            var contextualKeywordToken = (KeywordContextualToken)model.TokenWalker.Consume();
+            // Take the contextual keyword as an identifier
+            identifierToken = new IdentifierToken(contextualKeywordToken.TextSpan);
+        }
+        else
+        {
+            identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+        }
+
+		// Given: public class MyClass<T> { }
+		// Then: <T>
+        GenericArgumentsListingNode? genericArgumentsListingNode = null;
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+        {
+            ParseTypes.HandleGenericArguments(
+                (OpenAngleBracketToken)model.TokenWalker.Consume(),
+                model);
+
+            genericArgumentsListingNode = (GenericArgumentsListingNode?)model.SyntaxStack.Pop();
         }
 
         var typeDefinitionNode = new TypeDefinitionNode(
