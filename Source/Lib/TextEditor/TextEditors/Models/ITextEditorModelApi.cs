@@ -36,6 +36,7 @@ public interface ITextEditorModelApi
     /// since the previous invocation.
     /// </summary>
     public Dictionary<ResourceUri, TextEditorModel> GetModels();
+    public int GetModelsCount();
     public TextEditorModel? GetOrDefault(ResourceUri resourceUri);
     public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
     public string? GetAllText(ResourceUri resourceUri);

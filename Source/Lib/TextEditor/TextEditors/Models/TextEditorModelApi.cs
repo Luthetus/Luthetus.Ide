@@ -73,26 +73,23 @@ public class TextEditorModelApi : ITextEditorModelApi
 
     public string? GetAllText(ResourceUri resourceUri)
     {
-    	var exists = _textEditorService.TextEditorStateWrap.Value.__ModelList.TryGetValue(
-			resourceUri, out var inModel);
-		
-		if (exists)
-	        return inModel.GetAllText();
-                
-        return null;
+    	return GetOrDefault(resourceUri)?.GetAllText();;
     }
 
     public TextEditorModel? GetOrDefault(ResourceUri resourceUri)
     {
-        var exists = _textEditorService.TextEditorStateWrap.Value.__ModelList.TryGetValue(
-			resourceUri, out var inModel);
-		
-		return inModel;
+        return _textEditorService.TextEditorStateWrap.Value.Model_GetOrDefault(
+        	resourceUri);
     }
 
     public Dictionary<ResourceUri, TextEditorModel> GetModels()
     {
-        return _textEditorService.TextEditorStateWrap.Value.__ModelList;
+        return _textEditorService.TextEditorStateWrap.Value.Model_GetModels();
+    }
+    
+    public int GetModelsCount()
+    {
+    	return _textEditorService.TextEditorStateWrap.Value.Model_GetModelsCount();
     }
     #endregion
 
