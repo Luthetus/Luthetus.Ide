@@ -172,12 +172,20 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.6.5 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.6.5 </em> (2024-10-03)</div>
                 <ul>
-                	<li>Draft PR</li>
                 	<li>
                         On startup, re-open the last open '.sln' file
                     </li>
+					<li>Horizontally virtualize on a line by line basis, and only if the individual line is long.</li>
+					<li>Virtualization result is an array of lines (was a list)</li>
+					<li>Change: SetModelAndViewModelRangeAction to a struct</li>
+					<li>Change: TextEditorTextSpan to record-struct</li>
+					<li>
+						TextEditorState.Main.cs uses private-mutable dictionaries to store
+						text editor models/viewmodels.
+						(They used to be ImmutableList(s))
+					</li>
                 	<li>
                         Add: IAppDataService.cs
                     </li>
