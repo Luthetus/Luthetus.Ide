@@ -31,6 +31,8 @@ public interface ITextEditorModelApi
 
     #region READ_METHODS
     /// <summary>
+	/// Returns a shallow copy
+	///
     /// One should store the result of invoking this method in a variable, then reference that variable.
     /// If one continually invokes this, there is no guarantee that the data had not changed
     /// since the previous invocation.

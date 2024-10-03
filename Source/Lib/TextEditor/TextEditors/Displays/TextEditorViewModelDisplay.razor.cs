@@ -234,7 +234,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     {
     	var localTextEditorState = TextEditorStateWrap.Value;
     
-    	var model_viewmodel_tuple = localTextEditorState.Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+    	var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefaultThreadSafe(
 			TextEditorViewModelKey);
 				
         var renderBatchUnsafe = new TextEditorRenderBatchUnsafe(
@@ -316,7 +316,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         {
             var localTextEditorViewModelKey = TextEditorViewModelKey;
 
-            var nextViewModel = TextEditorStateWrap.Value.ViewModel_GetOrDefault(localTextEditorViewModelKey);
+            var nextViewModel = TextEditorStateWrap.Value.ViewModelGetOrDefault(localTextEditorViewModelKey);
 
             Key<TextEditorViewModel> nextViewModelKey;
 
@@ -345,7 +345,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
   {
   	var localTextEditorViewModelKey = TextEditorViewModelKey;
 
-      var nextViewModel = TextEditorStateWrap.Value.ViewModel_GetOrDefault(localTextEditorViewModelKey);
+      var nextViewModel = TextEditorStateWrap.Value.ViewModelGetOrDefault(localTextEditorViewModelKey);
       
       if (nextViewModel is not null)
       	return nextViewModel.FocusAsync();
@@ -370,7 +370,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs))
             return;
         
-        var model_viewmodel_tuple = TextEditorStateWrap.Value.Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+        var model_viewmodel_tuple = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
         	TextEditorViewModelKey);
 
         if (model_viewmodel_tuple.Model.ResourceUri == ResourceUri.Empty ||
@@ -421,7 +421,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
-        var model_viewmodel_tuple = TextEditorStateWrap.Value.Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+        var model_viewmodel_tuple = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
         	TextEditorViewModelKey);
 
         if (model_viewmodel_tuple.Model.ResourceUri == ResourceUri.Empty ||
@@ -443,7 +443,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     {
         _componentData.ThinksLeftMouseButtonIsDown = true;
 
-        var model_viewmodel_tuple = TextEditorStateWrap.Value.Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+        var model_viewmodel_tuple = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
         	TextEditorViewModelKey);
 
         if (model_viewmodel_tuple.Model.ResourceUri == ResourceUri.Empty ||
@@ -473,7 +473,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
         var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
 
-        var model_viewmodel_tuple = TextEditorStateWrap.Value.Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+        var model_viewmodel_tuple = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
         	TextEditorViewModelKey);
 
         if (model_viewmodel_tuple.Model.ResourceUri == ResourceUri.Empty ||
@@ -584,7 +584,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     
     private void ReceiveOnWheel(WheelEventArgs wheelEventArgs)
     {
-    	var viewModel = TextEditorStateWrap.Value.ViewModel_GetOrDefault(
+    	var viewModel = TextEditorStateWrap.Value.ViewModelGetOrDefault(
         	TextEditorViewModelKey);
 		
         var viewModelKey = viewModel?.ViewModelKey ?? Key<TextEditorViewModel>.Empty;
@@ -620,7 +620,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (previousTouchPoint is null || currentTouchPoint is null)
              return;
 
-        var viewModel = TextEditorStateWrap.Value.ViewModel_GetOrDefault(TextEditorViewModelKey);
+        var viewModel = TextEditorStateWrap.Value.ViewModelGetOrDefault(TextEditorViewModelKey);
         if (viewModel is null)
 			return;
 
@@ -688,7 +688,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
-        var model_viewmodel_tuple = TextEditorStateWrap.Value.Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+        var model_viewmodel_tuple = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
         	TextEditorViewModelKey);
 
         if (model_viewmodel_tuple.Model.ResourceUri == ResourceUri.Empty ||
@@ -720,7 +720,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private void QueueCalculateVirtualizationResultBackgroundTask(
 		ITextEditorRenderBatch localCurrentRenderBatch)
     {
-        var model_viewmodel_tuple = TextEditorStateWrap.Value.Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+        var model_viewmodel_tuple = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
         	TextEditorViewModelKey);
 
         if (model_viewmodel_tuple.Model.ResourceUri == ResourceUri.Empty ||

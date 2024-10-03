@@ -111,10 +111,10 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 [FeatureState]
 public partial record TextEditorState
 {
-	public Dictionary<ResourceUri, TextEditorModel> __ModelList { get; init; } = new();
-	public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> ViewModelList { get; init; } = new();
+	private readonly Dictionary<ResourceUri, TextEditorModel> _modelMap = new();
+	private readonly Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> _viewModelMap = new();
 	
-	public (TextEditorModel? TextEditorModel, TextEditorViewModel? TextEditorViewModel) Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+	public (TextEditorModel? TextEditorModel, TextEditorViewModel? TextEditorViewModel) GetModelAndViewModelOrDefaultThreadSafe(
 		ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
 	{
 		// Invoking Model_GetOrDefault should theoretically be no issue, since the same thread is accessing
@@ -128,8 +128,8 @@ public partial record TextEditorState
 		
 		try
 		{
-			_ = __ModelList.TryGetValue(resourceUri, out inModel);
-			_ = ViewModelList.TryGetValue(viewModelKey, out inViewModel);
+			_ = _modelMap.TryGetValue(resourceUri, out inModel);
+			_ = _viewModelMap.TryGetValue(viewModelKey, out inViewModel);
 		}
 		catch (Exception e)
 		{
@@ -142,7 +142,7 @@ public partial record TextEditorState
 	/// <summary>
 	/// This overload will lookup the model for the given view model, in the case that one only has access to the viewModelKey.
 	/// </summary>
-	public (TextEditorModel? Model, TextEditorViewModel? ViewModel) Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+	public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewModelOrDefaultThreadSafe(
 		Key<TextEditorViewModel> viewModelKey)
 	{
 		// Invoking Model_GetOrDefault should theoretically be no issue, since the same thread is accessing
@@ -156,10 +156,10 @@ public partial record TextEditorState
 		
 		try
 		{
-			_ = ViewModelList.TryGetValue(viewModelKey, out inViewModel);
+			_ = _viewModelMap.TryGetValue(viewModelKey, out inViewModel);
 			
 			if (inViewModel is not null)
-				_ = __ModelList.TryGetValue(inViewModel.ResourceUri, out inModel);
+				_ = _modelMap.TryGetValue(inViewModel.ResourceUri, out inModel);
 		}
 		catch (Exception e)
 		{
@@ -169,13 +169,13 @@ public partial record TextEditorState
 		return (inModel, inViewModel);
 	}
 	
-	public TextEditorModel? Model_GetOrDefault(ResourceUri resourceUri)
+	public TextEditorModel? ModelGetOrDefault(ResourceUri resourceUri)
     {
     	var inModel = (TextEditorModel?)null;
     	
     	try
     	{
-    		var exists = __ModelList.TryGetValue(resourceUri, out inModel);
+    		var exists = _modelMap.TryGetValue(resourceUri, out inModel);
     	}
     	catch (Exception e)
 		{
@@ -184,56 +184,15 @@ public partial record TextEditorState
 		
 		return inModel;
     }
-
-    public Dictionary<ResourceUri, TextEditorModel> Model_GetModels()
-    {
-    	try
-    	{
-    		return new Dictionary<ResourceUri, TextEditorModel>(__ModelList);
-    	}
-    	catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
-		
-		return new(); 
-    }
     
-    public int Model_GetModelsCount()
+	/// <summary>
+	/// Returns a shallow copy
+	/// </summary>
+    public Dictionary<ResourceUri, TextEditorModel> ModelGetModels()
     {
     	try
     	{
-    		return __ModelList.Count;
-    	}
-    	catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
-		
-		return 0;
-    }
-    
-    public TextEditorViewModel? ViewModel_GetOrDefault(Key<TextEditorViewModel> viewModelKey)
-    {
-    	var inViewModel = (TextEditorViewModel?)null;
-    
-    	try
-    	{
-    		var exists = ViewModelList.TryGetValue(viewModelKey, out inViewModel);
-    	}
-    	catch (Exception e)
-		{
-			Console.WriteLine(e);
-		}
-		
-    	return inViewModel;
-    }
-
-    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> ViewModel_GetViewModels()
-    {
-    	try
-    	{
-    		return new Dictionary<Key<TextEditorViewModel>, TextEditorViewModel>(ViewModelList);
+    		return new Dictionary<ResourceUri, TextEditorModel>(_modelMap);
     	}
     	catch (Exception e)
 		{
@@ -243,11 +202,11 @@ public partial record TextEditorState
 		return new();
     }
     
-    public int ViewModel_GetViewModelsCount()
+    public int ModelGetModelsCount()
     {
     	try
     	{
-    		return ViewModelList.Count;
+    		return _modelMap.Count;
     	}
     	catch (Exception e)
 		{
@@ -257,11 +216,11 @@ public partial record TextEditorState
 		return 0;
     }
     
-    public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
+    public ImmutableArray<TextEditorViewModel> ModelGetViewModelsOrEmpty(ResourceUri resourceUri)
     {
     	try
     	{
-    		return ViewModelList.Values
+    		return _viewModelMap.Values
     			.Where(x => x.ResourceUri == resourceUri)
             	.ToImmutableArray();;
     	}
@@ -271,5 +230,52 @@ public partial record TextEditorState
 		}
 		
 		return ImmutableArray<TextEditorViewModel>.Empty;
+    }
+    
+    public TextEditorViewModel? ViewModelGetOrDefault(Key<TextEditorViewModel> viewModelKey)
+    {
+    	var inViewModel = (TextEditorViewModel?)null;
+    
+    	try
+    	{
+    		var exists = _viewModelMap.TryGetValue(viewModelKey, out inViewModel);
+    	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+    	return inViewModel;
+    }
+
+	/// <summary>
+	/// Returns a shallow copy
+	/// </summary>
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> ViewModelGetViewModels()
+    {
+    	try
+    	{
+    		return new Dictionary<Key<TextEditorViewModel>, TextEditorViewModel>(_viewModelMap);
+    	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return new();
+    }
+    
+    public int ViewModelGetViewModelsCount()
+    {
+    	try
+    	{
+    		return _viewModelMap.Count;
+    	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return 0;
     }
 }

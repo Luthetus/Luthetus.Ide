@@ -66,7 +66,7 @@ public class TextEditorModelApi : ITextEditorModelApi
     #region READ_METHODS
     public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
-    	return _textEditorService.TextEditorStateWrap.Value.GetViewModelsOrEmpty(resourceUri);
+    	return _textEditorService.TextEditorStateWrap.Value.ModelGetViewModelsOrEmpty(resourceUri);
     }
 
     public string? GetAllText(ResourceUri resourceUri)
@@ -76,18 +76,18 @@ public class TextEditorModelApi : ITextEditorModelApi
 
     public TextEditorModel? GetOrDefault(ResourceUri resourceUri)
     {
-        return _textEditorService.TextEditorStateWrap.Value.Model_GetOrDefault(
+        return _textEditorService.TextEditorStateWrap.Value.ModelGetOrDefault(
         	resourceUri);
     }
 
     public Dictionary<ResourceUri, TextEditorModel> GetModels()
     {
-        return _textEditorService.TextEditorStateWrap.Value.Model_GetModels();
+        return _textEditorService.TextEditorStateWrap.Value.ModelGetModels();
     }
     
     public int GetModelsCount()
     {
-    	return _textEditorService.TextEditorStateWrap.Value.Model_GetModelsCount();
+    	return _textEditorService.TextEditorStateWrap.Value.ModelGetModelsCount();
     }
     #endregion
 

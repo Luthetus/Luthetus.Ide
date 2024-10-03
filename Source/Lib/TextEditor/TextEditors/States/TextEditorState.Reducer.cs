@@ -18,15 +18,13 @@ public partial record TextEditorState
             TextEditorState inState,
             RegisterModelAction registerModelAction)
         {
-        	var exists = inState.__ModelList.TryGetValue(
+        	var exists = inState._modelMap.TryGetValue(
         		registerModelAction.Model.ResourceUri, out var inModel);
         	
         	if (exists)
                 return inState;
-
-			// mutableModelList = new Dictionary<ResourceUri, TextEditorModel>(inState.__ModelList);
 			
-			inState.__ModelList.Add(
+			inState._modelMap.Add(
         		registerModelAction.Model.ResourceUri, registerModelAction.Model);
         		
         	return inState with {};
@@ -37,13 +35,13 @@ public partial record TextEditorState
             TextEditorState inState,
             DisposeModelAction disposeModelAction)
         {
-        	var exists = inState.__ModelList.TryGetValue(
+        	var exists = inState._modelMap.TryGetValue(
         		disposeModelAction.ResourceUri, out var inModel);
 
             if (!exists)
                 return inState;
 
-			inState.__ModelList.Remove(disposeModelAction.ResourceUri);
+			inState._modelMap.Remove(disposeModelAction.ResourceUri);
 			
 			return inState with {};
         }
@@ -53,13 +51,13 @@ public partial record TextEditorState
             TextEditorState inState,
             SetModelAction setModelAction)
         {
-        	var exists = inState.__ModelList.TryGetValue(
+        	var exists = inState._modelMap.TryGetValue(
         		setModelAction.ModelModifier.ResourceUri, out var inModel);
 
             if (!exists)
                 return inState;
 
-			inState.__ModelList[inModel.ResourceUri] = setModelAction.ModelModifier.ToModel();
+			inState._modelMap[inModel.ResourceUri] = setModelAction.ModelModifier.ToModel();
         	
         	return inState with {};
         }
@@ -85,7 +83,7 @@ public partial record TextEditorState
         	// 	- Or one could add dropzone logic that validates the category of a 'being dragged view model'
         	//     	  to ensure it belongs in that group.
         	
-            var inViewModel = inState.ViewModel_GetOrDefault(registerViewModelAction.ViewModelKey);
+            var inViewModel = inState.ViewModelGetOrDefault(registerViewModelAction.ViewModelKey);
 
             if (inViewModel is not null)
                 return inState;
@@ -107,7 +105,7 @@ public partial record TextEditorState
                 false,
                 registerViewModelAction.Category);
 
-			inState.ViewModelList.Add(viewModel.ViewModelKey, viewModel);
+			inState._viewModelMap.Add(viewModel.ViewModelKey, viewModel);
         	
         	return inState with {};
         }
@@ -117,7 +115,7 @@ public partial record TextEditorState
             TextEditorState inState,
             RegisterViewModelExistingAction registerViewModelExistingAction)
         {
-            var inViewModel = inState.ViewModel_GetOrDefault(
+            var inViewModel = inState.ViewModelGetOrDefault(
             	registerViewModelExistingAction.ViewModel.ViewModelKey);
 
             if (inViewModel is not null)
@@ -126,7 +124,7 @@ public partial record TextEditorState
             if (registerViewModelExistingAction.ViewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
                 throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
 
-			inState.ViewModelList.Add(
+			inState._viewModelMap.Add(
 				registerViewModelExistingAction.ViewModel.ViewModelKey,
 				registerViewModelExistingAction.ViewModel);
 				
@@ -138,13 +136,13 @@ public partial record TextEditorState
             TextEditorState inState,
             DisposeViewModelAction disposeViewModelAction)
         {
-            var inViewModel = inState.ViewModel_GetOrDefault(
+            var inViewModel = inState.ViewModelGetOrDefault(
                 disposeViewModelAction.ViewModelKey);
 
             if (inViewModel is null)
                 return inState;
                 
-			inState.ViewModelList.Remove(inViewModel.ViewModelKey);
+			inState._viewModelMap.Remove(inViewModel.ViewModelKey);
 			inViewModel.Dispose();
         	return inState with {};
         }
@@ -154,14 +152,14 @@ public partial record TextEditorState
             TextEditorState inState,
             SetViewModelWithAction setViewModelWithAction)
         {
-            var inViewModel = inState.ViewModel_GetOrDefault(
+            var inViewModel = inState.ViewModelGetOrDefault(
                 setViewModelWithAction.ViewModelKey);
 
             if (inViewModel is null)
                 return inState;
 
 			var outViewModel = setViewModelWithAction.WithFunc.Invoke(inViewModel);
-            inState.ViewModelList[inViewModel.ViewModelKey] = outViewModel;
+            inState._viewModelMap[inViewModel.ViewModelKey] = outViewModel;
             return inState with {};
         }
 
@@ -175,13 +173,13 @@ public partial record TextEditorState
 			{
 				// Enumeration was modified shouldn't occur here because only the reducer
 				// should be adding or removing, and the reducer is thread safe.
-				var exists = inState.__ModelList.TryGetValue(
+				var exists = inState._modelMap.TryGetValue(
 	        		modelModifier.ResourceUri, out var inModel);
 	
 	            if (!exists)
 	                continue;
 	                
-				inState.__ModelList[modelModifier.ResourceUri] = modelModifier.ToModel();
+				inState._modelMap[modelModifier.ResourceUri] = modelModifier.ToModel();
 			}
 			
 			// ViewModels
@@ -189,13 +187,13 @@ public partial record TextEditorState
 			{
 				// Enumeration was modified shouldn't occur here because only the reducer
 				// should be adding or removing, and the reducer is thread safe.
-				var exists = inState.ViewModelList.TryGetValue(
+				var exists = inState._viewModelMap.TryGetValue(
 	        		viewModelModifier.ViewModel.ViewModelKey, out var inViewModel);
 	        		
 	        	if (!exists)
 	                continue;
 	
-                inState.ViewModelList[viewModelModifier.ViewModel.ViewModelKey] = viewModelModifier.ViewModel;
+                inState._viewModelMap[viewModelModifier.ViewModel.ViewModelKey] = viewModelModifier.ViewModel;
 			}
 
             return inState with {};
