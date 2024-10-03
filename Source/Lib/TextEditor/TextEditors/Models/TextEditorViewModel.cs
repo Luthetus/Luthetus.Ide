@@ -25,7 +25,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// Both of those <see cref="TextEditorViewModel"/>(s) are referencing the same <see cref="TextEditorModel"/>.
 /// Therefore typing into the peek window will also result in the main text editor re-rendering with the updated text and vice versa.
 /// </summary>
-public record TextEditorViewModel : IDisposable
+public sealed record TextEditorViewModel : IDisposable
 {
 	public TextEditorViewModel(
         Key<TextEditorViewModel> viewModelKey,
@@ -190,6 +190,16 @@ public record TextEditorViewModel : IDisposable
     public string PrimaryCursorContentId => $"luth_te_text-editor-content_{ViewModelKey.Guid}_primary-cursor";
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
     public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
+
+    public bool Equals(TextEditorViewModel? other)
+    {
+    	if (other is null)
+    		return false;
+    		
+    	return ViewModelKey == other.ViewModelKey;
+    }
+
+    public override int GetHashCode() => ResourceUri.Value.GetHashCode();
 
     public Task FocusAsync()
     {

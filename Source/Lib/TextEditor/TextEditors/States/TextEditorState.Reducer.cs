@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.JavaScriptObjects.Models;
 using Luthetus.TextEditor.RazorLib.Virtualizations.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
@@ -17,12 +18,22 @@ public partial record TextEditorState
             TextEditorState inState,
             RegisterModelAction registerModelAction)
         {
-            if (inState.ModelList.Any(x => x.ResourceUri == registerModelAction.Model.ResourceUri))
+        	var exists = inState.__ModelList.TryGetValue(
+        		registerModelAction.Model.ResourceUri, out var inModel);
+        	
+        	if (exists)
                 return inState;
 
-            var outModelList = inState.ModelList.Add(registerModelAction.Model);
-
-            return inState with { ModelList = outModelList };
+			lock (inState.__ModelRegisterDisposeLock)
+			{
+				// mutableModelList = new Dictionary<ResourceUri, TextEditorModel>(inState.__ModelList);
+				
+				inState.__ModelList.Add(
+            		registerModelAction.Model.ResourceUri, registerModelAction.Model);
+            		
+            	return inState;
+            	//return inState with { __ModelList = outModelList };
+			}
         }
 
         [ReducerMethod]
@@ -30,15 +41,18 @@ public partial record TextEditorState
             TextEditorState inState,
             DisposeModelAction disposeModelAction)
         {
-            var inModel = inState.ModelList.SingleOrDefault(
-                x => x.ResourceUri == disposeModelAction.ResourceUri);
+        	var exists = inState.__ModelList.TryGetValue(
+        		disposeModelAction.ResourceUri, out var inModel);
 
-            if (inModel is null)
+            if (!exists)
                 return inState;
 
-            var outModelList = inState.ModelList.Remove(inModel);
-
-            return inState with { ModelList = outModelList };
+			lock (inState.__ModelRegisterDisposeLock)
+			{
+				inState.__ModelList.Remove(disposeModelAction.ResourceUri);
+				return inState;
+				//return inState with { __ModelList = outModelList };
+			}
         }
 
         [ReducerMethod]
@@ -46,17 +60,18 @@ public partial record TextEditorState
             TextEditorState inState,
             SetModelAction setModelAction)
         {
-            var inModel = inState.ModelList.FirstOrDefault(
-                x => x.ResourceUri == setModelAction.ModelModifier.ResourceUri);
+        	var exists = inState.__ModelList.TryGetValue(
+        		setModelAction.ModelModifier.ResourceUri, out var inModel);
 
-            if (inModel is null)
+            if (!exists)
                 return inState;
 
-            var outViewModelList = inState.ModelList.Replace(
-                inModel,
-                setModelAction.ModelModifier.ToModel());
-
-            return inState with { ModelList = outViewModelList };
+			lock (inState.__ModelRegisterDisposeLock)
+			{
+				inState.__ModelList[inModel.ResourceUri] = setModelAction.ModelModifier.ToModel();
+            	return inState;
+            	//return inState with { __ModelList = outModelList };
+			}
         }
 
 		[ReducerMethod]
@@ -167,18 +182,24 @@ public partial record TextEditorState
             TextEditorState inState,
             SetModelAndViewModelRangeAction setModelAndViewModelRangeAction)
         {
-			var mutableModelList = new List<TextEditorModel>(inState.ModelList);
 			var mutableViewModelList = new List<TextEditorViewModel>(inState.ViewModelList);
 
 			// Models
-			foreach (var modelModifier in setModelAndViewModelRangeAction.ModelModifierList)
-			{
-				var indexExistingModel = mutableModelList.FindIndex(
-	                x => x.ResourceUri == modelModifier.ResourceUri);
-	
-				if (indexExistingModel != -1)
-					mutableModelList[indexExistingModel] = modelModifier.ToModel();
+			lock (inState.__ModelRegisterDisposeLock)
+        	{
+				foreach (var modelModifier in setModelAndViewModelRangeAction.ModelModifierList)
+				{
+					var exists = inState.__ModelList.TryGetValue(
+		        		modelModifier.ResourceUri, out var inModel);
+		
+		            if (!exists)
+		                return inState;
+		                
+					if (exists)
+						inState.__ModelList[modelModifier.ResourceUri] = modelModifier.ToModel();
+				}
 			}
+			
 
 			// ViewModels
 			foreach (var viewModelModifier in setModelAndViewModelRangeAction.ViewModelModifierList)
@@ -192,7 +213,7 @@ public partial record TextEditorState
 
             return inState with
 			{
-				ModelList = mutableModelList.ToImmutableList(),
+				__ModelList = inState.__ModelList,
 				ViewModelList = mutableViewModelList.ToImmutableList(),
 			};
         }

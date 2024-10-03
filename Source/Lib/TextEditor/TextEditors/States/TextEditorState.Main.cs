@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Fluxor;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 
@@ -59,13 +60,30 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 /// It likely is just iterating the tree and checking the predicate until it finds true. (2024-10-02)
 /// </summary>
 [FeatureState]
-public partial record TextEditorState(
-	ImmutableList<TextEditorModel> ModelList,
-	ImmutableList<TextEditorViewModel> ViewModelList)
+public partial record TextEditorState(ImmutableList<TextEditorViewModel> ViewModelList)
 {
-	public TextEditorState() : this(
-		ImmutableList<TextEditorModel>.Empty,
-		ImmutableList<TextEditorViewModel>.Empty)
+	public readonly object __ModelRegisterDisposeLock = new();
+
+	public Dictionary<ResourceUri, TextEditorModel> __ModelList { get; init; } = new();
+	
+	public TextEditorState() : this(ImmutableList<TextEditorViewModel>.Empty)
 	{
 	}
+	
+	public TextEditorModel? Model_GetOrDefault(ResourceUri resourceUri)
+    {
+    	lock (__ModelRegisterDisposeLock)
+    	{
+    		var exists = __ModelList.TryGetValue(resourceUri, out var inModel);
+    		return inModel;
+    	}
+    }
+
+    public Dictionary<ResourceUri, TextEditorModel> Model_GetModels()
+    {
+    	lock (__ModelRegisterDisposeLock)
+    	{
+    		return new Dictionary<ResourceUri, TextEditorModel>(__ModelList);
+    	}
+    }
 }

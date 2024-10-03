@@ -85,9 +85,12 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 				? null
 				: (CSharpResource)interfaceCompilerServiceResource;
 
-			var textEditorModel = viewModel is null
-				? null
-				: localTextEditorState.ModelList.FirstOrDefault(x => x.ResourceUri == viewModel.ResourceUri);
+			var textEditorModel = (TextEditorModel?)null;
+			if (viewModel is not null)
+			{
+				var exists = localTextEditorState.__ModelList.TryGetValue(
+	        		viewModel.ResourceUri, out textEditorModel);
+			}
 
 			int? primaryCursorPositionIndex = textEditorModel is null || viewModel is null
 				? null

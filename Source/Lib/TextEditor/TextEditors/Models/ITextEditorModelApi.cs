@@ -35,7 +35,7 @@ public interface ITextEditorModelApi
     /// If one continually invokes this, there is no guarantee that the data had not changed
     /// since the previous invocation.
     /// </summary>
-    public ImmutableList<TextEditorModel> GetModels();
+    public Dictionary<ResourceUri, TextEditorModel> GetModels();
     public TextEditorModel? GetOrDefault(ResourceUri resourceUri);
     public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri);
     public string? GetAllText(ResourceUri resourceUri);
