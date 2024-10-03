@@ -191,16 +191,6 @@ public sealed record TextEditorViewModel : IDisposable
     public string GutterElementId => $"luth_te_text-editor-gutter_{ViewModelKey.Guid}";
     public string FindOverlayId => $"luth_te_find-overlay_{ViewModelKey.Guid}";
 
-    public bool Equals(TextEditorViewModel? other)
-    {
-    	if (other is null)
-    		return false;
-    		
-    	return ViewModelKey == other.ViewModelKey;
-    }
-
-    public override int GetHashCode() => ResourceUri.Value.GetHashCode();
-
     public Task FocusAsync()
     {
         return TextEditorService.ViewModelApi.FocusPrimaryCursorAsync(PrimaryCursorContentId);

@@ -13,7 +13,7 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <inheritdoc cref="ITextEditorModel"/>
-public partial class TextEditorModel : ITextEditorModel
+public sealed partial class TextEditorModel : ITextEditorModel
 {
     public TextEditorModel(
         ResourceUri resourceUri,
@@ -92,14 +92,4 @@ public partial class TextEditorModel : ITextEditorModel
 		MostCharactersOnASingleLineTuple = mostCharactersOnASingleRowTuple;
 		RenderStateKey = renderStateKey;
 	}
-	
-	public override bool Equals(object? obj)
-    {
-    	if (obj is not TextEditorModel otherTextEditorModel)
-    		return false;
-    		
-        return ResourceUri == otherTextEditorModel.ResourceUri;
-    }
-
-    public override int GetHashCode() => ResourceUri.Value.GetHashCode();
 }
