@@ -22,7 +22,7 @@ public class InMemoryEnvironmentProvider : IEnvironmentProvider
         	this);
         	
         SafeLocalApplicationDataDirectoryAbsolutePath = new AbsolutePath(
-        	JoinPaths(SafeLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
+        	JoinPaths(ActualLocalApplicationDataDirectoryAbsolutePath.Value, SafeRelativeDirectory),
         	true,
         	this);
         
