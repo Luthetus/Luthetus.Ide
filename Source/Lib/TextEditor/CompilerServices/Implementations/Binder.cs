@@ -12,7 +12,7 @@ public class Binder : IBinder
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
     public ImmutableArray<ITextEditorSymbol> SymbolsList { get; } = ImmutableArray<ITextEditorSymbol>.Empty;
 
-    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan)
+    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
         return null;
     }

@@ -871,33 +871,82 @@ public partial class CSharpBinder : IBinder
             x => textSpan.StartingIndexInclusive - x.StartingIndexInclusive);
     }
 
-    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan)
+    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
         var boundScope = GetBoundScope(textSpan) as CSharpBoundScope;
-
-        if (TryGetVariableDeclarationHierarchically(
-                textSpan.GetText(),
-                boundScope,
-                out var variableDeclarationStatementNode)
-            && variableDeclarationStatementNode is not null)
+        
+        if (compilerServiceResource.CompilationUnit is null)
+        	return null;
+        
+        // Try to find a symbol at that cursor position.
+		var symbols = compilerServiceResource.GetSymbols();
+		var foundSymbol = (ITextEditorSymbol?)null;
+		
+        foreach (var symbol in symbols)
         {
-            return variableDeclarationStatementNode.IdentifierToken.TextSpan;
+            if (textSpan.StartingIndexInclusive >= symbol.TextSpan.StartingIndexInclusive &&
+                textSpan.StartingIndexInclusive < symbol.TextSpan.EndingIndexExclusive)
+            {
+                foundSymbol = symbol;
+                break;
+            }
         }
-        else if (TryGetFunctionHierarchically(
-                     textSpan.GetText(),
-                     boundScope,
-                     out var functionDefinitionNode)
-                 && functionDefinitionNode is not null)
+		
+		if (foundSymbol is null)
+			return null;
+			
+		var currentSyntaxKind = foundSymbol.SyntaxKind;
+        
+        switch (currentSyntaxKind)
         {
-            return functionDefinitionNode.FunctionIdentifierToken.TextSpan;
-        }
-        else if (TryGetTypeDefinitionHierarchically(
-                     textSpan.GetText(),
-                     boundScope,
-                     out var typeDefinitionNode)
-                 && typeDefinitionNode is not null)
-        {
-            return typeDefinitionNode.TypeIdentifierToken.TextSpan;
+        	case SyntaxKind.VariableAssignmentExpressionNode:
+        	case SyntaxKind.VariableDeclarationNode:
+        	case SyntaxKind.VariableReferenceNode:
+        	case SyntaxKind.VariableSymbol:
+        	case SyntaxKind.PropertySymbol:
+        	case SyntaxKind.FieldSymbol:
+        	{
+        		if (TryGetVariableDeclarationHierarchically(
+		                textSpan.GetText(),
+		                boundScope,
+		                out var variableDeclarationStatementNode)
+		            && variableDeclarationStatementNode is not null)
+		        {
+		            return variableDeclarationStatementNode.IdentifierToken.TextSpan;
+		        }
+		        
+		        return null;
+        	}
+        	case SyntaxKind.FunctionInvocationNode:
+        	case SyntaxKind.FunctionDefinitionNode:
+        	case SyntaxKind.FunctionSymbol:
+	        {
+	        	if (TryGetFunctionHierarchically(
+		                     textSpan.GetText(),
+		                     boundScope,
+		                     out var functionDefinitionNode)
+		                 && functionDefinitionNode is not null)
+		        {
+		            return functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+		        }
+		        
+		        return null;
+	        }
+	        case SyntaxKind.TypeClauseNode:
+	        case SyntaxKind.TypeDefinitionNode:
+	        case SyntaxKind.TypeSymbol:
+	        {
+	        	if (TryGetTypeDefinitionHierarchically(
+		                     textSpan.GetText(),
+		                     boundScope,
+		                     out var typeDefinitionNode)
+		                 && typeDefinitionNode is not null)
+		        {
+		            return typeDefinitionNode.TypeIdentifierToken.TextSpan;
+		        }
+		        
+		        return null;
+	        }
         }
 
         return null;
