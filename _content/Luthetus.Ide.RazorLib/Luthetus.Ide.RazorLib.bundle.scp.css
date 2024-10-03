@@ -32,17 +32,6 @@
     height: 100%;
 	overflow: hidden;
 }
-/* _content/Luthetus.Ide.RazorLib/Gits/Displays/GitBranchCheckoutDisplay.razor.rz.scp.css */
-.luth_git-branch-checkout[b-75a7j52e7k] {
-    background-color: var(--luth_tertiary-background-color);
-    color: var(--luth_tertiary-foreground-color);
-    padding: 5px;
-}
-/* _content/Luthetus.Ide.RazorLib/Gits/Displays/TreeViewGitFileDisplay.razor.rz.scp.css */
-em[b-3j65xyidr1] {
-	margin-left: 15px;
-	margin-right: 10px;
-}
 /* _content/Luthetus.Ide.RazorLib/Notifications/Displays/NotificationsDisplay.razor.rz.scp.css */
 .luth_ide_folder-notifications[b-8sywka351y] {
     height: 100%;

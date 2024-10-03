@@ -1,0 +1,11 @@
+/* _content/Luthetus.Extensions.Git/Displays/GitBranchCheckoutDisplay.razor.rz.scp.css */
+.luth_git-branch-checkout[b-3lnyxmiezz] {
+    background-color: var(--luth_tertiary-background-color);
+    color: var(--luth_tertiary-foreground-color);
+    padding: 5px;
+}
+/* _content/Luthetus.Extensions.Git/Displays/TreeViewGitFileDisplay.razor.rz.scp.css */
+em[b-ebdn26tzyi] {
+	margin-left: 15px;
+	margin-right: 10px;
+}
