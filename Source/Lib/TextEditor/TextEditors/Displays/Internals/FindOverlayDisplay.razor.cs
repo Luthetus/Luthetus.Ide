@@ -299,20 +299,23 @@ public partial class FindOverlayDisplay : ComponentBase
 
                 if (presentationModel?.CompletedCalculation is not null)
                 {
-                    if (_decorationByteChangedTargetTextSpan is not null)
+                	var decorationByteChangedTargetTextSpanLocal = _decorationByteChangedTargetTextSpan;
+                    if (decorationByteChangedTargetTextSpanLocal is not null)
                     {
                         var needsColorResetSinceNoLongerActive = presentationModel.CompletedCalculation.TextSpanList.FirstOrDefault(x =>
-                            x.StartingIndexInclusive == _decorationByteChangedTargetTextSpan.StartingIndexInclusive &&
-                            x.EndingIndexExclusive == _decorationByteChangedTargetTextSpan.EndingIndexExclusive &&
-                            x.ResourceUri == _decorationByteChangedTargetTextSpan.ResourceUri &&
-                            x.GetText() == _decorationByteChangedTargetTextSpan.GetText());
+                            x.StartingIndexInclusive == decorationByteChangedTargetTextSpanLocal.Value.StartingIndexInclusive &&
+                            x.EndingIndexExclusive == decorationByteChangedTargetTextSpanLocal.Value.EndingIndexExclusive &&
+                            x.ResourceUri == decorationByteChangedTargetTextSpanLocal.Value.ResourceUri &&
+                            x.GetText() == decorationByteChangedTargetTextSpanLocal.Value.GetText());
 
-                        if (needsColorResetSinceNoLongerActive is not null)
+                        if (needsColorResetSinceNoLongerActive != default)
                         {
-                            presentationModel.CompletedCalculation.TextSpanList = presentationModel.CompletedCalculation.TextSpanList.Replace(needsColorResetSinceNoLongerActive, needsColorResetSinceNoLongerActive with
-                            {
-                                DecorationByte = _decorationByteChangedTargetTextSpan.DecorationByte
-                            });
+                            presentationModel.CompletedCalculation.TextSpanList = presentationModel.CompletedCalculation.TextSpanList.Replace(
+                            	needsColorResetSinceNoLongerActive,
+                            	needsColorResetSinceNoLongerActive with
+	                            {
+	                                DecorationByte = decorationByteChangedTargetTextSpanLocal.Value.DecorationByte
+	                            });
                         }
                     }
 
@@ -326,11 +329,19 @@ public partial class FindOverlayDisplay : ComponentBase
                         });
                 }
 
-				TextEditorService.ViewModelApi.ScrollIntoView(
-					editContext,
-					modelModifier,						
-					viewModelModifier,
-					_decorationByteChangedTargetTextSpan);
+				{
+					var decorationByteChangedTargetTextSpanLocal = _decorationByteChangedTargetTextSpan;
+					
+					if (decorationByteChangedTargetTextSpanLocal is not null)
+					{
+						TextEditorService.ViewModelApi.ScrollIntoView(
+							editContext,
+							modelModifier,						
+							viewModelModifier,
+							decorationByteChangedTargetTextSpanLocal.Value);
+					}
+				}
+				
                 return Task.CompletedTask;
             });
 		return Task.CompletedTask;

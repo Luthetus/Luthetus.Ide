@@ -38,8 +38,14 @@ namespace Luthetus.TextEditor.RazorLib.Lexers.Models;
 ///       hide the previous string values of the text editor and
 ///       permit the resources to be free'd?
 ///       (2024-07-27)
+///
+/// Changed to a record-struct (was previously just a record)
+/// This type is not a 1 instance per file scenario.
+/// The type is instantiated many times for each file,
+/// and then again instantiated each time the file is re-parsed.
+/// So the instantiation/lifecycle of this type is lending it to being a struct. (2024-010-02)
 /// </summary>
-public record TextEditorTextSpan(
+public record struct TextEditorTextSpan(
     int StartingIndexInclusive,
     int EndingIndexExclusive,
     byte DecorationByte,

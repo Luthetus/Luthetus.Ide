@@ -13,7 +13,7 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 /// <inheritdoc cref="ITextEditorModel"/>
-public partial class TextEditorModel
+public sealed partial class TextEditorModel : ITextEditorModel
 {
     public TextEditorModel(
         ResourceUri resourceUri,

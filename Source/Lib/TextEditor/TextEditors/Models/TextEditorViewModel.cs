@@ -25,7 +25,7 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models;
 /// Both of those <see cref="TextEditorViewModel"/>(s) are referencing the same <see cref="TextEditorModel"/>.
 /// Therefore typing into the peek window will also result in the main text editor re-rendering with the updated text and vice versa.
 /// </summary>
-public record TextEditorViewModel : IDisposable
+public sealed record TextEditorViewModel : IDisposable
 {
 	public TextEditorViewModel(
         Key<TextEditorViewModel> viewModelKey,
@@ -34,7 +34,7 @@ public record TextEditorViewModel : IDisposable
         IDispatcher dispatcher,
         IDialogService dialogService,
         IJSRuntime jsRuntime,
-        VirtualizationResult<List<RichCharacter>> virtualizationResult,
+        VirtualizationResult<RichCharacter[]> virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		ScrollbarDimensions scrollbarDimensions,
         CharAndLineMeasurements charAndLineMeasurements,
@@ -103,7 +103,7 @@ public record TextEditorViewModel : IDisposable
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
-    public VirtualizationResult<List<RichCharacter>> VirtualizationResult { get; init; }
+    public VirtualizationResult<RichCharacter[]> VirtualizationResult { get; init; }
 	public TextEditorDimensions TextEditorDimensions { get; init; }
 	public ScrollbarDimensions ScrollbarDimensions { get; init; }
 	/// <summary>

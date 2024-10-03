@@ -21,11 +21,13 @@ public interface ITextEditorViewModelApi
 
     #region READ_METHODS
     /// <summary>
+    /// Returns a shallow copy
+	///
     /// One should store the result of invoking this method in a variable, then reference that variable.
     /// If one continually invokes this, there is no guarantee that the data had not changed
     /// since the previous invocation.
     /// </summary>
-    public ImmutableList<TextEditorViewModel> GetViewModels();
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> GetViewModels();
     public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey);
     public Task<TextEditorDimensions> GetTextEditorMeasurementsAsync(string elementId);
 
