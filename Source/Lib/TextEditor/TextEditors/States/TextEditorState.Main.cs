@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Fluxor;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
@@ -108,38 +109,167 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 /// that technical debt is actually a techincal loan, which will be paid off. (2024-10-02).
 /// </summary>
 [FeatureState]
-public partial record TextEditorState(ImmutableList<TextEditorViewModel> ViewModelList)
+public partial record TextEditorState
 {
-	public readonly object __ModelRegisterDisposeLock = new();
-
 	public Dictionary<ResourceUri, TextEditorModel> __ModelList { get; init; } = new();
+	public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> ViewModelList { get; init; } = new();
 	
-	public TextEditorState() : this(ImmutableList<TextEditorViewModel>.Empty)
+	public (TextEditorModel? TextEditorModel, TextEditorViewModel? TextEditorViewModel) Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+		ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
 	{
+		// Invoking Model_GetOrDefault should theoretically be no issue, since the same thread is accessing
+		// the lock.
+		//
+		// But I'm doing some experimental optimizations at the moment and I'm already uncomfortable enough
+		// for the moment.
+		
+		var inModel = (TextEditorModel?)null;
+		var inViewModel = (TextEditorViewModel?)null;
+		
+		try
+		{
+			_ = __ModelList.TryGetValue(resourceUri, out inModel);
+			_ = ViewModelList.TryGetValue(viewModelKey, out inViewModel);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return (inModel, inViewModel);
+	}
+	
+	/// <summary>
+	/// This overload will lookup the model for the given view model, in the case that one only has access to the viewModelKey.
+	/// </summary>
+	public (TextEditorModel? Model, TextEditorViewModel? ViewModel) Get_Model_And_ViewModel_Or_Default_ThreadSafe(
+		Key<TextEditorViewModel> viewModelKey)
+	{
+		// Invoking Model_GetOrDefault should theoretically be no issue, since the same thread is accessing
+		// the lock.
+		//
+		// But I'm doing some experimental optimizations at the moment and I'm already uncomfortable enough
+		// for the moment.
+		
+		var inModel = (TextEditorModel?)null;
+		var inViewModel = (TextEditorViewModel?)null;
+		
+		try
+		{
+			_ = ViewModelList.TryGetValue(viewModelKey, out inViewModel);
+			
+			if (inViewModel is not null)
+				_ = __ModelList.TryGetValue(inViewModel.ResourceUri, out inModel);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return (inModel, inViewModel);
 	}
 	
 	public TextEditorModel? Model_GetOrDefault(ResourceUri resourceUri)
     {
-    	lock (__ModelRegisterDisposeLock)
+    	var inModel = (TextEditorModel?)null;
+    	
+    	try
     	{
-    		var exists = __ModelList.TryGetValue(resourceUri, out var inModel);
-    		return inModel;
+    		var exists = __ModelList.TryGetValue(resourceUri, out inModel);
     	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return inModel;
     }
 
     public Dictionary<ResourceUri, TextEditorModel> Model_GetModels()
     {
-    	lock (__ModelRegisterDisposeLock)
+    	try
     	{
     		return new Dictionary<ResourceUri, TextEditorModel>(__ModelList);
     	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return new(); 
     }
     
     public int Model_GetModelsCount()
     {
-    	lock (__ModelRegisterDisposeLock)
+    	try
     	{
     		return __ModelList.Count;
     	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return 0;
+    }
+    
+    public TextEditorViewModel? ViewModel_GetOrDefault(Key<TextEditorViewModel> viewModelKey)
+    {
+    	var inViewModel = (TextEditorViewModel?)null;
+    
+    	try
+    	{
+    		var exists = ViewModelList.TryGetValue(viewModelKey, out inViewModel);
+    	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+    	return inViewModel;
+    }
+
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> ViewModel_GetViewModels()
+    {
+    	try
+    	{
+    		return new Dictionary<Key<TextEditorViewModel>, TextEditorViewModel>(ViewModelList);
+    	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return new();
+    }
+    
+    public int ViewModel_GetViewModelsCount()
+    {
+    	try
+    	{
+    		return ViewModelList.Count;
+    	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return 0;
+    }
+    
+    public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
+    {
+    	try
+    	{
+    		return ViewModelList.Values
+    			.Where(x => x.ResourceUri == resourceUri)
+            	.ToImmutableArray();;
+    	}
+    	catch (Exception e)
+		{
+			Console.WriteLine(e);
+		}
+		
+		return ImmutableArray<TextEditorViewModel>.Empty;
     }
 }

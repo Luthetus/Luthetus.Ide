@@ -24,16 +24,12 @@ public partial record TextEditorState
         	if (exists)
                 return inState;
 
-			lock (inState.__ModelRegisterDisposeLock)
-			{
-				// mutableModelList = new Dictionary<ResourceUri, TextEditorModel>(inState.__ModelList);
-				
-				inState.__ModelList.Add(
-            		registerModelAction.Model.ResourceUri, registerModelAction.Model);
-            		
-            	return inState;
-            	//return inState with { __ModelList = outModelList };
-			}
+			// mutableModelList = new Dictionary<ResourceUri, TextEditorModel>(inState.__ModelList);
+			
+			inState.__ModelList.Add(
+        		registerModelAction.Model.ResourceUri, registerModelAction.Model);
+        		
+        	return inState with {};
         }
 
         [ReducerMethod]
@@ -47,12 +43,9 @@ public partial record TextEditorState
             if (!exists)
                 return inState;
 
-			lock (inState.__ModelRegisterDisposeLock)
-			{
-				inState.__ModelList.Remove(disposeModelAction.ResourceUri);
-				return inState;
-				//return inState with { __ModelList = outModelList };
-			}
+			inState.__ModelList.Remove(disposeModelAction.ResourceUri);
+			
+			return inState with {};
         }
 
         [ReducerMethod]
@@ -66,12 +59,9 @@ public partial record TextEditorState
             if (!exists)
                 return inState;
 
-			lock (inState.__ModelRegisterDisposeLock)
-			{
-				inState.__ModelList[inModel.ResourceUri] = setModelAction.ModelModifier.ToModel();
-            	return inState;
-            	//return inState with { __ModelList = outModelList };
-			}
+			inState.__ModelList[inModel.ResourceUri] = setModelAction.ModelModifier.ToModel();
+        	
+        	return inState with {};
         }
 
 		[ReducerMethod]
@@ -95,8 +85,7 @@ public partial record TextEditorState
         	// 	- Or one could add dropzone logic that validates the category of a 'being dragged view model'
         	//     	  to ensure it belongs in that group.
         	
-            var inViewModel = inState.ViewModelList.FirstOrDefault(
-                x => x.ViewModelKey == registerViewModelAction.ViewModelKey);
+            var inViewModel = inState.ViewModel_GetOrDefault(registerViewModelAction.ViewModelKey);
 
             if (inViewModel is not null)
                 return inState;
@@ -118,9 +107,9 @@ public partial record TextEditorState
                 false,
                 registerViewModelAction.Category);
 
-            var outViewModelList = inState.ViewModelList.Add(viewModel);
-
-            return inState with { ViewModelList = outViewModelList };
+			inState.ViewModelList.Add(viewModel.ViewModelKey, viewModel);
+        	
+        	return inState with {};
         }
         
         [ReducerMethod]
@@ -128,8 +117,8 @@ public partial record TextEditorState
             TextEditorState inState,
             RegisterViewModelExistingAction registerViewModelExistingAction)
         {
-            var inViewModel = inState.ViewModelList.FirstOrDefault(
-                x => x.ViewModelKey == registerViewModelExistingAction.ViewModel.ViewModelKey);
+            var inViewModel = inState.ViewModel_GetOrDefault(
+            	registerViewModelExistingAction.ViewModel.ViewModelKey);
 
             if (inViewModel is not null)
                 return inState;
@@ -137,9 +126,11 @@ public partial record TextEditorState
             if (registerViewModelExistingAction.ViewModel.ViewModelKey == Key<TextEditorViewModel>.Empty)
                 throw new InvalidOperationException($"Provided {nameof(Key<TextEditorViewModel>)} cannot be {nameof(Key<TextEditorViewModel>)}.{Key<TextEditorViewModel>.Empty}");
 
-            var outViewModelList = inState.ViewModelList.Add(registerViewModelExistingAction.ViewModel);
-
-            return inState with { ViewModelList = outViewModelList };
+			inState.ViewModelList.Add(
+				registerViewModelExistingAction.ViewModel.ViewModelKey,
+				registerViewModelExistingAction.ViewModel);
+				
+        	return inState with {};
         }
 
         [ReducerMethod]
@@ -147,17 +138,15 @@ public partial record TextEditorState
             TextEditorState inState,
             DisposeViewModelAction disposeViewModelAction)
         {
-            var inViewModel = inState.ViewModelList.FirstOrDefault(
-                x => x.ViewModelKey == disposeViewModelAction.ViewModelKey);
+            var inViewModel = inState.ViewModel_GetOrDefault(
+                disposeViewModelAction.ViewModelKey);
 
             if (inViewModel is null)
                 return inState;
-
-            var outViewModelList = inState.ViewModelList.Remove(inViewModel);
-			
-            inViewModel.Dispose();
-
-            return inState with { ViewModelList = outViewModelList };
+                
+			inState.ViewModelList.Remove(inViewModel.ViewModelKey);
+			inViewModel.Dispose();
+        	return inState with {};
         }
 
         [ReducerMethod]
@@ -165,16 +154,15 @@ public partial record TextEditorState
             TextEditorState inState,
             SetViewModelWithAction setViewModelWithAction)
         {
-            var inViewModel = inState.ViewModelList.FirstOrDefault(
-                x => x.ViewModelKey == setViewModelWithAction.ViewModelKey);
+            var inViewModel = inState.ViewModel_GetOrDefault(
+                setViewModelWithAction.ViewModelKey);
 
             if (inViewModel is null)
                 return inState;
 
-            var outViewModel = setViewModelWithAction.WithFunc.Invoke(inViewModel);
-            var outViewModelList = inState.ViewModelList.Replace(inViewModel, outViewModel);
-
-            return inState with { ViewModelList = outViewModelList };
+			var outViewModel = setViewModelWithAction.WithFunc.Invoke(inViewModel);
+            inState.ViewModelList[inViewModel.ViewModelKey] = outViewModel;
+            return inState with {};
         }
 
 		[ReducerMethod]
@@ -182,40 +170,35 @@ public partial record TextEditorState
             TextEditorState inState,
             SetModelAndViewModelRangeAction setModelAndViewModelRangeAction)
         {
-			var mutableViewModelList = new List<TextEditorViewModel>(inState.ViewModelList);
-
-			// Models
-			lock (inState.__ModelRegisterDisposeLock)
-        	{
-				foreach (var modelModifier in setModelAndViewModelRangeAction.ModelModifierList)
-				{
-					var exists = inState.__ModelList.TryGetValue(
-		        		modelModifier.ResourceUri, out var inModel);
-		
-		            if (!exists)
-		                return inState;
-		                
-					if (exists)
-						inState.__ModelList[modelModifier.ResourceUri] = modelModifier.ToModel();
-				}
+    		// Models
+			foreach (var modelModifier in setModelAndViewModelRangeAction.ModelModifierList)
+			{
+				// Enumeration was modified shouldn't occur here because only the reducer
+				// should be adding or removing, and the reducer is thread safe.
+				var exists = inState.__ModelList.TryGetValue(
+	        		modelModifier.ResourceUri, out var inModel);
+	
+	            if (!exists)
+	                continue;
+	                
+				inState.__ModelList[modelModifier.ResourceUri] = modelModifier.ToModel();
 			}
 			
-
 			// ViewModels
 			foreach (var viewModelModifier in setModelAndViewModelRangeAction.ViewModelModifierList)
 			{
-				var indexExistingViewModel = mutableViewModelList.FindIndex(
-	                x => x.ViewModelKey == viewModelModifier.ViewModel.ViewModelKey);
+				// Enumeration was modified shouldn't occur here because only the reducer
+				// should be adding or removing, and the reducer is thread safe.
+				var exists = inState.ViewModelList.TryGetValue(
+	        		viewModelModifier.ViewModel.ViewModelKey, out var inViewModel);
+	        		
+	        	if (!exists)
+	                continue;
 	
-	            if (indexExistingViewModel != -1)
-	                mutableViewModelList[indexExistingViewModel] = viewModelModifier.ViewModel;
+                inState.ViewModelList[viewModelModifier.ViewModel.ViewModelKey] = viewModelModifier.ViewModel;
 			}
 
-            return inState with
-			{
-				__ModelList = inState.__ModelList,
-				ViewModelList = mutableViewModelList.ToImmutableList(),
-			};
+            return inState with {};
         }
 	}
 }

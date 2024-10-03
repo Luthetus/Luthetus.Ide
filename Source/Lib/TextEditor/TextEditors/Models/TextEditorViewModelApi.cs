@@ -125,21 +125,19 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     #region READ_METHODS
     public TextEditorViewModel? GetOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-        return _textEditorService.TextEditorStateWrap.Value.ViewModelList.FirstOrDefault(
-            x => x.ViewModelKey == viewModelKey);
+        return _textEditorService.TextEditorStateWrap.Value.ViewModel_GetOrDefault(
+            viewModelKey);
     }
 
-    public ImmutableList<TextEditorViewModel> GetViewModels()
+    public Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> GetViewModels()
     {
-        return _textEditorService.TextEditorStateWrap.Value.ViewModelList;
+        return _textEditorService.TextEditorStateWrap.Value.ViewModel_GetViewModels();
     }
 
     public TextEditorModel? GetModelOrDefault(Key<TextEditorViewModel> viewModelKey)
     {
-        var textEditorState = _textEditorService.TextEditorStateWrap.Value;
-
-        var viewModel = textEditorState.ViewModelList.FirstOrDefault(
-            x => x.ViewModelKey == viewModelKey);
+        var viewModel = _textEditorService.TextEditorStateWrap.Value.ViewModel_GetOrDefault(
+            viewModelKey);
 
         if (viewModel is null)
             return null;

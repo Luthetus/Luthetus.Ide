@@ -66,9 +66,7 @@ public class TextEditorModelApi : ITextEditorModelApi
     #region READ_METHODS
     public ImmutableArray<TextEditorViewModel> GetViewModelsOrEmpty(ResourceUri resourceUri)
     {
-        return _textEditorService.TextEditorStateWrap.Value.ViewModelList
-            .Where(x => x.ResourceUri == resourceUri)
-            .ToImmutableArray();
+    	return _textEditorService.TextEditorStateWrap.Value.GetViewModelsOrEmpty(resourceUri);
     }
 
     public string? GetAllText(ResourceUri resourceUri)
