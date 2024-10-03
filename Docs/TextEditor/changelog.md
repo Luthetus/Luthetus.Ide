@@ -5,18 +5,26 @@ All notable changes to the `Luthetus.TextEditor` repository will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2024-10-03
+<details>
+  <summary>Click to show changes</summary>
+
+	### Fixed
+  - Fix null reference exception (is a fatal exception) from v3.0.0
+</details>
+
 ## [3.0.0] - 2024-10-03
 <details>
   <summary>Click to show changes</summary>
 
 	### Fixed
-    - Horizontally virtualize on a line by line basis, and only if the individual line is long.
+  - Horizontally virtualize on a line by line basis, and only if the individual line is long.
 	- Virtualization result is an array of lines (was a list)
 	- Change: SetModelAndViewModelRangeAction to a struct
 	- Change: TextEditorTextSpan to record-struct
 	- TextEditorState.Main.cs uses private-mutable dictionaries to store
 	  	text editor models/viewmodels (They used to be ImmutableList(s)).
-    - Add: ITextEditorDependentComponent.cs
+  - Add: ITextEditorDependentComponent.cs
       	("low priority" rendering of accessory components to the text editor).
 	  	Render header throttled at 1 second.
 	  	Render footer throttled at 250 milliseconds.
