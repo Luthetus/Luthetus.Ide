@@ -935,6 +935,7 @@ public partial class CSharpBinder : IBinder
 	        case SyntaxKind.TypeClauseNode:
 	        case SyntaxKind.TypeDefinitionNode:
 	        case SyntaxKind.TypeSymbol:
+	        case SyntaxKind.ConstructorSymbol:
 	        {
 	        	if (TryGetTypeDefinitionHierarchically(
 		                     textSpan.GetText(),
