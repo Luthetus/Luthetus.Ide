@@ -264,6 +264,14 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
             editContext =>
             {
                 commandArgs.EditContext = editContext;
+                
+                var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+        		
+        		if (viewModelModifier is null)
+        			return Task.CompletedTask;
+                
+                viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+                
                 return TextEditorCommandDefaultFacts.GoToDefinition.CommandFunc
                     .Invoke(commandArgs);
             });
