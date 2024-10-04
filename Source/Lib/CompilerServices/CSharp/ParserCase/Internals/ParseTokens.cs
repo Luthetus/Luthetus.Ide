@@ -738,7 +738,8 @@ public static class ParseTokens
         if (model.SyntaxStack.TryPeek(out var syntax) &&
             syntax is TypeDefinitionNode typeDefinitionNode)
         {
-            if (typeDefinitionNode.StorageModifierKind == StorageModifierKind.Record)
+            if (typeDefinitionNode.StorageModifierKind == StorageModifierKind.Record ||
+            	typeDefinitionNode.StorageModifierKind == StorageModifierKind.RecordStruct)
             {
                 _ = model.SyntaxStack.Pop();
 
