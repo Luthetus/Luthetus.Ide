@@ -647,6 +647,23 @@ public static class LexerUtils
         syntaxTokens.Add(new DollarSignToken(textSpan));
     }
 
+    public static void LexAtToken(
+        StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+    {
+        var entryPositionIndex = stringWalker.PositionIndex;
+
+        stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        syntaxTokens.Add(new AtToken(textSpan));
+    }
+
     public static void LexColonToken(
         StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
     {

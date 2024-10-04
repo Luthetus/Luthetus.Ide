@@ -161,6 +161,16 @@ public partial class CSharpBinder : IBinder
             DecorationByte = (byte)GenericDecorationKind.StringLiteral,
         }), model);
     }
+    
+    public void BindStringVerbatimExpression(
+        AtToken atToken,
+        CSharpParserModel model)
+    {
+        AddSymbolReference(new StringVerbatimSymbol(atToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.StringLiteral,
+        }), model);
+    }
 
     public void BindFunctionDefinitionNode(
         FunctionDefinitionNode functionDefinitionNode,

@@ -337,10 +337,6 @@ public static class ParseOthers
 					        typeClauseNode,
 					        closeParenthesisToken,
 					        new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
-                	
-                		for (int i = 0; i < 50; i++)
-                			Console.WriteLine("ASDASFAWFAWFAW");
-                		
                 		break;
                 	}
                 	else
@@ -364,7 +360,6 @@ public static class ParseOthers
 	                        model);
 	
 	                    var parenthesizedExpression = (IExpressionNode)model.SyntaxStack.Pop();
-	                    Console.WriteLine(parenthesizedExpression);
 	
 	                    previousInvocationExpressionNode = parenthesizedExpression;
 	
@@ -387,6 +382,12 @@ public static class ParseOthers
 
                         model.Binder.BindStringInterpolationExpression(
                             (DollarSignToken)tokenCurrent,
+                            model);
+                    }
+                    else if (tokenCurrent.SyntaxKind == SyntaxKind.AtToken)
+                    {
+                    	model.Binder.BindStringVerbatimExpression(
+                            (AtToken)tokenCurrent,
                             model);
                     }
 
