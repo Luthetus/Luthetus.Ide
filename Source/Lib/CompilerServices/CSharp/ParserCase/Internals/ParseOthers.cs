@@ -222,8 +222,7 @@ public static class ParseOthers
                         {
                         	// Constructor invocation
                         	var newKeywordToken = model.SyntaxStack.Pop();
-                        	
-					        
+
 					        var typeClauseNode = new TypeClauseNode(
 					        	(IdentifierToken)tokenCurrent,
 					        	valueType: null,
@@ -321,36 +320,64 @@ public static class ParseOthers
 
                     break;
                 case SyntaxKind.OpenParenthesisToken:
-                    var copyExtraExpressionDeliminaters = new List<ExpressionDelimiter>(extraExpressionDeliminaters ?? Array.Empty<ExpressionDelimiter>());
-
-                    copyExtraExpressionDeliminaters.Insert(0, new ExpressionDelimiter(
-                        SyntaxKind.OpenParenthesisToken,
-                        SyntaxKind.CloseParenthesisToken,
-                        tokenCurrent,
-                        null));
-
-                    HandleExpression(
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        copyExtraExpressionDeliminaters.ToArray(),
-                        model);
-
-                    var parenthesizedExpression = (IExpressionNode)model.SyntaxStack.Pop();
-
-                    previousInvocationExpressionNode = parenthesizedExpression;
-
-                    if (topMostExpressionNode is null)
-                        topMostExpressionNode = parenthesizedExpression;
-                    else if (leftExpressionNode is null)
-                        leftExpressionNode = parenthesizedExpression;
-                    else if (rightExpressionNode is null)
-                        rightExpressionNode = parenthesizedExpression;
-                    else
-                        model.DiagnosticBag.ReportTodoException(parenthesizedExpression.ConstructTextSpanRecursively(), $"{nameof(HandleExpression)} OpenParenthesisToken issue text:{parenthesizedExpression.ConstructTextSpanRecursively().GetText()}");
-                    break;
+                
+                	// Goal: Start parsing 'ExplicitCastNode' (2024-10-04)
+                	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.IdentifierToken &&
+                		model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+                	{
+                		// Explicit Cast
+                		
+                		var typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
+                		model.Binder.BindTypeClauseNode(typeClauseNode, model);
+                		
+                		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+                	
+                		var explicitCastNode = new ExplicitCastNode(
+					        (OpenParenthesisToken)tokenCurrent,
+					        typeClauseNode,
+					        closeParenthesisToken,
+					        new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
+                	
+                		for (int i = 0; i < 50; i++)
+                			Console.WriteLine("ASDASFAWFAWFAW");
+                		
+                		break;
+                	}
+                	else
+                	{
+	                    var copyExtraExpressionDeliminaters = new List<ExpressionDelimiter>(extraExpressionDeliminaters ?? Array.Empty<ExpressionDelimiter>());
+	
+						// TODO: This doesn't add delimiters to the parent invocation of the method right? Because that seemingly would be very wrong?
+	                    copyExtraExpressionDeliminaters.Insert(0, new ExpressionDelimiter(
+	                        SyntaxKind.OpenParenthesisToken,
+	                        SyntaxKind.CloseParenthesisToken,
+	                        tokenCurrent,
+	                        null));
+	
+	                    HandleExpression(
+	                        null,
+	                        null,
+	                        null,
+	                        null,
+	                        null,
+	                        copyExtraExpressionDeliminaters.ToArray(),
+	                        model);
+	
+	                    var parenthesizedExpression = (IExpressionNode)model.SyntaxStack.Pop();
+	                    Console.WriteLine(parenthesizedExpression);
+	
+	                    previousInvocationExpressionNode = parenthesizedExpression;
+	
+	                    if (topMostExpressionNode is null)
+	                        topMostExpressionNode = parenthesizedExpression;
+	                    else if (leftExpressionNode is null)
+	                        leftExpressionNode = parenthesizedExpression;
+	                    else if (rightExpressionNode is null)
+	                        rightExpressionNode = parenthesizedExpression;
+	                    else
+	                        model.DiagnosticBag.ReportTodoException(parenthesizedExpression.ConstructTextSpanRecursively(), $"{nameof(HandleExpression)} OpenParenthesisToken issue text:{parenthesizedExpression.ConstructTextSpanRecursively().GetText()}");
+	                    break;
+                    }
                 default:
                     if (tokenCurrent.SyntaxKind == SyntaxKind.DollarSignToken)
                     {
