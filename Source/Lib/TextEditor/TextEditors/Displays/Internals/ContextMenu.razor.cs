@@ -183,6 +183,7 @@ public partial class ContextMenu : ComponentBase, ITextEditorDependentComponent
 					});
 
                 await menuOptionAction.Invoke().ConfigureAwait(false);
+                TextEditorService.ViewModelApi.SetCursorShouldBlink(false);
             }
             catch (Exception e)
             {
