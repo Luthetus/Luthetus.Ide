@@ -235,7 +235,13 @@ public static class ParseTypes
                 null,
                 genericParametersListingNode);
         }
-
+        
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.QuestionMarkToken)
+        {
+        	typeClauseNode.HasQuestionMark = true;
+        	_ = model.TokenWalker.Consume();
+		}
+        
         while (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
         {
             var openSquareBracketToken = model.TokenWalker.Consume();
