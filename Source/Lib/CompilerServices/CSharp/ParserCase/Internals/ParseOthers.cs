@@ -107,6 +107,9 @@ public static class ParseOthers
         while (!model.TokenWalker.IsEof)
         {
             var tokenCurrent = model.TokenWalker.Consume();
+            
+            if (tokenCurrent.SyntaxKind == SyntaxKind.NewTokenKeyword) // Constructor Invocation
+            	model.SyntaxStack.Push(tokenCurrent);
 
             if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken || tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
             {
@@ -213,22 +216,48 @@ public static class ParseOthers
                                 ImmutableArray<FunctionParameterEntryNode>.Empty,
                                 (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken));
                         }
-
-                        model.Binder.TryGetFunctionHierarchically(
-                            tokenCurrent.TextSpan.GetText(),
-                            model.BinderSession.CurrentScope,
-                            out var functionDefinitionNode);
-
-                        var functionInvocationNode = new FunctionInvocationNode(
-                            (IdentifierToken)tokenCurrent,
-                            functionDefinitionNode,
-                            genericParametersListingNode,
-                            functionParametersListingNode,
-                            functionDefinitionNode?.ReturnTypeClauseNode ?? CSharpFacts.Types.Void.ToTypeClause());
-
-                        model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
-
-                        resultingExpression = functionInvocationNode;
+                        
+                        if (model.SyntaxStack.TryPeek(out var syntax) &&
+                        	syntax.SyntaxKind == SyntaxKind.NewTokenKeyword)
+                        {
+                        	// Constructor invocation
+                        	var newKeywordToken = model.SyntaxStack.Pop();
+                        	
+					        
+					        var typeClauseNode = new TypeClauseNode(
+					        	(IdentifierToken)tokenCurrent,
+					        	valueType: null,
+					        	genericParametersListingNode);
+					        	
+            				model.Binder.BindTypeClauseNode(typeClauseNode, model);
+	
+	                        var constructorInvocationNode = new ConstructorInvocationExpressionNode(
+						        (KeywordToken)newKeywordToken,
+						        typeClauseNode,
+						        functionParametersListingNode,
+						        objectInitializationParametersListingNode: null);
+	
+	                        resultingExpression = constructorInvocationNode;
+                        }
+                        else
+                        {
+                        	// Function invocation
+                        	model.Binder.TryGetFunctionHierarchically(
+	                            tokenCurrent.TextSpan.GetText(),
+	                            model.BinderSession.CurrentScope,
+	                            out var functionDefinitionNode);
+	
+	                        var functionInvocationNode = new FunctionInvocationNode(
+	                            (IdentifierToken)tokenCurrent,
+	                            functionDefinitionNode,
+	                            genericParametersListingNode,
+	                            functionParametersListingNode,
+	                            functionDefinitionNode?.ReturnTypeClauseNode ?? CSharpFacts.Types.Void.ToTypeClause());
+	
+	                        model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
+	
+	                        resultingExpression = functionInvocationNode;
+                        }
                     }
                     else
                     {
