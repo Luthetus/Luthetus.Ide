@@ -378,7 +378,8 @@ public static class ParseTokens
             expectingTypeClause = true;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
-            model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+            model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
             expectingTypeClause = true;
         }
