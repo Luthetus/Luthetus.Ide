@@ -88,7 +88,7 @@ public class ParseFunctions
         IdentifierToken consumedIdentifierToken,
         CSharpParserModel model)
     {
-        HandleFunctionArguments(
+    	HandleFunctionArguments(
             (OpenParenthesisToken)model.TokenWalker.Consume(),
             model);
 
@@ -118,18 +118,39 @@ public class ParseFunctions
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
+        	_ = model.TokenWalker.Consume();
             // Constructor invokes some other constructor as well
-
-            while (!model.TokenWalker.IsEof)
-            {
-                if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-                    model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
-                {
-                    break;
-                }
-
-                _ = model.TokenWalker.Consume();
-            }
+        	// 'this(...)' or 'base(...)'
+        	
+        	KeywordToken? keywordToken;
+        	
+        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
+        		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
+        	else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
+        		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
+        	else
+        		keywordToken = null;
+        	
+        	if (keywordToken is null || keywordToken.IsFabricated)
+        	{
+        		while (!model.TokenWalker.IsEof)
+	            {
+	                if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+	                    model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+	                {
+	                    break;
+	                }
+	
+	                _ = model.TokenWalker.Consume();
+	            }
+        	}
+        	else
+        	{
+        		HandleFunctionParameters(
+		        	(OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
+			        model);
+				var functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
+        	}
         }
     }
 
