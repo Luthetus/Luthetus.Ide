@@ -11,6 +11,10 @@ namespace Luthetus.Common.RazorLib.Reactives.Models;
 /// And this has its uses.
 /// But, if you only want to run 1 Func each 'Run' invocation,
 /// why re-allocate a Func object and closure the variables?
+/// |
+/// Followup: one can use a conditional branch within the singular Func
+/// to replicate this logic. Add a property to the TArgs
+/// that is a bool, enum, or etc... and then if or switch on it.
 ///
 /// So, this verson will take in the constructor, the Func to 'Run'.
 ///
