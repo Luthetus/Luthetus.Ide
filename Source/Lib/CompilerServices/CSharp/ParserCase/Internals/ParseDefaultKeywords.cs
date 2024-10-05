@@ -472,7 +472,7 @@ public class ParseDefaultKeywords
         }
         else
         {
-            throw new NotImplementedException($"Implement the {consumedKeywordToken.SyntaxKind} keyword.");
+        	model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, $"Implement the {consumedKeywordToken.SyntaxKind} keyword.");
         }
     }
 
@@ -494,7 +494,7 @@ public class ParseDefaultKeywords
         }
         else
         {
-            throw new NotImplementedException($"Implement the {consumedKeywordToken.SyntaxKind} keyword.");
+        	model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, $"Implement the {consumedKeywordToken.SyntaxKind} keyword.");
         }
     }
 

@@ -1356,7 +1356,8 @@ public static class ParseTokens
                 ParseContextualKeywords.HandleUnrecognizedTokenContextualKeyword(consumedKeywordContextualToken, model);
                 break;
             default:
-                throw new NotImplementedException($"Implement the {consumedKeywordContextualToken.SyntaxKind.ToString()} contextual keyword.");
+            	model.DiagnosticBag.ReportTodoException(consumedKeywordContextualToken.TextSpan, $"Implement the {consumedKeywordContextualToken.SyntaxKind.ToString()} contextual keyword.");
+            	break;
         }
     }
 }

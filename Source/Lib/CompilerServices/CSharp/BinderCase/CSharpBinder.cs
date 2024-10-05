@@ -68,13 +68,24 @@ public partial class CSharpBinder : IBinder
         LiteralExpressionNode literalExpressionNode,
         CSharpParserModel model)
     {
-        var typeClauseNode = literalExpressionNode.LiteralSyntaxToken.SyntaxKind switch
-        {
-            SyntaxKind.NumericLiteralToken => CSharpFacts.Types.Int.ToTypeClause(),
-            SyntaxKind.CharLiteralToken => CSharpFacts.Types.Char.ToTypeClause(),
-            SyntaxKind.StringLiteralToken => CSharpFacts.Types.String.ToTypeClause(),
-            _ => throw new NotImplementedException(),
-        };
+    	TypeClauseNode typeClauseNode;
+    
+    	switch (literalExpressionNode.LiteralSyntaxToken.SyntaxKind)
+    	{
+    		case SyntaxKind.NumericLiteralToken:
+    			typeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
+    			break;
+            case SyntaxKind.CharLiteralToken:
+            	typeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
+            	break;
+            case SyntaxKind.StringLiteralToken:
+            	typeClauseNode = CSharpFacts.Types.String.ToTypeClause();
+            	break;
+            default:
+            	typeClauseNode = CSharpFacts.Types.Void.ToTypeClause();
+            	model.DiagnosticBag.ReportTodoException(literalExpressionNode.LiteralSyntaxToken.TextSpan, $"{nameof(BindLiteralExpressionNode)}(...) failed to map SyntaxKind: '{literalExpressionNode.LiteralSyntaxToken.SyntaxKind}'");
+            	break;
+    	}
 
         return new LiteralExpressionNode(
             literalExpressionNode.LiteralSyntaxToken,

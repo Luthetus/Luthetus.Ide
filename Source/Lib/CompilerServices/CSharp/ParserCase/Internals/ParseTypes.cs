@@ -41,12 +41,12 @@ public static class ParseTypes
         var memberAccessToken = (MemberAccessToken)model.TokenWalker.Match(SyntaxKind.MemberAccessToken);
 
         if (memberAccessToken.IsFabricated)
-            throw new NotImplementedException("Implement a static class being member accessed, but the statement ends there --- it is incomplete.");
+        	model.DiagnosticBag.ReportTodoException(consumedIdentifierToken.TextSpan, "Implement a static class being member accessed, but the statement ends there --- it is incomplete.");
 
         var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
 
         if (identifierToken.IsFabricated)
-            throw new NotImplementedException("Implement a static class being member accessed, but the statement ends there --- it is incomplete.");
+            model.DiagnosticBag.ReportTodoException(identifierToken.TextSpan, "Implement a static class being member accessed, but the statement ends there --- it is incomplete.");
 
         var matchingFunctionDefinitionNodes = consumedTypeDefinitionNode
             .GetFunctionDefinitionNodes()
