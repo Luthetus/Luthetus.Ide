@@ -468,14 +468,20 @@ public class ParseFunctions
 
         while (true)
         {
+            var hasParamsKeyword = false;
             var hasOutKeyword = false;
             var hasInKeyword = false;
             var hasRefKeyword = false;
 
-            // Check for keywords: { 'out', 'in', 'ref', }
+            // Check for keywords: { 'params', 'out', 'in', 'ref', }
             {
-                // TODO: Erroneously putting an assortment of the keywords: { 'out', 'in', 'ref', }
-                if (SyntaxKind.OutTokenKeyword == model.TokenWalker.Current.SyntaxKind)
+                // TODO: Erroneously putting an assortment of the keywords: { 'params', 'out', 'in', 'ref', }
+                if (SyntaxKind.ParamsTokenKeyword == model.TokenWalker.Current.SyntaxKind)
+                {
+                    _ = model.TokenWalker.Consume();
+                    hasParamsKeyword = true;
+                }
+                else if (SyntaxKind.OutTokenKeyword == model.TokenWalker.Current.SyntaxKind)
                 {
                     _ = model.TokenWalker.Consume();
                     hasOutKeyword = true;
@@ -516,6 +522,7 @@ public class ParseFunctions
             var functionArgumentEntryNode = new FunctionArgumentEntryNode(
                 variableDeclarationStatementNode,
                 false,
+                hasParamsKeyword,
                 hasOutKeyword,
                 hasInKeyword,
                 hasRefKeyword);
@@ -537,6 +544,7 @@ public class ParseFunctions
                 functionArgumentEntryNode = model.Binder.BindFunctionOptionalArgument(
                     functionArgumentEntryNode,
                     compileTimeConstantToken,
+                    hasParamsKeyword,
                     hasOutKeyword,
                     hasInKeyword,
                     hasRefKeyword,

@@ -10,12 +10,14 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
     public FunctionArgumentEntryNode(
         VariableDeclarationNode variableDeclarationNode,
         bool isOptional,
+        bool hasParamsKeyword,
         bool hasOutKeyword,
         bool hasInKeyword,
         bool hasRefKeyword)
     {
         VariableDeclarationNode = variableDeclarationNode;
         IsOptional = isOptional;
+        HasParamsKeyword = hasParamsKeyword;
         HasOutKeyword = hasOutKeyword;
         HasInKeyword = hasInKeyword;
         HasRefKeyword = hasRefKeyword;
@@ -30,6 +32,7 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
 
     public VariableDeclarationNode VariableDeclarationNode { get; }
     public bool IsOptional { get; }
+    public bool HasParamsKeyword { get; }
     public bool HasOutKeyword { get; }
     public bool HasInKeyword { get; }
     public bool HasRefKeyword { get; }

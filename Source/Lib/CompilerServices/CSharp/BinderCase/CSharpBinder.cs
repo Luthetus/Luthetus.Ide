@@ -209,6 +209,7 @@ public partial class CSharpBinder : IBinder
     public FunctionArgumentEntryNode BindFunctionOptionalArgument(
         FunctionArgumentEntryNode functionArgumentEntryNode,
         ISyntaxToken compileTimeConstantToken,
+        bool hasParamsKeyword,
         bool hasOutKeyword,
         bool hasInKeyword,
         bool hasRefKeyword,
@@ -249,6 +250,7 @@ public partial class CSharpBinder : IBinder
         return new FunctionArgumentEntryNode(
             functionArgumentEntryNode.VariableDeclarationNode,
             true,
+            hasParamsKeyword,
             hasOutKeyword,
             hasInKeyword,
             hasRefKeyword);
