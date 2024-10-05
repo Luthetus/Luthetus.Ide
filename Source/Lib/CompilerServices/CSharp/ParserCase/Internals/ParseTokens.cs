@@ -534,6 +534,17 @@ public static class ParseTokens
                 inheritedTypeClauseNode,
                 typeDefinitionNode.OpenBraceToken,
                 typeDefinitionNode.TypeBodyCodeBlockNode));
+            
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
+	        {
+	        	while (!model.TokenWalker.IsEof)
+	        	{
+	        		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+	        			break;
+	        		
+	        		_ = model.TokenWalker.Consume();
+	        	}
+	        }
         }
         else
         {
@@ -658,6 +669,32 @@ public static class ParseTokens
                     codeBlockNode,
                     constructorDefinitionNode.ConstraintNode);
 
+				// Goal Fix:
+				/*
+					System.ArgumentOutOfRangeException : Index must be within the bounds of the List. (Parameter 'index')
+				  	Stack Trace:
+				     	at System.Collections.Generic.List`1.Insert(Int32 index, T item)
+				   	at Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseTokens.<>c__DisplayClass21_4.<ParseOpenBraceToken>b__4(CodeBlockNode codeBlockNode) in /home/hunter/Repos/Luthetus.Ide_Fork/Source/Lib/CompilerServices/CSharp/ParserCase/Internals/ParseTokens.cs:line 662
+				   	at Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseTokens.ParseCloseBraceToken(CloseBraceToken consumedCloseBraceToken, CSharpParserModel model) in /home/hunter/Repos/Luthetus.Ide_Fork/Source/Lib/CompilerServices/CSharp/ParserCase/Internals/ParseTokens.cs:line 727
+				   	at Luthetus.CompilerServices.CSharp.ParserCase.CSharpParser.Parse() in /home/hunter/Repos/Luthetus.Ide_Fork/Source/Lib/CompilerServices/CSharp/ParserCase/CSharpParser.cs:line 102
+				   	at Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals.OptionalArgumentsTests.Aaa_Smaller1() in /home/hunter/Repos/Luthetus.Ide_Fork/Source/Tests/CompilerServices/CSharp/Basis/ParserCase/Internals/OptionalArgumentsTests.cs:line 142
+				   	at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+				   	at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+				*/
+				/*{
+					Console.WriteLine($"closureCurrentCodeBlockBuilder.ChildList.Count: {closureCurrentCodeBlockBuilder.ChildList.Count}");
+					Console.WriteLine($"constructorDefinitionNode.FunctionIdentifier.TextSpan.StartingIndexInclusive: {constructorDefinitionNode.FunctionIdentifier.TextSpan.StartingIndexInclusive}");
+					
+					var indexToInsert = 0;
+					
+					for (int i = 0; i < closureCurrentCodeBlockBuilder.ChildList.Count; i++)
+					{
+						var child = closureCurrentCodeBlockBuilder.ChildList[i];
+						Console.WriteLine($"{i}: {child.SyntaxKind}");
+					}
+				}*/
+				
+                //closureCurrentCodeBlockBuilder.ChildList.Add(constructorDefinitionNode);
                 closureCurrentCodeBlockBuilder.ChildList.Insert(indexForInsertion, constructorDefinitionNode);
             });
 

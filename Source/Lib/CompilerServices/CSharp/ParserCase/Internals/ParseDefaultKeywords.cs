@@ -853,6 +853,17 @@ public class ParseDefaultKeywords
         model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
         model.Binder.BindTypeIdentifier(identifierToken, model);
         model.SyntaxStack.Push(typeDefinitionNode);
+        
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
+        {
+        	while (!model.TokenWalker.IsEof)
+        	{
+        		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+        			break;
+        		
+        		_ = model.TokenWalker.Consume();
+        	}
+        }
     }
 
     public static void HandleClassTokenKeyword(
