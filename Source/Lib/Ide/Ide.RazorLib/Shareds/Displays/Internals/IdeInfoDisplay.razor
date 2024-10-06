@@ -174,6 +174,29 @@
 			<div>
                 <div>v <em class="luth_em">0.9.6.7 </em> (WIP_DATE)</div>
                 <ul>
+					<li>Goto definition, respect the original cursor's syntax node kind.</li>
+					<li>
+						Parse:
+						<ul>
+							<li>'record struct' storage modifier kind</li>
+							<li>TypeClauseNode with '?'</li>
+							<li>Ambiguous property definition</li>
+							<li>Constructor invocation within an expression.</li>
+							<li>Record struct primary constructor</li>
+							<li>ExplicitCastNode.cs 'Ex: (MyClass)someObject'</li>
+							<li>Verbatim string progress</li>
+							<li>Constructor ': this(...) or base(...)'</li>
+							<li>'params' keyword</li>
+							<li>Constructor where clause (progress)</li>
+						</ul>
+					</li>
+					<li>Never throw an exception in the parser, just show a diagnostic</li>
+					<li>Goto definition for 'SyntaxKind.ConstructorSymbol'</li>
+					<li>ContextMenu goto definition, scroll cursor into view</li>
+					<li>After context menu picked SetCursorShouldBlink(false)</li>
+					<li>Add: ThrottleOptimized&lt;TArgs&gt;</li>
+					<li>Usage of ThrottleOptimized</li>
+					<li>Fixes are written out do them tomorrow</li>
                 	<li>
                         Drag optimizations (struct drag event actions)
                     </li>
