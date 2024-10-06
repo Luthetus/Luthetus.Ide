@@ -1,4 +1,5 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
@@ -10,6 +11,7 @@ public interface ICodeBlockOwner : ISyntaxNode
 {
 	public ScopeDirectionKind ScopeDirectionKind { get; }
 	public CodeBlockNode? CodeBlockNode { get; }
+	public OpenBraceToken? OpenBraceToken { get; }
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
 	
@@ -17,5 +19,5 @@ public interface ICodeBlockOwner : ISyntaxNode
 	/// TODO: Awkward 'With' naming yet it sets the property.
 	/// TODO: Recreate the ChildList after setting the CodeBlockNode
 	/// </summary>
-	public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode);
+	public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode);
 }

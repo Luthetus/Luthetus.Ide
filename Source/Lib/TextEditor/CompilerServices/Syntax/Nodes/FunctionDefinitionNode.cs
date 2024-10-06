@@ -53,6 +53,7 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
+    public OpenBraceToken? OpenBraceToken { get; private set; }
     public ConstraintNode? ConstraintNode { get; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -68,8 +69,9 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
+    	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
     	return this;
     }

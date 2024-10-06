@@ -7,14 +7,10 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed record ArbitraryCodeBlockNode : ICodeBlockOwner
 {
-    public ArbitraryCodeBlockNode(
-    	ICodeBlockOwner parentCodeBlockOwner,
-    	OpenBraceToken openBraceToken)
+    public ArbitraryCodeBlockNode(ICodeBlockOwner parentCodeBlockOwner)
     {
         ParentCodeBlockOwner = parentCodeBlockOwner;
         Parent = ParentCodeBlockOwner;
-        
-        OpenBraceToken = openBraceToken;
         
         var children = new List<ISyntax>
         {
@@ -25,7 +21,7 @@ public sealed record ArbitraryCodeBlockNode : ICodeBlockOwner
     }
 
     public ICodeBlockOwner ParentCodeBlockOwner { get; }
-    public OpenBraceToken OpenBraceToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ParentCodeBlockOwner.ScopeDirectionKind;
@@ -41,8 +37,9 @@ public sealed record ArbitraryCodeBlockNode : ICodeBlockOwner
     	return ParentCodeBlockOwner.GetReturnTypeClauseNode();
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
+    	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
     	return this;
     }

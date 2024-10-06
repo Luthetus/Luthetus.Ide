@@ -31,6 +31,7 @@ public sealed record IfStatementNode : ICodeBlockOwner
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
+    public OpenBraceToken? OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
@@ -45,8 +46,9 @@ public sealed record IfStatementNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
+    	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
     	return this;
     }

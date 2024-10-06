@@ -48,6 +48,7 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public ConstraintNode? ConstraintNode { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
@@ -62,8 +63,9 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
+    	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
     	return this;
     }

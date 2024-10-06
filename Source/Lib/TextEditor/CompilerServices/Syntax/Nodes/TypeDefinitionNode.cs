@@ -70,7 +70,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     /// <summary>
     /// The open brace for the body code block node.
     /// </summary>
-    public OpenBraceToken OpenBraceToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
 
     /// <summary>
     /// Given:<br/>
@@ -115,10 +115,10 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
+    	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
-    	model.Binder.BindTypeDefinitionNode(this, parserModel, true);
     	return this;
     }
 }
