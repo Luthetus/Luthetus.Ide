@@ -300,6 +300,19 @@ public class ClassTwo
 		   and think it needs to insert itself at index 1 of the first type definition within
 		   the namespace statement, but in reality the queue is ocupied by a type definition
 		   from the namespace statement that hasn't been dequeued yet.
+		   
+		   THIS TEST CASE IN PARTICULAR IS BREAKING BECAUSE:
+		   Not all code block owners are defined yet.
+		   The "arbitrary code block" where one just puts '{ }' wherever they please,
+		   does not put a node on the stack.
+		   
+		   THEREFORE:
+		   The most recent code block owner other than the "undefined" '{ }' would be
+		   the constructor definition that encompasses it.
+		   The '{ }' then goes on to mistake itself for that constructor defintion.
+		   
+		   FIX:
+		   Support '{ }' 'foreach' 'do-while' 'while' 'for' etc...
 		*/
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
@@ -339,8 +352,8 @@ public class ClassTwo { }
         var typeDefinitionNodeClassTwo = (TypeDefinitionNode)topCodeBlock.ChildList[1];
         
         // The assertions will fail because ClassTwo will be inserted at index 0 of the child list
-        Assert.Equal(typeDefinitionNodeClassOne.IdentifierToken.TextSpan.GetText(), "ClassOne");
-        Assert.Equal(typeDefinitionNodeClassTwo.IdentifierToken.TextSpan.GetText(), "ClassTwo");
+        Assert.Equal(typeDefinitionNodeClassOne.TypeIdentifierToken.TextSpan.GetText(), "ClassOne");
+        Assert.Equal(typeDefinitionNodeClassTwo.TypeIdentifierToken.TextSpan.GetText(), "ClassTwo");
     }
     
     [Fact]
