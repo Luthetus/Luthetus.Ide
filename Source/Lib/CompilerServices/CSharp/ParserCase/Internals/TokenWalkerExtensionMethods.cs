@@ -17,12 +17,10 @@ internal static class TokenWalkerExtensionMethods
 		OpenBraceToken consumedOpenBraceToken,
 		CSharpParserModel model)
     {
-    	// You have to add the count of pending 'deferred child parsing'(s)
-		var currentCodeBlockBuilderChildListCount = model.CurrentCodeBlockBuilder.ChildList.Count;
+		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.ChildList.Count - 1;
 		
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
 		_ = model.SyntaxStack.TryPop(out var syntax);
-		Console.WriteLine(syntax.SyntaxKind);
 
 		var openTokenIndex = tokenWalker.Index - 1;
 
@@ -56,10 +54,9 @@ internal static class TokenWalkerExtensionMethods
 				closeTokenIndex,
 				tokenIndexToRestore,
 				() => model.DequeuedIndexForChildList = null);
-			model.SyntaxStack.Push(syntax);
 			
-			Console.WriteLine(currentCodeBlockBuilderChildListCount);
-			model.DequeuedIndexForChildList = currentCodeBlockBuilderChildListCount;
+			model.SyntaxStack.Push(syntax);
+			model.DequeuedIndexForChildList = indexToUpdateAfterDequeue;
 		});
     }
 }

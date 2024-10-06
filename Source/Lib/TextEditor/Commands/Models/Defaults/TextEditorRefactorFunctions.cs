@@ -95,10 +95,10 @@ public class TextEditorRefactorFunctions
 			    return;
 			}
 			
-			if (typeDefinitionNode.TypeBodyCodeBlockNode is null)
+			if (typeDefinitionNode.CodeBlockNode is null)
 			{
 				NotificationHelper.DispatchError(
-			        nameof(GenerateConstructor), $"typeDefinitionNode.TypeBodyCodeBlockNode was null", serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
+			        nameof(GenerateConstructor), $"typeDefinitionNode.CodeBlockNode was null", serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
 			    return;
 			}
 			

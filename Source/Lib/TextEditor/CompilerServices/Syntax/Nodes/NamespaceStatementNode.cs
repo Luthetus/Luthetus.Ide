@@ -28,7 +28,7 @@ public sealed record NamespaceStatementNode : ICodeBlockOwner
 
     public KeywordToken KeywordToken { get; }
     public IdentifierToken IdentifierToken { get; }
-    public CodeBlockNode CodeBlockNode { get; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
@@ -53,5 +53,12 @@ public sealed record NamespaceStatementNode : ICodeBlockOwner
     public TypeClauseNode? GetReturnTypeClauseNode()
     {
     	return null;
+    }
+    
+    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    {    
+    	CodeBlockNode = codeBlockNode;
+    	model.Binder.BindNamespaceStatementNode(this, parserModel);
+    	return this;
     }
 }

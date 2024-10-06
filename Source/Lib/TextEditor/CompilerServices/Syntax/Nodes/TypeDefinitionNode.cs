@@ -20,7 +20,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
         TypeClauseNode? inheritedTypeClauseNode,
 		OpenBraceToken? openBraceToken,
-        CodeBlockNode? typeBodyCodeBlockNode)
+        CodeBlockNode? codeBlockNode)
     {
         AccessModifierKind = accessModifierKind;
         HasPartialModifier = hasPartialModifier;
@@ -31,7 +31,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
         InheritedTypeClauseNode = inheritedTypeClauseNode;
         OpenBraceToken = openBraceToken;
-        TypeBodyCodeBlockNode = typeBodyCodeBlockNode;
+        CodeBlockNode = codeBlockNode;
 
         var children = new List<ISyntax>
         {
@@ -44,8 +44,8 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         if (InheritedTypeClauseNode is not null)
             children.Add(InheritedTypeClauseNode);
 
-        if (TypeBodyCodeBlockNode is not null)
-            children.Add(TypeBodyCodeBlockNode);
+        if (CodeBlockNode is not null)
+            children.Add(CodeBlockNode);
 
         ChildList = children.ToImmutableArray();
     }
@@ -78,7 +78,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
     public TypeClauseNode? InheritedTypeClauseNode { get; }
-    public CodeBlockNode? TypeBodyCodeBlockNode { get; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
@@ -93,10 +93,10 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
 
     public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
     {
-        if (TypeBodyCodeBlockNode is null)
+        if (CodeBlockNode is null)
             return ImmutableArray<FunctionDefinitionNode>.Empty;
 
-        return TypeBodyCodeBlockNode.ChildList
+        return CodeBlockNode.ChildList
             .Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             .Select(fd => (FunctionDefinitionNode)fd)
             .ToImmutableArray();
@@ -113,5 +113,12 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     public TypeClauseNode? GetReturnTypeClauseNode()
     {
     	return null;
+    }
+    
+    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    {
+    	CodeBlockNode = codeBlockNode;
+    	model.Binder.BindTypeDefinitionNode(this, parserModel, true);
+    	return this;
     }
 }

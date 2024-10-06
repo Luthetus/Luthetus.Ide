@@ -10,11 +10,11 @@ public sealed record IfStatementNode : ICodeBlockOwner
     public IfStatementNode(
         KeywordToken keywordToken,
         IExpressionNode expressionNode,
-        CodeBlockNode? ifStatementBodyCodeBlockNode)
+        CodeBlockNode? codeBlockNode)
     {
         KeywordToken = keywordToken;
         ExpressionNode = expressionNode;
-        IfStatementBodyCodeBlockNode = ifStatementBodyCodeBlockNode;
+        CodeBlockNode = codeBlockNode;
 
         var childrenList = new List<ISyntax>
         {
@@ -22,15 +22,15 @@ public sealed record IfStatementNode : ICodeBlockOwner
             ExpressionNode,
         };
 
-        if (IfStatementBodyCodeBlockNode is not null)
-            childrenList.Add(IfStatementBodyCodeBlockNode);
+        if (CodeBlockNode is not null)
+            childrenList.Add(CodeBlockNode);
 
         ChildList = childrenList.ToImmutableArray();
     }
 
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
-    public CodeBlockNode? IfStatementBodyCodeBlockNode { get; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
@@ -43,5 +43,11 @@ public sealed record IfStatementNode : ICodeBlockOwner
     public TypeClauseNode? GetReturnTypeClauseNode()
     {
     	return null;
+    }
+    
+    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    {
+    	CodeBlockNode = codeBlockNode;
+    	return this;
     }
 }

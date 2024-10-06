@@ -848,7 +848,7 @@ public class ParseDefaultKeywords
             primaryConstructorFunctionArgumentsListingNode: null,
             inheritedTypeClauseNode: null,
             openBraceToken: null,
-            typeBodyCodeBlockNode: null);
+            codeBlockNode: null);
 
         model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
         model.Binder.BindTypeIdentifier(identifierToken, model);

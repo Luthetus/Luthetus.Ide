@@ -371,7 +371,7 @@ public class ParseContextualKeywords
                 functionDefinitionNode.FunctionIdentifierToken,
                 functionDefinitionNode.GenericArgumentsListingNode,
                 functionDefinitionNode.FunctionArgumentsListingNode,
-                functionDefinitionNode.FunctionBodyCodeBlockNode,
+                functionDefinitionNode.CodeBlockNode,
                 constraintNode));
         }
         else

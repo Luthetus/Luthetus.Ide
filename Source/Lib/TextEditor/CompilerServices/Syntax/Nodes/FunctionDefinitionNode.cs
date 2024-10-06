@@ -16,7 +16,7 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
         IdentifierToken functionIdentifierToken,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
-        CodeBlockNode? functionBodyCodeBlockNode,
+        CodeBlockNode? codeBlockNode,
         ConstraintNode? constraintNode)
     {
         AccessModifierKind = accessModifierKind;
@@ -24,7 +24,7 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
         FunctionIdentifierToken = functionIdentifierToken;
         GenericArgumentsListingNode = genericArgumentsListingNode;
         FunctionArgumentsListingNode = functionArgumentsListingNode;
-        FunctionBodyCodeBlockNode = functionBodyCodeBlockNode;
+        CodeBlockNode = codeBlockNode;
         ConstraintNode = constraintNode;
 
         var children = new List<ISyntax>
@@ -38,8 +38,8 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
 
         children.Add(FunctionArgumentsListingNode);
 
-        if (FunctionBodyCodeBlockNode is not null)
-            children.Add(FunctionBodyCodeBlockNode);
+        if (CodeBlockNode is not null)
+            children.Add(CodeBlockNode);
         
         if (ConstraintNode is not null)
             children.Add(ConstraintNode);
@@ -52,7 +52,7 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     public IdentifierToken FunctionIdentifierToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
-    public CodeBlockNode? FunctionBodyCodeBlockNode { get; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
     public ConstraintNode? ConstraintNode { get; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -66,5 +66,11 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     public TypeClauseNode? GetReturnTypeClauseNode()
     {
     	return ReturnTypeClauseNode;
+    }
+    
+    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    {
+    	CodeBlockNode = codeBlockNode;
+    	return this;
     }
 }

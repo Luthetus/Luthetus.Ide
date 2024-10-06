@@ -12,14 +12,14 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
         IdentifierToken functionIdentifier,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
-        CodeBlockNode? functionBodyCodeBlockNode,
+        CodeBlockNode? codeBlockNode,
         ConstraintNode? constraintNode)
     {
         ReturnTypeClauseNode = returnTypeClauseNode;
         FunctionIdentifier = functionIdentifier;
         GenericArgumentsListingNode = genericArgumentsListingNode;
         FunctionArgumentsListingNode = functionArgumentsListingNode;
-        FunctionBodyCodeBlockNode = functionBodyCodeBlockNode;
+        CodeBlockNode = codeBlockNode;
         ConstraintNode = constraintNode;
 
         var children = new List<ISyntax>
@@ -33,8 +33,8 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
 
         children.Add(FunctionArgumentsListingNode);
 
-        if (FunctionBodyCodeBlockNode is not null)
-            children.Add(FunctionBodyCodeBlockNode);
+        if (CodeBlockNode is not null)
+            children.Add(CodeBlockNode);
         
         if (ConstraintNode is not null)
             children.Add(ConstraintNode);
@@ -46,7 +46,7 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
     public IdentifierToken FunctionIdentifier { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
-    public CodeBlockNode? FunctionBodyCodeBlockNode { get; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
     public ConstraintNode? ConstraintNode { get; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -60,5 +60,11 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
     public TypeClauseNode? GetReturnTypeClauseNode()
     {
     	return ReturnTypeClauseNode;
+    }
+    
+    public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode)
+    {
+    	CodeBlockNode = codeBlockNode;
+    	return this;
     }
 }

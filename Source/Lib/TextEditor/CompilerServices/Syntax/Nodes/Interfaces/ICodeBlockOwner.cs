@@ -9,6 +9,13 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 public interface ICodeBlockOwner : ISyntaxNode
 {
 	public ScopeDirectionKind ScopeDirectionKind { get; }
+	public CodeBlockNode? CodeBlockNode { get; }
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
+	
+	/// <summary>
+	/// TODO: Awkward 'With' naming yet it sets the property.
+	/// TODO: Recreate the ChildList after setting the CodeBlockNode
+	/// </summary>
+	public ICodeBlockOwner WithCodeBlockNode(CSharpParserModel parserModel, CodeBlockNode codeBlockNode);
 }
