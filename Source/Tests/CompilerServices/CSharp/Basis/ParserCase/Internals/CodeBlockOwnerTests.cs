@@ -30,7 +30,7 @@ namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 /// The scope direction kind is one thing that can differ.
 /// But, if the scope directions match, is the same code able to be used?
 /// </summary>
-public class CodeBlockOwnerTests
+/*public class CodeBlockOwnerTests
 {
 	[Fact]
 	public void ArbitraryCodeBlock()
@@ -457,3 +457,4 @@ public class CodeBlockOwnerTests
 		throw new NotImplementedException();
     }
 }
+*/

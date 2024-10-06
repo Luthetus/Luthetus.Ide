@@ -9,4 +9,6 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 public interface ICodeBlockOwner : ISyntaxNode
 {
 	public ScopeDirectionKind ScopeDirectionKind { get; }
+	
+	public TypeClauseNode? GetReturnTypeClauseNode();
 }

@@ -56,4 +56,9 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
+    
+    public TypeClauseNode? GetReturnTypeClauseNode()
+    {
+    	return ReturnTypeClauseNode;
+    }
 }

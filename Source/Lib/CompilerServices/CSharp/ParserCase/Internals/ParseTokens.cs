@@ -581,6 +581,82 @@ public static class ParseTokens
 		}
 
 		var indexForInsertion = model.DequeuedIndexForChildList ?? model.CurrentCodeBlockBuilder.ChildList.Count;
+		
+		if (model.SyntaxStack.TryPeek(out var syntax) && syntax is not ICodeBlockOwner)
+		{
+			model.SyntaxStack.Push(new ArbitraryCodeBlockNode(
+				closureCurrentCodeBlockBuilder.CodeBlockOwner,
+				consumedOpenBraceToken));
+		}
+		
+		if (model.SyntaxStack.TryPeek(out var syntax) && syntax is ICodeBlockOwner)
+		{
+			nextCodeBlockOwner = (ICodeBlockOwner)model.SyntaxStack.Pop();
+			
+			var returnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
+			if (returnTypeClauseNode is not null)
+				scopeReturnTypeClauseNode = returnTypeClauseNode;
+			
+			// NamespaceStatementNode
+			namespaceStatementNode = new NamespaceStatementNode(
+                    namespaceStatementNode.KeywordToken,
+                    namespaceStatementNode.IdentifierToken,
+                    codeBlockNode);
+            closureCurrentCodeBlockBuilder.ChildList.Add(namespaceStatementNode);
+            model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
+            
+            // TypeDefinitionNode
+            typeDefinitionNode = new TypeDefinitionNode(
+                typeDefinitionNode.AccessModifierKind,
+                typeDefinitionNode.HasPartialModifier,
+                typeDefinitionNode.StorageModifierKind,
+                typeDefinitionNode.TypeIdentifierToken,
+                typeDefinitionNode.ValueType,
+                typeDefinitionNode.GenericArgumentsListingNode,
+                typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
+                typeDefinitionNode.InheritedTypeClauseNode,
+                typeDefinitionNode.OpenBraceToken,
+                codeBlockNode);
+            model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model, true);
+            closureCurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
+            
+            // FunctionDefinitionNode
+            functionDefinitionNode = new FunctionDefinitionNode(
+                AccessModifierKind.Public,
+                functionDefinitionNode.ReturnTypeClauseNode,
+                functionDefinitionNode.FunctionIdentifierToken,
+                functionDefinitionNode.GenericArgumentsListingNode,
+                functionDefinitionNode.FunctionArgumentsListingNode,
+                codeBlockNode,
+                functionDefinitionNode.ConstraintNode);
+            closureCurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
+            
+            // ConstructorDefinitionNode
+            constructorDefinitionNode = new ConstructorDefinitionNode(
+                constructorDefinitionNode.ReturnTypeClauseNode,
+                constructorDefinitionNode.FunctionIdentifier,
+                constructorDefinitionNode.GenericArgumentsListingNode,
+                constructorDefinitionNode.FunctionArgumentsListingNode,
+                codeBlockNode,
+                constructorDefinitionNode.ConstraintNode);
+            closureCurrentCodeBlockBuilder.ChildList.Insert(indexForInsertion, constructorDefinitionNode);
+            
+            // IfStatementNode
+            ifStatementNode = new IfStatementNode(
+                ifStatementNode.KeywordToken,
+                ifStatementNode.ExpressionNode,
+                codeBlockNode);
+            closureCurrentCodeBlockBuilder.ChildList.Add(ifStatementNode);
+            
+            // ArbitraryCodeBlockNode
+            arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(
+                arbitraryCodeBlockNode.ParentCodeBlockOwner,
+                codeBlockNode);
+            closureCurrentCodeBlockBuilder.ChildList.Add(codeBlockNode);
+            
+            // else
+            closureCurrentCodeBlockBuilder.ChildList.Add(codeBlockNode);
+		}
 
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {

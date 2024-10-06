@@ -62,4 +62,9 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
+    
+    public TypeClauseNode? GetReturnTypeClauseNode()
+    {
+    	return ReturnTypeClauseNode;
+    }
 }

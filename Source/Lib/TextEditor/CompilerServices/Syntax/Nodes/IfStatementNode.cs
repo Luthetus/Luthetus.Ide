@@ -39,4 +39,9 @@ public sealed record IfStatementNode : ICodeBlockOwner
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.IfStatementNode;
+    
+    public TypeClauseNode? GetReturnTypeClauseNode()
+    {
+    	return null;
+    }
 }

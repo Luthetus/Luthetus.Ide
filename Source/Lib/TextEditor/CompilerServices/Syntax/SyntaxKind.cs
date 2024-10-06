@@ -207,6 +207,7 @@ public enum SyntaxKind
     GenericArgumentEntryNode,
     GenericParametersListingNode,
     GenericParameterEntryNode,
+    ArbitraryCodeBlockNode,
     InheritanceStatementNode,
     AmbiguousIdentifierNode,
     EmptyNode,

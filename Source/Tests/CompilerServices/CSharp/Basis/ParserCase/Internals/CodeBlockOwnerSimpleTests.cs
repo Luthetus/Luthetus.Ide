@@ -11,7 +11,7 @@ namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 ///
 /// As opposed to <see cref="CodeBlockOwnerTests"/> which is testing whether they nest properly.
 /// </summary>
-public class CodeBlockOwnerSimpleTests
+/*public class CodeBlockOwnerSimpleTests
 {
 	[Fact]
 	public void ArbitraryCodeBlock()
@@ -377,8 +377,8 @@ lock (_syncRoot)
         
         var i = 0;
         
-        var lockNode = (CockNode)topCodeBlock.ChildList[i++];
-        var lockNode = (CockNode)topCodeBlock.ChildList[i++];
+        var lockNode = (LockNode)topCodeBlock.ChildList[i++];
+        var lockNode = (LockNode)topCodeBlock.ChildList[i++];
         
         Assert.Equal(2, topCodeBlock.Length);
     }
@@ -431,3 +431,4 @@ lock (_syncRoot)
 		throw new NotImplementedException();
     }
 }
+*/

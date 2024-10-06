@@ -109,4 +109,9 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
             ValueType,
             null);
     }
+    
+    public TypeClauseNode? GetReturnTypeClauseNode()
+    {
+    	return null;
+    }
 }

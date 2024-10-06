@@ -49,4 +49,9 @@ public sealed record NamespaceStatementNode : ICodeBlockOwner
             .Select(td => (TypeDefinitionNode)td)
             .ToImmutableArray();
     }
+    
+    public TypeClauseNode? GetReturnTypeClauseNode()
+    {
+    	return null;
+    }
 }
