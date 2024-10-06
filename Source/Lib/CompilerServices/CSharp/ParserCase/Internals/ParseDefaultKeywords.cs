@@ -513,7 +513,36 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        // TODO: Implement this method
+        var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+    	
+    	ParseOthers.HandleExpression(
+	        null,
+	        null,
+	        null,
+	        null,
+	        null,
+	        new[]
+	        {
+	            new ExpressionDelimiter(
+	                SyntaxKind.OpenParenthesisToken,
+	                SyntaxKind.CloseParenthesisToken,
+	                null,
+	                null)
+	        },
+	        model);
+	        
+		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+		
+		var whileStatementNode = new WhileStatementNode(
+			consumedKeywordToken,
+	        openParenthesisToken,
+	        expressionNode,
+	        closeParenthesisToken,
+	        codeBlockNode: null);
+	        
+	    model.CurrentCodeBlockBuilder.ChildList.Add(whileStatementNode);
+        model.SyntaxStack.Push(whileStatementNode);
     }
 
     public static void HandleUnrecognizedTokenKeyword(

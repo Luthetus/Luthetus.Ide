@@ -8,19 +8,25 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed record WhileStatementNode : ICodeBlockOwner
 {
     public WhileStatementNode(
-        KeywordToken keywordToken,
+    	KeywordToken keywordToken,
+        OpenParenthesisToken openParenthesisToken,
         IExpressionNode expressionNode,
+        CloseParenthesisToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
         KeywordToken = keywordToken;
+        OpenParenthesisToken = openParenthesisToken;
         ExpressionNode = expressionNode;
+        CloseParenthesisToken = closeParenthesisToken;
         CodeBlockNode = codeBlockNode;
 
         SetChildList();
     }
 
     public KeywordToken KeywordToken { get; }
+    public OpenParenthesisToken OpenParenthesisToken { get; }
     public IExpressionNode ExpressionNode { get; }
+    public CloseParenthesisToken CloseParenthesisToken { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public OpenBraceToken? OpenBraceToken { get; private set; }
 
