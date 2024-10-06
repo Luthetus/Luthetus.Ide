@@ -33,8 +33,37 @@ public class CodeBlockOwnerSimpleTests
     }
     
     [Fact]
-	public void Foreach()
+	public void Foreach_Simple()
 	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"foreach (var item in list)
+{
+	var a = 2;
+}";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var i = 0;
+        
+        foreach (var child in topCodeBlock.ChildList)
+        {
+        	Console.WriteLine(child.SyntaxKind);
+        }
+        
+        // var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[i++];
+        
+        // Assert.Equal(1, topCodeBlock.ChildList.Length);
+    }
+    
+    [Fact]
+	public void Foreach()
+	{ 
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =

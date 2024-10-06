@@ -8,19 +8,31 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed record ForeachStatementNode : ICodeBlockOwner
 {
     public ForeachStatementNode(
-        KeywordToken keywordToken,
+        KeywordToken foreachKeywordToken,
+        OpenParenthesisToken openParenthesisToken,
+        IdentifierToken identifierToken,
+        KeywordToken inKeywordToken,
         IExpressionNode expressionNode,
+        CloseParenthesisToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
-        KeywordToken = keywordToken;
+        ForeachKeywordToken = foreachKeywordToken;
+        OpenParenthesisToken = openParenthesisToken;
+        IdentifierToken = identifierToken;
+        InKeywordToken = inKeywordToken;
         ExpressionNode = expressionNode;
+        CloseParenthesisToken = closeParenthesisToken;
         CodeBlockNode = codeBlockNode;
 
         SetChildList();
     }
 
-    public KeywordToken KeywordToken { get; }
+    public KeywordToken ForeachKeywordToken { get; }
+    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public IdentifierToken IdentifierToken { get; }
+    public KeywordToken InKeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
+    public CloseParenthesisToken CloseParenthesisToken { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public OpenBraceToken? OpenBraceToken { get; private set; }
 
@@ -48,9 +60,16 @@ public sealed record ForeachStatementNode : ICodeBlockOwner
     {
     	var childrenList = new List<ISyntax>
         {
-            KeywordToken,
+            ForeachKeywordToken,
+            OpenParenthesisToken,
+            IdentifierToken,
+            InKeywordToken,
             ExpressionNode,
+            CloseParenthesisToken,
         };
+
+		if (OpenParenthesisToken is not null)
+            childrenList.Add(OpenParenthesisToken);
 
         if (CodeBlockNode is not null)
             childrenList.Add(CodeBlockNode);
