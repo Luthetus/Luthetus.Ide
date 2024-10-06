@@ -7,30 +7,11 @@ using Luthetus.CompilerServices.CSharp.ParserCase;
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 
 /// <summary>
-/// This file is checking if a code block will push a node onto the stack that represents itself.
+/// This file is just checking if various code block owners parse properly.
 ///
-/// Because, there is currently an index out of bounds exception occurring.
-///
-/// It is when, within a ConstructorDefinitionNode one uses '{ }' to create
-/// an "arbitrary scope".
-///
-/// This "arbitrary scope" does not push a node onto the stack that represents itself,
-/// therefore when the close brace is encountered, and the stack is pop'd,
-/// the node returned is the ConstructorDefinitionNode (which hasn't yet been "closed").
-///
-/// So the "arbitray scope" code block owner ends up confusing itself to be the ConstructorDefinitionNode
-/// codeblock owner.
-///
-/// Preferably, all these cases have something in common.
-/// And then, with 1 change all the cases will be fixed.
-///
-/// The question is sort of, is there anything particular about a constructor definition's
-/// code block that needs be handled differently than a function definition's?
-///
-/// The scope direction kind is one thing that can differ.
-/// But, if the scope directions match, is the same code able to be used?
+/// As opposed to <see cref="CodeBlockOwnerTests"/> which is testing whether they nest properly.
 /// </summary>
-public class CodeBlockOwnerTests
+public class CodeBlockOwnerSimpleTests
 {
 	[Fact]
 	public void ArbitraryCodeBlock()
@@ -38,18 +19,8 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
-{
-	public string LastName { get; set; }
-
-	public ClassOne(string firstName, string lastName)
-	{
-		{
-			FirstName = firstName;
-		}
-	}
-	
-	public string FirstName { get; set; }
+@"{
+	var a = 2;
 }";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
@@ -67,22 +38,18 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
-{
-	public string LastName { get; set; }
+@"var list = new List<int>();
 
-	public ClassOne(string firstName, string lastName)
-	{
-		var list = new List<int>();
-	
-		foreach (var item in list)
-		{
-			FirstName = firstName;
-		}
-	}
-	
-	public string FirstName { get; set; }
-}";
+foreach (var item in list)
+{
+	var a = 2;
+}
+
+foreach (var item in list)
+	var a = 2;
+
+foreach (var item in list)
+	;";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
@@ -99,20 +66,18 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
+@"do
 {
-	public string LastName { get; set; }
+	var a = 2;
+} while(true);
 
-	public ClassOne(string firstName, string lastName)
-	{
-		do
-		{
-			FirstName = firstName;
-		} while(true);
-	}
-	
-	public string FirstName { get; set; }
-}";
+do
+	var a = 2;
+while(true);
+
+do
+	;
+while(true);";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
@@ -129,20 +94,16 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
+@"while (true)
 {
-	public string LastName { get; set; }
+	var a = 2;
+}
 
-	public ClassOne(string firstName, string lastName)
-	{
-		while (true)
-		{
-			FirstName = firstName;
-		}
-	}
-	
-	public string FirstName { get; set; }
-}";
+while (true)
+	var a = 2;
+
+while (true)
+	;";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
@@ -159,20 +120,19 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
+@"for (int i = 0; i < 10; i++)
 {
-	public string LastName { get; set; }
+	var a = 2;
+}
 
-	public ClassOne(string firstName, string lastName)
-	{
-		for (int i = 0; i < 10; i++)
-		{
-			FirstName = firstName;
-		}
-	}
+for (int j = 0; j < 10; j++)
+	var a = 2;
 	
-	public string FirstName { get; set; }
-}";
+for (int j = 0; j < 10; j++)
+	;
+
+for (;;)
+	;";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
@@ -189,20 +149,16 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
+@"if (true)
 {
-	public string LastName { get; set; }
+	var a = 2;
+}
 
-	public ClassOne(string firstName, string lastName)
-	{
-		if (true)
-		{
-			FirstName = firstName;
-		}
-	}
+if (true)
+	var a = 2;
 	
-	public string FirstName { get; set; }
-}";
+if (true)
+	;";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
@@ -219,29 +175,19 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
+@"switch (true)
 {
-	public string LastName { get; set; }
-
-	public ClassOne(string firstName, string lastName)
+	case true:
+		var a = 2;
+		break;
+	case false:
 	{
-		switch (true)
-		{
-			case true:
-				FirstName = firstName;
-				break;
-			case false:
-			{
-				FirstName = firstName;
-				break;
-			}
-			default:
-				FirstName = firstName;
-				break;
-		}
+		var b = 2;
+		break;
 	}
-	
-	public string FirstName { get; set; }
+	default:
+		var c = 2;
+		break;
 }";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
@@ -259,22 +205,12 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
+@"FirstName = true switch
 {
-	public string LastName { get; set; }
-
-	public ClassOne(string firstName, string lastName)
-	{
-		FirstName = true switch
-		{
-			true => firstName,
-			false => firstName,
-			default => firstName
-		};
-	}
-	
-	public string FirstName { get; set; }
-}";
+	true => firstName,
+	false => firstName,
+	default => firstName
+};";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
@@ -291,18 +227,11 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
+@"public enum SomeKind
 {
-	public string LastName { get; set; }
-	
-	public enum SomeKind
-	{
-		ThatKind,
-		ThisKind,
-		AnyKind,
-	}
-	
-	public string FirstName { get; set; }
+	ThatKind,
+	ThisKind,
+	AnyKind,
 }";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
@@ -320,50 +249,40 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
+@"try
 {
-	public string LastName { get; set; }
+	var a = 2;
+}
+catch (Exception e)
+{
+	throw;
+}
+finally
+{
+	_ = firstName;
+}
 
-	public ClassOne(string firstName, string lastName)
-	{
-		try
-		{
-			FirstName = firstName;
-		}
-		catch (Exception e)
-		{
-			throw;
-		}
-		finally
-		{
-			_ = firstName;
-		}
-		
-		// Again but without the catch capturing the variable.
-		try
-		{
-			FirstName = firstName;
-		}
-		catch (Exception)
-		{
-			throw;
-		}
-		finally
-		{
-			_ = firstName;
-		}
-		
-		// Again but with single statements.
-		try
-			FirstName = firstName;
-		catch (Exception)
-			throw;
-		finally
-			_ = firstName;
-	}
-	
-	public string FirstName { get; set; }
-}";
+// Again but without the catch capturing the variable.
+try
+{
+	var a = 2;
+}
+catch (Exception)
+{
+	throw;
+}
+finally
+{
+	_ = firstName;
+}
+
+// Again but with single statements.
+try
+	var a = 2;
+catch (Exception)
+	throw;
+finally
+	_ = firstName;";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
@@ -380,25 +299,13 @@ public class CodeBlockOwnerTests
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
-@"public class ClassOne
+@"lock (_syncRoot)
 {
-	private readonly object _syncRoot = new();
+	var a = 2;
+}
 
-	public string LastName { get; set; }
-
-	public ClassOne(string firstName, string lastName)
-	{
-		lock (_syncRoot)
-		{
-			FirstName = firstName;
-		}
-		
-		lock (_syncRoot)
-			FirstName = firstName;
-	}
-	
-	public string FirstName { get; set; }
-}";
+lock (_syncRoot)
+	var a = 2;";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
