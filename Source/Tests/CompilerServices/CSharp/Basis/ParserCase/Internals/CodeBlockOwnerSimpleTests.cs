@@ -11,7 +11,7 @@ namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 ///
 /// As opposed to <see cref="CodeBlockOwnerTests"/> which is testing whether they nest properly.
 /// </summary>
-/*public class CodeBlockOwnerSimpleTests
+public class CodeBlockOwnerSimpleTests
 {
 	[Fact]
 	public void ArbitraryCodeBlock()
@@ -29,7 +29,7 @@ namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (CodeBlockNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (ArbitraryCodeBlockNode)topCodeBlock.ChildList.Single();
     }
     
     [Fact]
@@ -62,11 +62,11 @@ foreach (var item in list)
         var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[i++];
         var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[i++];
         
-        var foreachNodeOne = (ForeachNode)topCodeBlock.ChildList[i++];
-        var foreachNodeTwo = (ForeachNode)topCodeBlock.ChildList[i++];
-        var foreachNodeThree = (ForeachNode)topCodeBlock.ChildList[i++];
+        var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[i++];
+        var foreachNodeTwo = (ForeachStatementNode)topCodeBlock.ChildList[i++];
+        var foreachNodeThree = (ForeachStatementNode)topCodeBlock.ChildList[i++];
         
-        Assert.Equal(5, topCodeBlock.Length);
+        Assert.Equal(5, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
@@ -96,11 +96,11 @@ while(true);";
         
         var i = 0;
         
-        var doWhileNodeOne = (DoWhileNode)topCodeBlock.ChildList[i++];
-        var doWhileNodeTwo = (DoWhileNode)topCodeBlock.ChildList[i++];
-        var doWhileNodeThree = (DoWhileNode)topCodeBlock.ChildList[i++];
+        var doWhileNodeOne = (DoWhileStatementNode)topCodeBlock.ChildList[i++];
+        var doWhileNodeTwo = (DoWhileStatementNode)topCodeBlock.ChildList[i++];
+        var doWhileNodeThree = (DoWhileStatementNode)topCodeBlock.ChildList[i++];
         
-        Assert.Equal(3, topCodeBlock.Length);
+        Assert.Equal(3, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
@@ -128,11 +128,11 @@ while (true)
         
         var i = 0;
         
-        var whileNodeOne = (WhileNode)topCodeBlock.ChildList[i++];
-        var whileNodeTwo = (WhileNode)topCodeBlock.ChildList[i++];
-        var whileNodeThree = (WhileNode)topCodeBlock.ChildList[i++];
+        var whileNodeOne = (WhileStatementNode)topCodeBlock.ChildList[i++];
+        var whileNodeTwo = (WhileStatementNode)topCodeBlock.ChildList[i++];
+        var whileNodeThree = (WhileStatementNode)topCodeBlock.ChildList[i++];
         
-        Assert.Equal(3, topCodeBlock.Length);
+        Assert.Equal(3, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
@@ -163,12 +163,12 @@ for (;;)
         
         var i = 0;
         
-        var forNodeOne = (ForNode)topCodeBlock.ChildList[i++];
-        var forNodeTwo = (ForNode)topCodeBlock.ChildList[i++];
-        var forNodeThree = (ForNode)topCodeBlock.ChildList[i++];
-        var forNodeFour = (ForNode)topCodeBlock.ChildList[i++];
+        var forNodeOne = (ForStatementNode)topCodeBlock.ChildList[i++];
+        var forNodeTwo = (ForStatementNode)topCodeBlock.ChildList[i++];
+        var forNodeThree = (ForStatementNode)topCodeBlock.ChildList[i++];
+        var forNodeFour = (ForStatementNode)topCodeBlock.ChildList[i++];
         
-        Assert.Equal(4, topCodeBlock.Length);
+        Assert.Equal(4, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
@@ -196,11 +196,11 @@ if (true)
         
         var i = 0;
         
-        var ifNodeOne = (IfNode)topCodeBlock.ChildList[i++];
-        var ifNodeTwo = (IfNode)topCodeBlock.ChildList[i++];
-        var ifNodeThree = (IfNode)topCodeBlock.ChildList[i++];
+        var ifNodeOne = (IfStatementNode)topCodeBlock.ChildList[i++];
+        var ifNodeTwo = (IfStatementNode)topCodeBlock.ChildList[i++];
+        var ifNodeThree = (IfStatementNode)topCodeBlock.ChildList[i++];
         
-        Assert.Equal(3, topCodeBlock.Length);
+        Assert.Equal(3, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
@@ -230,7 +230,7 @@ if (true)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var switchNode = (SwitchNode)topCodeBlock.ChildList.Single();
+        var switchNode = (SwitchStatementNode)topCodeBlock.ChildList.Single();
     }
     
     [Fact]
@@ -348,11 +348,11 @@ finally
         
         var i = 0;
         
-        var tryNodeOne = (TryNode)topCodeBlock.ChildList[i++];
-        var tryNodeTwo = (TryNode)topCodeBlock.ChildList[i++];
-        var tryNodeThree = (TryNode)topCodeBlock.ChildList[i++];
+        var tryNodeOne = (TryStatementNode)topCodeBlock.ChildList[i++];
+        var tryNodeTwo = (TryStatementNode)topCodeBlock.ChildList[i++];
+        var tryNodeThree = (TryStatementNode)topCodeBlock.ChildList[i++];
         
-        Assert.Equal(3, topCodeBlock.Length);
+        Assert.Equal(3, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
@@ -377,10 +377,10 @@ lock (_syncRoot)
         
         var i = 0;
         
-        var lockNode = (LockNode)topCodeBlock.ChildList[i++];
-        var lockNode = (LockNode)topCodeBlock.ChildList[i++];
+        var lockNodeOne = (LockStatementNode)topCodeBlock.ChildList[i++];
+        var lockNodeTwo = (LockStatementNode)topCodeBlock.ChildList[i++];
         
-        Assert.Equal(2, topCodeBlock.Length);
+        Assert.Equal(2, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
@@ -431,4 +431,3 @@ lock (_syncRoot)
 		throw new NotImplementedException();
     }
 }
-*/
