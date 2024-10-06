@@ -29,7 +29,7 @@ public class CodeBlockOwnerSimpleTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (CodeBlockNode)topCodeBlock.ChildList.Single();
     }
     
     [Fact]
@@ -57,7 +57,16 @@ foreach (var item in list)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var i = 0;
+        
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[i++];
+        var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[i++];
+        
+        var foreachNodeOne = (ForeachNode)topCodeBlock.ChildList[i++];
+        var foreachNodeTwo = (ForeachNode)topCodeBlock.ChildList[i++];
+        var foreachNodeThree = (ForeachNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(5, topCodeBlock.Length);
     }
     
     [Fact]
@@ -85,7 +94,13 @@ while(true);";
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var i = 0;
+        
+        var doWhileNodeOne = (DoWhileNode)topCodeBlock.ChildList[i++];
+        var doWhileNodeTwo = (DoWhileNode)topCodeBlock.ChildList[i++];
+        var doWhileNodeThree = (DoWhileNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(3, topCodeBlock.Length);
     }
     
     [Fact]
@@ -111,7 +126,13 @@ while (true)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var i = 0;
+        
+        var whileNodeOne = (WhileNode)topCodeBlock.ChildList[i++];
+        var whileNodeTwo = (WhileNode)topCodeBlock.ChildList[i++];
+        var whileNodeThree = (WhileNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(3, topCodeBlock.Length);
     }
     
     [Fact]
@@ -140,7 +161,14 @@ for (;;)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var i = 0;
+        
+        var forNodeOne = (ForNode)topCodeBlock.ChildList[i++];
+        var forNodeTwo = (ForNode)topCodeBlock.ChildList[i++];
+        var forNodeThree = (ForNode)topCodeBlock.ChildList[i++];
+        var forNodeFour = (ForNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(4, topCodeBlock.Length);
     }
     
     [Fact]
@@ -166,7 +194,13 @@ if (true)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var i = 0;
+        
+        var ifNodeOne = (IfNode)topCodeBlock.ChildList[i++];
+        var ifNodeTwo = (IfNode)topCodeBlock.ChildList[i++];
+        var ifNodeThree = (IfNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(3, topCodeBlock.Length);
     }
     
     [Fact]
@@ -196,7 +230,7 @@ if (true)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var switchNode = (SwitchNode)topCodeBlock.ChildList.Single();
     }
     
     [Fact]
@@ -218,7 +252,29 @@ if (true)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var switchExpressionNode = (SwitchExpressionNode)topCodeBlock.ChildList.Single();
+    }
+    
+    [Fact]
+	public void Ternary()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"var a = true ? ""true"" : ""false"";";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var i = 0;
+        
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[i++];
+        var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[i++];
+        
+        throw new NotImplementedException("var ternaryNode = (TernaryNode)variableAssignmentNode.ExpressionNode;");
     }
     
     [Fact]
@@ -240,7 +296,7 @@ if (true)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var enumDefinitionNode = (EnumDefinitionNode)topCodeBlock.ChildList.Single();
     }
     
     [Fact]
@@ -290,7 +346,13 @@ finally
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var i = 0;
+        
+        var tryNodeOne = (TryNode)topCodeBlock.ChildList[i++];
+        var tryNodeTwo = (TryNode)topCodeBlock.ChildList[i++];
+        var tryNodeThree = (TryNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(3, topCodeBlock.Length);
     }
     
     [Fact]
@@ -313,7 +375,12 @@ lock (_syncRoot)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var i = 0;
+        
+        var lockNode = (CockNode)topCodeBlock.ChildList[i++];
+        var lockNode = (CockNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(2, topCodeBlock.Length);
     }
     
     [Fact]
