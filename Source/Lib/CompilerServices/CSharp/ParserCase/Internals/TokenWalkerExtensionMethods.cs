@@ -17,19 +17,13 @@ internal static class TokenWalkerExtensionMethods
 		OpenBraceToken consumedOpenBraceToken,
 		CSharpParserModel model)
     {
+    	// You have to add the count of pending 'deferred child parsing'(s)
 		var currentCodeBlockBuilderChildListCount = model.CurrentCodeBlockBuilder.ChildList.Count;
-		_ = model.SyntaxStack.TryPeek(out var syntax);
-
-		{
-			Console.WriteLine($"tokenWalker.Index: {tokenWalker.Index}");
 		
-			tokenWalker.Backtrack();
-			Console.Write(tokenWalker.Current.SyntaxKind + "  ");
-			_ = tokenWalker.Consume();
-			Console.WriteLine(tokenWalker.Current.SyntaxKind);
-		}
+		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
+		_ = model.SyntaxStack.TryPop(out var syntax);
+		Console.WriteLine(syntax.SyntaxKind);
 
-		
 		var openTokenIndex = tokenWalker.Index - 1;
 
 		var openBraceCounter = 1;
