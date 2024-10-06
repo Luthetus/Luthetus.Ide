@@ -9,18 +9,24 @@ public sealed record SwitchStatementNode : ICodeBlockOwner
 {
     public SwitchStatementNode(
         KeywordToken keywordToken,
+        OpenParenthesisToken openParenthesisToken,
         IExpressionNode expressionNode,
+        CloseParenthesisToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
         KeywordToken = keywordToken;
+        OpenParenthesisToken = openParenthesisToken;
         ExpressionNode = expressionNode;
+        CloseParenthesisToken = closeParenthesisToken;
         CodeBlockNode = codeBlockNode;
 
         SetChildList();
     }
 
     public KeywordToken KeywordToken { get; }
+    public OpenParenthesisToken OpenParenthesisToken { get; }
     public IExpressionNode ExpressionNode { get; }
+    public CloseParenthesisToken CloseParenthesisToken { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public OpenBraceToken? OpenBraceToken { get; private set; }
 
@@ -49,9 +55,14 @@ public sealed record SwitchStatementNode : ICodeBlockOwner
     	var childrenList = new List<ISyntax>
         {
             KeywordToken,
+            OpenParenthesisToken,
             ExpressionNode,
+            CloseParenthesisToken,
         };
 
+        if (OpenBraceToken is not null)
+            childrenList.Add(OpenBraceToken);
+        
         if (CodeBlockNode is not null)
             childrenList.Add(CodeBlockNode);
 
