@@ -259,10 +259,6 @@ public class ClassTwo
 		{
 			FirstName = firstName;
 		}
-		
-		{
-			LastName = lastName;
-		}
 	}
 	
 	public string FirstName { get; set; }
