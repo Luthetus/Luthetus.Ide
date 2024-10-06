@@ -6,18 +6,6 @@ using Luthetus.CompilerServices.CSharp.ParserCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 
-/*public abstract class CommandWithType<T> where T : notnull
-{
-    protected CommandWithType(
-            string displayName,
-            string internalIdentifier,
-            bool shouldBubble,
-            Func<ICommandArgs, Task> commandFunc) 
-        : base(displayName, internalIdentifier, shouldBubble, commandFunc)
-    {
-    }
-}*/
-
 public class ClassDefinitionWhere
 {
 	[Fact]

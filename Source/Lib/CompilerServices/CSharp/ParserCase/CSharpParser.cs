@@ -58,9 +58,19 @@ public class CSharpParser : IParser
             currentCodeBlockBuilder,
             null,
             new Stack<Action<CodeBlockNode>>());
+            
+        // TODO: Delete this debugging code block
+        /*{
+        	for (int i = 0; i < model.TokenWalker.TokenList.Length; i++)
+        	{
+        		Console.WriteLine($"{i}: {model.TokenWalker.TokenList[i].SyntaxKind}");
+        	}
+        }*/
 
         while (true)
         {
+        	Console.WriteLine($"Parse() model.TokenWalker.Index: {model.TokenWalker.Index} {model.TokenWalker.Current.SyntaxKind}");
+        
             var token = model.TokenWalker.Consume();
 
             switch (token.SyntaxKind)

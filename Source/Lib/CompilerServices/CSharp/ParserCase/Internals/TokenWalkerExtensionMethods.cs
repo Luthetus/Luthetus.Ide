@@ -20,6 +20,16 @@ internal static class TokenWalkerExtensionMethods
 		var currentCodeBlockBuilderChildListCount = model.CurrentCodeBlockBuilder.ChildList.Count;
 		_ = model.SyntaxStack.TryPeek(out var syntax);
 
+		{
+			Console.WriteLine($"tokenWalker.Index: {tokenWalker.Index}");
+		
+			tokenWalker.Backtrack();
+			Console.Write(tokenWalker.Current.SyntaxKind + "  ");
+			_ = tokenWalker.Consume();
+			Console.WriteLine(tokenWalker.Current.SyntaxKind);
+		}
+
+		
 		var openTokenIndex = tokenWalker.Index - 1;
 
 		var openBraceCounter = 1;
@@ -53,6 +63,8 @@ internal static class TokenWalkerExtensionMethods
 				tokenIndexToRestore,
 				() => model.DequeuedIndexForChildList = null);
 			model.SyntaxStack.Push(syntax);
+			
+			Console.WriteLine(currentCodeBlockBuilderChildListCount);
 			model.DequeuedIndexForChildList = currentCodeBlockBuilderChildListCount;
 		});
     }
