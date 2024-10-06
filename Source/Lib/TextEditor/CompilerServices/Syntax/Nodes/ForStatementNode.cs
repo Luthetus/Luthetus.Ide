@@ -9,18 +9,36 @@ public sealed record ForStatementNode : ICodeBlockOwner
 {
     public ForStatementNode(
         KeywordToken keywordToken,
-        IExpressionNode expressionNode,
+        OpenParenthesisToken openParenthesisToken,
+        ImmutableArray<ISyntax> initializationSyntaxList,
+        StatementDelimiterToken initializationStatementDelimiterToken,
+        IExpressionNode conditionExpressionNode,
+        StatementDelimiterToken conditionStatementDelimiterToken,
+        IExpressionNode updationExpressionNode,
+        CloseParenthesisToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
         KeywordToken = keywordToken;
-        ExpressionNode = expressionNode;
+        OpenParenthesisToken = openParenthesisToken;
+        InitializationSyntaxList = initializationSyntaxList;
+        InitializationStatementDelimiterToken = initializationStatementDelimiterToken;
+        ConditionExpressionNode = conditionExpressionNode;
+        ConditionStatementDelimiterToken = conditionStatementDelimiterToken;
+        UpdationExpressionNode = updationExpressionNode;
+        CloseParenthesisToken = closeParenthesisToken;
         CodeBlockNode = codeBlockNode;
 
         SetChildList();
     }
 
     public KeywordToken KeywordToken { get; }
-    public IExpressionNode ExpressionNode { get; }
+    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public ImmutableArray<ISyntax> InitializationSyntaxList { get; }
+    public StatementDelimiterToken InitializationStatementDelimiterToken { get; }
+    public IExpressionNode ConditionExpressionNode { get; }
+    public StatementDelimiterToken ConditionStatementDelimiterToken { get; }
+    public IExpressionNode UpdationExpressionNode { get; }
+    public CloseParenthesisToken CloseParenthesisToken { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public OpenBraceToken? OpenBraceToken { get; private set; }
 
@@ -49,9 +67,23 @@ public sealed record ForStatementNode : ICodeBlockOwner
     	var childrenList = new List<ISyntax>
         {
             KeywordToken,
-            ExpressionNode,
-        };
+	        OpenParenthesisToken,
+	    };
+	    
+	    childrenList.AddRange(InitializationSyntaxList);
+	    
+	    childrenList.AddRange(new ISyntax[] 
+	    {
+	        InitializationStatementDelimiterToken,
+	        ConditionExpressionNode,
+	        ConditionStatementDelimiterToken,
+	        UpdationExpressionNode,
+	        CloseParenthesisToken,
+	    });
 
+        if (OpenBraceToken is not null)
+            childrenList.Add(OpenBraceToken);
+        
         if (CodeBlockNode is not null)
             childrenList.Add(CodeBlockNode);
 

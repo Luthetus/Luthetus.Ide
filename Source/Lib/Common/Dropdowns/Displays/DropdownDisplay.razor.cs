@@ -185,6 +185,9 @@ public partial class DropdownDisplay : ComponentBase, IDisposable
 
 #if DEBUG
 	/// <summary>
+	/// TODO: I don't think this can cause this "simple infinite loop" anymore...
+	///       ...I can't remember exactly when it was fixed, but what is described here is likely no longer an issue. (2024-10-06)
+	///
 	/// This method is here because its incredibly simple to cause an infinite loop
 	/// when making use of this component.
 	///

@@ -36,6 +36,8 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         SetChildList();
     }
 
+	private TypeClauseNode? _toTypeClauseNodeResult;
+
     public AccessModifierKind AccessModifierKind { get; }
     public bool HasPartialModifier { get; }
     public StorageModifierKind StorageModifierKind { get; }
@@ -90,7 +92,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
 
     public TypeClauseNode ToTypeClause()
     {
-        return new TypeClauseNode(
+    	return _toTypeClauseNodeResult ??= new TypeClauseNode(
             TypeIdentifierToken,
             ValueType,
             null);

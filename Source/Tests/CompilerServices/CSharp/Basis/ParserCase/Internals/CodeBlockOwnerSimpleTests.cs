@@ -56,9 +56,9 @@ public class CodeBlockOwnerSimpleTests
         	Console.WriteLine(child.SyntaxKind);
         }
         
-        // var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[i++];
+        var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[i++];
         
-        // Assert.Equal(1, topCodeBlock.ChildList.Length);
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
@@ -99,6 +99,30 @@ foreach (var item in list)
     }
     
     [Fact]
+	public void DoWhile_Simple()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"do
+{
+	var a = 2;
+} while(true);";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var i = 0;
+        
+        var doWhileNodeOne = (DoWhileStatementNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
+    }
+    
+    [Fact]
 	public void DoWhile()
 	{
 		var resourceUri = new ResourceUri("./unitTesting.txt");
@@ -133,6 +157,30 @@ while(true);";
     }
     
     [Fact]
+	public void While_Simple()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"while (true)
+{
+	var a = 2;
+}";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var i = 0;
+        
+        var whileNodeOne = (WhileStatementNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
+    }
+    
+    [Fact]
 	public void While()
 	{
 		var resourceUri = new ResourceUri("./unitTesting.txt");
@@ -162,6 +210,35 @@ while (true)
         var whileNodeThree = (WhileStatementNode)topCodeBlock.ChildList[i++];
         
         Assert.Equal(3, topCodeBlock.ChildList.Length);
+    }
+    
+    [Fact]
+	public void For_Simple()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"for (int i = 0; i < 10; i++)
+{
+	var a = 2;
+}";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var i = 0;
+        
+        foreach (var child in topCodeBlock.ChildList)
+        {
+        	Console.WriteLine(child.SyntaxKind);
+        }
+        
+        var forNodeOne = (ForStatementNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
@@ -201,6 +278,30 @@ for (;;)
     }
     
     [Fact]
+	public void If_Simple()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"if (true)
+{
+	var a = 2;
+}";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var i = 0;
+        
+        var ifNodeOne = (IfStatementNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
+    }
+    
+    [Fact]
 	public void If()
 	{
 		var resourceUri = new ResourceUri("./unitTesting.txt");
@@ -230,6 +331,28 @@ if (true)
         var ifNodeThree = (IfStatementNode)topCodeBlock.ChildList[i++];
         
         Assert.Equal(3, topCodeBlock.ChildList.Length);
+    }
+    
+    
+    [Fact]
+	public void SwitchStatement_Simple()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"switch (true)
+{
+	case true:
+		break;
+}";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var switchNode = (SwitchStatementNode)topCodeBlock.ChildList.Single();
     }
     
     [Fact]
@@ -329,6 +452,38 @@ if (true)
     }
     
     [Fact]
+	public void Try_Simple()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"try
+{
+	var a = 2;
+}
+catch (Exception e)
+{
+	throw;
+}
+finally
+{
+	_ = firstName;
+}";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var i = 0;
+        
+        var tryNodeOne = (TryStatementNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
+    }
+    
+    [Fact]
 	public void Try()
 	{
 		var resourceUri = new ResourceUri("./unitTesting.txt");
@@ -382,6 +537,30 @@ finally
         var tryNodeThree = (TryStatementNode)topCodeBlock.ChildList[i++];
         
         Assert.Equal(3, topCodeBlock.ChildList.Length);
+    }
+    
+    [Fact]
+	public void Lock_Simple()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"lock (_syncRoot)
+{
+	var a = 2;
+}";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var i = 0;
+        
+        var lockNodeOne = (LockStatementNode)topCodeBlock.ChildList[i++];
+        
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
     }
     
     [Fact]
