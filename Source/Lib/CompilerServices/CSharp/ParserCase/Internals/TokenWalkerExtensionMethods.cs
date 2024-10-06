@@ -47,16 +47,16 @@ internal static class TokenWalkerExtensionMethods
 		var closeTokenIndex = tokenWalker.Index;
 		var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
 
-        model.ParseChildScopeQueue.Enqueue(tokenIndexToRestore =>
+		model.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(tokenIndexToRestore =>
 		{
 			tokenWalker.DeferredParsing(
 				openTokenIndex,
 				closeTokenIndex,
 				tokenIndexToRestore,
-				() => model.DequeuedIndexForChildList = null);
+				() => model.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null);
 			
 			model.SyntaxStack.Push(syntax);
-			model.DequeuedIndexForChildList = indexToUpdateAfterDequeue;
+			model.CurrentCodeBlockBuilder.DequeuedIndexForChildList = indexToUpdateAfterDequeue;
 		});
     }
 }

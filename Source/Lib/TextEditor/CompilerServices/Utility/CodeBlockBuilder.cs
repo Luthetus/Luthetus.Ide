@@ -23,6 +23,10 @@ public class CodeBlockBuilder
     /// Identifier is equal to the constructor's identifier.
     /// </summary>
     public ICodeBlockOwner? CodeBlockOwner { get; }
+    
+    public Queue<Action<int>> ParseChildScopeQueue { get; set; } = new();
+	public int DequeueChildScopeCounter { get; set; }
+	public int? DequeuedIndexForChildList { get; set; }
 
     public CodeBlockNode Build()
     {

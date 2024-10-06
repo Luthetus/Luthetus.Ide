@@ -577,18 +577,17 @@ public static class ParseTokens
 			//
 			// Response: This seems to be a flag that says a child scope is allowed to be parsed (rather than infinitely enqueueing).
 			//           If so, rename the variable and make it a bool because it being a 'counter' is extremely confusing.
-			if (model.DequeueChildScopeCounter == 0)
+			if (model.CurrentCodeBlockBuilder.DequeueChildScopeCounter == 0)
 			{
-				//closureCurrentCodeBlockBuilder.ChildList.Add(nextCodeBlockOwner);
 				model.TokenWalker.DeferParsingOfChildScope(consumedOpenBraceToken, model);
 				return;
 			}
 
-			model.DequeueChildScopeCounter--;
+			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter--;
 			wasDeferred = true;
 		}
 
-		var indexToUpdateAfterDequeue = model.DequeuedIndexForChildList ?? model.CurrentCodeBlockBuilder.ChildList.Count;
+		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.DequeuedIndexForChildList ?? model.CurrentCodeBlockBuilder.ChildList.Count;
 		
 		if (model.SyntaxStack.TryPeek(out var syntax) && syntax is ICodeBlockOwner)
 		{
@@ -644,10 +643,10 @@ public static class ParseTokens
         CloseBraceToken consumedCloseBraceToken,
         CSharpParserModel model)
     {
-		if (model.ParseChildScopeQueue.TryDequeue(out var action))
+		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var action))
 		{
 			action.Invoke(model.TokenWalker.Index - 1);
-			model.DequeueChildScopeCounter++;
+			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter++;
 			return;
 		}
 

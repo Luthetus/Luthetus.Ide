@@ -69,6 +69,8 @@ public class CSharpParser : IParser
 
         while (true)
         {
+        	Console.WriteLine($"Parse() model.TokenWalker.Index: {model.TokenWalker.Index} {model.TokenWalker.Current.SyntaxKind}");
+        	
             var token = model.TokenWalker.Consume();
 
             switch (token.SyntaxKind)
@@ -175,10 +177,18 @@ public class CSharpParser : IParser
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
-				if (model.ParseChildScopeQueue.TryDequeue(out var action))
+				Console.WriteLine(model.CurrentCodeBlockBuilder.ParseChildScopeQueue.Count);
+			
+				if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var action))
 				{
+					// TODO: After the child scope is parsed the current code block builder
+					//       needs to be restored.
+					
+					// TODO: Why would 'DequeueChildScopeCounter' be incremented after the fact (instead of before)?
+					// Response: maybe it returns to the main while loop in CSharpParser.cs so it doesn't matter the order.
+				
 					action.Invoke(model.TokenWalker.Index - 1);
-					model.DequeueChildScopeCounter++;
+					model.CurrentCodeBlockBuilder.DequeueChildScopeCounter++;
 				}
 				else
 				{

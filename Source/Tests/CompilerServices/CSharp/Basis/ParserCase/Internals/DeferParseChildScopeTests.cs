@@ -344,6 +344,15 @@ public class ClassTwo { }
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
         var typeDefinitionNodeClassOne = (TypeDefinitionNode)topCodeBlock.ChildList[0];
+        
+        Console.WriteLine(typeDefinitionNodeClassOne.SyntaxKind);
+        Console.WriteLine(typeDefinitionNodeClassOne.TypeIdentifierToken.TextSpan.GetText());
+        
+        foreach (var child in typeDefinitionNodeClassOne.CodeBlockNode.ChildList)
+        {
+        	Console.WriteLine(child.SyntaxKind);
+        }
+        
         var typeDefinitionNodeClassTwo = (TypeDefinitionNode)topCodeBlock.ChildList[1];
         
         // The assertions will fail because ClassTwo will be inserted at index 0 of the child list
