@@ -16,16 +16,7 @@ public sealed record IfStatementNode : ICodeBlockOwner
         ExpressionNode = expressionNode;
         CodeBlockNode = codeBlockNode;
 
-        var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-            ExpressionNode,
-        };
-
-        if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
-
-        ChildList = childrenList.ToImmutableArray();
+        SetChildList();
     }
 
     public KeywordToken KeywordToken { get; }
@@ -35,7 +26,7 @@ public sealed record IfStatementNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ImmutableArray<ISyntax> ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -51,5 +42,19 @@ public sealed record IfStatementNode : ICodeBlockOwner
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
     	return this;
+    }
+    
+    public void SetChildList()
+    {
+    	var childrenList = new List<ISyntax>
+        {
+            KeywordToken,
+            ExpressionNode,
+        };
+
+        if (CodeBlockNode is not null)
+            childrenList.Add(CodeBlockNode);
+
+        ChildList = childrenList.ToImmutableArray();
     }
 }

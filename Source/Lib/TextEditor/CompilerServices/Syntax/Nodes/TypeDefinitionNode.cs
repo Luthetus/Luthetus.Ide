@@ -32,22 +32,8 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         InheritedTypeClauseNode = inheritedTypeClauseNode;
         OpenBraceToken = openBraceToken;
         CodeBlockNode = codeBlockNode;
-
-        var children = new List<ISyntax>
-        {
-            TypeIdentifierToken,
-        };
-
-        if (GenericArgumentsListingNode is not null)
-            children.Add(GenericArgumentsListingNode);
-
-        if (InheritedTypeClauseNode is not null)
-            children.Add(InheritedTypeClauseNode);
-
-        if (CodeBlockNode is not null)
-            children.Add(CodeBlockNode);
-
-        ChildList = children.ToImmutableArray();
+        
+        SetChildList();
     }
 
     public AccessModifierKind AccessModifierKind { get; }
@@ -83,7 +69,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ImmutableArray<ISyntax> ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -119,6 +105,27 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	
+    	SetChildList();
     	return this;
+    }
+    
+    public void SetChildList()
+    {
+        var children = new List<ISyntax>
+        {
+            TypeIdentifierToken,
+        };
+
+        if (GenericArgumentsListingNode is not null)
+            children.Add(GenericArgumentsListingNode);
+
+        if (InheritedTypeClauseNode is not null)
+            children.Add(InheritedTypeClauseNode);
+
+        if (CodeBlockNode is not null)
+            children.Add(CodeBlockNode);
+
+        ChildList = children.ToImmutableArray();
     }
 }

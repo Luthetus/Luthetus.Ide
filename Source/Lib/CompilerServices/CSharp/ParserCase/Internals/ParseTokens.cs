@@ -579,7 +579,7 @@ public static class ParseTokens
 			//           If so, rename the variable and make it a bool because it being a 'counter' is extremely confusing.
 			if (model.DequeueChildScopeCounter == 0)
 			{
-				closureCurrentCodeBlockBuilder.ChildList.Add(nextCodeBlockOwner);
+				//closureCurrentCodeBlockBuilder.ChildList.Add(nextCodeBlockOwner);
 				model.TokenWalker.DeferParsingOfChildScope(consumedOpenBraceToken, model);
 				return;
 			}
@@ -606,10 +606,12 @@ public static class ParseTokens
             {
                 selfCodeBlockOwner = selfCodeBlockOwner.WithCodeBlockNode(consumedOpenBraceToken, codeBlockNode);
 				
-				if (wasDeferred)
+				/*if (wasDeferred)
 					closureCurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;
 				else
-					closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);
+					closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);*/
+					
+				closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);
 					
 				if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 					model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)selfCodeBlockOwner, model);
@@ -877,15 +879,15 @@ public static class ParseTokens
             nextCodeBlockOwner = namespaceStatementNode;
 
             model.FinalizeNamespaceFileScopeCodeBlockNodeAction = codeBlockNode =>
-                {
-                    namespaceStatementNode = new NamespaceStatementNode(
-                        namespaceStatementNode.KeywordToken,
-                        namespaceStatementNode.IdentifierToken,
-                        codeBlockNode);
+            {
+                namespaceStatementNode = new NamespaceStatementNode(
+                    namespaceStatementNode.KeywordToken,
+                    namespaceStatementNode.IdentifierToken,
+                    codeBlockNode);
 
-                    closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
-                    model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
-                };
+                closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
+                model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
+            };
 
             model.Binder.RegisterBoundScope(
                 scopeReturnTypeClauseNode,

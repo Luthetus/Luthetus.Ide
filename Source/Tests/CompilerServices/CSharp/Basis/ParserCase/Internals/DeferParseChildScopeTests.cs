@@ -6,7 +6,6 @@ using Luthetus.CompilerServices.CSharp.ParserCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 
-
 /// <summary>
 /// Goal Fix:
 ///
@@ -390,5 +389,29 @@ public class ClassTwo { }
         // This should throw an index out of bounds exception when the inner class
         // tries to insert itself at index 1 of the child list of the ClassOne,
         // meanwhile only index 0 is available.
+    }
+    
+    [Fact]
+	public void Aaa6()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"
+namespace Luthetus.Common.RazorLib.Clipboards.Models;
+
+public interface IClipboardService
+{
+    public Task<string> ReadClipboard();
+    public Task SetClipboard(string value);
+}
+
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
     }
 }
