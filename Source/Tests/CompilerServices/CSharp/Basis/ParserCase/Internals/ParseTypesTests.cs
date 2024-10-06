@@ -53,7 +53,7 @@ public class ParseTypesTests
 
                 // TypeBodyCodeBlockNode
                 {
-                    var typeBodyCodeBlockNode = typeDefinitionNode.TypeBodyCodeBlockNode;
+                    var typeBodyCodeBlockNode = typeDefinitionNode.CodeBlockNode;
 
                     Assert.NotNull(typeBodyCodeBlockNode);
                     Assert.Empty(typeBodyCodeBlockNode.DiagnosticsList);
@@ -106,7 +106,7 @@ public class ParseTypesTests
 
                 // TypeBodyCodeBlockNode
                 {
-                    var typeBodyCodeBlockNode = typeDefinitionNode.TypeBodyCodeBlockNode;
+                    var typeBodyCodeBlockNode = typeDefinitionNode.CodeBlockNode;
 
                     Assert.NotNull(typeBodyCodeBlockNode);
                     Assert.Empty(typeBodyCodeBlockNode.DiagnosticsList);
@@ -151,7 +151,7 @@ public class ParseTypesTests
         }
 
         Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
-        Assert.Null(typeDefinitionNode.TypeBodyCodeBlockNode);
+        Assert.Null(typeDefinitionNode.CodeBlockNode);
 
         Assert.Empty(compilationUnit.DiagnosticsList);
     }
@@ -206,7 +206,7 @@ public class ParseTypesTests
         }
 
         Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
-        Assert.Null(typeDefinitionNode.TypeBodyCodeBlockNode);
+        Assert.Null(typeDefinitionNode.CodeBlockNode);
 
         Assert.Empty(compilationUnit.DiagnosticsList);
     }
@@ -243,7 +243,7 @@ public class ParseTypesTests
         }
 
         Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
-        Assert.NotNull(typeDefinitionNode.TypeBodyCodeBlockNode);
+        Assert.NotNull(typeDefinitionNode.CodeBlockNode);
 
         Assert.Empty(compilationUnit.DiagnosticsList);
     }
@@ -298,7 +298,7 @@ public class ParseTypesTests
         }
 
         Assert.Null(typeDefinitionNode.InheritedTypeClauseNode);
-        Assert.NotNull(typeDefinitionNode.TypeBodyCodeBlockNode);
+        Assert.NotNull(typeDefinitionNode.CodeBlockNode);
 
         Assert.Empty(compilationUnit.DiagnosticsList);
     }

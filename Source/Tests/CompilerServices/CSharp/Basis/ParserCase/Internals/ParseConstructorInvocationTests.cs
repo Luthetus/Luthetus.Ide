@@ -28,11 +28,11 @@ public class ParseConstructorInvocationTests
 
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
 		
-		var typeBodyCodeBlockNode = typeDefinitionNode.TypeBodyCodeBlockNode;
+		var typeBodyCodeBlockNode = typeDefinitionNode.CodeBlockNode;
 		
 		var functionDefinitionNode = (FunctionDefinitionNode)typeBodyCodeBlockNode.ChildList.Single();
 		
-		var functionBodyCodeBlockNode = functionDefinitionNode.FunctionBodyCodeBlockNode;
+		var functionBodyCodeBlockNode = functionDefinitionNode.CodeBlockNode;
 		
 		var returnStatementNode = (ReturnStatementNode)functionBodyCodeBlockNode.ChildList.Single();
 		

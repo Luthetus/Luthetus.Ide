@@ -168,12 +168,12 @@ public class TokenApiTests
         var compilationUnit = parser.Parse();
         var typeDefinitionNode = (TypeDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
         
-        var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode!.ChildList.Single();
+        var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode!.ChildList.Single();
 
         Assert.Equal("MyClass", constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal("MyClass", constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText());
         Assert.Empty(constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
-        Assert.Empty(constructorDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
+        Assert.Empty(constructorDefinitionNode.CodeBlockNode!.ChildList);
     }
 
     /// <summary>
@@ -196,7 +196,7 @@ public class TokenApiTests
         Assert.Equal("string", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
         Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
-        Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
+        Assert.Empty(functionDefinitionNode.CodeBlockNode!.ChildList);
     }
 
     /// <summary>
@@ -315,7 +315,7 @@ Clone<int>(3);";
         Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
         Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
         Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
-        Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
+        Assert.Empty(functionDefinitionNode.CodeBlockNode!.ChildList);
     }
 
     /// <summary>
