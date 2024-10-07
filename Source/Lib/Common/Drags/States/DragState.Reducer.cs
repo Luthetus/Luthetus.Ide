@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 
 namespace Luthetus.Common.RazorLib.Drags.Displays;
 
@@ -7,11 +7,28 @@ public partial record DragState
     public class Reducer
     {
         [ReducerMethod]
-        public static DragState ReduceWithAction(
+        public static DragState ReduceShouldDisplayAndMouseEventArgsSetAction(
             DragState inState,
-            WithAction withAction)
+            ShouldDisplayAndMouseEventArgsSetAction shouldDisplayAndMouseEventArgsSetAction)
         {
-            return withAction.WithFunc.Invoke(inState);
+            return inState with
+            {
+            	ShouldDisplay = shouldDisplayAndMouseEventArgsSetAction.ShouldDisplay,
+	            MouseEventArgs = shouldDisplayAndMouseEventArgsSetAction.MouseEventArgs,
+            };
+        }
+        
+        [ReducerMethod]
+        public static DragState ReduceShouldDisplayAndMouseEventArgsAndDragSetAction(
+            DragState inState,
+            ShouldDisplayAndMouseEventArgsAndDragSetAction shouldDisplayAndMouseEventArgsAndDragSetAction)
+        {
+            return inState with
+            {
+            	ShouldDisplay = shouldDisplayAndMouseEventArgsAndDragSetAction.ShouldDisplay,
+	            MouseEventArgs = shouldDisplayAndMouseEventArgsAndDragSetAction.MouseEventArgs,
+	            Drag = shouldDisplayAndMouseEventArgsAndDragSetAction.Drag,
+            };
         }
     }
 }

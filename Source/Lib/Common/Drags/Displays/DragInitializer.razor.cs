@@ -19,60 +19,73 @@ public partial class DragInitializer : FluxorComponent
         ? string.Empty
         : "display: none;";
 
-    public static Throttle Throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second);
+    private ThrottleOptimized<MouseEvent> _throttle;
+    
+    public struct MouseEvent
+    {
+    	public MouseEvent(bool isOnMouseMove, MouseEventArgs mouseEventArgs)
+    	{
+    		IsOnMouseMove = isOnMouseMove;
+    		MouseEventArgs = mouseEventArgs;
+    	}
+    
+    	public bool IsOnMouseMove { get; }
+    	public MouseEventArgs MouseEventArgs { get; }
+    }
 
     private IDropzone? _onMouseOverDropzone = null;
+    
+    protected override void OnInitialized()
+    {
+    	_throttle = new(ThrottleFacts.TwentyFour_Frames_Per_Second, async (args, _) =>
+	    {
+	    	if (args.IsOnMouseMove)
+	    	{
+	    		if ((args.MouseEventArgs.Buttons & 1) != 1)
+	                DispatchClearDragStateAction();
+	            else
+	                Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, args.MouseEventArgs));
+	
+	            return;
+	    	}
+	    	else
+	    	{
+	    		var dragState = DragStateWrap.Value;
+				var localOnMouseOverDropzone = _onMouseOverDropzone;
+	    	
+	    		DispatchClearDragStateAction();
+	
+	            var draggableViewModel = dragState.Drag;
+	            if (draggableViewModel is not null)
+	            {
+	                await draggableViewModel
+	                    .OnDragEndAsync(args.MouseEventArgs, localOnMouseOverDropzone)
+	                    .ConfigureAwait(false);
+	            }
+	    	}
+	    });
+    	
+    	base.OnInitialized();
+    }
 
-    private DragState.WithAction ConstructClearDragStateAction()
+    private void DispatchClearDragStateAction()
     {
 		_onMouseOverDropzone = null;
-
-        return new DragState.WithAction(inState => inState with
-        {
-            ShouldDisplay = false,
-            MouseEventArgs = null,
-			Drag = null,
-        });
+		
+        Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsAndDragSetAction(
+        	false,
+            null,
+			null));
     }
 
     private void DispatchSetDragStateActionOnMouseMove(MouseEventArgs mouseEventArgs)
     {
-        Throttle.Run(_ =>
-        {
-            if ((mouseEventArgs.Buttons & 1) != 1)
-            {
-                Dispatcher.Dispatch(ConstructClearDragStateAction());
-            }
-            else
-            {
-                Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-                {
-                    ShouldDisplay = true,
-                    MouseEventArgs = mouseEventArgs,
-                }));
-            }
-
-            return Task.CompletedTask;
-        });
+        _throttle.Run(new(isOnMouseMove: true, mouseEventArgs));
     }
 
     private void DispatchSetDragStateActionOnMouseUp(MouseEventArgs mouseEventArgs)
     {
-		var dragState = DragStateWrap.Value;
-		var localOnMouseOverDropzone = _onMouseOverDropzone;
-
-        Throttle.Run(async _ =>
-        {
-            Dispatcher.Dispatch(ConstructClearDragStateAction());
-
-            var draggableViewModel = dragState.Drag;
-            if (draggableViewModel is not null)
-            {
-                await draggableViewModel
-                    .OnDragEndAsync(mouseEventArgs, localOnMouseOverDropzone)
-                    .ConfigureAwait(false);
-            }
-        });
+        _throttle.Run(new(isOnMouseMove: false, mouseEventArgs));
     }
 
 	private string GetIsActiveCssClass(IDropzone dropzone)

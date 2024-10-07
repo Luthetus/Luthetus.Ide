@@ -12,17 +12,50 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
         IdentifierToken functionIdentifier,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
-        CodeBlockNode? functionBodyCodeBlockNode,
+        CodeBlockNode? codeBlockNode,
         ConstraintNode? constraintNode)
     {
         ReturnTypeClauseNode = returnTypeClauseNode;
         FunctionIdentifier = functionIdentifier;
         GenericArgumentsListingNode = genericArgumentsListingNode;
         FunctionArgumentsListingNode = functionArgumentsListingNode;
-        FunctionBodyCodeBlockNode = functionBodyCodeBlockNode;
+        CodeBlockNode = codeBlockNode;
         ConstraintNode = constraintNode;
 
-        var children = new List<ISyntax>
+        SetChildList();
+    }
+
+    public TypeClauseNode ReturnTypeClauseNode { get; }
+    public IdentifierToken FunctionIdentifier { get; }
+    public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
+    public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
+    public ConstraintNode? ConstraintNode { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
+
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
+
+    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
+    
+    public TypeClauseNode? GetReturnTypeClauseNode()
+    {
+    	return ReturnTypeClauseNode;
+    }
+    
+    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    {
+    	OpenBraceToken = openBraceToken;
+    	CodeBlockNode = codeBlockNode;
+    	return this;
+    }
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
         {
             ReturnTypeClauseNode,
             FunctionIdentifier,
@@ -33,27 +66,12 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
 
         children.Add(FunctionArgumentsListingNode);
 
-        if (FunctionBodyCodeBlockNode is not null)
-            children.Add(FunctionBodyCodeBlockNode);
+        if (CodeBlockNode is not null)
+            children.Add(CodeBlockNode);
         
         if (ConstraintNode is not null)
             children.Add(ConstraintNode);
 
         ChildList = children.ToImmutableArray();
     }
-
-    public TypeClauseNode ReturnTypeClauseNode { get; }
-    public IdentifierToken FunctionIdentifier { get; }
-    public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
-    public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
-    public CodeBlockNode? FunctionBodyCodeBlockNode { get; }
-    public ConstraintNode? ConstraintNode { get; }
-
-	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
 }

@@ -15,14 +15,21 @@
     }
     else if (PropertyInfo.PropertyType == typeof(bool))
     {
+    	var value = PropertyInfo.GetValue(Syntax);
+    	
         if (PropertyInfo.Name != nameof(ISyntax.IsFabricated))
         {
-            <input type="checkbox" />
+            if (value is null)
+            {
+                <span>value <span class="luth_te_keyword">is null</span></span>
+            }
+            else
+            {
+                <span class="luth_te_keyword">@value</span>
+            }
         }
         else
         {
-            var value = PropertyInfo.GetValue(Syntax);
-
             if (value is null)
             {
                 <span>value <span class="luth_te_keyword">is null</span></span>

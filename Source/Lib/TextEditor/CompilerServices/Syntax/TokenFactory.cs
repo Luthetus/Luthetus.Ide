@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -84,7 +84,18 @@ public static class TokenFactory
             case SyntaxKind.CloseAssociatedGroupToken:
                 return new CloseAssociatedGroupToken(currentTextSpan) { IsFabricated = true, };
             default:
-                throw new NotImplementedException($"The {nameof(SyntaxKind)}: '{syntaxKind}' was unrecognized.");
+            	if (syntaxKind.ToString().EndsWith("ContextualKeyword"))
+            	{
+            		return new KeywordContextualToken(currentTextSpan, syntaxKind) { IsFabricated = true, };
+            	}
+            	else if (syntaxKind.ToString().EndsWith("Keyword"))
+            	{
+            		return new KeywordToken(currentTextSpan, syntaxKind) { IsFabricated = true, };
+            	}
+            	else
+            	{
+            		throw new NotImplementedException($"The {nameof(SyntaxKind)}: '{syntaxKind}' was unrecognized.");
+            	}
         }
     }
 }

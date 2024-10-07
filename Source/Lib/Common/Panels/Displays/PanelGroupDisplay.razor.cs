@@ -170,11 +170,7 @@ public partial class PanelGroupDisplay : FluxorComponent
 
             Dispatcher.Dispatch(new PanelState.SetDragEventArgsAction(null));
 
-            Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-            {
-                ShouldDisplay = false,
-                MouseEventArgs = null
-            }));
+			Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(false, null));
         }
 
         return Task.CompletedTask;
@@ -204,11 +200,7 @@ public partial class PanelGroupDisplay : FluxorComponent
 
             Dispatcher.Dispatch(new PanelState.SetDragEventArgsAction(null));
 
-            Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-            {
-                ShouldDisplay = false,
-                MouseEventArgs = null,
-            }));
+			Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(false, null));
         }
 
         return Task.CompletedTask;

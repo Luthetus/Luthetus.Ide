@@ -17,6 +17,7 @@ using Luthetus.Common.RazorLib.Menus.Displays;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Keymaps.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
@@ -30,7 +31,6 @@ using Luthetus.TextEditor.RazorLib.Groups.Models;
 using Luthetus.TextEditor.RazorLib.Events.Models;
 using Luthetus.TextEditor.RazorLib.ComponentRenderers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
-using Luthetus.Common.RazorLib.Keymaps.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -1035,7 +1035,11 @@ public class TextEditorCommandDefaultFunctions
         if (wordTextSpan is null)
             return;
 
-        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(wordTextSpan.Value);
+		var compilerServiceResource = modelModifier.CompilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
+		if (compilerServiceResource?.CompilationUnit is null)
+			return;
+
+        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(wordTextSpan.Value, compilerServiceResource);
         if (definitionTextSpan is null)
             return;
 
@@ -1316,7 +1320,7 @@ public class TextEditorCommandDefaultFunctions
 		ITextEditorEditContext editContext,
 		TextEditorModelModifier modelModifier,
 		TextEditorViewModelModifier viewModelModifier,
-		MouseEventArgs mouseEventArgs,		
+		MouseEventArgs mouseEventArgs,
 		TextEditorComponentData componentData,
 		ILuthetusTextEditorComponentRenderers textEditorComponentRenderers,
         ResourceUri resourceUri)

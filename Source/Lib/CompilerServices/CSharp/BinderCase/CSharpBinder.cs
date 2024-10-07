@@ -68,13 +68,24 @@ public partial class CSharpBinder : IBinder
         LiteralExpressionNode literalExpressionNode,
         CSharpParserModel model)
     {
-        var typeClauseNode = literalExpressionNode.LiteralSyntaxToken.SyntaxKind switch
-        {
-            SyntaxKind.NumericLiteralToken => CSharpFacts.Types.Int.ToTypeClause(),
-            SyntaxKind.CharLiteralToken => CSharpFacts.Types.Char.ToTypeClause(),
-            SyntaxKind.StringLiteralToken => CSharpFacts.Types.String.ToTypeClause(),
-            _ => throw new NotImplementedException(),
-        };
+    	TypeClauseNode typeClauseNode;
+    
+    	switch (literalExpressionNode.LiteralSyntaxToken.SyntaxKind)
+    	{
+    		case SyntaxKind.NumericLiteralToken:
+    			typeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
+    			break;
+            case SyntaxKind.CharLiteralToken:
+            	typeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
+            	break;
+            case SyntaxKind.StringLiteralToken:
+            	typeClauseNode = CSharpFacts.Types.String.ToTypeClause();
+            	break;
+            default:
+            	typeClauseNode = CSharpFacts.Types.Void.ToTypeClause();
+            	model.DiagnosticBag.ReportTodoException(literalExpressionNode.LiteralSyntaxToken.TextSpan, $"{nameof(BindLiteralExpressionNode)}(...) failed to map SyntaxKind: '{literalExpressionNode.LiteralSyntaxToken.SyntaxKind}'");
+            	break;
+    	}
 
         return new LiteralExpressionNode(
             literalExpressionNode.LiteralSyntaxToken,
@@ -161,6 +172,16 @@ public partial class CSharpBinder : IBinder
             DecorationByte = (byte)GenericDecorationKind.StringLiteral,
         }), model);
     }
+    
+    public void BindStringVerbatimExpression(
+        AtToken atToken,
+        CSharpParserModel model)
+    {
+        AddSymbolReference(new StringVerbatimSymbol(atToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.StringLiteral,
+        }), model);
+    }
 
     public void BindFunctionDefinitionNode(
         FunctionDefinitionNode functionDefinitionNode,
@@ -188,6 +209,7 @@ public partial class CSharpBinder : IBinder
     public FunctionArgumentEntryNode BindFunctionOptionalArgument(
         FunctionArgumentEntryNode functionArgumentEntryNode,
         ISyntaxToken compileTimeConstantToken,
+        bool hasParamsKeyword,
         bool hasOutKeyword,
         bool hasInKeyword,
         bool hasRefKeyword,
@@ -228,6 +250,7 @@ public partial class CSharpBinder : IBinder
         return new FunctionArgumentEntryNode(
             functionArgumentEntryNode.VariableDeclarationNode,
             true,
+            hasParamsKeyword,
             hasOutKeyword,
             hasInKeyword,
             hasRefKeyword);
@@ -871,33 +894,83 @@ public partial class CSharpBinder : IBinder
             x => textSpan.StartingIndexInclusive - x.StartingIndexInclusive);
     }
 
-    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan)
+    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
         var boundScope = GetBoundScope(textSpan) as CSharpBoundScope;
-
-        if (TryGetVariableDeclarationHierarchically(
-                textSpan.GetText(),
-                boundScope,
-                out var variableDeclarationStatementNode)
-            && variableDeclarationStatementNode is not null)
+        
+        if (compilerServiceResource.CompilationUnit is null)
+        	return null;
+        
+        // Try to find a symbol at that cursor position.
+		var symbols = compilerServiceResource.GetSymbols();
+		var foundSymbol = (ITextEditorSymbol?)null;
+		
+        foreach (var symbol in symbols)
         {
-            return variableDeclarationStatementNode.IdentifierToken.TextSpan;
+            if (textSpan.StartingIndexInclusive >= symbol.TextSpan.StartingIndexInclusive &&
+                textSpan.StartingIndexInclusive < symbol.TextSpan.EndingIndexExclusive)
+            {
+                foundSymbol = symbol;
+                break;
+            }
         }
-        else if (TryGetFunctionHierarchically(
-                     textSpan.GetText(),
-                     boundScope,
-                     out var functionDefinitionNode)
-                 && functionDefinitionNode is not null)
+		
+		if (foundSymbol is null)
+			return null;
+			
+		var currentSyntaxKind = foundSymbol.SyntaxKind;
+        
+        switch (currentSyntaxKind)
         {
-            return functionDefinitionNode.FunctionIdentifierToken.TextSpan;
-        }
-        else if (TryGetTypeDefinitionHierarchically(
-                     textSpan.GetText(),
-                     boundScope,
-                     out var typeDefinitionNode)
-                 && typeDefinitionNode is not null)
-        {
-            return typeDefinitionNode.TypeIdentifierToken.TextSpan;
+        	case SyntaxKind.VariableAssignmentExpressionNode:
+        	case SyntaxKind.VariableDeclarationNode:
+        	case SyntaxKind.VariableReferenceNode:
+        	case SyntaxKind.VariableSymbol:
+        	case SyntaxKind.PropertySymbol:
+        	case SyntaxKind.FieldSymbol:
+        	{
+        		if (TryGetVariableDeclarationHierarchically(
+		                textSpan.GetText(),
+		                boundScope,
+		                out var variableDeclarationStatementNode)
+		            && variableDeclarationStatementNode is not null)
+		        {
+		            return variableDeclarationStatementNode.IdentifierToken.TextSpan;
+		        }
+		        
+		        return null;
+        	}
+        	case SyntaxKind.FunctionInvocationNode:
+        	case SyntaxKind.FunctionDefinitionNode:
+        	case SyntaxKind.FunctionSymbol:
+	        {
+	        	if (TryGetFunctionHierarchically(
+		                     textSpan.GetText(),
+		                     boundScope,
+		                     out var functionDefinitionNode)
+		                 && functionDefinitionNode is not null)
+		        {
+		            return functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+		        }
+		        
+		        return null;
+	        }
+	        case SyntaxKind.TypeClauseNode:
+	        case SyntaxKind.TypeDefinitionNode:
+	        case SyntaxKind.TypeSymbol:
+	        case SyntaxKind.ConstructorSymbol:
+	        {
+	        	if (TryGetTypeDefinitionHierarchically(
+		                     textSpan.GetText(),
+		                     boundScope,
+		                     out var typeDefinitionNode)
+		                 && typeDefinitionNode is not null)
+		        {
+		            return typeDefinitionNode.TypeIdentifierToken.TextSpan;
+		        }
+		        
+		        return null;
+	        }
         }
 
         return null;

@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 
 public enum StorageModifierKind
 {
@@ -6,5 +6,6 @@ public enum StorageModifierKind
     Class,
     Interface,
     Enum,
-    Record
+    Record,
+    RecordStruct,
 }
