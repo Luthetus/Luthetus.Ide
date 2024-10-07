@@ -8,21 +8,32 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed record DoWhileStatementNode : ICodeBlockOwner
 {
     public DoWhileStatementNode(
-        KeywordToken keywordToken,
-        IExpressionNode expressionNode,
-        CodeBlockNode? codeBlockNode)
+        KeywordToken doKeywordToken,
+        OpenBraceToken? openBraceToken,
+        CodeBlockNode? codeBlockNode,
+        KeywordToken? whileKeywordToken,
+        OpenParenthesisToken? openParenthesisToken,
+        IExpressionNode? expressionNode,
+        CloseParenthesisToken? closeParenthesisToken)
     {
-        KeywordToken = keywordToken;
-        ExpressionNode = expressionNode;
+        DoKeywordToken = doKeywordToken;
+        OpenBraceToken = openBraceToken;
         CodeBlockNode = codeBlockNode;
+        WhileKeywordToken = whileKeywordToken;
+        OpenParenthesisToken = openParenthesisToken;
+        ExpressionNode = expressionNode;
+        CloseParenthesisToken = closeParenthesisToken;
 
         SetChildList();
     }
 
-    public KeywordToken KeywordToken { get; }
-    public IExpressionNode ExpressionNode { get; }
-    public CodeBlockNode? CodeBlockNode { get; private set; }
+    public KeywordToken DoKeywordToken { get; }
     public OpenBraceToken? OpenBraceToken { get; private set; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
+    public KeywordToken? WhileKeywordToken { get; private set; }
+    public OpenParenthesisToken? OpenParenthesisToken { get; private set; }
+    public IExpressionNode? ExpressionNode { get; private set; }
+    public CloseParenthesisToken? CloseParenthesisToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
@@ -48,13 +59,39 @@ public sealed record DoWhileStatementNode : ICodeBlockOwner
     {
     	var childrenList = new List<ISyntax>
         {
-            KeywordToken,
-            ExpressionNode,
+            DoKeywordToken,
         };
 
+        if (OpenBraceToken is not null)
+            childrenList.Add(OpenBraceToken);
+            
         if (CodeBlockNode is not null)
             childrenList.Add(CodeBlockNode);
+            
+        if (WhileKeywordToken is not null)
+            childrenList.Add(WhileKeywordToken);
+            
+        if (OpenParenthesisToken is not null)
+            childrenList.Add(OpenParenthesisToken);
+            
+        if (ExpressionNode is not null)
+            childrenList.Add(ExpressionNode);
+            
+        if (CloseParenthesisToken is not null)
+            childrenList.Add(CloseParenthesisToken);
 
         ChildList = childrenList.ToImmutableArray();
+    }
+    
+    public void SetWhileProperties(
+		KeywordToken whileKeywordToken,
+	    OpenParenthesisToken openParenthesisToken,
+	    IExpressionNode expressionNode,
+	    CloseParenthesisToken closeParenthesisToken)
+    {
+    	WhileKeywordToken = whileKeywordToken;
+    	OpenParenthesisToken = openParenthesisToken;
+	    ExpressionNode = expressionNode;
+	    CloseParenthesisToken = closeParenthesisToken;
     }
 }

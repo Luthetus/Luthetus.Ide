@@ -117,8 +117,12 @@ foreach (var item in list)
         
         var i = 0;
         
-        var doWhileNodeOne = (DoWhileStatementNode)topCodeBlock.ChildList[i++];
+        foreach (var child in topCodeBlock.ChildList)
+        {
+        	Console.WriteLine(child.SyntaxKind);
+        }
         
+        var doWhileNodeOne = (DoWhileStatementNode)topCodeBlock.ChildList.Single();
         Assert.Equal(1, topCodeBlock.ChildList.Length);
     }
     

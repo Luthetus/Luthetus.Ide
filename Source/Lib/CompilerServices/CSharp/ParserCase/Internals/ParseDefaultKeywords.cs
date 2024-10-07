@@ -148,7 +148,18 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        // TODO: Implement this method
+        var doWhileStatementNode = new DoWhileStatementNode(
+	    	consumedKeywordToken,
+	        openBraceToken: null,
+	        codeBlockNode: null,
+	        whileKeywordToken: null,
+	        openParenthesisToken: null,
+	        expressionNode: null,
+	        closeParenthesisToken: null);
+        	
+        // Have to push twice so it is on the stack when the 'while' keyword is parsed.
+		model.SyntaxStack.Push(doWhileStatementNode);
+		model.SyntaxStack.Push(doWhileStatementNode);
     }
 
     public static void HandleDoubleTokenKeyword(
@@ -762,7 +773,7 @@ public class ParseDefaultKeywords
     public static void HandleWhileTokenKeyword(
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
-    {
+    {    
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	ParseOthers.HandleExpression(
@@ -784,14 +795,26 @@ public class ParseDefaultKeywords
 		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
-		var whileStatementNode = new WhileStatementNode(
-			consumedKeywordToken,
-	        openParenthesisToken,
-	        expressionNode,
-	        closeParenthesisToken,
-	        codeBlockNode: null);
-	        
-        model.SyntaxStack.Push(whileStatementNode);
+		if (model.SyntaxStack.TryPeek(out var syntax) &&
+    		syntax is DoWhileStatementNode doWhileStatementNode)
+    	{
+	        doWhileStatementNode.SetWhileProperties(
+		    	consumedKeywordToken,
+		        openParenthesisToken,
+		        expressionNode,
+		        closeParenthesisToken);
+    	}
+		else
+		{
+			var whileStatementNode = new WhileStatementNode(
+				consumedKeywordToken,
+		        openParenthesisToken,
+		        expressionNode,
+		        closeParenthesisToken,
+		        codeBlockNode: null);
+		        
+	        model.SyntaxStack.Push(whileStatementNode);
+		}
     }
 
     public static void HandleUnrecognizedTokenKeyword(
