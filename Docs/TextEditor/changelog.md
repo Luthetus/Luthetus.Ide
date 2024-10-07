@@ -5,6 +5,22 @@ All notable changes to the `Luthetus.TextEditor` repository will be documented i
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.2.0] - 2024-10-07
+<details>
+  <summary>Click to show changes</summary>
+
+	### Fixed
+	- ContextMenu goto definition, scroll cursor into view
+	- After context menu picked SetCursorShouldBlink(false)
+	- C# Parser had Many Changes. Goto definition, respect the original cursor's syntax node kind. 'record struct' storage modifier kind. TypeClauseNode with '?'. Ambiguous property definition.
+	  	Constructor invocation within an expression. Record struct primary constructor. ExplicitCastNode.cs 'Ex: (MyClass)someObject'.
+	  	Verbatim string progress. Constructor ': this(...) or base(...)'. 'params' keyword. Constructor where clause (progress).
+	  	For statement progress. Foreach statement progress. Lock statement progress. While statement progress.
+	  	Do-while statement progress. Switch statement progress. Try-catch-finally statement progress.
+	  	Breadth first parsing progress (Parse all the definitions in a given scope prior to parsing an inner scope where appropriate i.e.: class definitions)
+
+</details>
+
 ## [3.1.0] - 2024-10-03
 <details>
   <summary>Click to show changes</summary>
