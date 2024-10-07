@@ -333,7 +333,6 @@ if (true)
         Assert.Equal(3, topCodeBlock.ChildList.Length);
     }
     
-    
     [Fact]
 	public void SwitchStatement_Simple()
 	{

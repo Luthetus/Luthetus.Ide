@@ -8,21 +8,20 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed record TryStatementNode : ICodeBlockOwner
 {
     public TryStatementNode(
-        KeywordToken keywordToken,
-        IExpressionNode expressionNode,
-        CodeBlockNode? codeBlockNode)
+        TryStatementTryNode? tryNode,
+        TryStatementCatchNode? catchNode,
+        TryStatementFinallyNode? finallyNode)
     {
-        KeywordToken = keywordToken;
-        ExpressionNode = expressionNode;
-        CodeBlockNode = codeBlockNode;
+        TryNode = tryNode;
+        CatchNode = catchNode;
+        FinallyNode = finallyNode;
 
         SetChildList();
     }
 
-    public KeywordToken KeywordToken { get; }
-    public IExpressionNode ExpressionNode { get; }
-    public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
+    public TryStatementTryNode? TryNode { get; }
+    public TryStatementCatchNode? CatchNode { get; }
+    public TryStatementFinallyNode? FinallyNode { get; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
@@ -46,14 +45,16 @@ public sealed record TryStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-            ExpressionNode,
-        };
+    	var childrenList = new List<ISyntax>();
 
-        if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+        if (TryNode is not null)
+            childrenList.Add(TryNode);
+            
+        if (CatchNode is not null)
+            childrenList.Add(CatchNode);
+            
+        if (FinallyNode is not null)
+            childrenList.Add(FinallyNode);
 
         ChildList = childrenList.ToImmutableArray();
     }
