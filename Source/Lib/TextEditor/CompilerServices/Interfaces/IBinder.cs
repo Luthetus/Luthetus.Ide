@@ -10,7 +10,7 @@ public interface IBinder
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
     public ImmutableArray<ITextEditorSymbol> SymbolsList { get; }
 
-    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan);
+    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit);
     public IBoundScope? GetBoundScope(TextEditorTextSpan textSpan);
     public IBinderSession ConstructBinderSession(ResourceUri resourceUri);

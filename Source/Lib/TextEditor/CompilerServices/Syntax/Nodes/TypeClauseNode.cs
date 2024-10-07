@@ -48,6 +48,8 @@ public sealed record TypeClauseNode : ISyntaxNode
     /// And: '&lt;int&gt;' is the <see cref="GenericParametersListingNode"/>
     /// </summary>
     public GenericParametersListingNode? GenericParametersListingNode { get; }
+    
+    public bool HasQuestionMark { get; set; }
 
     /// <summary>
     /// TODO: Change this attribute node property.

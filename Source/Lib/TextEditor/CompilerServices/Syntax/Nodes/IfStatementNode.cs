@@ -10,33 +10,51 @@ public sealed record IfStatementNode : ICodeBlockOwner
     public IfStatementNode(
         KeywordToken keywordToken,
         IExpressionNode expressionNode,
-        CodeBlockNode? ifStatementBodyCodeBlockNode)
+        CodeBlockNode? codeBlockNode)
     {
         KeywordToken = keywordToken;
         ExpressionNode = expressionNode;
-        IfStatementBodyCodeBlockNode = ifStatementBodyCodeBlockNode;
+        CodeBlockNode = codeBlockNode;
 
-        var childrenList = new List<ISyntax>
+        SetChildList();
+    }
+
+    public KeywordToken KeywordToken { get; }
+    public IExpressionNode ExpressionNode { get; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
+    public OpenBraceToken? OpenBraceToken { get; private set; }
+
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
+
+    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.IfStatementNode;
+    
+    public TypeClauseNode? GetReturnTypeClauseNode()
+    {
+    	return null;
+    }
+    
+    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    {
+    	OpenBraceToken = openBraceToken;
+    	CodeBlockNode = codeBlockNode;
+    	return this;
+    }
+    
+    public void SetChildList()
+    {
+    	var childrenList = new List<ISyntax>
         {
             KeywordToken,
             ExpressionNode,
         };
 
-        if (IfStatementBodyCodeBlockNode is not null)
-            childrenList.Add(IfStatementBodyCodeBlockNode);
+        if (CodeBlockNode is not null)
+            childrenList.Add(CodeBlockNode);
 
         ChildList = childrenList.ToImmutableArray();
     }
-
-    public KeywordToken KeywordToken { get; }
-    public IExpressionNode ExpressionNode { get; }
-    public CodeBlockNode? IfStatementBodyCodeBlockNode { get; }
-
-	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.IfStatementNode;
 }

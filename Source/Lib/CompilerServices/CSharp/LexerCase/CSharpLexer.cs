@@ -175,6 +175,9 @@ public class CSharpLexer : Lexer
                 case '$':
                     LexerUtils.LexDollarSignToken(_stringWalker, _syntaxTokenList);
                     break;
+                case '@':
+                    LexerUtils.LexAtToken(_stringWalker, _syntaxTokenList);
+                    break;
                 case ':':
                     LexerUtils.LexColonToken(_stringWalker, _syntaxTokenList);
                     break;

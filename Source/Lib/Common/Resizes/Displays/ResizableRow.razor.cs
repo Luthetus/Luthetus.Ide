@@ -76,12 +76,7 @@ public partial class ResizableRow : ComponentBase, IDisposable
         Func<(MouseEventArgs firstMouseEventArgs, MouseEventArgs secondMouseEventArgs), Task> dragEventHandler)
     {
         _dragEventHandler = dragEventHandler;
-
-        Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-        {
-            ShouldDisplay = true,
-            MouseEventArgs = null,
-        }));
+        Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, null));
     }
 
     private async Task DragEventHandlerResizeHandleAsync(

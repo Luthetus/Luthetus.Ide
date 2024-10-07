@@ -301,6 +301,15 @@ Execution Terminal"));
 
 		await SetDotNetSolutionTreeViewAsync(dotNetSolutionModel.Key).ConfigureAwait(false);
 	}
+	
+	private enum ParseSolutionStageKind
+	{
+		A,
+		B,
+		C,
+		D,
+		E,
+	}
 
 	private Task ParseSolution(Key<DotNetSolutionModel> dotNetSolutionModelKey)
 	{
@@ -323,18 +332,39 @@ Execution Terminal"));
 				_dispatcher,
 				TimeSpan.FromMilliseconds(-1));
 				
-			var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
+			// var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
+			var progressThrottle = new ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)>(TimeSpan.FromMilliseconds(200), (tuple, _) =>
+			{
+				switch (tuple.StageKind)
+				{
+					case ParseSolutionStageKind.A:
+						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
+						return Task.CompletedTask;
+					case ParseSolutionStageKind.B:
+						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
+						progressBarModel.Dispose();
+						return Task.CompletedTask;
+					case ParseSolutionStageKind.C:
+						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne);
+						progressBarModel.Dispose();
+						return Task.CompletedTask;
+					case ParseSolutionStageKind.D:
+						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
+						return Task.CompletedTask;
+					case ParseSolutionStageKind.E:
+						progressBarModel.SetProgress(tuple.Progress, tuple.MessageOne, tuple.MessageTwo);
+						return Task.CompletedTask;
+					default:
+						return Task.CompletedTask;
+				}
+			});
 		
 			try
 			{
 				if (_textEditorService.TextEditorConfig.RegisterModelFunc is null)
 					return;
-					
-				progressThrottle.Run(_ => 
-				{
-					progressBarModel.SetProgress(0.05, "Discovering projects...");
-					return Task.CompletedTask;
-				});
+				
+				progressThrottle.Run((ParseSolutionStageKind.A, 0.05, "Discovering projects...", null));
 				
 				foreach (var project in dotNetSolutionModel.DotNetProjectList)
 				{
@@ -391,23 +421,13 @@ Execution Terminal"));
 					projectsParsedCount++;
 				}
 
-				progressThrottle.Run(_ => 
-				{
-					progressBarModel.SetProgress(1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty);
-					progressBarModel.Dispose();
-					return Task.CompletedTask;
-				});
+				progressThrottle.Run((ParseSolutionStageKind.B, 1, $"Finished parsing: {dotNetSolutionModel.AbsolutePath.NameWithExtension}", string.Empty));
 			}
 			catch (Exception e)
 			{
 				var currentProgress = progressBarModel.GetProgress();
 				
-				progressThrottle.Run(_ => 
-				{
-					progressBarModel.SetProgress(currentProgress, e.ToString());
-					progressBarModel.Dispose();
-					return Task.CompletedTask;
-				});
+				progressThrottle.Run((ParseSolutionStageKind.C, currentProgress, e.ToString(), null));
 			}
 		});
 
@@ -417,7 +437,7 @@ Execution Terminal"));
 	private async Task DiscoverClassesInProject(
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
-		Throttle progressThrottle,
+		ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)> progressThrottle,
 		double currentProgress,
 		double maximumProgressAvailableToProject)
 	{
@@ -431,11 +451,7 @@ Execution Terminal"));
 		var startingAbsolutePathForSearch = parentDirectory.Value;
 		var discoveredFileList = new List<string>();
 
-		progressThrottle.Run(_ => 
-		{
-			progressBarModel.SetProgress(null, null, "discovering files");
-			return Task.CompletedTask;
-		});
+		progressThrottle.Run((ParseSolutionStageKind.D, null, null, "discovering files"));
 		
 		await DiscoverFilesRecursively(startingAbsolutePathForSearch, discoveredFileList, true).ConfigureAwait(false);
 
@@ -498,7 +514,7 @@ Execution Terminal"));
 	private async Task ParseClassesInProject(
 		IDotNetProject dotNetProject,
 		ProgressBarModel progressBarModel,
-		Throttle progressThrottle,
+		ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)> progressThrottle,
 		double currentProgress,
 		double maximumProgressAvailableToProject,
 		List<string> discoveredFileList)
@@ -511,14 +527,7 @@ Execution Terminal"));
 
 			var progress = currentProgress + maximumProgressAvailableToProject * (fileParsedCount / (double)discoveredFileList.Count);
 
-			progressThrottle.Run(_ => 
-			{
-				progressBarModel.SetProgress(
-					progress,
-					null,
-					$"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}");
-				return Task.CompletedTask;
-			});
+			progressThrottle.Run((ParseSolutionStageKind.E, progress, null, $"{fileParsedCount + 1}/{discoveredFileList.Count}: {fileAbsolutePath.NameWithExtension}"));
 
 			var resourceUri = new ResourceUri(file);
 			
