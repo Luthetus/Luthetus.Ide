@@ -161,11 +161,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 			_mouseDownEventArgs = mouseEventArgs;
 			_dragEventHandler = HORIZONTAL_DragEventHandlerScrollAsync;
 	
-	        Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-	        {
-	            ShouldDisplay = true,
-	            MouseEventArgs = null,
-	        }));
+			Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, null));
 		}
     }
     
@@ -195,11 +191,7 @@ public partial class ScrollbarSection : ComponentBase, IDisposable
 			_mouseDownEventArgs = mouseEventArgs;
 			_dragEventHandler = VERTICAL_DragEventHandlerScrollAsync;
 	
-	        Dispatcher.Dispatch(new DragState.WithAction(inState => inState with
-	        {
-	            ShouldDisplay = true,
-	            MouseEventArgs = null,
-	        }));
+			Dispatcher.Dispatch(new DragState.ShouldDisplayAndMouseEventArgsSetAction(true, null));
 		}     
     }
 

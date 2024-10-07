@@ -54,8 +54,8 @@ public class ParseBreadthFirst
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
-		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
-		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[1];
+		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList[0];
+		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList[1];
 
 		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
 	}
@@ -180,7 +180,7 @@ public class MyClass
 
 		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
 
-		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode.ChildList.Single();
+		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList.Single();
 	}
 
 	[Fact]
@@ -210,8 +210,8 @@ public class MyClass
 
 		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
 
-		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[0];
-		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.TypeBodyCodeBlockNode.ChildList[1];
+		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList[0];
+		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList[1];
 
 		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
 	}

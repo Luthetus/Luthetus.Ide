@@ -54,7 +54,8 @@ public static class ParseVariables
 		}
 		else
 		{
-			throw new NotImplementedException($"The {nameof(VariableKind)}: {variableKind} was not recognized.");
+			model.DiagnosticBag.ReportTodoException(consumedIdentifierToken.TextSpan, $"The {nameof(VariableKind)}: {variableKind} was not recognized.");
+			return;
 		}
 
         model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);

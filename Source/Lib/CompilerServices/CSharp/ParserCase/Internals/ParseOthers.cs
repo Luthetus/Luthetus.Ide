@@ -107,6 +107,9 @@ public static class ParseOthers
         while (!model.TokenWalker.IsEof)
         {
             var tokenCurrent = model.TokenWalker.Consume();
+            
+            if (tokenCurrent.SyntaxKind == SyntaxKind.NewTokenKeyword) // Constructor Invocation
+            	model.SyntaxStack.Push(tokenCurrent);
 
             if (tokenCurrent.SyntaxKind == SyntaxKind.EndOfFileToken || tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
             {
@@ -213,22 +216,47 @@ public static class ParseOthers
                                 ImmutableArray<FunctionParameterEntryNode>.Empty,
                                 (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken));
                         }
+                        
+                        if (model.SyntaxStack.TryPeek(out var syntax) &&
+                        	syntax.SyntaxKind == SyntaxKind.NewTokenKeyword)
+                        {
+                        	// Constructor invocation
+                        	var newKeywordToken = model.SyntaxStack.Pop();
 
-                        model.Binder.TryGetFunctionHierarchically(
-                            tokenCurrent.TextSpan.GetText(),
-                            model.BinderSession.CurrentScope,
-                            out var functionDefinitionNode);
-
-                        var functionInvocationNode = new FunctionInvocationNode(
-                            (IdentifierToken)tokenCurrent,
-                            functionDefinitionNode,
-                            genericParametersListingNode,
-                            functionParametersListingNode,
-                            functionDefinitionNode?.ReturnTypeClauseNode ?? CSharpFacts.Types.Void.ToTypeClause());
-
-                        model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
-
-                        resultingExpression = functionInvocationNode;
+					        var typeClauseNode = new TypeClauseNode(
+					        	(IdentifierToken)tokenCurrent,
+					        	valueType: null,
+					        	genericParametersListingNode);
+					        	
+            				model.Binder.BindTypeClauseNode(typeClauseNode, model);
+	
+	                        var constructorInvocationNode = new ConstructorInvocationExpressionNode(
+						        (KeywordToken)newKeywordToken,
+						        typeClauseNode,
+						        functionParametersListingNode,
+						        objectInitializationParametersListingNode: null);
+	
+	                        resultingExpression = constructorInvocationNode;
+                        }
+                        else
+                        {
+                        	// Function invocation
+                        	model.Binder.TryGetFunctionHierarchically(
+	                            tokenCurrent.TextSpan.GetText(),
+	                            model.BinderSession.CurrentScope,
+	                            out var functionDefinitionNode);
+	
+	                        var functionInvocationNode = new FunctionInvocationNode(
+	                            (IdentifierToken)tokenCurrent,
+	                            functionDefinitionNode,
+	                            genericParametersListingNode,
+	                            functionParametersListingNode,
+	                            functionDefinitionNode?.ReturnTypeClauseNode ?? CSharpFacts.Types.Void.ToTypeClause());
+	
+	                        model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
+	
+	                        resultingExpression = functionInvocationNode;
+                        }
                     }
                     else
                     {
@@ -292,36 +320,59 @@ public static class ParseOthers
 
                     break;
                 case SyntaxKind.OpenParenthesisToken:
-                    var copyExtraExpressionDeliminaters = new List<ExpressionDelimiter>(extraExpressionDeliminaters ?? Array.Empty<ExpressionDelimiter>());
-
-                    copyExtraExpressionDeliminaters.Insert(0, new ExpressionDelimiter(
-                        SyntaxKind.OpenParenthesisToken,
-                        SyntaxKind.CloseParenthesisToken,
-                        tokenCurrent,
-                        null));
-
-                    HandleExpression(
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        copyExtraExpressionDeliminaters.ToArray(),
-                        model);
-
-                    var parenthesizedExpression = (IExpressionNode)model.SyntaxStack.Pop();
-
-                    previousInvocationExpressionNode = parenthesizedExpression;
-
-                    if (topMostExpressionNode is null)
-                        topMostExpressionNode = parenthesizedExpression;
-                    else if (leftExpressionNode is null)
-                        leftExpressionNode = parenthesizedExpression;
-                    else if (rightExpressionNode is null)
-                        rightExpressionNode = parenthesizedExpression;
-                    else
-                        model.DiagnosticBag.ReportTodoException(parenthesizedExpression.ConstructTextSpanRecursively(), $"{nameof(HandleExpression)} OpenParenthesisToken issue text:{parenthesizedExpression.ConstructTextSpanRecursively().GetText()}");
-                    break;
+                
+                	// Goal: Start parsing 'ExplicitCastNode' (2024-10-04)
+                	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.IdentifierToken &&
+                		model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+                	{
+                		// Explicit Cast
+                		
+                		var typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
+                		model.Binder.BindTypeClauseNode(typeClauseNode, model);
+                		
+                		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+                	
+                		var explicitCastNode = new ExplicitCastNode(
+					        (OpenParenthesisToken)tokenCurrent,
+					        typeClauseNode,
+					        closeParenthesisToken,
+					        new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
+                		break;
+                	}
+                	else
+                	{
+	                    var copyExtraExpressionDeliminaters = new List<ExpressionDelimiter>(extraExpressionDeliminaters ?? Array.Empty<ExpressionDelimiter>());
+	
+						// TODO: This doesn't add delimiters to the parent invocation of the method right? Because that seemingly would be very wrong?
+	                    copyExtraExpressionDeliminaters.Insert(0, new ExpressionDelimiter(
+	                        SyntaxKind.OpenParenthesisToken,
+	                        SyntaxKind.CloseParenthesisToken,
+	                        tokenCurrent,
+	                        null));
+	
+	                    HandleExpression(
+	                        null,
+	                        null,
+	                        null,
+	                        null,
+	                        null,
+	                        copyExtraExpressionDeliminaters.ToArray(),
+	                        model);
+	
+	                    var parenthesizedExpression = (IExpressionNode)model.SyntaxStack.Pop();
+	
+	                    previousInvocationExpressionNode = parenthesizedExpression;
+	
+	                    if (topMostExpressionNode is null)
+	                        topMostExpressionNode = parenthesizedExpression;
+	                    else if (leftExpressionNode is null)
+	                        leftExpressionNode = parenthesizedExpression;
+	                    else if (rightExpressionNode is null)
+	                        rightExpressionNode = parenthesizedExpression;
+	                    else
+	                        model.DiagnosticBag.ReportTodoException(parenthesizedExpression.ConstructTextSpanRecursively(), $"{nameof(HandleExpression)} OpenParenthesisToken issue text:{parenthesizedExpression.ConstructTextSpanRecursively().GetText()}");
+	                    break;
+                    }
                 default:
                     if (tokenCurrent.SyntaxKind == SyntaxKind.DollarSignToken)
                     {
@@ -331,6 +382,12 @@ public static class ParseOthers
 
                         model.Binder.BindStringInterpolationExpression(
                             (DollarSignToken)tokenCurrent,
+                            model);
+                    }
+                    else if (tokenCurrent.SyntaxKind == SyntaxKind.AtToken)
+                    {
+                    	model.Binder.BindStringVerbatimExpression(
+                            (AtToken)tokenCurrent,
                             model);
                     }
 

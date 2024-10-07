@@ -20,7 +20,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
         TypeClauseNode? inheritedTypeClauseNode,
 		OpenBraceToken? openBraceToken,
-        CodeBlockNode? typeBodyCodeBlockNode)
+        CodeBlockNode? codeBlockNode)
     {
         AccessModifierKind = accessModifierKind;
         HasPartialModifier = hasPartialModifier;
@@ -31,24 +31,12 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
         InheritedTypeClauseNode = inheritedTypeClauseNode;
         OpenBraceToken = openBraceToken;
-        TypeBodyCodeBlockNode = typeBodyCodeBlockNode;
-
-        var children = new List<ISyntax>
-        {
-            TypeIdentifierToken,
-        };
-
-        if (GenericArgumentsListingNode is not null)
-            children.Add(GenericArgumentsListingNode);
-
-        if (InheritedTypeClauseNode is not null)
-            children.Add(InheritedTypeClauseNode);
-
-        if (TypeBodyCodeBlockNode is not null)
-            children.Add(TypeBodyCodeBlockNode);
-
-        ChildList = children.ToImmutableArray();
+        CodeBlockNode = codeBlockNode;
+        
+        SetChildList();
     }
+
+	private TypeClauseNode? _toTypeClauseNodeResult;
 
     public AccessModifierKind AccessModifierKind { get; }
     public bool HasPartialModifier { get; }
@@ -70,7 +58,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     /// <summary>
     /// The open brace for the body code block node.
     /// </summary>
-    public OpenBraceToken OpenBraceToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
 
     /// <summary>
     /// Given:<br/>
@@ -78,12 +66,12 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
     public TypeClauseNode? InheritedTypeClauseNode { get; }
-    public CodeBlockNode? TypeBodyCodeBlockNode { get; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ImmutableArray<ISyntax> ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -93,10 +81,10 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
 
     public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
     {
-        if (TypeBodyCodeBlockNode is null)
+        if (CodeBlockNode is null)
             return ImmutableArray<FunctionDefinitionNode>.Empty;
 
-        return TypeBodyCodeBlockNode.ChildList
+        return CodeBlockNode.ChildList
             .Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             .Select(fd => (FunctionDefinitionNode)fd)
             .ToImmutableArray();
@@ -104,9 +92,42 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
 
     public TypeClauseNode ToTypeClause()
     {
-        return new TypeClauseNode(
+    	return _toTypeClauseNodeResult ??= new TypeClauseNode(
             TypeIdentifierToken,
             ValueType,
             null);
+    }
+    
+    public TypeClauseNode? GetReturnTypeClauseNode()
+    {
+    	return null;
+    }
+    
+    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    {
+    	OpenBraceToken = openBraceToken;
+    	CodeBlockNode = codeBlockNode;
+    	
+    	SetChildList();
+    	return this;
+    }
+    
+    public void SetChildList()
+    {
+        var children = new List<ISyntax>
+        {
+            TypeIdentifierToken,
+        };
+
+        if (GenericArgumentsListingNode is not null)
+            children.Add(GenericArgumentsListingNode);
+
+        if (InheritedTypeClauseNode is not null)
+            children.Add(InheritedTypeClauseNode);
+
+        if (CodeBlockNode is not null)
+            children.Add(CodeBlockNode);
+
+        ChildList = children.ToImmutableArray();
     }
 }

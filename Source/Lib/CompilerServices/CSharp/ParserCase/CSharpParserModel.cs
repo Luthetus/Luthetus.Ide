@@ -48,7 +48,4 @@ public class CSharpParserModel
     /// That is to say, this action would create the function definition node and then append it.
     /// </summary>
     public Stack<Action<CodeBlockNode>> FinalizeCodeBlockNodeActionStack { get; set; }
-	public Queue<Action<int>> ParseChildScopeQueue { get; set; } = new();
-	public int DequeueChildScopeCounter { get; set; }
-	public int? DequeuedIndexForChildList { get; set; }
 }

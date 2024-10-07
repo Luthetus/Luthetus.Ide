@@ -16,23 +16,17 @@ public sealed record NamespaceStatementNode : ICodeBlockOwner
         IdentifierToken = identifierToken;
         CodeBlockNode = codeBlockNode;
 
-        var children = new List<ISyntax>
-        {
-            KeywordToken,
-            IdentifierToken,
-            CodeBlockNode,
-        };
-
-        ChildList = children.ToImmutableArray();
+        SetChildList();
     }
 
     public KeywordToken KeywordToken { get; }
     public IdentifierToken IdentifierToken { get; }
-    public CodeBlockNode CodeBlockNode { get; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
+    public OpenBraceToken? OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ImmutableArray<ISyntax> ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -44,9 +38,43 @@ public sealed record NamespaceStatementNode : ICodeBlockOwner
     /// </summary>
     public ImmutableArray<TypeDefinitionNode> GetTopLevelTypeDefinitionNodes()
     {
-        return CodeBlockNode.ChildList
+    	var localCodeBlockNode = CodeBlockNode;
+    
+    	if (localCodeBlockNode is null)
+    		return ImmutableArray<TypeDefinitionNode>.Empty;
+    
+        return localCodeBlockNode.ChildList
             .Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             .Select(td => (TypeDefinitionNode)td)
             .ToImmutableArray();
+    }
+    
+    public TypeClauseNode? GetReturnTypeClauseNode()
+    {
+    	return null;
+    }
+    
+    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    {    
+    	OpenBraceToken = openBraceToken;
+    	CodeBlockNode = codeBlockNode;
+    	return this;
+    }
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
+        {
+            KeywordToken,
+            IdentifierToken,
+        };
+        
+        if (OpenBraceToken is not null)
+    		children.Add(OpenBraceToken);
+    		
+    	if (CodeBlockNode is not null)
+    		children.Add(CodeBlockNode);
+
+        ChildList = children.ToImmutableArray();
     }
 }

@@ -55,7 +55,6 @@ public partial record IdeHeaderState
 			IdeHeaderState inState,
 			ModifyMenuFileAction modifyMenuFileAction)
 		{
-			Console.WriteLine("ReduceModifyMenuFileAction");
 			return inState with
 			{
 				MenuFile = modifyMenuFileAction.MenuFunc.Invoke(

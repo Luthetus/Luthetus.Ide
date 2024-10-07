@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Commands.Models;
+namespace Luthetus.Common.RazorLib.Commands.Models;
 
 public abstract class CommandWithType<T> : CommandNoType where T : notnull
 {

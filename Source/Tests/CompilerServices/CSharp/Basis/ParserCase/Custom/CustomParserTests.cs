@@ -79,7 +79,7 @@ public class CustomParserTests
 
         var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
 
-        var variableDeclarationNode = (VariableDeclarationNode)typeDefinitionNode.TypeBodyCodeBlockNode!.ChildList.Single();
+        var variableDeclarationNode = (VariableDeclarationNode)typeDefinitionNode.CodeBlockNode!.ChildList.Single();
 
         var attributeNode = variableDeclarationNode.TypeClauseNode.AttributeNode;
 
@@ -295,7 +295,7 @@ public class CustomParserTests
 
         var constructorDefinitionNode = (ConstructorDefinitionNode)
             ((TypeDefinitionNode)topCodeBlock.ChildList.Single())
-            .TypeBodyCodeBlockNode!.ChildList.Single();
+            .CodeBlockNode!.ChildList.Single();
 
         Assert.Equal(className,
             constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -307,7 +307,7 @@ public class CustomParserTests
             .FunctionArgumentsListingNode
             .FunctionArgumentEntryNodeList);
 
-        Assert.Empty(constructorDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
+        Assert.Empty(constructorDefinitionNode.CodeBlockNode!.ChildList);
         Assert.Null(constructorDefinitionNode.ConstraintNode);
         Assert.False(constructorDefinitionNode.IsFabricated);
         Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
@@ -468,7 +468,7 @@ public class CustomParserTests
 
         Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
         Assert.NotNull(functionDefinitionNode.FunctionArgumentsListingNode);
-        Assert.Empty(functionDefinitionNode.FunctionBodyCodeBlockNode!.ChildList);
+        Assert.Empty(functionDefinitionNode.CodeBlockNode!.ChildList);
         Assert.Null(functionDefinitionNode.ConstraintNode);
 
         Assert.False(functionDefinitionNode.IsFabricated);
@@ -1200,7 +1200,7 @@ public class CustomParserTests
 
         // ifStatementNode.IfStatementBodyCodeBlockNode
         {
-            var ifStatementBodyCodeBlockNode = ifStatementNode.IfStatementBodyCodeBlockNode;
+            var ifStatementBodyCodeBlockNode = ifStatementNode.CodeBlockNode;
             Assert.NotNull(ifStatementBodyCodeBlockNode);
 
             Assert.Empty(ifStatementBodyCodeBlockNode.ChildList);
@@ -1723,9 +1723,9 @@ public class CustomParserTests
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
         var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
-        Assert.NotNull(functionDefinitionNode.FunctionBodyCodeBlockNode);
+        Assert.NotNull(functionDefinitionNode.CodeBlockNode);
 
-        var returnStatementNode = (ReturnStatementNode)functionDefinitionNode.FunctionBodyCodeBlockNode.ChildList.Single();
+        var returnStatementNode = (ReturnStatementNode)functionDefinitionNode.CodeBlockNode.ChildList.Single();
 
         // returnStatementNode.ChildList
         {
@@ -1909,7 +1909,7 @@ public class CustomParserTests
 
         // typeDefinitionNode.TypeBodyCodeBlockNode
         {
-            var typeBodyCodeBlockNode = typeDefinitionNode.TypeBodyCodeBlockNode;
+            var typeBodyCodeBlockNode = typeDefinitionNode.CodeBlockNode;
             Assert.NotNull(typeBodyCodeBlockNode);
 
             Assert.Empty(typeBodyCodeBlockNode.ChildList);

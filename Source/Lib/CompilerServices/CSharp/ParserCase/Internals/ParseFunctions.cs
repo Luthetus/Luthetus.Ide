@@ -88,7 +88,7 @@ public class ParseFunctions
         IdentifierToken consumedIdentifierToken,
         CSharpParserModel model)
     {
-        HandleFunctionArguments(
+    	HandleFunctionArguments(
             (OpenParenthesisToken)model.TokenWalker.Consume(),
             model);
 
@@ -118,18 +118,39 @@ public class ParseFunctions
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
+        	_ = model.TokenWalker.Consume();
             // Constructor invokes some other constructor as well
-
-            while (!model.TokenWalker.IsEof)
-            {
-                if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-                    model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
-                {
-                    break;
-                }
-
-                _ = model.TokenWalker.Consume();
-            }
+        	// 'this(...)' or 'base(...)'
+        	
+        	KeywordToken? keywordToken;
+        	
+        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
+        		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
+        	else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
+        		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
+        	else
+        		keywordToken = null;
+        	
+        	if (keywordToken is null || keywordToken.IsFabricated)
+        	{
+        		while (!model.TokenWalker.IsEof)
+	            {
+	                if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+	                    model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+	                {
+	                    break;
+	                }
+	
+	                _ = model.TokenWalker.Consume();
+	            }
+        	}
+        	else
+        	{
+        		HandleFunctionParameters(
+		        	(OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
+			        model);
+				var functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
+        	}
         }
     }
 
@@ -447,14 +468,20 @@ public class ParseFunctions
 
         while (true)
         {
+            var hasParamsKeyword = false;
             var hasOutKeyword = false;
             var hasInKeyword = false;
             var hasRefKeyword = false;
 
-            // Check for keywords: { 'out', 'in', 'ref', }
+            // Check for keywords: { 'params', 'out', 'in', 'ref', }
             {
-                // TODO: Erroneously putting an assortment of the keywords: { 'out', 'in', 'ref', }
-                if (SyntaxKind.OutTokenKeyword == model.TokenWalker.Current.SyntaxKind)
+                // TODO: Erroneously putting an assortment of the keywords: { 'params', 'out', 'in', 'ref', }
+                if (SyntaxKind.ParamsTokenKeyword == model.TokenWalker.Current.SyntaxKind)
+                {
+                    _ = model.TokenWalker.Consume();
+                    hasParamsKeyword = true;
+                }
+                else if (SyntaxKind.OutTokenKeyword == model.TokenWalker.Current.SyntaxKind)
                 {
                     _ = model.TokenWalker.Consume();
                     hasOutKeyword = true;
@@ -495,6 +522,7 @@ public class ParseFunctions
             var functionArgumentEntryNode = new FunctionArgumentEntryNode(
                 variableDeclarationStatementNode,
                 false,
+                hasParamsKeyword,
                 hasOutKeyword,
                 hasInKeyword,
                 hasRefKeyword);
@@ -516,6 +544,7 @@ public class ParseFunctions
                 functionArgumentEntryNode = model.Binder.BindFunctionOptionalArgument(
                     functionArgumentEntryNode,
                     compileTimeConstantToken,
+                    hasParamsKeyword,
                     hasOutKeyword,
                     hasInKeyword,
                     hasRefKeyword,

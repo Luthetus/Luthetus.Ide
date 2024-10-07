@@ -167,6 +167,7 @@ public static class RuntimeAssembliesLoaderFactory
                                             false,
                                             false,
                                             false,
+                                            false,
                                             false);
 
                                         functionArgumentEntryNodeList.Add(functionArgumentEntryNode);

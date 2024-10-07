@@ -378,7 +378,8 @@ public static class ParseTokens
             expectingTypeClause = true;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
-            model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+            model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+            model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
             expectingTypeClause = true;
         }
@@ -532,7 +533,18 @@ public static class ParseTokens
                 typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
                 inheritedTypeClauseNode,
                 typeDefinitionNode.OpenBraceToken,
-                typeDefinitionNode.TypeBodyCodeBlockNode));
+                typeDefinitionNode.CodeBlockNode));
+            
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
+	        {
+	        	while (!model.TokenWalker.IsEof)
+	        	{
+	        		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+	        			break;
+	        		
+	        		_ = model.TokenWalker.Consume();
+	        	}
+	        }
         }
         else
         {
@@ -548,146 +560,71 @@ public static class ParseTokens
         ICodeBlockOwner? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
 
+		if (model.SyntaxStack.TryPeek(out var checkForCodeBlockOwner) && checkForCodeBlockOwner is not ICodeBlockOwner)
+		{
+			model.SyntaxStack.Push(new ArbitraryCodeBlockNode(
+				closureCurrentCodeBlockBuilder.CodeBlockOwner));
+		}
+
 		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind
 			?? ScopeDirectionKind.Both;
+			
+		bool wasDeferred = false;
 
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
-			if (model.DequeueChildScopeCounter == 0)
+			// TODO: ??????? How would two consecutive defers get enqueued if doing '== 0'.
+			//
+			// Response: This seems to be a flag that says a child scope is allowed to be parsed (rather than infinitely enqueueing).
+			//           If so, rename the variable and make it a bool because it being a 'counter' is extremely confusing.
+			if (model.CurrentCodeBlockBuilder.DequeueChildScopeCounter == 0)
 			{
 				model.TokenWalker.DeferParsingOfChildScope(consumedOpenBraceToken, model);
 				return;
 			}
 
-			model.DequeueChildScopeCounter--;
+			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter--;
+			wasDeferred = true;
 		}
 
-		var indexForInsertion = model.DequeuedIndexForChildList ?? model.CurrentCodeBlockBuilder.ChildList.Count;
-
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-        {
-            var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
-            nextCodeBlockOwner = namespaceStatementNode;
-
-            model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
+		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.DequeuedIndexForChildList ?? model.CurrentCodeBlockBuilder.ChildList.Count;
+		
+		if (model.SyntaxStack.TryPeek(out var syntax) && syntax is ICodeBlockOwner)
+		{
+			nextCodeBlockOwner = (ICodeBlockOwner)model.SyntaxStack.Pop();
+			
+			var returnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
+			if (returnTypeClauseNode is not null)
+				scopeReturnTypeClauseNode = returnTypeClauseNode;
+			
+			// Awkwardly capturing this variable so the closure on 'FinalizeCodeBlockNodeActionStack'
+			// Reads better. Because it will be used AFTER the code block was read so 'next' is nonsense.
+			var selfCodeBlockOwner = nextCodeBlockOwner;
+			
+			model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
             {
-                namespaceStatementNode = new NamespaceStatementNode(
-                    namespaceStatementNode.KeywordToken,
-                    namespaceStatementNode.IdentifierToken,
-                    codeBlockNode);
-
-                closureCurrentCodeBlockBuilder.ChildList.Add(namespaceStatementNode);
-                model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
+                selfCodeBlockOwner = selfCodeBlockOwner.WithCodeBlockNode(consumedOpenBraceToken, codeBlockNode);
+				
+				/*if (wasDeferred)
+					closureCurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;
+				else
+					closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);*/
+				
+				if (selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
+					selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
+					selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+				{
+					closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);
+				}
+					
+				if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+					model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)selfCodeBlockOwner, model);
+				else if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+					model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)selfCodeBlockOwner, model, true);
             });
-
-            model.SyntaxStack.Push(namespaceStatementNode);
-        }
-        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-        {
-			var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
-            nextCodeBlockOwner = typeDefinitionNode;
-
-            model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
-            {
-                typeDefinitionNode = new TypeDefinitionNode(
-                    typeDefinitionNode.AccessModifierKind,
-                    typeDefinitionNode.HasPartialModifier,
-                    typeDefinitionNode.StorageModifierKind,
-                    typeDefinitionNode.TypeIdentifierToken,
-                    typeDefinitionNode.ValueType,
-                    typeDefinitionNode.GenericArgumentsListingNode,
-                    typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
-                    typeDefinitionNode.InheritedTypeClauseNode,
-                    typeDefinitionNode.OpenBraceToken,
-                    codeBlockNode);
-
-                model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model, true);
-                closureCurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
-            });
-
-			typeDefinitionNode = new TypeDefinitionNode(
-                typeDefinitionNode.AccessModifierKind,
-                typeDefinitionNode.HasPartialModifier,
-                typeDefinitionNode.StorageModifierKind,
-                typeDefinitionNode.TypeIdentifierToken,
-                typeDefinitionNode.ValueType,
-                typeDefinitionNode.GenericArgumentsListingNode,
-                typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
-                typeDefinitionNode.InheritedTypeClauseNode,
-                consumedOpenBraceToken,
-                typeDefinitionNode.TypeBodyCodeBlockNode);
-
-            model.SyntaxStack.Push(typeDefinitionNode);
-        }
-        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-        {
-            var functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
-            nextCodeBlockOwner = functionDefinitionNode;
-            scopeReturnTypeClauseNode = functionDefinitionNode.ReturnTypeClauseNode;
-
-            model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
-            {
-                functionDefinitionNode = new FunctionDefinitionNode(
-                    AccessModifierKind.Public,
-                    functionDefinitionNode.ReturnTypeClauseNode,
-                    functionDefinitionNode.FunctionIdentifierToken,
-                    functionDefinitionNode.GenericArgumentsListingNode,
-                    functionDefinitionNode.FunctionArgumentsListingNode,
-                    codeBlockNode,
-                    functionDefinitionNode.ConstraintNode);
-
-                closureCurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
-            });
-
-            model.SyntaxStack.Push(functionDefinitionNode);
-        }
-        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
-        {
-            var constructorDefinitionNode = (ConstructorDefinitionNode)model.SyntaxStack.Pop();
-            nextCodeBlockOwner = constructorDefinitionNode;
-            scopeReturnTypeClauseNode = constructorDefinitionNode.ReturnTypeClauseNode;
-
-            model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
-            {
-                constructorDefinitionNode = new ConstructorDefinitionNode(
-                    constructorDefinitionNode.ReturnTypeClauseNode,
-                    constructorDefinitionNode.FunctionIdentifier,
-                    constructorDefinitionNode.GenericArgumentsListingNode,
-                    constructorDefinitionNode.FunctionArgumentsListingNode,
-                    codeBlockNode,
-                    constructorDefinitionNode.ConstraintNode);
-
-                closureCurrentCodeBlockBuilder.ChildList.Insert(indexForInsertion, constructorDefinitionNode);
-            });
-
-            model.SyntaxStack.Push(constructorDefinitionNode);
-        }
-        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.IfStatementNode)
-        {
-            var ifStatementNode = (IfStatementNode)model.SyntaxStack.Pop();
-            nextCodeBlockOwner = ifStatementNode;
-
-            model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
-            {
-                ifStatementNode = new IfStatementNode(
-                    ifStatementNode.KeywordToken,
-                    ifStatementNode.ExpressionNode,
-                    codeBlockNode);
-
-                closureCurrentCodeBlockBuilder.ChildList.Add(ifStatementNode);
-            });
-
-            model.SyntaxStack.Push(ifStatementNode);
-        }
-        else
-        {
-            nextCodeBlockOwner = closureCurrentCodeBlockBuilder.CodeBlockOwner;
-
-            model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
-            {
-                closureCurrentCodeBlockBuilder.ChildList.Add(codeBlockNode);
-            });
-        }
+			
+			model.SyntaxStack.Push(selfCodeBlockOwner);
+		}
 
         model.Binder.RegisterBoundScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan, model);
 
@@ -711,10 +648,10 @@ public static class ParseTokens
         CloseBraceToken consumedCloseBraceToken,
         CSharpParserModel model)
     {
-		if (model.ParseChildScopeQueue.TryDequeue(out var action))
+		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var action))
 		{
 			action.Invoke(model.TokenWalker.Index - 1);
-			model.DequeueChildScopeCounter++;
+			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter++;
 			return;
 		}
 
@@ -737,7 +674,8 @@ public static class ParseTokens
         if (model.SyntaxStack.TryPeek(out var syntax) &&
             syntax is TypeDefinitionNode typeDefinitionNode)
         {
-            if (typeDefinitionNode.StorageModifierKind == StorageModifierKind.Record)
+            if (typeDefinitionNode.StorageModifierKind == StorageModifierKind.Record ||
+            	typeDefinitionNode.StorageModifierKind == StorageModifierKind.RecordStruct)
             {
                 _ = model.SyntaxStack.Pop();
 
@@ -864,7 +802,7 @@ public static class ParseTokens
         if (model.SyntaxStack.TryPeek(out var syntax) &&
             syntax is FunctionDefinitionNode functionDefinitionNode)
         {
-            if (functionDefinitionNode.FunctionBodyCodeBlockNode is null &&
+            if (functionDefinitionNode.CodeBlockNode is null &&
                 model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
             {
                 var closeAngleBracketToken = model.TokenWalker.Consume();
@@ -945,15 +883,15 @@ public static class ParseTokens
             nextCodeBlockOwner = namespaceStatementNode;
 
             model.FinalizeNamespaceFileScopeCodeBlockNodeAction = codeBlockNode =>
-                {
-                    namespaceStatementNode = new NamespaceStatementNode(
-                        namespaceStatementNode.KeywordToken,
-                        namespaceStatementNode.IdentifierToken,
-                        codeBlockNode);
+            {
+                namespaceStatementNode = new NamespaceStatementNode(
+                    namespaceStatementNode.KeywordToken,
+                    namespaceStatementNode.IdentifierToken,
+                    codeBlockNode);
 
-                    closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
-                    model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
-                };
+                closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
+                model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
+            };
 
             model.Binder.RegisterBoundScope(
                 scopeReturnTypeClauseNode,
@@ -1354,7 +1292,8 @@ public static class ParseTokens
                 ParseContextualKeywords.HandleUnrecognizedTokenContextualKeyword(consumedKeywordContextualToken, model);
                 break;
             default:
-                throw new NotImplementedException($"Implement the {consumedKeywordContextualToken.SyntaxKind.ToString()} contextual keyword.");
+            	model.DiagnosticBag.ReportTodoException(consumedKeywordContextualToken.TextSpan, $"Implement the {consumedKeywordContextualToken.SyntaxKind.ToString()} contextual keyword.");
+            	break;
         }
     }
 }
