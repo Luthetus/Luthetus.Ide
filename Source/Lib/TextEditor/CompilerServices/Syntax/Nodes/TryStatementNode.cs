@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record TryStatementNode : ICodeBlockOwner
+public sealed record TryStatementNode : ISyntaxNode
 {
     public TryStatementNode(
         TryStatementTryNode? tryNode,
@@ -19,9 +19,9 @@ public sealed record TryStatementNode : ICodeBlockOwner
         SetChildList();
     }
 
-    public TryStatementTryNode? TryNode { get; }
-    public TryStatementCatchNode? CatchNode { get; }
-    public TryStatementFinallyNode? FinallyNode { get; }
+    public TryStatementTryNode? TryNode { get; private set; }
+    public TryStatementCatchNode? CatchNode { get; private set; }
+    public TryStatementFinallyNode? FinallyNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
@@ -30,18 +30,6 @@ public sealed record TryStatementNode : ICodeBlockOwner
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
-    
-    public TypeClauseNode? GetReturnTypeClauseNode()
-    {
-    	return null;
-    }
-    
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
-    {
-    	OpenBraceToken = openBraceToken;
-    	CodeBlockNode = codeBlockNode;
-    	return this;
-    }
     
     public void SetChildList()
     {
@@ -57,5 +45,23 @@ public sealed record TryStatementNode : ICodeBlockOwner
             childrenList.Add(FinallyNode);
 
         ChildList = childrenList.ToImmutableArray();
+    }
+    
+    public void SetTryStatementTryNode(TryStatementTryNode tryStatementTryNode)
+    {
+    	TryNode = tryStatementTryNode;
+    	SetChildList();
+    }
+    
+    public void SetTryStatementCatchNode(TryStatementCatchNode tryStatementCatchNode)
+    {
+    	CatchNode = tryStatementCatchNode;
+    	SetChildList();
+    }
+    
+    public void SetTryStatementFinallyNode(TryStatementFinallyNode tryStatementFinallyNode)
+    {
+    	FinallyNode = tryStatementFinallyNode;
+    	SetChildList();
     }
 }

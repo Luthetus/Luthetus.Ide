@@ -609,8 +609,13 @@ public static class ParseTokens
 					closureCurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;
 				else
 					closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);*/
-					
-				closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);
+				
+				if (selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
+					selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
+					selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+				{
+					closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);
+				}
 					
 				if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 					model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)selfCodeBlockOwner, model);

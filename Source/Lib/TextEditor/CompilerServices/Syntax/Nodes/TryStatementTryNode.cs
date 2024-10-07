@@ -1,11 +1,18 @@
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using System.Collections.Immutable;
+
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed record TryStatementTryNode : ICodeBlockOwner
 {
 	public TryStatementTryNode(
+		TryStatementNode? parent,
         KeywordToken keywordToken,
         CodeBlockNode? codeBlockNode)
     {
+    	Parent = parent;
         KeywordToken = keywordToken;
         CodeBlockNode = codeBlockNode;
 
@@ -13,8 +20,8 @@ public sealed record TryStatementTryNode : ICodeBlockOwner
     }
 
     public KeywordToken KeywordToken { get; }
-    public OpenBraceToken? OpenBraceToken { get; }
-    public CodeBlockNode? CodeBlockNode { get; }
+    public OpenBraceToken? OpenBraceToken { get; private set; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 

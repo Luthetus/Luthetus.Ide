@@ -479,6 +479,11 @@ finally
         
         var tryNodeOne = (TryStatementNode)topCodeBlock.ChildList[i++];
         
+        foreach (var child in topCodeBlock.ChildList)
+        {
+        	Console.WriteLine(child.SyntaxKind);
+        }
+        
         Assert.Equal(1, topCodeBlock.ChildList.Length);
     }
     
