@@ -8,7 +8,7 @@ namespace Luthetus.Extensions.DotNet.Outputs.Models;
 
 public static class OutputTextSpanHelper
 {
-	public static Task OpenInEditorOnClick(
+	public static async Task OpenInEditorOnClick(
 		TreeViewDiagnosticLine treeViewDiagnosticLine,
 		bool shouldSetFocusToEditor,
 		ITextEditorService textEditorService)
@@ -53,7 +53,7 @@ public static class OutputTextSpanHelper
 		
 		var category = new Category("main");
 		
-		textEditorService.OpenInEditorAsync(
+		await textEditorService.OpenInEditorAsync(
 			treeViewDiagnosticLine.Item.FilePathTextSpan.Text,
 			shouldSetFocusToEditor,
 			null,
@@ -99,7 +99,5 @@ public static class OutputTextSpanHelper
 		
 			return Task.CompletedTask;
 		});
-		
-		return Task.CompletedTask;
 	}
 }

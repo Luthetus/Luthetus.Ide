@@ -98,10 +98,12 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 											
 											if (contextRecord is not null)
 											{
-												var command = ConstructFocusContextElementCommand(
+												var command = ContextHelper.ConstructFocusContextElementCommand(
 											        contextRecord,
-											        nameof(ConstructFocusContextElementCommand),
-											        nameof(ConstructFocusContextElementCommand));
+											        nameof(ContextHelper.ConstructFocusContextElementCommand),
+											        nameof(ContextHelper.ConstructFocusContextElementCommand),
+											        JsRuntimeCommonApi,
+											        Dispatcher);
 											        
 											    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 											}
@@ -128,10 +130,12 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 											
 												if (contextRecord is not null)
 												{
-													var command = ConstructFocusContextElementCommand(
+													var command = ContextHelper.ConstructFocusContextElementCommand(
 												        contextRecord,
-												        nameof(ConstructFocusContextElementCommand),
-												        nameof(ConstructFocusContextElementCommand));
+												        nameof(ContextHelper.ConstructFocusContextElementCommand),
+												        nameof(ContextHelper.ConstructFocusContextElementCommand),
+												        JsRuntimeCommonApi,
+												        Dispatcher);
 												        
 												    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 												}
@@ -160,37 +164,6 @@ public partial class LuthetusCommonInitializer : ComponentBase, IDisposable
 			BrowserResizeInterop.SubscribeWindowSizeChanged(JsRuntimeCommonApi);
 		}
 	}
-	
-	/// <summary>
-	/// TODO: BAD: Code duplication from 'Luthetus.Ide.RazorLib.Commands.CommandFactory'
-	/// </summary>
-	public CommandNoType ConstructFocusContextElementCommand(
-        ContextRecord contextRecord,
-        string displayName,
-        string internalIdentifier)
-    {
-        return new CommonCommand(
-            displayName, internalIdentifier, false,
-            async commandArgs =>
-            {
-                var success = await TrySetFocus().ConfigureAwait(false);
-
-                if (!success)
-                {
-                    Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(
-                        contextRecord.ContextKey));
-
-                    _ = await TrySetFocus().ConfigureAwait(false);
-                }
-            });
-
-        async Task<bool> TrySetFocus()
-        {
-            return await JsRuntimeCommonApi
-                .TryFocusHtmlElementById(contextRecord.ContextElementId)
-                .ConfigureAwait(false);
-        }
-    }
     
     public void Dispose()
     {
