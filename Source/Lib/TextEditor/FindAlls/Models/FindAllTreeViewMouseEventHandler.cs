@@ -1,7 +1,9 @@
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.FindAlls.Models;
 
@@ -31,11 +33,11 @@ public class FindAllTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewFindAllTextSpan treeViewFindAllTextSpan)
 			return Task.CompletedTask;
 
-		return TreeViewFindAllTextSpanHelper.OpenInEditorOnClick(
-			treeViewFindAllTextSpan,
+		return _textEditorService.OpenInEditorAsync(
+			treeViewFindAllTextSpan.AbsolutePath.Value,
 			true,
-			_textEditorService,
-			_textEditorConfig,
-			_serviceProvider);
+			treeViewFindAllTextSpan.Item.StartingIndexInclusive,
+			new Category("main"),
+			Key<TextEditorViewModel>.NewKey());
 	}
 }

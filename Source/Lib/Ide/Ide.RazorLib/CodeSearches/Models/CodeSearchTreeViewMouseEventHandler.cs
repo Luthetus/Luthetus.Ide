@@ -1,8 +1,10 @@
 using Luthetus.Common.RazorLib.Commands.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.Ide.RazorLib.CodeSearches.Models;
 
@@ -32,11 +34,11 @@ public class CodeSearchTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewCodeSearchTextSpan treeViewCodeSearchTextSpan)
 			return Task.CompletedTask;
 
-		return TreeViewCodeSearchTextSpanHelper.OpenInEditorOnClick(
-			treeViewCodeSearchTextSpan,
+		return _textEditorService.OpenInEditorAsync(
+			treeViewCodeSearchTextSpan.AbsolutePath.Value,
 			true,
-			_textEditorService,
-			_textEditorConfig,
-			_serviceProvider);
+			treeViewCodeSearchTextSpan.Item.StartingIndexInclusive,
+			new Category("main"),
+			Key<TextEditorViewModel>.NewKey());
 	}
 }
