@@ -635,31 +635,6 @@ public static class ParseTokens
 			nextCodeBlockOwner = (ICodeBlockOwner)syntax;
 			nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(model);
 		}
-		
-        /*if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-        {
-            var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
-
-            var namespaceString = namespaceStatementNode
-                .IdentifierToken
-                .TextSpan
-                .GetText();
-
-            model.Binder.AddNamespaceToCurrentScope(namespaceString, model);
-            model.SyntaxStack.Push(namespaceStatementNode);
-        }
-        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
-        {
-        	var functionDefinitionNode = (FunctionDefinitionNode)syntax; // Don't pop
-        
-        	foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
-        	{
-        		if (argument.IsOptional)
-        			model.Binder.BindFunctionOptionalArgument(argument, model);
-        		else
-        			model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
-        	}
-        }*/
     }
 
     public static void ParseCloseBraceToken(

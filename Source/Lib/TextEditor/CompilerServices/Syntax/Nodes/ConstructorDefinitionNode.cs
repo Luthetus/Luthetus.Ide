@@ -56,8 +56,13 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
     
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
-    	// Do nothing.
-    	return;
+		foreach (var argument in FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+		{
+			if (argument.IsOptional)
+				parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
+			else
+				parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+		}
     }
     
     public void SetChildList()
