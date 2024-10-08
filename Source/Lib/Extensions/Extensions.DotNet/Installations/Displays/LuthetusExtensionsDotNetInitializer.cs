@@ -15,6 +15,8 @@ using Luthetus.Common.RazorLib.Menus.Models;
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
+using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -25,6 +27,7 @@ using Luthetus.Extensions.DotNet.DotNetSolutions.States;
 using Luthetus.Extensions.DotNet.Nugets.Displays;
 using Luthetus.Extensions.DotNet.CompilerServices.Displays;
 using Luthetus.Extensions.DotNet.TestExplorers.Displays;
+using Luthetus.Extensions.DotNet.TestExplorers.States;
 using Luthetus.Extensions.DotNet.Outputs.Displays;
 using Luthetus.Extensions.DotNet.BackgroundTasks.Models;
 using Luthetus.Extensions.DotNet.CommandLines.Models;
@@ -56,6 +59,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 	private IState<TerminalState> TerminalStateWrap { get; set; } = null!;
 	[Inject]
 	private IState<StartupControlState> StartupControlStateWrap { get; set; } = null!;
+	[Inject]
+	private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
     [Inject]
@@ -261,6 +266,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
             JsRuntime);
         Dispatcher.Dispatch(new PanelState.RegisterPanelAction(testExplorerPanel));
         Dispatcher.Dispatch(new PanelState.RegisterPanelTabAction(bottomPanel.Key, testExplorerPanel, false));
+        // This UI has resizable parts that need to be initialized.
+        Dispatcher.Dispatch(new TestExplorerState.InitializeResizeHandleDimensionUnitAction(
+            new DimensionUnit
+            {
+                ValueFunc = () => AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
+                DimensionUnitKind = DimensionUnitKind.Pixels,
+                DimensionOperatorKind = DimensionOperatorKind.Subtract,
+                Purpose = DimensionUnitFacts.Purposes.RESIZABLE_HANDLE_COLUMN,
+            }));
 
         // nuGetPanel
         var nuGetPanel = new Panel(
@@ -387,13 +401,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			string.Empty);
+        			string.Empty,
+        			"Build-Project_started");
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand.OutputCache.ToString());
+        			parsedCommand.OutputCache.ToString(),
+        			"Build-Project_completed");
         		return Task.CompletedTask;
         	}
         };
@@ -417,13 +433,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			string.Empty);
+        			string.Empty,
+        			"Clean-Project_started");
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand.OutputCache.ToString());
+        			parsedCommand.OutputCache.ToString(),
+        			"Clean-Project_completed");
         		return Task.CompletedTask;
         	}
         };
@@ -447,13 +465,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			string.Empty);
+        			string.Empty,
+        			"Build-Solution_started");
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand.OutputCache.ToString());
+        			parsedCommand.OutputCache.ToString(),
+        			"Build-Solution_completed");
         		return Task.CompletedTask;
         	}
         };
@@ -477,13 +497,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			string.Empty);
+        			string.Empty,
+        			"Clean-Solution_started");
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand.OutputCache.ToString());
+        			parsedCommand.OutputCache.ToString(),
+        			"Clean-Solution_completed");
         		return Task.CompletedTask;
         	}
         };

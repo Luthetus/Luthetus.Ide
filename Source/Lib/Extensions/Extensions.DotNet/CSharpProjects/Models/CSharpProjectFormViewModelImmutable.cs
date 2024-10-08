@@ -27,5 +27,6 @@ public record CSharpProjectFormViewModelImmutable(
 	FormattedCommand FormattedNewCSharpProjectCommand,
 	FormattedCommand FormattedAddExistingProjectToSolutionCommand,
 	Key<TerminalCommandRequest> NewCSharpProjectTerminalCommandRequestKey,
+	Key<TerminalCommandRequest> AddCSharpProjectToSolutionTerminalCommandRequestKey,
 	Key<TerminalCommandRequest> LoadProjectTemplatesTerminalCommandRequestKey,
 	CancellationTokenSource NewCSharpProjectCancellationTokenSource);

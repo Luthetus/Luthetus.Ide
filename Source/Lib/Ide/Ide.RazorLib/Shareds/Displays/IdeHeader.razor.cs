@@ -319,10 +319,12 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						
 						if (contextRecord is not null)
 						{
-							var command = CommandFactory.ConstructFocusContextElementCommand(
+							var command = ContextHelper.ConstructFocusContextElementCommand(
 						        contextRecord,
-						        nameof(CommandFactory.ConstructFocusContextElementCommand),
-						        nameof(CommandFactory.ConstructFocusContextElementCommand));
+						        nameof(ContextHelper.ConstructFocusContextElementCommand),
+						        nameof(ContextHelper.ConstructFocusContextElementCommand),
+						        JsRuntimeCommonApi,
+						        Dispatcher);
 						        
 						    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 						}
@@ -349,10 +351,12 @@ public partial class IdeHeader : ComponentBase, IDisposable
 						
 							if (contextRecord is not null)
 							{
-								var command = CommandFactory.ConstructFocusContextElementCommand(
+								var command = ContextHelper.ConstructFocusContextElementCommand(
 							        contextRecord,
-							        nameof(CommandFactory.ConstructFocusContextElementCommand),
-							        nameof(CommandFactory.ConstructFocusContextElementCommand));
+							        nameof(ContextHelper.ConstructFocusContextElementCommand),
+							        nameof(ContextHelper.ConstructFocusContextElementCommand),
+							        JsRuntimeCommonApi,
+							        Dispatcher);
 							        
 							    await command.CommandFunc.Invoke(null).ConfigureAwait(false);
 							}

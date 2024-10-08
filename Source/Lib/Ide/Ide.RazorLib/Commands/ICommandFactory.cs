@@ -9,9 +9,4 @@ public interface ICommandFactory
 	public IDialog? CodeSearchDialog { get; set; }
 
     public void Initialize();
-
-    public CommandNoType ConstructFocusContextElementCommand(
-        ContextRecord contextRecord,
-        string displayName,
-        string internalIdentifier);
 }

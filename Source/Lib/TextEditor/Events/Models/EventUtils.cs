@@ -162,12 +162,10 @@ public static class EventUtils
 
 	public static bool IsAutocompleteMenuInvoker(KeymapArgs keymapArgs)
     {
-        // Is {Ctrl + Space} or LetterOrDigit was hit without Ctrl being held
-        return keymapArgs.CtrlKey &&
-                   keymapArgs.Code == KeyboardKeyFacts.WhitespaceCodes.SPACE_CODE ||
-               !keymapArgs.CtrlKey &&
-                   !KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code) &&
-                   !KeyboardKeyFacts.IsMetaKey(keymapArgs);
+        // LetterOrDigit was hit without Ctrl being held
+        return !keymapArgs.CtrlKey &&
+               !KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code) &&
+               !KeyboardKeyFacts.IsMetaKey(keymapArgs);
     }
 
 	public static bool IsSyntaxHighlightingInvoker(KeymapArgs keymapArgs)

@@ -604,6 +604,32 @@ public static class TextEditorCommandDefaultFacts
 		        cursorModifierBag,
 		        commandArgs);
         });
+        
+    public static readonly TextEditorCommand ShowAutocompleteMenu = new(
+        "ShowAutocompleteMenu", "defaults_show-autocomplete-menu", false, true, TextEditKind.None, null,
+        interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+			
+            var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+            var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return Task.CompletedTask;
+            
+            TextEditorCommandDefaultFunctions.ShowAutocompleteMenu(
+        		commandArgs.EditContext,
+		        modelModifier,
+		        viewModelModifier,
+		        cursorModifierBag,
+		        primaryCursorModifier,
+		        commandArgs.ComponentData.Dispatcher,
+		        commandArgs.ComponentData);
+		    
+		    return Task.CompletedTask;
+        });
     
     public static readonly TextEditorCommand GoToDefinition = new(
         "GoToDefinition", "defaults_go-to-definition", false, true, TextEditKind.None, null,

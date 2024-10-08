@@ -529,6 +529,8 @@ public partial class TextEditorService : ITextEditorService
 					
 				primaryCursorModifier.LineIndex = lineAndColumnIndices.lineIndex;
 				primaryCursorModifier.ColumnIndex = lineAndColumnIndices.columnIndex;
+				
+				viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
 				return Task.CompletedTask;
 			});
 		}

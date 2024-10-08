@@ -7,6 +7,7 @@ public class DotNetRunParseResult
 	/// <summary>Use this to determine if the UI is up to date.</summary>
 	public Guid Id { get; } = Guid.NewGuid();
 	
+	public string Message { get; init; }
 	public ImmutableList<DiagnosticLine> AllDiagnosticLineList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
 	public ImmutableList<DiagnosticLine> ErrorList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
 	public ImmutableList<DiagnosticLine> WarningList { get; init; } = ImmutableList<DiagnosticLine>.Empty;
