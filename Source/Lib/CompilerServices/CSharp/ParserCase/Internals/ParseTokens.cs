@@ -573,7 +573,7 @@ public static class ParseTokens
 
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
-			// TODO: ??????? How would two consecutive defers get enqueued if doing '== 0'.
+			// Retrospective: ??? How would two consecutive defers get enqueued if doing '== 0'.
 			//
 			// Response: This seems to be a flag that says a child scope is allowed to be parsed (rather than infinitely enqueueing).
 			//           If so, rename the variable and make it a bool because it being a 'counter' is extremely confusing.
@@ -639,6 +639,18 @@ public static class ParseTokens
 
             model.Binder.AddNamespaceToCurrentScope(namespaceString, model);
             model.SyntaxStack.Push(namespaceStatementNode);
+        }
+        else if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+        {
+        	var functionDefinitionNode = (FunctionDefinitionNode)syntax; // Don't pop
+        
+        	foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+        	{
+        		if (argument.IsOptional)
+        			model.Binder.BindFunctionOptionalArgument(argument, model);
+        		else
+        			model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
+        	}
         }
 
         model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);

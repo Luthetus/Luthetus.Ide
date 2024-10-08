@@ -206,13 +206,8 @@ public partial class CSharpBinder : IBinder
         }
     }
 
-    public FunctionArgumentEntryNode BindFunctionOptionalArgument(
+    public void BindFunctionOptionalArgument(
         FunctionArgumentEntryNode functionArgumentEntryNode,
-        ISyntaxToken compileTimeConstantToken,
-        bool hasParamsKeyword,
-        bool hasOutKeyword,
-        bool hasInKeyword,
-        bool hasRefKeyword,
         CSharpParserModel model)
     {
         var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode;
@@ -227,7 +222,7 @@ public partial class CSharpBinder : IBinder
         }
 
         var literalExpressionNode = new LiteralExpressionNode(
-            compileTimeConstantToken,
+            functionArgumentEntryNode.OptionalCompileTimeConstantToken,
             typeDefinitionNode.ToTypeClause());
 
         literalExpressionNode = BindLiteralExpressionNode(literalExpressionNode, model);
@@ -246,14 +241,6 @@ public partial class CSharpBinder : IBinder
                 functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType?.Name ?? "null",
                 literalExpressionNode.ResultTypeClauseNode.ValueType?.Name ?? "null");
         }
-
-        return new FunctionArgumentEntryNode(
-            functionArgumentEntryNode.VariableDeclarationNode,
-            true,
-            hasParamsKeyword,
-            hasOutKeyword,
-            hasInKeyword,
-            hasRefKeyword);
     }
 
     /// <summary>TODO: Validate that the returned bound expression node has the same result type as the enclosing scope.</summary>

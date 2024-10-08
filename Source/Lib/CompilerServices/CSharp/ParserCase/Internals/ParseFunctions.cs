@@ -66,21 +66,24 @@ public class ParseFunctions
             // TODO: Would method constraints break this code? "public T Aaa<T>() where T : OtherClass"
             var statementDelimiterToken = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
 
-            // TODO: Fabricating an OpenBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
-            ParseTokens.ParseOpenBraceToken(
-                new OpenBraceToken(statementDelimiterToken.TextSpan)
-                {
-                    IsFabricated = true
-                },
-                model);
-
-            // TODO: Fabricating a CloseBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
-            ParseTokens.ParseCloseBraceToken(
-                new CloseBraceToken(statementDelimiterToken.TextSpan)
-                {
-                    IsFabricated = true
-                },
-                model);
+			// Retrospective: this code made no sense. It seems to add the interface's method definition?
+			{
+	            // TODO: Fabricating an OpenBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
+	            ParseTokens.ParseOpenBraceToken(
+	                new OpenBraceToken(statementDelimiterToken.TextSpan)
+	                {
+	                    IsFabricated = true
+	                },
+	                model);
+	
+	            // TODO: Fabricating a CloseBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
+	            ParseTokens.ParseCloseBraceToken(
+	                new CloseBraceToken(statementDelimiterToken.TextSpan)
+	                {
+	                    IsFabricated = true
+	                },
+	                model);
+            }
         }
     }
 
@@ -514,13 +517,13 @@ public class ParseFunctions
                 typeClauseNode,
                 variableIdentifierToken,
                 VariableKind.Local,
-                false
-            );
+                false);
 
-            model.Binder.BindVariableDeclarationNode(variableDeclarationStatementNode, model);
+			// Moved binding to be in during parsing of OpenBraceToken (2024-10-08)
 
             var functionArgumentEntryNode = new FunctionArgumentEntryNode(
                 variableDeclarationStatementNode,
+                optionalCompileTimeConstantToken: null,
                 false,
                 hasParamsKeyword,
                 hasOutKeyword,
@@ -541,14 +544,15 @@ public class ParseFunctions
                     compileTimeConstantAbleSyntaxKinds,
                     SyntaxKind.BadToken);
 
-                functionArgumentEntryNode = model.Binder.BindFunctionOptionalArgument(
-                    functionArgumentEntryNode,
-                    compileTimeConstantToken,
-                    hasParamsKeyword,
-                    hasOutKeyword,
-                    hasInKeyword,
-                    hasRefKeyword,
-                    model);
+                // Moved binding to be in during parsing of OpenBraceToken (2024-10-08)
+                functionArgumentEntryNode = new FunctionArgumentEntryNode(
+		            functionArgumentEntryNode.VariableDeclarationNode,
+		            optionalCompileTimeConstantToken: compileTimeConstantToken,
+		            isOptional: true,
+		            hasParamsKeyword,
+		            hasOutKeyword,
+		            hasInKeyword,
+		            hasRefKeyword);
             }
 
             mutableFunctionArgumentListing.Add(functionArgumentEntryNode);

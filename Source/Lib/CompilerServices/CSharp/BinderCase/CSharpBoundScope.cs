@@ -50,4 +50,6 @@ public sealed record CSharpBoundScope : IBoundScope
     public Dictionary<string, IVariableDeclarationNode> VariableDeclarationMap { get; init; }
     public NamespaceStatementNode EncompassingNamespaceStatementNode { get; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; }
+    
+    IBoundScope IBoundScope.Parent => Parent;
 }
