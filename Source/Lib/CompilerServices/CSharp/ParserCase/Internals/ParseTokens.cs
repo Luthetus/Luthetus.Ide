@@ -628,7 +628,15 @@ public static class ParseTokens
 
         model.Binder.RegisterBoundScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan, model);
 
-        if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+		model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+
+		if (model.SyntaxStack.TryPeek(out syntax) && syntax is ICodeBlockOwner)
+		{
+			nextCodeBlockOwner = (ICodeBlockOwner)syntax;
+			nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(model);
+		}
+		
+        /*if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
 
@@ -651,9 +659,7 @@ public static class ParseTokens
         		else
         			model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
         	}
-        }
-
-        model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+        }*/
     }
 
     public static void ParseCloseBraceToken(

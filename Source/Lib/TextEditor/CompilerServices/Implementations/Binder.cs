@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices;
@@ -35,5 +36,20 @@ public class Binder : IBinder
     public void ClearStateByResourceUri(ResourceUri resourceUri)
     {
         return;
+    }
+    
+    public void AddNamespaceToCurrentScope(string namespaceString, IParserModel model)
+    {
+    	return;
+    }
+    
+    public void BindFunctionOptionalArgument(FunctionArgumentEntryNode functionArgumentEntryNode, IParserModel model)
+    {
+    	return;
+    }
+    
+    public void BindVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, IParserModel model)
+    {
+    	return;
     }
 }

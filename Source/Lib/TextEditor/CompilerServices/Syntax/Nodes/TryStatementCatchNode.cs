@@ -1,7 +1,8 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -48,6 +49,12 @@ public sealed record TryStatementCatchNode : ICodeBlockOwner
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
     	return this;
+    }
+    
+    public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
+    {
+    	// Do nothing.
+    	return;
     }
     
     public void SetChildList()

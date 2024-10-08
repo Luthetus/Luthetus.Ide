@@ -205,6 +205,9 @@ public partial class CSharpBinder : IBinder
                 functionIdentifierText);
         }
     }
+    
+    void IBinder.BindFunctionOptionalArgument(FunctionArgumentEntryNode functionArgumentEntryNode, IParserModel model) =>
+    	BindFunctionOptionalArgument(functionArgumentEntryNode, (CSharpParserModel)model);
 
     public void BindFunctionOptionalArgument(
         FunctionArgumentEntryNode functionArgumentEntryNode,
@@ -319,6 +322,9 @@ public partial class CSharpBinder : IBinder
 
         return new InheritanceStatementNode(typeClauseNode);
     }
+
+	void IBinder.BindVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, IParserModel model) =>
+		BindVariableDeclarationNode(variableDeclarationNode, (CSharpParserModel)model);
 
     public void BindVariableDeclarationNode(
         IVariableDeclarationNode variableDeclarationNode,
@@ -587,6 +593,9 @@ public partial class CSharpBinder : IBinder
 
         model.BinderSession.CurrentScope = boundScope;
     }
+
+	void IBinder.AddNamespaceToCurrentScope(string namespaceString, IParserModel model) =>
+		AddNamespaceToCurrentScope(namespaceString, (CSharpParserModel)model);
 
     public void AddNamespaceToCurrentScope(
         string namespaceString,
