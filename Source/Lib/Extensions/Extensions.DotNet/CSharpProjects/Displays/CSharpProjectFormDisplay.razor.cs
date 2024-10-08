@@ -230,7 +230,7 @@ public partial class CSharpProjectFormDisplay : FluxorComponent
 					var terminalCommandRequest = new TerminalCommandRequest(
 			        	immutableView.FormattedAddExistingProjectToSolutionCommand.Value,
 			        	immutableView.ParentDirectoryNameValue,
-			        	new Key<TerminalCommandRequest>(immutableView.NewCSharpProjectTerminalCommandRequestKey.Guid))
+			        	new Key<TerminalCommandRequest>(immutableView.AddCSharpProjectToSolutionTerminalCommandRequestKey.Guid))
 			        {
 			        	ContinueWithFunc = parsedCommand =>
 			        	{
