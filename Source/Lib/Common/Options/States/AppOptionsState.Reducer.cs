@@ -1,4 +1,4 @@
-﻿using Fluxor;
+using Fluxor;
 
 namespace Luthetus.Common.RazorLib.Options.States;
 

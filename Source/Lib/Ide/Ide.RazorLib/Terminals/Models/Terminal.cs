@@ -6,6 +6,8 @@ using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.Common.RazorLib.Notifications.Models;
+using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Ide.RazorLib.Terminals.States;
 
 namespace Luthetus.Ide.RazorLib.Terminals.Models;
 
@@ -17,6 +19,9 @@ public class Terminal : ITerminal
 	private readonly IBackgroundTaskService _backgroundTaskService;
 	private readonly ICommonComponentRenderers _commonComponentRenderers;
 	private readonly IDispatcher _dispatcher;
+	
+	/// <summary>The TArgs of byte is unused</summary>
+	private readonly ThrottleOptimized<byte> _throttleUiUpdateFromSetHasExecutingProcess;
 
 	public Terminal(
 		string displayName,
@@ -35,7 +40,17 @@ public class Terminal : ITerminal
 		_backgroundTaskService = backgroundTaskService;
 		_commonComponentRenderers = commonComponentRenderers;
 		_dispatcher = dispatcher;
+		
+		_throttleUiUpdateFromSetHasExecutingProcess = new(
+			DelaySetHasExecutingProcess,
+			(_, _) =>
+			{
+				_dispatcher.Dispatch(new TerminalState.StateHasChangedAction());
+				return Task.CompletedTask;
+			});
 	}
+	
+	public static readonly TimeSpan DelaySetHasExecutingProcess = TimeSpan.FromMilliseconds(200);
 
 	public string DisplayName { get; }
 	public ITerminalInteractive TerminalInteractive { get; }
@@ -119,7 +134,7 @@ public class Terminal : ITerminal
 		
 		try
 		{
-			HasExecutingProcess = true;
+			SetHasExecutingProcess(true);
 		
 			if (parsedCommand.SourceTerminalCommandRequest.BeginWithFunc is not null)
 			{
@@ -154,12 +169,22 @@ public class Terminal : ITerminal
 		{
 			if (parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc is not null)
 			{
-				await parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc
-					.Invoke(parsedCommand)
-					.ConfigureAwait(false);
+				try
+				{
+					// The code 'SetHasExecutingProcess(false);' needs to run
+					// So, in the case that their ContinueWithFunc throws an exception
+					// make sure its wrapped in a try catch block.
+					await parsedCommand.SourceTerminalCommandRequest.ContinueWithFunc
+						.Invoke(parsedCommand)
+						.ConfigureAwait(false);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+				}
 			}
 		
-			HasExecutingProcess = false;
+			SetHasExecutingProcess(false);
 		}
 	}
 	
@@ -178,6 +203,12 @@ public class Terminal : ITerminal
 	private void DispatchNewStateKey()
     {
         // _dispatcher.Dispatch(new TerminalState.NotifyStateChangedAction(Key));
+    }
+    
+    public void SetHasExecutingProcess(bool value)
+    {
+    	HasExecutingProcess = value;
+    	_throttleUiUpdateFromSetHasExecutingProcess.Run(default(byte));
     }
     
     public void Dispose()

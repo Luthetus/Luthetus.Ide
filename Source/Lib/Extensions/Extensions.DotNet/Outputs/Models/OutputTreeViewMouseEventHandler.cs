@@ -35,49 +35,9 @@ public class OutputTreeViewMouseEventHandler : TreeViewMouseEventHandler
 		if (commandArgs.NodeThatReceivedMouseEvent is not TreeViewDiagnosticLine treeViewDiagnosticLine)
 			return Task.CompletedTask;
 			
-		var lineAndColumnIndicesString = treeViewDiagnosticLine.Item.LineAndColumnIndicesTextSpan.Text;
-		var position = 0;
-		
-		int? lineIndex = null;
-		int? columnIndex = null;
-		
-		while (position < lineAndColumnIndicesString.Length)
-		{
-			var character = lineAndColumnIndicesString[position];
-		
-			if (char.IsDigit(character))
-			{
-				var numberBuilder = new StringBuilder(character);
-				
-				while (true)
-				{
-					character = lineAndColumnIndicesString[position];
-					
-					if (char.IsDigit(character))
-						numberBuilder.Append(character);
-					else
-						break;
-					
-					position++;
-				}
-				
-				if (int.TryParse(numberBuilder.ToString(), out var number))
-				{
-					if (lineIndex is null)
-						lineIndex = number;
-					else if (columnIndex is null)
-						columnIndex = number;
-				}
-			}
-			
-			position++;
-		}
-
-		return _textEditorService.OpenInEditorAsync(
-			treeViewDiagnosticLine.Item.FilePathTextSpan.Text,
+		return OutputTextSpanHelper.OpenInEditorOnClick(
+			treeViewDiagnosticLine,
 			true,
-			0,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+			_textEditorService);
 	}
 }

@@ -33,7 +33,7 @@ public interface ITextEditorEditContext
 
     /// <inheritdoc cref="ITextEditorEditContext"/>
     public TextEditorViewModelModifier? GetViewModelModifier(Key<TextEditorViewModel> viewModelKey, bool isReadonly = false);
-
+    
     /// <inheritdoc cref="ITextEditorEditContext"/>
     public CursorModifierBagTextEditor? GetCursorModifierBag(TextEditorViewModel? viewModel);
 

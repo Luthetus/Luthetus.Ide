@@ -42,57 +42,12 @@ public partial class TestExplorerDisplay : FluxorComponent
 	[Inject]
 	private IDispatcher Dispatcher { get; set; } = null!;
 
-	private readonly ElementDimensions _treeViewElementDimensions = new();
-	private readonly ElementDimensions _detailsElementDimensions = new();
-
 	protected override void OnInitialized()
 	{
 		// TODO: Supress un-used property on TreeViewStateWrap...
 		// ...Its injected so that Fluxor will wire up events to re-render UI...
 		// ...Preferably a different approach would be taken here.
 		_ = TreeViewStateWrap;
-
-		// TreeView ElementDimensions
-		{
-			var treeViewWidth = _treeViewElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-			treeViewWidth.DimensionUnitList.AddRange(new[]
-			{
-				new DimensionUnit
-				{
-					Value = 50,
-					DimensionUnitKind = DimensionUnitKind.Percentage
-				},
-				new DimensionUnit
-				{
-					Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-					DimensionUnitKind = DimensionUnitKind.Pixels,
-					DimensionOperatorKind = DimensionOperatorKind.Subtract
-				}
-			});
-		}
-
-		// Details ElementDimensions
-		{
-			var detailsWidth = _detailsElementDimensions.DimensionAttributeList.Single(
-				da => da.DimensionAttributeKind == DimensionAttributeKind.Width);
-
-			detailsWidth.DimensionUnitList.AddRange(new[]
-			{
-				new DimensionUnit
-				{
-					Value = 50,
-					DimensionUnitKind = DimensionUnitKind.Percentage
-				},
-				new DimensionUnit
-				{
-					Value = AppOptionsStateWrap.Value.Options.ResizeHandleWidthInPixels / 2,
-					DimensionUnitKind = DimensionUnitKind.Pixels,
-					DimensionOperatorKind = DimensionOperatorKind.Subtract
-				}
-			});
-		}
 
 		Dispatcher.Dispatch(new TestExplorerState.UserInterfaceWasInitializedEffect());
 

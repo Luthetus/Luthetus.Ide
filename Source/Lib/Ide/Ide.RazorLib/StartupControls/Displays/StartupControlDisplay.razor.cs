@@ -12,6 +12,7 @@ using Luthetus.Common.RazorLib.Panels.States;
 using Luthetus.Common.RazorLib.Contexts.Models;
 using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Options.States;
+using Luthetus.Ide.RazorLib.Terminals.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
 using Luthetus.Ide.RazorLib.StartupControls.States;
 using Luthetus.Ide.RazorLib.StartupControls.Models;
@@ -101,6 +102,8 @@ public partial class StartupControlDisplay : FluxorComponent
 	
 	                    _ = await TrySetFocus(ContextFacts.TerminalContext).ConfigureAwait(false);
 	                }
+	                
+	                Dispatcher.Dispatch(new TerminalGroupState.SetActiveTerminalAction(TerminalFacts.EXECUTION_KEY));
 				}));
 			    
 			menuOptionList.Add(new MenuOptionRecord(
