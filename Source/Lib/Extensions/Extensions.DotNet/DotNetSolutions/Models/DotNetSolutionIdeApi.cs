@@ -634,7 +634,8 @@ Execution Terminal"));
         	BeginWithFunc = parsedCommand =>
         	{
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			string.Empty);
+        			string.Empty,
+        			"Run-Project_started");
         			
         		return Task.CompletedTask;
         	},
@@ -644,7 +645,8 @@ Execution Terminal"));
         		_dispatcher.Dispatch(new StartupControlState.StateChangedAction());
         	
         		_dotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand.OutputCache.ToString());
+        			parsedCommand.OutputCache.ToString(),
+        			"Run-Project_completed");
         			
         		return Task.CompletedTask;
         	}

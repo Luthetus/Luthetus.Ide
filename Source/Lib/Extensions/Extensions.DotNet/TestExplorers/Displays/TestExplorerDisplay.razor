@@ -58,13 +58,13 @@
 				<div class="luth_ide_test-explorer-bottom"
 					 style="display: flex; height: calc(100% - 1.8em);">
 
-					<TestExplorerTreeViewDisplay ElementDimensions="_treeViewElementDimensions"/>
+					<TestExplorerTreeViewDisplay ElementDimensions="renderBatchValidated.TestExplorerState.TreeViewElementDimensions"/>
 
-					<ResizableColumn LeftElementDimensions="_treeViewElementDimensions"
-									 RightElementDimensions="_detailsElementDimensions"
+					<ResizableColumn LeftElementDimensions="renderBatchValidated.TestExplorerState.TreeViewElementDimensions"
+									 RightElementDimensions="renderBatchValidated.TestExplorerState.DetailsElementDimensions"
 									 ReRenderFuncAsync="async () => await InvokeAsync(StateHasChanged).ConfigureAwait(false)" />
 
-					<TestExplorerDetailsDisplay ElementDimensions="_detailsElementDimensions"/>
+					<TestExplorerDetailsDisplay ElementDimensions="renderBatchValidated.TestExplorerState.DetailsElementDimensions"/>
 				</div>
 			</CascadingValue>
 		}

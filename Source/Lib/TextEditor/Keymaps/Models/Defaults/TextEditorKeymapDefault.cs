@@ -145,15 +145,6 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
 
         TryRegister(new KeymapArgs()
         {
-            Key = "F",
-            Code = "KeyF",
-            CtrlKey = true,
-            ShiftKey = true,
-            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
-        }, TextEditorCommandDefaultFacts.ShowFindAllDialog);
-
-        TryRegister(new KeymapArgs()
-        {
             Key = "ArrowDown",
             Code = "ArrowDown",
             CtrlKey = true,
@@ -215,6 +206,14 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
             CtrlKey = true,
             LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
         }, TextEditorCommandDefaultFacts.RefreshSyntaxHighlighting);
+        
+        TryRegister(new KeymapArgs()
+        {
+            Key = " ",
+            Code = "Space",
+            CtrlKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.ShowAutocompleteMenu);
         
         TryRegister(new KeymapArgs()
         {

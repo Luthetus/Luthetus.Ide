@@ -22,23 +22,11 @@ public partial record TerminalState
         }
 
         [ReducerMethod]
-        public static TerminalState ReduceNotifyStateChangedAction(
+        public static TerminalState ReduceStateHasChangedAction(
             TerminalState inState,
-            NotifyStateChangedAction notifyStateChangedAction)
+            StateHasChangedAction stateHasChangedAction)
         {
-            if (!inState.TerminalMap.ContainsKey(notifyStateChangedAction.TerminalKey))
-                return inState;
-
-			var inTerminal = inState.TerminalMap[notifyStateChangedAction.TerminalKey];
-
-            var nextMap = inState.TerminalMap.SetItem(
-				notifyStateChangedAction.TerminalKey,
-                inTerminal);
-
-            return inState with
-            {
-                TerminalMap = nextMap
-            };
+            return inState with {};
         }
 
         [ReducerMethod]
