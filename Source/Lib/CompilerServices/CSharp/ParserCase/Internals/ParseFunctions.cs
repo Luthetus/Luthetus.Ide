@@ -66,24 +66,13 @@ public class ParseFunctions
             // TODO: Would method constraints break this code? "public T Aaa<T>() where T : OtherClass"
             var statementDelimiterToken = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
 
-			// Retrospective: this code made no sense. It seems to add the interface's method definition?
-			{
-	            // TODO: Fabricating an OpenBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
-	            ParseTokens.ParseOpenBraceToken(
-	                new OpenBraceToken(statementDelimiterToken.TextSpan)
-	                {
-	                    IsFabricated = true
-	                },
-	                model);
-	
-	            // TODO: Fabricating a CloseBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
-	            ParseTokens.ParseCloseBraceToken(
-	                new CloseBraceToken(statementDelimiterToken.TextSpan)
-	                {
-	                    IsFabricated = true
-	                },
-	                model);
-            }
+			foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+	    	{
+	    		if (argument.IsOptional)
+	    			model.Binder.BindFunctionOptionalArgument(argument, model);
+	    		else
+	    			model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
+	    	}
         }
     }
 
