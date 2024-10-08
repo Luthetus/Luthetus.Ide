@@ -387,13 +387,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			string.Empty);
+        			string.Empty,
+        			"Build-Project_started");
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand.OutputCache.ToString());
+        			parsedCommand.OutputCache.ToString(),
+        			"Build-Project_completed");
         		return Task.CompletedTask;
         	}
         };
@@ -417,13 +419,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			string.Empty);
+        			string.Empty,
+        			"Clean-Project_started");
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand.OutputCache.ToString());
+        			parsedCommand.OutputCache.ToString(),
+        			"Clean-Project_completed");
         		return Task.CompletedTask;
         	}
         };
@@ -447,13 +451,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			string.Empty);
+        			string.Empty,
+        			"Build-Solution_started");
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand.OutputCache.ToString());
+        			parsedCommand.OutputCache.ToString(),
+        			"Build-Solution_completed");
         		return Task.CompletedTask;
         	}
         };
@@ -477,13 +483,15 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
         	BeginWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			string.Empty);
+        			string.Empty,
+        			"Clean-Solution_started");
         		return Task.CompletedTask;
         	},
         	ContinueWithFunc = parsedCommand =>
         	{
         		DotNetCliOutputParser.ParseOutputEntireDotNetRun(
-        			parsedCommand.OutputCache.ToString());
+        			parsedCommand.OutputCache.ToString(),
+        			"Clean-Solution_completed");
         		return Task.CompletedTask;
         	}
         };

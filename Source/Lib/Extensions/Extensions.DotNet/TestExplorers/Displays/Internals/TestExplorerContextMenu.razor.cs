@@ -519,7 +519,7 @@ public partial class TestExplorerContextMenu : ComponentBase
 	{
 		var contextRecord = ContextFacts.OutputContext;
 		
-		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output);
+		DotNetCliOutputParser.ParseOutputEntireDotNetRun(output, "Unit-Test_results");
 		
 		Dispatcher.Dispatch(new PanelState.SetPanelTabAsActiveByContextRecordKeyAction(contextRecord.ContextKey));
 	

@@ -9,6 +9,8 @@
 	@{ var dotNetRunParseResult = DotNetCliOutputParser.GetDotNetRunParseResult(); }
 	
 	<div class="luth_output-display-top-row" style="height: 1.8em;">
+		@dotNetRunParseResult.Message
+	
 		(@dotNetRunParseResult.ErrorList.Count errors)
 		(@dotNetRunParseResult.WarningList.Count warnings)
 		(@dotNetRunParseResult.OtherList.Count other)

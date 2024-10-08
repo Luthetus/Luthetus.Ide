@@ -31,7 +31,7 @@ public class DotNetCliOutputParser
 	public NewListModel NewListModelSession { get; private set; }
 	
 	/// <summary>The results can be retrieved by invoking <see cref="GetDiagnosticLineList"/></summary>
-	public void ParseOutputEntireDotNetRun(string output)
+	public void ParseOutputEntireDotNetRun(string output, string message)
 	{
 		var stringWalker = new StringWalker(
 			new ResourceUri("/__LUTHETUS__/DotNetRunOutputParser.txt"),
@@ -278,6 +278,7 @@ public class DotNetCliOutputParser
 		
 			_dotNetRunParseResult = new()
 			{
+				Message = message,
 				AllDiagnosticLineList = allDiagnosticLineList,
 				ErrorList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Error).ToImmutableList(),
 				WarningList = allDiagnosticLineList.Where(x => x.DiagnosticLineKind == DiagnosticLineKind.Warning).ToImmutableList(),
