@@ -49,16 +49,25 @@ public class CodeBlockOwnerSimpleTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var i = 0;
-        
-        foreach (var child in topCodeBlock.ChildList)
-        {
-        	Console.WriteLine(child.SyntaxKind);
-        }
-        
-        var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[i++];
+        var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[0];
         
         Assert.Equal(1, topCodeBlock.ChildList.Length);
+        
+        var foreachBoundScope = compilationUnit.Binder.GetBoundScope(foreachNodeOne.OpenBraceToken.TextSpan);
+        Assert.NotNull(foreachBoundScope);
+        Console.WriteLine($"foreachBoundScope.VariableDeclarationMap.Count: {foreachBoundScope.VariableDeclarationMap.Count}");
+        
+        var globalScope = compilationUnit.Binder.GetBoundScope(foreachNodeOne.ForeachKeywordToken.TextSpan);
+        Assert.NotNull(globalScope);
+        Console.WriteLine($"globalScope.VariableDeclarationMap.Count: {globalScope.VariableDeclarationMap.Count}");
+        
+        foreach (var variable in globalScope.VariableDeclarationMap.Values)
+        {
+        	Console.WriteLine(variable.IdentifierToken.TextSpan.GetText());
+        }
+        
+        Assert.Equal(0, globalScope.VariableDeclarationMap.Count);
+        Assert.Equal(1, foreachBoundScope.VariableDeclarationMap.Count);
     }
     
     [Fact]

@@ -11,7 +11,7 @@ public sealed record ForeachStatementNode : ICodeBlockOwner
     public ForeachStatementNode(
         KeywordToken foreachKeywordToken,
         OpenParenthesisToken openParenthesisToken,
-        IdentifierToken identifierToken,
+        VariableDeclarationNode variableDeclarationNode,
         KeywordToken inKeywordToken,
         IExpressionNode expressionNode,
         CloseParenthesisToken closeParenthesisToken,
@@ -19,7 +19,7 @@ public sealed record ForeachStatementNode : ICodeBlockOwner
     {
         ForeachKeywordToken = foreachKeywordToken;
         OpenParenthesisToken = openParenthesisToken;
-        IdentifierToken = identifierToken;
+        VariableDeclarationNode = variableDeclarationNode;
         InKeywordToken = inKeywordToken;
         ExpressionNode = expressionNode;
         CloseParenthesisToken = closeParenthesisToken;
@@ -30,7 +30,7 @@ public sealed record ForeachStatementNode : ICodeBlockOwner
 
     public KeywordToken ForeachKeywordToken { get; }
     public OpenParenthesisToken OpenParenthesisToken { get; }
-    public IdentifierToken IdentifierToken { get; }
+    public VariableDeclarationNode VariableDeclarationNode { get; }
     public KeywordToken InKeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
@@ -59,8 +59,7 @@ public sealed record ForeachStatementNode : ICodeBlockOwner
     
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
-    	// Do nothing.
-    	return;
+    	parserModel.Binder.BindVariableDeclarationNode(VariableDeclarationNode, parserModel);
     }
     
     public void SetChildList()
@@ -69,7 +68,7 @@ public sealed record ForeachStatementNode : ICodeBlockOwner
         {
             ForeachKeywordToken,
             OpenParenthesisToken,
-            IdentifierToken,
+            VariableDeclarationNode,
             InKeywordToken,
             ExpressionNode,
             CloseParenthesisToken,

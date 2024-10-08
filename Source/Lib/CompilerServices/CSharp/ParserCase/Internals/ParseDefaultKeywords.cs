@@ -422,9 +422,15 @@ public class ParseDefaultKeywords
         CSharpParserModel model)
     {
     	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
-    	var typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
     	
-    	var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+    	var typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
+    	var variableIdentifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+    	
+    	var variableDeclarationStatementNode = new VariableDeclarationNode(
+            typeClauseNode,
+            variableIdentifierToken,
+            VariableKind.Local,
+            false);
     	
     	var inKeywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.InTokenKeyword);
     	
@@ -450,7 +456,7 @@ public class ParseDefaultKeywords
 		var foreachStatementNode = new ForeachStatementNode(
 	        consumedKeywordToken,
 	        openParenthesisToken,
-	        identifierToken,
+	        variableDeclarationStatementNode,
 	        inKeywordToken,
 	        expressionNode,
 	        closeParenthesisToken,
