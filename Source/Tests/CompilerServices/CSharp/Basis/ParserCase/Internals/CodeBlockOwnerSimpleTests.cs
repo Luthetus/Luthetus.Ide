@@ -73,6 +73,56 @@ public class CodeBlockOwnerSimpleTests
     [Fact]
 	public void Foreach_SingleStatementBody()
 	{
+		/*
+		It seems that in order to do the single statement body,
+		I need to begin reading the statement that immediately follows
+		any ICodeBlockOwner.
+		
+		As for deferred parsing of child scopes,
+		it might be the case that one would never need the breadth
+		first parsing in regards to nested single statement bodies.
+		
+		Ex:
+		================================
+		foreach (...)
+			foreach (...)
+				foreach (...)
+					Console.WriteLine();
+		================================
+		
+		Regardless, I will write the parsing such that
+		I don't have any breadth first parsing for the
+		single statement bodies.
+		
+		Also, what even would be "breadth first" if
+		there is only 1 child node (the single statement body)?
+		
+		Also, if anyone ever consumes a StatementDelimiterToken
+		without passing through the ParseStatementDelimiterToken(...)
+		method, I cannot take that statement as the single statement body
+		because I will never know that the statement even ended.
+		
+		A massive headache is related to the ParseOpenBraceToken(...)
+		method. Because I've done the code for:
+		    'model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode => ...'
+		within that method.
+		
+		This results in my "finalization" of a code block being
+		strictly written with the presumption of a OpenBraceToken and CloseBraceToken.
+		
+		If I move the:
+		    'model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode => ...'
+		code to the interface ICodeBlockOwner, I might be able to
+		then invoke it from 'ParseCloseBraceToken(...)' and
+		'ParseStatementDelimiterToken(...)'.
+		
+		If it turns out that the code inside:
+		    'model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode => ...'
+		is too language specific to C# to exist in the text editor project,
+		I could also define a method in the CompilerServices.CSharp project
+		that takes an instance of ICodeBlockOwner.
+		*/
+	
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
@@ -161,8 +211,8 @@ foreach (var item in list)
     [Fact]
 	public void Foreach()
 	{
-		foreach (var item in list)
-			var a = 2;
+		//foreach (var item in list)
+		//	var a = 2;
 	
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
