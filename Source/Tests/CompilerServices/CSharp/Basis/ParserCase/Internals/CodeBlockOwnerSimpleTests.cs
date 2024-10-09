@@ -121,6 +121,36 @@ public class CodeBlockOwnerSimpleTests
 		is too language specific to C# to exist in the text editor project,
 		I could also define a method in the CompilerServices.CSharp project
 		that takes an instance of ICodeBlockOwner.
+		
+		If somehow the current code block builder could be set once
+		an ICodeBlockOwner were found, rather than wait until the OpenBraceToken,
+		would this be beneficial?
+		
+		If I could see an ICodeBlockOwner and then Peek the next token
+		if it were OpenBraceToken then it would be a lot easier.
+		
+		But, the 'where' clauses for methods and types mess things up.
+		
+		If the "mess things up" cases are small enough, I could check for them
+		then the OpenBraceToken.
+		
+		It might be the case that I can know whether the code block will be
+		a single statement.
+		
+		I really like the idea that I might know the code block will be a single statement.
+		
+		Because to know if the code block is a OpenBraceToken, requires far more complexity
+		because the 'where' clause might be complex.
+		
+		Although now that I say it, is the existence of the where clause an indicator
+		that it would be a code block?
+		
+		I'm thinking about where clauses for types and methods but that isn't
+		even part of the question if we're looking at control keywords.
+		
+		The answer to this problem might be in the allowed sequences of tokens.
+		
+		
 		*/
 	
 		var resourceUri = new ResourceUri("./unitTesting.txt");
