@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -23,14 +24,79 @@ public class Binder : IBinder
         return null;
     }
 
-    public IBoundScope? GetBoundScope(TextEditorTextSpan textSpan)
+	public IScope? GetScope(int positionIndex, ResourceUri resourceUri)
     {
         return null;
     }
 
+    public IScope? GetScope(TextEditorTextSpan textSpan)
+    {
+        return null;
+    }
+    
+    public IScope? GetScope(Key<IScope> scopeKey)
+    {
+    	return null;
+    }
+
+	public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
+	{
+		return Array.Empty<TypeDefinitionNode>();
+	}
+    
+    public bool TryAddTypeDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string typeIdentifierText,
+        TypeDefinitionNode typeDefinitionNode)
+    {
+    	return false;
+    }
+	
+    public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
+    {
+		return Array.Empty<FunctionDefinitionNode>();
+    }
+    
+    public bool TryAddFunctionDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string functionIdentifierText,
+        FunctionDefinitionNode functionDefinitionNode)
+    {
+    	return false;
+    }
+    
+    public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
+    {
+		return Array.Empty<IVariableDeclarationNode>();
+    }
+    
+    public bool TryAddVariableDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string variableIdentifierText,
+        IVariableDeclarationNode variableDefinitionNode)
+    {
+    	return false;
+    }
+    
+    public TypeClauseNode? GetReturnTypeClauseNodeByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
+    {
+		return null;
+    }
+    
+    public bool TryAddReturnTypeClauseNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+        TypeClauseNode typeClauseNode)
+    {
+    	return false;
+    }
+
     public IBinderSession ConstructBinderSession(ResourceUri resourceUri)
     {
-        return new BinderSession(resourceUri, null, null, this);
+        return new BinderSession(resourceUri, Key<IScope>.Empty, null, this);
     }
 
     public void ClearStateByResourceUri(ResourceUri resourceUri)

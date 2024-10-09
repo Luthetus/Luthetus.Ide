@@ -1,13 +1,16 @@
-﻿namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
+using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+
+namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 public sealed class SymbolReference
 {
-    public SymbolReference(ISymbol symbol, BoundScopeKey boundScopeKey)
+    public SymbolReference(ISymbol symbol, Key<IScope> scopeKey)
     {
         Symbol = symbol;
-        BoundScopeKey = boundScopeKey;
+        ScopeKey = scopeKey;
     }
 
     public ISymbol Symbol { get; }
-    public BoundScopeKey BoundScopeKey { get; }
+    public Key<IScope> ScopeKey { get; }
 }

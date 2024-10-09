@@ -1,5 +1,7 @@
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
@@ -12,8 +14,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 public interface IBinderSession
 {
     public IBinder Binder { get; }
-    public IBoundScope CurrentScope { get; set; }
+    public Key<IScope> CurrentScopeKey { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
-    public ResourceUri? CurrentResourceUri { get; set; }
+    public ResourceUri ResourceUri { get; set; }
+    
+    public IScope GetScope(Key<IScope> scopeKey);
+    public IScope GetScopeCurrent();
 }

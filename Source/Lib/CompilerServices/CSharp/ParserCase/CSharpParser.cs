@@ -189,7 +189,7 @@ public class CSharpParser : IParser
             model.CurrentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
-            Binder.DisposeBoundScope(model.TokenWalker.Current.TextSpan, model);
+            Binder.DisposeScope(model.TokenWalker.Current.TextSpan, model);
 
             model.FinalizeNamespaceFileScopeCodeBlockNodeAction.Invoke(
                 model.CurrentCodeBlockBuilder.Build());
