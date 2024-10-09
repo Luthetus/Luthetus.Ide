@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -624,6 +625,8 @@ public static class ParseTokens
 			{
 				closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);
 			}
+			
+			closureCurrentCodeBlockBuilder.PendingChild = null;
 				
 			if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 				model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)selfCodeBlockOwner, model);
@@ -897,6 +900,19 @@ public static class ParseTokens
                 model);
 
             model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+        }
+        else if (model.CurrentCodeBlockBuilder.PendingChild is not null)
+        {
+        	var pendingChild = model.CurrentCodeBlockBuilder.PendingChild;
+        
+        	model.Binder.RegisterBoundScope(CSharpFacts.Types.Void.ToTypeClause(), consumedStatementDelimiterToken.TextSpan, model);
+			model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, pendingChild);
+			pendingChild.OnBoundScopeCreatedAndSetAsCurrent(model);
+			
+	        model.Binder.DisposeBoundScope(consumedStatementDelimiterToken.TextSpan, model);
+	
+	        if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
+	            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
         }
     }
 

@@ -114,10 +114,55 @@ foreach (var item in list)
     }
     
     [Fact]
+	public void Foreach_Idea()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"
+foreach (var item in list)
+	foreach (var item in list)
+		foreach (var item in list)
+			Console.WriteLine(item);
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[0];
+        
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
+        
+        var foreachBoundScope = compilationUnit.Binder.GetBoundScope(foreachNodeOne.OpenBraceToken.TextSpan);
+        
+        // Assert.ISNull();
+        
+        
+        
+        Assert.NotNull(foreachBoundScope);
+        Console.WriteLine($"foreachBoundScope.VariableDeclarationMap.Count: {foreachBoundScope.VariableDeclarationMap.Count}");
+        
+        var globalScope = compilationUnit.Binder.GetBoundScope(foreachNodeOne.ForeachKeywordToken.TextSpan);
+        Assert.NotNull(globalScope);
+        Console.WriteLine($"globalScope.VariableDeclarationMap.Count: {globalScope.VariableDeclarationMap.Count}");
+        
+        foreach (var variable in globalScope.VariableDeclarationMap.Values)
+        {
+        	Console.WriteLine(variable.IdentifierToken.TextSpan.GetText());
+        }
+        
+        Assert.Equal(0, globalScope.VariableDeclarationMap.Count);
+        Assert.Equal(1, foreachBoundScope.VariableDeclarationMap.Count);
+    }
+    
+    [Fact]
 	public void Foreach()
 	{
-		//foreach (var item in list)
-		//	var a = 2;
+		foreach (var item in list)
+			var a = 2;
 	
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
