@@ -365,14 +365,17 @@ public class ParseContextualKeywords
 
             var constraintNode = new ConstraintNode(constraintNodeInnerTokens.ToImmutableArray());
 
-            model.SyntaxStack.Push(new FunctionDefinitionNode(
+			functionDefinitionNode = new FunctionDefinitionNode(
                 AccessModifierKind.Public,
                 functionDefinitionNode.ReturnTypeClauseNode,
                 functionDefinitionNode.FunctionIdentifierToken,
                 functionDefinitionNode.GenericArgumentsListingNode,
                 functionDefinitionNode.FunctionArgumentsListingNode,
                 functionDefinitionNode.CodeBlockNode,
-                constraintNode));
+                constraintNode);
+                
+            model.SyntaxStack.Push(functionDefinitionNode);
+            model.CurrentCodeBlockBuilder.PendingChild = functionDefinitionNode;
         }
         else
         {

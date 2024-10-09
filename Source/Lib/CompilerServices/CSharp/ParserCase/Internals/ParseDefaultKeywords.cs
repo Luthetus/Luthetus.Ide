@@ -92,6 +92,7 @@ public class ParseDefaultKeywords
         
         	tryStatementNode.SetTryStatementCatchNode(catchNode);
         	model.SyntaxStack.Push(catchNode);
+        	model.CurrentCodeBlockBuilder.PendingChild = catchNode;
     	}
     }
 
@@ -160,6 +161,7 @@ public class ParseDefaultKeywords
         // Have to push twice so it is on the stack when the 'while' keyword is parsed.
 		model.SyntaxStack.Push(doWhileStatementNode);
 		model.SyntaxStack.Push(doWhileStatementNode);
+        model.CurrentCodeBlockBuilder.PendingChild = doWhileStatementNode;
     }
 
     public static void HandleDoubleTokenKeyword(
@@ -254,6 +256,7 @@ public class ParseDefaultKeywords
 	    
 	    	tryStatementNode.SetTryStatementFinallyNode(finallyNode);
 	    	model.SyntaxStack.Push(finallyNode);
+        	model.CurrentCodeBlockBuilder.PendingChild = finallyNode;
     	}
     }
 
@@ -415,6 +418,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(forStatementNode);
+        model.CurrentCodeBlockBuilder.PendingChild = forStatementNode;
     }
 
     public static void HandleForeachTokenKeyword(
@@ -463,6 +467,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(foreachStatementNode);
+        model.CurrentCodeBlockBuilder.PendingChild = foreachStatementNode;
     }
 
     public static void HandleGotoTokenKeyword(
@@ -533,6 +538,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(lockStatementNode);
+        model.CurrentCodeBlockBuilder.PendingChild = lockStatementNode;
     }
 
     public static void HandleLongTokenKeyword(
@@ -675,6 +681,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(switchStatementNode);
+        model.CurrentCodeBlockBuilder.PendingChild = switchStatementNode;
     }
 
     public static void HandleThisTokenKeyword(
@@ -717,7 +724,9 @@ public class ParseDefaultKeywords
 	    model.CurrentCodeBlockBuilder.ChildList.Add(tryStatementNode);
 	        
 		model.SyntaxStack.Push(tryStatementNode);
+		
 		model.SyntaxStack.Push(tryStatementTryNode);
+        model.CurrentCodeBlockBuilder.PendingChild = tryStatementTryNode;
     }
 
     public static void HandleTypeofTokenKeyword(
@@ -820,6 +829,7 @@ public class ParseDefaultKeywords
 		        codeBlockNode: null);
 		        
 	        model.SyntaxStack.Push(whileStatementNode);
+        	model.CurrentCodeBlockBuilder.PendingChild = whileStatementNode;
 		}
     }
 
@@ -1062,6 +1072,7 @@ public class ParseDefaultKeywords
 
         var boundIfStatementNode = model.Binder.BindIfStatementNode(consumedKeywordToken, expression);
         model.SyntaxStack.Push(boundIfStatementNode);
+        model.CurrentCodeBlockBuilder.PendingChild = boundIfStatementNode;
     }
 
     public static void HandleUsingTokenKeyword(
@@ -1225,6 +1236,7 @@ public class ParseDefaultKeywords
         model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
         model.Binder.BindTypeIdentifier(identifierToken, model);
         model.SyntaxStack.Push(typeDefinitionNode);
+        model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
         
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
         {
@@ -1271,8 +1283,9 @@ public class ParseDefaultKeywords
             new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
 
         model.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, model);
-
+        
         model.SyntaxStack.Push(namespaceStatementNode);
+        model.CurrentCodeBlockBuilder.PendingChild = namespaceStatementNode;
     }
 
     public static void HandleReturnTokenKeyword(
