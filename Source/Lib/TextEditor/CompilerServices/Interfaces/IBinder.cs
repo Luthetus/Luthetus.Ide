@@ -29,8 +29,8 @@ public interface IBinder
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit);
     
     public IScope? GetScope(TextEditorTextSpan textSpan);
-    public IScope? GetScope(int positionIndex, ResourceUri resourceUri);
-    public IScope? GetScope(Key<IScope> scopeKey);
+    public IScope? GetScope(ResourceUri resourceUri, int positionIndex);
+    public IScope? GetScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     
@@ -80,17 +80,17 @@ public interface IBinder
     	string variableIdentifierText,
     	out IVariableDeclarationNode variableDeclarationNode);
     
-    public bool TryAddVariableDefinitionNodeByScope(
+    public bool TryAddVariableDeclarationNodeByScope(
     	ResourceUri resourceUri,
     	Key<IScope> scopeKey,
     	string variableIdentifierText,
-        IVariableDeclarationNode variableDefinitionNode);
+        IVariableDeclarationNode variableDeclarationNode);
         
-    public void SetVariableDefinitionNodeByScope(
+    public void SetVariableDeclarationNodeByScope(
     	ResourceUri resourceUri,
     	Key<IScope> scopeKey,
     	string variableIdentifierText,
-        IVariableDeclarationNode variableDefinitionNode);
+        IVariableDeclarationNode variableDeclarationNode);
     
     public TypeClauseNode? GetReturnTypeClauseNodeByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     

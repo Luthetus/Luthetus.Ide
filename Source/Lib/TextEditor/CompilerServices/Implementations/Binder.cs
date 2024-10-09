@@ -24,7 +24,7 @@ public class Binder : IBinder
         return null;
     }
 
-	public IScope? GetScope(int positionIndex, ResourceUri resourceUri)
+	public IScope? GetScope(ResourceUri resourceUri, int positionIndex)
     {
         return null;
     }
@@ -34,7 +34,7 @@ public class Binder : IBinder
         return null;
     }
     
-    public IScope? GetScope(Key<IScope> scopeKey)
+    public IScope? GetScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
     	return null;
     }
@@ -120,20 +120,20 @@ public class Binder : IBinder
     	return false;
     }
     
-    public bool TryAddVariableDefinitionNodeByScope(
+    public bool TryAddVariableDeclarationNodeByScope(
     	ResourceUri resourceUri,
     	Key<IScope> scopeKey,
     	string variableIdentifierText,
-        IVariableDeclarationNode variableDefinitionNode)
+        IVariableDeclarationNode variableDeclarationNode)
     {
     	return false;
     }
     
-    public void SetVariableDefinitionNodeByScope(
+    public void SetVariableDeclarationNodeByScope(
     	ResourceUri resourceUri,
     	Key<IScope> scopeKey,
     	string variableIdentifierText,
-        IVariableDeclarationNode variableDefinitionNode)
+        IVariableDeclarationNode variableDeclarationNode)
     {
     	return;
     }

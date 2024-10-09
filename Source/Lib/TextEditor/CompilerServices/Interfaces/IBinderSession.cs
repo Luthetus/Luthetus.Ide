@@ -19,6 +19,6 @@ public interface IBinderSession
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
     public ResourceUri ResourceUri { get; set; }
     
-    public IScope GetScope(Key<IScope> scopeKey);
+    public IScope GetScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     public IScope GetScopeCurrent();
 }

@@ -91,7 +91,7 @@ public sealed class CSharpCompilerService : CompilerService
 			if (targetScope.ParentKey is null)
 				targetScope = null;
 			else
-            	targetScope = CSharpBinder.GetScope(targetScope.ParentKey.Value);
+            	targetScope = CSharpBinder.GetScope(targetScope.ResourceUri, targetScope.ParentKey.Value);
         }
         
         var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;

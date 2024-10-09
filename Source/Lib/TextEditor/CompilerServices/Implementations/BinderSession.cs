@@ -32,13 +32,13 @@ public class BinderSession : IBinderSession
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
     public ResourceUri ResourceUri { get; set; }
     
-    public IScope GetScope(Key<IScope> scopeKey)
+    public IScope GetScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
-    	return Binder.GetScope(scopeKey);
+    	return Binder.GetScope(resourceUri, scopeKey);
     }
     
     public IScope GetScopeCurrent()
     {
-    	return Binder.GetScope(CurrentScopeKey);
+    	return Binder.GetScope(ResourceUri, CurrentScopeKey);
     }
 }
