@@ -654,6 +654,10 @@ public partial class CSharpBinder : IBinder
         TextEditorTextSpan textSpan,
         CSharpParserModel model)
     {
+    	// Check if it is the global scope, if so return early.
+    	if (model.BinderSession.CurrentScopeKey == Key<IScope>.Empty)
+    		return;
+    
     	if (!_boundScopes.TryGetValue(model.BinderSession.ResourceUri, out var narrowToFile))
     		return;
     	
