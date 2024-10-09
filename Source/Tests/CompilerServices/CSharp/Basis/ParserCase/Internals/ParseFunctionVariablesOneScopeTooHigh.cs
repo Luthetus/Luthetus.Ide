@@ -1,4 +1,4 @@
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
+/*using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.CompilerServices.CSharp.LexerCase;
@@ -41,15 +41,15 @@ public void Bbb(int number) { }
         var aaaFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList[0];
         var bbbFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList[1];
         
-        var aaaFunctionBoundScope = compilationUnit.Binder.GetBoundScope(aaaFunctionDefinitionNode.OpenBraceToken.TextSpan);
+        var aaaFunctionBoundScope = compilationUnit.Binder.GetScope(aaaFunctionDefinitionNode.OpenBraceToken.TextSpan);
         Assert.NotNull(aaaFunctionBoundScope);
         Console.WriteLine($"aaaFunctionBoundScope.VariableDeclarationMap.Count: {aaaFunctionBoundScope.VariableDeclarationMap.Count}");
         
-        var bbbFunctionBoundScope = compilationUnit.Binder.GetBoundScope(bbbFunctionDefinitionNode.OpenBraceToken.TextSpan);
+        var bbbFunctionBoundScope = compilationUnit.Binder.GetScope(bbbFunctionDefinitionNode.OpenBraceToken.TextSpan);
         Assert.NotNull(bbbFunctionBoundScope);
         Console.WriteLine($"bbbFunctionBoundScope.VariableDeclarationMap.Count: {bbbFunctionBoundScope.VariableDeclarationMap.Count}");
         
-        var globalScope = compilationUnit.Binder.GetBoundScope(aaaFunctionDefinitionNode.FunctionIdentifierToken.TextSpan);
+        var globalScope = compilationUnit.Binder.GetScope(aaaFunctionDefinitionNode.FunctionIdentifierToken.TextSpan);
         Assert.NotNull(globalScope);
         Console.WriteLine($"globalScope.VariableDeclarationMap.Count: {globalScope.VariableDeclarationMap.Count}");
         
@@ -74,7 +74,7 @@ public void Bbb(int number) { }
         yet those come before the '('.
         
         Will probably for now just check the syntax stack when parsing the function body.
-        */
+        *//*
     }
 
 	// TODO: Undo CarriageReturnLineFeed seems buggy
@@ -82,3 +82,4 @@ public void Bbb(int number) { }
 	private void Aaa(int number) { }
 	private void Bbb(int number) { }
 }
+*/

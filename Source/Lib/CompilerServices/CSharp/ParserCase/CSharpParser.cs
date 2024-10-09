@@ -37,8 +37,8 @@ public class CSharpParser : IParser
         ResourceUri resourceUri)
     {
         Binder = (CSharpBinder)previousBinder;
-        BinderSession = (CSharpBinderSession)Binder.ConstructBinderSession(resourceUri);
         Binder.ClearStateByResourceUri(resourceUri);
+        BinderSession = (CSharpBinderSession)Binder.ConstructBinderSession(resourceUri);
         return Parse();
     }
 

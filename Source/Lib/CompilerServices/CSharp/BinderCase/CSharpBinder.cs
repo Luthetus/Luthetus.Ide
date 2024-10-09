@@ -64,7 +64,7 @@ public partial class CSharpBinder : IBinder
     public ImmutableDictionary<string, NamespaceGroupNode> NamespaceGroupNodes => _namespaceGroupNodeMap.ToImmutableDictionary();
     public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
-    public ImmutableDictionary<ResourceUri, List<IScope>> Scopes => _boundScopes.ToImmutableDictionary();
+    public ImmutableDictionary<ResourceUri, List<IScope>> ScopeList => _boundScopes.ToImmutableDictionary();
     public ImmutableDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions.ToImmutableDictionary();
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 
@@ -74,6 +74,8 @@ public partial class CSharpBinder : IBinder
 
     public IBinderSession ConstructBinderSession(ResourceUri resourceUri)
     {
+    	RegisterStateByResourceUri(resourceUri);
+    
         return new CSharpBinderSession(
             resourceUri,
             _globalScope.Key,
@@ -607,14 +609,14 @@ public partial class CSharpBinder : IBinder
         CSharpParserModel model)
     {
         var scope = new Scope(
-        	Key<IScope>.NewKey(),
-		    model.BinderSession.CurrentScopeKey,
+        	Key: Key<IScope>.NewKey(),
+		    ParentKey: model.BinderSession.CurrentScopeKey,
 		    model.BinderSession.ResourceUri,
 		    textSpan.StartingIndexInclusive,
 		    EndingIndexExclusive: null);
             
         if (!_boundScopes.ContainsKey(scope.ResourceUri))
-        	_boundScopes.Add(scope.ResourceUri, new List<IScope>());
+        	throw new NotImplementedException(nameof(RegisterScope));
         	
         _boundScopes[scope.ResourceUri].Add(scope);
 
@@ -640,10 +642,10 @@ public partial class CSharpBinder : IBinder
             foreach (var typeDefinitionNode in typeDefinitionNodes)
             {
             	_ = TryAddTypeDefinitionNodeByScope(
-            		model.BinderSession.ResourceUri,
-            		model.BinderSession.CurrentScopeKey,
-            		typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
-            		typeDefinitionNode);
+	            		model.BinderSession.ResourceUri,
+	            		model.BinderSession.CurrentScopeKey,
+	            		typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
+	            		typeDefinitionNode);
             }
         }
     }
@@ -652,12 +654,16 @@ public partial class CSharpBinder : IBinder
         TextEditorTextSpan textSpan,
         CSharpParserModel model)
     {
-    	var narrowToFile = _boundScopes[model.BinderSession.ResourceUri];
+    	if (!_boundScopes.TryGetValue(model.BinderSession.ResourceUri, out var narrowToFile))
+    		return;
     	
     	var indexOf = narrowToFile.FindIndex(x => x.Key == model.BinderSession.CurrentScopeKey);
 
         if (indexOf == -1)
+        {
+        	Console.WriteLine(narrowToFile.Count);
             throw new NotImplementedException();
+        }
         
     	var scope = (Scope)narrowToFile[indexOf];
     	narrowToFile[indexOf] = scope with
@@ -845,6 +851,16 @@ public partial class CSharpBinder : IBinder
 
         _diagnosticBag.ClearByResourceUri(resourceUri);
     }
+    
+    public void RegisterStateByResourceUri(ResourceUri resourceUri)
+    {
+        _ = _boundScopes.TryAdd(resourceUri, new());
+
+		_ = _scopeTypeDefinitionMap.TryAdd(resourceUri, new());
+		_ = _scopeTypeDefinitionMap.TryAdd(resourceUri, new());
+		_ = _scopeVariableDeclarationMap.TryAdd(resourceUri, new());
+		_ = _scopeReturnTypeClauseNodeMap.TryAdd(resourceUri, new());
+    }
 
     /// <summary>
     /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
@@ -950,13 +966,12 @@ public partial class CSharpBinder : IBinder
 
     public IScope? GetScope(TextEditorTextSpan textSpan)
     {
-        var selfFile = _boundScopes[textSpan.ResourceUri];
-        var globalFile = _boundScopes[ResourceUri.Empty];
-        
-        var totalFile = new List<IScope>();
-        
-        totalFile.AddRange(selfFile);
-        totalFile.AddRange(globalFile);
+    	var totalFile = new List<IScope>();
+    
+    	if (_boundScopes.TryGetValue(textSpan.ResourceUri, out var selfFile))
+    		totalFile.AddRange(selfFile);
+		if (_boundScopes.TryGetValue(ResourceUri.Empty, out var globalFile))
+    		totalFile.AddRange(globalFile);
         
         var possibleScopes = totalFile.Where(x =>
         {
@@ -970,13 +985,12 @@ public partial class CSharpBinder : IBinder
     
     public IScope? GetScope(ResourceUri resourceUri, int positionIndex)
     {
-    	var selfFile = _boundScopes[resourceUri];
-        var globalFile = _boundScopes[ResourceUri.Empty];
-        
-        var totalFile = new List<IScope>();
-        
-        totalFile.AddRange(selfFile);
-        totalFile.AddRange(globalFile);
+    	var totalFile = new List<IScope>();
+    
+    	if (_boundScopes.TryGetValue(resourceUri, out var selfFile))
+    		totalFile.AddRange(selfFile);
+		if (_boundScopes.TryGetValue(ResourceUri.Empty, out var globalFile))
+    		totalFile.AddRange(globalFile);
         
         var possibleScopes = totalFile.Where(x =>
             x.StartingIndexInclusive <= positionIndex);
@@ -986,20 +1000,21 @@ public partial class CSharpBinder : IBinder
     
     public IScope? GetScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
-    	var selfFile = _boundScopes[resourceUri];
-        var globalFile = _boundScopes[ResourceUri.Empty];
-        
-        var totalFile = new List<IScope>();
-        
-        totalFile.AddRange(selfFile);
-        totalFile.AddRange(globalFile);
+    	var totalFile = new List<IScope>();
+    
+    	if (_boundScopes.TryGetValue(resourceUri, out var selfFile))
+    		totalFile.AddRange(selfFile);
+		if (_boundScopes.TryGetValue(ResourceUri.Empty, out var globalFile))
+    		totalFile.AddRange(globalFile);
         
         return totalFile.FirstOrDefault(x => x.Key == scopeKey);
     }
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
-    	var narrowDownToFile = _scopeTypeDefinitionMap[resourceUri];
+    	if (!_scopeTypeDefinitionMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    		return Array.Empty<TypeDefinitionNode>();
+    	
     	var narrowDownToScope = narrowDownToFile.Where(kvp => kvp.Key.ScopeKey == scopeKey);
     	return narrowDownToScope.Select(kvp => kvp.Value).ToArray();
     }
@@ -1010,7 +1025,12 @@ public partial class CSharpBinder : IBinder
     	string typeIdentifierText,
     	out TypeDefinitionNode typeDefinitionNode)
     {
-    	var narrowDownToFile = _scopeTypeDefinitionMap[resourceUri];
+    	if (!_scopeTypeDefinitionMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    	{
+    		typeDefinitionNode = null;
+    		return false;
+    	}
+    	
     	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, typeIdentifierText);
     	return narrowDownToFile.TryGetValue(scopeKeyAndIdentifierText, out typeDefinitionNode);
     }
@@ -1021,7 +1041,11 @@ public partial class CSharpBinder : IBinder
     	string typeIdentifierText,
         TypeDefinitionNode typeDefinitionNode)
     {
-    	var narrowDownToFile = _scopeTypeDefinitionMap[resourceUri];
+    	if (!_scopeTypeDefinitionMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    	{
+    		return false;
+    	}
+    		
 		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, typeIdentifierText);
     	return narrowDownToFile.TryAdd(scopeKeyAndIdentifierText, typeDefinitionNode);
     }
@@ -1032,14 +1056,18 @@ public partial class CSharpBinder : IBinder
     	string typeIdentifierText,
         TypeDefinitionNode typeDefinitionNode)
     {
-    	var narrowDownToFile = _scopeTypeDefinitionMap[resourceUri];
+    	if (!_scopeTypeDefinitionMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    		return;
+    		
 		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, typeIdentifierText);
     	narrowDownToFile[scopeKeyAndIdentifierText] = typeDefinitionNode;
     }
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
-    	var narrowDownToFile = _scopeFunctionDefinitionMap[resourceUri];
+    	if (!_scopeFunctionDefinitionMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    		return Array.Empty<FunctionDefinitionNode>();
+
     	var narrowDownToScope = narrowDownToFile.Where(kvp => kvp.Key.ScopeKey == scopeKey);
     	return narrowDownToScope.Select(kvp => kvp.Value).ToArray();
     }
@@ -1050,7 +1078,12 @@ public partial class CSharpBinder : IBinder
     	string functionIdentifierText,
     	out FunctionDefinitionNode functionDefinitionNode)
     {
-    	var narrowDownToFile = _scopeFunctionDefinitionMap[resourceUri];
+    	if (!_scopeFunctionDefinitionMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    	{
+    		functionDefinitionNode = null;
+    		return false;
+    	}
+    		
     	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, functionIdentifierText);
     	return narrowDownToFile.TryGetValue(scopeKeyAndIdentifierText, out functionDefinitionNode);
     }
@@ -1061,7 +1094,11 @@ public partial class CSharpBinder : IBinder
     	string functionIdentifierText,
         FunctionDefinitionNode functionDefinitionNode)
     {
-    	var narrowDownToFile = _scopeFunctionDefinitionMap[resourceUri];
+    	if (!_scopeFunctionDefinitionMap.TryGetValue(resourceUri, out var narrowDownToFile))
+		{
+			return false;
+		}
+    		
 		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, functionIdentifierText);
     	return narrowDownToFile.TryAdd(scopeKeyAndIdentifierText, functionDefinitionNode);
     }
@@ -1072,14 +1109,18 @@ public partial class CSharpBinder : IBinder
     	string functionIdentifierText,
         FunctionDefinitionNode functionDefinitionNode)
     {
-    	var narrowDownToFile = _scopeFunctionDefinitionMap[resourceUri];
+    	if (!_scopeFunctionDefinitionMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    		return;
+    		
 		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, functionIdentifierText);
     	narrowDownToFile[scopeKeyAndIdentifierText] = functionDefinitionNode;
     }
 
     public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
-    	var narrowDownToFile = _scopeVariableDeclarationMap[resourceUri];
+    	if (!_scopeVariableDeclarationMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    		return Array.Empty<IVariableDeclarationNode>();
+    		
     	var narrowDownToScope = narrowDownToFile.Where(kvp => kvp.Key.ScopeKey == scopeKey);
     	return narrowDownToScope.Select(kvp => kvp.Value).ToArray();
     }
@@ -1090,7 +1131,12 @@ public partial class CSharpBinder : IBinder
     	string variableIdentifierText,
     	out IVariableDeclarationNode variableDeclarationNode)
     {
-    	var narrowDownToFile = _scopeVariableDeclarationMap[resourceUri];
+    	if (!_scopeVariableDeclarationMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    	{
+    		variableDeclarationNode = null;
+    		return false;
+    	}
+    		
     	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, variableIdentifierText);
     	return narrowDownToFile.TryGetValue(scopeKeyAndIdentifierText, out variableDeclarationNode);
     }
@@ -1101,7 +1147,9 @@ public partial class CSharpBinder : IBinder
     	string variableIdentifierText,
         IVariableDeclarationNode variableDeclarationNode)
     {
-    	var narrowDownToFile = _scopeVariableDeclarationMap[resourceUri];
+    	if (!_scopeVariableDeclarationMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    		return false;
+    		
 		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, variableIdentifierText);
     	return narrowDownToFile.TryAdd(scopeKeyAndIdentifierText, variableDeclarationNode);
     }
@@ -1112,15 +1160,22 @@ public partial class CSharpBinder : IBinder
     	string variableIdentifierText,
         IVariableDeclarationNode variableDeclarationNode)
     {
-    	var narrowDownToFile = _scopeVariableDeclarationMap[resourceUri];
+    	if (!_scopeVariableDeclarationMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    		return;
+    		
 		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, variableIdentifierText);
     	narrowDownToFile[scopeKeyAndIdentifierText] = variableDeclarationNode;
     }
 
     public TypeClauseNode? GetReturnTypeClauseNodeByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
-    	var narrowDownToFile = _scopeReturnTypeClauseNodeMap[resourceUri];
-    	return narrowDownToFile[scopeKey];
+    	if (!_scopeReturnTypeClauseNodeMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    		return null;
+    	
+    	if (narrowDownToFile.TryGetValue(scopeKey, out var returnTypeClauseNode))
+    		return returnTypeClauseNode;
+    	else
+    		return null;
     }
     
     public bool TryAddReturnTypeClauseNodeByScope(
@@ -1128,7 +1183,12 @@ public partial class CSharpBinder : IBinder
     	Key<IScope> scopeKey,
         TypeClauseNode typeClauseNode)
     {
-    	var narrowDownToFile = _scopeReturnTypeClauseNodeMap[resourceUri];
+    	if (!_scopeReturnTypeClauseNodeMap.TryGetValue(resourceUri, out var narrowDownToFile))
+    	{
+    		typeClauseNode = null;
+    		return false;
+    	}
+    		
     	return narrowDownToFile.TryAdd(scopeKey, typeClauseNode);
     }
 

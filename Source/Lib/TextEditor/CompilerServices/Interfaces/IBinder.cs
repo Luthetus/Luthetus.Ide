@@ -24,6 +24,7 @@ public interface IBinder
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
     public ImmutableArray<ITextEditorSymbol> SymbolsList { get; }
+    public ImmutableDictionary<ResourceUri, List<IScope>> ScopeList { get; }
 
     public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit);
