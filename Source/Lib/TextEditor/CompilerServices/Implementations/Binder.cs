@@ -43,6 +43,16 @@ public class Binder : IBinder
 	{
 		return Array.Empty<TypeDefinitionNode>();
 	}
+	
+	public bool TryGetTypeDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string typeIdentifierText,
+    	out TypeDefinitionNode typeDefinitionNode)
+    {
+    	typeDefinitionNode = null;
+    	return false;
+    }
     
     public bool TryAddTypeDefinitionNodeByScope(
     	ResourceUri resourceUri,
@@ -52,10 +62,29 @@ public class Binder : IBinder
     {
     	return false;
     }
+    
+    public void SetTypeDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string typeIdentifierText,
+        TypeDefinitionNode typeDefinitionNode)
+    {
+    	return;
+    }
 	
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
 		return Array.Empty<FunctionDefinitionNode>();
+    }
+    
+    public bool TryGetFunctionDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string functionIdentifierText,
+    	out FunctionDefinitionNode functionDefinitionNode)
+    {
+    	functionDefinitionNode = null;
+    	return false;
     }
     
     public bool TryAddFunctionDefinitionNodeByScope(
@@ -67,9 +96,28 @@ public class Binder : IBinder
     	return false;
     }
     
+    public void SetFunctionDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string functionIdentifierText,
+        FunctionDefinitionNode functionDefinitionNode)
+    {
+    	return;
+    }
+    
     public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
 		return Array.Empty<IVariableDeclarationNode>();
+    }
+    
+    public bool TryGetVariableDeclarationNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string variableIdentifierText,
+    	out IVariableDeclarationNode variableDeclarationNode)
+    {
+    	variableDeclarationNode = null;
+    	return false;
     }
     
     public bool TryAddVariableDefinitionNodeByScope(
@@ -79,6 +127,15 @@ public class Binder : IBinder
         IVariableDeclarationNode variableDefinitionNode)
     {
     	return false;
+    }
+    
+    public void SetVariableDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string variableIdentifierText,
+        IVariableDeclarationNode variableDefinitionNode)
+    {
+    	return;
     }
     
     public TypeClauseNode? GetReturnTypeClauseNodeByScope(ResourceUri resourceUri, Key<IScope> scopeKey)

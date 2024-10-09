@@ -7,6 +7,19 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
+/// <summary>
+/// The <see cref="TryGetTypeDefinitionNodeByScope"/>,
+/// <see cref="TryGetTypeDefinitionNodeByScope"/>,
+/// <see cref="TryAddTypeDefinitionNodeByScope"/>,
+/// (and the similarly named methods),
+/// might seem a bit odd at first glance.
+///
+/// In order to avoid allocating a Dictionary
+/// foreach <see cref="IScope"/>,
+/// the storage is being done on the <see cref="IBinder"/>
+/// instance. And all the indexing is hidden
+/// behind the method invocations.
+/// </summary>
 public interface IBinder
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
@@ -21,7 +34,19 @@ public interface IBinder
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     
+    public bool TryGetTypeDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string typeIdentifierText,
+    	out TypeDefinitionNode typeDefinitionNode);
+    
     public bool TryAddTypeDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string typeIdentifierText,
+        TypeDefinitionNode typeDefinitionNode);
+        
+    public void SetTypeDefinitionNodeByScope(
     	ResourceUri resourceUri,
     	Key<IScope> scopeKey,
     	string typeIdentifierText,
@@ -29,7 +54,19 @@ public interface IBinder
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     
+    public bool TryGetFunctionDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string functionIdentifierText,
+    	out FunctionDefinitionNode functionDefinitionNode);
+    
     public bool TryAddFunctionDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string functionIdentifierText,
+        FunctionDefinitionNode functionDefinitionNode);
+        
+    public void SetFunctionDefinitionNodeByScope(
     	ResourceUri resourceUri,
     	Key<IScope> scopeKey,
     	string functionIdentifierText,
@@ -37,7 +74,19 @@ public interface IBinder
     
     public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     
+    public bool TryGetVariableDeclarationNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string variableIdentifierText,
+    	out IVariableDeclarationNode variableDeclarationNode);
+    
     public bool TryAddVariableDefinitionNodeByScope(
+    	ResourceUri resourceUri,
+    	Key<IScope> scopeKey,
+    	string variableIdentifierText,
+        IVariableDeclarationNode variableDefinitionNode);
+        
+    public void SetVariableDefinitionNodeByScope(
     	ResourceUri resourceUri,
     	Key<IScope> scopeKey,
     	string variableIdentifierText,

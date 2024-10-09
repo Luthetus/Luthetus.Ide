@@ -220,8 +220,9 @@ public static class ParseTokens
         else
         {
             if (model.Binder.TryGetVariableDeclarationHierarchically(
+                    model.BinderSession.ResourceUri,
+                    model.BinderSession.CurrentScopeKey,
                     text,
-                    model.BinderSession.CurrentScope,
                     out var variableDeclarationStatementNode) &&
                 variableDeclarationStatementNode is not null)
             {
@@ -232,8 +233,9 @@ public static class ParseTokens
             {
                 // 'static class identifier' OR 'undeclared-variable reference'
                 if (model.Binder.TryGetTypeDefinitionHierarchically(
+                        model.BinderSession.ResourceUri,
+                        model.BinderSession.CurrentScopeKey,
                         text,
-                        model.BinderSession.CurrentScope,
                         out var typeDefinitionNode) &&
                     typeDefinitionNode is not null)
                 {
@@ -388,8 +390,9 @@ public static class ParseTokens
         if (expectingTypeClause)
         {
             if (!model.Binder.TryGetTypeDefinitionHierarchically(
+                    model.BinderSession.ResourceUri,
+                    model.BinderSession.CurrentScopeKey,
                     consumedAmbiguousIdentifierNode.IdentifierToken.TextSpan.GetText(),
-                    model.BinderSession.CurrentScope,
                     out var typeDefinitionNode)
                 || typeDefinitionNode is null)
             {
@@ -634,7 +637,7 @@ public static class ParseTokens
 				model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)selfCodeBlockOwner, model, true);
         });
 
-        model.Binder.RegisterBoundScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan, model);
+        model.Binder.RegisterScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan, model);
 		model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
 		nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(model);
     }
@@ -650,7 +653,7 @@ public static class ParseTokens
 			return;
 		}
 
-        model.Binder.DisposeBoundScope(consumedCloseBraceToken.TextSpan, model);
+        model.Binder.DisposeScope(consumedCloseBraceToken.TextSpan, model);
 
         if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
         {
@@ -890,7 +893,7 @@ public static class ParseTokens
                 model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
             };
 
-            model.Binder.RegisterBoundScope(
+            model.Binder.RegisterScope(
                 scopeReturnTypeClauseNode,
                 consumedStatementDelimiterToken.TextSpan,
                 model);
@@ -905,11 +908,11 @@ public static class ParseTokens
         {
         	var pendingChild = model.CurrentCodeBlockBuilder.PendingChild;
         
-        	model.Binder.RegisterBoundScope(CSharpFacts.Types.Void.ToTypeClause(), consumedStatementDelimiterToken.TextSpan, model);
+        	model.Binder.RegisterScope(CSharpFacts.Types.Void.ToTypeClause(), consumedStatementDelimiterToken.TextSpan, model);
 			model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, pendingChild);
 			pendingChild.OnBoundScopeCreatedAndSetAsCurrent(model);
 			
-	        model.Binder.DisposeBoundScope(consumedStatementDelimiterToken.TextSpan, model);
+	        model.Binder.DisposeScope(consumedStatementDelimiterToken.TextSpan, model);
 	
 	        if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
 	            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;

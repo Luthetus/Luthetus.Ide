@@ -32,8 +32,9 @@ public class ParseContextualKeywords
                     null);
 
                 if (model.Binder.TryGetTypeDefinitionHierarchically(
+                		model.BinderSession.ResourceUri,
+                		model.BinderSession.CurrentScopeKey,
                         consumedKeywordContextualToken.TextSpan.GetText(),
-                        model.BinderSession.GetScopeCurrent(),
                         out var varTypeDefinitionNode) &&
                     varTypeDefinitionNode is not null)
                 {

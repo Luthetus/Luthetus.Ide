@@ -88,7 +88,10 @@ public sealed class CSharpCompilerService : CompilerService
                         null);
                 }));
 
-            targetScope = targetScope.Parent;
+			if (targetScope.ParentKey is null)
+				targetScope = null;
+			else
+            	targetScope = CSharpBinder.GetScope(targetScope.ParentKey.Value);
         }
         
         var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;
