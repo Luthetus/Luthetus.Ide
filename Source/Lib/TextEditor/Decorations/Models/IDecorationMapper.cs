@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
+namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 
 public interface IDecorationMapper
 {

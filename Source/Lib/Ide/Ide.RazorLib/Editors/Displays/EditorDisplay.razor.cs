@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components;
 using Luthetus.Common.RazorLib.Dimensions.Models;
 using Luthetus.Common.RazorLib.Options.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
 namespace Luthetus.Ide.RazorLib.Editors.Displays;
 
@@ -28,6 +29,7 @@ public partial class EditorDisplay : ComponentBase
             WrapperClassCssString = "luth_te_demo-text-editor",
             TabIndex = 0,
             HeaderButtonKinds = TextEditorHeaderButtonKindsList,
+            HeaderComponentType = typeof(TextEditorDevToolsAnchorDisplay),
         };
 
         base.OnInitialized();

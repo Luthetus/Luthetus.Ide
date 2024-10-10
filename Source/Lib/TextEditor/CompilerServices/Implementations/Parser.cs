@@ -27,8 +27,8 @@ public class Parser : IParser
         ResourceUri resourceUri)
     {
         Binder = previousBinder;
-        BinderSession = Binder.ConstructBinderSession(resourceUri);
         Binder.ClearStateByResourceUri(resourceUri);
+        BinderSession = Binder.ConstructBinderSession(resourceUri);
         return Parse();
     }
 

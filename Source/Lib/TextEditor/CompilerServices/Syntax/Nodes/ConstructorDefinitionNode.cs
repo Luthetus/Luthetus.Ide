@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -51,6 +52,17 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
     	return this;
+    }
+    
+    public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
+    {
+		foreach (var argument in FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+		{
+			if (argument.IsOptional)
+				parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
+			else
+				parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+		}
     }
     
     public void SetChildList()

@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -219,8 +220,9 @@ public static class ParseTokens
         else
         {
             if (model.Binder.TryGetVariableDeclarationHierarchically(
+                    model.BinderSession.ResourceUri,
+                    model.BinderSession.CurrentScopeKey,
                     text,
-                    model.BinderSession.CurrentScope,
                     out var variableDeclarationStatementNode) &&
                 variableDeclarationStatementNode is not null)
             {
@@ -231,8 +233,9 @@ public static class ParseTokens
             {
                 // 'static class identifier' OR 'undeclared-variable reference'
                 if (model.Binder.TryGetTypeDefinitionHierarchically(
+                        model.BinderSession.ResourceUri,
+                        model.BinderSession.CurrentScopeKey,
                         text,
-                        model.BinderSession.CurrentScope,
                         out var typeDefinitionNode) &&
                     typeDefinitionNode is not null)
                 {
@@ -387,8 +390,9 @@ public static class ParseTokens
         if (expectingTypeClause)
         {
             if (!model.Binder.TryGetTypeDefinitionHierarchically(
+                    model.BinderSession.ResourceUri,
+                    model.BinderSession.CurrentScopeKey,
                     consumedAmbiguousIdentifierNode.IdentifierToken.TextSpan.GetText(),
-                    model.BinderSession.CurrentScope,
                     out var typeDefinitionNode)
                 || typeDefinitionNode is null)
             {
@@ -523,7 +527,7 @@ public static class ParseTokens
 
             model.Binder.BindTypeClauseNode(inheritedTypeClauseNode, model);
 
-            model.SyntaxStack.Push(new TypeDefinitionNode(
+			typeDefinitionNode = new TypeDefinitionNode(
                 typeDefinitionNode.AccessModifierKind,
                 typeDefinitionNode.HasPartialModifier,
                 typeDefinitionNode.StorageModifierKind,
@@ -533,7 +537,10 @@ public static class ParseTokens
                 typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
                 inheritedTypeClauseNode,
                 typeDefinitionNode.OpenBraceToken,
-                typeDefinitionNode.CodeBlockNode));
+                typeDefinitionNode.CodeBlockNode);
+
+            model.SyntaxStack.Push(typeDefinitionNode);
+            model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
             
             if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
 	        {
@@ -560,10 +567,13 @@ public static class ParseTokens
         ICodeBlockOwner? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
 
-		if (model.SyntaxStack.TryPeek(out var checkForCodeBlockOwner) && checkForCodeBlockOwner is not ICodeBlockOwner)
+		if (closureCurrentCodeBlockBuilder.PendingChild is null)
 		{
-			model.SyntaxStack.Push(new ArbitraryCodeBlockNode(
-				closureCurrentCodeBlockBuilder.CodeBlockOwner));
+			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(
+				closureCurrentCodeBlockBuilder.CodeBlockOwner);
+		
+			model.SyntaxStack.Push(arbitraryCodeBlockNode);
+        	model.CurrentCodeBlockBuilder.PendingChild = arbitraryCodeBlockNode;
 		}
 
 		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind
@@ -573,7 +583,7 @@ public static class ParseTokens
 
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
-			// TODO: ??????? How would two consecutive defers get enqueued if doing '== 0'.
+			// Retrospective: ??? How would two consecutive defers get enqueued if doing '== 0'.
 			//
 			// Response: This seems to be a flag that says a child scope is allowed to be parsed (rather than infinitely enqueueing).
 			//           If so, rename the variable and make it a bool because it being a 'counter' is extremely confusing.
@@ -587,61 +597,49 @@ public static class ParseTokens
 			wasDeferred = true;
 		}
 
-		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.DequeuedIndexForChildList ?? model.CurrentCodeBlockBuilder.ChildList.Count;
+		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.DequeuedIndexForChildList
+			?? model.CurrentCodeBlockBuilder.ChildList.Count;
 		
-		if (model.SyntaxStack.TryPeek(out var syntax) && syntax is ICodeBlockOwner)
-		{
-			nextCodeBlockOwner = (ICodeBlockOwner)model.SyntaxStack.Pop();
-			
-			var returnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
-			if (returnTypeClauseNode is not null)
-				scopeReturnTypeClauseNode = returnTypeClauseNode;
-			
-			// Awkwardly capturing this variable so the closure on 'FinalizeCodeBlockNodeActionStack'
-			// Reads better. Because it will be used AFTER the code block was read so 'next' is nonsense.
-			var selfCodeBlockOwner = nextCodeBlockOwner;
-			
-			model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
-            {
-                selfCodeBlockOwner = selfCodeBlockOwner.WithCodeBlockNode(consumedOpenBraceToken, codeBlockNode);
-				
-				/*if (wasDeferred)
-					closureCurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;
-				else
-					closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);*/
-				
-				if (selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
-					selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
-					selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
-				{
-					closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);
-				}
-					
-				if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-					model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)selfCodeBlockOwner, model);
-				else if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-					model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)selfCodeBlockOwner, model, true);
-            });
-			
-			model.SyntaxStack.Push(selfCodeBlockOwner);
-		}
-
-        model.Binder.RegisterBoundScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan, model);
-
-        if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+		if (closureCurrentCodeBlockBuilder.PendingChild is null)
+			return;
+		
+		nextCodeBlockOwner = closureCurrentCodeBlockBuilder.PendingChild;
+		
+		var returnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
+		if (returnTypeClauseNode is not null)
+			scopeReturnTypeClauseNode = returnTypeClauseNode;
+		
+		// Awkwardly capturing this variable so the closure on 'FinalizeCodeBlockNodeActionStack'
+		// Reads better. Because it will be used AFTER the code block was read so 'next' is nonsense.
+		var selfCodeBlockOwner = nextCodeBlockOwner;
+		
+		model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
         {
-            var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
+            selfCodeBlockOwner = selfCodeBlockOwner.WithCodeBlockNode(consumedOpenBraceToken, codeBlockNode);
+			
+			/*if (wasDeferred)
+				closureCurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;
+			else
+				closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);*/
+			
+			if (selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
+				selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
+				selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+			{
+				closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);
+			}
+			
+			closureCurrentCodeBlockBuilder.PendingChild = null;
+				
+			if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+				model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)selfCodeBlockOwner, model);
+			else if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+				model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)selfCodeBlockOwner, model, true);
+        });
 
-            var namespaceString = namespaceStatementNode
-                .IdentifierToken
-                .TextSpan
-                .GetText();
-
-            model.Binder.AddNamespaceToCurrentScope(namespaceString, model);
-            model.SyntaxStack.Push(namespaceStatementNode);
-        }
-
-        model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+        model.Binder.RegisterScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan, model);
+		model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+		nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(model);
     }
 
     public static void ParseCloseBraceToken(
@@ -655,7 +653,7 @@ public static class ParseTokens
 			return;
 		}
 
-        model.Binder.DisposeBoundScope(consumedCloseBraceToken.TextSpan, model);
+        model.Binder.DisposeScope(consumedCloseBraceToken.TextSpan, model);
 
         if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
         {
@@ -833,6 +831,7 @@ public static class ParseTokens
                     functionDefinitionNode.ConstraintNode);
 
                 model.CurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
+                model.CurrentCodeBlockBuilder.PendingChild = null;
             }
         }
     }
@@ -889,11 +888,12 @@ public static class ParseTokens
                     namespaceStatementNode.IdentifierToken,
                     codeBlockNode);
 
+				model.CurrentCodeBlockBuilder.PendingChild = null;
                 closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
                 model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
             };
 
-            model.Binder.RegisterBoundScope(
+            model.Binder.RegisterScope(
                 scopeReturnTypeClauseNode,
                 consumedStatementDelimiterToken.TextSpan,
                 model);
@@ -903,6 +903,19 @@ public static class ParseTokens
                 model);
 
             model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+        }
+        else if (model.CurrentCodeBlockBuilder.PendingChild is not null)
+        {
+        	var pendingChild = model.CurrentCodeBlockBuilder.PendingChild;
+        
+        	model.Binder.RegisterScope(CSharpFacts.Types.Void.ToTypeClause(), consumedStatementDelimiterToken.TextSpan, model);
+			model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, pendingChild);
+			pendingChild.OnBoundScopeCreatedAndSetAsCurrent(model);
+			
+	        model.Binder.DisposeScope(consumedStatementDelimiterToken.TextSpan, model);
+	
+	        if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
+	            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
         }
     }
 

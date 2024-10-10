@@ -217,10 +217,12 @@ public class CSharpKeywords
         DO_KEYWORD,
         ELSE_KEYWORD,
         FOR_KEYWORD,
+        FOREACH_KEYWORD,
         GOTO_KEYWORD,
         IF_KEYWORD,
         RETURN_KEYWORD,
         SWITCH_KEYWORD,
+        THROW_KEYWORD,
         WHILE_KEYWORD,
         YIELD_KEYWORD
     }.ToImmutableArray();

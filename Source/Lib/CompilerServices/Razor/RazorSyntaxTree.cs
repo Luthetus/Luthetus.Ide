@@ -223,14 +223,17 @@ public class RazorSyntaxTree
         InjectedLanguageDefinition injectedLanguageDefinition,
         TextEditorTextSpan textSpan)
     {
-        var boundScopes = _cSharpCompilerService.CSharpBinder.BoundScopes;
+        var allTypeDefinitions = _cSharpCompilerService.CSharpBinder.AllTypeDefinitions;
 
         var text = textSpan.GetText();
+        
+        var matchingKvps = allTypeDefinitions.Where(x => x.Key.TypeIdentifier == text);
 
-        foreach (var scope in boundScopes)
+        foreach (var kvp in matchingKvps)
         {
-            if (scope.TypeDefinitionMap.TryGetValue(text, out var typeDefinitionNode) &&
-                typeDefinitionNode?.InheritedTypeClauseNode is not null)
+        	var typeDefinitionNode = kvp.Value;
+        	
+            if (typeDefinitionNode?.InheritedTypeClauseNode is not null)
             {
                 var inheritanceIdentifierText = typeDefinitionNode
                     .InheritedTypeClauseNode.TypeIdentifierToken.TextSpan.GetText();

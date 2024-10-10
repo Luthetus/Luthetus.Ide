@@ -164,6 +164,7 @@ public static class RuntimeAssembliesLoaderFactory
 
                                         var functionArgumentEntryNode = new FunctionArgumentEntryNode(
                                             variableDeclarationStatementNode,
+                                            optionalCompileTimeConstantToken: null,
                                             false,
                                             false,
                                             false,

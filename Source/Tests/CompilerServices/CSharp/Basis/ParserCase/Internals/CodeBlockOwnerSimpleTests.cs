@@ -1,4 +1,4 @@
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
+/*using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.CompilerServices.CSharp.LexerCase;
@@ -49,21 +49,201 @@ public class CodeBlockOwnerSimpleTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var i = 0;
-        
-        foreach (var child in topCodeBlock.ChildList)
-        {
-        	Console.WriteLine(child.SyntaxKind);
-        }
-        
-        var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[i++];
+        var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[0];
         
         Assert.Equal(1, topCodeBlock.ChildList.Length);
+        
+        var foreachBoundScope = compilationUnit.Binder.GetScope(foreachNodeOne.OpenBraceToken.TextSpan);
+        Assert.NotNull(foreachBoundScope);
+        //Console.WriteLine($"foreachBoundScope.VariableDeclarationMap.Count: {foreachBoundScope.VariableDeclarationMap.Count}");
+        
+        var globalScope = compilationUnit.Binder.GetScope(foreachNodeOne.ForeachKeywordToken.TextSpan);
+        Assert.NotNull(globalScope);
+        //Console.WriteLine($"globalScope.VariableDeclarationMap.Count: {globalScope.VariableDeclarationMap.Count}");
+        
+        //foreach (var variable in globalScope.VariableDeclarationMap.Values)
+        //{
+        //	Console.WriteLine(variable.IdentifierToken.TextSpan.GetText());
+        //}
+        
+        //Assert.Equal(0, globalScope.VariableDeclarationMap.Count);
+        //Assert.Equal(1, foreachBoundScope.VariableDeclarationMap.Count);
+    }
+    
+    [Fact]
+	public void Foreach_SingleStatementBody()
+	{
+		/*
+		It seems that in order to do the single statement body,
+		I need to begin reading the statement that immediately follows
+		any ICodeBlockOwner.
+		
+		As for deferred parsing of child scopes,
+		it might be the case that one would never need the breadth
+		first parsing in regards to nested single statement bodies.
+		
+		Ex:
+		================================
+		foreach (...)
+			foreach (...)
+				foreach (...)
+					Console.WriteLine();
+		================================
+		
+		Regardless, I will write the parsing such that
+		I don't have any breadth first parsing for the
+		single statement bodies.
+		
+		Also, what even would be "breadth first" if
+		there is only 1 child node (the single statement body)?
+		
+		Also, if anyone ever consumes a StatementDelimiterToken
+		without passing through the ParseStatementDelimiterToken(...)
+		method, I cannot take that statement as the single statement body
+		because I will never know that the statement even ended.
+		
+		A massive headache is related to the ParseOpenBraceToken(...)
+		method. Because I've done the code for:
+		    'model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode => ...'
+		within that method.
+		
+		This results in my "finalization" of a code block being
+		strictly written with the presumption of a OpenBraceToken and CloseBraceToken.
+		
+		If I move the:
+		    'model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode => ...'
+		code to the interface ICodeBlockOwner, I might be able to
+		then invoke it from 'ParseCloseBraceToken(...)' and
+		'ParseStatementDelimiterToken(...)'.
+		
+		If it turns out that the code inside:
+		    'model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode => ...'
+		is too language specific to C# to exist in the text editor project,
+		I could also define a method in the CompilerServices.CSharp project
+		that takes an instance of ICodeBlockOwner.
+		
+		If somehow the current code block builder could be set once
+		an ICodeBlockOwner were found, rather than wait until the OpenBraceToken,
+		would this be beneficial?
+		
+		If I could see an ICodeBlockOwner and then Peek the next token
+		if it were OpenBraceToken then it would be a lot easier.
+		
+		But, the 'where' clauses for methods and types mess things up.
+		
+		If the "mess things up" cases are small enough, I could check for them
+		then the OpenBraceToken.
+		
+		It might be the case that I can know whether the code block will be
+		a single statement.
+		
+		I really like the idea that I might know the code block will be a single statement.
+		
+		Because to know if the code block is a OpenBraceToken, requires far more complexity
+		because the 'where' clause might be complex.
+		
+		Although now that I say it, is the existence of the where clause an indicator
+		that it would be a code block?
+		
+		I'm thinking about where clauses for types and methods but that isn't
+		even part of the question if we're looking at control keywords.
+		
+		The answer to this problem might be in the allowed sequences of tokens.
+		
+		
+		*//*
+	
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"
+foreach (var item in list)
+	Console.WriteLine(item);
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[0];
+        
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
+        
+        var foreachBoundScope = compilationUnit.Binder.GetScope(foreachNodeOne.OpenBraceToken.TextSpan);
+        
+        // Assert.ISNull();
+        
+        
+        
+        Assert.NotNull(foreachBoundScope);
+        //Console.WriteLine($"foreachBoundScope.VariableDeclarationMap.Count: {foreachBoundScope.VariableDeclarationMap.Count}");
+        
+        var globalScope = compilationUnit.Binder.GetScope(foreachNodeOne.ForeachKeywordToken.TextSpan);
+        Assert.NotNull(globalScope);
+        //Console.WriteLine($"globalScope.VariableDeclarationMap.Count: {globalScope.VariableDeclarationMap.Count}");
+        
+        //foreach (var variable in globalScope.VariableDeclarationMap.Values)
+        //{
+        //	Console.WriteLine(variable.IdentifierToken.TextSpan.GetText());
+        //}
+        
+        //Assert.Equal(0, globalScope.VariableDeclarationMap.Count);
+        //Assert.Equal(1, foreachBoundScope.VariableDeclarationMap.Count);
+    }
+    
+    [Fact]
+	public void Foreach_Idea()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+		
+        var sourceText =
+@"
+foreach (var item in list)
+	foreach (var item in list)
+		foreach (var item in list)
+			Console.WriteLine(item);
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var foreachNodeOne = (ForeachStatementNode)topCodeBlock.ChildList[0];
+        
+        Assert.Equal(1, topCodeBlock.ChildList.Length);
+        
+        var foreachBoundScope = compilationUnit.Binder.GetScope(foreachNodeOne.OpenBraceToken.TextSpan);
+        
+        // Assert.ISNull();
+        
+        
+        
+        Assert.NotNull(foreachBoundScope);
+        Console.WriteLine($"foreachBoundScope.VariableDeclarationMap.Count: {foreachBoundScope.VariableDeclarationMap.Count}");
+        
+        var globalScope = compilationUnit.Binder.GetScope(foreachNodeOne.ForeachKeywordToken.TextSpan);
+        Assert.NotNull(globalScope);
+        Console.WriteLine($"globalScope.VariableDeclarationMap.Count: {globalScope.VariableDeclarationMap.Count}");
+        
+        foreach (var variable in globalScope.VariableDeclarationMap.Values)
+        {
+        	Console.WriteLine(variable.IdentifierToken.TextSpan.GetText());
+        }
+        
+        Assert.Equal(0, globalScope.VariableDeclarationMap.Count);
+        Assert.Equal(1, foreachBoundScope.VariableDeclarationMap.Count);
     }
     
     [Fact]
 	public void Foreach()
-	{ 
+	{
+		//foreach (var item in list)
+		//	var a = 2;
+	
 		var resourceUri = new ResourceUri("./unitTesting.txt");
 		
         var sourceText =
@@ -647,3 +827,4 @@ lock (_syncRoot)
 		throw new NotImplementedException();
     }
 }
+*/

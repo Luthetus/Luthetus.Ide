@@ -1,5 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
@@ -20,4 +21,14 @@ public interface ICodeBlockOwner : ISyntaxNode
 	/// TODO: Recreate the ChildList after setting the CodeBlockNode
 	/// </summary>
 	public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode);
+	
+	/// <summary>
+	/// Once the code block owner's scope has been constructed,
+	/// this method gives them an opportunity to pull any variables
+	/// into scope that ought to be there.
+	/// As well, the current code block builder will have been updated.
+	///
+	/// (i.e.: a function definition's arguments)
+	/// </summary>
+	public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel);
 }
