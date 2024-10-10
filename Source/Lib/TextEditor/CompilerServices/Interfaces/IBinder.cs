@@ -32,6 +32,7 @@ public interface IBinder
     public IScope? GetScope(TextEditorTextSpan textSpan);
     public IScope? GetScope(ResourceUri resourceUri, int positionIndex);
     public IScope? GetScope(ResourceUri resourceUri, Key<IScope> scopeKey);
+    public IScope[]? GetScopeList(ResourceUri resourceUri);
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     

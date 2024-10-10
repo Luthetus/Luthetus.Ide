@@ -39,6 +39,11 @@ public class Binder : IBinder
     {
     	return null;
     }
+    
+    public IScope[]? GetScopeList(ResourceUri resourceUri)
+    {
+    	return null;
+    }
 
 	public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
 	{

@@ -1,10 +1,61 @@
+@using Luthetus.Common.RazorLib.Keys.Models;
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+
 <div class="luth_te_text-editor-dev-tools">
 	@{ var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated; }
 	
 	@if (renderBatch is not null)
 	{
 		<div>
+			ResourceUri: @renderBatch.Model.ResourceUri
+		</div>
+		<div>
 			CompilerService: @renderBatch.Model.CompilerService.GetType().Name
 		</div>
+		
+		var scopeList = renderBatch.Model.CompilerService.Binder
+			.GetScopeList(renderBatch.Model.ResourceUri)
+			?? Array.Empty<IScope>();
+			
+		scopeList = scopeList
+			.OrderBy(x => x.StartingIndexInclusive)
+            .ToArray();
+            
+        var hashSet = new HashSet<Key<IScope>>();
+        
+		foreach (var scope in scopeList)
+		{
+			if (scope.ParentKey is not null)
+				hashSet.Add(scope.ParentKey.Value);
+		}
+		
+		var leaves = new List<IScope>();
+		
+		foreach (var scope in scopeList)
+		{
+			if (!hashSet.Contains(scope.Key))
+			{
+				leaves.Add(scope);
+			}
+		}
+		
+		var groupLeaves = leaves.GroupBy(x => x.ParentKey);
+		
+		foreach (var group in groupLeaves)
+		{
+			<div style="border: 2px solid var(--luth_primary-border-color); padding: 4px;">
+				@foreach (var scope in group)
+				{
+					<text>@scope.Key.Guid, </text>
+				}
+				
+				-> @group.Key.Value.Guid
+			</div>
+		}
+		
+		<input class="luth_input luth_input-app-options-font-family"
+			   style="margin-top: 6px; width: 100%; display: block;"
+			   placeholder="Scope Key"
+			   @bind="Input" />
 	}
 </div>

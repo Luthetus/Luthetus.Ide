@@ -1014,6 +1014,18 @@ public partial class CSharpBinder : IBinder
         return totalFile.FirstOrDefault(x => x.Key == scopeKey);
     }
     
+    public IScope[]? GetScopeList(ResourceUri resourceUri)
+    {
+    	var totalFile = new List<IScope>();
+    
+    	if (_boundScopes.TryGetValue(resourceUri, out var selfFile))
+    		totalFile.AddRange(selfFile);
+		if (_boundScopes.TryGetValue(ResourceUri.Empty, out var globalFile))
+    		totalFile.AddRange(globalFile);
+    		
+    	return totalFile.ToArray();
+    }
+    
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
     	if (!_scopeTypeDefinitionMap.TryGetValue(resourceUri, out var narrowDownToFile))
