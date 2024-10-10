@@ -57,5 +57,23 @@
 			   style="margin-top: 6px; width: 100%; display: block;"
 			   placeholder="Scope Key"
 			   @bind="Input" />
+		
+		var inputLocal = Input;
+		
+		if (Guid.TryParse(inputLocal, out var guid))
+		{
+			var scopeKey = new Key<IScope>(guid);
+			
+			var chosenScope = scopeList.FirstOrDefault(x => x.Key == scopeKey);
+			
+			if (chosenScope is null)
+			{
+				<div>chosenScope is null</div>
+			}
+			else
+			{
+				<div>@chosenScope</div>
+			}
+		}
 	}
 </div>
