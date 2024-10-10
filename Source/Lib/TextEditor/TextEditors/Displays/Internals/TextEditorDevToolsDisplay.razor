@@ -1,0 +1,10 @@
+<div class="luth_te_text-editor-dev-tools">
+	@{ var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated; }
+	
+	@if (renderBatch is not null)
+	{
+		<div>
+			CompilerService: @renderBatch.Model.CompilerService.GetType().Name
+		</div>
+	}
+</div>
