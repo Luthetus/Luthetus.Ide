@@ -22,24 +22,12 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 
 	/// <summary>byte is used as TArgs just as a "throwaway" type. It isn't used.</summary>
 	private ThrottleOptimized<byte> _throttleRender;
-
-	private string _input = string.Empty;
-	
-	private string Input
-	{
-		get => _input;
-		set
-		{
-			_input = value;
-			DrawScopeInTextEditor(_input);
-		}
-	}
 	
 	protected override void OnInitialized()
     {
     	_throttleRender = new(ThrottleTimeSpan, async (_, _) =>
     	{
-    		await InvokeAsync(StateHasChanged).ConfigureAwait(false);
+    		DrawScopeInTextEditor();
     	});
     
         TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
@@ -53,17 +41,12 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
     	_throttleRender.Run(0);
     }
     
-    private void DrawScopeInTextEditor(string inputLocal)
+    private void DrawScopeInTextEditor()
     {
-    	if (!Guid.TryParse(inputLocal, out var guid))
-    		return;
-    
     	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
     	
     	if (renderBatch is null)
     		return;
-    		
-    	var scopeKey = new Key<IScope>(guid);
     	
     	TextEditorService.PostUnique(nameof(TextEditorDevToolsDisplay), editContext =>
     	{
@@ -74,12 +57,16 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
-                
-            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+            
+            if (!viewModelModifier.ViewModel.FirstPresentationLayerKeysList.Contains(
+            		TextEditorDevToolsPresentationFacts.PresentationKey))
             {
-            	FirstPresentationLayerKeysList = viewModelModifier.ViewModel.FirstPresentationLayerKeysList
-            		.Add(TextEditorDevToolsPresentationFacts.PresentationKey)
-            };
+	            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+	            {
+	            	FirstPresentationLayerKeysList = viewModelModifier.ViewModel.FirstPresentationLayerKeysList
+	            		.Add(TextEditorDevToolsPresentationFacts.PresentationKey)
+	            };
+	        }
     	
     		TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
 				editContext,
@@ -95,24 +82,29 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 	
 	        var resourceUri = modelModifier.ResourceUri;
 	
-			var scopeList = modelModifier.CompilerService.Binder
-				.GetScopeList(resourceUri)
-				?? Array.Empty<IScope>();
-				
-			var targetScope = scopeList.FirstOrDefault(x => x.Key == scopeKey);
+			var targetScope = modelModifier.CompilerService.Binder.
+				GetScope(resourceUri, modelModifier.GetPositionIndex(primaryCursorModifier));
 			
 			if (targetScope is null)
 				return Task.CompletedTask;
     
-			var textSpan = new TextEditorTextSpan(
+    		var textSpanStart = new TextEditorTextSpan(
 	            targetScope.StartingIndexInclusive,
+	            targetScope.StartingIndexInclusive + 1,
+			    (byte)TextEditorDevToolsDecorationKind.Scope,
+			    resourceUri,
+			    sourceText: string.Empty,
+			    getTextPrecalculatedResult: string.Empty);
+    		
+			var textSpanEnd = new TextEditorTextSpan(
+	            (targetScope.EndingIndexExclusive ?? presentationModel.PendingCalculation.ContentAtRequest.Length) - 1,
 			    targetScope.EndingIndexExclusive ?? presentationModel.PendingCalculation.ContentAtRequest.Length,
 			    (byte)TextEditorDevToolsDecorationKind.Scope,
 			    resourceUri,
 			    sourceText: string.Empty,
 			    getTextPrecalculatedResult: string.Empty);
 	
-			var diagnosticTextSpans = new [] { textSpan }
+			var diagnosticTextSpans = new [] { textSpanStart, textSpanEnd }
 				.ToImmutableArray();
 
 			modelModifier.CompletePendingCalculatePresentationModel(
