@@ -147,7 +147,7 @@ public class PresentationAndSelectionDriver
 
             return $"position: absolute; {top} {height} {left} {widthCssStyleString}";
         }
-        catch (LuthetusTextEditorException e)
+        catch (LuthetusTextEditorException)
         {
             return string.Empty;
         }
