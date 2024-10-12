@@ -11,7 +11,7 @@ public class TextEditorDevToolsDecorationMapper : IDecorationMapper
         return decoration switch
         {
             TextEditorDevToolsDecorationKind.None => string.Empty,
-            TextEditorDevToolsDecorationKind.Scope => "luth_te_diff-longest-common-subsequence",
+            TextEditorDevToolsDecorationKind.Scope => "luth_te_brace_matching",
             _ => string.Empty,
         };
     }
