@@ -51,62 +51,6 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 ///     base.OnInitialized();
 /// }
 /// ```
-///
-/// ImmutableList shouldn't be used here, (at least not the way it currently is).
-/// Every time we want to get a specific TextEditorModel via their ResourceUri,
-/// then this code is used: ModelList.GetFirstOrDefault(x => x.ResourceUri == resourceUri).
-/// This was the way things were for a few reasons. One because not enough files were being processed
-/// by the IDE for it to matter. Two because ImmutableList is a tree datastructure internally.
-/// But, that "two" point is completely pointless if one isn't searching by a hash.
-/// It likely is just iterating the tree and checking the predicate until it finds true. (2024-10-02)
-///
-/// With the Luthetus.Ide solution open, I have
-/// 1,833 text editor models (post parsing the entire solution).
-/// |
-/// And I have 11 view models (post parsing the entire solution 
-/// as well having opened a couple of files.)
-/// |
-/// I was concerned about the text editor models, and these numbers make sense.
-/// We were recreating the ImmutableList<TextEditorModel> every time a user interacted
-/// with the text editor.
-/// |
-/// The count of 1,833 isn't actually as bad as I thought it would be.
-/// It might be only a minor optimization to have made it a dictionary.
-/// |
-/// But, the Dictionary of <TextEditorModel> isn't being recreated everytime
-/// a user interacts with the text editor anymore.
-/// |
-/// And that should be quite noticible. Granted that it was only recreating
-/// a List which contained the references to objects (not the objects themselves).
-/// |
-/// It still probably was quite a lot to have to create a new instance and add the
-/// references to it. Also garbage collection of "throwing away" the previous immutable list
-/// perhaps could've been an issue.
-/// |
-/// It is probably a good idea to replicate these changes (list to dictionary, and don't recreate)
-/// for the text editor view-models. But, the only way to get 1,833 view models (at the moment)
-/// would be to manually open 1,833 files in the text editor.
-/// |
-/// So theoretically the view models over time would cause minor slowing of the IDE as it
-/// has more and more to churn through (until the changes are made)
-/// |
-/// I used <see cref="__ModelRegisterDisposeLock"/> specifically when
-/// adding or removing from the dictionary. Because its presumed that this would
-/// have a chance to be an enumeration was modified, if someone was reading it.
-/// |
-/// As for reading an individual value by providing a key, its presumed that
-/// whatever value they get is what they get, it doesn't matter so long as
-/// it isn't deleted while they try to get it.
-/// |
-/// I, Hunter Freeman, named these variables very oddly.
-/// I do this when I'm feeling tired, but see an interesting scenario
-/// such as this optimization. It caught my attention so I figured I would
-/// push through and "just get it done". So I could see how it ends up.
-/// I need to rename the variables now though. The scope shouldn't be public either.
-/// |
-/// The idea is that some work leaves behind a bit of techincal debt,
-/// but if the work being done will long term be a source of motivation, then
-/// that technical debt is actually a techincal loan, which will be paid off. (2024-10-02).
 /// </summary>
 [FeatureState]
 public partial record TextEditorState
@@ -114,15 +58,9 @@ public partial record TextEditorState
 	private readonly Dictionary<ResourceUri, TextEditorModel> _modelMap = new();
 	private readonly Dictionary<Key<TextEditorViewModel>, TextEditorViewModel> _viewModelMap = new();
 	
-	public (TextEditorModel? TextEditorModel, TextEditorViewModel? TextEditorViewModel) GetModelAndViewModelOrDefaultThreadSafe(
+	public (TextEditorModel? TextEditorModel, TextEditorViewModel? TextEditorViewModel) GetModelAndViewModelOrDefault(
 		ResourceUri resourceUri, Key<TextEditorViewModel> viewModelKey)
 	{
-		// Invoking Model_GetOrDefault should theoretically be no issue, since the same thread is accessing
-		// the lock.
-		//
-		// But I'm doing some experimental optimizations at the moment and I'm already uncomfortable enough
-		// for the moment.
-		
 		var inModel = (TextEditorModel?)null;
 		var inViewModel = (TextEditorViewModel?)null;
 		
@@ -142,15 +80,9 @@ public partial record TextEditorState
 	/// <summary>
 	/// This overload will lookup the model for the given view model, in the case that one only has access to the viewModelKey.
 	/// </summary>
-	public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewModelOrDefaultThreadSafe(
+	public (TextEditorModel? Model, TextEditorViewModel? ViewModel) GetModelAndViewModelOrDefault(
 		Key<TextEditorViewModel> viewModelKey)
 	{
-		// Invoking Model_GetOrDefault should theoretically be no issue, since the same thread is accessing
-		// the lock.
-		//
-		// But I'm doing some experimental optimizations at the moment and I'm already uncomfortable enough
-		// for the moment.
-		
 		var inModel = (TextEditorModel?)null;
 		var inViewModel = (TextEditorViewModel?)null;
 		

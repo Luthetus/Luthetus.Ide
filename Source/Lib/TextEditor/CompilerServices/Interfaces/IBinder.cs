@@ -7,19 +7,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
-/// <summary>
-/// The <see cref="TryGetTypeDefinitionNodeByScope"/>,
-/// <see cref="TryGetTypeDefinitionNodeByScope"/>,
-/// <see cref="TryAddTypeDefinitionNodeByScope"/>,
-/// (and the similarly named methods),
-/// might seem a bit odd at first glance.
-///
-/// In order to avoid allocating a Dictionary
-/// foreach <see cref="IScope"/>,
-/// the storage is being done on the <see cref="IBinder"/>
-/// instance. And all the indexing is hidden
-/// behind the method invocations.
-/// </summary>
 public interface IBinder
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
@@ -33,6 +20,9 @@ public interface IBinder
     public IScope? GetScope(ResourceUri resourceUri, int positionIndex);
     public IScope? GetScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     public IScope[]? GetScopeList(ResourceUri resourceUri);
+    
+    public IBinderSession GetBinderSession(ResourceUri resourceUri);
+    public IBinderSession SetBinderSession(IBinderSession binderSession);
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     

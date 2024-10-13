@@ -234,7 +234,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     {
     	var localTextEditorState = TextEditorStateWrap.Value;
     
-    	var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefaultThreadSafe(
+    	var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefault(
 			TextEditorViewModelKey);
 				
         var renderBatchUnsafe = new TextEditorRenderBatchUnsafe(
@@ -370,7 +370,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         if (EventUtils.IsKeyboardEventArgsNoise(keyboardEventArgs))
             return;
         
-        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
+        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefault(
         	TextEditorViewModelKey);
 
         var resourceUri = model?.ResourceUri ?? ResourceUri.Empty;
@@ -424,7 +424,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
     private void ReceiveOnDoubleClick(MouseEventArgs mouseEventArgs)
     {
-        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
+        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefault(
             TextEditorViewModelKey);
 
         var resourceUri = model?.ResourceUri ?? ResourceUri.Empty;
@@ -449,7 +449,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     {
         _componentData.ThinksLeftMouseButtonIsDown = true;
 
-        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
+        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefault(
             TextEditorViewModelKey);
 
         var resourceUri = model?.ResourceUri ?? ResourceUri.Empty;
@@ -482,7 +482,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
 
         var localThinksLeftMouseButtonIsDown = _componentData.ThinksLeftMouseButtonIsDown;
 
-        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
+        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefault(
             TextEditorViewModelKey);
 
         var resourceUri = model?.ResourceUri ?? ResourceUri.Empty;
@@ -703,7 +703,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
         int countOfTestCharacters,
         CancellationToken cancellationToken)
     {
-        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
+        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefault(
             TextEditorViewModelKey);
 
         var resourceUri = model?.ResourceUri ?? ResourceUri.Empty;
@@ -738,7 +738,7 @@ public sealed partial class TextEditorViewModelDisplay : ComponentBase, IDisposa
     private void QueueCalculateVirtualizationResultBackgroundTask(
 		ITextEditorRenderBatch localCurrentRenderBatch)
     {
-        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefaultThreadSafe(
+        var (model, viewModel) = TextEditorStateWrap.Value.GetModelAndViewModelOrDefault(
             TextEditorViewModelKey);
 
         var resourceUri = model?.ResourceUri ?? ResourceUri.Empty;

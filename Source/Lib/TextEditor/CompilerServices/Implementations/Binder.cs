@@ -11,9 +11,12 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class Binder : IBinder
 {
+	private readonly Dictionary<ResourceUri, IBinderSession> ;
+
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
     public ImmutableArray<ITextEditorSymbol> SymbolsList { get; } = ImmutableArray<ITextEditorSymbol>.Empty;
     public ImmutableDictionary<ResourceUri, List<IScope>> ScopeList { get; } = ImmutableDictionary<ResourceUri, List<IScope>>.Empty;
+    
 
     public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
@@ -43,6 +46,14 @@ public class Binder : IBinder
     public IScope[]? GetScopeList(ResourceUri resourceUri)
     {
     	return null;
+    }
+    
+    public IBinderSession GetBinderSession(ResourceUri resourceUri)
+    {
+    }
+    
+    public IBinderSession SetBinderSession(IBinderSession binderSession)
+    {
     }
 
 	public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
