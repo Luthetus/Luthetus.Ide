@@ -73,10 +73,15 @@ public class Binder : IBinder
     	}
     }
 
-    public IBinderSession ConstructBinderSession(ResourceUri resourceUri)
+    public IBinderSession StartBinderSession(ResourceUri resourceUri)
     {
         return new BinderSession(resourceUri, Key<IScope>.Empty, null, this);
     }
+    
+	public void FinalizeBinderSession(IBinderSession binderSession)
+	{
+		UpsertBinderSession(binderSession);
+	}
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
 	{

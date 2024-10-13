@@ -11,10 +11,15 @@ public interface IBinder
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
     public ImmutableArray<ITextEditorSymbol> SymbolsList { get; }
-    public ImmutableDictionary<ResourceUri, List<IScope>> ScopeList { get; }
 
     public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit);
+    
+    /// <summary><see cref="FinalizeBinderSession"/></summary>
+    public IBinderSession StartBinderSession(ResourceUri resourceUri);
+    
+	/// <summary><see cref="StartBinderSession"/></summary>
+	public void FinalizeBinderSession(IBinderSession binderSession);
     
     public bool TryGetBinderSession(ResourceUri resourceUri, out IBinderSession binderSession);
     public void UpsertBinderSession(IBinderSession binderSession);
@@ -93,7 +98,6 @@ public interface IBinder
     	Key<IScope> scopeKey,
         TypeClauseNode typeClauseNode);
     
-    public IBinderSession ConstructBinderSession(ResourceUri resourceUri);
     public void ClearStateByResourceUri(ResourceUri resourceUri);
     public void AddNamespaceToCurrentScope(string namespaceString, IParserModel model);
     public void BindFunctionOptionalArgument(FunctionArgumentEntryNode functionArgumentEntryNode, IParserModel model);

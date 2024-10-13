@@ -12,5 +12,10 @@ public interface IScope
     public Key<IScope>? ParentKey { get; }
     public ResourceUri ResourceUri { get; }
     public int StartingIndexInclusive { get; }
-    public int? EndingIndexExclusive { get; }
+    /// <summary>
+    /// Beware of this property's setter,
+    /// as a hack to set the ending index later on in this
+    /// type's lifecycle because it isn't immediately known.
+    /// </summary>
+    public int? EndingIndexExclusive { get; set; }
 }

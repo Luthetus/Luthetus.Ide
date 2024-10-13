@@ -39,10 +39,10 @@ public partial class CSharpFacts
 	        
 			return new Scope(
 				Key<IScope>.Empty,
-			    ParentKey: null,
+			    parentKey: null,
 			    ResourceUri.Empty,
 			    0,
-			    EndingIndexExclusive: null);
+			    endingIndexExclusive: null);
         }
     }
 }

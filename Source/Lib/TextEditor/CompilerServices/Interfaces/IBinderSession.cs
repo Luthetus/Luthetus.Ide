@@ -2,6 +2,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
@@ -32,6 +33,27 @@ public interface IBinderSession
     public Key<IScope> CurrentScopeKey { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
+    
+    public List<IScope> ScopeList { get; }
+    /// <summary>
+    /// Key is the name of the type, prefixed with the ScopeKey and '_' to separate the ScopeKey from the type.
+    /// Given: public class MyClass { }
+    /// Then: Key == new ScopeKeyAndIdentifierText(ScopeKey, "MyClass")
+    /// </summary>
+    public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; }
+    /// <summary>
+    /// Key is the name of the function, prefixed with the ScopeKey and '_' to separate the ScopeKey from the function.
+    /// Given: public void MyMethod() { }
+    /// Then: Key == new ScopeKeyAndIdentifierText(ScopeKey, "MyMethod")
+    /// </summary>
+    public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; }
+    /// <summary>
+    /// Key is the name of the variable, prefixed with the ScopeKey and '_' to separate the ScopeKey from the variable.
+    /// Given: var myVariable = 2;
+    /// Then: Key == new ScopeKeyAndIdentifierText(ScopeKey, "myVariable")
+    /// </summary>
+    public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; }
+    public Dictionary<Key<IScope>, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; }
     
     public IScope GetScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     public IScope GetScopeCurrent();

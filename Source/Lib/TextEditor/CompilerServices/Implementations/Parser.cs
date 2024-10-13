@@ -13,7 +13,7 @@ public class Parser : IParser
     {
         Lexer = lexer;
         Binder = new Binder();
-        BinderSession = Binder.ConstructBinderSession(lexer.ResourceUri);
+        BinderSession = Binder.StartBinderSession(lexer.ResourceUri);
     }
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; private set; } = ImmutableArray<TextEditorDiagnostic>.Empty;
@@ -28,7 +28,7 @@ public class Parser : IParser
     {
         Binder = previousBinder;
         Binder.ClearStateByResourceUri(resourceUri);
-        BinderSession = Binder.ConstructBinderSession(resourceUri);
+        BinderSession = Binder.StartBinderSession(resourceUri);
         return Parse();
     }
 

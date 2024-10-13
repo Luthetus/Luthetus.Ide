@@ -26,7 +26,7 @@ public partial class CSharpBinder : IBinder
     /// <summary>
     /// The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/>
     /// </summary>
-    private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
+	private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
     /// <summary>
     /// All of the type definitions should be maintainted in this dictionary as they are
     /// found via parsing. Then, when one types an ambiguous identifier, perhaps they
@@ -40,13 +40,13 @@ public partial class CSharpBinder : IBinder
     
     public CSharpBinder()
     {
-        _boundScopes.Add(_globalScope.ResourceUri, new List<IScope> { _globalScope });
+    	_ = StartBinderSession(ResourceUri.Empty);
+        // _boundScopes.Add(_globalScope.ResourceUri, new List<IScope> { _globalScope });
     }
 
     public ImmutableDictionary<string, NamespaceGroupNode> NamespaceGroupNodes => _namespaceGroupNodeMap.ToImmutableDictionary();
     public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
-    public ImmutableDictionary<ResourceUri, List<IScope>> ScopeList => _boundScopes.ToImmutableDictionary();
     public ImmutableDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions.ToImmutableDictionary();
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
 
@@ -54,16 +54,21 @@ public partial class CSharpBinder : IBinder
         .Select(s => (ITextEditorSymbol)s)
         .ToImmutableArray();
 
-    public IBinderSession ConstructBinderSession(ResourceUri resourceUri)
+	/// <summary><see cref="FinalizeBinderSession"/></summary>
+    public IBinderSession StartBinderSession(ResourceUri resourceUri)
     {
-    	RegisterStateByResourceUri(resourceUri);
-    
         return new CSharpBinderSession(
             resourceUri,
+            this,
             _globalScope.Key,
-            _topLevelNamespaceStatementNode,
-            this);
+            _topLevelNamespaceStatementNode);
     }
+
+	/// <summary><see cref="StartBinderSession"/></summary>
+	public void FinalizeBinderSession(IBinderSession binderSession)
+	{
+		UpsertBinderSession(binderSession);
+	}
 
     public LiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode,
@@ -591,21 +596,19 @@ public partial class CSharpBinder : IBinder
         CSharpParserModel model)
     {
         var scope = new Scope(
-        	Key: Key<IScope>.NewKey(),
-		    ParentKey: model.BinderSession.CurrentScopeKey,
+        	key: Key<IScope>.NewKey(),
+		    parentKey: model.BinderSession.CurrentScopeKey,
 		    model.BinderSession.ResourceUri,
 		    textSpan.StartingIndexInclusive,
-		    EndingIndexExclusive: null);
-            
-        if (!_boundScopes.ContainsKey(scope.ResourceUri))
-        	throw new NotImplementedException(nameof(RegisterScope));
+		    endingIndexExclusive: null);
+		    
+		var indexForInsertion = model.BinderSession.ScopeList.FindIndex(x =>
+			scope.StartingIndexInclusive < x.StartingIndexInclusive);
+			
+		if (indexForInsertion == -1)
+        	indexForInsertion = model.BinderSession.ScopeList.Count;
         	
-        _boundScopes[scope.ResourceUri].Add(scope);
-
-        _boundScopes[scope.ResourceUri] = _boundScopes[scope.ResourceUri]
-            .OrderBy(x => x.StartingIndexInclusive)
-            .ToList();
-
+        model.BinderSession.ScopeList.Insert(indexForInsertion, scope);
         model.BinderSession.CurrentScopeKey = scope.Key;
     }
 
@@ -639,23 +642,16 @@ public partial class CSharpBinder : IBinder
     	// Check if it is the global scope, if so return early.
     	if (model.BinderSession.CurrentScopeKey == Key<IScope>.Empty)
     		return;
-    
-    	if (!_boundScopes.TryGetValue(model.BinderSession.ResourceUri, out var narrowToFile))
+    	
+    	// It is a struct, but needs to be mutated;
+    	var indexOf = model.BinderSession.ScopeList.FindIndex(x => x.Key == model.BinderSession.CurrentScopeKey);
+    	if (indexOf == -1)
     		return;
     	
-    	var indexOf = narrowToFile.FindIndex(x => x.Key == model.BinderSession.CurrentScopeKey);
-
-        if (indexOf == -1)
-        {
-        	Console.WriteLine(narrowToFile.Count);
-            throw new NotImplementedException();
-        }
-        
-    	var scope = (Scope)narrowToFile[indexOf];
-    	narrowToFile[indexOf] = scope with
-    	{
-    		EndingIndexExclusive = textSpan.EndingIndexExclusive
-    	};
+    	// "mutate"
+    	var scope = model.BinderSession.ScopeList[indexOf];
+    	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
+    	model.BinderSession.ScopeList[indexOf] = scope;
 
         if (scope.ParentKey is not null)
             model.BinderSession.CurrentScopeKey = scope.ParentKey.Value;
@@ -801,6 +797,12 @@ public partial class CSharpBinder : IBinder
         }
     }
 
+	/// <summary>
+	/// Do not invoke this when re-parsing the same file.
+	/// 
+	/// Instead, only invoke this when the file is deleted,
+	/// and should no longer be included in the binder.
+	/// </summary>
     public void ClearStateByResourceUri(ResourceUri resourceUri)
     {
         foreach (var namespaceGroupNodeKvp in _namespaceGroupNodeMap)
@@ -828,26 +830,11 @@ public partial class CSharpBinder : IBinder
                 };
         }
 
-        _boundScopes.Remove(resourceUri);
-
-		_scopeTypeDefinitionMap.Remove(resourceUri);
-		_scopeTypeDefinitionMap.Remove(resourceUri);
-		_scopeVariableDeclarationMap.Remove(resourceUri);
-		_scopeReturnTypeClauseNodeMap.Remove(resourceUri);
+		_binderSessionMap.Remove(resourceUri);
 
         _diagnosticBag.ClearByResourceUri(resourceUri);
     }
     
-    public void RegisterStateByResourceUri(ResourceUri resourceUri)
-    {
-        _ = _boundScopes.TryAdd(resourceUri, new());
-
-		_ = _scopeTypeDefinitionMap.TryAdd(resourceUri, new());
-		_ = _scopeTypeDefinitionMap.TryAdd(resourceUri, new());
-		_ = _scopeVariableDeclarationMap.TryAdd(resourceUri, new());
-		_ = _scopeReturnTypeClauseNodeMap.TryAdd(resourceUri, new());
-    }
-
     /// <summary>
     /// Search hierarchically through all the scopes, starting at the <see cref="initialScope"/>.<br/><br/>
     /// If a match is found, then set the out parameter to it and return true.<br/><br/>
@@ -957,14 +944,14 @@ public partial class CSharpBinder : IBinder
     
     public IScope? GetScope(ResourceUri resourceUri, int positionIndex)
     {
-    	var totalFile = new List<IScope>();
+    	var scopeList = new List<IScope>();
     
-    	if (_boundScopes.TryGetValue(resourceUri, out var selfFile))
-    		totalFile.AddRange(selfFile);
-		if (_boundScopes.TryGetValue(ResourceUri.Empty, out var globalFile))
-    		totalFile.AddRange(globalFile);
+    	if (_binderSessionMap.TryGetValue(resourceUri, out var targetBinderSession))
+    		scopeList.AddRange(targetBinderSession.ScopeList);
+		if (_binderSessionMap.TryGetValue(ResourceUri.Empty, out var globalBinderSession))
+    		scopeList.AddRange(globalBinderSession.ScopeList);
         
-        var possibleScopes = totalFile.Where(x =>
+        var possibleScopes = scopeList.Where(x =>
         {
             return x.StartingIndexInclusive <= positionIndex &&
             	   // Global Scope awkwardly has a null ending index exclusive (2023-10-15)
@@ -976,26 +963,26 @@ public partial class CSharpBinder : IBinder
     
     public IScope? GetScope(ResourceUri resourceUri, Key<IScope> scopeKey)
     {
-    	var totalFile = new List<IScope>();
+    	var scopeList = new List<IScope>();
     
-    	if (_boundScopes.TryGetValue(resourceUri, out var selfFile))
-    		totalFile.AddRange(selfFile);
-		if (_boundScopes.TryGetValue(ResourceUri.Empty, out var globalFile))
-    		totalFile.AddRange(globalFile);
+    	if (_binderSessionMap.TryGetValue(resourceUri, out var targetBinderSession))
+    		scopeList.AddRange(targetBinderSession.ScopeList);
+		if (_binderSessionMap.TryGetValue(ResourceUri.Empty, out var globalBinderSession))
+    		scopeList.AddRange(globalBinderSession.ScopeList);
         
-        return totalFile.FirstOrDefault(x => x.Key == scopeKey);
+        return scopeList.FirstOrDefault(x => x.Key == scopeKey);
     }
     
     public IScope[]? GetScopeList(ResourceUri resourceUri)
     {
-    	var totalFile = new List<IScope>();
+    	var scopeList = new List<IScope>();
     
-    	if (_boundScopes.TryGetValue(resourceUri, out var selfFile))
-    		totalFile.AddRange(selfFile);
-		if (_boundScopes.TryGetValue(ResourceUri.Empty, out var globalFile))
-    		totalFile.AddRange(globalFile);
+    	if (_binderSessionMap.TryGetValue(resourceUri, out var targetBinderSession))
+    		scopeList.AddRange(targetBinderSession.ScopeList);
+		if (_binderSessionMap.TryGetValue(ResourceUri.Empty, out var globalBinderSession))
+    		scopeList.AddRange(globalBinderSession.ScopeList);
     		
-    	return totalFile.ToArray();
+    	return scopeList.ToArray();
     }
     
     public bool TryGetBinderSession(ResourceUri resourceUri, out IBinderSession binderSession)
@@ -1081,7 +1068,7 @@ public partial class CSharpBinder : IBinder
     		return Array.Empty<FunctionDefinitionNode>();
 
     	return binderSession.ScopeFunctionDefinitionMap
-    		.Where(kvp => kvp.Key.ScopeKey == scopeKey);
+    		.Where(kvp => kvp.Key.ScopeKey == scopeKey)
     		.Select(kvp => kvp.Value)
     		.ToArray();
     }

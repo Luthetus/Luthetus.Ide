@@ -60,7 +60,7 @@ public static class RuntimeAssembliesLoaderFactory
 
             var model = new CSharpParserModel(
                 cSharpBinder,
-                (CSharpBinderSession)cSharpBinder.ConstructBinderSession(new ResourceUri("aaa")),
+                (CSharpBinderSession)cSharpBinder.StartBinderSession(new ResourceUri("aaa")),
                 new TokenWalker(ImmutableArray<ISyntaxToken>.Empty, new()),
                 new Stack<ISyntax>(),
                 diagnosticBag,
