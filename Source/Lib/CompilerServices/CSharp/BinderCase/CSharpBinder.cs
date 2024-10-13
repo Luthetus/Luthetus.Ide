@@ -997,7 +997,11 @@ public partial class CSharpBinder : IBinder
     		totalFile.AddRange(globalFile);
         
         var possibleScopes = totalFile.Where(x =>
-            x.StartingIndexInclusive <= positionIndex);
+        {
+            return x.StartingIndexInclusive <= positionIndex &&
+            	   // Global Scope awkwardly has a null ending index exclusive (2023-10-15)
+                   (x.EndingIndexExclusive >= positionIndex || x.EndingIndexExclusive is null);
+        });
 
         return possibleScopes.MinBy(x => positionIndex - x.StartingIndexInclusive);
     }
