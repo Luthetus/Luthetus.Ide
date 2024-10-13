@@ -6,12 +6,6 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.CompilerServices.CSharp.BinderCase;
 
-/// <summary>
-/// The <see cref="CSharpBinder"/> is being instantiated, then re-used many times
-/// foreach C# resource. This allows the files to know of eachother but,
-/// some data should only last for the length of a particular resource being parsed.
-/// Opposed to the lifetime of the <see cref="CSharpBinder"/> instance.
-/// </summary>
 public class CSharpBinderSession : IBinderSession
 {
     public CSharpBinderSession(
