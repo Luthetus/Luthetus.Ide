@@ -324,8 +324,14 @@ public static class ParseTypes
             typeDefinitionNode.CodeBlockNode);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+        {
             model.SyntaxStack.Push(typeDefinitionNode);
+            model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
+        }
         else
+        {
             model.CurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
+            model.CurrentCodeBlockBuilder.PendingChild = null;
+        }
     }
 }

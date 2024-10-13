@@ -119,7 +119,7 @@ public class PresentationAndSelectionDriver
             {
                 var tabsOnSameRowBeforeCursor = renderBatchLocal.Model.GetTabCountOnSameLineBeforeCursor(
                     rowIndex,
-                    endingColumnIndex);
+                    line.LastValidColumnIndex);
 
                 // 1 of the character width is already accounted for
                 var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;

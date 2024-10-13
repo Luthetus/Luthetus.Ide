@@ -9,6 +9,7 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
 {
     public FunctionArgumentEntryNode(
         VariableDeclarationNode variableDeclarationNode,
+        ISyntaxToken? optionalCompileTimeConstantToken,
         bool isOptional,
         bool hasParamsKeyword,
         bool hasOutKeyword,
@@ -16,6 +17,7 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
         bool hasRefKeyword)
     {
         VariableDeclarationNode = variableDeclarationNode;
+        OptionalCompileTimeConstantToken = optionalCompileTimeConstantToken;
         IsOptional = isOptional;
         HasParamsKeyword = hasParamsKeyword;
         HasOutKeyword = hasOutKeyword;
@@ -26,11 +28,15 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
         {
             VariableDeclarationNode
         };
+        
+        if (OptionalCompileTimeConstantToken is not null)
+        	children.Add(OptionalCompileTimeConstantToken);
 
         ChildList = children.ToImmutableArray();
     }
 
     public VariableDeclarationNode VariableDeclarationNode { get; }
+    public ISyntaxToken? OptionalCompileTimeConstantToken { get; }
     public bool IsOptional { get; }
     public bool HasParamsKeyword { get; }
     public bool HasOutKeyword { get; }

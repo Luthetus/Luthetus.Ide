@@ -21,6 +21,7 @@ internal static class TokenWalkerExtensionMethods
 		
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
 		_ = model.SyntaxStack.TryPop(out var syntax);
+		var pendingChild = model.CurrentCodeBlockBuilder.PendingChild;
 
 		var openTokenIndex = tokenWalker.Index - 1;
 
@@ -56,6 +57,7 @@ internal static class TokenWalkerExtensionMethods
 				() => model.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null);
 			
 			model.SyntaxStack.Push(syntax);
+			model.CurrentCodeBlockBuilder.PendingChild = pendingChild;
 			model.CurrentCodeBlockBuilder.DequeuedIndexForChildList = indexToUpdateAfterDequeue;
 		});
     }
