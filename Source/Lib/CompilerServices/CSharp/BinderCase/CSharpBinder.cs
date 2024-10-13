@@ -970,21 +970,7 @@ public partial class CSharpBinder : IBinder
 
     public IScope? GetScope(TextEditorTextSpan textSpan)
     {
-    	var totalFile = new List<IScope>();
-    
-    	if (_boundScopes.TryGetValue(textSpan.ResourceUri, out var selfFile))
-    		totalFile.AddRange(selfFile);
-		if (_boundScopes.TryGetValue(ResourceUri.Empty, out var globalFile))
-    		totalFile.AddRange(globalFile);
-        
-        var possibleScopes = totalFile.Where(x =>
-        {
-            return x.StartingIndexInclusive <= textSpan.StartingIndexInclusive &&
-            	   // Global Scope awkwardly has a null ending index exclusive (2023-10-15)
-                   (x.EndingIndexExclusive >= textSpan.StartingIndexInclusive || x.EndingIndexExclusive is null);
-        });
-
-        return possibleScopes.MinBy(x => textSpan.StartingIndexInclusive - x.StartingIndexInclusive);
+    	return GetScope(textSpan.ResourceUri, textSpan.StartingIndexInclusive);
     }
     
     public IScope? GetScope(ResourceUri resourceUri, int positionIndex)

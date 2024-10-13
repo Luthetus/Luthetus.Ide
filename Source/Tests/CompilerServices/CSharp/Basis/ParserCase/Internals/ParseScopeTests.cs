@@ -81,8 +81,37 @@ public class ParseScopeTests
 	/// rather than be returned to the parent scope.
 	///
 	/// i.e.: if the user's cursor is between the two
-	/// type definitions, they'll see their active scsope
+	/// type definitions, they'll see their active scope
 	/// as the first type definition (erroneously).
+	///
+	/// -----------------------------------------------------
+	///
+	/// The issue is fixed.
+	///
+	/// It's funny because I was so full of anxiety and dread
+	/// that this wasn't working.
+	///
+	/// I was struggling to bring myself to look at the code.
+	///
+	/// But, I took one look at the
+	/// 'public IScope? GetScope(ResourceUri resourceUri, int positionIndex)'
+	/// method.
+	///
+	/// And instantly I saw it and was like, "yeah that'll do it"
+	/// I never compared the ending of the scope, only the start of the scope.
+	///
+	/// Oddly enough this was only for this positionIndex overload.
+	/// The other overloads were correct so I just copy and pasted it.
+	/// 
+	/// Even better the TextSpan overload now just invokes
+	/// the positionIndex overload instead of copy/paste duplicating code.
+	///
+	/// In other words: the issue was getting the scope,
+	/// not that the scopes were parsed incorrectly.
+	///
+	/// That being said, there are some cases of scopes being parsed
+	/// incorrectly. These being object/collection initialization,
+	/// so I can fix that next.
 	/// </summary>
 	[Fact]
 	public void Aaa1()
