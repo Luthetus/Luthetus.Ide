@@ -9,6 +9,33 @@ namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 public class ParseScopeTests
 {
 	/// <summary>
+	/// Syntax that breaks scope:
+	///     - [] Object Initialization
+	///     - [] Collection Initialization
+	///     - [] getter code blocks
+	///     - [] setter code blocks
+	///     - [] lambda code blocks
+	/// </summary>
+	[Fact]
+	public void Aaa2()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText = @"";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+
+	/// <summary>
 	/// Goal: correctly parse all the scopes (2024-10-13)
 	/// =================================================
 	///
@@ -138,5 +165,7 @@ public class ParseScopeTests
 
         var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
         var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+        throw new NotImplementedException();
     }
 }
