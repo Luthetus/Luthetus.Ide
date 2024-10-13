@@ -51,6 +51,8 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.States;
 ///     base.OnInitialized();
 /// }
 /// ```
+///
+/// TODO: This file has odd code where a try catch wraps a Dictionary 'TryGetValue(...)' method invocation and no other code is in the try clause.
 /// </summary>
 [FeatureState]
 public partial record TextEditorState

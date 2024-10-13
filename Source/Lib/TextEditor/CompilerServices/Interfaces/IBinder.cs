@@ -16,13 +16,15 @@ public interface IBinder
     public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit);
     
+    public bool TryGetBinderSession(ResourceUri resourceUri, out IBinderSession binderSession);
+    public void UpsertBinderSession(IBinderSession binderSession);
+    /// <summary>Returns true if the entry was removed</summary>
+    public bool RemoveBinderSession(ResourceUri resourceUri);
+    
     public IScope? GetScope(TextEditorTextSpan textSpan);
     public IScope? GetScope(ResourceUri resourceUri, int positionIndex);
     public IScope? GetScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     public IScope[]? GetScopeList(ResourceUri resourceUri);
-    
-    public IBinderSession GetBinderSession(ResourceUri resourceUri);
-    public IBinderSession SetBinderSession(IBinderSession binderSession);
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     

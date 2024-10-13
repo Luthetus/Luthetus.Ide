@@ -27,11 +27,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 /// </summary>
 public interface IBinderSession
 {
+    public ResourceUri ResourceUri { get; }
     public IBinder Binder { get; }
     public Key<IScope> CurrentScopeKey { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
-    public ResourceUri ResourceUri { get; set; }
     
     public IScope GetScope(ResourceUri resourceUri, Key<IScope> scopeKey);
     public IScope GetScopeCurrent();
