@@ -20,7 +20,7 @@ namespace Luthetus.CompilerServices.CSharp.BinderCase;
 public partial class CSharpBinder : IBinder
 {
 	private readonly Dictionary<ResourceUri, IBinderSession> _binderSessionMap = new();
-	private readonly object _binderSessionMapLock = new();
+	//private readonly object _binderSessionMapLock = new();
 
     private readonly Dictionary<string, NamespaceGroupNode> _namespaceGroupNodeMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     /// <summary>
@@ -34,7 +34,6 @@ public partial class CSharpBinder : IBinder
     /// inserted for the user if they decide to use that autocomplete option.
     /// </summary>
     private readonly Dictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> _allTypeDefinitions = new();
-    private readonly DiagnosticBag _diagnosticBag = new();
     private readonly IScope _globalScope = CSharpFacts.ScopeFacts.GetInitialGlobalScope();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
@@ -48,7 +47,7 @@ public partial class CSharpBinder : IBinder
     public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public ImmutableDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions.ToImmutableDictionary();
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
+    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => ImmutableArray<TextEditorDiagnostic>.Empty;
 
     ImmutableArray<ITextEditorSymbol> IBinder.SymbolsList => Symbols
         .Select(s => (ITextEditorSymbol)s)
@@ -208,7 +207,7 @@ public partial class CSharpBinder : IBinder
         		functionIdentifierText,
                 functionDefinitionNode))
         {
-            _diagnosticBag.ReportAlreadyDefinedFunction(
+            model.BinderSession.DiagnosticBag.ReportAlreadyDefinedFunction(
                 functionDefinitionNode.FunctionIdentifierToken.TextSpan,
                 functionIdentifierText);
         }
@@ -247,7 +246,7 @@ public partial class CSharpBinder : IBinder
                 EndingIndexExclusive = functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive
             };
 
-            _diagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(
+            model.BinderSession.DiagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(
                 optionalArgumentTextSpan,
                 functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText(),
                 functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType?.Name ?? "null",
@@ -361,7 +360,7 @@ public partial class CSharpBinder : IBinder
                 	variableDeclarationNode);
             }
 
-            _diagnosticBag.ReportAlreadyDefinedVariable(
+            model.BinderSession.DiagnosticBag.ReportAlreadyDefinedVariable(
                 variableDeclarationNode.IdentifierToken.TextSpan,
                 text);
         }
@@ -408,7 +407,7 @@ public partial class CSharpBinder : IBinder
                 variableIdentifierToken,
                 variableDeclarationNode);
 
-            _diagnosticBag.ReportUndefinedVariable(
+            model.BinderSession.DiagnosticBag.ReportUndefinedVariable(
                 variableIdentifierToken.TextSpan,
                 text);
         }
@@ -441,13 +440,13 @@ public partial class CSharpBinder : IBinder
         {
             if (UtilityApi.IsContextualKeywordSyntaxKind(text))
             {
-                _diagnosticBag.TheNameDoesNotExistInTheCurrentContext(
+                model.BinderSession.DiagnosticBag.TheNameDoesNotExistInTheCurrentContext(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
                     text);
             }
             else
             {
-                _diagnosticBag.ReportUndefinedVariable(
+                model.BinderSession.DiagnosticBag.ReportUndefinedVariable(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
                     text);
             }
@@ -493,7 +492,7 @@ public partial class CSharpBinder : IBinder
         }
         else
         {
-            _diagnosticBag.ReportUndefinedFunction(
+            model.BinderSession.DiagnosticBag.ReportUndefinedFunction(
                 functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
                 functionInvocationIdentifierText);
         }
@@ -831,8 +830,6 @@ public partial class CSharpBinder : IBinder
         }
 
 		_binderSessionMap.Remove(resourceUri);
-
-        _diagnosticBag.ClearByResourceUri(resourceUri);
     }
     
     /// <summary>
@@ -992,21 +989,22 @@ public partial class CSharpBinder : IBinder
     
     public void UpsertBinderSession(IBinderSession binderSession)
     {
-    	lock (_binderSessionMapLock)
+    	try
     	{
     		if (_binderSessionMap.ContainsKey(binderSession.ResourceUri))
 	    		_binderSessionMap[binderSession.ResourceUri] = binderSession;
 	    	else
 	    		_binderSessionMap.Add(binderSession.ResourceUri, binderSession);
     	}
+    	catch (Exception e)
+    	{
+    		Console.WriteLine(e);
+    	}
     }
     
     public bool RemoveBinderSession(ResourceUri resourceUri)
     {
-    	lock (_binderSessionMapLock)
-    	{
-    		return _binderSessionMap.Remove(resourceUri);
-    	}
+    	return _binderSessionMap.Remove(resourceUri);
     }
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)

@@ -37,7 +37,6 @@ public class CSharpParser : IParser
         ResourceUri resourceUri)
     {
         Binder = (CSharpBinder)previousBinder;
-        Binder.ClearStateByResourceUri(resourceUri);
         BinderSession = (CSharpBinderSession)Binder.StartBinderSession(resourceUri);
         return Parse();
     }
@@ -205,6 +204,7 @@ public class CSharpParser : IParser
                 .Union(Lexer.DiagnosticList)
                 .ToImmutableArray());
 
+		Binder.FinalizeBinderSession(BinderSession);
         return new CompilationUnit(
             topLevelStatementsCodeBlock,
             Lexer,
