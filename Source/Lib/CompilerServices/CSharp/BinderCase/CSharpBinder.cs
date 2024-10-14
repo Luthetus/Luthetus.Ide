@@ -39,7 +39,9 @@ public partial class CSharpBinder : IBinder
     
     public CSharpBinder()
     {
-    	_ = StartBinderSession(ResourceUri.Empty);
+    	var globalBinderSession = StartBinderSession(ResourceUri.Empty);
+    	globalBinderSession.ScopeList.Add(_globalScope);
+    	FinalizeBinderSession(globalBinderSession);
         // _boundScopes.Add(_globalScope.ResourceUri, new List<IScope> { _globalScope });
     }
 
