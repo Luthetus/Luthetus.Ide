@@ -6,18 +6,157 @@ using Luthetus.CompilerServices.CSharp.ParserCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 
+/// <summary>
+/// Syntax that breaks scope:
+///     - [] Object Initialization
+///     - [] Collection Initialization
+///     - [] getter code blocks
+///     - [] setter code blocks
+///     - [] lambda code blocks
+///     - [] record with keyword?
+///
+/// Also, why is 'var' as the first token in a scope no longer parsing correctly?
+///
+/// Again also, I moved the diagnostic bag to the session how are the diagnostics
+/// rendering when I didn't do anything beyond move them (I didn't tell the code to look at the new location)?
+/// </summary>
 public class ParseScopeTests
 {
-	/// <summary>
-	/// Syntax that breaks scope:
-	///     - [] Object Initialization
-	///     - [] Collection Initialization
-	///     - [] getter code blocks
-	///     - [] setter code blocks
-	///     - [] lambda code blocks
-	/// </summary>
 	[Fact]
-	public void Aaa2()
+	public void ObjectInitialization()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText = @"";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void CollectionInitialization()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText = @"";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void GetterCodeBlocks()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText = @"";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void SetterCodeBlocks()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText = @"";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void LambdaCodeBlocks()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText = @"";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void RecordWithKeyword()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText = @"";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void VarContextualKeyword()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText = @"";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void EnsureDiagnosticBagWorksProperly()
 	{
 		var resourceUri = new ResourceUri("./unitTesting.txt");
  
