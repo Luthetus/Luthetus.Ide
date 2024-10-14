@@ -35,14 +35,4 @@ public class BinderSession : IBinderSession
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();
     public Dictionary<Key<IScope>, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
-    
-    public IScope GetScope(ResourceUri resourceUri, Key<IScope> scopeKey)
-    {
-    	return Binder.GetScope(resourceUri, scopeKey);
-    }
-    
-    public IScope GetScopeCurrent()
-    {
-    	return Binder.GetScope(ResourceUri, CurrentScopeKey);
-    }
 }

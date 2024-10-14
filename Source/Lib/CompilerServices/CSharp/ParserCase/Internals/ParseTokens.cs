@@ -220,6 +220,7 @@ public static class ParseTokens
         else
         {
             if (model.Binder.TryGetVariableDeclarationHierarchically(
+            		model,
                     model.BinderSession.ResourceUri,
                     model.BinderSession.CurrentScopeKey,
                     text,
@@ -233,6 +234,7 @@ public static class ParseTokens
             {
                 // 'static class identifier' OR 'undeclared-variable reference'
                 if (model.Binder.TryGetTypeDefinitionHierarchically(
+                		model,
                         model.BinderSession.ResourceUri,
                         model.BinderSession.CurrentScopeKey,
                         text,
@@ -390,6 +392,7 @@ public static class ParseTokens
         if (expectingTypeClause)
         {
             if (!model.Binder.TryGetTypeDefinitionHierarchically(
+            		model,
                     model.BinderSession.ResourceUri,
                     model.BinderSession.CurrentScopeKey,
                     consumedAmbiguousIdentifierNode.IdentifierToken.TextSpan.GetText(),

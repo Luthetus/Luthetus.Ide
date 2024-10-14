@@ -38,14 +38,4 @@ public class CSharpBinderSession : IBinderSession
 
     IBinder IBinderSession.Binder => Binder;
     Key<IScope> IBinderSession.CurrentScopeKey { get => CurrentScopeKey; set => CurrentScopeKey = value; }
-    
-    public IScope GetScope(ResourceUri resourceUri, Key<IScope> scopeKey)
-    {
-    	return Binder.GetScope(resourceUri, scopeKey);
-    }
-    
-    public IScope GetScopeCurrent()
-    {
-    	return Binder.GetScope(ResourceUri, CurrentScopeKey);
-    }
 }

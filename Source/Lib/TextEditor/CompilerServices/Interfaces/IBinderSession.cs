@@ -55,7 +55,4 @@ public interface IBinderSession
     /// </summary>
     public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; }
     public Dictionary<Key<IScope>, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; }
-    
-    public IScope GetScope(ResourceUri resourceUri, Key<IScope> scopeKey);
-    public IScope GetScopeCurrent();
 }
