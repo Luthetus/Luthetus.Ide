@@ -21,12 +21,12 @@ public partial class CSharpBinder : IBinder
 {
 	private readonly Dictionary<ResourceUri, IBinderSession> _binderSessionMap = new();
 	//private readonly object _binderSessionMapLock = new();
-
-    private readonly Dictionary<string, NamespaceGroupNode> _namespaceGroupNodeMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
-    /// <summary>
+	
+	/// <summary>
     /// The key for _symbolDefinitions is calculated by <see cref="ISymbol.GetSymbolDefinitionId"/>
     /// </summary>
 	private readonly Dictionary<string, SymbolDefinition> _symbolDefinitions = new();
+    private readonly Dictionary<string, NamespaceGroupNode> _namespaceGroupNodeMap = CSharpFacts.Namespaces.GetInitialBoundNamespaceStatementNodes();
     /// <summary>
     /// All of the type definitions should be maintainted in this dictionary as they are
     /// found via parsing. Then, when one types an ambiguous identifier, perhaps they
@@ -58,6 +58,31 @@ public partial class CSharpBinder : IBinder
 	/// <summary><see cref="FinalizeBinderSession"/></summary>
     public IBinderSession StartBinderSession(ResourceUri resourceUri)
     {
+    	foreach (var namespaceGroupNodeKvp in _namespaceGroupNodeMap)
+        {
+            var keepStatements = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList
+                .Where(x => x.IdentifierToken.TextSpan.ResourceUri != resourceUri)
+                .ToImmutableArray();
+
+            _namespaceGroupNodeMap[namespaceGroupNodeKvp.Key] =
+                new NamespaceGroupNode(
+                    namespaceGroupNodeKvp.Value.NamespaceString,
+                    keepStatements);
+        }
+
+        foreach (var symbolDefinition in _symbolDefinitions)
+        {
+            var keep = symbolDefinition.Value.SymbolReferences
+                .Where(x => x.Symbol.TextSpan.ResourceUri != resourceUri)
+                .ToList();
+
+            _symbolDefinitions[symbolDefinition.Key] =
+                symbolDefinition.Value with
+                {
+                    SymbolReferences = keep
+                };
+        }
+    
         return new CSharpBinderSession(
             resourceUri,
             this,
