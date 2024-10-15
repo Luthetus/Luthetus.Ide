@@ -97,4 +97,12 @@ public partial interface ITextEditorService
 		int? cursorPositionIndex,
 		Category category,
 		Key<TextEditorViewModel> preferredViewModelKey);
+		
+	public Task OpenInEditorAsync(
+		string absolutePath,
+		bool shouldSetFocusToEditor,
+		int? lineIndex,
+		int? columnIndex,
+		Category category,
+		Key<TextEditorViewModel> preferredViewModelKey);
 }

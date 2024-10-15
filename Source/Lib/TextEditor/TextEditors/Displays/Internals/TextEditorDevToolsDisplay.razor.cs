@@ -18,7 +18,7 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 	
-	private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(500);
+	private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(1_000);
 
 	/// <summary>byte is used as TArgs just as a "throwaway" type. It isn't used.</summary>
 	private ThrottleOptimized<byte> _throttleRender;

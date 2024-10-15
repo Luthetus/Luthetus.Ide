@@ -494,23 +494,12 @@ public partial class TextEditorService : ITextEditorService
 	{
 		try
 		{
-			// RegisterModelFunc
-			if (TextEditorConfig.RegisterModelFunc is null)
-				return;
 			var resourceUri = new ResourceUri(absolutePath);
-			await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(resourceUri, _serviceProvider)).ConfigureAwait(false);
-		
-			// TryRegisterViewModelFunc
-			if (TextEditorConfig.TryRegisterViewModelFunc is null)
-				return;
-			var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
-				preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
-		
-			// TryShowViewModelFunc
-			if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
-				return;
-			await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
-				actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
+			var actualViewModelKey = await CommonLogic_OpenInEditorAsync(
+				resourceUri,
+				shouldSetFocusToEditor,
+				category,
+				preferredViewModelKey);
 				
 			// Move cursor
 			if (cursorPositionIndex is null)
@@ -540,5 +529,91 @@ public partial class TextEditorService : ITextEditorService
 			// One would never want a failed attempt at opening a text file to cause a fatal exception.
 			// TODO: Perhaps add a notification? Perhaps 'throw' then add handling in the callers? But again, this should never cause a fatal exception.
 		}
+	}
+	
+	public async Task OpenInEditorAsync(
+		string absolutePath,
+		bool shouldSetFocusToEditor,
+		int? lineIndex,
+		int? columnIndex,
+		Category category,
+		Key<TextEditorViewModel> preferredViewModelKey)
+	{
+		try
+		{
+			var resourceUri = new ResourceUri(absolutePath);
+			var actualViewModelKey = await CommonLogic_OpenInEditorAsync(
+				resourceUri,
+				shouldSetFocusToEditor,
+				category,
+				preferredViewModelKey);
+				
+			// Move cursor
+			if (lineIndex is null && columnIndex is null)
+				return; // Leave the cursor unchanged if the argument is null
+			PostUnique(nameof(OpenInEditorAsync), editContext =>
+			{
+				var modelModifier = editContext.GetModelModifier(resourceUri);
+				var viewModelModifier = editContext.GetViewModelModifier(actualViewModelKey);
+				var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+		
+				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+					return Task.CompletedTask;
+			
+				if (lineIndex is not null)
+					primaryCursorModifier.LineIndex = lineIndex.Value;
+				if (columnIndex is not null)
+					primaryCursorModifier.ColumnIndex = columnIndex.Value;
+				
+				if (primaryCursorModifier.LineIndex > modelModifier.LineCount - 1)
+					primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
+				
+				var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
+				
+				if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
+					primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
+					
+				viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
+				
+				return Task.CompletedTask;
+			});
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e);
+			// One would never want a failed attempt at opening a text file to cause a fatal exception.
+			// TODO: Perhaps add a notification? Perhaps 'throw' then add handling in the callers? But again, this should never cause a fatal exception.
+		}
+	}
+	
+	/// <summary>
+	/// Returns Key<TextEditorViewModel>.Empty if it failed to open in editor.
+	/// Returns the ViewModel's key (non Key<TextEditorViewModel>.Empty value) if it successfully opened in editor.
+	/// </summary>
+	private async Task<Key<TextEditorViewModel>> CommonLogic_OpenInEditorAsync(
+		ResourceUri resourceUri,
+		bool shouldSetFocusToEditor,
+		Category category,
+		Key<TextEditorViewModel> preferredViewModelKey)
+	{
+		// RegisterModelFunc
+		if (TextEditorConfig.RegisterModelFunc is null)
+			return Key<TextEditorViewModel>.Empty;
+		await TextEditorConfig.RegisterModelFunc.Invoke(new RegisterModelArgs(resourceUri, _serviceProvider)).ConfigureAwait(false);
+	
+		// TryRegisterViewModelFunc
+		if (TextEditorConfig.TryRegisterViewModelFunc is null)
+			return Key<TextEditorViewModel>.Empty;
+		var actualViewModelKey = await TextEditorConfig.TryRegisterViewModelFunc.Invoke(new TryRegisterViewModelArgs(
+			preferredViewModelKey, resourceUri, category, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
+	
+		// TryShowViewModelFunc
+		if (actualViewModelKey == Key<TextEditorViewModel>.Empty || TextEditorConfig.TryShowViewModelFunc is null)
+			return Key<TextEditorViewModel>.Empty;
+		await TextEditorConfig.TryShowViewModelFunc.Invoke(new TryShowViewModelArgs(
+			actualViewModelKey, Key<TextEditorGroup>.Empty, shouldSetFocusToEditor, _serviceProvider)).ConfigureAwait(false);
+		
+		return actualViewModelKey;
 	}
 }

@@ -19,6 +19,8 @@ namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 ///
 /// Again also, I moved the diagnostic bag to the session how are the diagnostics
 /// rendering when I didn't do anything beyond move them (I didn't tell the code to look at the new location)?
+///
+/// Even still also, 'record' and 'record struct' primary constructor syntax isn't working?
 /// </summary>
 public class ParseScopeTests
 {
@@ -42,11 +44,16 @@ public class ParseScopeTests
 	}
 	
 	[Fact]
-	public void CollectionInitialization()
+	public void CollectionInitialization_NoParenthesis()
 	{
 		var resourceUri = new ResourceUri("./unitTesting.txt");
  
-        var sourceText = @"";
+        var sourceText = @"var numbers = new List<int>
+{
+    0,
+    1,
+    2,
+};";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
@@ -54,8 +61,32 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
-        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var variableDeclarationNode = (variableDeclarationNode)topCodeBlock.ChildList[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void CollectionInitialization_WithParenthesis()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText = @"var numbers = new List<int>()
+{
+    0,
+    1,
+    2,
+};";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var variableDeclarationNode = (variableDeclarationNode)topCodeBlock.ChildList[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
         
 		throw new NotImplementedException();
 	}
