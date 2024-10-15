@@ -31,48 +31,44 @@ public static class ServiceCollectionExtensions
 
         if (ideConfig.AddLuthetusTextEditor)
         {
-            ResourceUri RemoveDriveFromResourceUri(ResourceUri resourceUri, IServiceProvider serviceProvider)
-            {
-                var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
-
-                if (resourceUri.Value.StartsWith(environmentProvider.DriveExecutingFromNoDirectorySeparator))
-                {
-                    var removeDriveFromResourceUriValue = resourceUri.Value[
-                        environmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
-
-                    return new ResourceUri(removeDriveFromResourceUriValue);
-                }
-
-                return resourceUri;
-            }
-
             services.AddLuthetusTextEditor(hostingInformation, inTextEditorOptions => inTextEditorOptions with
             {
                 CustomThemeRecordList = LuthetusTextEditorCustomThemeFacts.AllCustomThemesList,
                 InitialThemeKey = ThemeFacts.VisualStudioDarkThemeClone.Key,
-                RegisterModelFunc = (registerModelArgs) =>
+                AbsolutePathStandardizeFunc = AbsolutePathStandardizeFunc,
+                RegisterModelFunc = async (registerModelArgs) =>
                 {
+                	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
+                		registerModelArgs.ResourceUri.Value, registerModelArgs.ServiceProvider);
+                		
+                	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
+                
                     registerModelArgs = new RegisterModelArgs(
-                        RemoveDriveFromResourceUri(registerModelArgs.ResourceUri, registerModelArgs.ServiceProvider),
+                        standardizedResourceUri,
                         registerModelArgs.ServiceProvider)
                     {
                     	ShouldBlockUntilBackgroundTaskIsCompleted = registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted
                     };
 
                     var ideBackgroundTaskApi = registerModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return ideBackgroundTaskApi.Editor.RegisterModelFunc(registerModelArgs);
+                    await ideBackgroundTaskApi.Editor.RegisterModelFunc(registerModelArgs);
                 },
-                TryRegisterViewModelFunc = (tryRegisterViewModelArgs) =>
+                TryRegisterViewModelFunc = async (tryRegisterViewModelArgs) =>
                 {
+                	var standardizedAbsolutePathString = await AbsolutePathStandardizeFunc(
+                		tryRegisterViewModelArgs.ResourceUri.Value, tryRegisterViewModelArgs.ServiceProvider);
+                		
+                	var standardizedResourceUri = new ResourceUri(standardizedAbsolutePathString);
+                	
                     tryRegisterViewModelArgs = new TryRegisterViewModelArgs(
                         tryRegisterViewModelArgs.ViewModelKey,
-                        RemoveDriveFromResourceUri(tryRegisterViewModelArgs.ResourceUri, tryRegisterViewModelArgs.ServiceProvider),
+                        standardizedResourceUri,
                         tryRegisterViewModelArgs.Category,
                         tryRegisterViewModelArgs.ShouldSetFocusToEditor,
                         tryRegisterViewModelArgs.ServiceProvider);
 
                     var ideBackgroundTaskApi = tryRegisterViewModelArgs.ServiceProvider.GetRequiredService<IdeBackgroundTaskApi>();
-                    return ideBackgroundTaskApi.Editor.TryRegisterViewModelFunc(tryRegisterViewModelArgs);
+                    return await ideBackgroundTaskApi.Editor.TryRegisterViewModelFunc(tryRegisterViewModelArgs);
                 },
                 TryShowViewModelFunc = (tryShowViewModelArgs) =>
                 {
@@ -96,6 +92,21 @@ public static class ServiceCollectionExtensions
             .AddScoped<IFileTemplateProvider, FileTemplateProvider>();
 
         return services;
+    }
+    
+    public static Task<string> AbsolutePathStandardizeFunc(string absolutePathString, IServiceProvider serviceProvider)
+    {
+        var environmentProvider = serviceProvider.GetRequiredService<IEnvironmentProvider>();
+
+        if (absolutePathString.StartsWith(environmentProvider.DriveExecutingFromNoDirectorySeparator))
+        {
+            var removeDriveFromResourceUriValue = absolutePathString[
+                environmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
+
+            return Task.FromResult(removeDriveFromResourceUriValue);
+        }
+
+        return Task.FromResult(absolutePathString);
     }
 
     private static readonly IdeTreeViews _ideTreeViews = new(

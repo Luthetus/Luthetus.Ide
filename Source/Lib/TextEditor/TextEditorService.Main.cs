@@ -541,7 +541,16 @@ public partial class TextEditorService : ITextEditorService
 	{
 		try
 		{
-			var resourceUri = new ResourceUri(absolutePath);
+			// Standardize Resource Uri
+			if (TextEditorConfig.AbsolutePathStandardizeFunc is null)
+				return;
+				
+			var standardizedFilePathString = await TextEditorConfig.AbsolutePathStandardizeFunc
+				.Invoke(absolutePath, _serviceProvider)
+				.ConfigureAwait(false);
+				
+			var resourceUri = new ResourceUri(standardizedFilePathString);
+
 			var actualViewModelKey = await CommonLogic_OpenInEditorAsync(
 				resourceUri,
 				shouldSetFocusToEditor,
@@ -559,7 +568,21 @@ public partial class TextEditorService : ITextEditorService
 				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+				{
+					Console.WriteLine("if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)");
+
+					if (modelModifier is null)
+					{
+						Console.WriteLine("if (modelModifier is null)");
+					}
+					
+					if (viewModelModifier is null)
+					{
+						Console.WriteLine("if (viewModelModifier is null)");
+					}
+
 					return Task.CompletedTask;
+				}
 			
 				if (lineIndex is not null)
 					primaryCursorModifier.LineIndex = lineIndex.Value;

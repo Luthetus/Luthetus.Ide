@@ -27,7 +27,7 @@ public static class OutputTextSpanHelper
 			{
 				var numberBuilder = new StringBuilder(character);
 				
-				while (true)
+				while (position < lineAndColumnIndicesString.Length)
 				{
 					character = lineAndColumnIndicesString[position];
 					
