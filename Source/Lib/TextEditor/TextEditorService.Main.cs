@@ -568,21 +568,7 @@ public partial class TextEditorService : ITextEditorService
 				var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
 		
 				if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-				{
-					Console.WriteLine("if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)");
-
-					if (modelModifier is null)
-					{
-						Console.WriteLine("if (modelModifier is null)");
-					}
-					
-					if (viewModelModifier is null)
-					{
-						Console.WriteLine("if (viewModelModifier is null)");
-					}
-
 					return Task.CompletedTask;
-				}
 			
 				if (lineIndex is not null)
 					primaryCursorModifier.LineIndex = lineIndex.Value;
