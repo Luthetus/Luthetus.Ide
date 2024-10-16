@@ -20,6 +20,6 @@ public sealed class EmptyNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	ChildList = ImmutableArray<ISyntax>.Empty;
+    	ChildList = Array.Empty<ISyntax>();
     }
 }

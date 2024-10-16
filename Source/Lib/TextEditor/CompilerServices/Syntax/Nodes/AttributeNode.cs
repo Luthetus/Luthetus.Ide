@@ -31,13 +31,10 @@ public sealed class AttributeNode : ISyntaxNode
     {
     	// OpenSquareBracketToken, InnerTokens.Count, CloseSquareBracketToken
     	var childCount = 
-    		1 +                  // OpenSquareBracketToken,
+    		1 +                 // OpenSquareBracketToken,
     		InnerTokens.Count + // InnerTokens.Count,
-    		1;                   // CloseSquareBracketToken,
+    		1;                  // CloseSquareBracketToken,
     		
-        if (CodeBlockNode is not null)
-            childCount++;
-            
         var childList = new ISyntax[childCount];
 		var i = 0;
 

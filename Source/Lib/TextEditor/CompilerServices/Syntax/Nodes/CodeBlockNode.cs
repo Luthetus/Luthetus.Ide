@@ -11,7 +11,7 @@ public sealed class CodeBlockNode : ISyntaxNode
 {
     public CodeBlockNode(ImmutableArray<ISyntax> childList)
     {
-        ChildList = childList;
+        ChildList = childList.ToArray();
 
         DiagnosticsList = ImmutableArray<TextEditorDiagnostic>.Empty;
     }
@@ -20,7 +20,7 @@ public sealed class CodeBlockNode : ISyntaxNode
         ImmutableArray<ISyntax> childList,
         ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
-        ChildList = childList;
+        ChildList = childList.ToArray();
         DiagnosticsList = diagnostics;
     }
 
