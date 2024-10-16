@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record InheritanceStatementNode : ISyntaxNode
+public sealed class InheritanceStatementNode : ISyntaxNode
 {
     public InheritanceStatementNode(TypeClauseNode parentTypeClauseNode)
     {

@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// Used when defining a syntax which contains a generic type.
 /// </summary>
-public sealed record GenericArgumentEntryNode : ISyntaxNode
+public sealed class GenericArgumentEntryNode : ISyntaxNode
 {
     public GenericArgumentEntryNode(TypeClauseNode typeClauseNode)
     {

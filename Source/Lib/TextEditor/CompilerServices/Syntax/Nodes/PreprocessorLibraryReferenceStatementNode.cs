@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record PreprocessorLibraryReferenceStatementNode : IStatementNode
+public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
 {
     public PreprocessorLibraryReferenceStatementNode(
         ISyntaxToken includeDirectiveSyntaxToken,

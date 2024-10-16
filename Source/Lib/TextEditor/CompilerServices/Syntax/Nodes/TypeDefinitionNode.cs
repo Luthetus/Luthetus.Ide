@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// <see cref="TypeDefinitionNode"/> is used anywhere a type is defined.
 /// </summary>
-public sealed record TypeDefinitionNode : ICodeBlockOwner
+public sealed class TypeDefinitionNode : ICodeBlockOwner
 {
     public TypeDefinitionNode(
         AccessModifierKind accessModifierKind,
@@ -104,7 +104,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;

@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ExplicitCastNode : ISyntaxNode
+public sealed class ExplicitCastNode : ISyntaxNode
 {
 	public ExplicitCastNode(
         OpenParenthesisToken openParenthesisToken,

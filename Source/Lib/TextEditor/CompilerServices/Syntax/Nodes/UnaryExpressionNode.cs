@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record UnaryExpressionNode : IExpressionNode
+public sealed class UnaryExpressionNode : IExpressionNode
 {
     public UnaryExpressionNode(
         IExpressionNode expression,

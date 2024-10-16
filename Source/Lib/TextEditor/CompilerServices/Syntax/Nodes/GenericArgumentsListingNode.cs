@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// Used when defining a syntax which contains a generic type.
 /// </summary>
-public sealed record GenericArgumentsListingNode : ISyntaxNode
+public sealed class GenericArgumentsListingNode : ISyntaxNode
 {
     public GenericArgumentsListingNode(
         OpenAngleBracketToken openAngleBracketToken,

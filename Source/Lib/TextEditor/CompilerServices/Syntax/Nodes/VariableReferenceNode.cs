@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record VariableReferenceNode : IExpressionNode
+public sealed class VariableReferenceNode : IExpressionNode
 {
     public VariableReferenceNode(
         IdentifierToken variableIdentifierToken,

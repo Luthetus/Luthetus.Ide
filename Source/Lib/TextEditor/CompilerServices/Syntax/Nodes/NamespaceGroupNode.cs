@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record NamespaceGroupNode : ISyntaxNode
+public sealed class NamespaceGroupNode : ISyntaxNode
 {
     public NamespaceGroupNode(
         string namespaceString,

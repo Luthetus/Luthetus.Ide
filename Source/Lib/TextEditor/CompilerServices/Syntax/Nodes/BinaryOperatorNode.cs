@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record BinaryOperatorNode : ISyntaxNode
+public sealed class BinaryOperatorNode : ISyntaxNode
 {
     public BinaryOperatorNode(
         TypeClauseNode leftOperandTypeClauseNode,

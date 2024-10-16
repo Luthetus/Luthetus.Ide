@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ConstructorInvocationExpressionNode : IExpressionNode
+public sealed class ConstructorInvocationExpressionNode : IExpressionNode
 {
     public ConstructorInvocationExpressionNode(
         KeywordToken newKeywordToken,

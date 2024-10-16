@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// One usage of the <see cref="EmptyExpressionNode"/> is for a <see cref="ParenthesizedExpressionNode"/>
 /// which has no <see cref="ParenthesizedExpressionNode.InnerExpression"/>
 /// </summary>
-public sealed record EmptyExpressionNode : IExpressionNode
+public sealed class EmptyExpressionNode : IExpressionNode
 {
     public EmptyExpressionNode(TypeClauseNode typeClauseNode)
     {

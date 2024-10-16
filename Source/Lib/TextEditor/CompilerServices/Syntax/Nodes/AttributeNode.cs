@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record AttributeNode : ISyntaxNode
+public sealed class AttributeNode : ISyntaxNode
 {
     public AttributeNode(
         OpenSquareBracketToken openSquareBracketToken,

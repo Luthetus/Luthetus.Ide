@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// Used when invoking a function.
 /// </summary>
-public sealed record FunctionParametersListingNode : ISyntaxNode
+public sealed class FunctionParametersListingNode : ISyntaxNode
 {
     public FunctionParametersListingNode(
         OpenParenthesisToken openParenthesisToken,

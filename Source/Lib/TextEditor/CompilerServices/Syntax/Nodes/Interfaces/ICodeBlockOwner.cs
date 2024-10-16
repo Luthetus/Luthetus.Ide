@@ -16,11 +16,7 @@ public interface ICodeBlockOwner : ISyntaxNode
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
 	
-	/// <summary>
-	/// TODO: Awkward 'With' naming yet it sets the property.
-	/// TODO: Recreate the ChildList after setting the CodeBlockNode
-	/// </summary>
-	public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode);
+	public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode);
 	
 	/// <summary>
 	/// Once the code block owner's scope has been constructed,

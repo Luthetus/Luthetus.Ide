@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ObjectInitializationParametersListingNode : ISyntaxNode
+public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
 {
     public ObjectInitializationParametersListingNode(
         OpenBraceToken openBraceToken,

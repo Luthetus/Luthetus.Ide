@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// At times, this node is used in place of 'null'.
 /// </summary>
-public sealed record EmptyNode : ISyntaxNode
+public sealed class EmptyNode : ISyntaxNode
 {
     public EmptyNode()
     {

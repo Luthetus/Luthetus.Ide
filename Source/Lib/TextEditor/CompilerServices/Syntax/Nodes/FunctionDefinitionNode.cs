@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// TODO: Track the open and close braces for the function body.
 /// </summary>
-public sealed record FunctionDefinitionNode : ICodeBlockOwner
+public sealed class FunctionDefinitionNode : ICodeBlockOwner
 {
     public FunctionDefinitionNode(
         AccessModifierKind accessModifierKind,
@@ -53,10 +53,11 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
     }
     

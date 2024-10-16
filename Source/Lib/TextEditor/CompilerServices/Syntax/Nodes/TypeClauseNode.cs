@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// <see cref="TypeClauseNode"/> is used anywhere a type is referenced.
 /// </summary>
-public sealed record TypeClauseNode : ISyntaxNode
+public sealed class TypeClauseNode : ISyntaxNode
 {
     public TypeClauseNode(
         ISyntaxToken typeIdentifier,

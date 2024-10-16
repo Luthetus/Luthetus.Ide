@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ObjectInitializationParameterEntryNode : ISyntaxNode
+public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
 {
     public ObjectInitializationParameterEntryNode(
         IdentifierToken propertyIdentifierToken,

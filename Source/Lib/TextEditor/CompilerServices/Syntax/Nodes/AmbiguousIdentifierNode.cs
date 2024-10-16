@@ -8,7 +8,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// continue parsing in order to know if it is a reference to a
 /// function, type, variable, or etc...
 /// </summary>
-public sealed record AmbiguousIdentifierNode : ISyntaxNode
+public sealed class AmbiguousIdentifierNode : ISyntaxNode
 {
     public AmbiguousIdentifierNode(IdentifierToken identifierToken)
     {

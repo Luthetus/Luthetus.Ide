@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record UsingStatementNode : ISyntaxNode
+public sealed class UsingStatementNode : ISyntaxNode
 {
     public UsingStatementNode(KeywordToken keywordToken, IdentifierToken namespaceIdentifier)
     {

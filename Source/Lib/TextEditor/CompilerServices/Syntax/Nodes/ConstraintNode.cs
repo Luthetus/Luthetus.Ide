@@ -12,7 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// 
 /// public T Clone&lt;T&gt;(T item) where T : class => item;<br/>
 /// </summary>
-public sealed record ConstraintNode : ISyntaxNode
+public sealed class ConstraintNode : ISyntaxNode
 {
     public ConstraintNode(ImmutableArray<ISyntaxToken> innerTokens)
     {

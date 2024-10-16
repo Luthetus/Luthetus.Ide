@@ -618,7 +618,7 @@ public static class ParseTokens
 		
 		model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
         {
-            selfCodeBlockOwner = selfCodeBlockOwner.WithCodeBlockNode(consumedOpenBraceToken, codeBlockNode);
+            selfCodeBlockOwner = selfCodeBlockOwner.SetCodeBlockNode(consumedOpenBraceToken, codeBlockNode);
 			
 			/*if (wasDeferred)
 				closureCurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;

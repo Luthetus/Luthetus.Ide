@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ParenthesizedExpressionNode : IExpressionNode
+public sealed class ParenthesizedExpressionNode : IExpressionNode
 {
     public ParenthesizedExpressionNode(
         OpenParenthesisToken openParenthesisToken,

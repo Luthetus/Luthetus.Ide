@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record FieldDefinitionNode : IVariableDeclarationNode
+public sealed class FieldDefinitionNode : IVariableDeclarationNode
 {
 	public FieldDefinitionNode(
         TypeClauseNode typeClauseNode,

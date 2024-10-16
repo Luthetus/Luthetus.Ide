@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ConstructorDefinitionNode : ICodeBlockOwner
+public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 {
     public ConstructorDefinitionNode(
         TypeClauseNode returnTypeClauseNode,
@@ -47,10 +47,11 @@ public sealed record ConstructorDefinitionNode : ICodeBlockOwner
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
     }
     

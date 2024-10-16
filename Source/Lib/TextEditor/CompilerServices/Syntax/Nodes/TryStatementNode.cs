@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record TryStatementNode : ISyntaxNode
+public sealed class TryStatementNode : ISyntaxNode
 {
     public TryStatementNode(
         TryStatementTryNode? tryNode,

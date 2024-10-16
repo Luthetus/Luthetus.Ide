@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record FunctionInvocationNode : IExpressionNode
+public sealed class FunctionInvocationNode : IExpressionNode
 {
     public FunctionInvocationNode(
         IdentifierToken functionInvocationIdentifierToken,

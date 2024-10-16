@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// Used when defining a function.
 /// </summary>
-public sealed record FunctionArgumentEntryNode : ISyntaxNode
+public sealed class FunctionArgumentEntryNode : ISyntaxNode
 {
     public FunctionArgumentEntryNode(
         VariableDeclarationNode variableDeclarationNode,
