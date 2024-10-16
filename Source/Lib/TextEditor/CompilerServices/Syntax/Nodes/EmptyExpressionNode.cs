@@ -13,19 +13,25 @@ public sealed class EmptyExpressionNode : IExpressionNode
     {
         ResultTypeClauseNode = typeClauseNode;
 
-        var children = new List<ISyntax>
+        SetChildList();
+    }
+
+    public TypeClauseNode ResultTypeClauseNode { get; }
+
+    public ISyntax[] ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
         {
             ResultTypeClauseNode
         };
 
         ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
     }
-
-    public TypeClauseNode ResultTypeClauseNode { get; }
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
 }

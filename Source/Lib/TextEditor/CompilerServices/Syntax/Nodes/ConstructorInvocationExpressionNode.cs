@@ -17,7 +17,23 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
         FunctionParametersListingNode = functionParametersListingNode;
         ObjectInitializationParametersListingNode = objectInitializationParametersListingNode;
 
-        var children = new List<ISyntax>
+        SetChildList();
+    }
+
+    public KeywordToken NewKeywordToken { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
+    public FunctionParametersListingNode? FunctionParametersListingNode { get; }
+    public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; }
+    
+    public ISyntax[] ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
         {
             NewKeywordToken,
             ResultTypeClauseNode,
@@ -30,16 +46,6 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
             children.Add(ObjectInitializationParametersListingNode);
 
         ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
     }
-
-    public KeywordToken NewKeywordToken { get; }
-    public TypeClauseNode ResultTypeClauseNode { get; }
-    public FunctionParametersListingNode? FunctionParametersListingNode { get; }
-    public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; }
-    
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
 }

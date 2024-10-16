@@ -11,19 +11,25 @@ public sealed class ObjectInitializationNode : ISyntaxNode
         OpenBraceToken = openBraceToken;
         CloseBraceToken = closeBraceToken;
 
-        ChildList = new ISyntax[]
-        {
-            OpenBraceToken,
-            CloseBraceToken,
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public OpenBraceToken OpenBraceToken { get; }
     public CloseBraceToken CloseBraceToken { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            OpenBraceToken,
+            CloseBraceToken,
+        }.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

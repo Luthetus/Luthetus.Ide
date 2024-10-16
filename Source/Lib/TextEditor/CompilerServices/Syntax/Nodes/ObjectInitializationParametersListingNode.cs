@@ -14,7 +14,22 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
         ObjectInitializationParameterEntryNodeList = objectInitializationParameterEntryNodeList;
         CloseBraceToken = closeBraceToken;
 
-        var children = new List<ISyntax>
+        SetChildList();
+    }
+
+    public OpenBraceToken OpenBraceToken { get; }
+    public ImmutableArray<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
+    public CloseBraceToken CloseBraceToken { get; }
+
+    public ISyntax[] ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParametersListingNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
         {
             OpenBraceToken
         };
@@ -24,15 +39,6 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
         children.Add(CloseBraceToken);
 
         ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
     }
-
-    public OpenBraceToken OpenBraceToken { get; }
-    public ImmutableArray<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
-    public CloseBraceToken CloseBraceToken { get; }
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParametersListingNode;
 }

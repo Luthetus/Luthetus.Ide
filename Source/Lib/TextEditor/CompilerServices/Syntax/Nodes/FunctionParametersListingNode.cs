@@ -17,7 +17,22 @@ public sealed class FunctionParametersListingNode : ISyntaxNode
         FunctionParameterEntryNodeList = functionParameterEntryNodes;
         CloseParenthesisToken = closeParenthesisToken;
 
-        var children = new List<ISyntax>
+        SetChildList();
+    }
+
+    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public ImmutableArray<FunctionParameterEntryNode> FunctionParameterEntryNodeList { get; }
+    public CloseParenthesisToken CloseParenthesisToken { get; }
+
+    public ISyntax[] ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.FunctionParametersListingNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
         {
             OpenParenthesisToken
         };
@@ -27,15 +42,6 @@ public sealed class FunctionParametersListingNode : ISyntaxNode
         children.Add(CloseParenthesisToken);
 
         ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
     }
-
-    public OpenParenthesisToken OpenParenthesisToken { get; }
-    public ImmutableArray<FunctionParameterEntryNode> FunctionParameterEntryNodeList { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.FunctionParametersListingNode;
 }

@@ -33,7 +33,7 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -60,20 +60,24 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-            OpenParenthesisToken,
-            ExpressionNode,
-            CloseParenthesisToken,
-        };
-
+        var childCount = 4; //KeywordToken, OpenParenthesisToken, ExpressionNode, CloseParenthesisToken,
         if (OpenBraceToken.ConstructorWasInvoked)
-            childrenList.Add(OpenBraceToken);
-        
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = childrenList.ToImmutableArray();
+		childList[i++] = KeywordToken;
+		childList[i++] = OpenParenthesisToken;
+		childList[i++] = ExpressionNode;
+		childList[i++] = CloseParenthesisToken;
+		if (OpenBraceToken.ConstructorWasInvoked)
+            childList[i++] = OpenBraceToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

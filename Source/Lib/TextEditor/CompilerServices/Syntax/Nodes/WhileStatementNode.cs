@@ -33,7 +33,7 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -60,15 +60,22 @@ public sealed class WhileStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-            ExpressionNode,
-        };
-
+    	// KeywordToken
+    	// ExpressionNode
+    	var childCount = 2;
+    	
+    	if (CodeBlockNode is not null)
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+        
+        var i = 0;
+        childList[i++] = KeywordToken;
+        childList[i++] = ExpressionNode;
+        
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+            childList[i++] = CodeBlockNode;
 
-        ChildList = childrenList.ToImmutableArray();
+        ChildList = childList;
     }
 }

@@ -24,15 +24,7 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
         HasInKeyword = hasInKeyword;
         HasRefKeyword = hasRefKeyword;
 
-        var children = new List<ISyntax>
-        {
-            VariableDeclarationNode
-        };
-        
-        if (OptionalCompileTimeConstantToken is not null)
-        	children.Add(OptionalCompileTimeConstantToken);
-
-        ChildList = children.ToImmutableArray();
+        SetChildList();
     }
 
     public VariableDeclarationNode VariableDeclarationNode { get; }
@@ -43,9 +35,23 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
     public bool HasInKeyword { get; }
     public bool HasRefKeyword { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentEntryNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
+        {
+            VariableDeclarationNode
+        };
+        
+        if (OptionalCompileTimeConstantToken is not null)
+        	children.Add(OptionalCompileTimeConstantToken);
+
+        ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

@@ -8,17 +8,23 @@ public sealed class InheritanceStatementNode : ISyntaxNode
     {
         ParentTypeClauseNode = parentTypeClauseNode;
 
-        ChildList = new ISyntax[]
-        {
-            ParentTypeClauseNode
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public TypeClauseNode ParentTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            ParentTypeClauseNode
+        }.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

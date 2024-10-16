@@ -26,8 +26,14 @@ public sealed class CodeBlockNode : ISyntaxNode
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
-    public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntax[] ChildList { get; init; }
     public ISyntaxNode? Parent { get; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CodeBlockNode;
+    
+    public void SetChildList()
+    {
+    	return; // Do nothing
+    	throw new NotImplementedException();
+    }
 }

@@ -31,10 +31,7 @@ public sealed class CompilationUnit : ISyntaxNode
 
         DiagnosticsList = diagnosticsListBuilder.ToImmutableArray();
 
-        ChildList = new ISyntax[]
-        {
-            RootCodeBlockNode
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public CodeBlockNode RootCodeBlockNode { get; }
@@ -43,8 +40,17 @@ public sealed class CompilationUnit : ISyntaxNode
     public IBinder Binder { get; }
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
-    public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntax[] ChildList { get; init; }
     public ISyntaxNode? Parent { get; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            RootCodeBlockNode
+        }.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

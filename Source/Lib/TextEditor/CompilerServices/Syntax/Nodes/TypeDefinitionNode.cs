@@ -72,7 +72,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -121,20 +121,25 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-        var children = new List<ISyntax>
-        {
-            TypeIdentifierToken,
-        };
-
+    	var childCount = 1; // TypeIdentifierToken
         if (GenericArgumentsListingNode is not null)
-            children.Add(GenericArgumentsListingNode);
-
+            childCount++;
         if (InheritedTypeClauseNode is not null)
-            children.Add(InheritedTypeClauseNode);
-
+            childCount++;
         if (CodeBlockNode is not null)
-            children.Add(CodeBlockNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+		
+		childList[i++] = TypeIdentifierToken;
+		if (GenericArgumentsListingNode is not null)
+            childList[i++] = GenericArgumentsListingNode;
+        if (InheritedTypeClauseNode is not null)
+            childList[i++] = InheritedTypeClauseNode;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
 
-        ChildList = children.ToImmutableArray();
+        ChildList = childList;
     }
 }

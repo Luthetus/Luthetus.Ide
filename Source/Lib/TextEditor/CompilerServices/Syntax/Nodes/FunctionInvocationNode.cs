@@ -18,8 +18,25 @@ public sealed class FunctionInvocationNode : IExpressionNode
         GenericParametersListingNode = genericParametersListingNode;
         FunctionParametersListingNode = functionParametersListingNode;
         ResultTypeClauseNode = resultTypeClauseNode;
+        
+        SetChildList();
+    }
 
-        var children = new List<ISyntax>
+    public IdentifierToken FunctionInvocationIdentifierToken { get; }
+    public FunctionDefinitionNode? FunctionDefinitionNode { get; }
+    public GenericParametersListingNode? GenericParametersListingNode { get; }
+    public FunctionParametersListingNode FunctionParametersListingNode { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
+
+    public ISyntax[] ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
+
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
         {
             FunctionInvocationIdentifierToken
         };
@@ -35,18 +52,6 @@ public sealed class FunctionInvocationNode : IExpressionNode
         children.Add(ResultTypeClauseNode);
 
         ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
     }
-
-    public IdentifierToken FunctionInvocationIdentifierToken { get; }
-    public FunctionDefinitionNode? FunctionDefinitionNode { get; }
-    public GenericParametersListingNode? GenericParametersListingNode { get; }
-    public FunctionParametersListingNode FunctionParametersListingNode { get; }
-    public TypeClauseNode ResultTypeClauseNode { get; }
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
-
 }

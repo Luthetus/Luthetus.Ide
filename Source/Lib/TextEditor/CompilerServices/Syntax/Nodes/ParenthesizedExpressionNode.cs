@@ -14,8 +14,24 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
         OpenParenthesisToken = openParenthesisToken;
         InnerExpression = innerExpression;
         CloseParenthesisToken = closeParenthesisToken;
+        
+        SetChildList();
+    }
 
-        var children = new List<ISyntax>
+    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public IExpressionNode InnerExpression { get; }
+    public CloseParenthesisToken CloseParenthesisToken { get; }
+    public TypeClauseNode ResultTypeClauseNode => InnerExpression.ResultTypeClauseNode;
+
+    public ISyntax[] ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
         {
             OpenParenthesisToken,
             InnerExpression,
@@ -24,16 +40,6 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
         };
 
         ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
     }
-
-    public OpenParenthesisToken OpenParenthesisToken { get; }
-    public IExpressionNode InnerExpression { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
-    public TypeClauseNode ResultTypeClauseNode => InnerExpression.ResultTypeClauseNode;
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
 }

@@ -26,7 +26,7 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -53,17 +53,24 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>();
-
+    	var childCount = 0;
         if (KeywordToken.ConstructorWasInvoked)
-            childrenList.Add(KeywordToken);
-            
+            childCount++;
         if (OpenBraceToken.ConstructorWasInvoked)
-            childrenList.Add(OpenBraceToken);
-            
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
-
-        ChildList = childrenList.ToImmutableArray();
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+		
+		if (KeywordToken.ConstructorWasInvoked)
+            childList[i++] = KeywordToken;
+        if (OpenBraceToken.ConstructorWasInvoked)
+            childList[i++] = OpenBraceToken;
+        if (CodeBlockNode is not null)
+        	childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

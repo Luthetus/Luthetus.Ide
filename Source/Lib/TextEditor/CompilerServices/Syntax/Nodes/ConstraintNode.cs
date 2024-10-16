@@ -18,10 +18,7 @@ public sealed class ConstraintNode : ISyntaxNode
     {
         InnerTokens = innerTokens;
 
-        var children = new List<ISyntax>();
-        children.AddRange(InnerTokens);
-
-        ChildList = children.ToImmutableArray();
+        SetChildList();
     }
 
     /// <summary>
@@ -30,9 +27,18 @@ public sealed class ConstraintNode : ISyntaxNode
     /// </summary>
     public ImmutableArray<ISyntaxToken> InnerTokens { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>();
+        children.AddRange(InnerTokens);
+
+        ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

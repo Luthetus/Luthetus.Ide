@@ -10,21 +10,27 @@ public sealed class LiteralExpressionNode : IExpressionNode
         LiteralSyntaxToken = literalSyntaxToken;
         ResultTypeClauseNode = typeClauseNode;
 
-        var children = new List<ISyntax>
+        SetChildList();
+    }
+
+    public ISyntaxToken LiteralSyntaxToken { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
+
+    public ISyntax[] ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
         {
             LiteralSyntaxToken,
             ResultTypeClauseNode
         };
 
         ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
     }
-
-    public ISyntaxToken LiteralSyntaxToken { get; }
-    public TypeClauseNode ResultTypeClauseNode { get; }
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.LiteralExpressionNode;
 }

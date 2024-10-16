@@ -17,13 +17,7 @@ public sealed class ExplicitCastNode : ISyntaxNode
         CloseParenthesisToken = closeParenthesisToken;
         ExpressionNode = expressionNode;
 
-        ChildList = new ISyntax[]
-        {
-            OpenParenthesisToken,
-            TypeClauseNode,
-            CloseParenthesisToken,
-            ExpressionNode,
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
@@ -31,9 +25,21 @@ public sealed class ExplicitCastNode : ISyntaxNode
     public CloseParenthesisToken CloseParenthesisToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            OpenParenthesisToken,
+            TypeClauseNode,
+            CloseParenthesisToken,
+            ExpressionNode,
+        }.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

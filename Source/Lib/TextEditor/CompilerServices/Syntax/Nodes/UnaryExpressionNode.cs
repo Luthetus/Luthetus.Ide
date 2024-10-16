@@ -12,20 +12,25 @@ public sealed class UnaryExpressionNode : IExpressionNode
         Expression = expression;
         UnaryOperatorNode = unaryOperatorNode;
 
-        ChildList = new ISyntax[]
-        {
-            Expression,
-            UnaryOperatorNode,
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public IExpressionNode Expression { get; }
     public UnaryOperatorNode UnaryOperatorNode { get; }
     public TypeClauseNode ResultTypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
 
-    public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            Expression,
+            UnaryOperatorNode,
+        };
+    }
 }

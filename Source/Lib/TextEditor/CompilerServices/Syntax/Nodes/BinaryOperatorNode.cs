@@ -15,11 +15,7 @@ public sealed class BinaryOperatorNode : ISyntaxNode
         RightOperandTypeClauseNode = rightOperandTypeClauseNode;
         ResultTypeClauseNode = resultTypeClauseNode;
 
-        ChildList = new ISyntax[]
-        {
-            OperatorToken
-        }
-        .ToImmutableArray();
+        SetChildList();
     }
 
     public TypeClauseNode LeftOperandTypeClauseNode { get; }
@@ -27,9 +23,19 @@ public sealed class BinaryOperatorNode : ISyntaxNode
     public TypeClauseNode RightOperandTypeClauseNode { get; }
 	public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryOperatorNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            OperatorToken
+        }
+        .ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

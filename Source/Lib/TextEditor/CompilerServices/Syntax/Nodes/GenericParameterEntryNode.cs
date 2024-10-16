@@ -11,19 +11,25 @@ public sealed class GenericParameterEntryNode : ISyntaxNode
     {
         TypeClauseNode = typeClauseNode;
 
-        var children = new List<ISyntax>
+        SetChildList();
+    }
+
+    public TypeClauseNode TypeClauseNode { get; }
+
+    public ISyntax[] ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.GenericParameterEntryNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
         {
             TypeClauseNode
         };
 
         ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
     }
-
-    public TypeClauseNode TypeClauseNode { get; }
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.GenericParameterEntryNode;
 }

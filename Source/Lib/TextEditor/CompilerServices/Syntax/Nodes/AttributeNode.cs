@@ -14,7 +14,22 @@ public sealed class AttributeNode : ISyntaxNode
         InnerTokens = innerTokens;
         CloseSquareBracketToken = closeSquareBracketToken;
 
-        var childList = new List<ISyntax>
+        SetChildList();
+    }
+
+    public OpenSquareBracketToken OpenSquareBracketToken { get; }
+    public List<ISyntaxToken> InnerTokens { get; }
+    public CloseSquareBracketToken CloseSquareBracketToken { get; }
+
+    public ISyntax[] ChildList { get; private set; }
+    public ISyntaxNode? Parent { get; }
+
+    public bool IsFabricated { get; init; }
+    public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
+    
+    public void SetChildList()
+    {
+    	var childList = new List<ISyntax>
         {
             OpenSquareBracketToken
         };
@@ -23,15 +38,6 @@ public sealed class AttributeNode : ISyntaxNode
         childList.Add(CloseSquareBracketToken);
         
         ChildList = childList.ToImmutableArray();
+    	throw new NotImplementedException();
     }
-
-    public OpenSquareBracketToken OpenSquareBracketToken { get; }
-    public List<ISyntaxToken> InnerTokens { get; }
-    public CloseSquareBracketToken CloseSquareBracketToken { get; }
-
-    public ImmutableArray<ISyntax> ChildList { get; }
-    public ISyntaxNode? Parent { get; }
-
-    public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
 }

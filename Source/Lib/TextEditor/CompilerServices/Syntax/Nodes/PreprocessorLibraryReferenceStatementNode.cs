@@ -11,20 +11,26 @@ public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
     {
         IncludeDirectiveSyntaxToken = includeDirectiveSyntaxToken;
         LibraryReferenceSyntaxToken = libraryReferenceSyntaxToken;
-
-        ChildList = new ISyntax[]
-        {
-            IncludeDirectiveSyntaxToken,
-            LibraryReferenceSyntaxToken,
-        }.ToImmutableArray();
+        
+        SetChildList();
     }
 
     public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
     public ISyntaxToken LibraryReferenceSyntaxToken { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            IncludeDirectiveSyntaxToken,
+            LibraryReferenceSyntaxToken,
+        }.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

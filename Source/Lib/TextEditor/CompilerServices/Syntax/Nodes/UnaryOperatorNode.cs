@@ -13,22 +13,26 @@ public sealed class UnaryOperatorNode : ISyntaxNode
         OperatorToken = operatorToken;
         ResultTypeClauseNode = resultTypeClauseNode;
 
-        ChildList = new ISyntax[]
-        {
-            OperandTypeClauseNode,
-            OperatorToken,
-            ResultTypeClauseNode,
-        }
-        .ToImmutableArray();
+        SetChildList();
     }
 
     public TypeClauseNode OperandTypeClauseNode { get; }
     public ISyntaxToken OperatorToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            OperandTypeClauseNode,
+            OperatorToken,
+            ResultTypeClauseNode,
+        };
+    }
 }

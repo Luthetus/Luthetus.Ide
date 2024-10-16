@@ -25,7 +25,7 @@ public sealed class TryStatementNode : ISyntaxNode
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -33,18 +33,25 @@ public sealed class TryStatementNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>();
-
+        var childCount = 0;
         if (TryNode is not null)
-            childrenList.Add(TryNode);
-            
+            childCount++;
         if (CatchNode is not null)
-            childrenList.Add(CatchNode);
-            
+            childCount++;
         if (FinallyNode is not null)
-            childrenList.Add(FinallyNode);
-
-        ChildList = childrenList.ToImmutableArray();
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+		
+		if (TryNode is not null)
+            childList[i++] = TryNode;
+        if (CatchNode is not null)
+            childList[i++] = CatchNode;
+        if (FinallyNode is not null)
+            childList[i++] = FinallyNode;
+            
+        ChildList = childList;
     }
     
     public void SetTryStatementTryNode(TryStatementTryNode tryStatementTryNode)

@@ -10,14 +10,14 @@ public sealed class NamespaceGroupNode : ISyntaxNode
     {
         NamespaceString = namespaceString;
         NamespaceStatementNodeList = namespaceStatementNodeList;
-
-        ChildList = namespaceStatementNodeList.Select(x => (ISyntax)x).ToImmutableArray();
+        
+        SetChildList();
     }
 
     public string NamespaceString { get; }
     public ImmutableArray<NamespaceStatementNode> NamespaceStatementNodeList { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -35,5 +35,11 @@ public sealed class NamespaceGroupNode : ISyntaxNode
         return NamespaceStatementNodeList
             .SelectMany(x => x.GetTopLevelTypeDefinitionNodes())
             .ToImmutableArray();
+    }
+    
+    public void SetChildList()
+    {
+    	ChildList = namespaceStatementNodeList.Select(x => (ISyntax)x).ToImmutableArray();
+    	throw new NotImplementedException();
     }
 }

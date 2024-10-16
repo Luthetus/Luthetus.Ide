@@ -19,12 +19,7 @@ public sealed class FunctionParameterEntryNode : ISyntaxNode
         HasInKeyword = hasInKeyword;
         HasRefKeyword = hasRefKeyword;
 
-        var children = new List<ISyntax>
-        {
-            ExpressionNode
-        };
-
-        ChildList = children.ToImmutableArray();
+        SetChildList();
     }
 
     public IExpressionNode ExpressionNode { get; }
@@ -32,9 +27,20 @@ public sealed class FunctionParameterEntryNode : ISyntaxNode
     public bool HasInKeyword { get; }
     public bool HasRefKeyword { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionParameterEntryNode;
+    
+    public void SetChildList()
+    {
+    	var children = new List<ISyntax>
+        {
+            ExpressionNode
+        };
+
+        ChildList = children.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

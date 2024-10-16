@@ -13,11 +13,7 @@ public sealed class VariableReferenceNode : IExpressionNode
         VariableIdentifierToken = variableIdentifierToken;
         VariableDeclarationNode = variableDeclarationNode;
 
-        ChildList = new ISyntax[]
-        {
-            VariableIdentifierToken,
-            VariableDeclarationNode,
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public IdentifierToken VariableIdentifierToken { get; }
@@ -27,9 +23,18 @@ public sealed class VariableReferenceNode : IExpressionNode
     public IVariableDeclarationNode VariableDeclarationNode { get; }
     public TypeClauseNode ResultTypeClauseNode => VariableDeclarationNode.TypeClauseNode;
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            VariableIdentifierToken,
+            VariableDeclarationNode,
+        };
+    }
 }

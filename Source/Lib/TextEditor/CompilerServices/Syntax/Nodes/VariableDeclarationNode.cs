@@ -18,11 +18,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
         VariableKind = variableKind;
         IsInitialized = isInitialized;
 
-        ChildList = new ISyntax[]
-        {
-            TypeClauseNode,
-            IdentifierToken,
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public TypeClauseNode TypeClauseNode { get; }
@@ -46,9 +42,18 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            TypeClauseNode,
+            IdentifierToken,
+        };
+    }
 }

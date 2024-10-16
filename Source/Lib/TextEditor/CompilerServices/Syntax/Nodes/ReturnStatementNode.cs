@@ -11,19 +11,25 @@ public sealed class ReturnStatementNode : ISyntaxNode
         KeywordToken = keywordToken;
         ExpressionNode = expressionNode;
 
-        ChildList = new ISyntax[]
-        {
-            KeywordToken,
-            ExpressionNode
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            KeywordToken,
+            ExpressionNode
+        }.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }

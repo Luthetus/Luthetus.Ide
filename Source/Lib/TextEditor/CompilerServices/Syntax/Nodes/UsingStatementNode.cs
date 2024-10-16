@@ -10,19 +10,24 @@ public sealed class UsingStatementNode : ISyntaxNode
         KeywordToken = keywordToken;
         NamespaceIdentifier = namespaceIdentifier;
 
-        ChildList = new ISyntax[]
-        {
-            KeywordToken,
-            NamespaceIdentifier
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public KeywordToken KeywordToken { get; }
     public IdentifierToken NamespaceIdentifier { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            KeywordToken,
+            NamespaceIdentifier
+        };
+    }
 }

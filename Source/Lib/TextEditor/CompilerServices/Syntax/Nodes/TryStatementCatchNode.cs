@@ -33,7 +33,7 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -60,23 +60,32 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>();
-
+        var childCount = 0;
         if (KeywordToken.ConstructorWasInvoked)
-            childrenList.Add(KeywordToken);
-            
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
-            
+            childCount++;
         if (OpenParenthesisToken.ConstructorWasInvoked)
-            childrenList.Add(OpenParenthesisToken);
-            
+            childCount++;
         if (CloseParenthesisToken.ConstructorWasInvoked)
-            childrenList.Add(CloseParenthesisToken);
-            
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
-
-        ChildList = childrenList.ToImmutableArray();
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+		
+		if (KeywordToken.ConstructorWasInvoked)
+            childList[i++] = KeywordToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+        if (OpenParenthesisToken.ConstructorWasInvoked)
+            childList[i++] = OpenParenthesisToken;
+        if (CloseParenthesisToken.ConstructorWasInvoked)
+            childList[i++] = CloseParenthesisToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

@@ -14,12 +14,7 @@ public sealed class BinaryExpressionNode : IExpressionNode
         BinaryOperatorNode = binaryOperatorNode;
         RightExpressionNode = rightExpressionNode;
 
-        ChildList = new ISyntax[]
-        {
-            LeftExpressionNode,
-            BinaryOperatorNode,
-            RightExpressionNode
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public IExpressionNode LeftExpressionNode { get; }
@@ -27,9 +22,20 @@ public sealed class BinaryExpressionNode : IExpressionNode
     public IExpressionNode RightExpressionNode { get; }
     public TypeClauseNode ResultTypeClauseNode => BinaryOperatorNode.ResultTypeClauseNode;
 
-    public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            LeftExpressionNode,
+            BinaryOperatorNode,
+            RightExpressionNode
+        }.ToImmutableArray();
+    	throw new NotImplementedException();
+    }
 }
