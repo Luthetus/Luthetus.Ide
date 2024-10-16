@@ -32,16 +32,22 @@ public sealed class FunctionArgumentsListingNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            OpenParenthesisToken
-        };
+    	// OpenParenthesisToken, FunctionArgumentEntryNodeList.Length, CloseParenthesisToken,
+    	var childCount = 
+    		1 +                                    // OpenParenthesisToken,
+    		FunctionArgumentEntryNodeList.Length + // FunctionArgumentEntryNodeList.Length,
+    		1;                                     // CloseParenthesisToken,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        children.AddRange(FunctionArgumentEntryNodeList);
-
-        children.Add(CloseParenthesisToken);
-
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = OpenParenthesisToken;
+		foreach (var item in FunctionArgumentEntryNodeList)
+		{
+			childList[i++] = item;
+		}
+		childList[i++] = CloseParenthesisToken;
+            
+        ChildList = childList;
     }
 }

@@ -26,12 +26,13 @@ public sealed class EmptyExpressionNode : IExpressionNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            ResultTypeClauseNode
-        };
+    	var childCount = 1; // ResultTypeClauseNode,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = ResultTypeClauseNode;
+            
+        ChildList = childList;
     }
 }

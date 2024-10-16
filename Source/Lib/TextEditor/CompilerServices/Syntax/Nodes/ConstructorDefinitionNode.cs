@@ -68,23 +68,28 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            ReturnTypeClauseNode,
-            FunctionIdentifier,
-        };
-
+    	// ReturnTypeClauseNode, FunctionIdentifier, ...FunctionArgumentsListingNode,
+        var childCount = 3;
         if (GenericArgumentsListingNode is not null)
-            children.Add(GenericArgumentsListingNode);
-
-        children.Add(FunctionArgumentsListingNode);
-
+            childCount++;
         if (CodeBlockNode is not null)
-            children.Add(CodeBlockNode);
-        
+            childCount++;
         if (ConstraintNode is not null)
-            children.Add(ConstraintNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
+		childList[i++] = ReturnTypeClauseNode;
+		childList[i++] = FunctionIdentifier;
+		if (GenericArgumentsListingNode is not null)
+			childList[i++] = GenericArgumentsListingNode;
+        childList[i++] = FunctionArgumentsListingNode;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+        if (ConstraintNode is not null)
+            childList[i++] = ConstraintNode;
+            
+        ChildList = childList;
     }
 }

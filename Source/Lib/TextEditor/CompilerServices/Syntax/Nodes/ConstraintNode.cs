@@ -35,10 +35,6 @@ public sealed class ConstraintNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>();
-        children.AddRange(InnerTokens);
-
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+    	ChildList = InnerTokens.ToArray();
     }
 }

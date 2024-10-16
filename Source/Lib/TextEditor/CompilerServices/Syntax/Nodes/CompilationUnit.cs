@@ -40,17 +40,20 @@ public sealed class CompilationUnit : ISyntaxNode
     public IBinder Binder { get; }
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
-    public ISyntax[] ChildList { get; init; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
     
     public void SetChildList()
     {
-    	ChildList = new ISyntax[]
-        {
-            RootCodeBlockNode
-        }.ToImmutableArray();
-    	throw new NotImplementedException();
+    	var childCount = 1; // RootCodeBlockNode,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = RootCodeBlockNode;
+            
+        ChildList = childList;
     }
 }

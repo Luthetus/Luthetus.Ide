@@ -29,10 +29,10 @@ public sealed class AttributeNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	// OpenSquareBracketToken, InnerTokens.Length, CloseSquareBracketToken
+    	// OpenSquareBracketToken, InnerTokens.Count, CloseSquareBracketToken
     	var childCount = 
     		1 +                  // OpenSquareBracketToken,
-    		InnerTokens.Length + // InnerTokens.Length,
+    		InnerTokens.Count + // InnerTokens.Count,
     		1;                   // CloseSquareBracketToken,
     		
         if (CodeBlockNode is not null)

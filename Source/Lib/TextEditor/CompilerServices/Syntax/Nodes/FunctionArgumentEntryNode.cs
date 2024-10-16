@@ -43,15 +43,17 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            VariableDeclarationNode
-        };
-        
+    	var childCount = 1; // VariableDeclarationNode,
         if (OptionalCompileTimeConstantToken is not null)
-        	children.Add(OptionalCompileTimeConstantToken);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = VariableDeclarationNode;
+        if (OptionalCompileTimeConstantToken is not null)
+            childList[i++] = OptionalCompileTimeConstantToken;
+            
+        ChildList = childList;
     }
 }

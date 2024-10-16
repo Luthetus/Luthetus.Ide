@@ -21,6 +21,5 @@ public sealed class EmptyNode : ISyntaxNode
     public void SetChildList()
     {
     	ChildList = ImmutableArray<ISyntax>.Empty;
-    	throw new NotImplementedException();
     }
 }

@@ -34,6 +34,5 @@ public sealed class CodeBlockNode : ISyntaxNode
     public void SetChildList()
     {
     	return; // Do nothing
-    	throw new NotImplementedException();
     }
 }

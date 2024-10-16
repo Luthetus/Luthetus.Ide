@@ -33,19 +33,22 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            NewKeywordToken,
-            ResultTypeClauseNode,
-        };
-
-        if (FunctionParametersListingNode is not null)
-            children.Add(FunctionParametersListingNode);
-        
+    	var childCount = 2; // NewKeywordToken, ResultTypeClauseNode,
+    	if (FunctionParametersListingNode is not null)
+            childCount++;
         if (ObjectInitializationParametersListingNode is not null)
-            children.Add(ObjectInitializationParametersListingNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = NewKeywordToken;
+		childList[i++] = ResultTypeClauseNode;
+		if (FunctionParametersListingNode is not null)
+            childList[i++] = FunctionParametersListingNode;
+        if (ObjectInitializationParametersListingNode is not null)
+            childList[i++] = ObjectInitializationParametersListingNode;
+            
+        ChildList = childList;
     }
 }

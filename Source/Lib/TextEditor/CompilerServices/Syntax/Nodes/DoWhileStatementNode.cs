@@ -65,30 +65,38 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            DoKeywordToken,
-        };
-
+    	var childCount = 1; // DoKeywordToken,
         if (OpenBraceToken.ConstructorWasInvoked)
-            childrenList.Add(OpenBraceToken);
-            
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
-            
+            childCount++;
         if (WhileKeywordToken.ConstructorWasInvoked)
-            childrenList.Add(WhileKeywordToken);
-            
+            childCount++;
         if (OpenParenthesisToken.ConstructorWasInvoked)
-            childrenList.Add(OpenParenthesisToken);
-            
+            childCount++;
         if (ExpressionNode is not null)
-            childrenList.Add(ExpressionNode);
-            
+            childCount++;
         if (CloseParenthesisToken.ConstructorWasInvoked)
-            childrenList.Add(CloseParenthesisToken);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = childrenList.ToImmutableArray();
+		childList[i++] = DoKeywordToken;
+		if (OpenBraceToken.ConstructorWasInvoked)
+            childList[i++] = OpenBraceToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+        if (WhileKeywordToken.ConstructorWasInvoked)
+            childList[i++] = WhileKeywordToken;
+        if (OpenParenthesisToken.ConstructorWasInvoked)
+            childList[i++] = OpenParenthesisToken;
+        if (ExpressionNode is not null)
+            childList[i++] = ExpressionNode;
+        if (CloseParenthesisToken.ConstructorWasInvoked)
+            childList[i++] = CloseParenthesisToken;
+            
+        ChildList = childList;
     }
     
     public void SetWhileProperties(

@@ -65,22 +65,26 @@ public sealed class ForeachStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            ForeachKeywordToken,
-            OpenParenthesisToken,
-            VariableDeclarationNode,
-            InKeywordToken,
-            ExpressionNode,
-            CloseParenthesisToken,
-        };
-
-		if (OpenParenthesisToken.ConstructorWasInvoked)
-            childrenList.Add(OpenParenthesisToken);
-
+    	var childCount = 6; // ForeachKeywordToken, OpenParenthesisToken, VariableDeclarationNode, InKeywordToken, ExpressionNode, CloseParenthesisToken,
+        if (OpenParenthesisToken.ConstructorWasInvoked)
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = childrenList.ToImmutableArray();
+		childList[i++] = ForeachKeywordToken;
+		childList[i++] = OpenParenthesisToken;
+		childList[i++] = VariableDeclarationNode;
+		childList[i++] = InKeywordToken;
+		childList[i++] = ExpressionNode;
+		childList[i++] = CloseParenthesisToken;
+		if (OpenParenthesisToken.ConstructorWasInvoked)
+            childList[i++] = OpenParenthesisToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

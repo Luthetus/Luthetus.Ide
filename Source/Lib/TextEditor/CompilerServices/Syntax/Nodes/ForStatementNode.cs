@@ -72,29 +72,42 @@ public sealed class ForStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-	        OpenParenthesisToken,
-	    };
-	    
-	    childrenList.AddRange(InitializationSyntaxList);
-	    
-	    childrenList.AddRange(new ISyntax[] 
-	    {
-	        InitializationStatementDelimiterToken,
-	        ConditionExpressionNode,
-	        ConditionStatementDelimiterToken,
-	        UpdationExpressionNode,
-	        CloseParenthesisToken,
-	    });
-
-        if (OpenBraceToken.ConstructorWasInvoked)
-            childrenList.Add(OpenBraceToken);
+    	// KeywordToken, OpenParenthesisToken, InitializationSyntaxList.Length, InitializationStatementDelimiterToken,
+        // ConditionExpressionNode, ConditionStatementDelimiterToken, UpdationExpressionNode, CloseParenthesisToken,
+        var childCount =
+        	1 +                               // KeywordToken,
+        	1 +                               // OpenParenthesisToken,
+        	InitializationSyntaxList.Length + // InitializationSyntaxList.Length
+        	1 +                               // InitializationStatementDelimiterToken,
+        	1 +                               // ConditionExpressionNode,
+        	1 +                               // ConditionStatementDelimiterToken,
+        	1 +                               // UpdationExpressionNode,
+        	1;                                // CloseParenthesisToken,
         
+        if (OpenBraceToken.ConstructorWasInvoked)
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = childrenList.ToImmutableArray();
+		childList[i++] = KeywordToken;
+		childList[i++] = OpenParenthesisToken;
+		foreach (var item in InitializationSyntaxList)
+		{
+			childList[i++] = item;
+		}
+		childList[i++] = InitializationStatementDelimiterToken;
+        childList[i++] = ConditionExpressionNode;
+		childList[i++] = ConditionStatementDelimiterToken;
+		childList[i++] = UpdationExpressionNode;
+		childList[i++] = CloseParenthesisToken;
+		if (OpenBraceToken.ConstructorWasInvoked)
+            childList[i++] = OpenBraceToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

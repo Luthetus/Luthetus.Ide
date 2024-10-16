@@ -33,13 +33,16 @@ public sealed class ExplicitCastNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	ChildList = new ISyntax[]
-        {
-            OpenParenthesisToken,
-            TypeClauseNode,
-            CloseParenthesisToken,
-            ExpressionNode,
-        }.ToImmutableArray();
-    	throw new NotImplementedException();
+    	var childCount = 4; // OpenParenthesisToken, TypeClauseNode, CloseParenthesisToken, ExpressionNode,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = OpenParenthesisToken;
+		childList[i++] = TypeClauseNode;
+		childList[i++] = CloseParenthesisToken;
+		childList[i++] = ExpressionNode;
+            
+        ChildList = childList;
     }
 }
