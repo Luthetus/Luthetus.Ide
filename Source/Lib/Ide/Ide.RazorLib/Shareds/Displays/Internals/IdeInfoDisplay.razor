@@ -243,6 +243,22 @@ TypeDefinitions&lt;string identifier, typeDefinitionNode&gt;.</pre>
 								Also, the Scope.cs itself was made into a struct, with minimal
 								information attached to it.
 							</li>
+							<li>
+								Tokens are now structs (previously they were sealed records)
+							</li>
+							<li>
+								Nodes now maintain their ChildList as an ISyntax[]
+								(previously they were ImmutableArray&lt;ISyntax&gt;)
+							</li>
+							<li>
+								Reason for all the struct changes:
+								the parser logic gets ran frequently,
+								and is constantly constructing new syntax trees.
+								So the faster we can delete the previous syntax tree
+								the better (i.e.: not delete it via garbage collection
+								which is hard on the cpu with how much turnover on the constructed objects there are
+								in the parser code).
+							</li>
 						</ul>
 					</li>
                 </ul>
