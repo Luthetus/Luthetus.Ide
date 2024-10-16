@@ -716,7 +716,7 @@ Execution Terminal"));
 			relativePathFromSlnToProject,
 			projectIdGuid,
 			// TODO: 'openAssociatedGroupToken' gets set when 'AddDotNetProject(...)' is ran, which is hacky and should be changed. Until then passing in 'null!'
-			null!,
+			default,
 			null,
 			cSharpProjectAbsolutePath);
 

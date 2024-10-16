@@ -10,12 +10,12 @@ public sealed record DoWhileStatementNode : ICodeBlockOwner
 {
     public DoWhileStatementNode(
         KeywordToken doKeywordToken,
-        OpenBraceToken? openBraceToken,
+        OpenBraceToken openBraceToken,
         CodeBlockNode? codeBlockNode,
-        KeywordToken? whileKeywordToken,
-        OpenParenthesisToken? openParenthesisToken,
+        KeywordToken whileKeywordToken,
+        OpenParenthesisToken openParenthesisToken,
         IExpressionNode? expressionNode,
-        CloseParenthesisToken? closeParenthesisToken)
+        CloseParenthesisToken closeParenthesisToken)
     {
         DoKeywordToken = doKeywordToken;
         OpenBraceToken = openBraceToken;
@@ -29,12 +29,12 @@ public sealed record DoWhileStatementNode : ICodeBlockOwner
     }
 
     public KeywordToken DoKeywordToken { get; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
-    public KeywordToken? WhileKeywordToken { get; private set; }
-    public OpenParenthesisToken? OpenParenthesisToken { get; private set; }
+    public KeywordToken WhileKeywordToken { get; private set; }
+    public OpenParenthesisToken OpenParenthesisToken { get; private set; }
     public IExpressionNode? ExpressionNode { get; private set; }
-    public CloseParenthesisToken? CloseParenthesisToken { get; private set; }
+    public CloseParenthesisToken CloseParenthesisToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
@@ -69,22 +69,22 @@ public sealed record DoWhileStatementNode : ICodeBlockOwner
             DoKeywordToken,
         };
 
-        if (OpenBraceToken is not null)
+        if (OpenBraceToken.ConstructorWasInvoked)
             childrenList.Add(OpenBraceToken);
             
         if (CodeBlockNode is not null)
             childrenList.Add(CodeBlockNode);
             
-        if (WhileKeywordToken is not null)
+        if (WhileKeywordToken.ConstructorWasInvoked)
             childrenList.Add(WhileKeywordToken);
             
-        if (OpenParenthesisToken is not null)
+        if (OpenParenthesisToken.ConstructorWasInvoked)
             childrenList.Add(OpenParenthesisToken);
             
         if (ExpressionNode is not null)
             childrenList.Add(ExpressionNode);
             
-        if (CloseParenthesisToken is not null)
+        if (CloseParenthesisToken.ConstructorWasInvoked)
             childrenList.Add(CloseParenthesisToken);
 
         ChildList = childrenList.ToImmutableArray();

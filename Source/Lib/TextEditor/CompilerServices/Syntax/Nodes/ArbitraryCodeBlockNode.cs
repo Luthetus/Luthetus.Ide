@@ -17,7 +17,7 @@ public sealed record ArbitraryCodeBlockNode : ICodeBlockOwner
     }
 
     public ICodeBlockOwner? ParentCodeBlockOwner { get; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ParentCodeBlockOwner.ScopeDirectionKind;
@@ -50,7 +50,7 @@ public sealed record ArbitraryCodeBlockNode : ICodeBlockOwner
     {
     	var children = new List<ISyntax>();
     	
-    	if (OpenBraceToken is not null)
+    	if (OpenBraceToken.ConstructorWasInvoked)
     		children.Add(OpenBraceToken);
     		
     	if (CodeBlockNode is not null)

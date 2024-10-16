@@ -408,7 +408,7 @@ public static class ParseTokens
                     null,
                     null,
                     null,
-                    null,
+                    openBraceToken: default,
                     null)
                 {
                     IsFabricated = true

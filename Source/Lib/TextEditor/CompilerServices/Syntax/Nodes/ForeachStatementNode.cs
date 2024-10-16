@@ -34,8 +34,8 @@ public sealed record ForeachStatementNode : ICodeBlockOwner
     public KeywordToken InKeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
@@ -74,7 +74,7 @@ public sealed record ForeachStatementNode : ICodeBlockOwner
             CloseParenthesisToken,
         };
 
-		if (OpenParenthesisToken is not null)
+		if (OpenParenthesisToken.ConstructorWasInvoked)
             childrenList.Add(OpenParenthesisToken);
 
         if (CodeBlockNode is not null)

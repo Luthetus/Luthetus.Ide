@@ -119,7 +119,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 null,
                                 null,
             					null,
-                                null,
+                                openBraceToken: default,
                                 null);
 
                             var declaredMethods = definedType.GetMethods();
@@ -242,7 +242,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 typeDefinitionNode.GenericArgumentsListingNode,
                                 null,
                                 typeDefinitionNode.InheritedTypeClauseNode,
-                                null,
+                                openBraceToken: default,
                                 typeBodyCodeBlockNodeBuilder.Build());
 
                             var typeNamespace = definedType.Namespace;

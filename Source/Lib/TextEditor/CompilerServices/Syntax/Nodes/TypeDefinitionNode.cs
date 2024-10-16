@@ -20,7 +20,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
         TypeClauseNode? inheritedTypeClauseNode,
-		OpenBraceToken? openBraceToken,
+		OpenBraceToken openBraceToken,
         CodeBlockNode? codeBlockNode)
     {
         AccessModifierKind = accessModifierKind;

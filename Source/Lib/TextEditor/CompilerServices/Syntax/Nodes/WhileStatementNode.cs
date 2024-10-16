@@ -28,8 +28,8 @@ public sealed record WhileStatementNode : ICodeBlockOwner
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public IExpressionNode ExpressionNode { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 

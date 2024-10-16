@@ -36,9 +36,9 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     public IdentifierToken FunctionIdentifierToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
-    public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
     public ConstraintNode? ConstraintNode { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 

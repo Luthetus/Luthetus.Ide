@@ -21,7 +21,7 @@ public sealed record TryStatementTryNode : ICodeBlockOwner
     }
 
     public KeywordToken KeywordToken { get; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -54,10 +54,10 @@ public sealed record TryStatementTryNode : ICodeBlockOwner
     {
     	var childrenList = new List<ISyntax>();
 
-        if (KeywordToken is not null)
+        if (KeywordToken.ConstructorWasInvoked)
             childrenList.Add(KeywordToken);
             
-        if (OpenBraceToken is not null)
+        if (OpenBraceToken.ConstructorWasInvoked)
             childrenList.Add(OpenBraceToken);
             
         if (CodeBlockNode is not null)

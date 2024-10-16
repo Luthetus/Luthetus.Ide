@@ -22,8 +22,8 @@ public sealed record IfStatementNode : ICodeBlockOwner
 
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 

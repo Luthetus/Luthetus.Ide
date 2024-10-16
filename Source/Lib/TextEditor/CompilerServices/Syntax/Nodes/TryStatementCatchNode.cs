@@ -11,8 +11,8 @@ public sealed record TryStatementCatchNode : ICodeBlockOwner
 	public TryStatementCatchNode(
 		TryStatementNode? parent,
         KeywordToken keywordToken,
-        OpenParenthesisToken? openParenthesisToken,
-        CloseParenthesisToken? closeParenthesisToken,
+        OpenParenthesisToken openParenthesisToken,
+        CloseParenthesisToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
     	Parent = parent;
@@ -26,9 +26,9 @@ public sealed record TryStatementCatchNode : ICodeBlockOwner
     }
 	
 	public KeywordToken KeywordToken { get; }
-    public OpenParenthesisToken? OpenParenthesisToken { get; }
-    public CloseParenthesisToken? CloseParenthesisToken { get; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
+    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public CloseParenthesisToken CloseParenthesisToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
@@ -61,16 +61,16 @@ public sealed record TryStatementCatchNode : ICodeBlockOwner
     {
     	var childrenList = new List<ISyntax>();
 
-        if (KeywordToken is not null)
+        if (KeywordToken.ConstructorWasInvoked)
             childrenList.Add(KeywordToken);
             
         if (CodeBlockNode is not null)
             childrenList.Add(CodeBlockNode);
             
-        if (OpenParenthesisToken is not null)
+        if (OpenParenthesisToken.ConstructorWasInvoked)
             childrenList.Add(OpenParenthesisToken);
             
-        if (CloseParenthesisToken is not null)
+        if (CloseParenthesisToken.ConstructorWasInvoked)
             childrenList.Add(CloseParenthesisToken);
             
         if (CodeBlockNode is not null)

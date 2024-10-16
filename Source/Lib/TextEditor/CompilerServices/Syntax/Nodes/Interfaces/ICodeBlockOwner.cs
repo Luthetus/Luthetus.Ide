@@ -11,8 +11,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 public interface ICodeBlockOwner : ISyntaxNode
 {
 	public ScopeDirectionKind ScopeDirectionKind { get; }
+	public OpenBraceToken OpenBraceToken { get; }
 	public CodeBlockNode? CodeBlockNode { get; }
-	public OpenBraceToken? OpenBraceToken { get; }
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
 	

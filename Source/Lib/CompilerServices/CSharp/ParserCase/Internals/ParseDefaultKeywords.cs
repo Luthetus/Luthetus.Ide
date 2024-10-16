@@ -151,12 +151,12 @@ public class ParseDefaultKeywords
     {
         var doWhileStatementNode = new DoWhileStatementNode(
 	    	consumedKeywordToken,
-	        openBraceToken: null,
+	        openBraceToken: default,
 	        codeBlockNode: null,
-	        whileKeywordToken: null,
-	        openParenthesisToken: null,
+	        whileKeywordToken: default,
+	        openParenthesisToken: default,
 	        expressionNode: null,
-	        closeParenthesisToken: null);
+	        closeParenthesisToken: default);
         	
         // Have to push twice so it is on the stack when the 'while' keyword is parsed.
 		model.SyntaxStack.Push(doWhileStatementNode);
@@ -1230,7 +1230,7 @@ public class ParseDefaultKeywords
             genericArgumentsListingNode,
             primaryConstructorFunctionArgumentsListingNode: null,
             inheritedTypeClauseNode: null,
-            openBraceToken: null,
+            openBraceToken: default,
             codeBlockNode: null);
 
         model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
