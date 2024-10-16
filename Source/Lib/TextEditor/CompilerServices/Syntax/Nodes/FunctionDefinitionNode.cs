@@ -9,7 +9,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// TODO: Track the open and close braces for the function body.
 /// </summary>
-public sealed record FunctionDefinitionNode : ICodeBlockOwner
+public sealed class FunctionDefinitionNode : ICodeBlockOwner
 {
     public FunctionDefinitionNode(
         AccessModifierKind accessModifierKind,
@@ -36,13 +36,13 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     public IdentifierToken FunctionIdentifierToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
-    public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
     public ConstraintNode? ConstraintNode { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
+    public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -53,10 +53,11 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
     }
     
@@ -73,23 +74,27 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            ReturnTypeClauseNode,
-            FunctionIdentifierToken,
-        };
-
+    	var childCount = 3; // ReturnTypeClauseNode, FunctionIdentifierToken, ...FunctionArgumentsListingNode,
         if (GenericArgumentsListingNode is not null)
-            children.Add(GenericArgumentsListingNode);
-
-        children.Add(FunctionArgumentsListingNode);
-
+            childCount++;
         if (CodeBlockNode is not null)
-            children.Add(CodeBlockNode);
-        
+            childCount++;
         if (ConstraintNode is not null)
-            children.Add(ConstraintNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
+		childList[i++] = ReturnTypeClauseNode;
+		childList[i++] = FunctionIdentifierToken;
+		if (GenericArgumentsListingNode is not null)
+            childList[i++] = GenericArgumentsListingNode;
+        childList[i++] = FunctionArgumentsListingNode;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+        if (ConstraintNode is not null)
+            childList[i++] = ConstraintNode;
+            
+        ChildList = childList;
     }
 }

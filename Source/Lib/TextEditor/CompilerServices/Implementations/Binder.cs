@@ -11,13 +11,17 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices;
 
 public class Binder : IBinder
 {
+	private readonly Dictionary<ResourceUri, IBinderSession> _binderSessionMap = new();
+	private readonly object _binderSessionMapLock = new();
+
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
     public ImmutableArray<ITextEditorSymbol> SymbolsList { get; } = ImmutableArray<ITextEditorSymbol>.Empty;
     public ImmutableDictionary<ResourceUri, List<IScope>> ScopeList { get; } = ImmutableDictionary<ResourceUri, List<IScope>>.Empty;
+    
 
     public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
-        return null;
+    	return null;
     }
 
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit)
@@ -44,8 +48,42 @@ public class Binder : IBinder
     {
     	return null;
     }
+    
+    public bool TryGetBinderSession(ResourceUri resourceUri, out IBinderSession binderSession)
+    {
+    	return _binderSessionMap.TryGetValue(resourceUri, out binderSession);
+    }
+    
+    public void UpsertBinderSession(IBinderSession binderSession)
+    {
+    	lock (_binderSessionMapLock)
+    	{
+    		if (_binderSessionMap.ContainsKey(binderSession.ResourceUri))
+	    		_binderSessionMap[binderSession.ResourceUri] = binderSession;
+	    	else
+	    		_binderSessionMap.Add(binderSession.ResourceUri, binderSession);
+    	}
+    }
+    
+    public bool RemoveBinderSession(ResourceUri resourceUri)
+    {
+    	lock (_binderSessionMapLock)
+    	{
+    		return _binderSessionMap.Remove(resourceUri);
+    	}
+    }
 
-	public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
+    public IBinderSession StartBinderSession(ResourceUri resourceUri)
+    {
+        return new BinderSession(resourceUri, Key<IScope>.Empty, null, this);
+    }
+    
+	public void FinalizeBinderSession(IBinderSession binderSession)
+	{
+		UpsertBinderSession(binderSession);
+	}
+    
+    public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey)
 	{
 		return Array.Empty<TypeDefinitionNode>();
 	}
@@ -155,11 +193,6 @@ public class Binder : IBinder
         TypeClauseNode typeClauseNode)
     {
     	return false;
-    }
-
-    public IBinderSession ConstructBinderSession(ResourceUri resourceUri)
-    {
-        return new BinderSession(resourceUri, Key<IScope>.Empty, null, this);
     }
 
     public void ClearStateByResourceUri(ResourceUri resourceUri)

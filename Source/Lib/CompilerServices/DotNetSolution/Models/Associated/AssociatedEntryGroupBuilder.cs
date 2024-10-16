@@ -16,7 +16,7 @@ public class AssociatedEntryGroupBuilder
     public Action<AssociatedEntryGroup> OnAfterBuildAction { get; }
     public OpenAssociatedGroupToken OpenAssociatedGroupToken { get; set; }
     public List<IAssociatedEntry> AssociatedEntryList { get; } = new();
-    public CloseAssociatedGroupToken? CloseAssociatedGroupToken { get; set; }
+    public CloseAssociatedGroupToken CloseAssociatedGroupToken { get; set; }
 
     public AssociatedEntryGroup Build()
     {

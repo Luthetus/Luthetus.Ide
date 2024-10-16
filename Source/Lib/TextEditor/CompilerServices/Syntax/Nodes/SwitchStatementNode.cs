@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record SwitchStatementNode : ICodeBlockOwner
+public sealed class SwitchStatementNode : ICodeBlockOwner
 {
     public SwitchStatementNode(
         KeywordToken keywordToken,
@@ -28,12 +28,12 @@ public sealed record SwitchStatementNode : ICodeBlockOwner
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public IExpressionNode ExpressionNode { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -44,10 +44,11 @@ public sealed record SwitchStatementNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
     }
     
@@ -59,20 +60,24 @@ public sealed record SwitchStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-            OpenParenthesisToken,
-            ExpressionNode,
-            CloseParenthesisToken,
-        };
-
-        if (OpenBraceToken is not null)
-            childrenList.Add(OpenBraceToken);
-        
+        var childCount = 4; //KeywordToken, OpenParenthesisToken, ExpressionNode, CloseParenthesisToken,
+        if (OpenBraceToken.ConstructorWasInvoked)
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = childrenList.ToImmutableArray();
+		childList[i++] = KeywordToken;
+		childList[i++] = OpenParenthesisToken;
+		childList[i++] = ExpressionNode;
+		childList[i++] = CloseParenthesisToken;
+		if (OpenBraceToken.ConstructorWasInvoked)
+            childList[i++] = OpenBraceToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

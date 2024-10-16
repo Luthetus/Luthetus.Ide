@@ -6,13 +6,13 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record TryStatementCatchNode : ICodeBlockOwner
+public sealed class TryStatementCatchNode : ICodeBlockOwner
 {
 	public TryStatementCatchNode(
 		TryStatementNode? parent,
         KeywordToken keywordToken,
-        OpenParenthesisToken? openParenthesisToken,
-        CloseParenthesisToken? closeParenthesisToken,
+        OpenParenthesisToken openParenthesisToken,
+        CloseParenthesisToken closeParenthesisToken,
         CodeBlockNode? codeBlockNode)
     {
     	Parent = parent;
@@ -26,14 +26,14 @@ public sealed record TryStatementCatchNode : ICodeBlockOwner
     }
 	
 	public KeywordToken KeywordToken { get; }
-    public OpenParenthesisToken? OpenParenthesisToken { get; }
-    public CloseParenthesisToken? CloseParenthesisToken { get; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
+    public OpenParenthesisToken OpenParenthesisToken { get; }
+    public CloseParenthesisToken CloseParenthesisToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -44,10 +44,11 @@ public sealed record TryStatementCatchNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
     }
     
@@ -59,23 +60,32 @@ public sealed record TryStatementCatchNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>();
-
-        if (KeywordToken is not null)
-            childrenList.Add(KeywordToken);
-            
+        var childCount = 0;
+        if (KeywordToken.ConstructorWasInvoked)
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
-            
-        if (OpenParenthesisToken is not null)
-            childrenList.Add(OpenParenthesisToken);
-            
-        if (CloseParenthesisToken is not null)
-            childrenList.Add(CloseParenthesisToken);
-            
+            childCount++;
+        if (OpenParenthesisToken.ConstructorWasInvoked)
+            childCount++;
+        if (CloseParenthesisToken.ConstructorWasInvoked)
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
-
-        ChildList = childrenList.ToImmutableArray();
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+		
+		if (KeywordToken.ConstructorWasInvoked)
+            childList[i++] = KeywordToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+        if (OpenParenthesisToken.ConstructorWasInvoked)
+            childList[i++] = OpenParenthesisToken;
+        if (CloseParenthesisToken.ConstructorWasInvoked)
+            childList[i++] = CloseParenthesisToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

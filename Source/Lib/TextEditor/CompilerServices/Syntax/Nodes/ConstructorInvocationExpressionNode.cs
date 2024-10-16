@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ConstructorInvocationExpressionNode : IExpressionNode
+public sealed class ConstructorInvocationExpressionNode : IExpressionNode
 {
     public ConstructorInvocationExpressionNode(
         KeywordToken newKeywordToken,
@@ -17,19 +17,7 @@ public sealed record ConstructorInvocationExpressionNode : IExpressionNode
         FunctionParametersListingNode = functionParametersListingNode;
         ObjectInitializationParametersListingNode = objectInitializationParametersListingNode;
 
-        var children = new List<ISyntax>
-        {
-            NewKeywordToken,
-            ResultTypeClauseNode,
-        };
-
-        if (FunctionParametersListingNode is not null)
-            children.Add(FunctionParametersListingNode);
-        
-        if (ObjectInitializationParametersListingNode is not null)
-            children.Add(ObjectInitializationParametersListingNode);
-
-        ChildList = children.ToImmutableArray();
+        SetChildList();
     }
 
     public KeywordToken NewKeywordToken { get; }
@@ -37,9 +25,30 @@ public sealed record ConstructorInvocationExpressionNode : IExpressionNode
     public FunctionParametersListingNode? FunctionParametersListingNode { get; }
     public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; }
     
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
+    
+    public void SetChildList()
+    {
+    	var childCount = 2; // NewKeywordToken, ResultTypeClauseNode,
+    	if (FunctionParametersListingNode is not null)
+            childCount++;
+        if (ObjectInitializationParametersListingNode is not null)
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = NewKeywordToken;
+		childList[i++] = ResultTypeClauseNode;
+		if (FunctionParametersListingNode is not null)
+            childList[i++] = FunctionParametersListingNode;
+        if (ObjectInitializationParametersListingNode is not null)
+            childList[i++] = ObjectInitializationParametersListingNode;
+            
+        ChildList = childList;
+    }
 }

@@ -7,27 +7,24 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
-/// <summary>
-/// The <see cref="TryGetTypeDefinitionNodeByScope"/>,
-/// <see cref="TryGetTypeDefinitionNodeByScope"/>,
-/// <see cref="TryAddTypeDefinitionNodeByScope"/>,
-/// (and the similarly named methods),
-/// might seem a bit odd at first glance.
-///
-/// In order to avoid allocating a Dictionary
-/// foreach <see cref="IScope"/>,
-/// the storage is being done on the <see cref="IBinder"/>
-/// instance. And all the indexing is hidden
-/// behind the method invocations.
-/// </summary>
 public interface IBinder
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
     public ImmutableArray<ITextEditorSymbol> SymbolsList { get; }
-    public ImmutableDictionary<ResourceUri, List<IScope>> ScopeList { get; }
 
     public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit);
+    
+    /// <summary><see cref="FinalizeBinderSession"/></summary>
+    public IBinderSession StartBinderSession(ResourceUri resourceUri);
+    
+	/// <summary><see cref="StartBinderSession"/></summary>
+	public void FinalizeBinderSession(IBinderSession binderSession);
+    
+    public bool TryGetBinderSession(ResourceUri resourceUri, out IBinderSession binderSession);
+    public void UpsertBinderSession(IBinderSession binderSession);
+    /// <summary>Returns true if the entry was removed</summary>
+    public bool RemoveBinderSession(ResourceUri resourceUri);
     
     public IScope? GetScope(TextEditorTextSpan textSpan);
     public IScope? GetScope(ResourceUri resourceUri, int positionIndex);
@@ -101,7 +98,6 @@ public interface IBinder
     	Key<IScope> scopeKey,
         TypeClauseNode typeClauseNode);
     
-    public IBinderSession ConstructBinderSession(ResourceUri resourceUri);
     public void ClearStateByResourceUri(ResourceUri resourceUri);
     public void AddNamespaceToCurrentScope(string namespaceString, IParserModel model);
     public void BindFunctionOptionalArgument(FunctionArgumentEntryNode functionArgumentEntryNode, IParserModel model);

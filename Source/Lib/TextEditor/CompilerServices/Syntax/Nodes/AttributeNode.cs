@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record AttributeNode : ISyntaxNode
+public sealed class AttributeNode : ISyntaxNode
 {
     public AttributeNode(
         OpenSquareBracketToken openSquareBracketToken,
@@ -14,24 +14,37 @@ public sealed record AttributeNode : ISyntaxNode
         InnerTokens = innerTokens;
         CloseSquareBracketToken = closeSquareBracketToken;
 
-        var childList = new List<ISyntax>
-        {
-            OpenSquareBracketToken
-        };
-
-        childList.AddRange(innerTokens);
-        childList.Add(CloseSquareBracketToken);
-        
-        ChildList = childList.ToImmutableArray();
+        SetChildList();
     }
 
     public OpenSquareBracketToken OpenSquareBracketToken { get; }
     public List<ISyntaxToken> InnerTokens { get; }
     public CloseSquareBracketToken CloseSquareBracketToken { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
+    
+    public void SetChildList()
+    {
+    	// OpenSquareBracketToken, InnerTokens.Count, CloseSquareBracketToken
+    	var childCount = 
+    		1 +                 // OpenSquareBracketToken,
+    		InnerTokens.Count + // InnerTokens.Count,
+    		1;                  // CloseSquareBracketToken,
+    		
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = OpenSquareBracketToken;
+		foreach (var item in InnerTokens)
+		{
+			childList[i++] = item;
+		}
+		childList[i++] = CloseSquareBracketToken;
+            
+        ChildList = childList;
+    }
 }

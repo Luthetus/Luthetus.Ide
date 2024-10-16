@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// <see cref="TypeClauseNode"/> is used anywhere a type is referenced.
 /// </summary>
-public sealed record TypeClauseNode : ISyntaxNode
+public sealed class TypeClauseNode : ISyntaxNode
 {
     public TypeClauseNode(
         ISyntaxToken typeIdentifier,
@@ -15,16 +15,8 @@ public sealed record TypeClauseNode : ISyntaxNode
         TypeIdentifierToken = typeIdentifier;
         ValueType = valueType;
         GenericParametersListingNode = genericParametersListingNode;
-
-        var children = new List<ISyntax>
-        {
-            TypeIdentifierToken
-        };
-
-        if (GenericParametersListingNode is not null)
-            children.Add(GenericParametersListingNode);
-
-        ChildList = children.ToImmutableArray();
+        
+        SetChildList();
     }
 
     /// <summary>
@@ -56,9 +48,25 @@ public sealed record TypeClauseNode : ISyntaxNode
     /// </summary>
     public AttributeNode AttributeNode { get; set; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
+    
+    public void SetChildList()
+    {
+    	var childCount = 1; // TypeIdentifierToken
+        if (GenericParametersListingNode is not null)
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+		
+		childList[i++] = TypeIdentifierToken;
+		if (GenericParametersListingNode is not null)
+            childList[i++] = GenericParametersListingNode;
+            
+        ChildList = childList;
+    }
 }

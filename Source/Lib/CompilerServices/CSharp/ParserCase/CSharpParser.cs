@@ -19,7 +19,7 @@ public class CSharpParser : IParser
     {
         Lexer = lexer;
         Binder = new CSharpBinder();
-        BinderSession = (CSharpBinderSession)Binder.ConstructBinderSession(lexer.ResourceUri);
+        BinderSession = (CSharpBinderSession)Binder.StartBinderSession(lexer.ResourceUri);
     }
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; private set; } = ImmutableArray<TextEditorDiagnostic>.Empty;
@@ -37,8 +37,7 @@ public class CSharpParser : IParser
         ResourceUri resourceUri)
     {
         Binder = (CSharpBinder)previousBinder;
-        Binder.ClearStateByResourceUri(resourceUri);
-        BinderSession = (CSharpBinderSession)Binder.ConstructBinderSession(resourceUri);
+        BinderSession = (CSharpBinderSession)Binder.StartBinderSession(resourceUri);
         return Parse();
     }
 
@@ -205,6 +204,7 @@ public class CSharpParser : IParser
                 .Union(Lexer.DiagnosticList)
                 .ToImmutableArray());
 
+		Binder.FinalizeBinderSession(BinderSession);
         return new CompilationUnit(
             topLevelStatementsCodeBlock,
             Lexer,

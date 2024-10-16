@@ -220,6 +220,7 @@ public static class ParseTokens
         else
         {
             if (model.Binder.TryGetVariableDeclarationHierarchically(
+            		model,
                     model.BinderSession.ResourceUri,
                     model.BinderSession.CurrentScopeKey,
                     text,
@@ -233,6 +234,7 @@ public static class ParseTokens
             {
                 // 'static class identifier' OR 'undeclared-variable reference'
                 if (model.Binder.TryGetTypeDefinitionHierarchically(
+                		model,
                         model.BinderSession.ResourceUri,
                         model.BinderSession.CurrentScopeKey,
                         text,
@@ -390,6 +392,7 @@ public static class ParseTokens
         if (expectingTypeClause)
         {
             if (!model.Binder.TryGetTypeDefinitionHierarchically(
+            		model,
                     model.BinderSession.ResourceUri,
                     model.BinderSession.CurrentScopeKey,
                     consumedAmbiguousIdentifierNode.IdentifierToken.TextSpan.GetText(),
@@ -405,7 +408,7 @@ public static class ParseTokens
                     null,
                     null,
                     null,
-                    null,
+                    openBraceToken: default,
                     null)
                 {
                     IsFabricated = true
@@ -615,7 +618,7 @@ public static class ParseTokens
 		
 		model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
         {
-            selfCodeBlockOwner = selfCodeBlockOwner.WithCodeBlockNode(consumedOpenBraceToken, codeBlockNode);
+            selfCodeBlockOwner = selfCodeBlockOwner.SetCodeBlockNode(consumedOpenBraceToken, codeBlockNode);
 			
 			/*if (wasDeferred)
 				closureCurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;

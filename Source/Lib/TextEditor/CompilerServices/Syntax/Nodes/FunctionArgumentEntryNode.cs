@@ -5,7 +5,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// Used when defining a function.
 /// </summary>
-public sealed record FunctionArgumentEntryNode : ISyntaxNode
+public sealed class FunctionArgumentEntryNode : ISyntaxNode
 {
     public FunctionArgumentEntryNode(
         VariableDeclarationNode variableDeclarationNode,
@@ -24,15 +24,7 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
         HasInKeyword = hasInKeyword;
         HasRefKeyword = hasRefKeyword;
 
-        var children = new List<ISyntax>
-        {
-            VariableDeclarationNode
-        };
-        
-        if (OptionalCompileTimeConstantToken is not null)
-        	children.Add(OptionalCompileTimeConstantToken);
-
-        ChildList = children.ToImmutableArray();
+        SetChildList();
     }
 
     public VariableDeclarationNode VariableDeclarationNode { get; }
@@ -43,9 +35,25 @@ public sealed record FunctionArgumentEntryNode : ISyntaxNode
     public bool HasInKeyword { get; }
     public bool HasRefKeyword { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentEntryNode;
+    
+    public void SetChildList()
+    {
+    	var childCount = 1; // VariableDeclarationNode,
+        if (OptionalCompileTimeConstantToken is not null)
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = VariableDeclarationNode;
+        if (OptionalCompileTimeConstantToken is not null)
+            childList[i++] = OptionalCompileTimeConstantToken;
+            
+        ChildList = childList;
+    }
 }

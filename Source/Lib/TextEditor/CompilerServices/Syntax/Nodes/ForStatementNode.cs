@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ForStatementNode : ICodeBlockOwner
+public sealed class ForStatementNode : ICodeBlockOwner
 {
     public ForStatementNode(
         KeywordToken keywordToken,
@@ -40,12 +40,12 @@ public sealed record ForStatementNode : ICodeBlockOwner
     public StatementDelimiterToken ConditionStatementDelimiterToken { get; }
     public IExpressionNode UpdationExpressionNode { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -56,10 +56,11 @@ public sealed record ForStatementNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
     }
     
@@ -71,29 +72,42 @@ public sealed record ForStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-	        OpenParenthesisToken,
-	    };
-	    
-	    childrenList.AddRange(InitializationSyntaxList);
-	    
-	    childrenList.AddRange(new ISyntax[] 
-	    {
-	        InitializationStatementDelimiterToken,
-	        ConditionExpressionNode,
-	        ConditionStatementDelimiterToken,
-	        UpdationExpressionNode,
-	        CloseParenthesisToken,
-	    });
-
-        if (OpenBraceToken is not null)
-            childrenList.Add(OpenBraceToken);
+    	// KeywordToken, OpenParenthesisToken, InitializationSyntaxList.Length, InitializationStatementDelimiterToken,
+        // ConditionExpressionNode, ConditionStatementDelimiterToken, UpdationExpressionNode, CloseParenthesisToken,
+        var childCount =
+        	1 +                               // KeywordToken,
+        	1 +                               // OpenParenthesisToken,
+        	InitializationSyntaxList.Length + // InitializationSyntaxList.Length
+        	1 +                               // InitializationStatementDelimiterToken,
+        	1 +                               // ConditionExpressionNode,
+        	1 +                               // ConditionStatementDelimiterToken,
+        	1 +                               // UpdationExpressionNode,
+        	1;                                // CloseParenthesisToken,
         
+        if (OpenBraceToken.ConstructorWasInvoked)
+            childCount++;
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = childrenList.ToImmutableArray();
+		childList[i++] = KeywordToken;
+		childList[i++] = OpenParenthesisToken;
+		foreach (var item in InitializationSyntaxList)
+		{
+			childList[i++] = item;
+		}
+		childList[i++] = InitializationStatementDelimiterToken;
+        childList[i++] = ConditionExpressionNode;
+		childList[i++] = ConditionStatementDelimiterToken;
+		childList[i++] = UpdationExpressionNode;
+		childList[i++] = CloseParenthesisToken;
+		if (OpenBraceToken.ConstructorWasInvoked)
+            childList[i++] = OpenBraceToken;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

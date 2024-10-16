@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.Python.Facts;
@@ -58,18 +59,18 @@ public class PythonLexer : Lexer
         pythonSyntaxWalker.Visit(pythonSyntaxUnit.GenericDocumentSyntax);
 
         _syntaxTokenList.AddRange(
-            pythonSyntaxWalker.StringSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            pythonSyntaxWalker.StringSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
 
         _syntaxTokenList.AddRange(
-            pythonSyntaxWalker.CommentSingleLineSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            pythonSyntaxWalker.CommentSingleLineSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
 
         _syntaxTokenList.AddRange(
-            pythonSyntaxWalker.CommentMultiLineSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            pythonSyntaxWalker.CommentMultiLineSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
 
         _syntaxTokenList.AddRange(
-            pythonSyntaxWalker.KeywordSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            pythonSyntaxWalker.KeywordSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
 
         _syntaxTokenList.AddRange(
-            pythonSyntaxWalker.FunctionSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            pythonSyntaxWalker.FunctionSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
     }
 }

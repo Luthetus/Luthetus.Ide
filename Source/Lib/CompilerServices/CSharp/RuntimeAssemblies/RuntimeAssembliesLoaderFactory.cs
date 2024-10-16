@@ -60,7 +60,7 @@ public static class RuntimeAssembliesLoaderFactory
 
             var model = new CSharpParserModel(
                 cSharpBinder,
-                (CSharpBinderSession)cSharpBinder.ConstructBinderSession(new ResourceUri("aaa")),
+                (CSharpBinderSession)cSharpBinder.StartBinderSession(new ResourceUri("aaa")),
                 new TokenWalker(ImmutableArray<ISyntaxToken>.Empty, new()),
                 new Stack<ISyntax>(),
                 diagnosticBag,
@@ -119,7 +119,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 null,
                                 null,
             					null,
-                                null,
+                                openBraceToken: default,
                                 null);
 
                             var declaredMethods = definedType.GetMethods();
@@ -242,7 +242,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 typeDefinitionNode.GenericArgumentsListingNode,
                                 null,
                                 typeDefinitionNode.InheritedTypeClauseNode,
-                                null,
+                                openBraceToken: default,
                                 typeBodyCodeBlockNodeBuilder.Build());
 
                             var typeNamespace = definedType.Namespace;

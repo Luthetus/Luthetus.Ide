@@ -116,16 +116,16 @@ public class ParseFunctions
             // Constructor invokes some other constructor as well
         	// 'this(...)' or 'base(...)'
         	
-        	KeywordToken? keywordToken;
+        	KeywordToken keywordToken;
         	
         	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
         		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
         	else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
         		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
         	else
-        		keywordToken = null;
+        		keywordToken = default;
         	
-        	if (keywordToken is null || keywordToken.IsFabricated)
+        	if (!keywordToken.ConstructorWasInvoked || keywordToken.IsFabricated)
         	{
         		while (!model.TokenWalker.IsEof)
 	            {

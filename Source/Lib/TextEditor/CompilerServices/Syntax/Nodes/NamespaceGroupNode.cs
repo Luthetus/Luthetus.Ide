@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record NamespaceGroupNode : ISyntaxNode
+public sealed class NamespaceGroupNode : ISyntaxNode
 {
     public NamespaceGroupNode(
         string namespaceString,
@@ -10,14 +10,14 @@ public sealed record NamespaceGroupNode : ISyntaxNode
     {
         NamespaceString = namespaceString;
         NamespaceStatementNodeList = namespaceStatementNodeList;
-
-        ChildList = namespaceStatementNodeList.Select(x => (ISyntax)x).ToImmutableArray();
+        
+        SetChildList();
     }
 
     public string NamespaceString { get; }
     public ImmutableArray<NamespaceStatementNode> NamespaceStatementNodeList { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -35,5 +35,10 @@ public sealed record NamespaceGroupNode : ISyntaxNode
         return NamespaceStatementNodeList
             .SelectMany(x => x.GetTopLevelTypeDefinitionNodes())
             .ToImmutableArray();
+    }
+    
+    public void SetChildList()
+    {
+    	ChildList = NamespaceStatementNodeList.Select(x => (ISyntax)x).ToArray();
     }
 }

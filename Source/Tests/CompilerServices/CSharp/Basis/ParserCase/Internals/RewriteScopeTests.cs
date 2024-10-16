@@ -39,7 +39,7 @@ public class MyClass
         	Console.WriteLine($"child.SyntaxKind: {child.SyntaxKind}");
         }
         
-        foreach (var kvp in compilationUnit.Binder.ScopeList)
+        /*foreach (var kvp in compilationUnit.Binder.ScopeList)
         {
         	Console.WriteLine($"Key: \"{kvp.Key.Value}\"");
         	
@@ -47,6 +47,6 @@ public class MyClass
         	{
         		Console.WriteLine($"\t{scope}");
         	}
-        }
+        }*/
     }
 }

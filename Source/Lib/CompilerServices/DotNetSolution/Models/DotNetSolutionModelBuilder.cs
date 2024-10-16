@@ -104,12 +104,12 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                     return this;
 
                 var openStartingIndexInclusive =
-                    lastValidProjectToken.CloseAssociatedGroupToken.TextSpan.EndingIndexExclusive;
+                    lastValidProjectToken.CloseAssociatedGroupToken.Value.TextSpan.EndingIndexExclusive;
 
                 var openEndingIndexExclusive = openStartingIndexInclusive +
                     LexSolutionFacts.Project.PROJECT_DEFINITION_START_TOKEN.Length;
 
-                var openTextSpan = lastValidProjectToken.CloseAssociatedGroupToken.TextSpan with
+                var openTextSpan = lastValidProjectToken.CloseAssociatedGroupToken.Value.TextSpan with
                 {
                     StartingIndexInclusive = openStartingIndexInclusive,
                     EndingIndexExclusive = openEndingIndexExclusive + solutionProjectEntry.Length
@@ -118,13 +118,13 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                 dotNetProject.OpenAssociatedGroupToken = new OpenAssociatedGroupToken(openTextSpan);
                 
                 var closeEndingIndexExclusive =
-                    lastValidProjectToken.CloseAssociatedGroupToken.TextSpan.EndingIndexExclusive +
+                    lastValidProjectToken.CloseAssociatedGroupToken.Value.TextSpan.EndingIndexExclusive +
                     solutionProjectEntry.Length;
 
                 var closeStartingIndexInclusive = closeEndingIndexExclusive -
                     LexSolutionFacts.Project.PROJECT_DEFINITION_END_TOKEN.Length;
 
-                var closeTextSpan = lastValidProjectToken.CloseAssociatedGroupToken.TextSpan with
+                var closeTextSpan = lastValidProjectToken.CloseAssociatedGroupToken.Value.TextSpan with
                 {
                     StartingIndexInclusive = closeStartingIndexInclusive,
                     EndingIndexExclusive = closeEndingIndexExclusive
@@ -141,9 +141,9 @@ public record DotNetSolutionModelBuilder : IDotNetSolution
                 if (global.OpenAssociatedGroupToken is null)
                     return this;
                 
-                var newProjectTextSpanStartingIndexInclusive = global.OpenAssociatedGroupToken.TextSpan.StartingIndexInclusive;
+                var newProjectTextSpanStartingIndexInclusive = global.OpenAssociatedGroupToken.Value.TextSpan.StartingIndexInclusive;
 
-                var newProjectTextSpan = global.OpenAssociatedGroupToken.TextSpan with
+                var newProjectTextSpan = global.OpenAssociatedGroupToken.Value.TextSpan with
                 {
                     StartingIndexInclusive = newProjectTextSpanStartingIndexInclusive,
                     EndingIndexExclusive = newProjectTextSpanStartingIndexInclusive + solutionProjectEntry.Length
@@ -229,12 +229,7 @@ EndProject
                     dotNetProject.CloseAssociatedGroupToken,
                     new Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?>((inToken, textSpan) =>
                     {
-                        var outCloseAssociatedGroupToken = dotNetProject.CloseAssociatedGroupToken with
-                        {
-                            TextSpan = textSpan
-                        };
-
-                        dotNetProject.CloseAssociatedGroupToken = outCloseAssociatedGroupToken;
+                    	dotNetProject.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(textSpan);
                         return null;
                     })));
             }
@@ -248,12 +243,7 @@ EndProject
                 global.OpenAssociatedGroupToken,
                 new Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?>((inToken, textSpan) =>
                 {
-                    var outOpenAssociatedGroupToken = global.OpenAssociatedGroupToken with
-                    {
-                        TextSpan = textSpan
-                    };
-
-                    global.OpenAssociatedGroupToken = outOpenAssociatedGroupToken;
+                    global.OpenAssociatedGroupToken = new OpenAssociatedGroupToken(textSpan);
                     return null;
                 })));
         }
@@ -264,12 +254,7 @@ EndProject
                 global.CloseAssociatedGroupToken,
                 new Func<ISyntaxToken, TextEditorTextSpan, ISyntaxToken?>((inToken, textSpan) =>
                 {
-                    var outOpenAssociatedGroupToken = global.CloseAssociatedGroupToken with
-                    {
-                        TextSpan = textSpan
-                    };
-
-                    global.CloseAssociatedGroupToken = outOpenAssociatedGroupToken;
+                    global.CloseAssociatedGroupToken = new CloseAssociatedGroupToken(textSpan);
                     return null;
                 })));
         }

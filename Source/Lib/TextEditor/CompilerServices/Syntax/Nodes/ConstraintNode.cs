@@ -12,16 +12,13 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// 
 /// public T Clone&lt;T&gt;(T item) where T : class => item;<br/>
 /// </summary>
-public sealed record ConstraintNode : ISyntaxNode
+public sealed class ConstraintNode : ISyntaxNode
 {
     public ConstraintNode(ImmutableArray<ISyntaxToken> innerTokens)
     {
         InnerTokens = innerTokens;
 
-        var children = new List<ISyntax>();
-        children.AddRange(InnerTokens);
-
-        ChildList = children.ToImmutableArray();
+        SetChildList();
     }
 
     /// <summary>
@@ -30,9 +27,14 @@ public sealed record ConstraintNode : ISyntaxNode
     /// </summary>
     public ImmutableArray<ISyntaxToken> InnerTokens { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = InnerTokens.ToArray();
+    }
 }

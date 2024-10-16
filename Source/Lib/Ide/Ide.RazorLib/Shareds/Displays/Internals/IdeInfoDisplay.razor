@@ -181,25 +181,57 @@
                 		Previously, you had to break the singular text span yourself
                 		into individual text spans per line.
                 	</li>
+                	<li>
+                		When viewing a C# file, one can have the nearest scope highlighted
+                		at its start and end points by adding the following
+                		(NOTE: the luthetusTextEditor.css was modified to now include .luth_te_brace_matching {...}
+                		       so you might have to clear your cache to get the latest CSS to load.):
+                		
+                		<pre>
+private ViewModelDisplayOptions _viewModelDisplayOptions = new()
+{
+    HeaderComponentType = typeof(TextEditorDevToolsAnchorDisplay),
+};
+
+&lt;TextEditorGroupDisplay TextEditorGroupKey="EditorIdeApi.EditorTextEditorGroupKey"
+			ViewModelDisplayOptions="_viewModelDisplayOptions"/&gt;</pre>
+                	</li>
 					<li>
 						C# Parser:
 						<ul>
 							<li>
-								Function definition arguments are now added to the function body's scope.
+								Function Definition and Constructor Definition arguments are now added to the function body's scope.
 								(previously they were being added to the scope that contained
 								 the function definition.)
+								 As well this applies to: .
 							</li>
 							<li>
-								Constructor definition arguments are now added to the constructor body's scope.
-								(previously they were being added to the scope that contained
-								 the constructor definition.)
+								Parse scope of keywords that create scope blocks.
+								<pre>
+foreach (var someVariable in list)
+{
+/*
+	scope is parsed here now, and the variable 'someVariable'
+	is only defined within this code block.
+*/
+}</pre>
+							</li>
+							<li>
+								Progress was made on "single statement body code blocks"
+								i.e.:
+								<pre>
+foreach (var someVariable in list)
+	Console.WriteLine(someVariable);</pre>
+								
+								A scope is made on the semicolon for now (more changes to this will be made in the future).
 							</li>
 							<li>
 								Drastic reduction to object allocations when parsing. Previously every
 								scope held 3 or so dictionaries:
-								VariableDeclarations&lt;string identifier, variableDeclarationNode&gt;
-								FunctionDefinitions&lt;string identifier, functionDefinitionNode&gt;
-								TypeDefinitions&lt;string identifier, typeDefinitionNode&gt;.
+								<pre>
+VariableDeclarations&lt;string identifier, variableDeclarationNode&gt;
+FunctionDefinitions&lt;string identifier, functionDefinitionNode&gt;
+TypeDefinitions&lt;string identifier, typeDefinitionNode&gt;.</pre>
 								
 								Now, the 3 dictionaries are allocated per file, rather than
 								per scope within a file.

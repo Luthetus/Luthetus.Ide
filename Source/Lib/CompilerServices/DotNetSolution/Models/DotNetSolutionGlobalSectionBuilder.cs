@@ -8,7 +8,7 @@ public class DotNetSolutionGlobalSectionBuilder
 {
     public AssociatedValueToken? GlobalSectionArgument { get; set; }
     public AssociatedValueToken? GlobalSectionOrder { get; set; }
-    public AssociatedEntryGroup AssociatedEntryGroup { get; set; } = new(null, ImmutableArray<IAssociatedEntry>.Empty, null);
+    public AssociatedEntryGroup AssociatedEntryGroup { get; set; } = new(openAssociatedGroupToken: default, ImmutableArray<IAssociatedEntry>.Empty, closeAssociatedGroupToken: default);
 
     public DotNetSolutionGlobalSection Build()
     {

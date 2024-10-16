@@ -3,3 +3,9 @@ table, th, td {
 	margin-top: 8px;
 	padding: 5px;
 }
+
+pre {
+	 background-color: var(--luth_te_body-background-color);
+	 margin-top: 5px;
+	 padding: 5px;
+}

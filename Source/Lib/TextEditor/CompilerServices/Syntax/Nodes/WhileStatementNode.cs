@@ -6,7 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record WhileStatementNode : ICodeBlockOwner
+public sealed class WhileStatementNode : ICodeBlockOwner
 {
     public WhileStatementNode(
     	KeywordToken keywordToken,
@@ -28,12 +28,12 @@ public sealed record WhileStatementNode : ICodeBlockOwner
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public IExpressionNode ExpressionNode { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -44,10 +44,11 @@ public sealed record WhileStatementNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
     }
     
@@ -59,15 +60,22 @@ public sealed record WhileStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-            ExpressionNode,
-        };
-
+    	// KeywordToken
+    	// ExpressionNode
+    	var childCount = 2;
+    	
+    	if (CodeBlockNode is not null)
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+        
+        var i = 0;
+        childList[i++] = KeywordToken;
+        childList[i++] = ExpressionNode;
+        
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+            childList[i++] = CodeBlockNode;
 
-        ChildList = childrenList.ToImmutableArray();
+        ChildList = childList;
     }
 }
