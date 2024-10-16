@@ -35,12 +35,13 @@ public sealed class FunctionParameterEntryNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            ExpressionNode
-        };
+    	var childCount = 1; // ExpressionNode
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = ExpressionNode;
+            
+        ChildList = childList;
     }
 }

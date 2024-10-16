@@ -32,16 +32,22 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            OpenAngleBracketToken,
-        };
+    	// OpenAngleBracketToken, GenericArgumentEntryNodeList.Length, CloseAngleBracketToken
+    	var childCount =
+    		1 +                                   // OpenAngleBracketToken,
+    		GenericArgumentEntryNodeList.Length + // GenericArgumentEntryNodeList.Length,
+    		1;                                    // CloseAngleBracketToken
+    		
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        children.AddRange(GenericArgumentEntryNodeList);
-
-        children.Add(CloseAngleBracketToken);
-
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = OpenAngleBracketToken;
+		foreach (var item in GenericArgumentEntryNodeList)
+		{
+			childList[i++] = item;
+		}
+		childList[i++] = CloseAngleBracketToken;
+            
+        ChildList = childList;
     }
 }

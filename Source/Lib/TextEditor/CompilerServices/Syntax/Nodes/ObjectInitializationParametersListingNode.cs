@@ -29,16 +29,22 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            OpenBraceToken
-        };
+    	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Length, CloseBraceToken
+    	var childCount = 
+    		1 +                                                // OpenBraceToken
+    		ObjectInitializationParameterEntryNodeList.Length + // ObjectInitializationParameterEntryNodeList.Length
+    		1;                                                 // CloseBraceToken
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        children.AddRange(ObjectInitializationParameterEntryNodeList);
-
-        children.Add(CloseBraceToken);
-
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = OpenBraceToken;
+		foreach (var item in ObjectInitializationParameterEntryNodeList)
+		{
+			childList[i++] = item;
+		}
+		childList[i++] = CloseBraceToken;
+            
+        ChildList = childList;
     }
 }

@@ -30,12 +30,15 @@ public sealed class BinaryExpressionNode : IExpressionNode
     
     public void SetChildList()
     {
-    	ChildList = new ISyntax[]
-        {
-            LeftExpressionNode,
-            BinaryOperatorNode,
-            RightExpressionNode
-        }.ToImmutableArray();
-    	throw new NotImplementedException();
+    	var childCount = 3; // LeftExpressionNode, BinaryOperatorNode, RightExpressionNode
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = LeftExpressionNode;
+		childList[i++] = BinaryOperatorNode;
+		childList[i++] = RightExpressionNode;
+            
+        ChildList = childList;
     }
 }

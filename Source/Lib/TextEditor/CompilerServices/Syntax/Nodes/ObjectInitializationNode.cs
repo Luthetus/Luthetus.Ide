@@ -25,11 +25,14 @@ public sealed class ObjectInitializationNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	ChildList = new ISyntax[]
-        {
-            OpenBraceToken,
-            CloseBraceToken,
-        }.ToImmutableArray();
-    	throw new NotImplementedException();
+    	var childCount = 2; // OpenBraceToken, CloseBraceToken,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = OpenBraceToken;
+		childList[i++] = CloseBraceToken;
+            
+        ChildList = childList;
     }
 }

@@ -71,18 +71,22 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            KeywordToken,
-            IdentifierToken,
-        };
-        
+    	var childCount = 2; // KeywordToken, IdentifierToken,
         if (OpenBraceToken.ConstructorWasInvoked)
-    		children.Add(OpenBraceToken);
-    		
+    		childCount++;
     	if (CodeBlockNode is not null)
-    		children.Add(CodeBlockNode);
+    		childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
+		childList[i++] = KeywordToken;
+		childList[i++] = IdentifierToken;
+		if (OpenBraceToken.ConstructorWasInvoked)
+    		childList[i++] = OpenBraceToken;
+    	if (CodeBlockNode is not null)
+    		childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

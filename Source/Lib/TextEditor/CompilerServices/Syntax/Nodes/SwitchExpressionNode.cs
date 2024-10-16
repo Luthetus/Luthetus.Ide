@@ -54,19 +54,18 @@ public sealed class SwitchExpressionNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-            ExpressionNode,
-        };
-
+        var childCount = 2; // KeywordToken, ExpressionNode,
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = childrenList.ToImmutableArray();
-        
-        /////////////////////////////
-        
-        
+		childList[i++] = KeywordToken;
+		childList[i++] = ExpressionNode;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

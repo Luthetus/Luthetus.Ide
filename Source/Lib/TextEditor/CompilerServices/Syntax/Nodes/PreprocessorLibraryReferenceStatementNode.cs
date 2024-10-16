@@ -26,11 +26,14 @@ public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
     
     public void SetChildList()
     {
-    	ChildList = new ISyntax[]
-        {
-            IncludeDirectiveSyntaxToken,
-            LibraryReferenceSyntaxToken,
-        }.ToImmutableArray();
-    	throw new NotImplementedException();
+    	var childCount = 2; // IncludeDirectiveSyntaxToken, LibraryReferenceSyntaxToken,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = IncludeDirectiveSyntaxToken;
+		childList[i++] = LibraryReferenceSyntaxToken;
+            
+        ChildList = childList;
     }
 }

@@ -29,15 +29,25 @@ public sealed class AttributeNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var childList = new List<ISyntax>
-        {
-            OpenSquareBracketToken
-        };
+    	// OpenSquareBracketToken, InnerTokens.Length, CloseSquareBracketToken
+    	var childCount = 
+    		1 +                  // OpenSquareBracketToken,
+    		InnerTokens.Length + // InnerTokens.Length,
+    		1;                   // CloseSquareBracketToken,
+    		
+        if (CodeBlockNode is not null)
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        childList.AddRange(innerTokens);
-        childList.Add(CloseSquareBracketToken);
-        
-        ChildList = childList.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = OpenSquareBracketToken;
+		foreach (var item in InnerTokens)
+		{
+			childList[i++] = item;
+		}
+		childList[i++] = CloseSquareBracketToken;
+            
+        ChildList = childList;
     }
 }

@@ -39,7 +39,6 @@ public sealed class NamespaceGroupNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	ChildList = namespaceStatementNodeList.Select(x => (ISyntax)x).ToImmutableArray();
-    	throw new NotImplementedException();
+    	ChildList = NamespaceStatementNodeList.Select(x => (ISyntax)x).ToArray();
     }
 }

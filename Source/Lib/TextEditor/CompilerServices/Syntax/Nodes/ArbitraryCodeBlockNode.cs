@@ -49,14 +49,20 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>();
-    	
-    	if (OpenBraceToken.ConstructorWasInvoked)
-    		children.Add(OpenBraceToken);
-    		
+    	var childCount = 0;
+        if (OpenBraceToken.ConstructorWasInvoked)
+    		childCount++;
     	if (CodeBlockNode is not null)
-    		children.Add(CodeBlockNode);
+    		childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
+		if (OpenBraceToken.ConstructorWasInvoked)
+    		childList[i++] = OpenBraceToken;
+    	if (CodeBlockNode is not null)
+    		childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

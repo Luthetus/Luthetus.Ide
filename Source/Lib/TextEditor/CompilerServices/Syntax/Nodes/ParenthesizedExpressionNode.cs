@@ -31,15 +31,16 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            OpenParenthesisToken,
-            InnerExpression,
-            CloseParenthesisToken,
-            ResultTypeClauseNode,
-        };
+    	var childCount = 4; // OpenParenthesisToken, InnerExpression, CloseParenthesisToken, ResultTypeClauseNode,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = OpenParenthesisToken;
+		childList[i++] = InnerExpression;
+		childList[i++] = CloseParenthesisToken;
+		childList[i++] = ResultTypeClauseNode;
+            
+        ChildList = childList;
     }
 }

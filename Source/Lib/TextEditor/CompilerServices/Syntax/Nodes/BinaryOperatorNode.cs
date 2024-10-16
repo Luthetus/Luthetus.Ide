@@ -31,11 +31,13 @@ public sealed class BinaryOperatorNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	ChildList = new ISyntax[]
-        {
-            OperatorToken
-        }
-        .ToImmutableArray();
-    	throw new NotImplementedException();
+    	var childCount = 1; // OperatorToken,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = OperatorToken;
+            
+        ChildList = childList;
     }
 }

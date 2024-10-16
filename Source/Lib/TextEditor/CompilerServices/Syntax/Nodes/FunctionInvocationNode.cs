@@ -36,22 +36,23 @@ public sealed class FunctionInvocationNode : IExpressionNode
 
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            FunctionInvocationIdentifierToken
-        };
-
+    	var childCount = 3; // FunctionInvocationIdentifierToken, ...FunctionParametersListingNode, ResultTypeClauseNode,
         if (FunctionDefinitionNode is not null)
-            children.Add(FunctionDefinitionNode);
-
+            childCount++;
         if (GenericParametersListingNode is not null)
-            children.Add(GenericParametersListingNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        children.Add(FunctionParametersListingNode);
-
-        children.Add(ResultTypeClauseNode);
-
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = FunctionInvocationIdentifierToken;
+		if (FunctionDefinitionNode is not null)
+            childList[i++] = FunctionDefinitionNode;
+        if (GenericParametersListingNode is not null)
+            childList[i++] = GenericParametersListingNode;
+		childList[i++] = FunctionParametersListingNode;
+		childList[i++] = ResultTypeClauseNode;
+            
+        ChildList = childList;
     }
 }

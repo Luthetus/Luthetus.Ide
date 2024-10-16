@@ -24,13 +24,14 @@ public sealed class LiteralExpressionNode : IExpressionNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            LiteralSyntaxToken,
-            ResultTypeClauseNode
-        };
+    	var childCount = 2; // LiteralSyntaxToken, ResultTypeClauseNode,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = LiteralSyntaxToken;
+		childList[i++] = ResultTypeClauseNode;
+            
+        ChildList = childList;
     }
 }

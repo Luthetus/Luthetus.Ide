@@ -30,13 +30,14 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            PropertyIdentifierToken,
-            ExpressionNode,
-        };
+    	var childCount = 2; // PropertyIdentifierToken, ExpressionNode,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = PropertyIdentifierToken;
+		childList[i++] = ExpressionNode;
+            
+        ChildList = childList;
     }
 }

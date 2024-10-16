@@ -25,11 +25,14 @@ public sealed class ReturnStatementNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	ChildList = new ISyntax[]
-        {
-            KeywordToken,
-            ExpressionNode
-        }.ToImmutableArray();
-    	throw new NotImplementedException();
+    	var childCount = 2; // KeywordToken, ExpressionNode
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = KeywordToken;
+		childList[i++] = ExpressionNode;
+            
+        ChildList = childList;
     }
 }

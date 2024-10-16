@@ -32,16 +32,22 @@ public sealed class GenericParametersListingNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            OpenAngleBracketToken,
-        };
+    	// OpenAngleBracketToken, GenericParameterEntryNodeList.Length, CloseAngleBracketToken,
+    	var childCount = 
+    		1 +                                    // OpenAngleBracketToken,
+    		GenericParameterEntryNodeList.Length + // GenericParameterEntryNodeList.Length,
+    		1;                                     // CloseAngleBracketToken,
+    	
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        children.AddRange(GenericParameterEntryNodeList);
-
-        children.Add(CloseAngleBracketToken);
-
-        ChildList = children.ToImmutableArray();
-    	throw new NotImplementedException();
+		childList[i++] = OpenAngleBracketToken;
+		foreach (var item in GenericParameterEntryNodeList)
+		{
+			childList[i++] = item;
+		}
+		childList[i++] = CloseAngleBracketToken;
+            
+        ChildList = childList;
     }
 }

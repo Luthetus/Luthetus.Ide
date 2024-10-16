@@ -53,11 +53,14 @@ public sealed class PropertyDefinitionNode : IVariableDeclarationNode
     
     public void SetChildList()
     {
-    	ChildList = new ISyntax[]
-        {
-            TypeClauseNode,
-            IdentifierToken,
-        }.ToImmutableArray();
-    	throw new NotImplementedException();
+    	var childCount = 2; // TypeClauseNode, IdentifierToken,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = TypeClauseNode;
+		childList[i++] = IdentifierToken;
+            
+        ChildList = childList;
     }
 }

@@ -21,10 +21,13 @@ public sealed class InheritanceStatementNode : ISyntaxNode
     
     public void SetChildList()
     {
-    	ChildList = new ISyntax[]
-        {
-            ParentTypeClauseNode
-        }.ToImmutableArray();
-    	throw new NotImplementedException();
+    	var childCount = 1; // ParentTypeClauseNode
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = ParentTypeClauseNode;
+            
+        ChildList = childList;
     }
 }
