@@ -23,15 +23,8 @@ Goal: (2024-10-17)
 
 */
 
-public record MyRecord(int Aaa)
+/*public void MyMethod()
 {
-	public MyRecord() : this(0)
-	{
-	}
-
-	public int Number { get; set; }
-
-	public void MyMethod()
-	{
-	}
-}
+	var aaa = 1;
+	var bbb = 2;
+}*/

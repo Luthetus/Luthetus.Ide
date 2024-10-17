@@ -353,7 +353,14 @@ public class MyClass(int Aaa)
 	{
 		var resourceUri = new ResourceUri("./unitTesting.txt");
  
-        var sourceText = @"";
+        var sourceText =
+@"
+public void MyMethod()
+{
+	var aaa = 1;
+	var bbb = 2;
+}
+";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
@@ -361,8 +368,14 @@ public class MyClass(int Aaa)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
-        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+        
+        foreach (var child in functionDefinitionNode.CodeBlockNode.ChildList)
+        {
+        	Console.WriteLine(child.SyntaxKind);
+        }
+        
+        Assert.Equal(4, functionDefinitionNode.CodeBlockNode.ChildList.Length);
         
 		throw new NotImplementedException();
 	}

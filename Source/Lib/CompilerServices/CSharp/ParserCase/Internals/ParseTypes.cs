@@ -310,15 +310,7 @@ public static class ParseTypes
 
         typeDefinitionNode.SetPrimaryConstructorFunctionArgumentsListingNode(functionArgumentsListingNode);
 
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-        {
-            model.SyntaxStack.Push(typeDefinitionNode);
-            model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
-        }
-        else
-        {
-            model.CurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
-            model.CurrentCodeBlockBuilder.PendingChild = null;
-        }
+		model.SyntaxStack.Push(typeDefinitionNode);
+		model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
     }
 }
