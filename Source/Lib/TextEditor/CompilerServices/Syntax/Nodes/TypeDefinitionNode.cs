@@ -2,13 +2,14 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// <see cref="TypeDefinitionNode"/> is used anywhere a type is defined.
 /// </summary>
-public sealed record TypeDefinitionNode : ICodeBlockOwner
+public sealed class TypeDefinitionNode : ICodeBlockOwner
 {
     public TypeDefinitionNode(
         AccessModifierKind accessModifierKind,
@@ -19,7 +20,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
         TypeClauseNode? inheritedTypeClauseNode,
-		OpenBraceToken? openBraceToken,
+		OpenBraceToken openBraceToken,
         CodeBlockNode? codeBlockNode)
     {
         AccessModifierKind = accessModifierKind;
@@ -54,7 +55,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
     /// </summary>
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
-    public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; }
+    public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; private set; }
     /// <summary>
     /// The open brace for the body code block node.
     /// </summary>
@@ -65,13 +66,13 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     /// public class Person : IPerson { ... }<br/><br/>
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
-    public TypeClauseNode? InheritedTypeClauseNode { get; }
+    public TypeClauseNode? InheritedTypeClauseNode { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -103,7 +104,7 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
@@ -112,22 +113,57 @@ public sealed record TypeDefinitionNode : ICodeBlockOwner
     	return this;
     }
     
+    public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
+    {
+    	if (PrimaryConstructorFunctionArgumentsListingNode is not null)
+    	{
+    		foreach (var argument in PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+	    	{
+	    		if (argument.IsOptional)
+	    			parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
+	    		else
+	    			parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+	    	}
+    	}
+    }
+    
+    public ICodeBlockOwner SetPrimaryConstructorFunctionArgumentsListingNode(FunctionArgumentsListingNode functionArgumentsListingNode)
+    {
+    	PrimaryConstructorFunctionArgumentsListingNode = functionArgumentsListingNode;
+    	
+    	SetChildList();
+    	return this;
+    }
+    
+    public ICodeBlockOwner SetInheritedTypeClauseNode(TypeClauseNode typeClauseNode)
+    {
+    	InheritedTypeClauseNode = typeClauseNode;
+    	
+    	SetChildList();
+    	return this;
+    }
+    
     public void SetChildList()
     {
-        var children = new List<ISyntax>
-        {
-            TypeIdentifierToken,
-        };
-
+    	var childCount = 1; // TypeIdentifierToken
         if (GenericArgumentsListingNode is not null)
-            children.Add(GenericArgumentsListingNode);
-
+            childCount++;
         if (InheritedTypeClauseNode is not null)
-            children.Add(InheritedTypeClauseNode);
-
+            childCount++;
         if (CodeBlockNode is not null)
-            children.Add(CodeBlockNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+		
+		childList[i++] = TypeIdentifierToken;
+		if (GenericArgumentsListingNode is not null)
+            childList[i++] = GenericArgumentsListingNode;
+        if (InheritedTypeClauseNode is not null)
+            childList[i++] = InheritedTypeClauseNode;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
 
-        ChildList = children.ToImmutableArray();
+        ChildList = childList;
     }
 }

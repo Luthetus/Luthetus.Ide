@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ObjectInitializationParametersListingNode : ISyntaxNode
+public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
 {
     public ObjectInitializationParametersListingNode(
         OpenBraceToken openBraceToken,
@@ -14,25 +14,37 @@ public sealed record ObjectInitializationParametersListingNode : ISyntaxNode
         ObjectInitializationParameterEntryNodeList = objectInitializationParameterEntryNodeList;
         CloseBraceToken = closeBraceToken;
 
-        var children = new List<ISyntax>
-        {
-            OpenBraceToken
-        };
-
-        children.AddRange(ObjectInitializationParameterEntryNodeList);
-
-        children.Add(CloseBraceToken);
-
-        ChildList = children.ToImmutableArray();
+        SetChildList();
     }
 
     public OpenBraceToken OpenBraceToken { get; }
     public ImmutableArray<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
     public CloseBraceToken CloseBraceToken { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParametersListingNode;
+    
+    public void SetChildList()
+    {
+    	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Length, CloseBraceToken
+    	var childCount = 
+    		1 +                                                // OpenBraceToken
+    		ObjectInitializationParameterEntryNodeList.Length + // ObjectInitializationParameterEntryNodeList.Length
+    		1;                                                 // CloseBraceToken
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = OpenBraceToken;
+		foreach (var item in ObjectInitializationParameterEntryNodeList)
+		{
+			childList[i++] = item;
+		}
+		childList[i++] = CloseBraceToken;
+            
+        ChildList = childList;
+    }
 }

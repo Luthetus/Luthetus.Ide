@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record FunctionInvocationNode : IExpressionNode
+public sealed class FunctionInvocationNode : IExpressionNode
 {
     public FunctionInvocationNode(
         IdentifierToken functionInvocationIdentifierToken,
@@ -18,23 +18,8 @@ public sealed record FunctionInvocationNode : IExpressionNode
         GenericParametersListingNode = genericParametersListingNode;
         FunctionParametersListingNode = functionParametersListingNode;
         ResultTypeClauseNode = resultTypeClauseNode;
-
-        var children = new List<ISyntax>
-        {
-            FunctionInvocationIdentifierToken
-        };
-
-        if (FunctionDefinitionNode is not null)
-            children.Add(FunctionDefinitionNode);
-
-        if (GenericParametersListingNode is not null)
-            children.Add(GenericParametersListingNode);
-
-        children.Add(FunctionParametersListingNode);
-
-        children.Add(ResultTypeClauseNode);
-
-        ChildList = children.ToImmutableArray();
+        
+        SetChildList();
     }
 
     public IdentifierToken FunctionInvocationIdentifierToken { get; }
@@ -43,10 +28,31 @@ public sealed record FunctionInvocationNode : IExpressionNode
     public FunctionParametersListingNode FunctionParametersListingNode { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
 
+    public void SetChildList()
+    {
+    	var childCount = 3; // FunctionInvocationIdentifierToken, ...FunctionParametersListingNode, ResultTypeClauseNode,
+        if (FunctionDefinitionNode is not null)
+            childCount++;
+        if (GenericParametersListingNode is not null)
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = FunctionInvocationIdentifierToken;
+		if (FunctionDefinitionNode is not null)
+            childList[i++] = FunctionDefinitionNode;
+        if (GenericParametersListingNode is not null)
+            childList[i++] = GenericParametersListingNode;
+		childList[i++] = FunctionParametersListingNode;
+		childList[i++] = ResultTypeClauseNode;
+            
+        ChildList = childList;
+    }
 }

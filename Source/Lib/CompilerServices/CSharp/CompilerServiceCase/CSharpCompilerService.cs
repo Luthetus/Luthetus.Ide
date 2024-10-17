@@ -47,7 +47,7 @@ public sealed class CSharpCompilerService : CompilerService
 
     public override ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
-        var boundScope = CSharpBinder.GetBoundScope(textSpan) as CSharpBoundScope;
+        var boundScope = CSharpBinder.GetScope(null, textSpan);
 
         if (boundScope is null)
             return ImmutableArray<AutocompleteEntry>.Empty;
@@ -59,7 +59,8 @@ public sealed class CSharpCompilerService : CompilerService
         while (targetScope is not null)
         {
             autocompleteEntryList.AddRange(
-                targetScope.VariableDeclarationMap.Keys
+            	CSharpBinder.GetVariableDeclarationNodesByScope(model: null, targetScope.ResourceUri, targetScope.Key)
+            	.Select(x => x.IdentifierToken.TextSpan.GetText())
                 .ToArray()
                 .Where(x => x.Contains(word, StringComparison.InvariantCulture))
                 .Distinct()
@@ -73,7 +74,8 @@ public sealed class CSharpCompilerService : CompilerService
                 }));
 
             autocompleteEntryList.AddRange(
-                targetScope.FunctionDefinitionMap.Keys
+                CSharpBinder.GetFunctionDefinitionNodesByScope(model: null, targetScope.ResourceUri, targetScope.Key)
+            	.Select(x => x.FunctionIdentifierToken.TextSpan.GetText())
                 .ToArray()
                 .Where(x => x.Contains(word, StringComparison.InvariantCulture))
                 .Distinct()
@@ -86,7 +88,10 @@ public sealed class CSharpCompilerService : CompilerService
                         null);
                 }));
 
-            targetScope = targetScope.Parent;
+			if (targetScope.ParentKey is null)
+				targetScope = null;
+			else
+            	targetScope = CSharpBinder.GetScope(model: null, targetScope.ResourceUri, targetScope.ParentKey.Value);
         }
         
         var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;

@@ -7,25 +7,32 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// One usage of the <see cref="EmptyExpressionNode"/> is for a <see cref="ParenthesizedExpressionNode"/>
 /// which has no <see cref="ParenthesizedExpressionNode.InnerExpression"/>
 /// </summary>
-public sealed record EmptyExpressionNode : IExpressionNode
+public sealed class EmptyExpressionNode : IExpressionNode
 {
     public EmptyExpressionNode(TypeClauseNode typeClauseNode)
     {
         ResultTypeClauseNode = typeClauseNode;
 
-        var children = new List<ISyntax>
-        {
-            ResultTypeClauseNode
-        };
-
-        ChildList = children.ToImmutableArray();
+        SetChildList();
     }
 
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
+    
+    public void SetChildList()
+    {
+    	var childCount = 1; // ResultTypeClauseNode,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = ResultTypeClauseNode;
+            
+        ChildList = childList;
+    }
 }

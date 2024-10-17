@@ -20,7 +20,7 @@ public partial class CSharpFacts
             null,
             null,
             null,
-            null,
+            openBraceToken: default,
             null);
 
         public static readonly TypeDefinitionNode Int = new(
@@ -32,7 +32,7 @@ public partial class CSharpFacts
             null,
             null,
             null,
-            null,
+            openBraceToken: default,
             null);
 
         public static readonly TypeDefinitionNode Char = new(
@@ -44,7 +44,7 @@ public partial class CSharpFacts
             null,
             null,
             null,
-            null,
+            openBraceToken: default,
             null);
 
         public static readonly TypeDefinitionNode String = new(
@@ -56,7 +56,7 @@ public partial class CSharpFacts
             null,
             null,
             null,
-            null,
+            openBraceToken: default,
             null);
 
         public static readonly TypeDefinitionNode Bool = new(
@@ -68,7 +68,7 @@ public partial class CSharpFacts
             null,
             null,
             null,
-            null,
+            openBraceToken: default,
             null);
 
         public static readonly TypeDefinitionNode Var = new(
@@ -80,7 +80,7 @@ public partial class CSharpFacts
             null,
             null,
             null,
-            null,
+            openBraceToken: default,
             null);
 
         public static readonly ImmutableArray<TypeDefinitionNode> TypeDefinitionNodes = new[]

@@ -74,7 +74,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
 			var activeViewModelKey = editorTextEditorGroup?.ActiveViewModelKey ?? Key<TextEditorViewModel>.Empty;
 			
-			var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefaultThreadSafe(
+			var model_viewmodel_tuple = localTextEditorState.GetModelAndViewModelOrDefault(
 				activeViewModelKey);
 				
 			var viewModel = model_viewmodel_tuple.ViewModel;

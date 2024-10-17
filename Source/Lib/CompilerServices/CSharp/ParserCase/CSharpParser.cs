@@ -19,7 +19,7 @@ public class CSharpParser : IParser
     {
         Lexer = lexer;
         Binder = new CSharpBinder();
-        BinderSession = (CSharpBinderSession)Binder.ConstructBinderSession(lexer.ResourceUri);
+        BinderSession = (CSharpBinderSession)Binder.StartBinderSession(lexer.ResourceUri);
     }
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; private set; } = ImmutableArray<TextEditorDiagnostic>.Empty;
@@ -37,8 +37,7 @@ public class CSharpParser : IParser
         ResourceUri resourceUri)
     {
         Binder = (CSharpBinder)previousBinder;
-        BinderSession = (CSharpBinderSession)Binder.ConstructBinderSession(resourceUri);
-        Binder.ClearStateByResourceUri(resourceUri);
+        BinderSession = (CSharpBinderSession)Binder.StartBinderSession(resourceUri);
         return Parse();
     }
 
@@ -189,7 +188,7 @@ public class CSharpParser : IParser
             model.CurrentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
-            Binder.DisposeBoundScope(model.TokenWalker.Current.TextSpan, model);
+            Binder.DisposeScope(model.TokenWalker.Current.TextSpan, model);
 
             model.FinalizeNamespaceFileScopeCodeBlockNodeAction.Invoke(
                 model.CurrentCodeBlockBuilder.Build());
@@ -205,6 +204,7 @@ public class CSharpParser : IParser
                 .Union(Lexer.DiagnosticList)
                 .ToImmutableArray());
 
+		Binder.FinalizeBinderSession(BinderSession);
         return new CompilationUnit(
             topLevelStatementsCodeBlock,
             Lexer,

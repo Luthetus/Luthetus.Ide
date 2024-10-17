@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record BinaryExpressionNode : IExpressionNode
+public sealed class BinaryExpressionNode : IExpressionNode
 {
     public BinaryExpressionNode(
         IExpressionNode leftExpressionNode,
@@ -14,12 +14,7 @@ public sealed record BinaryExpressionNode : IExpressionNode
         BinaryOperatorNode = binaryOperatorNode;
         RightExpressionNode = rightExpressionNode;
 
-        ChildList = new ISyntax[]
-        {
-            LeftExpressionNode,
-            BinaryOperatorNode,
-            RightExpressionNode
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public IExpressionNode LeftExpressionNode { get; }
@@ -27,9 +22,23 @@ public sealed record BinaryExpressionNode : IExpressionNode
     public IExpressionNode RightExpressionNode { get; }
     public TypeClauseNode ResultTypeClauseNode => BinaryOperatorNode.ResultTypeClauseNode;
 
-    public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
+    
+    public void SetChildList()
+    {
+    	var childCount = 3; // LeftExpressionNode, BinaryOperatorNode, RightExpressionNode
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = LeftExpressionNode;
+		childList[i++] = BinaryOperatorNode;
+		childList[i++] = RightExpressionNode;
+            
+        ChildList = childList;
+    }
 }

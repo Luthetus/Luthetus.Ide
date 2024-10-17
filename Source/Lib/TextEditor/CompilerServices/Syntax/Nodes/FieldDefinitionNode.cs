@@ -5,7 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record FieldDefinitionNode : IVariableDeclarationNode
+public sealed class FieldDefinitionNode : IVariableDeclarationNode
 {
 	public FieldDefinitionNode(
         TypeClauseNode typeClauseNode,
@@ -18,11 +18,7 @@ public sealed record FieldDefinitionNode : IVariableDeclarationNode
         VariableKind = variableKind;
         IsInitialized = isInitialized;
 
-        ChildList = new ISyntax[]
-        {
-            TypeClauseNode,
-            IdentifierToken,
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public TypeClauseNode TypeClauseNode { get; }
@@ -46,9 +42,22 @@ public sealed record FieldDefinitionNode : IVariableDeclarationNode
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FieldDefinitionNode;
+    
+    public void SetChildList()
+    {
+    	var childCount = 2; // TypeClauseNode, IdentifierToken,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = TypeClauseNode;
+		childList[i++] = IdentifierToken;
+            
+        ChildList = childList;
+    }
 }

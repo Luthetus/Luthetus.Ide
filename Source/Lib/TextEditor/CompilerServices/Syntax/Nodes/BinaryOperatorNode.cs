@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record BinaryOperatorNode : ISyntaxNode
+public sealed class BinaryOperatorNode : ISyntaxNode
 {
     public BinaryOperatorNode(
         TypeClauseNode leftOperandTypeClauseNode,
@@ -15,11 +15,7 @@ public sealed record BinaryOperatorNode : ISyntaxNode
         RightOperandTypeClauseNode = rightOperandTypeClauseNode;
         ResultTypeClauseNode = resultTypeClauseNode;
 
-        ChildList = new ISyntax[]
-        {
-            OperatorToken
-        }
-        .ToImmutableArray();
+        SetChildList();
     }
 
     public TypeClauseNode LeftOperandTypeClauseNode { get; }
@@ -27,9 +23,21 @@ public sealed record BinaryOperatorNode : ISyntaxNode
     public TypeClauseNode RightOperandTypeClauseNode { get; }
 	public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryOperatorNode;
+    
+    public void SetChildList()
+    {
+    	var childCount = 1; // OperatorToken,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = OperatorToken;
+            
+        ChildList = childList;
+    }
 }

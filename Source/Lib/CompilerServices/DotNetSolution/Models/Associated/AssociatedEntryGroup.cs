@@ -8,7 +8,7 @@ public record AssociatedEntryGroup : IAssociatedEntry
     public AssociatedEntryGroup(
         OpenAssociatedGroupToken openAssociatedGroupToken,
         ImmutableArray<IAssociatedEntry> associatedEntryList,
-        CloseAssociatedGroupToken? closeAssociatedGroupToken)
+        CloseAssociatedGroupToken closeAssociatedGroupToken)
     {
         OpenAssociatedGroupToken = openAssociatedGroupToken;
         AssociatedEntryList = associatedEntryList;
@@ -17,7 +17,7 @@ public record AssociatedEntryGroup : IAssociatedEntry
 
     public OpenAssociatedGroupToken OpenAssociatedGroupToken { get; }
     public ImmutableArray<IAssociatedEntry> AssociatedEntryList { get; init; }
-    public CloseAssociatedGroupToken? CloseAssociatedGroupToken { get; }
+    public CloseAssociatedGroupToken CloseAssociatedGroupToken { get; }
 
     public AssociatedEntryKind AssociatedEntryKind => AssociatedEntryKind.Group;
 }

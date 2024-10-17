@@ -8,7 +8,7 @@ namespace Luthetus.Extensions.DotNet.Outputs.Models;
 
 public static class OutputTextSpanHelper
 {
-	public static async Task OpenInEditorOnClick(
+	public static Task OpenInEditorOnClick(
 		TreeViewDiagnosticLine treeViewDiagnosticLine,
 		bool shouldSetFocusToEditor,
 		ITextEditorService textEditorService)
@@ -27,7 +27,7 @@ public static class OutputTextSpanHelper
 			{
 				var numberBuilder = new StringBuilder(character);
 				
-				while (true)
+				while (position < lineAndColumnIndicesString.Length)
 				{
 					character = lineAndColumnIndicesString[position];
 					
@@ -53,51 +53,20 @@ public static class OutputTextSpanHelper
 		
 		var category = new Category("main");
 		
-		await textEditorService.OpenInEditorAsync(
+		int? lineIndex = (lineNumber ?? 0) - 1;
+		if (lineIndex < 0)
+			lineIndex = null;
+			
+		int? columnIndex = (columnNumber ?? 0) - 1;
+		if (columnIndex < 0)
+			columnIndex = null;
+		
+		return textEditorService.OpenInEditorAsync(
 			treeViewDiagnosticLine.Item.FilePathTextSpan.Text,
 			shouldSetFocusToEditor,
-			null,
+			lineIndex,
+			columnIndex,
 			category,
 			Key<TextEditorViewModel>.NewKey());
-		
-		textEditorService.PostUnique(nameof(OutputTreeViewKeyboardEventHandler), editContext =>
-		{
-			var resourceUri = new ResourceUri(treeViewDiagnosticLine.Item.FilePathTextSpan.Text);
-			
-			var modelModifier = editContext.GetModelModifier(resourceUri);
-			if (modelModifier is null)
-				return Task.CompletedTask;
-			
-			var viewModelKey = textEditorService.TextEditorStateWrap.Value
-				.ModelGetViewModelsOrEmpty(resourceUri)
-				.FirstOrDefault(x => x.Category == category)
-				?.ViewModelKey;
-			if (viewModelKey is null)
-				return Task.CompletedTask;
-			
-			var viewModelModifier = editContext.GetViewModelModifier(viewModelKey.Value);
-			var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-			
-			if (viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-				return Task.CompletedTask;
-				
-			if (lineNumber is not null && lineNumber.Value > 0)
-				primaryCursorModifier.LineIndex = lineNumber.Value - 1;
-			if (columnNumber is not null && lineNumber.Value > 0)
-				primaryCursorModifier.ColumnIndex = columnNumber.Value - 1;
-			
-			if (primaryCursorModifier.LineIndex > modelModifier.LineCount - 1)
-				primaryCursorModifier.LineIndex = modelModifier.LineCount - 1;
-			
-			var lineInformation = modelModifier.GetLineInformation(primaryCursorModifier.LineIndex);
-			
-			if (primaryCursorModifier.ColumnIndex > lineInformation.LastValidColumnIndex)
-				primaryCursorModifier.SetColumnIndexAndPreferred(lineInformation.LastValidColumnIndex);
-				
-			viewModelModifier.ViewModel.UnsafeState.ShouldRevealCursor = true;
-		
-			return Task.CompletedTask;
-		});
 	}
 }

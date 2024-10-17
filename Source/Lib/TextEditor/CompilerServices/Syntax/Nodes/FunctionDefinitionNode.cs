@@ -2,13 +2,14 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// TODO: Track the open and close braces for the function body.
 /// </summary>
-public sealed record FunctionDefinitionNode : ICodeBlockOwner
+public sealed class FunctionDefinitionNode : ICodeBlockOwner
 {
     public FunctionDefinitionNode(
         AccessModifierKind accessModifierKind,
@@ -35,49 +36,79 @@ public sealed record FunctionDefinitionNode : ICodeBlockOwner
     public IdentifierToken FunctionIdentifierToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
+    public ConstraintNode? ConstraintNode { get; private set; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
-    public ConstraintNode? ConstraintNode { get; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
+    
+    public ICodeBlockOwner SetConstraintNode(ConstraintNode constraintNode)
+    {
+    	ConstraintNode = constraintNode;
+    	SetChildList();
+    	return this;
+    }
     
     public TypeClauseNode? GetReturnTypeClauseNode()
     {
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
+    }
+    
+    public ICodeBlockOwner SetExpressionBody(CodeBlockNode codeBlockNode)
+    {
+    	CodeBlockNode = codeBlockNode;
+    	SetChildList();
+    	return this;
+    }
+    
+    public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
+    {
+    	foreach (var argument in FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+    	{
+    		if (argument.IsOptional)
+    			parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
+    		else
+    			parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+    	}
     }
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>
-        {
-            ReturnTypeClauseNode,
-            FunctionIdentifierToken,
-        };
-
+    	var childCount = 3; // ReturnTypeClauseNode, FunctionIdentifierToken, ...FunctionArgumentsListingNode,
         if (GenericArgumentsListingNode is not null)
-            children.Add(GenericArgumentsListingNode);
-
-        children.Add(FunctionArgumentsListingNode);
-
+            childCount++;
         if (CodeBlockNode is not null)
-            children.Add(CodeBlockNode);
-        
+            childCount++;
         if (ConstraintNode is not null)
-            children.Add(ConstraintNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
+		childList[i++] = ReturnTypeClauseNode;
+		childList[i++] = FunctionIdentifierToken;
+		if (GenericArgumentsListingNode is not null)
+            childList[i++] = GenericArgumentsListingNode;
+        childList[i++] = FunctionArgumentsListingNode;
+        if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+        if (ConstraintNode is not null)
+            childList[i++] = ConstraintNode;
+            
+        ChildList = childList;
     }
 }

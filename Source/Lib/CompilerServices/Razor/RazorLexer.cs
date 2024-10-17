@@ -1,6 +1,7 @@
 using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
@@ -62,23 +63,23 @@ public class RazorLexer : Lexer
 
         // Tag Names
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.TagNameNodes.Select(tns => new BadToken(tns.TextEditorTextSpan)));
+            htmlSyntaxWalker.TagNameNodes.Select(tns => (ISyntaxToken)new BadToken(tns.TextEditorTextSpan)));
 
         // InjectedLanguageFragmentSyntaxes
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.InjectedLanguageFragmentNodes.Select(ilfs => new BadToken(ilfs.TextEditorTextSpan)));
+            htmlSyntaxWalker.InjectedLanguageFragmentNodes.Select(ilfs => (ISyntaxToken)new BadToken(ilfs.TextEditorTextSpan)));
 
         // Attribute Names
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.AttributeNameNodes.Select(an => new BadToken(an.TextEditorTextSpan)));
+            htmlSyntaxWalker.AttributeNameNodes.Select(an => (ISyntaxToken)new BadToken(an.TextEditorTextSpan)));
 
         // Attribute Values
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.AttributeValueNodes.Select(av => new BadToken(av.TextEditorTextSpan)));
+            htmlSyntaxWalker.AttributeValueNodes.Select(av => (ISyntaxToken)new BadToken(av.TextEditorTextSpan)));
 
         // Comments
         _syntaxTokenList.AddRange(
-            htmlSyntaxWalker.CommentNodes.Select(c => new BadToken(c.TextEditorTextSpan)));
+            htmlSyntaxWalker.CommentNodes.Select(c => (ISyntaxToken)new BadToken(c.TextEditorTextSpan)));
 
         RazorSyntaxTree.ParseCodebehind();
     }

@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record PreprocessorLibraryReferenceStatementNode : IStatementNode
+public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
 {
     public PreprocessorLibraryReferenceStatementNode(
         ISyntaxToken includeDirectiveSyntaxToken,
@@ -11,20 +11,29 @@ public sealed record PreprocessorLibraryReferenceStatementNode : IStatementNode
     {
         IncludeDirectiveSyntaxToken = includeDirectiveSyntaxToken;
         LibraryReferenceSyntaxToken = libraryReferenceSyntaxToken;
-
-        ChildList = new ISyntax[]
-        {
-            IncludeDirectiveSyntaxToken,
-            LibraryReferenceSyntaxToken,
-        }.ToImmutableArray();
+        
+        SetChildList();
     }
 
     public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
     public ISyntaxToken LibraryReferenceSyntaxToken { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
+    
+    public void SetChildList()
+    {
+    	var childCount = 2; // IncludeDirectiveSyntaxToken, LibraryReferenceSyntaxToken,
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
+
+		childList[i++] = IncludeDirectiveSyntaxToken;
+		childList[i++] = LibraryReferenceSyntaxToken;
+            
+        ChildList = childList;
+    }
 }
