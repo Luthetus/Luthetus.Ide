@@ -170,7 +170,41 @@ public class ParseScopeTests
 	}
 	
 	[Fact]
-	public void RecordPrimaryConstructor()
+	public void RecordPrimaryConstructor_A()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText =
+@"
+public record MyRecord(int Aaa)
+{
+}
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        
+        foreach (var child in recordDefinitionNode.ChildList)
+        {
+        	Console.WriteLine(child.SyntaxKind);
+        }
+        
+        Console.WriteLine(((IdentifierToken)recordDefinitionNode.ChildList[0]).TextSpan.GetText());
+        
+        var constructorDefinitionNode = recordDefinitionNode.ChildList[0];
+        var propertyDefinitionNode = recordDefinitionNode.ChildList[1];
+        var functionDefinitionNode = recordDefinitionNode.ChildList[2];
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void RecordPrimaryConstructor_B()
 	{
 		var resourceUri = new ResourceUri("./unitTesting.txt");
  

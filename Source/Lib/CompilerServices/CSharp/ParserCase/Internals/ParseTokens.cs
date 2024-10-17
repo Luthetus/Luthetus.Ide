@@ -665,19 +665,14 @@ public static class ParseTokens
         if (model.SyntaxStack.TryPeek(out var syntax) &&
             syntax is TypeDefinitionNode typeDefinitionNode)
         {
-            if (typeDefinitionNode.StorageModifierKind == StorageModifierKind.Record ||
-            	typeDefinitionNode.StorageModifierKind == StorageModifierKind.RecordStruct)
-            {
-            	
-                _ = model.SyntaxStack.Pop();
+            _ = model.SyntaxStack.Pop();
 
-                ParseTypes.HandlePrimaryConstructorDefinition(
-                    typeDefinitionNode,
-                    consumedOpenParenthesisToken,
-                    model);
+            ParseTypes.HandlePrimaryConstructorDefinition(
+                typeDefinitionNode,
+                consumedOpenParenthesisToken,
+                model);
 
-                return;
-            }
+            return;
         }
 
         // The handle expression won't see this token unless backtracked.

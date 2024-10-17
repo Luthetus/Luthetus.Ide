@@ -115,8 +115,16 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
-    	// Do nothing.
-    	return;
+    	if (PrimaryConstructorFunctionArgumentsListingNode is not null)
+    	{
+    		foreach (var argument in PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+	    	{
+	    		if (argument.IsOptional)
+	    			parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
+	    		else
+	    			parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+	    	}
+    	}
     }
     
     public ICodeBlockOwner SetPrimaryConstructorFunctionArgumentsListingNode(FunctionArgumentsListingNode functionArgumentsListingNode)
