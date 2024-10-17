@@ -39,7 +39,7 @@ public sealed class TypeClauseNode : ISyntaxNode
     /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
     /// And: '&lt;int&gt;' is the <see cref="GenericParametersListingNode"/>
     /// </summary>
-    public GenericParametersListingNode? GenericParametersListingNode { get; }
+    public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
     
     public bool HasQuestionMark { get; set; }
 

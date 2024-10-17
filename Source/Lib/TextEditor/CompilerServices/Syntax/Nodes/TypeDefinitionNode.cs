@@ -66,7 +66,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     /// public class Person : IPerson { ... }<br/><br/>
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
-    public TypeClauseNode? InheritedTypeClauseNode { get; }
+    public TypeClauseNode? InheritedTypeClauseNode { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 

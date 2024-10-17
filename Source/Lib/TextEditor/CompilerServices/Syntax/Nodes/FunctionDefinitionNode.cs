@@ -36,7 +36,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     public IdentifierToken FunctionIdentifierToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
-    public ConstraintNode? ConstraintNode { get; }
+    public ConstraintNode? ConstraintNode { get; private set; }
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 
