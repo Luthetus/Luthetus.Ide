@@ -55,7 +55,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
     /// </summary>
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
-    public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; }
+    public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; private set; }
     /// <summary>
     /// The open brace for the body code block node.
     /// </summary>
@@ -66,7 +66,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     /// public class Person : IPerson { ... }<br/><br/>
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
-    public TypeClauseNode? InheritedTypeClauseNode { get; }
+    public TypeClauseNode? InheritedTypeClauseNode { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
@@ -115,8 +115,32 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
-    	// Do nothing.
-    	return;
+    	if (PrimaryConstructorFunctionArgumentsListingNode is not null)
+    	{
+    		foreach (var argument in PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+	    	{
+	    		if (argument.IsOptional)
+	    			parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
+	    		else
+	    			parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+	    	}
+    	}
+    }
+    
+    public ICodeBlockOwner SetPrimaryConstructorFunctionArgumentsListingNode(FunctionArgumentsListingNode functionArgumentsListingNode)
+    {
+    	PrimaryConstructorFunctionArgumentsListingNode = functionArgumentsListingNode;
+    	
+    	SetChildList();
+    	return this;
+    }
+    
+    public ICodeBlockOwner SetInheritedTypeClauseNode(TypeClauseNode typeClauseNode)
+    {
+    	InheritedTypeClauseNode = typeClauseNode;
+    	
+    	SetChildList();
+    	return this;
     }
     
     public void SetChildList()

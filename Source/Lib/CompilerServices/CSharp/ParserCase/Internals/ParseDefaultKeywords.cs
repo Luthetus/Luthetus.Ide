@@ -1242,8 +1242,11 @@ public class ParseDefaultKeywords
         {
         	while (!model.TokenWalker.IsEof)
         	{
-        		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+        		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+        			model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+        		{
         			break;
+        		}
         		
         		_ = model.TokenWalker.Consume();
         	}

@@ -14,39 +14,63 @@ public class ParseContextualKeywords
     {
         // Check if previous statement is finished, and a new one is starting.
         // TODO: 'Peek(-2)' is horribly confusing. The reason for using -2 is that one consumed the 'var' keyword and moved their position forward by 1. So to read the token behind 'var' one must go back 2 tokens. It feels natural to put '-1' and then this evaluates to the wrong token. Should an expression bound property be made for 'Peek(-2)'?
-        var previousToken = model.TokenWalker.Peek(-2);
-
-        if (previousToken.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
-            previousToken.SyntaxKind == SyntaxKind.CloseBraceToken ||
-            previousToken.SyntaxKind == SyntaxKind.BadToken)
+        
+        var peekNumber = -2;
+        
+        while (model.TokenWalker.Peek(peekNumber).SyntaxKind != SyntaxKind.BadToken)
         {
-            // Check if the next token is a second 'var keyword' or an IdentifierToken. Two IdentifierTokens is invalid, and therefore one can contextually take this 'var' as a keyword.
-            bool nextTokenIsVarKeyword = SyntaxKind.VarTokenContextualKeyword == model.TokenWalker.Current.SyntaxKind;
-            bool nextTokenIsIdentifierToken = SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind;
-
-            if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
-            {
-                var varTypeClauseNode = new TypeClauseNode(
-                    consumedKeywordContextualToken,
-                    null,
-                    null);
-
-                if (model.Binder.TryGetTypeDefinitionHierarchically(
-                		model,
-                		model.BinderSession.ResourceUri,
-                		model.BinderSession.CurrentScopeKey,
-                        consumedKeywordContextualToken.TextSpan.GetText(),
-                        out var varTypeDefinitionNode) &&
-                    varTypeDefinitionNode is not null)
-                {
-                    varTypeClauseNode = varTypeDefinitionNode.ToTypeClause();
-                }
-
-                model.SyntaxStack.Push(varTypeClauseNode);
-                return;
-            }
+        	if (model.TokenWalker.Peek(peekNumber).SyntaxKind == SyntaxKind.CommentSingleLineToken ||
+        		model.TokenWalker.Peek(peekNumber).SyntaxKind == SyntaxKind.CommentMultiLineToken)
+        	{
+        		peekNumber--;
+        	}
+        	else
+        	{
+        		break;
+        	}
         }
+        
+        var previousToken = model.TokenWalker.Peek(peekNumber);
 
+		switch (previousToken.SyntaxKind)
+		{
+			case SyntaxKind.StatementDelimiterToken:
+            case SyntaxKind.CloseBraceToken:
+            case SyntaxKind.OpenBraceToken:
+            case SyntaxKind.CommaToken:
+            case SyntaxKind.OpenParenthesisToken:
+            case SyntaxKind.BadToken:
+            {
+	            // Check if the next token is a second 'var keyword' or an IdentifierToken. Two IdentifierTokens is invalid, and therefore one can contextually take this 'var' as a keyword.
+	            bool nextTokenIsVarKeyword = SyntaxKind.VarTokenContextualKeyword == model.TokenWalker.Current.SyntaxKind;
+	            bool nextTokenIsIdentifierToken = SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind;
+	
+	            if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
+	            {
+	                var varTypeClauseNode = new TypeClauseNode(
+	                    consumedKeywordContextualToken,
+	                    null,
+	                    null);
+	
+	                if (model.Binder.TryGetTypeDefinitionHierarchically(
+	                		model,
+	                		model.BinderSession.ResourceUri,
+	                		model.BinderSession.CurrentScopeKey,
+	                        consumedKeywordContextualToken.TextSpan.GetText(),
+	                        out var varTypeDefinitionNode) &&
+	                    varTypeDefinitionNode is not null)
+	                {
+	                    varTypeClauseNode = varTypeDefinitionNode.ToTypeClause();
+	                }
+	
+	                model.SyntaxStack.Push(varTypeClauseNode);
+	                return;
+	            }
+	            
+	            break;
+            }
+		}
+        
         // Take 'var' as an identifier
         IdentifierToken varIdentifierToken = new(consumedKeywordContextualToken.TextSpan);
         ParseTokens.ParseIdentifierToken(varIdentifierToken, model);
@@ -367,14 +391,7 @@ public class ParseContextualKeywords
 
             var constraintNode = new ConstraintNode(constraintNodeInnerTokens.ToImmutableArray());
 
-			functionDefinitionNode = new FunctionDefinitionNode(
-                AccessModifierKind.Public,
-                functionDefinitionNode.ReturnTypeClauseNode,
-                functionDefinitionNode.FunctionIdentifierToken,
-                functionDefinitionNode.GenericArgumentsListingNode,
-                functionDefinitionNode.FunctionArgumentsListingNode,
-                functionDefinitionNode.CodeBlockNode,
-                constraintNode);
+			functionDefinitionNode.SetConstraintNode(constraintNode);
                 
             model.SyntaxStack.Push(functionDefinitionNode);
             model.CurrentCodeBlockBuilder.PendingChild = functionDefinitionNode;

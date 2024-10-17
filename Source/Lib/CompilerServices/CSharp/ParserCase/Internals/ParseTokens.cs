@@ -530,17 +530,7 @@ public static class ParseTokens
 
             model.Binder.BindTypeClauseNode(inheritedTypeClauseNode, model);
 
-			typeDefinitionNode = new TypeDefinitionNode(
-                typeDefinitionNode.AccessModifierKind,
-                typeDefinitionNode.HasPartialModifier,
-                typeDefinitionNode.StorageModifierKind,
-                typeDefinitionNode.TypeIdentifierToken,
-                typeDefinitionNode.ValueType,
-                typeDefinitionNode.GenericArgumentsListingNode,
-                typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode,
-                inheritedTypeClauseNode,
-                typeDefinitionNode.OpenBraceToken,
-                typeDefinitionNode.CodeBlockNode);
+			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 
             model.SyntaxStack.Push(typeDefinitionNode);
             model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
@@ -675,18 +665,14 @@ public static class ParseTokens
         if (model.SyntaxStack.TryPeek(out var syntax) &&
             syntax is TypeDefinitionNode typeDefinitionNode)
         {
-            if (typeDefinitionNode.StorageModifierKind == StorageModifierKind.Record ||
-            	typeDefinitionNode.StorageModifierKind == StorageModifierKind.RecordStruct)
-            {
-                _ = model.SyntaxStack.Pop();
+            _ = model.SyntaxStack.Pop();
 
-                ParseTypes.HandlePrimaryConstructorDefinition(
-                    typeDefinitionNode,
-                    consumedOpenParenthesisToken,
-                    model);
+            ParseTypes.HandlePrimaryConstructorDefinition(
+                typeDefinitionNode,
+                consumedOpenParenthesisToken,
+                model);
 
-                return;
-            }
+            return;
         }
 
         // The handle expression won't see this token unless backtracked.
@@ -824,14 +810,7 @@ public static class ParseTokens
                 }.ToImmutableArray());
 
                 functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
-                functionDefinitionNode = new FunctionDefinitionNode(
-                    AccessModifierKind.Public,
-                    functionDefinitionNode.ReturnTypeClauseNode,
-                    functionDefinitionNode.FunctionIdentifierToken,
-                    functionDefinitionNode.GenericArgumentsListingNode,
-                    functionDefinitionNode.FunctionArgumentsListingNode,
-                    codeBlockNode,
-                    functionDefinitionNode.ConstraintNode);
+                functionDefinitionNode.SetExpressionBody(codeBlockNode);
 
                 model.CurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
                 model.CurrentCodeBlockBuilder.PendingChild = null;
@@ -886,10 +865,7 @@ public static class ParseTokens
 
             model.FinalizeNamespaceFileScopeCodeBlockNodeAction = codeBlockNode =>
             {
-                namespaceStatementNode = new NamespaceStatementNode(
-                    namespaceStatementNode.KeywordToken,
-                    namespaceStatementNode.IdentifierToken,
-                    codeBlockNode);
+                namespaceStatementNode.SetFileScoped(codeBlockNode);
 
 				model.CurrentCodeBlockBuilder.PendingChild = null;
                 closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);

@@ -36,7 +36,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     public IdentifierToken FunctionIdentifierToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
-    public ConstraintNode? ConstraintNode { get; }
+    public ConstraintNode? ConstraintNode { get; private set; }
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 
@@ -48,6 +48,13 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
     
+    public ICodeBlockOwner SetConstraintNode(ConstraintNode constraintNode)
+    {
+    	ConstraintNode = constraintNode;
+    	SetChildList();
+    	return this;
+    }
+    
     public TypeClauseNode? GetReturnTypeClauseNode()
     {
     	return ReturnTypeClauseNode;
@@ -56,6 +63,13 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
+    	CodeBlockNode = codeBlockNode;
+    	SetChildList();
+    	return this;
+    }
+    
+    public ICodeBlockOwner SetExpressionBody(CodeBlockNode codeBlockNode)
+    {
     	CodeBlockNode = codeBlockNode;
     	SetChildList();
     	return this;

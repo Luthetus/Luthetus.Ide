@@ -196,14 +196,32 @@ private ViewModelDisplayOptions _viewModelDisplayOptions = new()
 &lt;TextEditorGroupDisplay TextEditorGroupKey="EditorIdeApi.EditorTextEditorGroupKey"
 			ViewModelDisplayOptions="_viewModelDisplayOptions"/&gt;</pre>
                 	</li>
+                	<li>
+                		Add property: LuthetusTextEditorConfig.AbsolutePathStandardizeFunc
+                		<pre>
+/// &lt;summary&gt;
+/// Func is given as an argument a string and IServiceProvider, the string will be
+/// made into a &lt;see cref="Luthetus.TextEditor.RazorLib.Lexers.Models.ResourceUri"/&gt;.
+///
+/// Returns the standardized format for the absolute path.
+///
+/// Example: "C:\a.txt" and "\a.txt" are two distinct resource uri's.
+///          With this Func, if one desires, they can alter
+///          "C:\a.txt" to remove the 'C:' from its string,
+///          or add 'C:' to the "\a.txt" or etc...
+///          to make these resource uris match one another.
+/// &lt;/summary&gt;
+public Func&lt;string, IServiceProvider, Task&lt;string&gt;&gt;? AbsolutePathStandardizeFunc { get; set; }
+                		</pre>
+                	</li>
 					<li>
 						C# Parser:
 						<ul>
 							<li>
-								Function Definition and Constructor Definition arguments are now added to the function body's scope.
+								Function Definition and Constructor Definition and Primary Constructor arguments
+								are now added to the function body's scope.
 								(previously they were being added to the scope that contained
-								 the function definition.)
-								 As well this applies to: .
+								 the function definition.).
 							</li>
 							<li>
 								Parse scope of keywords that create scope blocks.
@@ -242,6 +260,22 @@ TypeDefinitions&lt;string identifier, typeDefinitionNode&gt;.</pre>
 								
 								Also, the Scope.cs itself was made into a struct, with minimal
 								information attached to it.
+							</li>
+							<li>
+								Tokens are now structs (previously they were sealed records)
+							</li>
+							<li>
+								Nodes now maintain their ChildList as an ISyntax[]
+								(previously they were ImmutableArray&lt;ISyntax&gt;)
+							</li>
+							<li>
+								Reason for all the struct changes:
+								the parser logic gets ran frequently,
+								and is constantly constructing new syntax trees.
+								So the faster we can delete the previous syntax tree
+								the better (i.e.: not delete it via garbage collection
+								which is hard on the cpu with how much turnover on the constructed objects there are
+								in the parser code).
 							</li>
 						</ul>
 					</li>
