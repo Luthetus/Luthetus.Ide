@@ -55,7 +55,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     /// And: '&lt;T&gt;' is the <see cref="GenericArgumentsListingNode"/>
     /// </summary>
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
-    public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; }
+    public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; private set; }
     /// <summary>
     /// The open brace for the body code block node.
     /// </summary>
@@ -117,6 +117,22 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     {
     	// Do nothing.
     	return;
+    }
+    
+    public ICodeBlockOwner SetPrimaryConstructorFunctionArgumentsListingNode(FunctionArgumentsListingNode functionArgumentsListingNode)
+    {
+    	PrimaryConstructorFunctionArgumentsListingNode = functionArgumentsListingNode;
+    	
+    	SetChildList();
+    	return this;
+    }
+    
+    public ICodeBlockOwner SetInheritedTypeClauseNode(TypeClauseNode typeClauseNode)
+    {
+    	InheritedTypeClauseNode = typeClauseNode;
+    	
+    	SetChildList();
+    	return this;
     }
     
     public void SetChildList()

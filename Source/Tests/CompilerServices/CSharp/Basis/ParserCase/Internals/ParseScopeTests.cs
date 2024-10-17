@@ -61,8 +61,9 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var variableDeclarationNode = (variableDeclarationNode)topCodeBlock.ChildList[0];
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+        Assert.Equal(2, topCodeBlock.ChildList.Length);
         
 		throw new NotImplementedException();
 	}
@@ -85,8 +86,9 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var variableDeclarationNode = (variableDeclarationNode)topCodeBlock.ChildList[0];
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+        Assert.Equal(2, topCodeBlock.ChildList.Length);
         
 		throw new NotImplementedException();
 	}
@@ -163,6 +165,151 @@ public class ParseScopeTests
 
         var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
         var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void RecordPrimaryConstructor()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText =
+@"
+public record MyRecord(int Aaa)
+{
+	public MyRecordStruct()
+	{
+	}
+
+	public int Number { get; set; }
+
+	public void MyMethod()
+	{
+	}
+}
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        
+        foreach (var child in recordDefinitionNode.ChildList)
+        {
+        	Console.WriteLine(child.SyntaxKind);
+        }
+        
+        var constructorDefinitionNode = recordDefinitionNode.ChildList[0];
+        var propertyDefinitionNode = recordDefinitionNode.ChildList[1];
+        var functionDefinitionNode = recordDefinitionNode.ChildList[2];
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void RecordStructPrimaryConstructor()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText =
+@"
+public record struct MyRecordStruct(int Aaa)
+{
+	public MyRecordStruct()
+	{
+	}
+
+	public int Number { get; set; }
+
+	public void MyMethod()
+	{
+	}
+}
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[0];
+        var recordStructDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[1];
+        var classDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[2];
+        Assert.Equal(3, topCodeBlock.ChildList.Length);
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void ClassPrimaryConstructor()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText =
+@"
+public class MyClass(int Aaa)
+{
+	public MyClass()
+	{
+	}
+
+	public int Number { get; set; }
+
+	public void MyMethod()
+	{
+	}
+}
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[0];
+        var recordStructDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[1];
+        var classDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[2];
+        Assert.Equal(3, topCodeBlock.ChildList.Length);
+        
+		throw new NotImplementedException();
+	}
+	
+	[Fact]
+	public void RecordAndRecordStructAndClassPrimaryConstructor()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+ 
+        var sourceText =
+@"
+public record MyRecord(int Aaa)
+{
+}
+
+public record struct MyRecordStruct(int Aaa)
+{
+}
+
+public class MyClass(int Aaa)
+{
+}
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[0];
+        var recordStructDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[1];
+        var classDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[2];
+        Assert.Equal(3, topCodeBlock.ChildList.Length);
         
 		throw new NotImplementedException();
 	}

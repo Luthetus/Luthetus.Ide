@@ -54,6 +54,14 @@ public sealed class TypeClauseNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
     
+    public TypeClauseNode SetGenericParametersListingNode(GenericParametersListingNode genericParametersListingNode)
+    {
+    	GenericParametersListingNode = genericParametersListingNode;
+    	
+    	SetChildList();
+    	return this;
+    }
+    
     public void SetChildList()
     {
     	var childCount = 1; // TypeIdentifierToken

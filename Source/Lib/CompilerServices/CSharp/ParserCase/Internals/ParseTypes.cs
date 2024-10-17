@@ -230,10 +230,7 @@ public static class ParseTypes
 
             var genericParametersListingNode = (GenericParametersListingNode)model.SyntaxStack.Pop();
 
-            typeClauseNode = new TypeClauseNode(
-                typeClauseNode.TypeIdentifierToken,
-                null,
-                genericParametersListingNode);
+            typeClauseNode.SetGenericParametersListingNode(genericParametersListingNode);
         }
         
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.QuestionMarkToken)
@@ -308,28 +305,24 @@ public static class ParseTypes
         OpenParenthesisToken consumedOpenParenthesisToken,
         CSharpParserModel model)
     {
+    	Console.WriteLine($"HandlePrimaryConstructorDefinition");
+    
         ParseFunctions.HandleFunctionArguments(consumedOpenParenthesisToken, model);
         var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
 
-        typeDefinitionNode = new TypeDefinitionNode(
-            typeDefinitionNode.AccessModifierKind,
-            typeDefinitionNode.HasPartialModifier,
-            typeDefinitionNode.StorageModifierKind,
-            typeDefinitionNode.TypeIdentifierToken,
-            typeDefinitionNode.ValueType,
-            typeDefinitionNode.GenericArgumentsListingNode,
-            functionArgumentsListingNode,
-            typeDefinitionNode.InheritedTypeClauseNode,
-            typeDefinitionNode.OpenBraceToken,
-            typeDefinitionNode.CodeBlockNode);
+        typeDefinitionNode.SetPrimaryConstructorFunctionArgumentsListingNode(functionArgumentsListingNode);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
+        	Console.WriteLine("model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken");
+        
             model.SyntaxStack.Push(typeDefinitionNode);
             model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
         }
         else
         {
+        	Console.WriteLine("else");
+        	
             model.CurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
             model.CurrentCodeBlockBuilder.PendingChild = null;
         }

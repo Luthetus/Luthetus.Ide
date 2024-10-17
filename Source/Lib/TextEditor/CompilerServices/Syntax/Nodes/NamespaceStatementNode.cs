@@ -69,6 +69,13 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
         parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, parserModel);
     }
     
+    public ICodeBlockOwner SetFileScoped(CodeBlockNode codeBlockNode)
+    {    
+    	CodeBlockNode = codeBlockNode;
+    	SetChildList();
+    	return this;
+    }
+    
     public void SetChildList()
     {
     	var childCount = 2; // KeywordToken, IdentifierToken,
