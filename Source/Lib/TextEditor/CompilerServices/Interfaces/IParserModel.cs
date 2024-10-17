@@ -9,7 +9,12 @@ public interface IParserModel
     public IBinder Binder { get; }
     public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
+    
+    /// <summary>
+    /// TODO: This is an idea; maybe two stacks: 1 for inter-statement syntax, and another for intra-statement syntax? (2024-10-17)
+    /// </summary>
     public Stack<ISyntax> SyntaxStack { get; set; }
+    
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

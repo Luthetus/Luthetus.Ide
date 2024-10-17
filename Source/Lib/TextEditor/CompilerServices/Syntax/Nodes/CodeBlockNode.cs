@@ -7,11 +7,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// expression-statement).<br/><br/>
 /// Perhaps one might use <see cref="CodeBlockNode"/> for the body of a class definition, for example.
 /// </summary>
-public sealed record CodeBlockNode : ISyntaxNode
+public sealed class CodeBlockNode : ISyntaxNode
 {
     public CodeBlockNode(ImmutableArray<ISyntax> childList)
     {
-        ChildList = childList;
+        ChildList = childList.ToArray();
 
         DiagnosticsList = ImmutableArray<TextEditorDiagnostic>.Empty;
     }
@@ -20,14 +20,19 @@ public sealed record CodeBlockNode : ISyntaxNode
         ImmutableArray<ISyntax> childList,
         ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
-        ChildList = childList;
+        ChildList = childList.ToArray();
         DiagnosticsList = diagnostics;
     }
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
-    public ImmutableArray<ISyntax> ChildList { get; init; }
+    public ISyntax[] ChildList { get; init; }
     public ISyntaxNode? Parent { get; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CodeBlockNode;
+    
+    public void SetChildList()
+    {
+    	return; // Do nothing
+    }
 }

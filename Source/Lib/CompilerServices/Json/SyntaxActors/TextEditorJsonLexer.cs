@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.RenderStates.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.CompilerServices.Json.SyntaxActors;
@@ -31,21 +32,21 @@ public class TextEditorJsonLexer : Lexer
         syntaxWalker.Visit(syntaxNodeRoot);
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.PropertyKeySyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.PropertyKeySyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.BooleanSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.BooleanSyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.IntegerSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.IntegerSyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.NullSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.NullSyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.NumberSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.NumberSyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.StringSyntaxes.Select(x => new BadToken(x.TextEditorTextSpan)));
+            syntaxWalker.StringSyntaxes.Select(x => (ISyntaxToken)new BadToken(x.TextEditorTextSpan)));
     }
 }

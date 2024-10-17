@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.SyntaxActors;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.CompilerServices.FSharp.Facts;
@@ -59,18 +60,18 @@ public class TextEditorFSharpLexer : Lexer
         syntaxWalker.Visit(fSharpSyntaxUnit.GenericDocumentSyntax);
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.StringSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            syntaxWalker.StringSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.CommentSingleLineSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            syntaxWalker.CommentSingleLineSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.CommentMultiLineSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            syntaxWalker.CommentMultiLineSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.KeywordSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            syntaxWalker.KeywordSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
 
         _syntaxTokenList.AddRange(
-            syntaxWalker.FunctionSyntaxList.Select(x => new BadToken(x.TextSpan)));
+            syntaxWalker.FunctionSyntaxList.Select(x => (ISyntaxToken)new BadToken(x.TextSpan)));
     }
 }

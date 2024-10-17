@@ -4,7 +4,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 public interface ISyntaxNode : ISyntax
 {
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; }
     
     /// <summary>
     /// I am working on Quick Actions / Refactoring context menu,
@@ -26,4 +26,6 @@ public interface ISyntaxNode : ISyntax
     /// have the nullability removed (2024-08-16).
     /// </summary>
     public ISyntaxNode? Parent { get; }
+    
+    public void SetChildList();
 }

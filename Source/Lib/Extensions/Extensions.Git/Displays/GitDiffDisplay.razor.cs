@@ -295,9 +295,12 @@ public partial class GitDiffDisplay : ComponentBase
     	_logFileContent = logFileContent;
         if (_logFileContent is null)
             return;
-            
-        var originalResourceUri = new ResourceUri(localGitFile.AbsolutePath.Value);
-        originalResourceUri = RemoveDriveFromResourceUri(originalResourceUri);
+        
+        var absolutePathStringStandardized = await TextEditorConfig.AbsolutePathStandardizeFunc.Invoke(
+        	localGitFile.AbsolutePath.Value,
+        	ServiceProvider);
+        	
+        var originalResourceUri = new ResourceUri(absolutePathStringStandardized);
         
     	if (!(await TryCreateEditorIn(logFileContent, originalResourceUri)))
     		return;
@@ -376,18 +379,5 @@ public partial class GitDiffDisplay : ComponentBase
             });
 
         await InvokeAsync(StateHasChanged);
-    }
-    
-    private ResourceUri RemoveDriveFromResourceUri(ResourceUri resourceUri)
-    {
-        if (resourceUri.Value.StartsWith(EnvironmentProvider.DriveExecutingFromNoDirectorySeparator))
-        {
-            var removeDriveFromResourceUriValue = resourceUri.Value[
-                EnvironmentProvider.DriveExecutingFromNoDirectorySeparator.Length..];
-
-            return new ResourceUri(removeDriveFromResourceUriValue);
-        }
-
-        return resourceUri;
     }
 }

@@ -242,8 +242,10 @@ public static class ParseOthers
                         {
                         	// Function invocation
                         	model.Binder.TryGetFunctionHierarchically(
+                        		model,
+	                            model.BinderSession.ResourceUri,
+	                            model.BinderSession.CurrentScopeKey,
 	                            tokenCurrent.TextSpan.GetText(),
-	                            model.BinderSession.CurrentScope,
 	                            out var functionDefinitionNode);
 	
 	                        var functionInvocationNode = new FunctionInvocationNode(

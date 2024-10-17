@@ -2,10 +2,11 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record ArbitraryCodeBlockNode : ICodeBlockOwner
+public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 {
     public ArbitraryCodeBlockNode(ICodeBlockOwner? parentCodeBlockOwner)
     {
@@ -16,12 +17,12 @@ public sealed record ArbitraryCodeBlockNode : ICodeBlockOwner
     }
 
     public ICodeBlockOwner? ParentCodeBlockOwner { get; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ParentCodeBlockOwner.ScopeDirectionKind;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -32,23 +33,36 @@ public sealed record ArbitraryCodeBlockNode : ICodeBlockOwner
     	return ParentCodeBlockOwner?.GetReturnTypeClauseNode();
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
+    }
+    
+    public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
+    {
+    	// Do nothing.
+    	return;
     }
     
     public void SetChildList()
     {
-    	var children = new List<ISyntax>();
-    	
-    	if (OpenBraceToken is not null)
-    		children.Add(OpenBraceToken);
-    		
+    	var childCount = 0;
+        if (OpenBraceToken.ConstructorWasInvoked)
+    		childCount++;
     	if (CodeBlockNode is not null)
-    		children.Add(CodeBlockNode);
+    		childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = children.ToImmutableArray();
+		if (OpenBraceToken.ConstructorWasInvoked)
+    		childList[i++] = OpenBraceToken;
+    	if (CodeBlockNode is not null)
+    		childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

@@ -59,6 +59,7 @@ public class ParseFunctions
 
         model.Binder.BindFunctionDefinitionNode(functionDefinitionNode, model);
         model.SyntaxStack.Push(functionDefinitionNode);
+        model.CurrentCodeBlockBuilder.PendingChild = functionDefinitionNode;
 
         if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
             typeDefinitionNode.IsInterface)
@@ -66,21 +67,13 @@ public class ParseFunctions
             // TODO: Would method constraints break this code? "public T Aaa<T>() where T : OtherClass"
             var statementDelimiterToken = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
 
-            // TODO: Fabricating an OpenBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
-            ParseTokens.ParseOpenBraceToken(
-                new OpenBraceToken(statementDelimiterToken.TextSpan)
-                {
-                    IsFabricated = true
-                },
-                model);
-
-            // TODO: Fabricating a CloseBraceToken in order to not duplicate the logic within 'ParseOpenBraceToken(...)' seems silly. This likely should be changed
-            ParseTokens.ParseCloseBraceToken(
-                new CloseBraceToken(statementDelimiterToken.TextSpan)
-                {
-                    IsFabricated = true
-                },
-                model);
+			foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+	    	{
+	    		if (argument.IsOptional)
+	    			model.Binder.BindFunctionOptionalArgument(argument, model);
+	    		else
+	    			model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
+	    	}
         }
     }
 
@@ -115,6 +108,7 @@ public class ParseFunctions
 
         model.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, model);
         model.SyntaxStack.Push(constructorDefinitionNode);
+        model.CurrentCodeBlockBuilder.PendingChild = constructorDefinitionNode;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
@@ -122,16 +116,16 @@ public class ParseFunctions
             // Constructor invokes some other constructor as well
         	// 'this(...)' or 'base(...)'
         	
-        	KeywordToken? keywordToken;
+        	KeywordToken keywordToken;
         	
         	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
         		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
         	else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
         		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
         	else
-        		keywordToken = null;
+        		keywordToken = default;
         	
-        	if (keywordToken is null || keywordToken.IsFabricated)
+        	if (!keywordToken.ConstructorWasInvoked || keywordToken.IsFabricated)
         	{
         		while (!model.TokenWalker.IsEof)
 	            {
@@ -514,13 +508,13 @@ public class ParseFunctions
                 typeClauseNode,
                 variableIdentifierToken,
                 VariableKind.Local,
-                false
-            );
+                false);
 
-            model.Binder.BindVariableDeclarationNode(variableDeclarationStatementNode, model);
+			// Moved binding to be in during parsing of OpenBraceToken (2024-10-08)
 
             var functionArgumentEntryNode = new FunctionArgumentEntryNode(
                 variableDeclarationStatementNode,
+                optionalCompileTimeConstantToken: null,
                 false,
                 hasParamsKeyword,
                 hasOutKeyword,
@@ -541,14 +535,15 @@ public class ParseFunctions
                     compileTimeConstantAbleSyntaxKinds,
                     SyntaxKind.BadToken);
 
-                functionArgumentEntryNode = model.Binder.BindFunctionOptionalArgument(
-                    functionArgumentEntryNode,
-                    compileTimeConstantToken,
-                    hasParamsKeyword,
-                    hasOutKeyword,
-                    hasInKeyword,
-                    hasRefKeyword,
-                    model);
+                // Moved binding to be in during parsing of OpenBraceToken (2024-10-08)
+                functionArgumentEntryNode = new FunctionArgumentEntryNode(
+		            functionArgumentEntryNode.VariableDeclarationNode,
+		            optionalCompileTimeConstantToken: compileTimeConstantToken,
+		            isOptional: true,
+		            hasParamsKeyword,
+		            hasOutKeyword,
+		            hasInKeyword,
+		            hasRefKeyword);
             }
 
             mutableFunctionArgumentListing.Add(functionArgumentEntryNode);

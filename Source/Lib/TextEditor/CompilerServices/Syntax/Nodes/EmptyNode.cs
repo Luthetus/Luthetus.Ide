@@ -5,15 +5,21 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <summary>
 /// At times, this node is used in place of 'null'.
 /// </summary>
-public sealed record EmptyNode : ISyntaxNode
+public sealed class EmptyNode : ISyntaxNode
 {
     public EmptyNode()
     {
+    	SetChildList();
     }
 
-    public ImmutableArray<ISyntax> ChildList { get; } = ImmutableArray<ISyntax>.Empty;
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = Array.Empty<ISyntax>();
+    }
 }

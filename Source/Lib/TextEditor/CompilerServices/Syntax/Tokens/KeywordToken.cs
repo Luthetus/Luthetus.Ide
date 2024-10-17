@@ -2,10 +2,11 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
-public sealed record KeywordToken : ISyntaxToken
+public struct KeywordToken : ISyntaxToken
 {
     public KeywordToken(TextEditorTextSpan textSpan, SyntaxKind syntaxKind)
     {
+    	ConstructorWasInvoked = true;
         TextSpan = textSpan;
         SyntaxKind = syntaxKind;
     }
@@ -13,4 +14,5 @@ public sealed record KeywordToken : ISyntaxToken
     public TextEditorTextSpan TextSpan { get; }
     public SyntaxKind SyntaxKind { get; }
     public bool IsFabricated { get; init; }
+    public bool ConstructorWasInvoked { get; }
 }

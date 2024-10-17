@@ -33,7 +33,7 @@ public class ParserModelTests
         var lexer = new CSharpLexer(resourceUri, sourceText);
 
         var binder = new CSharpBinder();
-        var binderSession = binder.ConstructBinderSession(resourceUri);
+        var binderSession = binder.StartBinderSession(resourceUri);
         var tokenWalker = new TokenWalker(lexer.SyntaxTokenList, new DiagnosticBag());
         var syntaxStack = new Stack<ISyntax>();
         var diagnosticBag = new DiagnosticBag();

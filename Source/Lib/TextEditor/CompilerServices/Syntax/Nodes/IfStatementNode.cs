@@ -1,11 +1,12 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed record IfStatementNode : ICodeBlockOwner
+public sealed class IfStatementNode : ICodeBlockOwner
 {
     public IfStatementNode(
         KeywordToken keywordToken,
@@ -21,12 +22,12 @@ public sealed record IfStatementNode : ICodeBlockOwner
 
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
+    public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
-    public OpenBraceToken? OpenBraceToken { get; private set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ImmutableArray<ISyntax> ChildList { get; private set; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -37,24 +38,34 @@ public sealed record IfStatementNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner WithCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
+    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
+    	SetChildList();
     	return this;
+    }
+    
+    public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
+    {
+    	// Do nothing.
+    	return;
     }
     
     public void SetChildList()
     {
-    	var childrenList = new List<ISyntax>
-        {
-            KeywordToken,
-            ExpressionNode,
-        };
-
+    	var childCount = 2; // KeywordToken, ExpressionNode,
         if (CodeBlockNode is not null)
-            childrenList.Add(CodeBlockNode);
+            childCount++;
+            
+        var childList = new ISyntax[childCount];
+		var i = 0;
 
-        ChildList = childrenList.ToImmutableArray();
+		childList[i++] = KeywordToken;
+		childList[i++] = ExpressionNode;
+		if (CodeBlockNode is not null)
+            childList[i++] = CodeBlockNode;
+            
+        ChildList = childList;
     }
 }

@@ -1,39 +1,41 @@
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.CompilerServices.CSharp.BinderCase;
 
-/// <summary>
-/// The <see cref="CSharpBinder"/> is being instantiated, then re-used many times
-/// foreach C# resource. This allows the files to know of eachother but,
-/// some data should only last for the length of a particular resource being parsed.
-/// Opposed to the lifetime of the <see cref="CSharpBinder"/> instance.
-/// </summary>
 public class CSharpBinderSession : IBinderSession
 {
     public CSharpBinderSession(
         ResourceUri resourceUri,
-        CSharpBoundScope globalScope,
-        NamespaceStatementNode topLevelNamespaceStatementNode,
-        CSharpBinder binder)
+        CSharpBinder binder,
+        Key<IScope> globalScopeKey,
+        NamespaceStatementNode topLevelNamespaceStatementNode)
     {
+    	ResourceUri = resourceUri;
         Binder = binder;
-
-        CurrentScope = globalScope;
+        CurrentScopeKey = globalScopeKey;
         CurrentNamespaceStatementNode = topLevelNamespaceStatementNode;
         CurrentUsingStatementNodeList = new();
-
-
     }
 
+	public ResourceUri ResourceUri { get; }
     public CSharpBinder Binder { get; }
-
-    public CSharpBoundScope CurrentScope { get; set; }
+    public Key<IScope> CurrentScopeKey { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
-    public ResourceUri? CurrentResourceUri { get; set; }
+    
+    public DiagnosticBag DiagnosticBag { get; } = new();
+    public List<IScope> ScopeList { get; } = new();
+    public Dictionary<ScopeKeyAndIdentifierText, TypeDefinitionNode> ScopeTypeDefinitionMap { get; } = new();
+    public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
+    public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();
+    public Dictionary<Key<IScope>, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
 
     IBinder IBinderSession.Binder => Binder;
-    IBoundScope IBinderSession.CurrentScope { get => CurrentScope; set => CurrentScope = (CSharpBoundScope)value; }
+    Key<IScope> IBinderSession.CurrentScopeKey { get => CurrentScopeKey; set => CurrentScopeKey = value; }
 }

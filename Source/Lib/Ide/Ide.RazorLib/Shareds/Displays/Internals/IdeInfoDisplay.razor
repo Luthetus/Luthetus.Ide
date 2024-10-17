@@ -172,6 +172,116 @@
         Recent Changes:
 		<div>
 			<div>
+                <div>v <em class="luth_em">0.9.6.9 </em> (WIP_DATE)</div>
+                <ul>
+                	<li>
+                		Text Editor: fix presentation layer background highlighting.
+                		You can now provide a singular text span that "spans" many lines,
+                		and the text editor will highlight that area.
+                		Previously, you had to break the singular text span yourself
+                		into individual text spans per line.
+                	</li>
+                	<li>
+                		When viewing a C# file, one can have the nearest scope highlighted
+                		at its start and end points by adding the following
+                		(NOTE: the luthetusTextEditor.css was modified to now include .luth_te_brace_matching {...}
+                		       so you might have to clear your cache to get the latest CSS to load.):
+                		
+                		<pre>
+private ViewModelDisplayOptions _viewModelDisplayOptions = new()
+{
+    HeaderComponentType = typeof(TextEditorDevToolsAnchorDisplay),
+};
+
+&lt;TextEditorGroupDisplay TextEditorGroupKey="EditorIdeApi.EditorTextEditorGroupKey"
+			ViewModelDisplayOptions="_viewModelDisplayOptions"/&gt;</pre>
+                	</li>
+                	<li>
+                		Add property: LuthetusTextEditorConfig.AbsolutePathStandardizeFunc
+                		<pre>
+/// &lt;summary&gt;
+/// Func is given as an argument a string and IServiceProvider, the string will be
+/// made into a &lt;see cref="Luthetus.TextEditor.RazorLib.Lexers.Models.ResourceUri"/&gt;.
+///
+/// Returns the standardized format for the absolute path.
+///
+/// Example: "C:\a.txt" and "\a.txt" are two distinct resource uri's.
+///          With this Func, if one desires, they can alter
+///          "C:\a.txt" to remove the 'C:' from its string,
+///          or add 'C:' to the "\a.txt" or etc...
+///          to make these resource uris match one another.
+/// &lt;/summary&gt;
+public Func&lt;string, IServiceProvider, Task&lt;string&gt;&gt;? AbsolutePathStandardizeFunc { get; set; }
+                		</pre>
+                	</li>
+					<li>
+						C# Parser:
+						<ul>
+							<li>
+								Function Definition and Constructor Definition and Primary Constructor arguments
+								are now added to the function body's scope.
+								(previously they were being added to the scope that contained
+								 the function definition.).
+							</li>
+							<li>
+								Parse scope of keywords that create scope blocks.
+								<pre>
+foreach (var someVariable in list)
+{
+/*
+	scope is parsed here now, and the variable 'someVariable'
+	is only defined within this code block.
+*/
+}</pre>
+							</li>
+							<li>
+								Progress was made on "single statement body code blocks"
+								i.e.:
+								<pre>
+foreach (var someVariable in list)
+	Console.WriteLine(someVariable);</pre>
+								
+								A scope is made on the semicolon for now (more changes to this will be made in the future).
+							</li>
+							<li>
+								Drastic reduction to object allocations when parsing. Previously every
+								scope held 3 or so dictionaries:
+								<pre>
+VariableDeclarations&lt;string identifier, variableDeclarationNode&gt;
+FunctionDefinitions&lt;string identifier, functionDefinitionNode&gt;
+TypeDefinitions&lt;string identifier, typeDefinitionNode&gt;.</pre>
+								
+								Now, the 3 dictionaries are allocated per file, rather than
+								per scope within a file.
+								
+								Depending on how many code blocks were in a file, this could
+								end up being a substantial reduction to the amount of
+								objects that are allocated.
+								
+								Also, the Scope.cs itself was made into a struct, with minimal
+								information attached to it.
+							</li>
+							<li>
+								Tokens are now structs (previously they were sealed records)
+							</li>
+							<li>
+								Nodes now maintain their ChildList as an ISyntax[]
+								(previously they were ImmutableArray&lt;ISyntax&gt;)
+							</li>
+							<li>
+								Reason for all the struct changes:
+								the parser logic gets ran frequently,
+								and is constantly constructing new syntax trees.
+								So the faster we can delete the previous syntax tree
+								the better (i.e.: not delete it via garbage collection
+								which is hard on the cpu with how much turnover on the constructed objects there are
+								in the parser code).
+							</li>
+						</ul>
+					</li>
+                </ul>
+            </div>
+			<div>
                 <div>v <em class="luth_em">0.9.6.8 </em> (2024-10-08)</div>
                 <ul>
                     <li>

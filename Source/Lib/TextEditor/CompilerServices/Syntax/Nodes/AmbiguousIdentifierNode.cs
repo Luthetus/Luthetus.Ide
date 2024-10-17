@@ -8,23 +8,28 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// continue parsing in order to know if it is a reference to a
 /// function, type, variable, or etc...
 /// </summary>
-public sealed record AmbiguousIdentifierNode : ISyntaxNode
+public sealed class AmbiguousIdentifierNode : ISyntaxNode
 {
     public AmbiguousIdentifierNode(IdentifierToken identifierToken)
     {
         IdentifierToken = identifierToken;
 
-        ChildList = new ISyntax[]
-        {
-            IdentifierToken,
-        }.ToImmutableArray();
+        SetChildList();
     }
 
     public IdentifierToken IdentifierToken { get; }
 
-    public ImmutableArray<ISyntax> ChildList { get; }
+    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
+    
+    public void SetChildList()
+    {
+    	ChildList = new ISyntax[]
+        {
+            IdentifierToken,
+        };
+    }
 }
