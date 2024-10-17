@@ -305,8 +305,6 @@ public static class ParseTypes
         OpenParenthesisToken consumedOpenParenthesisToken,
         CSharpParserModel model)
     {
-    	Console.WriteLine($"HandlePrimaryConstructorDefinition");
-    
         ParseFunctions.HandleFunctionArguments(consumedOpenParenthesisToken, model);
         var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
 
@@ -314,15 +312,11 @@ public static class ParseTypes
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
-        	Console.WriteLine("model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken");
-        
             model.SyntaxStack.Push(typeDefinitionNode);
             model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
         }
         else
         {
-        	Console.WriteLine("else");
-        	
             model.CurrentCodeBlockBuilder.ChildList.Add(typeDefinitionNode);
             model.CurrentCodeBlockBuilder.PendingChild = null;
         }
