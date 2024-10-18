@@ -1,8 +1,11 @@
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 
@@ -143,6 +146,8 @@ var aaa = 1;
     				return EmptyExpressionMerge((EmptyExpressionNode)expressionPrimary, token, tokenList, expressionStack);
     			case SyntaxKind.BadExpressionNode:
     				return BadExpressionMerge((BadExpressionNode)expressionPrimary, token, tokenList, expressionStack);
+    			default:
+    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { expressionPrimary, token });
     		};
     	}
     	
@@ -153,6 +158,11 @@ var aaa = 1;
     	public IExpressionNode Merge(
     		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
     	{
+    		switch (expressionPrimary.SyntaxKind)
+    		{
+    			default:
+    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { expressionPrimary, expressionSecondary });
+    		};
     	}
     	
     	public IExpressionNode EmptyExpressionMerge(
@@ -161,7 +171,9 @@ var aaa = 1;
     		switch (token.SyntaxKind)
     		{
     			case SyntaxKind.NumericLiteralToken:
-    				return new LiteralExpressionNode(token, CSharpFacts.Types.Int.ToTypeClauseNode());
+    				return new LiteralExpressionNode(token, CSharpFacts.Types.Int.ToTypeClause());
+    			default:
+    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { emptyExpressionNode, token });
     		}
     	}
     	
@@ -169,43 +181,24 @@ var aaa = 1;
     		BadExpressionNode badExpressionNode, ISyntaxToken token, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
     	{
     		badExpressionNode.SyntaxList.Add(token);
+    		return badExpressionNode;
     	}
     }
     
     private static IExpressionNode ParseExpression(List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
     {
     	var binder = new BinderTest();
-    	var expressionPrimary = new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClauseNode());
+    	IExpressionNode expressionPrimary = new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
     	int position = 0;
     	
     	while (position < tokenList.Count)
     	{
     		var tokenCurrent = tokenList[position];
-    		
-    		binder.Merge(expressionPrimary, tokenCurrent);
-    		
-    		IExpressionNode expressionCurrent = tokenCurrent.SyntaxKind switch =>
-    		{
-    			SyntaxKind.NumericLiteralToken => new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Int.ToTypeClauseNode()),
-    			_ => new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClauseNode()),
-    		};
-    		
-    		var canMerge = false;
-    		
-    		if (canMerge)
-    		{
-    			
-    		}
-    		else
-    		{
-    			if (expressionCurrent.SyntaxKind == SyntaxKind.EmptyExpressionNode)
-    				expressionStack.Push(tokenCurrent);
-    			else
-    				expressionStack.Push(expressionCurrent);
-    		}
-    		
+    		expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, tokenList, expressionStack);
     		position++;
     	}
+    	
+    	return expressionPrimary;
     }
     
     [Fact]
