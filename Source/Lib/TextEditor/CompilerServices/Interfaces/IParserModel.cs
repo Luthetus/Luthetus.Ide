@@ -11,9 +11,14 @@ public interface IParserModel
     public TokenWalker TokenWalker { get; }
     
     /// <summary>
-    /// TODO: This is an idea; maybe two stacks: 1 for inter-statement syntax, and another for intra-statement syntax? (2024-10-17)
+    /// Essentially, this stack is NOT cleared when a statement delimiter token is encountered.
     /// </summary>
     public Stack<ISyntax> SyntaxStack { get; set; }
+    
+    /// <summary>
+    /// Essentially, this stack is cleared when a statement delimiter token is encountered.
+    /// </summary>
+    public Stack<ISyntax> ExpressionStack { get; set; }
     
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }

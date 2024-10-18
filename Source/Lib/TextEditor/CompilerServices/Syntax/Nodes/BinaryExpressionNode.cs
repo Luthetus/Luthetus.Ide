@@ -19,7 +19,7 @@ public sealed class BinaryExpressionNode : IExpressionNode
 
     public IExpressionNode LeftExpressionNode { get; }
     public BinaryOperatorNode BinaryOperatorNode { get; }
-    public IExpressionNode RightExpressionNode { get; }
+    public IExpressionNode RightExpressionNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode => BinaryOperatorNode.ResultTypeClauseNode;
 
     public ISyntax[] ChildList { get; private set; }
@@ -40,5 +40,13 @@ public sealed class BinaryExpressionNode : IExpressionNode
 		childList[i++] = RightExpressionNode;
             
         ChildList = childList;
+    }
+    
+    public BinaryExpressionNode SetRightExpressionNode(IExpressionNode rightExpressionNode)
+    {
+    	RightExpressionNode = rightExpressionNode;
+    	SetChildList();
+    	
+    	return this;
     }
 }

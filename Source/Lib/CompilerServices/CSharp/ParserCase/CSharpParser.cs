@@ -52,6 +52,7 @@ public class CSharpParser : IParser
             BinderSession,
             new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),
             new Stack<ISyntax>(),
+            new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder,
