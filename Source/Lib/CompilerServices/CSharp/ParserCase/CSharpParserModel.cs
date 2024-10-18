@@ -14,6 +14,7 @@ public class CSharpParserModel : IParserModel
         CSharpBinderSession binderSession,
         TokenWalker tokenWalker,
         Stack<ISyntax> syntaxStack,
+        Stack<ISyntax> expressionStack,
         DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder,
@@ -24,6 +25,7 @@ public class CSharpParserModel : IParserModel
         BinderSession = binderSession;
         TokenWalker = tokenWalker;
         SyntaxStack = syntaxStack;
+        ExpressionStack = expressionStack;
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
@@ -35,6 +37,7 @@ public class CSharpParserModel : IParserModel
     public CSharpBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
+    public Stack<ISyntax> ExpressionStack { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

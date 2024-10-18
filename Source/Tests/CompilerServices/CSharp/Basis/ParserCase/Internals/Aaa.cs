@@ -1,30 +1,74 @@
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
 
 /*
-Goal: (2024-10-17)
+Goal: (2024-10-18)
 ==================
 
-- [x] Primary Constructor Syntax
-	- [x] At what scope are these things being declared at?
-	- [x] 'record'
-	- [x] 'record struct'
-	- [x] 'class'  // Similarly as done for 'struct'. If they don't have the correct language version of C# let the compiler tell them that for now.
-			       //
-	- [x] 'struct' // Whether 'struct' is allowed or not to have one, it might be a better experience to allow the parser to
-	               // read it as if were allowed syntax, then have the C# compiler tell them the error(?).
-- [ ] 'var' contextual keyword as a type clause
-	- [ ] If it is the first token in a scope, it doesn't work. But if it comes after the first token it does.
-- [x] Instead of reconstructing an object to set an immutable property,
-	add a private setter, and a public method.
-- [ ] Finalize
-	- [ ] Update NuGet packages
-	- [ ] Accept PR
-	- [ ] Check website
-
+- [ ] Parse Scope properly (these syntax contain a close brace and it gets erroneously used to close the encompasing scope).
+	- [ ] Object initialization
+	- [ ] Collection initialization
 */
 
-/*public void MyMethod()
+public class MyClassAaa
 {
-	var aaa = 1;
-	var bbb = 2;
-}*/
+	public MyClassAaa FactoryMethodOne(string firstName, string lastName)
+	{
+		return new MyClassAaa
+		{
+			FirstName = firstName,
+			LastName = lastName,
+		};
+	}
+	
+	public MyClassAaa FactoryMethodTwo(string firstName, string lastName)
+	{
+		var aaa = new MyClassAaa
+		{
+			FirstName = firstName,
+			LastName = lastName,
+		};
+		
+		return aaa;
+	}
+	
+	public MyClassAaa FactoryMethodThree(string firstName, string lastName)
+	{
+		return new MyClassAaa()
+		{
+			FirstName = firstName,
+			LastName = lastName,
+		};
+	}
+	
+	public MyClassAaa FactoryMethodFour(string firstName, string lastName)
+	{
+		var aaa = new MyClassAaa()
+		{
+			FirstName = firstName,
+			LastName = lastName,
+		};
+		
+		return aaa;
+	}
+	
+	public MyClassAaa FactoryMethodFive(string firstName, string lastName)
+	{
+		var aaa = new MyClassAaa
+		{
+		};
+		
+		return aaa;
+	}
+	
+	public MyClassAaa FactoryMethodSix(string firstName, string lastName)
+	{
+		var aaa = new MyClassAaa()
+		{
+		};
+		
+		return aaa;
+	}
+	
+	public string FirstName { get; set; }
+	public string LastName { get; set; }
+}

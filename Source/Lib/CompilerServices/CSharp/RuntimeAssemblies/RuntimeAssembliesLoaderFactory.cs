@@ -63,6 +63,7 @@ public static class RuntimeAssembliesLoaderFactory
                 (CSharpBinderSession)cSharpBinder.StartBinderSession(new ResourceUri("aaa")),
                 new TokenWalker(ImmutableArray<ISyntaxToken>.Empty, new()),
                 new Stack<ISyntax>(),
+                new Stack<ISyntax>(),
                 diagnosticBag,
                 globalCodeBlockBuilder,
                 currentCodeBlockBuilder,

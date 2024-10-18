@@ -36,6 +36,7 @@ public class ParserModelTests
         var binderSession = binder.StartBinderSession(resourceUri);
         var tokenWalker = new TokenWalker(lexer.SyntaxTokenList, new DiagnosticBag());
         var syntaxStack = new Stack<ISyntax>();
+        var expressionStack = new Stack<ISyntax>();
         var diagnosticBag = new DiagnosticBag();
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
@@ -47,6 +48,7 @@ public class ParserModelTests
             (CSharpBinderSession)binderSession,
             tokenWalker,
             syntaxStack,
+            expressionStack,
             diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder,
