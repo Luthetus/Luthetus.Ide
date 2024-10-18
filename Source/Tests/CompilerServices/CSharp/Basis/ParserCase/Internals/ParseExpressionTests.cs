@@ -225,6 +225,19 @@ var aaa = 1;
 			NumberFabricate("1"),
 		};
 		var expressionStack = new Stack<ISyntax>();
-		ParseExpression(tokenList, expressionStack);
+		var expressionPrimary = ParseExpression(tokenList, expressionStack);
+		
+		var badExpressionNode = (BadExpressionNode)expressionPrimary;
+
+		foreach (var child in badExpressionNode.SyntaxList)
+		{
+			Console.WriteLine(child.SyntaxKind);
+		}
+		
+		var literalExpressionNode = (LiteralExpressionNode)badExpressionNode.SyntaxList[0];
+		var plusToken = (PlusToken)badExpressionNode.SyntaxList[1];
+		var numericLiteralToken = (NumericLiteralToken)badExpressionNode.SyntaxList[2];
+		
+		Assert.Equal(3, badExpressionNode.SyntaxList.Count);
     }
 }
