@@ -104,14 +104,134 @@ var aaa = 1;
         var identifierToken = (IdentifierToken)variableAssignmentExpressionNode.ChildList[0];
         var equalsToken = (EqualsToken)variableAssignmentExpressionNode.ChildList[1];
         
-        // var parenthesizedExpressionNode = (ParenthesizedExpressionNode)variableAssignmentExpressionNode.ChildList[2];
-        var explicitCastNode = (ExplicitCastNode)variableAssignmentExpressionNode.ChildList[2];
-        
-        foreach (var child in variableAssignmentExpressionNode.ChildList)
-        {
-        	Console.WriteLine(child.SyntaxKind);
-        }
-        
-        Console.WriteLine(variableAssignmentExpressionNode);
+        var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.ChildList[2];
+    }
+    
+    private static TextEditorTextSpan TextSpanFabricate(string text)
+    {
+    	return new TextEditorTextSpan(
+            0,
+		    0,
+		    0,
+		    ResourceUri.Empty,
+		    text,
+		    text);
+    }
+    
+    private static NumericLiteralToken NumberFabricate(string text)
+    {
+    	return new NumericLiteralToken(TextSpanFabricate(text));
+    }
+    
+    private static PlusToken PlusFabricate()
+    {
+    	return new PlusToken(TextSpanFabricate("+"));
+    }
+    
+    private class BinderTest
+    {
+    	/// <summary>
+    	/// Returns the new primary expression which will be the passed in 'expressionPrimary'
+    	/// if the parameters were not mergeable.
+    	/// </summary>
+    	public IExpressionNode Merge(
+    		IExpressionNode expressionPrimary, ISyntaxToken token, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    	{
+    		switch (expressionPrimary.SyntaxKind)
+    		{
+    			case SyntaxKind.EmptyExpressionNode:
+    				return EmptyExpressionMerge((EmptyExpressionNode)expressionPrimary, token, tokenList, expressionStack);
+    			case SyntaxKind.BadExpressionNode:
+    				return BadExpressionMerge((BadExpressionNode)expressionPrimary, token, tokenList, expressionStack);
+    		};
+    	}
+    	
+    	/// <summary>
+    	/// Returns the new primary expression which will be the passed in 'expressionPrimary'
+    	/// if the parameters were not mergeable.
+    	/// </summary>
+    	public IExpressionNode Merge(
+    		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    	{
+    	}
+    	
+    	public IExpressionNode EmptyExpressionMerge(
+    		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    	{
+    		switch (token.SyntaxKind)
+    		{
+    			case SyntaxKind.NumericLiteralToken:
+    				return new LiteralExpressionNode(token, CSharpFacts.Types.Int.ToTypeClauseNode());
+    		}
+    	}
+    	
+    	public IExpressionNode BadExpressionMerge(
+    		BadExpressionNode badExpressionNode, ISyntaxToken token, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    	{
+    		badExpressionNode.SyntaxList.Add(token);
+    	}
+    }
+    
+    private static IExpressionNode ParseExpression(List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    {
+    	var binder = new BinderTest();
+    	var expressionPrimary = new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClauseNode());
+    	int position = 0;
+    	
+    	while (position < tokenList.Count)
+    	{
+    		var tokenCurrent = tokenList[position];
+    		
+    		binder.Merge(expressionPrimary, tokenCurrent);
+    		
+    		IExpressionNode expressionCurrent = tokenCurrent.SyntaxKind switch =>
+    		{
+    			SyntaxKind.NumericLiteralToken => new LiteralExpressionNode(tokenCurrent, CSharpFacts.Types.Int.ToTypeClauseNode()),
+    			_ => new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClauseNode()),
+    		};
+    		
+    		var canMerge = false;
+    		
+    		if (canMerge)
+    		{
+    			
+    		}
+    		else
+    		{
+    			if (expressionCurrent.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+    				expressionStack.Push(tokenCurrent);
+    			else
+    				expressionStack.Push(expressionCurrent);
+    		}
+    		
+    		position++;
+    	}
+    }
+    
+    [Fact]
+    public void Bbb()
+    {
+		/*
+		I can make a static method 'ParseExpression(...)' then ignore all the other sections of the parser
+		and have my tests invoke just the one method.
+		
+		Then I move the method to the parser when I'm done.
+		
+		I want to try and make sure the method can be moved without any changes,
+		but I'm open to making some changes when I'm done if it elucidates the answer for the time being.
+		
+		I think all I "need" is 'Stack<ISyntax> expressionStack' for the time being.
+		So I can forgo thinking about the Parser as a whole for a moment.
+		
+		Well... I guess I need an IEnumerable<ISyntaxToken> too
+		*/
+		var tokenList = new List<ISyntaxToken>
+		{
+			NumberFabricate("1"),
+			PlusFabricate(),
+			NumberFabricate("1"),
+		};
+		var expressionStack = new Stack<ISyntax>();
+		ParseExpression(tokenList, expressionStack);
     }
 }

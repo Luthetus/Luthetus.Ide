@@ -228,6 +228,7 @@ public enum SyntaxKind
     NamespaceGroupNode,
     ObjectInitializationNode,
     UsingStatementNode,
+    BadExpressionNode,
     UnaryOperatorNode,
     UnaryExpressionNode,
     BinaryOperatorNode,
