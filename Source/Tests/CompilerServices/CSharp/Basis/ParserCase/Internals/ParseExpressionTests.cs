@@ -136,6 +136,16 @@ var aaa = 1;
     	return new CharLiteralToken(TextSpanFabricate(text));
     }
     
+    private static KeywordToken FalseFabricate()
+    {
+    	return new KeywordToken(TextSpanFabricate("true"), SyntaxKind.FalseTokenKeyword);
+    }
+    
+    private static KeywordToken TrueFabricate()
+    {
+    	return new KeywordToken(TextSpanFabricate("false"), SyntaxKind.TrueTokenKeyword);
+    }
+    
     private static PlusToken PlusFabricate()
     {
     	return new PlusToken(TextSpanFabricate("+"));
@@ -207,6 +217,8 @@ var aaa = 1;
     			case SyntaxKind.NumericLiteralToken:
     			case SyntaxKind.StringLiteralToken:
     			case SyntaxKind.CharLiteralToken:
+    			case SyntaxKind.FalseTokenKeyword:
+    			case SyntaxKind.TrueTokenKeyword:
     				TypeClauseNode tokenTypeClauseNode;
     				
     				if (token.SyntaxKind == SyntaxKind.NumericLiteralToken)
@@ -215,6 +227,8 @@ var aaa = 1;
     					tokenTypeClauseNode = CSharpFacts.Types.String.ToTypeClause();
     				else if (token.SyntaxKind == SyntaxKind.CharLiteralToken)
     					tokenTypeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
+    				else if (token.SyntaxKind == SyntaxKind.FalseTokenKeyword || token.SyntaxKind == SyntaxKind.TrueTokenKeyword)
+    					tokenTypeClauseNode = CSharpFacts.Types.Bool.ToTypeClause();
     				else
     					goto default;
     					
@@ -258,6 +272,8 @@ var aaa = 1;
     			case SyntaxKind.NumericLiteralToken:
     			case SyntaxKind.StringLiteralToken:
     			case SyntaxKind.CharLiteralToken:
+    			case SyntaxKind.FalseTokenKeyword:
+    			case SyntaxKind.TrueTokenKeyword:
     				TypeClauseNode tokenTypeClauseNode;
     				
     				if (token.SyntaxKind == SyntaxKind.NumericLiteralToken)
@@ -266,6 +282,8 @@ var aaa = 1;
     					tokenTypeClauseNode = CSharpFacts.Types.String.ToTypeClause();
     				else if (token.SyntaxKind == SyntaxKind.CharLiteralToken)
     					tokenTypeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
+    				else if (token.SyntaxKind == SyntaxKind.FalseTokenKeyword || token.SyntaxKind == SyntaxKind.TrueTokenKeyword)
+    					tokenTypeClauseNode = CSharpFacts.Types.Bool.ToTypeClause();
     				else
     					goto default;
     					
@@ -279,6 +297,10 @@ var aaa = 1;
 					binaryExpressionNode.SetRightExpressionNode(rightExpressionNode);
     				return binaryExpressionNode;
     			case SyntaxKind.PlusToken:
+    			case SyntaxKind.MinusToken:
+    			case SyntaxKind.StarToken:
+			    case SyntaxKind.DivisionToken:
+			    case SyntaxKind.EqualsEqualsToken:
     				// TODO: More generally, the result will be a number, so all that matters is what operators a number can interact with instead of duplicating this code.
     				if (binaryExpressionNode.RightExpressionNode.SyntaxKind != SyntaxKind.EmptyExpressionNode)
 		    		{
@@ -603,6 +625,36 @@ var aaa = 1;
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "char";
+		
+		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
+		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		
+	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
+	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
+	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
+	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+    }
+    
+    [Fact]
+    public void Bool_BinaryExpressionNode()
+    {
+		var tokenList = new List<ISyntaxToken>
+		{
+			FalseFabricate(),
+			EqualsEqualsFabricate(),
+			TrueFabricate(),
+		};
+		var expressionStack = new Stack<ISyntax>();
+		var expression = ParseExpression(tokenList, expressionStack);
+		
+		var binaryExpressionNode = (BinaryExpressionNode)expression;
+		var textTypeClause = "bool";
 		
 		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
 		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
