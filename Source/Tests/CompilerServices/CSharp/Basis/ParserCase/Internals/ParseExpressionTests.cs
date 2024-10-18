@@ -3,7 +3,6 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.Facts;
@@ -127,6 +126,11 @@ var aaa = 1;
     	return new NumericLiteralToken(TextSpanFabricate(text));
     }
     
+    private static StringLiteralToken StringFabricate(string text)
+    {
+    	return new StringLiteralToken(TextSpanFabricate(text));
+    }
+    
     private static PlusToken PlusFabricate()
     {
     	return new PlusToken(TextSpanFabricate("+"));
@@ -177,6 +181,8 @@ var aaa = 1;
     		{
     			case SyntaxKind.NumericLiteralToken:
     				return new LiteralExpressionNode(token, CSharpFacts.Types.Int.ToTypeClause());
+    			case SyntaxKind.StringLiteralToken:
+    				return new LiteralExpressionNode(token, CSharpFacts.Types.String.ToTypeClause());
     			default:
     				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { emptyExpressionNode, token });
     		}
@@ -188,9 +194,9 @@ var aaa = 1;
     		switch (token.SyntaxKind)
     		{
     			case SyntaxKind.PlusToken:
-    				var intTypeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
-    				var binaryOperatorNode = new BinaryOperatorNode(intTypeClauseNode, token, intTypeClauseNode, intTypeClauseNode);
-    				return new BinaryExpressionNode(literalExpressionNode, binaryOperatorNode, new EmptyExpressionNode(intTypeClauseNode));
+    				var typeClauseNode = literalExpressionNode.ResultTypeClauseNode;
+    				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+    				return new BinaryExpressionNode(literalExpressionNode, binaryOperatorNode, new EmptyExpressionNode(typeClauseNode));
     			default:
     				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { literalExpressionNode, token });
     		}
@@ -202,9 +208,22 @@ var aaa = 1;
     		switch (token.SyntaxKind)
     		{
     			case SyntaxKind.NumericLiteralToken:
-    				if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+    				if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode &&
+    					binaryExpressionNode.LeftExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText() == CSharpFacts.Types.Int.ToTypeClause().TypeIdentifierToken.TextSpan.GetText())
     				{
     					var rightExpressionNode = new LiteralExpressionNode(token, CSharpFacts.Types.Int.ToTypeClause());
+    					binaryExpressionNode.SetRightExpressionNode(rightExpressionNode);
+	    				return binaryExpressionNode;
+    				}
+    				else
+    				{
+    					goto default;
+    				}
+    			case SyntaxKind.StringLiteralToken:
+    				if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode &&
+    					binaryExpressionNode.LeftExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText() == CSharpFacts.Types.String.ToTypeClause().TypeIdentifierToken.TextSpan.GetText())
+    				{
+    					var rightExpressionNode = new LiteralExpressionNode(token, CSharpFacts.Types.String.ToTypeClause());
     					binaryExpressionNode.SetRightExpressionNode(rightExpressionNode);
 	    				return binaryExpressionNode;
     				}
@@ -268,44 +287,50 @@ var aaa = 1;
 		var expression = ParseExpression(tokenList, expressionStack);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
+		var textTypeClause = "int";
 		
 		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-	    // BinaryOperatorNode binaryExpressionNode.BinaryOperatorNode;
+		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		
+	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
+	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
 	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    // TypeClauseNode binaryExpressionNode.ResultTypeClauseNode;
+	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
+	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
     }
     
     [Fact]
-    public void Bbb()
+    public void String_BinaryExpressionNode()
     {
-		/*
-		I can make a static method 'ParseExpression(...)' then ignore all the other sections of the parser
-		and have my tests invoke just the one method.
-		
-		Then I move the method to the parser when I'm done.
-		
-		I want to try and make sure the method can be moved without any changes,
-		but I'm open to making some changes when I'm done if it elucidates the answer for the time being.
-		
-		I think all I "need" is 'Stack<ISyntax> expressionStack' for the time being.
-		So I can forgo thinking about the Parser as a whole for a moment.
-		
-		Well... I guess I need an IEnumerable<ISyntaxToken> too
-		*/
 		var tokenList = new List<ISyntaxToken>
 		{
-			NumberFabricate("1"),
+			StringFabricate("Asd"),
 			PlusFabricate(),
-			NumberFabricate("1"),
+			StringFabricate("Fgh"),
 		};
 		var expressionStack = new Stack<ISyntax>();
 		var expression = ParseExpression(tokenList, expressionStack);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
+		var textTypeClause = "string";
 		
 		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
-	    // BinaryOperatorNode binaryExpressionNode.BinaryOperatorNode;
+		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		
+	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
+	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
 	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-	    // TypeClauseNode binaryExpressionNode.ResultTypeClauseNode;
+	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
+	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
     }
 }
