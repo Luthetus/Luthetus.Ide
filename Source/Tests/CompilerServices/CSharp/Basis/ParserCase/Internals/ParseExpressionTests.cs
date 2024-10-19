@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
@@ -372,9 +373,10 @@ var aaa = 1;
     			var badExpressionNode = (BadExpressionNode)expressionSecondary;
     			
     			if (badExpressionNode.SyntaxList.Count == 2 &&
-    				badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken)
+    					(badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken ||
+    					 UtilityApi.IsTypeIdentifierKeywordSyntaxKind(badExpressionNode.SyntaxList[1].SyntaxKind)))
     			{
-    				var typeClauseNode = new TypeClauseNode((IdentifierToken)badExpressionNode.SyntaxList[1], valueType: null, genericParametersListingNode: null);
+    				var typeClauseNode = new TypeClauseNode((ISyntaxToken)badExpressionNode.SyntaxList[1], valueType: null, genericParametersListingNode: null);
     				return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
     			}
     		}
@@ -968,6 +970,6 @@ var aaa = 1;
 		
 		var expression = ParseExpression(session);
 		
-		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)expression;
+		var parenthesizedExpressionNode = (ExplicitCastNode)expression;
     }
 }
