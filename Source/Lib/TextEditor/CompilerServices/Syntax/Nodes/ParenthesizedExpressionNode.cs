@@ -24,8 +24,8 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
     }
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
-    public IExpressionNode InnerExpression { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
+    public IExpressionNode InnerExpression { get; private set; }
+    public CloseParenthesisToken CloseParenthesisToken { get; private set; }
     public TypeClauseNode ResultTypeClauseNode => InnerExpression.ResultTypeClauseNode;
 
     public ISyntax[] ChildList { get; private set; }
@@ -33,6 +33,20 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
+    
+    public ParenthesizedExpressionNode SetCloseParenthesisToken(CloseParenthesisToken closeParenthesisToken)
+    {
+    	CloseParenthesisToken = closeParenthesisToken;
+    	SetChildList();
+    	return this;
+    }
+    
+    public ParenthesizedExpressionNode SetInnerExpression(IExpressionNode innerExpression)
+    {
+    	InnerExpression = innerExpression;
+    	SetChildList();
+    	return this;
+    }
     
     public void SetChildList()
     {

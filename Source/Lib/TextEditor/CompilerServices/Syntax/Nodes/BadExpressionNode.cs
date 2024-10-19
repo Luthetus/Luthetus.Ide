@@ -22,6 +22,11 @@ public sealed class BadExpressionNode : IExpressionNode
 
         SetChildList();
     }
+    
+    public BadExpressionNode(TypeClauseNode resultTypeClauseNode, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
+    	: this(resultTypeClauseNode, new List<ISyntax> { syntaxPrimary, syntaxSecondary })
+    {
+    }
 
     public List<ISyntax> SyntaxList { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }

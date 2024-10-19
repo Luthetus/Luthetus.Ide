@@ -203,7 +203,7 @@ var aaa = 1;
     			case SyntaxKind.BadExpressionNode:
     				return BadExpressionMerge((BadExpressionNode)expressionPrimary, token, session);
     			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { expressionPrimary, token });
+    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), expressionPrimary, token);
     		};
     	}
     	
@@ -216,8 +216,10 @@ var aaa = 1;
     	{
     		switch (expressionPrimary.SyntaxKind)
     		{
+    			case SyntaxKind.ParenthesizedExpressionNode:
+    				return ParenthesizedExpressionMerge((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, session);
     			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { expressionPrimary, expressionSecondary });
+    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), expressionPrimary, expressionSecondary);
     		};
     	}
     	
@@ -250,7 +252,7 @@ var aaa = 1;
     				session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
     				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
     			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { emptyExpressionNode, token });
+    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
     		}
     	}
     	
@@ -276,7 +278,7 @@ var aaa = 1;
     				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
     				return new BinaryExpressionNode(literalExpressionNode, binaryOperatorNode);
     			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { literalExpressionNode, token });
+    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, token);
     		}
     	}
     	
@@ -329,14 +331,29 @@ var aaa = 1;
 		    			goto default;
 		    		}
     			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { binaryExpressionNode, token });
+    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), binaryExpressionNode, token);
     		}
     	}
     	
     	public IExpressionNode ParenthesizedExpressionMerge(
     		ParenthesizedExpressionNode parenthesizedExpressionNode, ISyntaxToken token, ExpressionSession session)
     	{
-    		return parenthesizedExpressionNode;
+    		switch (token.SyntaxKind)
+    		{
+    			case SyntaxKind.CloseParenthesisToken:
+    				return parenthesizedExpressionNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
+    			default:
+    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), parenthesizedExpressionNode, token);
+    		}
+    	}
+    	
+    	public IExpressionNode ParenthesizedExpressionMerge(
+    		ParenthesizedExpressionNode parenthesizedExpressionNode, IExpressionNode expressionSecondary, ExpressionSession session)
+    	{
+    		if (parenthesizedExpressionNode.InnerExpression.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+    			return parenthesizedExpressionNode.SetInnerExpression(expressionSecondary);
+    			
+    		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), parenthesizedExpressionNode, expressionSecondary);
     	}
     	
     	public IExpressionNode BadExpressionMerge(
@@ -359,9 +376,8 @@ var aaa = 1;
     		if (tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
     			break;
     		
-    		// Check if the tokenCurrent is a token that is used as a delimiter
+    		// Check if the tokenCurrent is a token that is used as a end-delimiter
     		// before iterating the list?
-    		var wasHandled = false;
     		if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
     		{
     			for (int i = session.ShortCircuitList.Count - 1; i > -1; i--)
@@ -370,21 +386,17 @@ var aaa = 1;
 	    			
 	    			if (tuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
 	    			{
-	    				wasHandled = true;
 	    				session.ShortCircuitList.RemoveRange(i, session.ShortCircuitList.Count - i);
 	    				
 		    			var expressionSecondary = expressionPrimary;
 		    			expressionPrimary = tuple.ExpressionNode;
-		    			binder.Merge(expressionPrimary, expressionPrimary, session);
+		    			expressionPrimary = binder.Merge(expressionPrimary, expressionSecondary, session);
 		    			break;
 	    			}
 	    		}
     		}
     		
-    		if (!wasHandled)
-    		{
-    			expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, session);
-    		}
+    		expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, session);
 
     		position++;
     		
@@ -634,7 +646,6 @@ var aaa = 1;
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		
 		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
@@ -837,6 +848,13 @@ var aaa = 1;
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)expression;
 		var textTypeClause = "int";
+		
+		Assert.Equal(textTypeClause, parenthesizedExpressionNode.InnerExpression.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		
+		var literalExpressionNode = (LiteralExpressionNode)parenthesizedExpressionNode.InnerExpression;
+		Assert.Equal("7", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		
+		Assert.True(parenthesizedExpressionNode.OpenParenthesisToken.ConstructorWasInvoked);
     }
     
     [Fact]
@@ -854,6 +872,26 @@ var aaa = 1;
     	//
     	// Consume if it is your delimiter
     	// Stop, but do not consume if it is NOT your delimiter
+    	
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				OpenParenthesisFabricate(),
+				NumberFabricate("1"),
+				PlusFabricate(),
+				CloseParenthesisFabricate(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = ParseExpression(session);
+		
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)expression;
+		var textTypeClause = "int";
+		
+		Assert.Equal(textTypeClause, parenthesizedExpressionNode.InnerExpression.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		
+		var literalExpressionNode = (BinaryExpressionNode)parenthesizedExpressionNode.InnerExpression;
     	
     	throw new NotImplementedException();
     }
