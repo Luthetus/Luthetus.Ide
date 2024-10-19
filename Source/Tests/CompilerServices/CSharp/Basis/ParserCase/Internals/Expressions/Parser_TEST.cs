@@ -37,13 +37,13 @@ public class Parser_TEST
 	    				
 		    			var expressionSecondary = expressionPrimary;
 		    			expressionPrimary = tuple.ExpressionNode;
-		    			expressionPrimary = binder.Merge(expressionPrimary, expressionSecondary, session);
+		    			expressionPrimary = binder.AnyMergeExpression(expressionPrimary, expressionSecondary, session);
 		    			break;
 	    			}
 	    		}
     		}
     		
-    		expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, session);
+    		expressionPrimary = binder.AnyMergeToken(expressionPrimary, tokenCurrent, session);
 
     		position++;
     	}
