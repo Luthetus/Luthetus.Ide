@@ -198,6 +198,8 @@ var aaa = 1;
     				return LiteralExpressionMerge((LiteralExpressionNode)expressionPrimary, token, session);
     			case SyntaxKind.BinaryExpressionNode:
     				return BinaryExpressionMerge((BinaryExpressionNode)expressionPrimary, token, session);
+    			case SyntaxKind.ParenthesizedExpressionNode:
+    				return ParenthesizedExpressionMerge((ParenthesizedExpressionNode)expressionPrimary, token, session);
     			case SyntaxKind.BadExpressionNode:
     				return BadExpressionMerge((BadExpressionNode)expressionPrimary, token, session);
     			default:
@@ -329,6 +331,13 @@ var aaa = 1;
     		}
     	}
     	
+    	public IExpressionNode ParenthesizedExpressionMerge(
+    		ParenthesizedExpressionNode parenthesizedExpressionNode, ISyntaxToken token, ExpressionSession session)
+    	{
+    		badExpressionNode.SyntaxList.Add(token);
+    		return badExpressionNode;
+    	}
+    	
     	public IExpressionNode BadExpressionMerge(
     		BadExpressionNode badExpressionNode, ISyntaxToken token, ExpressionSession session)
     	{
@@ -348,6 +357,59 @@ var aaa = 1;
     		var tokenCurrent = session.TokenList[position];
     		if (tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
     			break;
+    			
+    		/*
+    		I need to add the recursive part of this.
+    		I ignored operator precedence for now.
+    		
+    		But, something about ParenthesizedExpressionNode is resulting
+    		in me needing the recursion.
+    		
+    		Presumably operator precedence would also require recursion,
+    		and that 'ParenthesizedExpressionNode'
+    		is a case where recursion is unavoidable?
+    		
+    		Because I have to leave behind an unfinished ParenthesizedExpressionNode
+    		after I parse the OpenParenthesisToken.
+    		
+    		Then, only when I've parsed the inner expression (or short circuited)
+    		I revisit the ParenthesizedExpressionNode and can set its inner expression.
+    		
+    		If I invoked 'ParseExpression(...)' recursively,
+    		once I had the OpenParenthesisToken,
+    		I could say:
+    			'var innerExpression = ParseExpression(...);'
+    		
+    		But, I think it would be better for optimization, and readability
+    		if I go about "primitive recursion" via a while loop here.
+    		
+    		A Stack<ISyntaxNode> of unresolved nodes might be useful.
+    		I could push the unfinished ParenthesizedExpressionNode
+    		onto it, then handle parsing the inner expression.
+    		
+    		Once I'm done with the inner expression, 
+    		I can check the Stack<ISyntaxNode> and see that there was
+    		an unresolved InnerExpression and invoke Merge(IExpressionNode, IExpressionNode).
+    		
+    		Perhaps I'm thinking too far ahead when I say this but...
+    		I want to use a List<ISyntaxNode> because it lends itself more to the short circuiting logic.
+    		Where the parent expression's delimiter appeared in the child expression,
+    		therefore stop parsing the child expression,
+    		and make the parent expression the 'expressionPrimary' again.
+    		
+    		If there were a count of 2 or more for the List<ISyntaxNode>, it is possible
+    		that it isn't even a parent expression's delimiter that appeared
+    		in the current expression.
+    		But instead, that it was an ancestor expression that is older than the parent expression.
+    		
+    		In this case, I'd be "short circuiting" back to the ancestor expression and clearing
+    		a few indices of the List.
+    		
+    		If the short circuit list stored a value tuple (DelimiterToken, Node),
+    		then I could search the list to see if the current token is in one of the tuples.
+    		
+    		If it is, then: 'primaryExpression = tuple.Node;'
+    		*/
     		
     		expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, session);
     		position++;
@@ -578,7 +640,6 @@ var aaa = 1;
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new List<ISyntaxToken>());
-		
 		
 		var expression = ParseExpression(session);
 		
