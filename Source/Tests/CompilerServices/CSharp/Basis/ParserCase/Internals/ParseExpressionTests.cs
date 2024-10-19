@@ -246,7 +246,9 @@ var aaa = 1;
     					
     				return new LiteralExpressionNode(token, tokenTypeClauseNode);
     			case SyntaxKind.OpenParenthesisToken:
-    				return new ParenthesizedExpressionNode((OpenParenthesisToken)token, CSharpFacts.Types.Void.ToTypeClause());
+    				var parenthesizedExpressionNode = new ParenthesizedExpressionNode((OpenParenthesisToken)token, CSharpFacts.Types.Void.ToTypeClause());
+    				session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
+    				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
     			default:
     				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { emptyExpressionNode, token });
     		}
@@ -334,8 +336,7 @@ var aaa = 1;
     	public IExpressionNode ParenthesizedExpressionMerge(
     		ParenthesizedExpressionNode parenthesizedExpressionNode, ISyntaxToken token, ExpressionSession session)
     	{
-    		badExpressionNode.SyntaxList.Add(token);
-    		return badExpressionNode;
+    		return parenthesizedExpressionNode;
     	}
     	
     	public IExpressionNode BadExpressionMerge(
@@ -357,7 +358,36 @@ var aaa = 1;
     		var tokenCurrent = session.TokenList[position];
     		if (tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
     			break;
-    			
+    		
+    		// Check if the tokenCurrent is a token that is used as a delimiter
+    		// before iterating the list?
+    		var wasHandled = false;
+    		if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+    		{
+    			for (int i = session.ShortCircuitList.Count - 1; i > -1; i--)
+	    		{
+	    			var tuple = session.ShortCircuitList[i];
+	    			
+	    			if (tuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
+	    			{
+	    				wasHandled = true;
+	    				session.ShortCircuitList.RemoveRange(i, session.ShortCircuitList.Count - i);
+	    				
+		    			var expressionSecondary = expressionPrimary;
+		    			expressionPrimary = tuple.ExpressionNode;
+		    			binder.Merge(expressionPrimary, expressionPrimary, session);
+		    			break;
+	    			}
+	    		}
+    		}
+    		
+    		if (!wasHandled)
+    		{
+    			expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, session);
+    		}
+
+    		position++;
+    		
     		/*
     		I need to add the recursive part of this.
     		I ignored operator precedence for now.
@@ -410,9 +440,6 @@ var aaa = 1;
     		
     		If it is, then: 'primaryExpression = tuple.Node;'
     		*/
-    		
-    		expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, session);
-    		position++;
     	}
     	
     	return expressionPrimary;
@@ -423,7 +450,7 @@ var aaa = 1;
 		public ExpressionSession(
 			List<ISyntaxToken> tokenList,
 			Stack<ISyntax> expressionStack,
-			List<ISyntaxToken> shortCircuitList)
+			List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> shortCircuitList)
 		{
 			TokenList = tokenList;
 			ExpressionStack = expressionStack;
@@ -432,7 +459,7 @@ var aaa = 1;
 
     	public List<ISyntaxToken> TokenList { get; }
 		public Stack<ISyntax> ExpressionStack { get; }
-		public List<ISyntaxToken> ShortCircuitList { get; }
+		public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ShortCircuitList { get; }
     }
     
     [Fact]
@@ -460,7 +487,7 @@ var aaa = 1;
 				NumberFabricate("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 			
 		var expression = ParseExpression(session);
 		
@@ -504,7 +531,7 @@ var aaa = 1;
 				NumberFabricate("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 			
 		var expression = ParseExpression(session);
 		
@@ -572,7 +599,7 @@ var aaa = 1;
 				NumberFabricate("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 		
 		var expression = ParseExpression(session);
 		
@@ -605,7 +632,7 @@ var aaa = 1;
 				NumberFabricate("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 		
 		
 		var expression = ParseExpression(session);
@@ -639,7 +666,7 @@ var aaa = 1;
 				NumberFabricate("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 		
 		var expression = ParseExpression(session);
 		
@@ -672,7 +699,7 @@ var aaa = 1;
 				NumberFabricate("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 		
 		var expression = ParseExpression(session);
 		
@@ -705,7 +732,7 @@ var aaa = 1;
 				StringFabricate("Fgh"),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 		
 		var expression = ParseExpression(session);
 		
@@ -738,7 +765,7 @@ var aaa = 1;
 				CharFabricate("\n"),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 		
 		var expression = ParseExpression(session);
 		
@@ -771,7 +798,7 @@ var aaa = 1;
 				TrueFabricate(),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 		
 		var expression = ParseExpression(session);
 		
@@ -804,7 +831,7 @@ var aaa = 1;
 				CloseParenthesisFabricate(),
 			},
 			expressionStack: new Stack<ISyntax>(),
-			shortCircuitList: new List<ISyntaxToken>());
+			shortCircuitList: new());
 		
 		var expression = ParseExpression(session);
 		
