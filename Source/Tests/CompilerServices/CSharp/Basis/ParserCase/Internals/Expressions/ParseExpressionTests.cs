@@ -8,7 +8,7 @@ using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 using Luthetus.CompilerServices.CSharp.Facts;
 
-namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals;
+namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals.Expressions;
 
 public class ParseExpressionTests
 {
@@ -111,409 +111,6 @@ var aaa = 1;
         var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.ChildList[2];
     }
     
-    private static TextEditorTextSpan TextSpanFabricate(string text)
-    {
-    	return new TextEditorTextSpan(
-            0,
-		    0,
-		    0,
-		    ResourceUri.Empty,
-		    text,
-		    text);
-    }
-    
-    private static NumericLiteralToken NumberFabricate(string text)
-    {
-    	return new NumericLiteralToken(TextSpanFabricate(text));
-    }
-    
-    private static StringLiteralToken StringFabricate(string text)
-    {
-    	return new StringLiteralToken(TextSpanFabricate(text));
-    }
-    
-    private static CharLiteralToken CharFabricate(string text)
-    {
-    	return new CharLiteralToken(TextSpanFabricate(text));
-    }
-    
-    private static KeywordToken FalseFabricate()
-    {
-    	return new KeywordToken(TextSpanFabricate("true"), SyntaxKind.FalseTokenKeyword);
-    }
-    
-    private static KeywordToken TrueFabricate()
-    {
-    	return new KeywordToken(TextSpanFabricate("false"), SyntaxKind.TrueTokenKeyword);
-    }
-    
-    private static KeywordToken IntFabricate()
-    {
-    	return new KeywordToken(TextSpanFabricate("int"), SyntaxKind.IntTokenKeyword);
-    }
-    
-    private static IdentifierToken IdentifierFabricate(string text)
-    {
-    	return new IdentifierToken(TextSpanFabricate(text));
-    }
-    
-    private static PlusToken PlusFabricate()
-    {
-    	return new PlusToken(TextSpanFabricate("+"));
-    }
-    
-    private static MinusToken MinusFabricate()
-    {
-    	return new MinusToken(TextSpanFabricate("-"));
-    }
-    
-    private static StarToken StarFabricate()
-    {
-    	return new StarToken(TextSpanFabricate("*"));
-    }
-    
-    private static DivisionToken DivisionFabricate()
-    {
-    	return new DivisionToken(TextSpanFabricate("/"));
-    }
-    
-    private static EqualsEqualsToken EqualsEqualsFabricate()
-    {
-    	return new EqualsEqualsToken(TextSpanFabricate("=="));
-    }
-    
-    private static OpenParenthesisToken OpenParenthesisFabricate()
-    {
-    	return new OpenParenthesisToken(TextSpanFabricate("("));
-    }
-    
-    private static CloseParenthesisToken CloseParenthesisFabricate()
-    {
-    	return new CloseParenthesisToken(TextSpanFabricate(")"));
-    }
-    
-    private class BinderTest
-    {
-    	/// <summary>
-    	/// Returns the new primary expression which will be the passed in 'expressionPrimary'
-    	/// if the parameters were not mergeable.
-    	/// </summary>
-    	public IExpressionNode Merge(
-    		IExpressionNode expressionPrimary, ISyntaxToken token, ExpressionSession session)
-    	{
-    		switch (expressionPrimary.SyntaxKind)
-    		{
-    			case SyntaxKind.EmptyExpressionNode:
-    				return EmptyExpressionMerge((EmptyExpressionNode)expressionPrimary, token, session);
-    			case SyntaxKind.LiteralExpressionNode:
-    				return LiteralExpressionMerge((LiteralExpressionNode)expressionPrimary, token, session);
-    			case SyntaxKind.BinaryExpressionNode:
-    				return BinaryExpressionMerge((BinaryExpressionNode)expressionPrimary, token, session);
-    			case SyntaxKind.ParenthesizedExpressionNode:
-    				return ParenthesizedExpressionMerge((ParenthesizedExpressionNode)expressionPrimary, token, session);
-    			case SyntaxKind.ExplicitCastNode:
-    				return ExplicitCastMerge((ExplicitCastNode)expressionPrimary, token, session);
-    			case SyntaxKind.BadExpressionNode:
-    				return BadExpressionMerge((BadExpressionNode)expressionPrimary, token, session);
-    			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), expressionPrimary, token);
-    		};
-    	}
-    	
-    	/// <summary>
-    	/// Returns the new primary expression which will be the passed in 'expressionPrimary'
-    	/// if the parameters were not mergeable.
-    	/// </summary>
-    	public IExpressionNode Merge(
-    		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, ExpressionSession session)
-    	{
-    		switch (expressionPrimary.SyntaxKind)
-    		{
-    			case SyntaxKind.ParenthesizedExpressionNode:
-    				return ParenthesizedExpressionMerge((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, session);
-    			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), expressionPrimary, expressionSecondary);
-    		};
-    	}
-    	
-    	public IExpressionNode EmptyExpressionMerge(
-    		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, ExpressionSession session)
-    	{
-    		switch (token.SyntaxKind)
-    		{
-    			case SyntaxKind.NumericLiteralToken:
-    			case SyntaxKind.StringLiteralToken:
-    			case SyntaxKind.CharLiteralToken:
-    			case SyntaxKind.FalseTokenKeyword:
-    			case SyntaxKind.TrueTokenKeyword:
-    				TypeClauseNode tokenTypeClauseNode;
-    				
-    				if (token.SyntaxKind == SyntaxKind.NumericLiteralToken)
-    					tokenTypeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
-    				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken)
-    					tokenTypeClauseNode = CSharpFacts.Types.String.ToTypeClause();
-    				else if (token.SyntaxKind == SyntaxKind.CharLiteralToken)
-    					tokenTypeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
-    				else if (token.SyntaxKind == SyntaxKind.FalseTokenKeyword || token.SyntaxKind == SyntaxKind.TrueTokenKeyword)
-    					tokenTypeClauseNode = CSharpFacts.Types.Bool.ToTypeClause();
-    				else
-    					goto default;
-    					
-    				return new LiteralExpressionNode(token, tokenTypeClauseNode);
-    			case SyntaxKind.OpenParenthesisToken:
-    				var parenthesizedExpressionNode = new ParenthesizedExpressionNode((OpenParenthesisToken)token, CSharpFacts.Types.Void.ToTypeClause());
-    				session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
-    				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-    			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
-    		}
-    	}
-    	
-    	/// <summary>
-    	/// I am not evaluating anything when parsing for the IDE, so for now I'm going to ignore the precedence,
-    	/// and just track the start and end of the expression more or less.
-    	///
-    	/// Reason for this being: object initialization and collection initialization
-    	/// currently will at times break the Parser for an entire file, and therefore
-    	/// they are much higher priority.
-    	/// </summary>
-    	public IExpressionNode LiteralExpressionMerge(
-    		LiteralExpressionNode literalExpressionNode, ISyntaxToken token, ExpressionSession session)
-    	{
-    		switch (token.SyntaxKind)
-    		{
-    			case SyntaxKind.PlusToken:
-    			case SyntaxKind.MinusToken:
-    			case SyntaxKind.StarToken:
-			    case SyntaxKind.DivisionToken:
-			    case SyntaxKind.EqualsEqualsToken:
-    				var typeClauseNode = literalExpressionNode.ResultTypeClauseNode;
-    				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-    				return new BinaryExpressionNode(literalExpressionNode, binaryOperatorNode);
-    			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, token);
-    		}
-    	}
-    	
-    	public IExpressionNode BinaryExpressionMerge(
-    		BinaryExpressionNode binaryExpressionNode, ISyntaxToken token, ExpressionSession session)
-    	{
-    		switch (token.SyntaxKind)
-    		{
-    			case SyntaxKind.NumericLiteralToken:
-    			case SyntaxKind.StringLiteralToken:
-    			case SyntaxKind.CharLiteralToken:
-    			case SyntaxKind.FalseTokenKeyword:
-    			case SyntaxKind.TrueTokenKeyword:
-    				TypeClauseNode tokenTypeClauseNode;
-    				
-    				if (token.SyntaxKind == SyntaxKind.NumericLiteralToken)
-    					tokenTypeClauseNode = CSharpFacts.Types.Int.ToTypeClause();
-    				else if (token.SyntaxKind == SyntaxKind.StringLiteralToken)
-    					tokenTypeClauseNode = CSharpFacts.Types.String.ToTypeClause();
-    				else if (token.SyntaxKind == SyntaxKind.CharLiteralToken)
-    					tokenTypeClauseNode = CSharpFacts.Types.Char.ToTypeClause();
-    				else if (token.SyntaxKind == SyntaxKind.FalseTokenKeyword || token.SyntaxKind == SyntaxKind.TrueTokenKeyword)
-    					tokenTypeClauseNode = CSharpFacts.Types.Bool.ToTypeClause();
-    				else
-    					goto default;
-    					
-    				var tokenTypeClauseNodeText = tokenTypeClauseNode.TypeIdentifierToken.TextSpan.GetText();
-    			
-    				var leftExpressionTypeClauseNodeText = binaryExpressionNode.LeftExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText();
-    				if (leftExpressionTypeClauseNodeText != tokenTypeClauseNodeText)
-    					goto default;
-    			
-					var rightExpressionNode = new LiteralExpressionNode(token, tokenTypeClauseNode);
-					binaryExpressionNode.SetRightExpressionNode(rightExpressionNode);
-    				return binaryExpressionNode;
-    			case SyntaxKind.PlusToken:
-    			case SyntaxKind.MinusToken:
-    			case SyntaxKind.StarToken:
-			    case SyntaxKind.DivisionToken:
-			    case SyntaxKind.EqualsEqualsToken:
-    				// TODO: More generally, the result will be a number, so all that matters is what operators a number can interact with instead of duplicating this code.
-    				if (binaryExpressionNode.RightExpressionNode.SyntaxKind != SyntaxKind.EmptyExpressionNode)
-		    		{
-		    			var typeClauseNode = binaryExpressionNode.ResultTypeClauseNode;
-	    				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-	    				return new BinaryExpressionNode(binaryExpressionNode, binaryOperatorNode, new EmptyExpressionNode(typeClauseNode));
-		    		}
-		    		else
-		    		{
-		    			goto default;
-		    		}
-    			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), binaryExpressionNode, token);
-    		}
-    	}
-    	
-    	public IExpressionNode ParenthesizedExpressionMerge(
-    		ParenthesizedExpressionNode parenthesizedExpressionNode, ISyntaxToken token, ExpressionSession session)
-    	{
-    		switch (token.SyntaxKind)
-    		{
-    			case SyntaxKind.CloseParenthesisToken:
-    				return parenthesizedExpressionNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
-    			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), parenthesizedExpressionNode, token);
-    		}
-    	}
-    	
-    	public IExpressionNode ParenthesizedExpressionMerge(
-    		ParenthesizedExpressionNode parenthesizedExpressionNode, IExpressionNode expressionSecondary, ExpressionSession session)
-    	{
-    		if (parenthesizedExpressionNode.InnerExpression.SyntaxKind != SyntaxKind.EmptyExpressionNode)
-    			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), parenthesizedExpressionNode, expressionSecondary);
-    			
-    		if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
-    		{
-    			Console.WriteLine("if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)");
-    		
-    			var badExpressionNode = (BadExpressionNode)expressionSecondary;
-    			
-    			if (badExpressionNode.SyntaxList.Count == 2 &&
-    					(badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken ||
-    					 UtilityApi.IsTypeIdentifierKeywordSyntaxKind(badExpressionNode.SyntaxList[1].SyntaxKind)))
-    			{
-    				var typeClauseNode = new TypeClauseNode((ISyntaxToken)badExpressionNode.SyntaxList[1], valueType: null, genericParametersListingNode: null);
-    				return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
-    			}
-    		}
-    			
-    		return parenthesizedExpressionNode.SetInnerExpression(expressionSecondary);
-    	}
-    	
-    	public IExpressionNode ExplicitCastMerge(
-    		ExplicitCastNode explicitCastNode, ISyntaxToken token, ExpressionSession session)
-    	{
-    		switch (token.SyntaxKind)
-    		{
-    			case SyntaxKind.CloseParenthesisToken:
-    				return explicitCastNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
-    			default:
-    				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), explicitCastNode, token);
-    		}
-    	}
-    	
-    	public IExpressionNode BadExpressionMerge(
-    		BadExpressionNode badExpressionNode, ISyntaxToken token, ExpressionSession session)
-    	{
-    		badExpressionNode.SyntaxList.Add(token);
-    		return badExpressionNode;
-    	}
-    }
-    
-    private static IExpressionNode ParseExpression(ExpressionSession session)
-    {
-    	var binder = new BinderTest();
-    	IExpressionNode expressionPrimary = new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-    	int position = 0;
-    	
-    	while (position < session.TokenList.Count)
-    	{
-    		var tokenCurrent = session.TokenList[position];
-    		if (tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-    			break;
-    		
-    		// Check if the tokenCurrent is a token that is used as a end-delimiter
-    		// before iterating the list?
-    		if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-    		{
-    			for (int i = session.ShortCircuitList.Count - 1; i > -1; i--)
-	    		{
-	    			var tuple = session.ShortCircuitList[i];
-	    			
-	    			if (tuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
-	    			{
-	    				session.ShortCircuitList.RemoveRange(i, session.ShortCircuitList.Count - i);
-	    				
-		    			var expressionSecondary = expressionPrimary;
-		    			expressionPrimary = tuple.ExpressionNode;
-		    			expressionPrimary = binder.Merge(expressionPrimary, expressionSecondary, session);
-		    			break;
-	    			}
-	    		}
-    		}
-    		
-    		expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, session);
-
-    		position++;
-    		
-    		/*
-    		I need to add the recursive part of this.
-    		I ignored operator precedence for now.
-    		
-    		But, something about ParenthesizedExpressionNode is resulting
-    		in me needing the recursion.
-    		
-    		Presumably operator precedence would also require recursion,
-    		and that 'ParenthesizedExpressionNode'
-    		is a case where recursion is unavoidable?
-    		
-    		Because I have to leave behind an unfinished ParenthesizedExpressionNode
-    		after I parse the OpenParenthesisToken.
-    		
-    		Then, only when I've parsed the inner expression (or short circuited)
-    		I revisit the ParenthesizedExpressionNode and can set its inner expression.
-    		
-    		If I invoked 'ParseExpression(...)' recursively,
-    		once I had the OpenParenthesisToken,
-    		I could say:
-    			'var innerExpression = ParseExpression(...);'
-    		
-    		But, I think it would be better for optimization, and readability
-    		if I go about "primitive recursion" via a while loop here.
-    		
-    		A Stack<ISyntaxNode> of unresolved nodes might be useful.
-    		I could push the unfinished ParenthesizedExpressionNode
-    		onto it, then handle parsing the inner expression.
-    		
-    		Once I'm done with the inner expression, 
-    		I can check the Stack<ISyntaxNode> and see that there was
-    		an unresolved InnerExpression and invoke Merge(IExpressionNode, IExpressionNode).
-    		
-    		Perhaps I'm thinking too far ahead when I say this but...
-    		I want to use a List<ISyntaxNode> because it lends itself more to the short circuiting logic.
-    		Where the parent expression's delimiter appeared in the child expression,
-    		therefore stop parsing the child expression,
-    		and make the parent expression the 'expressionPrimary' again.
-    		
-    		If there were a count of 2 or more for the List<ISyntaxNode>, it is possible
-    		that it isn't even a parent expression's delimiter that appeared
-    		in the current expression.
-    		But instead, that it was an ancestor expression that is older than the parent expression.
-    		
-    		In this case, I'd be "short circuiting" back to the ancestor expression and clearing
-    		a few indices of the List.
-    		
-    		If the short circuit list stored a value tuple (DelimiterToken, Node),
-    		then I could search the list to see if the current token is in one of the tuples.
-    		
-    		If it is, then: 'primaryExpression = tuple.Node;'
-    		*/
-    	}
-    	
-    	return expressionPrimary;
-    }
-    
-    private class ExpressionSession
-    {
-		public ExpressionSession(
-			List<ISyntaxToken> tokenList,
-			Stack<ISyntax> expressionStack,
-			List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> shortCircuitList)
-		{
-			TokenList = tokenList;
-			ExpressionStack = expressionStack;
-			ShortCircuitList = shortCircuitList;
-		}
-
-    	public List<ISyntaxToken> TokenList { get; }
-		public Stack<ISyntax> ExpressionStack { get; }
-		public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ShortCircuitList { get; }
-    }
-    
     [Fact]
     public void Numeric_Add_BinaryExpressionNode()
     {
@@ -534,14 +131,15 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				NumberFabricate("1"),
-				PlusFabricate(),
-				NumberFabricate("1"),
+				// 1 + 1
+				Fabricate.Number("1"),
+				Fabricate.Plus(),
+				Fabricate.Number("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 			
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -576,16 +174,17 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				NumberFabricate("1"),
-				PlusFabricate(),
-				NumberFabricate("1"),
-				PlusFabricate(),
-				NumberFabricate("1"),
+				// 1 + 1 + 1
+				Fabricate.Number("1"),
+				Fabricate.Plus(),
+				Fabricate.Number("1"),
+				Fabricate.Plus(),
+				Fabricate.Number("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 			
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -646,14 +245,15 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				NumberFabricate("1"),
-				MinusFabricate(),
-				NumberFabricate("1"),
+				// 1 - 1
+				Fabricate.Number("1"),
+				Fabricate.Minus(),
+				Fabricate.Number("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -679,14 +279,15 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				NumberFabricate("1"),
-				StarFabricate(),
-				NumberFabricate("1"),
+				// 1 * 1
+				Fabricate.Number("1"),
+				Fabricate.Star(),
+				Fabricate.Number("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -712,14 +313,15 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				NumberFabricate("1"),
-				DivisionFabricate(),
-				NumberFabricate("1"),
+				// 1 / 1
+				Fabricate.Number("1"),
+				Fabricate.Division(),
+				Fabricate.Number("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -745,14 +347,15 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				NumberFabricate("1"),
-				EqualsEqualsFabricate(),
-				NumberFabricate("1"),
+				// 1 == 1
+				Fabricate.Number("1"),
+				Fabricate.EqualsEquals(),
+				Fabricate.Number("1"),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -778,14 +381,15 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				StringFabricate("Asd"),
-				PlusFabricate(),
-				StringFabricate("Fgh"),
+				// "Asd" + "Fgh"
+				Fabricate.String("Asd"),
+				Fabricate.Plus(),
+				Fabricate.String("Fgh"),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "string";
@@ -811,14 +415,15 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				CharFabricate("a"),
-				PlusFabricate(),
-				CharFabricate("\n"),
+				// 'a' + '\n'
+				Fabricate.Char("a"),
+				Fabricate.Plus(),
+				Fabricate.Char("\n"),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "char";
@@ -844,14 +449,15 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				FalseFabricate(),
-				EqualsEqualsFabricate(),
-				TrueFabricate(),
+				// false == true
+				Fabricate.False(),
+				Fabricate.EqualsEquals(),
+				Fabricate.True(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "bool";
@@ -877,14 +483,15 @@ var aaa = 1;
 		var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				OpenParenthesisFabricate(),
-				NumberFabricate("7"),
-				CloseParenthesisFabricate(),
+				// (7)
+				Fabricate.OpenParenthesis(),
+				Fabricate.Number("7"),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)expression;
 		var textTypeClause = "int";
@@ -900,25 +507,19 @@ var aaa = 1;
     [Fact]
     public void ShortCircuit()
     {
-    	// ( 1 + );
-    	
-    	// ?
-    	//
-    	// Consume if it is your delimiter
-    	// Stop, but do not consume if it is NOT your delimiter
-    	
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				OpenParenthesisFabricate(),
-				NumberFabricate("1"),
-				PlusFabricate(),
-				CloseParenthesisFabricate(),
+				// (1 + )
+				Fabricate.OpenParenthesis(),
+				Fabricate.Number("1"),
+				Fabricate.Plus(),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)expression;
 		var textTypeClause = "int";
@@ -943,14 +544,15 @@ var aaa = 1;
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				OpenParenthesisFabricate(),
-				IdentifierFabricate("MyClass"),
-				CloseParenthesisFabricate(),
+				// (MyClass)
+				Fabricate.OpenParenthesis(),
+				Fabricate.Identifier("MyClass"),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var parenthesizedExpressionNode = (ExplicitCastNode)expression;
     }
@@ -961,15 +563,108 @@ var aaa = 1;
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				OpenParenthesisFabricate(),
-				IntFabricate(),
-				CloseParenthesisFabricate(),
+				// (int)
+				Fabricate.OpenParenthesis(),
+				Fabricate.Int(),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
-		var expression = ParseExpression(session);
+		var expression = Parser_TEST.ParseExpression(session);
 		
 		var parenthesizedExpressionNode = (ExplicitCastNode)expression;
+    }
+    
+    [Fact]
+    public void FunctionInvocationNode_A()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// MyMethod()
+				Fabricate.Identifier("MyMethod"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var parenthesizedExpressionNode = (FunctionInvocationNode)expression;
+    }
+    
+    [Fact]
+    public void FunctionInvocationNode_B()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// MyMethod(7, "Asdfg")
+				Fabricate.Identifier("MyMethod"),
+				Fabricate.OpenParenthesis(),
+				/**/Fabricate.Number("7"),
+				/**/Fabricate.Comma(),
+				/**/Fabricate.String("Asdfg"),
+				Fabricate.CloseParenthesis(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var parenthesizedExpressionNode = (FunctionInvocationNode)expression;
+    }
+    
+    [Fact]
+    public void FunctionInvocationNode_C()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// MyMethod<int, MyClass>()
+				Fabricate.Identifier("MyMethod"),
+				Fabricate.OpenAngleBracket(),
+				/**/Fabricate.Int(),
+				/**/Fabricate.Comma(),
+				/**/Fabricate.Identifier("MyClass"),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var parenthesizedExpressionNode = (FunctionInvocationNode)expression;
+    }
+    
+    [Fact]
+    public void FunctionInvocationNode_D()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// MyMethod<int, MyClass>(7, "Asdfg")
+				Fabricate.Identifier("MyMethod"),
+				Fabricate.OpenAngleBracket(),
+				/**/Fabricate.Int(),
+				/**/Fabricate.Comma(),
+				/**/Fabricate.Identifier("MyClass"),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				/**/Fabricate.Number("7"),
+				/**/Fabricate.Comma(),
+				/**/Fabricate.String("Asdfg"),
+				Fabricate.CloseParenthesis(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var parenthesizedExpressionNode = (FunctionInvocationNode)expression;
     }
 }
