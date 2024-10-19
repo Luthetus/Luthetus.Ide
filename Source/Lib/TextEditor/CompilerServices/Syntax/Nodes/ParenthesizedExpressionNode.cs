@@ -17,6 +17,11 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
         
         SetChildList();
     }
+    
+    public ParenthesizedExpressionNode(OpenParenthesisToken openParenthesisToken, TypeClauseNode typeClauseNode)
+    	: this(openParenthesisToken, new EmptyExpressionNode(typeClauseNode), default)
+    {
+    }
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public IExpressionNode InnerExpression { get; }

@@ -171,6 +171,16 @@ var aaa = 1;
     	return new EqualsEqualsToken(TextSpanFabricate("=="));
     }
     
+    private static OpenParenthesisToken OpenParenthesisFabricate()
+    {
+    	return new OpenParenthesisToken(TextSpanFabricate("("));
+    }
+    
+    private static CloseParenthesisToken CloseParenthesisFabricate()
+    {
+    	return new CloseParenthesisToken(TextSpanFabricate(")"));
+    }
+    
     private class BinderTest
     {
     	/// <summary>
@@ -178,18 +188,18 @@ var aaa = 1;
     	/// if the parameters were not mergeable.
     	/// </summary>
     	public IExpressionNode Merge(
-    		IExpressionNode expressionPrimary, ISyntaxToken token, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    		IExpressionNode expressionPrimary, ISyntaxToken token, ExpressionSession session)
     	{
     		switch (expressionPrimary.SyntaxKind)
     		{
     			case SyntaxKind.EmptyExpressionNode:
-    				return EmptyExpressionMerge((EmptyExpressionNode)expressionPrimary, token, tokenList, expressionStack);
+    				return EmptyExpressionMerge((EmptyExpressionNode)expressionPrimary, token, session);
     			case SyntaxKind.LiteralExpressionNode:
-    				return LiteralExpressionMerge((LiteralExpressionNode)expressionPrimary, token, tokenList, expressionStack);
+    				return LiteralExpressionMerge((LiteralExpressionNode)expressionPrimary, token, session);
     			case SyntaxKind.BinaryExpressionNode:
-    				return BinaryExpressionMerge((BinaryExpressionNode)expressionPrimary, token, tokenList, expressionStack);
+    				return BinaryExpressionMerge((BinaryExpressionNode)expressionPrimary, token, session);
     			case SyntaxKind.BadExpressionNode:
-    				return BadExpressionMerge((BadExpressionNode)expressionPrimary, token, tokenList, expressionStack);
+    				return BadExpressionMerge((BadExpressionNode)expressionPrimary, token, session);
     			default:
     				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { expressionPrimary, token });
     		};
@@ -200,7 +210,7 @@ var aaa = 1;
     	/// if the parameters were not mergeable.
     	/// </summary>
     	public IExpressionNode Merge(
-    		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, ExpressionSession session)
     	{
     		switch (expressionPrimary.SyntaxKind)
     		{
@@ -210,7 +220,7 @@ var aaa = 1;
     	}
     	
     	public IExpressionNode EmptyExpressionMerge(
-    		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, ExpressionSession session)
     	{
     		switch (token.SyntaxKind)
     		{
@@ -233,6 +243,8 @@ var aaa = 1;
     					goto default;
     					
     				return new LiteralExpressionNode(token, tokenTypeClauseNode);
+    			case SyntaxKind.OpenParenthesisToken:
+    				return new ParenthesizedExpressionNode((OpenParenthesisToken)token, CSharpFacts.Types.Void.ToTypeClause());
     			default:
     				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { emptyExpressionNode, token });
     		}
@@ -247,7 +259,7 @@ var aaa = 1;
     	/// they are much higher priority.
     	/// </summary>
     	public IExpressionNode LiteralExpressionMerge(
-    		LiteralExpressionNode literalExpressionNode, ISyntaxToken token, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    		LiteralExpressionNode literalExpressionNode, ISyntaxToken token, ExpressionSession session)
     	{
     		switch (token.SyntaxKind)
     		{
@@ -258,14 +270,14 @@ var aaa = 1;
 			    case SyntaxKind.EqualsEqualsToken:
     				var typeClauseNode = literalExpressionNode.ResultTypeClauseNode;
     				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-    				return new BinaryExpressionNode(literalExpressionNode, binaryOperatorNode, new EmptyExpressionNode(typeClauseNode));
+    				return new BinaryExpressionNode(literalExpressionNode, binaryOperatorNode);
     			default:
     				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new List<ISyntax> { literalExpressionNode, token });
     		}
     	}
     	
     	public IExpressionNode BinaryExpressionMerge(
-    		BinaryExpressionNode binaryExpressionNode, ISyntaxToken token, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    		BinaryExpressionNode binaryExpressionNode, ISyntaxToken token, ExpressionSession session)
     	{
     		switch (token.SyntaxKind)
     		{
@@ -318,27 +330,47 @@ var aaa = 1;
     	}
     	
     	public IExpressionNode BadExpressionMerge(
-    		BadExpressionNode badExpressionNode, ISyntaxToken token, List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    		BadExpressionNode badExpressionNode, ISyntaxToken token, ExpressionSession session)
     	{
     		badExpressionNode.SyntaxList.Add(token);
     		return badExpressionNode;
     	}
     }
     
-    private static IExpressionNode ParseExpression(List<ISyntaxToken> tokenList, Stack<ISyntax> expressionStack)
+    private static IExpressionNode ParseExpression(ExpressionSession session)
     {
     	var binder = new BinderTest();
     	IExpressionNode expressionPrimary = new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
     	int position = 0;
     	
-    	while (position < tokenList.Count)
+    	while (position < session.TokenList.Count)
     	{
-    		var tokenCurrent = tokenList[position];
-    		expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, tokenList, expressionStack);
+    		var tokenCurrent = session.TokenList[position];
+    		if (tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+    			break;
+    		
+    		expressionPrimary = binder.Merge(expressionPrimary, tokenCurrent, session);
     		position++;
     	}
     	
     	return expressionPrimary;
+    }
+    
+    private class ExpressionSession
+    {
+		public ExpressionSession(
+			List<ISyntaxToken> tokenList,
+			Stack<ISyntax> expressionStack,
+			List<ISyntaxToken> shortCircuitList)
+		{
+			TokenList = tokenList;
+			ExpressionStack = expressionStack;
+			ShortCircuitList = shortCircuitList;
+		}
+
+    	public List<ISyntaxToken> TokenList { get; }
+		public Stack<ISyntax> ExpressionStack { get; }
+		public List<ISyntaxToken> ShortCircuitList { get; }
     }
     
     [Fact]
@@ -358,14 +390,17 @@ var aaa = 1;
 		
 		Well... I guess I need an IEnumerable<ISyntaxToken> too
 		*/
-		var tokenList = new List<ISyntaxToken>
-		{
-			NumberFabricate("1"),
-			PlusFabricate(),
-			NumberFabricate("1"),
-		};
-		var expressionStack = new Stack<ISyntax>();
-		var expression = ParseExpression(tokenList, expressionStack);
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				NumberFabricate("1"),
+				PlusFabricate(),
+				NumberFabricate("1"),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+			
+		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -397,16 +432,19 @@ var aaa = 1;
     [Fact]
     public void Numeric_Add_BinaryExpressionNode_More()
     {
-		var tokenList = new List<ISyntaxToken>
-		{
-			NumberFabricate("1"),
-			PlusFabricate(),
-			NumberFabricate("1"),
-			PlusFabricate(),
-			NumberFabricate("1"),
-		};
-		var expressionStack = new Stack<ISyntax>();
-		var expression = ParseExpression(tokenList, expressionStack);
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				NumberFabricate("1"),
+				PlusFabricate(),
+				NumberFabricate("1"),
+				PlusFabricate(),
+				NumberFabricate("1"),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+			
+		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -464,14 +502,17 @@ var aaa = 1;
     [Fact]
     public void Numeric_Subtract_BinaryExpressionNode()
     {
-		var tokenList = new List<ISyntaxToken>
-		{
-			NumberFabricate("1"),
-			MinusFabricate(),
-			NumberFabricate("1"),
-		};
-		var expressionStack = new Stack<ISyntax>();
-		var expression = ParseExpression(tokenList, expressionStack);
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				NumberFabricate("1"),
+				MinusFabricate(),
+				NumberFabricate("1"),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+		
+		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -494,14 +535,18 @@ var aaa = 1;
     [Fact]
     public void Numeric_Star_BinaryExpressionNode()
     {
-		var tokenList = new List<ISyntaxToken>
-		{
-			NumberFabricate("1"),
-			StarFabricate(),
-			NumberFabricate("1"),
-		};
-		var expressionStack = new Stack<ISyntax>();
-		var expression = ParseExpression(tokenList, expressionStack);
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				NumberFabricate("1"),
+				StarFabricate(),
+				NumberFabricate("1"),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+		
+		
+		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -524,14 +569,18 @@ var aaa = 1;
     [Fact]
     public void Numeric_Division_BinaryExpressionNode()
     {
-		var tokenList = new List<ISyntaxToken>
-		{
-			NumberFabricate("1"),
-			DivisionFabricate(),
-			NumberFabricate("1"),
-		};
-		var expressionStack = new Stack<ISyntax>();
-		var expression = ParseExpression(tokenList, expressionStack);
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				NumberFabricate("1"),
+				DivisionFabricate(),
+				NumberFabricate("1"),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+		
+		
+		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -554,14 +603,17 @@ var aaa = 1;
     [Fact]
     public void Numeric_EqualsEquals_BinaryExpressionNode()
     {
-		var tokenList = new List<ISyntaxToken>
-		{
-			NumberFabricate("1"),
-			EqualsEqualsFabricate(),
-			NumberFabricate("1"),
-		};
-		var expressionStack = new Stack<ISyntax>();
-		var expression = ParseExpression(tokenList, expressionStack);
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				NumberFabricate("1"),
+				EqualsEqualsFabricate(),
+				NumberFabricate("1"),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+		
+		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "int";
@@ -584,14 +636,17 @@ var aaa = 1;
     [Fact]
     public void String_BinaryExpressionNode()
     {
-		var tokenList = new List<ISyntaxToken>
-		{
-			StringFabricate("Asd"),
-			PlusFabricate(),
-			StringFabricate("Fgh"),
-		};
-		var expressionStack = new Stack<ISyntax>();
-		var expression = ParseExpression(tokenList, expressionStack);
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				StringFabricate("Asd"),
+				PlusFabricate(),
+				StringFabricate("Fgh"),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+		
+		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "string";
@@ -614,14 +669,17 @@ var aaa = 1;
     [Fact]
     public void Char_BinaryExpressionNode()
     {
-		var tokenList = new List<ISyntaxToken>
-		{
-			CharFabricate("a"),
-			PlusFabricate(),
-			CharFabricate("\n"),
-		};
-		var expressionStack = new Stack<ISyntax>();
-		var expression = ParseExpression(tokenList, expressionStack);
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				CharFabricate("a"),
+				PlusFabricate(),
+				CharFabricate("\n"),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+		
+		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "char";
@@ -644,14 +702,17 @@ var aaa = 1;
     [Fact]
     public void Bool_BinaryExpressionNode()
     {
-		var tokenList = new List<ISyntaxToken>
-		{
-			FalseFabricate(),
-			EqualsEqualsFabricate(),
-			TrueFabricate(),
-		};
-		var expressionStack = new Stack<ISyntax>();
-		var expression = ParseExpression(tokenList, expressionStack);
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				FalseFabricate(),
+				EqualsEqualsFabricate(),
+				TrueFabricate(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+		
+		var expression = ParseExpression(session);
 		
 		var binaryExpressionNode = (BinaryExpressionNode)expression;
 		var textTypeClause = "bool";
@@ -669,5 +730,43 @@ var aaa = 1;
 	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	    
 	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+    }
+    
+    [Fact]
+    public void ParenthesizedExpressionNode_Test()
+    {
+		var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				OpenParenthesisFabricate(),
+				NumberFabricate("7"),
+				CloseParenthesisFabricate(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new List<ISyntaxToken>());
+		
+		var expression = ParseExpression(session);
+		
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)expression;
+		var textTypeClause = "int";
+    }
+    
+    [Fact]
+    public void ExplicitCastNode_Test()
+    {
+    	throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void ShortCircuit()
+    {
+    	// ( 1 + );
+    	
+    	// ?
+    	//
+    	// Consume if it is your delimiter
+    	// Stop, but do not consume if it is NOT your delimiter
+    	
+    	throw new NotImplementedException();
     }
 }

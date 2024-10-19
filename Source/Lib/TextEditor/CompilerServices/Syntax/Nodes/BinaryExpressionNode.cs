@@ -16,6 +16,13 @@ public sealed class BinaryExpressionNode : IExpressionNode
 
         SetChildList();
     }
+    
+    public BinaryExpressionNode(
+	        IExpressionNode leftExpressionNode,
+	        BinaryOperatorNode binaryOperatorNode)
+        : this(leftExpressionNode, binaryOperatorNode, new EmptyExpressionNode(binaryOperatorNode.RightOperandTypeClauseNode))
+    {
+    }
 
     public IExpressionNode LeftExpressionNode { get; }
     public BinaryOperatorNode BinaryOperatorNode { get; }
