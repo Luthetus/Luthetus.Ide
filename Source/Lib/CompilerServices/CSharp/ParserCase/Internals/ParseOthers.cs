@@ -337,8 +337,7 @@ public static class ParseOthers
                 		var explicitCastNode = new ExplicitCastNode(
 					        (OpenParenthesisToken)tokenCurrent,
 					        typeClauseNode,
-					        closeParenthesisToken,
-					        new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
+					        closeParenthesisToken);
                 		break;
                 	}
                 	else

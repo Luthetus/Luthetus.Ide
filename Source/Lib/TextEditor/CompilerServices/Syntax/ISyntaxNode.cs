@@ -4,6 +4,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 public interface ISyntaxNode : ISyntax
 {
+	/// <summary>
+	/// TODO: This property needs to change. It should lazily create the ChildList when the getter is hit...
+	///       ...and a private field '_isDirty' is set to true. Then change '_isDirty' to false and cache the created list.
+	///       If a 'SetPropertyNameGoesHere()' is invoked, then set '_isDirty' to true.
+	/// </summary>
     public ISyntax[] ChildList { get; }
     
     /// <summary>
