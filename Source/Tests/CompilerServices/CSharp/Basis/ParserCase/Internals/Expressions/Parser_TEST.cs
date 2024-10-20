@@ -38,52 +38,10 @@ public class Parser_TEST
 		    			var expressionSecondary = expressionPrimary;
 		    			expressionPrimary = tuple.ExpressionNode;
 		    			
-		    			void WriteBadExpressionNode(BadExpressionNode badExpressionNode)
-		    			{
-		    				Console.Write($"{expressionPrimary.SyntaxKind} {{");
-		    				
-		    				foreach (var child in badExpressionNode.SyntaxList)
-		    				{
-		    					Console.Write($"{child.SyntaxKind}, ");
-		    				}
-		    				
-		    				Console.Write(" }, ");
-		    			}
+		    			var expressionResult = binder.AnyMergeExpression(expressionPrimary, expressionSecondary, session);
+		    			WriteMerge(expressionPrimary, expressionSecondary, expressionResult);
 		    			
-		    			Console.Write("MERGE: ");
-		    			
-		    			if (expressionPrimary.SyntaxKind == SyntaxKind.BadExpressionNode)
-		    			{
-		    				WriteBadExpressionNode((BadExpressionNode)expressionPrimary);
-		    			}
-		    			else
-		    			{
-		    				Console.Write("{expressionPrimary.SyntaxKind}, ");
-		    			}
-		    			
-		    			if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
-		    			{
-		    				WriteBadExpressionNode((BadExpressionNode)expressionSecondary);
-		    			}
-		    			else
-		    			{
-		    				Console.Write("{expressionSecondary.SyntaxKind}, ");
-		    			}
-		    			Console.WriteLine();
-		    			
-		    			
-		    			expressionPrimary = binder.AnyMergeExpression(expressionPrimary, expressionSecondary, session);
-		    			
-		    			Console.Write($"\t-> ");
-		    			if (expressionPrimary.SyntaxKind == SyntaxKind.BadExpressionNode)
-		    			{
-		    				WriteBadExpressionNode((BadExpressionNode)expressionPrimary);
-		    			}
-		    			else
-		    			{
-		    				Console.Write("{expressionPrimary.SyntaxKind}, ");
-		    			}
-		    			Console.WriteLine();
+		    			expressionPrimary = expressionResult;
 		    			break;
 	    			}
 	    		}
@@ -96,4 +54,43 @@ public class Parser_TEST
     	
     	return expressionPrimary;
     }
+    
+    /// <summary>This method is nasty I'm just logging to console for debug purposes.</summary>
+    private static void WriteMerge(
+    	IExpressionNode expressionPrimary,
+    	IExpressionNode expressionSecondary,
+    	IExpressionNode expressionResult)
+	{
+		Console.Write("MERGE: ");
+		///////////////////////////////////////////////////////////////////
+		if (expressionPrimary.SyntaxKind == SyntaxKind.BadExpressionNode)
+			WriteBadExpressionNode((BadExpressionNode)expressionPrimary);
+		else
+			Console.Write($"{expressionPrimary.SyntaxKind}, ");
+		///////////////////////////////////////////////////////////////////
+		if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
+			WriteBadExpressionNode((BadExpressionNode)expressionSecondary);
+		else
+			Console.Write($"{expressionSecondary.SyntaxKind}, ");
+		Console.WriteLine();
+		///////////////////////////////////////////////////////////////////
+		Console.Write($"\t-> ");
+		if (expressionPrimary.SyntaxKind == SyntaxKind.BadExpressionNode)
+			WriteBadExpressionNode((BadExpressionNode)expressionPrimary);
+		else
+			Console.Write($"{expressionPrimary.SyntaxKind}, ");
+		Console.WriteLine();
+	}
+	
+	private static void WriteBadExpressionNode(BadExpressionNode badExpressionNode)
+	{
+		Console.Write($"{badExpressionNode.SyntaxKind} {{");
+		
+		foreach (var child in badExpressionNode.SyntaxList)
+		{
+			Console.Write($"{child.SyntaxKind}, ");
+		}
+		
+		Console.Write(" }, ");
+	}
 }
