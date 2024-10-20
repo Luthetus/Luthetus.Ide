@@ -29,6 +29,8 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
     public FunctionParametersListingNode? FunctionParametersListingNode { get; private set; }
     public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; }
     
+    public bool IsReadingGenericArguments { get; set; }
+    
     public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 

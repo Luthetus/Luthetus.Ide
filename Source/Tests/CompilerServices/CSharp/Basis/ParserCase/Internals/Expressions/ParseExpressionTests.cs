@@ -828,7 +828,19 @@ var aaa = 1;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
 		
-        throw new NotImplementedException();
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // ResultTypeClauseNode.GenericParametersListingNode
+	    {
+	    	Assert.Equal(2, constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count);
+	    }
+	    
+	    Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+		Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+		Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+		Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+	    
+	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
     }
     
     [Fact]
