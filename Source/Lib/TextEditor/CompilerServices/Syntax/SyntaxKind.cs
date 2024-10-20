@@ -185,6 +185,7 @@ public enum SyntaxKind
     LiteralExpressionNode,
     ParenthesizedExpressionNode,
     EmptyExpressionNode,
+    AmbiguousIdentifierExpressionNode,
     PreprocessorLibraryReferenceStatementNode,
     TypeDefinitionNode,
     TypeClauseNode,

@@ -34,6 +34,8 @@ public class Binder_TEST
 				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, token, session);
 			case SyntaxKind.ExplicitCastNode:
 				return ExplicitCastMergeToken((ExplicitCastNode)expressionPrimary, token, session);
+			case SyntaxKind.AmbiguousIdentifierExpressionNode:
+				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, token, session);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeToken((BadExpressionNode)expressionPrimary, token, session);
 			default:
@@ -54,6 +56,8 @@ public class Binder_TEST
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, session);
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, session);
+			case SyntaxKind.AmbiguousIdentifierExpressionNode:
+				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, session);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, session);
 			default:
@@ -61,91 +65,84 @@ public class Binder_TEST
 		};
 	}
 
-	public IExpressionNode BadMergeToken(
-		BadExpressionNode badExpressionNode, ISyntaxToken token, ExpressionSession session)
+	public IExpressionNode AmbiguousIdentifierMergeToken(
+		AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode, ISyntaxToken token, ExpressionSession session)
 	{
-		if (badExpressionNode.SyntaxList.Count == 2 &&
-			token.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+		if (token.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
+			ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
 		{
-			IdentifierToken identifierToken = default;
-			GenericParametersListingNode? genericParametersListingNode = null;
+			var functionParametersListingNode = new FunctionParametersListingNode(
+				(OpenParenthesisToken)token,
+		        new List<FunctionParameterEntryNode>(),
+		        closeParenthesisToken: default);
 		
-			if (badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken)
-			{
-				identifierToken = (IdentifierToken)badExpressionNode.SyntaxList[1];
-			}
-			else if (badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.TypeClauseNode)
-			{
-				var typeClauseNode = (TypeClauseNode)badExpressionNode.SyntaxList[1];
-				
-				if (typeClauseNode.TypeIdentifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
-				{
-					identifierToken = (IdentifierToken)typeClauseNode.TypeIdentifierToken;
-					genericParametersListingNode = typeClauseNode.GenericParametersListingNode;
-				}
-			}
+			// TODO: ContextualKeywords as the function identifier?
+			var functionInvocationNode = new FunctionInvocationNode(
+				(IdentifierToken)ambiguousIdentifierExpressionNode.Token,
+		        functionDefinitionNode: null,
+		        ambiguousIdentifierExpressionNode.GenericParametersListingNode,
+		        functionParametersListingNode,
+		        CSharpFacts.Types.Void.ToTypeClause());
 			
-			if (identifierToken.ConstructorWasInvoked)
-			{
-				var functionParametersListingNode = new FunctionParametersListingNode(
-					(OpenParenthesisToken)token,
-			        new List<FunctionParameterEntryNode>(),
-			        closeParenthesisToken: default);
-			
-				var functionInvocationNode = new FunctionInvocationNode(
-					identifierToken,
-			        functionDefinitionNode: null,
-			        genericParametersListingNode,
-			        functionParametersListingNode,
-			        CSharpFacts.Types.Void.ToTypeClause());
-				
-				session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
-				session.ShortCircuitList.Add((SyntaxKind.CommaToken, functionInvocationNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-			}
+			session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
+			session.ShortCircuitList.Add((SyntaxKind.CommaToken, functionInvocationNode));
+			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 		}
-		else if (badExpressionNode.SyntaxList.Count == 2 &&
-				 token.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+		else if (token.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
 		{
-			if (badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken ||
-				UtilityApi.IsTypeIdentifierKeywordSyntaxKind(badExpressionNode.SyntaxList[1].SyntaxKind))
+			if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is null)
 			{
-				// Naively take this to be a TypeClauseNode with generic parameters.
-				// If later an OpenParenthesisToken is found, then change the node to a FunctionInvocationNode.
-				var typeClauseNode = new TypeClauseNode(
-					(IdentifierToken)badExpressionNode.SyntaxList[1],
-			        valueType: null,
-			        genericParametersListingNode: null);
-			        
-			    // TypeClauseNode doesn't implement IExpressionNode so it needs to be wrapped in the badExpressionNode
-			    badExpressionNode.SyntaxList[1] = typeClauseNode;
+				ambiguousIdentifierExpressionNode.SetGenericParametersListingNode(
+					new GenericParametersListingNode(
+						(OpenAngleBracketToken)token,
+				        new List<GenericParameterEntryNode>(),
+				        closeAngleBracketToken: default));
 			}
 			
-			// The prior if can fall into this one.
-			if (badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.TypeClauseNode)
-			{
-				var typeClauseNode = (TypeClauseNode)badExpressionNode.SyntaxList[1];
-				
-				if (typeClauseNode.GenericParametersListingNode is null)
-				{
-					typeClauseNode.SetGenericParametersListingNode(
-						new GenericParametersListingNode(
-							(OpenAngleBracketToken)token,
-					        new List<GenericParameterEntryNode>(),
-					        closeAngleBracketToken: default));
-				}
-				
-			    session.ShortCircuitList.Add((SyntaxKind.CloseAngleBracketToken, badExpressionNode));
-				session.ShortCircuitList.Add((SyntaxKind.CommaToken, badExpressionNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-			}
+		    session.ShortCircuitList.Add((SyntaxKind.CloseAngleBracketToken, ambiguousIdentifierExpressionNode));
+			session.ShortCircuitList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
+			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 		}
-		else if (badExpressionNode.SyntaxList.Count == 2 &&
-				 token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+		else if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
 			Console.WriteLine("HHHHHHHHHHHHHHHHHHHHHH");
 		}
+		else if (token.SyntaxKind == SyntaxKind.CommaToken)
+		{
+			session.ShortCircuitList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
+			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+		}
 	
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, token);
+	}
+		
+	public IExpressionNode AmbiguousIdentifierMergeExpression(
+		AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode, IExpressionNode expressionSecondary, ExpressionSession session)
+	{
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+			
+			var typeClauseNode = new TypeClauseNode(
+				expressionSecondaryTyped.Token,
+		        valueType: null,
+		        genericParametersListingNode: null);
+			
+			if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is not null)
+			{
+				ambiguousIdentifierExpressionNode.GenericParametersListingNode.GenericParameterEntryNodeList.Add(
+					new GenericParameterEntryNode(typeClauseNode));
+				
+				return ambiguousIdentifierExpressionNode;
+			}
+		}
+		
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, expressionSecondary);
+	}
+		
+	public IExpressionNode BadMergeToken(
+		BadExpressionNode badExpressionNode, ISyntaxToken token, ExpressionSession session)
+	{
 		badExpressionNode.SyntaxList.Add(token);
 		return badExpressionNode;
 	}
@@ -153,41 +150,6 @@ public class Binder_TEST
 	public IExpressionNode BadMergeExpression(
 		BadExpressionNode badExpressionNode, IExpressionNode expressionSecondary, ExpressionSession session)
 	{
-		if (badExpressionNode.SyntaxList.Count == 2 &&
-			badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.TypeClauseNode)
-		{
-			var typeClauseNodePrimary = (TypeClauseNode)badExpressionNode.SyntaxList[1];
-			
-			if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
-			{
-				var expressionSecondaryTyped = (BadExpressionNode)expressionSecondary;
-				
-				if (expressionSecondaryTyped.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken ||
-					UtilityApi.IsTypeIdentifierKeywordSyntaxKind(expressionSecondaryTyped.SyntaxList[1].SyntaxKind))
-				{
-					var typeClauseNode = new TypeClauseNode(
-						(ISyntaxToken)expressionSecondaryTyped.SyntaxList[1],
-				        valueType: null,
-				        genericParametersListingNode: null);
-				        
-				    // TypeClauseNode doesn't implement IExpressionNode so it needs to be wrapped in the expressionSecondaryTyped
-				    expressionSecondaryTyped.SyntaxList[1] = typeClauseNode;
-				}
-				
-				if (expressionSecondaryTyped.SyntaxList.Count == 2 &&
-					expressionSecondaryTyped.SyntaxList[1].SyntaxKind == SyntaxKind.TypeClauseNode)
-				{
-					if (typeClauseNodePrimary.GenericParametersListingNode is not null)
-					{
-						typeClauseNodePrimary.GenericParametersListingNode.GenericParameterEntryNodeList.Add(
-							new GenericParameterEntryNode((TypeClauseNode)expressionSecondaryTyped.SyntaxList[1]));
-						
-						return badExpressionNode;
-					}
-				}
-			}
-		}
-		
 		badExpressionNode.SyntaxList.Add(expressionSecondary);
 		return badExpressionNode;
 	}
@@ -248,6 +210,17 @@ public class Binder_TEST
 	public IExpressionNode EmptyMergeToken(
 		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, ExpressionSession session)
 	{
+		if (token.SyntaxKind == SyntaxKind.IdentifierToken ||
+			UtilityApi.IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
+		{
+			var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
+				token,
+		        genericParametersListingNode: null,
+		        CSharpFacts.Types.Void.ToTypeClause());
+		    
+		    return ambiguousExpressionNode;
+		}
+	
 		switch (token.SyntaxKind)
 		{
 			case SyntaxKind.NumericLiteralToken:

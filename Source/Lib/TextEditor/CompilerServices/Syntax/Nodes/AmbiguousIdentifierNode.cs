@@ -7,6 +7,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// Example usage: One finds a <see cref="IdentifierToken"/>, but must
 /// continue parsing in order to know if it is a reference to a
 /// function, type, variable, or etc...
+///
+/// TODO: Permit this type to have a nullable GenericParametersListingNode
 /// </summary>
 public sealed class AmbiguousIdentifierNode : ISyntaxNode
 {
