@@ -6,6 +6,10 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class ConstructorInvocationExpressionNode : IExpressionNode
 {
+	/// <summary>
+	/// The <see cref="GenericParametersListingNode"/> is located
+	/// on the <see cref="TypeClauseNode"/>.
+	/// </summary>
     public ConstructorInvocationExpressionNode(
         KeywordToken newKeywordToken,
         TypeClauseNode typeClauseNode,
@@ -21,8 +25,8 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
     }
 
     public KeywordToken NewKeywordToken { get; }
-    public TypeClauseNode ResultTypeClauseNode { get; }
-    public FunctionParametersListingNode? FunctionParametersListingNode { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; private set; }
+    public FunctionParametersListingNode? FunctionParametersListingNode { get; private set; }
     public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; }
     
     public ISyntax[] ChildList { get; private set; }
@@ -30,7 +34,23 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;
-    
+
+	public ConstructorInvocationExpressionNode SetTypeClauseNode(TypeClauseNode? resultTypeClauseNode)
+	{
+		ResultTypeClauseNode = resultTypeClauseNode;
+		
+		SetChildList();
+		return this;
+	}
+
+	public ConstructorInvocationExpressionNode SetFunctionParametersListingNode(FunctionParametersListingNode? functionParametersListingNode)
+	{
+		FunctionParametersListingNode = functionParametersListingNode;
+		
+		SetChildList();
+		return this;
+	}
+   
     public void SetChildList()
     {
     	var childCount = 2; // NewKeywordToken, ResultTypeClauseNode,

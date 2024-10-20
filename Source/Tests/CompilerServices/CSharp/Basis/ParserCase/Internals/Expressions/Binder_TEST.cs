@@ -32,6 +32,8 @@ public class Binder_TEST
 				return ParenthesizedMergeToken((ParenthesizedExpressionNode)expressionPrimary, token, session);
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, token, session);
+			case SyntaxKind.ConstructorInvocationExpressionNode:
+				return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, token, session);
 			case SyntaxKind.ExplicitCastNode:
 				return ExplicitCastMergeToken((ExplicitCastNode)expressionPrimary, token, session);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
@@ -56,6 +58,8 @@ public class Binder_TEST
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, session);
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, session);
+			case SyntaxKind.ConstructorInvocationExpressionNode:
+				return ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)expressionPrimary, expressionSecondary, session);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
 				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, session);
 			case SyntaxKind.BadExpressionNode:
@@ -208,6 +212,61 @@ public class Binder_TEST
 		}
 	}
 	
+	public IExpressionNode ConstructorInvocationMergeToken(
+		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, ISyntaxToken token, ExpressionSession session)
+	{
+		switch (token.SyntaxKind)
+		{
+			case SyntaxKind.IdentifierToken:
+				if (constructorInvocationExpressionNode.ResultTypeClauseNode is null)
+				{
+					if (token.SyntaxKind == SyntaxKind.IdentifierToken ||
+					    UtilityApi.IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
+					{
+						var typeClauseNode = new TypeClauseNode(
+							token,
+        					valueType: null,
+        					genericParametersListingNode: null);
+						
+						return constructorInvocationExpressionNode.SetTypeClauseNode(typeClauseNode);
+					}
+				}
+				
+				goto default;
+			case SyntaxKind.OpenParenthesisToken:
+				var functionParametersListingNode = new FunctionParametersListingNode(
+					(OpenParenthesisToken)token,
+			        new List<FunctionParameterEntryNode>(),
+			        closeParenthesisToken: default);
+			        
+			    constructorInvocationExpressionNode.SetFunctionParametersListingNode(functionParametersListingNode);
+				
+				session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, constructorInvocationExpressionNode));
+				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			case SyntaxKind.CloseParenthesisToken:
+				constructorInvocationExpressionNode.FunctionParametersListingNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
+				return constructorInvocationExpressionNode;
+			case SyntaxKind.CommaToken:
+				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, token);
+		}
+	}
+	
+	public IExpressionNode ConstructorInvocationMergeExpression(
+		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, IExpressionNode expressionSecondary, ExpressionSession session)
+	{
+		switch (expressionSecondary.SyntaxKind)
+		{
+			case SyntaxKind.EmptyExpressionNode:
+				return constructorInvocationExpressionNode;
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+		}
+	}
+	
 	public IExpressionNode EmptyMergeToken(
 		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, ExpressionSession session)
 	{
@@ -247,6 +306,12 @@ public class Binder_TEST
 				var parenthesizedExpressionNode = new ParenthesizedExpressionNode((OpenParenthesisToken)token, CSharpFacts.Types.Void.ToTypeClause());
 				session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			case SyntaxKind.NewTokenKeyword:
+				return new ConstructorInvocationExpressionNode(
+					(KeywordToken)token,
+			        typeClauseNode: null,
+			        functionParametersListingNode: null,
+			        objectInitializationParametersListingNode: null);
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
 		}
