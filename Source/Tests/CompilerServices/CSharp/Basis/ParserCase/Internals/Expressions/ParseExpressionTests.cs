@@ -792,14 +792,13 @@ var aaa = 1;
 	    Assert.Null(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode);
 	    
 	    Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
-		Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
 		
 		// FunctionParametersListingNode
 		{
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
 			Assert.Equal(2, constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Count);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
 		}
-		
-		Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
 	    
 	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
     }
@@ -832,7 +831,10 @@ var aaa = 1;
 		
 	    // ResultTypeClauseNode.GenericParametersListingNode
 	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
 	    	Assert.Equal(2, constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count);
+	    	Assert.True(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
 	    }
 	    
 	    Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
@@ -871,7 +873,25 @@ var aaa = 1;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
         
-        throw new NotImplementedException();
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // ResultTypeClauseNode.GenericParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.OpenAngleBracketToken.ConstructorWasInvoked);
+	    	Assert.Equal(2, constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count);
+	    	Assert.True(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked);
+	    }
+
+		// FunctionParametersListingNode
+		{
+			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			Assert.Equal(2, constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Count);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
+	    
+	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
     }
     
     // TODO: Object initialization and Collection initialization
