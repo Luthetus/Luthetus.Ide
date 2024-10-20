@@ -62,35 +62,54 @@ public class Parser_TEST
     	IExpressionNode expressionResult)
 	{
 		Console.Write("MERGE: ");
-		///////////////////////////////////////////////////////////////////
-		if (expressionPrimary.SyntaxKind == SyntaxKind.BadExpressionNode)
-			WriteBadExpressionNode((BadExpressionNode)expressionPrimary);
-		else
-			Console.Write($"{expressionPrimary.SyntaxKind}, ");
-		///////////////////////////////////////////////////////////////////
-		if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
-			WriteBadExpressionNode((BadExpressionNode)expressionSecondary);
-		else
-			Console.Write($"{expressionSecondary.SyntaxKind}, ");
+		
+		WriteSyntax(expressionPrimary);
+		WriteSyntax(expressionSecondary);
 		Console.WriteLine();
-		///////////////////////////////////////////////////////////////////
+		
 		Console.Write($"\t-> ");
-		if (expressionPrimary.SyntaxKind == SyntaxKind.BadExpressionNode)
-			WriteBadExpressionNode((BadExpressionNode)expressionPrimary);
-		else
-			Console.Write($"{expressionPrimary.SyntaxKind}, ");
+		WriteSyntax(expressionResult);
 		Console.WriteLine();
 	}
 	
-	private static void WriteBadExpressionNode(BadExpressionNode badExpressionNode)
+	private static void WriteSyntax(ISyntax syntax)
 	{
-		Console.Write($"{badExpressionNode.SyntaxKind} {{");
-		
-		foreach (var child in badExpressionNode.SyntaxList)
+		if (syntax.SyntaxKind == SyntaxKind.BadExpressionNode)
 		{
-			Console.Write($"{child.SyntaxKind}, ");
-		}
+			var badExpressionNode = (BadExpressionNode)syntax;
+			
+			Console.Write($"{badExpressionNode.SyntaxKind} {{");
 		
-		Console.Write(" }, ");
+			foreach (var child in badExpressionNode.SyntaxList)
+			{
+				Console.Write($"{child.SyntaxKind}, ");
+			}
+			
+			Console.Write(" }, ");
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)syntax;
+			Console.Write($"AIEN_{ambiguousIdentifierExpressionNode.Token.TextSpan.GetText()}");
+			
+			if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is not null)
+			{
+				Console.Write("<");
+				
+				for (int i = 0; i < ambiguousIdentifierExpressionNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count; i++)
+				{
+					Console.Write($"{ambiguousIdentifierExpressionNode.GenericParametersListingNode.GenericParameterEntryNodeList[i].TypeClauseNode.TypeIdentifierToken.TextSpan.GetText()}");
+				
+					if (i < ambiguousIdentifierExpressionNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
+						Console.Write(", ");
+				}
+				
+				Console.Write(">");
+			}
+		}
+		else
+		{
+			Console.Write($"{syntax.SyntaxKind}, ");
+		}
 	}
 }
