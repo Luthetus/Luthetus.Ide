@@ -346,7 +346,7 @@ public class ParseFunctions
         {
             model.SyntaxStack.Push(new FunctionParametersListingNode(
                 consumedOpenParenthesisToken,
-                ImmutableArray<FunctionParameterEntryNode>.Empty,
+                new List<FunctionParameterEntryNode>(),
                 (CloseParenthesisToken)model.TokenWalker.Consume()));
 
             return;
@@ -439,7 +439,7 @@ public class ParseFunctions
 
         model.SyntaxStack.Push(new FunctionParametersListingNode(
             consumedOpenParenthesisToken,
-            mutableFunctionParametersListing.ToImmutableArray(),
+            mutableFunctionParametersListing,
             closeParenthesisToken));
     }
 

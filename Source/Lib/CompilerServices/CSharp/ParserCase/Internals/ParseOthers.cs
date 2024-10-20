@@ -213,7 +213,7 @@ public static class ParseOthers
                         {
                             functionParametersListingNode = new FunctionParametersListingNode(
                                 (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
-                                ImmutableArray<FunctionParameterEntryNode>.Empty,
+                                new List<FunctionParameterEntryNode>(),
                                 (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken));
                         }
                         

@@ -36,6 +36,7 @@ public class Parser_TEST
 	    				session.ShortCircuitList.RemoveRange(i, session.ShortCircuitList.Count - i);
 	    				
 		    			var expressionSecondary = expressionPrimary;
+		    			Console.WriteLine($"expressionSecondary: {expressionSecondary.SyntaxKind}");
 		    			expressionPrimary = tuple.ExpressionNode;
 		    			expressionPrimary = binder.AnyMergeExpression(expressionPrimary, expressionSecondary, session);
 		    			break;

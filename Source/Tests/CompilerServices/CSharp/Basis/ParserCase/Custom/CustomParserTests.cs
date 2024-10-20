@@ -551,7 +551,7 @@ public class CustomParserTests
             .FunctionParametersListingNode;
 
         Assert.NotNull(functionParametersListingNode.OpenParenthesisToken);
-        Assert.Equal(2, functionParametersListingNode.FunctionParameterEntryNodeList.Length);
+        Assert.Equal(2, functionParametersListingNode.FunctionParameterEntryNodeList.Count);
         Assert.NotNull(functionParametersListingNode.CloseParenthesisToken);
 
         Assert.False(functionParametersListingNode.IsFabricated);

@@ -592,7 +592,7 @@ var aaa = 1;
 		
 		var expression = Parser_TEST.ParseExpression(session);
 		
-		var parenthesizedExpressionNode = (FunctionInvocationNode)expression;
+		var functionInvocationNode = (FunctionInvocationNode)expression;
     }
     
     [Fact]

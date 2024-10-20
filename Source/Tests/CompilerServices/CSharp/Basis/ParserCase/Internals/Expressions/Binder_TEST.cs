@@ -30,6 +30,8 @@ public class Binder_TEST
 				return BinaryMergeToken((BinaryExpressionNode)expressionPrimary, token, session);
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeToken((ParenthesizedExpressionNode)expressionPrimary, token, session);
+			case SyntaxKind.FunctionInvocationNode:
+				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, token, session);
 			case SyntaxKind.ExplicitCastNode:
 				return ExplicitCastMergeToken((ExplicitCastNode)expressionPrimary, token, session);
 			case SyntaxKind.BadExpressionNode:
@@ -50,6 +52,8 @@ public class Binder_TEST
 		{
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, session);
+			case SyntaxKind.FunctionInvocationNode:
+				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, session);
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), expressionPrimary, expressionSecondary);
 		};
@@ -58,6 +62,29 @@ public class Binder_TEST
 	public IExpressionNode BadMergeToken(
 		BadExpressionNode badExpressionNode, ISyntaxToken token, ExpressionSession session)
 	{
+		if (badExpressionNode.SyntaxList.Count == 2 &&
+			token.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+		{
+			if (badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken)
+			{
+				var functionParametersListingNode = new FunctionParametersListingNode(
+					(OpenParenthesisToken)token,
+			        new List<FunctionParameterEntryNode>(),
+			        closeParenthesisToken: default);
+			
+				var functionInvocationNode = new FunctionInvocationNode(
+					(IdentifierToken)badExpressionNode.SyntaxList[1],
+			        functionDefinitionNode: null,
+			        genericParametersListingNode: null,
+			        functionParametersListingNode: functionParametersListingNode,
+			        CSharpFacts.Types.Void.ToTypeClause());
+				
+				session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
+				session.ShortCircuitList.Add((SyntaxKind.CommaToken, functionInvocationNode));
+				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			}
+		}
+	
 		badExpressionNode.SyntaxList.Add(token);
 		return badExpressionNode;
 	}
@@ -218,5 +245,30 @@ public class Binder_TEST
 		}
 			
 		return parenthesizedExpressionNode.SetInnerExpression(expressionSecondary);
+	}
+	
+	public IExpressionNode FunctionInvocationMergeToken(
+		FunctionInvocationNode functionInvocationNode, ISyntaxToken token, ExpressionSession session)
+	{
+		switch (token.SyntaxKind)
+		{
+			case SyntaxKind.CloseParenthesisToken:
+				functionInvocationNode.FunctionParametersListingNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
+				return functionInvocationNode;
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), functionInvocationNode, token);
+		}
+	}
+	
+	public IExpressionNode FunctionInvocationMergeExpression(
+		FunctionInvocationNode functionInvocationNode, IExpressionNode expressionSecondary, ExpressionSession session)
+	{
+		switch (expressionSecondary.SyntaxKind)
+		{
+			case SyntaxKind.EmptyExpressionNode:
+				return functionInvocationNode;
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), functionInvocationNode, expressionSecondary);
+		}
 	}
 }
