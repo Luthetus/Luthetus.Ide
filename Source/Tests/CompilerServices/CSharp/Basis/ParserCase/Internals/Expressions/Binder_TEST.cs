@@ -105,7 +105,8 @@ public class Binder_TEST
 		}
 		else if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
-			Console.WriteLine("HHHHHHHHHHHHHHHHHHHHHH");
+			ambiguousIdentifierExpressionNode.GenericParametersListingNode.SetCloseAngleBracketToken((CloseAngleBracketToken)token);
+			return ambiguousIdentifierExpressionNode;
 		}
 		else if (token.SyntaxKind == SyntaxKind.CommaToken)
 		{

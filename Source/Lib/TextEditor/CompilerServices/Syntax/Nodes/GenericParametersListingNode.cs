@@ -22,13 +22,21 @@ public sealed class GenericParametersListingNode : ISyntaxNode
 
     public OpenAngleBracketToken OpenAngleBracketToken { get; }
     public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
-    public CloseAngleBracketToken CloseAngleBracketToken { get; }
+    public CloseAngleBracketToken CloseAngleBracketToken { get; private set; }
 
     public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericParametersListingNode;
+    
+    public GenericParametersListingNode SetCloseAngleBracketToken(CloseAngleBracketToken closeAngleBracketToken)
+    {
+    	CloseAngleBracketToken = closeAngleBracketToken;
+    	
+    	SetChildList();
+    	return this;
+    }
     
     public void SetChildList()
     {
