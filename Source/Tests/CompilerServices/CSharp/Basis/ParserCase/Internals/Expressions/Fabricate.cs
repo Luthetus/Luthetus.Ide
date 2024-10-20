@@ -53,6 +53,11 @@ public static class Fabricate
     	return new KeywordToken(TextSpan("int"), SyntaxKind.IntTokenKeyword);
     }
     
+    public static KeywordToken New()
+    {
+    	return new KeywordToken(TextSpan("new"), SyntaxKind.NewTokenKeyword);
+    }
+    
     public static IdentifierToken Identifier(string text)
     {
     	return new IdentifierToken(TextSpan(text));

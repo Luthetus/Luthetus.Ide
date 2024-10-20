@@ -729,4 +729,107 @@ var aaa = 1;
 			Assert.True(functionInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
 		}
     }
+    
+    [Fact]
+    public void ConstructorInvocationNode_A()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new Person()
+				Fabricate.New(),
+				Fabricate.Identifier("Person"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void ConstructorInvocationNode_B()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new Person(18, "John")
+				Fabricate.New(),
+				Fabricate.Identifier("Person"),
+				Fabricate.OpenParenthesis(),
+				/**/Fabricate.Number("18"),
+				/**/Fabricate.String("John"),
+				Fabricate.CloseParenthesis(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+    	
+    	throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void ConstructorInvocationNode_C()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new Dictionary<int, Person>()
+				Fabricate.New(),
+				Fabricate.Identifier("Dictionary"),
+				Fabricate.OpenAngleBracket(),
+				/**/Fabricate.Int(),
+				/**/Fabricate.Identifier("Person"),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+		
+        throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void ConstructorInvocationNode_D()
+    {
+    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new Dictionary<int, Person>(0, "Test")
+				Fabricate.New(),
+				Fabricate.Identifier("Dictionary"),
+				Fabricate.OpenAngleBracket(),
+				/**/Fabricate.Int(),
+				/**/Fabricate.Identifier("Person"),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				/**/Fabricate.Number("0"),
+				/**/Fabricate.String("Test"),
+				Fabricate.CloseParenthesis(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        throw new NotImplementedException();
+    }
+    
+    // TODO: Object initialization and Collection initialization
 }
