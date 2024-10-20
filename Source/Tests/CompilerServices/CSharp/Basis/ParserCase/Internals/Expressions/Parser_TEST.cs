@@ -36,9 +36,54 @@ public class Parser_TEST
 	    				session.ShortCircuitList.RemoveRange(i, session.ShortCircuitList.Count - i);
 	    				
 		    			var expressionSecondary = expressionPrimary;
-		    			Console.WriteLine($"expressionSecondary: {expressionSecondary.SyntaxKind}");
 		    			expressionPrimary = tuple.ExpressionNode;
+		    			
+		    			void WriteBadExpressionNode(BadExpressionNode badExpressionNode)
+		    			{
+		    				Console.Write($"{expressionPrimary.SyntaxKind} {{");
+		    				
+		    				foreach (var child in badExpressionNode.SyntaxList)
+		    				{
+		    					Console.Write($"{child.SyntaxKind}, ");
+		    				}
+		    				
+		    				Console.Write(" }, ");
+		    			}
+		    			
+		    			Console.Write("MERGE: ");
+		    			
+		    			if (expressionPrimary.SyntaxKind == SyntaxKind.BadExpressionNode)
+		    			{
+		    				WriteBadExpressionNode((BadExpressionNode)expressionPrimary);
+		    			}
+		    			else
+		    			{
+		    				Console.Write("{expressionPrimary.SyntaxKind}, ");
+		    			}
+		    			
+		    			if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
+		    			{
+		    				WriteBadExpressionNode((BadExpressionNode)expressionSecondary);
+		    			}
+		    			else
+		    			{
+		    				Console.Write("{expressionSecondary.SyntaxKind}, ");
+		    			}
+		    			Console.WriteLine();
+		    			
+		    			
 		    			expressionPrimary = binder.AnyMergeExpression(expressionPrimary, expressionSecondary, session);
+		    			
+		    			Console.Write($"\t-> ");
+		    			if (expressionPrimary.SyntaxKind == SyntaxKind.BadExpressionNode)
+		    			{
+		    				WriteBadExpressionNode((BadExpressionNode)expressionPrimary);
+		    			}
+		    			else
+		    			{
+		    				Console.Write("{expressionPrimary.SyntaxKind}, ");
+		    			}
+		    			Console.WriteLine();
 		    			break;
 	    			}
 	    		}
