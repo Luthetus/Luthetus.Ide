@@ -64,6 +64,7 @@ public class Parser_TEST
 		Console.Write("MERGE: ");
 		
 		WriteSyntax(expressionPrimary);
+		Console.Write(" + ");
 		WriteSyntax(expressionSecondary);
 		Console.WriteLine();
 		
@@ -82,7 +83,7 @@ public class Parser_TEST
 		
 			foreach (var child in badExpressionNode.SyntaxList)
 			{
-				Console.Write($"{child.SyntaxKind}, ");
+				WriteSyntax(child);
 			}
 			
 			Console.Write(" }, ");
@@ -94,18 +95,22 @@ public class Parser_TEST
 			
 			if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is not null)
 			{
-				Console.Write("<");
-				
-				for (int i = 0; i < ambiguousIdentifierExpressionNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count; i++)
-				{
-					Console.Write($"{ambiguousIdentifierExpressionNode.GenericParametersListingNode.GenericParameterEntryNodeList[i].TypeClauseNode.TypeIdentifierToken.TextSpan.GetText()}");
-				
-					if (i < ambiguousIdentifierExpressionNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
-						Console.Write(", ");
-				}
-				
-				Console.Write(">");
+				WriteSyntax(ambiguousIdentifierExpressionNode.GenericParametersListingNode);
 			}
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.GenericParametersListingNode)
+		{
+			var genericParametersListingNode = (GenericParametersListingNode)syntax;
+			
+			Console.Write("<");
+			for (int i = 0; i < genericParametersListingNode.GenericParameterEntryNodeList.Count; i++)
+			{
+				Console.Write($"{genericParametersListingNode.GenericParameterEntryNodeList[i].TypeClauseNode.TypeIdentifierToken.TextSpan.GetText()}");
+				
+				if (i < genericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
+					Console.Write(",");
+			}
+			Console.Write(">");
 		}
 		else
 		{
