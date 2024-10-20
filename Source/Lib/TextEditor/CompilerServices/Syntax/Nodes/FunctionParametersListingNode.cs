@@ -53,7 +53,7 @@ public sealed class FunctionParametersListingNode : ISyntaxNode
     	// OpenParenthesisToken, FunctionParameterEntryNodeList.Length, CloseParenthesisToken,
     	var childCount = 
     		1 +                                     // OpenParenthesisToken,
-    		FunctionParameterEntryNodeList.Count + // FunctionParameterEntryNodeList.Length,
+    		FunctionParameterEntryNodeList.Count + // FunctionParameterEntryNodeList.Count,
     		1;                                      // CloseParenthesisToken,
             
         var childList = new ISyntax[childCount];

@@ -84,6 +84,41 @@ public class Binder_TEST
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			}
 		}
+		else if (badExpressionNode.SyntaxList.Count == 2 &&
+				 token.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+		{
+			if (badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken)
+			{
+				// Naively take this to be a TypeClauseNode with generic parameters.
+				// If later an OpenParenthesisToken is found, then change the node to a FunctionInvocationNode.
+				var typeClauseNode = new TypeClauseNode(
+					(IdentifierToken)badExpressionNode.SyntaxList[1],
+			        valueType: null,
+			        genericParametersListingNode: null);
+			        
+			    // TypeClauseNode doesn't implement IExpressionNode so it needs to be wrapped in the badExpressionNode
+			    badExpressionNode.SyntaxList[1] = typeClauseNode;
+			}
+			
+			// The prior if can fall into this one.
+			if (badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.TypeClauseNode)
+			{
+				var typeClauseNode = (TypeClauseNode)badExpressionNode.SyntaxList[1];
+				
+				if (typeClauseNode.GenericParametersListingNode is null)
+				{
+					typeClauseNode.SetGenericParametersListingNode(
+						new GenericParametersListingNode(
+							(OpenAngleBracketToken)token,
+					        new List<GenericParameterEntryNode>(),
+					        closeAngleBracketToken: default));
+				}
+				
+			    session.ShortCircuitList.Add((SyntaxKind.CloseAngleBracketToken, badExpressionNode));
+				session.ShortCircuitList.Add((SyntaxKind.CommaToken, badExpressionNode));
+				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			}
+		}
 	
 		badExpressionNode.SyntaxList.Add(token);
 		return badExpressionNode;

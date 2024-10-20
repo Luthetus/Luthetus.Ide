@@ -653,6 +653,17 @@ var aaa = 1;
 		var expression = Parser_TEST.ParseExpression(session);
 		
 		var functionInvocationNode = (FunctionInvocationNode)expression;
+		
+		Assert.True(functionInvocationNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+		Assert.True(functionInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		
+		Assert.NotNull(functionInvocationNode.GenericParametersListingNode);
+		
+		var intGenericParameterEntryNode = functionInvocationNode.GenericParametersListingNode.GenericParameterEntryNodeList[0];
+		Assert.Equal("int", intGenericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		
+		var stringGenericParameterEntryNode = functionInvocationNode.GenericParametersListingNode.GenericParameterEntryNodeList[1];
+		Assert.Equal("string", stringGenericParameterEntryNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
     }
     
     [Fact]

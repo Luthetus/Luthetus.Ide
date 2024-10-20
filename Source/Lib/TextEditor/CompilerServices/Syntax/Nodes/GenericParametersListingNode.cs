@@ -10,7 +10,7 @@ public sealed class GenericParametersListingNode : ISyntaxNode
 {
     public GenericParametersListingNode(
         OpenAngleBracketToken openAngleBracketToken,
-        ImmutableArray<GenericParameterEntryNode> genericParameterEntryNodes,
+        List<GenericParameterEntryNode> genericParameterEntryNodes,
         CloseAngleBracketToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
@@ -21,7 +21,7 @@ public sealed class GenericParametersListingNode : ISyntaxNode
     }
 
     public OpenAngleBracketToken OpenAngleBracketToken { get; }
-    public ImmutableArray<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
+    public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; }
 
     public ISyntax[] ChildList { get; private set; }
@@ -35,7 +35,7 @@ public sealed class GenericParametersListingNode : ISyntaxNode
     	// OpenAngleBracketToken, GenericParameterEntryNodeList.Length, CloseAngleBracketToken,
     	var childCount = 
     		1 +                                    // OpenAngleBracketToken,
-    		GenericParameterEntryNodeList.Length + // GenericParameterEntryNodeList.Length,
+    		GenericParameterEntryNodeList.Count + // GenericParameterEntryNodeList.Count,
     		1;                                     // CloseAngleBracketToken,
     	
         var childList = new ISyntax[childCount];
