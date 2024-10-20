@@ -263,7 +263,15 @@ public class Binder_TEST
 			case SyntaxKind.EmptyExpressionNode:
 				return constructorInvocationExpressionNode;
 			default:
-				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+				var functionParameterEntryNode = new FunctionParameterEntryNode(
+			        expressionSecondary,
+			        hasOutKeyword: false,
+			        hasInKeyword: false,
+			        hasRefKeyword: false);
+			        
+				constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Add(functionParameterEntryNode);
+				
+				return constructorInvocationExpressionNode;
 		}
 	}
 	

@@ -774,6 +774,7 @@ var aaa = 1;
 				Fabricate.Identifier("Person"),
 				Fabricate.OpenParenthesis(),
 				/**/Fabricate.Number("18"),
+				/**/Fabricate.Comma(),
 				/**/Fabricate.String("John"),
 				Fabricate.CloseParenthesis(),
 			},
@@ -784,7 +785,23 @@ var aaa = 1;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
     	
-    	throw new NotImplementedException();
+    	Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    //constructorInvocationExpressionNode.ResultTypeClauseNode;
+	    
+	    Assert.Null(constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode);
+	    
+	    Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+		Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+		
+		// FunctionParametersListingNode
+		{
+			Assert.Equal(2, constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Count);
+		}
+		
+		Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+	    
+	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
     }
     
     [Fact]
@@ -798,6 +815,7 @@ var aaa = 1;
 				Fabricate.Identifier("Dictionary"),
 				Fabricate.OpenAngleBracket(),
 				/**/Fabricate.Int(),
+				/**/Fabricate.Comma(),
 				/**/Fabricate.Identifier("Person"),
 				Fabricate.CloseAngleBracket(),
 				Fabricate.OpenParenthesis(),
@@ -825,10 +843,12 @@ var aaa = 1;
 				Fabricate.Identifier("Dictionary"),
 				Fabricate.OpenAngleBracket(),
 				/**/Fabricate.Int(),
+				/**/Fabricate.Comma(),
 				/**/Fabricate.Identifier("Person"),
 				Fabricate.CloseAngleBracket(),
 				Fabricate.OpenParenthesis(),
 				/**/Fabricate.Number("0"),
+				/**/Fabricate.Comma(),
 				/**/Fabricate.String("Test"),
 				Fabricate.CloseParenthesis(),
 			},
