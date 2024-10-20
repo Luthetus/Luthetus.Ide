@@ -593,6 +593,11 @@ var aaa = 1;
 		var expression = Parser_TEST.ParseExpression(session);
 		
 		var functionInvocationNode = (FunctionInvocationNode)expression;
+		
+		Assert.True(functionInvocationNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+		Assert.True(functionInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		
+		Assert.Empty(functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
     }
     
     [Fact]
@@ -614,7 +619,16 @@ var aaa = 1;
 		
 		var expression = Parser_TEST.ParseExpression(session);
 		
-		var parenthesizedExpressionNode = (FunctionInvocationNode)expression;
+		var functionInvocationNode = (FunctionInvocationNode)expression;
+		
+		Assert.True(functionInvocationNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+		Assert.True(functionInvocationNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		
+		var numericFunctionParameterEntryNode = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList[0];
+		Assert.Equal(SyntaxKind.NumericLiteralToken, ((LiteralExpressionNode)numericFunctionParameterEntryNode.ExpressionNode).LiteralSyntaxToken.SyntaxKind);
+		
+		var stringFunctionParameterEntryNode = functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList[1];
+		Assert.Equal(SyntaxKind.StringLiteralToken, ((LiteralExpressionNode)stringFunctionParameterEntryNode.ExpressionNode).LiteralSyntaxToken.SyntaxKind);
     }
     
     [Fact]
@@ -638,7 +652,7 @@ var aaa = 1;
 		
 		var expression = Parser_TEST.ParseExpression(session);
 		
-		var parenthesizedExpressionNode = (FunctionInvocationNode)expression;
+		var functionInvocationNode = (FunctionInvocationNode)expression;
     }
     
     [Fact]
@@ -665,6 +679,6 @@ var aaa = 1;
 		
 		var expression = Parser_TEST.ParseExpression(session);
 		
-		var parenthesizedExpressionNode = (FunctionInvocationNode)expression;
+		var functionInvocationNode = (FunctionInvocationNode)expression;
     }
 }

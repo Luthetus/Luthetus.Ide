@@ -25,8 +25,8 @@ public class Parser_TEST
     			break;
     		
     		// Check if the tokenCurrent is a token that is used as a end-delimiter before iterating the list?
-    		if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-    		{
+    		//if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+    		//{
     			for (int i = session.ShortCircuitList.Count - 1; i > -1; i--)
 	    		{
 	    			var tuple = session.ShortCircuitList[i];
@@ -42,7 +42,7 @@ public class Parser_TEST
 		    			break;
 	    			}
 	    		}
-    		}
+    		//}
     		
     		expressionPrimary = binder.AnyMergeToken(expressionPrimary, tokenCurrent, session);
 

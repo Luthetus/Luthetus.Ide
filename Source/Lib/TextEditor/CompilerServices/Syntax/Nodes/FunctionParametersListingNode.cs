@@ -5,6 +5,16 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Used when invoking a function.
+///
+/// TODO: I don't like how this type has the 'OpenParenthesisToken, and CloseParenthesisToken'...
+///       ...It was done this way in order to mirror the generic parameters.
+///       |
+/// 	  Because for generic parameters, the 'OpenAngleBracketToken, and CloseAngleBracketToken'
+///       are tied to the existance of generic parameters
+///       (i.e.: you must match at least 1 generic parameter if the 'OpenAngleBracketToken' is there.).
+///       |
+///       With the function parameters however, the 'OpenParenthesisToken' does not
+///       mandate that at least 1 function parameter must be matched.
 /// </summary>
 public sealed class FunctionParametersListingNode : ISyntaxNode
 {

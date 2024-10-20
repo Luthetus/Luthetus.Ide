@@ -255,6 +255,9 @@ public class Binder_TEST
 			case SyntaxKind.CloseParenthesisToken:
 				functionInvocationNode.FunctionParametersListingNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
 				return functionInvocationNode;
+			case SyntaxKind.CommaToken:
+				session.ShortCircuitList.Add((SyntaxKind.CommaToken, functionInvocationNode));
+				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), functionInvocationNode, token);
 		}
@@ -268,7 +271,15 @@ public class Binder_TEST
 			case SyntaxKind.EmptyExpressionNode:
 				return functionInvocationNode;
 			default:
-				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), functionInvocationNode, expressionSecondary);
+				var functionParameterEntryNode = new FunctionParameterEntryNode(
+			        expressionSecondary,
+			        hasOutKeyword: false,
+			        hasInKeyword: false,
+			        hasRefKeyword: false);
+			        
+				functionInvocationNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Add(functionParameterEntryNode);
+				
+				return functionInvocationNode;
 		}
 	}
 }
