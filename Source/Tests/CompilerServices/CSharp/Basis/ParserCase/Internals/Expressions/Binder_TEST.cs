@@ -270,6 +270,7 @@ public class Binder_TEST
 				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.SetCloseAngleBracketToken((CloseAngleBracketToken)token);
 				return constructorInvocationExpressionNode;
 			case SyntaxKind.OpenBraceToken:
+				Console.WriteLine("case SyntaxKind.OpenBraceToken:");
 				var objectInitializationParametersListingNode = new ObjectInitializationParametersListingNode(
 					(OpenBraceToken)token,
 			        new List<ObjectInitializationParameterEntryNode>(),
@@ -387,8 +388,24 @@ public class Binder_TEST
 			}
 
 			var success = true;
+			
+			// I'm tired and feel like I'm about to pass out.
+			// This feels like hacky nonsense.
+			// It allows for ObjectInitialization and CollectionInitialization
+			// to use the same node but why not just use separate nodes?
+			var currentTokenIsComma = false;
+			var currentTokenIsBrace = false;
+			{
+				if (session.Position < session.TokenList.Count)
+				{
+					var currentToken = session.TokenList[session.Position];
+					currentTokenIsComma = currentToken.SyntaxKind == SyntaxKind.CommaToken;
+					currentTokenIsBrace = currentToken.SyntaxKind == SyntaxKind.CloseBraceToken;
+				}
+			}
 
-			if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked)
+			if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked &&
+				(!currentTokenIsComma && !currentTokenIsBrace))
 			{
 				Console.Write("AC; ");
 				
@@ -424,7 +441,8 @@ public class Binder_TEST
 					success = false;
 				}
 			}
-			else if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked)
+			else if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked &&
+					 (!currentTokenIsComma && !currentTokenIsBrace))
 			{
 				Console.Write("AD; ");
 				success = false;
@@ -433,6 +451,16 @@ public class Binder_TEST
 			{
 				Console.Write("AE; ");
 				objectInitializationParameterEntryNode.ExpressionNode = expressionSecondary;
+				
+				if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked && (currentTokenIsComma || currentTokenIsBrace))
+				{
+					var nextObjectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
+				        propertyIdentifierToken: default,
+				        equalsToken: default,
+				        expressionNode: new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
+				    
+				    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(nextObjectInitializationParameterEntryNode);
+				}
 			}
 			else
 			{
@@ -539,6 +567,7 @@ public class Binder_TEST
 				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
 				return new BinaryExpressionNode(literalExpressionNode, binaryOperatorNode);
 			default:
+				Console.WriteLine($"LiteralMergeToken: {token.SyntaxKind}");
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, token);
 		}
 	}

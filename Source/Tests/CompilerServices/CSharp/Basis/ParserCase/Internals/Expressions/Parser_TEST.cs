@@ -16,11 +16,11 @@ public class Parser_TEST
     {
     	var binder = new Binder_TEST();
     	IExpressionNode expressionPrimary = new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-    	int position = 0;
+    	session.Position = 0;
     	
-    	while (position < session.TokenList.Count)
+    	while (session.Position < session.TokenList.Count)
     	{
-    		var tokenCurrent = session.TokenList[position];
+    		var tokenCurrent = session.TokenList[session.Position];
     		if (tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
     			break;
     		
@@ -49,7 +49,7 @@ public class Parser_TEST
     		
     		expressionPrimary = binder.AnyMergeToken(expressionPrimary, tokenCurrent, session);
 
-    		position++;
+    		session.Position++;
     	}
     	
     	return expressionPrimary;

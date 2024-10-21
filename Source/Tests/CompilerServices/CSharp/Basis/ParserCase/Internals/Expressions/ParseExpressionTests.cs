@@ -1159,9 +1159,10 @@ var aaa = 1;
 				Fabricate.OpenAngleBracket(),
 				Fabricate.Int(),
 				Fabricate.CloseAngleBracket(),
-				Fabricate.OpenParenthesis(),
-				Fabricate.CloseParenthesis(),
 				Fabricate.OpenBrace(),
+				Fabricate.Number("1"),
+				Fabricate.Comma(),
+				Fabricate.Number("2"),
 				Fabricate.CloseBrace(),
 			},
 			expressionStack: new Stack<ISyntax>(),
@@ -1190,7 +1191,7 @@ var aaa = 1;
 	    		var firstCollectionInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[0];
 				Assert.True(firstCollectionInitializationParameterEntryNode.IsCollectionInitialization);
 	    		
-	    		var literalExpressionNode = (LiteralExpressionNode)firstCollectionInitializationParameterEntryNode;
+	    		var literalExpressionNode = (LiteralExpressionNode)firstCollectionInitializationParameterEntryNode.ExpressionNode;
 	    		Assert.Equal("1", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 		        Assert.True(literalExpressionNode.LiteralSyntaxToken.ConstructorWasInvoked);
 	    	}
@@ -1198,7 +1199,7 @@ var aaa = 1;
 	    		var secondCollectionInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
 	    		Assert.True(secondCollectionInitializationParameterEntryNode.IsCollectionInitialization);
 	    		
-	    		var literalExpressionNode = (LiteralExpressionNode)secondCollectionInitializationParameterEntryNode;
+	    		var literalExpressionNode = (LiteralExpressionNode)secondCollectionInitializationParameterEntryNode.ExpressionNode;
 	    		Assert.Equal("2", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 		        Assert.True(literalExpressionNode.LiteralSyntaxToken.ConstructorWasInvoked);
 	    	}

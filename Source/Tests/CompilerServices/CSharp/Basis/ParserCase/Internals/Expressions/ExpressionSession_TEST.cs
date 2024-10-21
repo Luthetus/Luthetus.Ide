@@ -25,4 +25,5 @@ public class ExpressionSession
 	public List<ISyntaxToken> TokenList { get; }
 	public Stack<ISyntax> ExpressionStack { get; }
 	public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ShortCircuitList { get; }
+	public int Position { get; set; }
 }
