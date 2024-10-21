@@ -60,7 +60,9 @@ public class Binder_TEST
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, session);
 			case SyntaxKind.ConstructorInvocationExpressionNode:
-				return ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)expressionPrimary, expressionSecondary, session);
+				expressionPrimary = ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)expressionPrimary, expressionSecondary, session);
+				Console.WriteLine();
+				return expressionPrimary;
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
 				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, session);
 			case SyntaxKind.BadExpressionNode:
@@ -294,23 +296,16 @@ public class Binder_TEST
 				if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters &&
 					constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
 				{
-					var wasHandled = false;
-				
 					if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)
 					{
 						var lastParameter = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
 						
 						if (!lastParameter.EqualsToken.ConstructorWasInvoked)
 						{
-							wasHandled = true;
 							lastParameter.EqualsToken = (EqualsToken)token;
+							return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 						}
 					}
-					
-					if (!wasHandled)
-						goto default;
-					
-					return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 				}
 				
 				goto default;
@@ -322,139 +317,142 @@ public class Binder_TEST
 	public IExpressionNode ConstructorInvocationMergeExpression(
 		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, IExpressionNode expressionSecondary, ExpressionSession session)
 	{
-		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		if (expressionSecondary.SyntaxKind == SyntaxKind.EmptyExpressionNode)
 		{
-			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
-			var text = ambiguousIdentifierExpressionNode.Token.TextSpan.GetText();
-			if (text == "LastName")
-			{
-				Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-			}
+			return constructorInvocationExpressionNode;
 		}
-	
-		switch (expressionSecondary.SyntaxKind)
+		else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.GenericParameters &&
+				 constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode is not null)
 		{
-			case SyntaxKind.EmptyExpressionNode:
+			if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+			{
+				var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+				
+				var typeClauseNode = new TypeClauseNode(
+					expressionSecondaryTyped.Token,
+			        valueType: null,
+			        genericParametersListingNode: null);
+				
+				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Add(
+					new GenericParameterEntryNode(typeClauseNode));
+				
 				return constructorInvocationExpressionNode;
-			default:
-				if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.GenericParameters &&
-					constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode is not null)
+			}
+			
+			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+		}
+		else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.FunctionParameters &&
+				 constructorInvocationExpressionNode.FunctionParametersListingNode is not null)
+		{
+			var functionParameterEntryNode = new FunctionParameterEntryNode(
+		        expressionSecondary,
+		        hasOutKeyword: false,
+		        hasInKeyword: false,
+		        hasRefKeyword: false);
+		        
+			constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Add(functionParameterEntryNode);
+			
+			return constructorInvocationExpressionNode;
+		}
+		else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters &&
+				 constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
+		{
+			Console.Write("A; ");
+			var needNewNode = true;
+			ObjectInitializationParameterEntryNode? objectInitializationParameterEntryNode = null;
+			
+			if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)
+			{
+				Console.Write("AA; ");
+				objectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
+				
+				if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked ||
+					(objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode))
 				{
-					if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-					{
-						var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
-						
-						var typeClauseNode = new TypeClauseNode(
-							expressionSecondaryTyped.Token,
-					        valueType: null,
-					        genericParametersListingNode: null);
-						
-						constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Add(
-							new GenericParameterEntryNode(typeClauseNode));
-						
-						return constructorInvocationExpressionNode;
-					}
-					
-					return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+					Console.Write("AAA; ");
+					needNewNode = false;
 				}
-				else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.FunctionParameters &&
-						 constructorInvocationExpressionNode.FunctionParametersListingNode is not null)
+			}
+			
+			if (needNewNode)
+			{
+				Console.Write("AB; ");
+				
+				objectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
+			        propertyIdentifierToken: default,
+			        equalsToken: default,
+			        expressionNode: new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
+			    
+			    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(objectInitializationParameterEntryNode);
+			}
+
+			var success = true;
+
+			if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked)
+			{
+				Console.Write("AC; ");
+				
+				if (expressionSecondary.SyntaxKind != SyntaxKind.VariableReferenceNode &&
+					expressionSecondary.SyntaxKind != SyntaxKind.AmbiguousIdentifierExpressionNode)
 				{
-					var functionParameterEntryNode = new FunctionParameterEntryNode(
-				        expressionSecondary,
-				        hasOutKeyword: false,
-				        hasInKeyword: false,
-				        hasRefKeyword: false);
-				        
-					constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList.Add(functionParameterEntryNode);
-					
-					return constructorInvocationExpressionNode;
+					Console.Write("ACA; ");
+					success = false;
 				}
-				else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters &&
-						 constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
+				else if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 				{
-					var needNewNode = true;
-					
-					ObjectInitializationParameterEntryNode objectInitializationParameterEntryNode;
-					
-					if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)
+					Console.Write("ACB; ");
+					objectInitializationParameterEntryNode.PropertyIdentifierToken = ((VariableReferenceNode)expressionSecondary).VariableIdentifierToken;
+				}
+				else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+				{
+					Console.Write("ACC; ");
+					var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+					if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
 					{
-						objectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
-						
-						if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked ||
-							//!lastParameter.EqualsToken.ConstructorWasInvoked ||
-							objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyNode)
-						{
-							needNewNode = false;
-						}
-					}
-					
-					if (needNewNode)
-					{
-						objectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
-					        propertyIdentifierToken: default,
-					        equalsToken: default,
-					        expressionNode: new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
-					    
-					    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(objectInitializationParameterEntryNode);
+						Console.Write("ACCA; ");
+						objectInitializationParameterEntryNode.PropertyIdentifierToken = (IdentifierToken)ambiguousIdentifierExpressionNode.Token;
 					}
 					else
 					{
-						return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+						Console.Write("ACCB; ");
+						success = false;
 					}
-				    
-					if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked &&
-							(expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode ||
-							 expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode))
-					{
-						IdentifierToken identifierToken;
-						
-						if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
-						{
-							var variableReferenceNode = (VariableReferenceNode)expressionSecondary; 
-							identifierToken = variableReferenceNode.VariableIdentifierToken;
-						}
-						else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-						{
-							var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
-							
-							if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
-							{
-								identifierToken = (IdentifierToken)ambiguousIdentifierExpressionNode.Token;
-							}
-							else
-							{
-								Console.WriteLine("else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)");
-								return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
-							}
-						}
-						else
-						{
-							Console.WriteLine("above wasHandled = true;");
-							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
-						}
-						
-						objectInitializationParameterEntryNode.PropertyIdentifierToken = identifierToken;
-					}
-					//else if (!lastParameter.EqualsToken.ConstructorWasInvoked)
-					//{
-					//	Console.WriteLine("else if (!lastParameter.EqualsToken.ConstructorWasInvoked)");
-					//	Console.WriteLine($"constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count: {constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count}");
-					//	return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
-					//}
-					else if (objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyNode)
-					{
-						objectInitializationParameterEntryNode.ExpressionNode = expressionSecondary;
-					}
-					
-					return constructorInvocationExpressionNode;
 				}
 				else
 				{
-					Console.WriteLine("END");
-					return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+					Console.Write("ACD; ");
+					success = false;
 				}
+			}
+			else if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked)
+			{
+				Console.Write("AD; ");
+				success = false;
+			}
+			else if (objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+			{
+				Console.Write("AE; ");
+				objectInitializationParameterEntryNode.ExpressionNode = expressionSecondary;
+			}
+			else
+			{
+				Console.Write($"AF({objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind}); ");
+				success = false;
+			}
+			
+			if (success)
+			{
+				Console.Write("AG; ");
+				return constructorInvocationExpressionNode;
+			}
+			else
+			{
+				Console.Write("AH; ");
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+			}
 		}
+		
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 	}
 	
 	public IExpressionNode EmptyMergeToken(
