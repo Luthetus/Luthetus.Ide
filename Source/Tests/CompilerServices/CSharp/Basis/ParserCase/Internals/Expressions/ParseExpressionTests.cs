@@ -897,7 +897,6 @@ var aaa = 1;
     [Fact]
     public void ObjectInitializationNode_A()
     {
-    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
@@ -906,11 +905,11 @@ var aaa = 1;
 				Fabricate.Identifier("MyClass"),
 				Fabricate.OpenBrace(),
 				/**/Fabricate.Identifier("FirstName"),
-				/**/Fabricate.Equals(),
+				/**/Fabricate.EqualsToken(),
 				/**/Fabricate.Identifier("firstName"),
-				/**/Fabricate.Comma("firstName"),
+				/**/Fabricate.Comma(),
 				/**/Fabricate.Identifier("LastName"),
-				/**/Fabricate.Equals(),
+				/**/Fabricate.EqualsToken(),
 				/**/Fabricate.Identifier("lastName"),
 				Fabricate.CloseBrace(),
 			},
@@ -920,12 +919,51 @@ var aaa = 1;
 		var expression = Parser_TEST.ParseExpression(session);
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
+	    
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	// { FirstName = firstName, LastName = lastName };
+	    	{
+	    		var firstNameObjectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[0];
+	    		
+	    		Assert.Equal("FirstName", firstNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
+		        Assert.True(firstNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
+		        
+		        var variableReferenceNode = (VariableReferenceNode)firstNameObjectInitializationParameterEntryNode.ExpressionNode;
+		        Assert.Equal("firstName", VariableIdentifierToken.TextSpan.GetText())
+	    	}
+	    	{
+	    		var lastNameObjectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
+	    		
+	    		Assert.Equal("LastName", lastNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
+		        Assert.True(lastNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
+		        
+		        var variableReferenceNode = (VariableReferenceNode)lastNameObjectInitializationParameterEntryNode.ExpressionNode;
+		        Assert.Equal("lastName", VariableIdentifierToken.TextSpan.GetText())
+	    	}
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
     
     [Fact]
     public void ObjectInitializationNode_B()
     {
-    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
@@ -934,13 +972,13 @@ var aaa = 1;
 				Fabricate.Identifier("MyClass"),
 				Fabricate.OpenBrace(),
 				/**/Fabricate.Identifier("FirstName"),
-				/**/Fabricate.Equals(),
+				/**/Fabricate.EqualsToken(),
 				/**/Fabricate.Identifier("firstName"),
-				/**/Fabricate.Comma("firstName"),
+				/**/Fabricate.Comma(),
 				/**/Fabricate.Identifier("LastName"),
-				/**/Fabricate.Equals(),
+				/**/Fabricate.EqualsToken(),
 				/**/Fabricate.Identifier("lastName"),
-				/**/Fabricate.Comma("firstName"),
+				/**/Fabricate.Comma(),
 				Fabricate.CloseBrace(),
 			},
 			expressionStack: new Stack<ISyntax>(),
@@ -949,12 +987,51 @@ var aaa = 1;
 		var expression = Parser_TEST.ParseExpression(session);
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
+	    
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	// { FirstName = firstName, LastName = lastName };
+	    	{
+	    		var firstNameObjectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[0];
+	    		
+	    		Assert.Equal("FirstName", firstNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
+		        Assert.True(firstNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
+		        
+		        var variableReferenceNode = (VariableReferenceNode)firstNameObjectInitializationParameterEntryNode.ExpressionNode;
+		        Assert.Equal("firstName", VariableIdentifierToken.TextSpan.GetText())
+	    	}
+	    	{
+	    		var lastNameObjectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
+	    		
+	    		Assert.Equal("LastName", lastNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
+		        Assert.True(lastNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
+		        
+		        var variableReferenceNode = (VariableReferenceNode)lastNameObjectInitializationParameterEntryNode.ExpressionNode;
+		        Assert.Equal("lastName", VariableIdentifierToken.TextSpan.GetText())
+	    	}
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
     
     [Fact]
     public void ObjectInitializationNode_C()
     {
-    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
@@ -970,6 +1047,28 @@ var aaa = 1;
 		var expression = Parser_TEST.ParseExpression(session);
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
+	    
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	Assert.Empty(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList);
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
     
     [Fact]
@@ -992,6 +1091,28 @@ var aaa = 1;
 		var expression = Parser_TEST.ParseExpression(session);
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
+	    
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	Assert.Empty(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList);
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
     
     [Fact]
@@ -1014,6 +1135,28 @@ var aaa = 1;
 		var expression = Parser_TEST.ParseExpression(session);
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
+	    
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	Assert.Empty(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList);
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
     
     // TODO: Collection initialization

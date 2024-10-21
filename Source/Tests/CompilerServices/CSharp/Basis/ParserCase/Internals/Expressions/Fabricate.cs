@@ -88,6 +88,11 @@ public static class Fabricate
     	return new DivisionToken(TextSpan("/"));
     }
     
+    public static EqualsToken EqualsToken()
+    {
+    	return new EqualsToken(TextSpan("="));
+    }
+    
     public static EqualsEqualsToken EqualsEquals()
     {
     	return new EqualsEqualsToken(TextSpan("=="));
@@ -111,5 +116,15 @@ public static class Fabricate
     public static CloseAngleBracketToken CloseAngleBracket()
     {
     	return new CloseAngleBracketToken(TextSpan(">"));
+    }
+    
+    public static OpenBraceToken OpenBrace()
+    {
+    	return new OpenBraceToken(TextSpan("{"));
+    }
+    
+    public static CloseBraceToken CloseBrace()
+    {
+    	return new CloseBraceToken(TextSpan("}"));
     }
 }
