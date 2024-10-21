@@ -194,7 +194,7 @@ public class ParseFunctions
         {
             model.SyntaxStack.Push(new ObjectInitializationParametersListingNode(
                 consumedOpenBraceToken,
-                ImmutableArray<ObjectInitializationParameterEntryNode>.Empty,
+                new List<ObjectInitializationParameterEntryNode>(),
                 (CloseBraceToken)model.TokenWalker.Consume()));
 
             return;
@@ -265,7 +265,7 @@ public class ParseFunctions
 
         model.SyntaxStack.Push(new ObjectInitializationParametersListingNode(
             consumedOpenBraceToken,
-            mutableObjectInitializationParametersListing.ToImmutableArray(),
+            mutableObjectInitializationParametersListing,
             closeBraceToken));
     }
 

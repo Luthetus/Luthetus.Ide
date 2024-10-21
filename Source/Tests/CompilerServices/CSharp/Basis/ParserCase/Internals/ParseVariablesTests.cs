@@ -687,7 +687,7 @@ public class ParseVariablesTests
 
                 // constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList
                 {
-                    Assert.Equal(2, constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Length);
+                    Assert.Equal(2, constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count);
 
                     // First ObjectInitializationParameterEntryNode
                     {
@@ -778,7 +778,7 @@ public class ParseVariablesTests
 
                 // constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList
                 {
-                    Assert.Equal(2, constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Length);
+                    Assert.Equal(2, constructorInvocationNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count);
 
                     // First ObjectInitializationParameterEntryNode
                     {

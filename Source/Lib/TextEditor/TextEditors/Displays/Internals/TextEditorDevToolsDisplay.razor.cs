@@ -10,6 +10,9 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
+/// <summary>
+/// TODO: Debounce this instead of throttling.
+/// </summary>
 public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDependentComponent
 {
 	[Inject]

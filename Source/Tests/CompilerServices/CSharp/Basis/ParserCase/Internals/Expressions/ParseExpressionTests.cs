@@ -945,7 +945,7 @@ var aaa = 1;
 		        Assert.True(firstNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
 		        
 		        var variableReferenceNode = (VariableReferenceNode)firstNameObjectInitializationParameterEntryNode.ExpressionNode;
-		        Assert.Equal("firstName", VariableIdentifierToken.TextSpan.GetText())
+		        Assert.Equal("firstName", variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
 	    	}
 	    	{
 	    		var lastNameObjectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
@@ -954,7 +954,7 @@ var aaa = 1;
 		        Assert.True(lastNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
 		        
 		        var variableReferenceNode = (VariableReferenceNode)lastNameObjectInitializationParameterEntryNode.ExpressionNode;
-		        Assert.Equal("lastName", VariableIdentifierToken.TextSpan.GetText())
+		        Assert.Equal("lastName", variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
 	    	}
 	    	
 	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
@@ -1013,7 +1013,7 @@ var aaa = 1;
 		        Assert.True(firstNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
 		        
 		        var variableReferenceNode = (VariableReferenceNode)firstNameObjectInitializationParameterEntryNode.ExpressionNode;
-		        Assert.Equal("firstName", VariableIdentifierToken.TextSpan.GetText())
+		        Assert.Equal("firstName", variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
 	    	}
 	    	{
 	    		var lastNameObjectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
@@ -1022,7 +1022,7 @@ var aaa = 1;
 		        Assert.True(lastNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
 		        
 		        var variableReferenceNode = (VariableReferenceNode)lastNameObjectInitializationParameterEntryNode.ExpressionNode;
-		        Assert.Equal("lastName", VariableIdentifierToken.TextSpan.GetText())
+		        Assert.Equal("lastName", variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
 	    	}
 	    	
 	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);

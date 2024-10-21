@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -27,9 +28,9 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
     public KeywordToken NewKeywordToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; private set; }
     public FunctionParametersListingNode? FunctionParametersListingNode { get; private set; }
-    public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; }
+    public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; private set; }
     
-    public bool IsReadingGenericArguments { get; set; }
+    public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
     
     public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
@@ -48,6 +49,14 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
 	public ConstructorInvocationExpressionNode SetFunctionParametersListingNode(FunctionParametersListingNode? functionParametersListingNode)
 	{
 		FunctionParametersListingNode = functionParametersListingNode;
+		
+		SetChildList();
+		return this;
+	}
+
+	public ConstructorInvocationExpressionNode SetObjectInitializationParametersListingNode(ObjectInitializationParametersListingNode? objectInitializationParametersListingNode)
+	{
+		ObjectInitializationParametersListingNode = objectInitializationParametersListingNode;
 		
 		SetChildList();
 		return this;

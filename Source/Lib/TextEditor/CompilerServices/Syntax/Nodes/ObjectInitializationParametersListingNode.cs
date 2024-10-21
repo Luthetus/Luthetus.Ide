@@ -7,7 +7,7 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
 {
     public ObjectInitializationParametersListingNode(
         OpenBraceToken openBraceToken,
-        ImmutableArray<ObjectInitializationParameterEntryNode> objectInitializationParameterEntryNodeList,
+        List<ObjectInitializationParameterEntryNode> objectInitializationParameterEntryNodeList,
         CloseBraceToken closeBraceToken)
     {
         OpenBraceToken = openBraceToken;
@@ -18,7 +18,7 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
     }
 
     public OpenBraceToken OpenBraceToken { get; }
-    public ImmutableArray<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
+    public List<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
     public CloseBraceToken CloseBraceToken { get; }
 
     public ISyntax[] ChildList { get; private set; }
@@ -32,7 +32,7 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
     	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Length, CloseBraceToken
     	var childCount = 
     		1 +                                                // OpenBraceToken
-    		ObjectInitializationParameterEntryNodeList.Length + // ObjectInitializationParameterEntryNodeList.Length
+    		ObjectInitializationParameterEntryNodeList.Count + // ObjectInitializationParameterEntryNodeList.Count
     		1;                                                 // CloseBraceToken
             
         var childList = new ISyntax[childCount];

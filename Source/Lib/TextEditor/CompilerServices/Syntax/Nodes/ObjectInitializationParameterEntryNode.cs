@@ -18,9 +18,9 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
         SetChildList();
     }
 
-    public IdentifierToken PropertyIdentifierToken { get; }
-    public EqualsToken EqualsToken { get; }
-    public IExpressionNode ExpressionNode { get; }
+    public IdentifierToken PropertyIdentifierToken { get; set; }
+    public EqualsToken EqualsToken { get; set; }
+    public IExpressionNode ExpressionNode { get; set; }
 
     public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
