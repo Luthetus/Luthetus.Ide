@@ -1172,8 +1172,39 @@ var aaa = 1;
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
         
         Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.Null(constructorInvocationExpressionNode.FunctionParametersListingNode);
+		}
 	    
-	    throw new NotImplementedException();
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	// { 1, 2 };
+	    	{
+	    		var firstCollectionInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[0];
+				Assert.True(firstCollectionInitializationParameterEntryNode.IsCollectionInitialization);
+	    		
+	    		var literalExpressionNode = (LiteralExpressionNode)firstCollectionInitializationParameterEntryNode;
+	    		Assert.Equal("1", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		        Assert.True(literalExpressionNode.LiteralSyntaxToken.ConstructorWasInvoked);
+	    	}
+	    	{
+	    		var secondCollectionInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
+	    		Assert.True(secondCollectionInitializationParameterEntryNode.IsCollectionInitialization);
+	    		
+	    		var literalExpressionNode = (LiteralExpressionNode)secondCollectionInitializationParameterEntryNode;
+	    		Assert.Equal("2", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		        Assert.True(literalExpressionNode.LiteralSyntaxToken.ConstructorWasInvoked);
+	    	}
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
     
     [Fact]
