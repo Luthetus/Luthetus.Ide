@@ -941,8 +941,8 @@ var aaa = 1;
 	    		Assert.Equal("FirstName", firstNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
 		        Assert.True(firstNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
 		        
-		        var variableReferenceNode = (VariableReferenceNode)firstNameObjectInitializationParameterEntryNode.ExpressionNode;
-		        Assert.Equal("firstName", variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
+		        var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)firstNameObjectInitializationParameterEntryNode.ExpressionNode;
+		        Assert.Equal("firstName", ambiguousIdentifierExpressionNode.Token.TextSpan.GetText());
 	    	}
 	    	{
 	    		var lastNameObjectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
@@ -950,8 +950,8 @@ var aaa = 1;
 	    		Assert.Equal("LastName", lastNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
 		        Assert.True(lastNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
 		        
-		        var variableReferenceNode = (VariableReferenceNode)lastNameObjectInitializationParameterEntryNode.ExpressionNode;
-		        Assert.Equal("lastName", variableReferenceNode.VariableIdentifierToken.TextSpan.GetText());
+		        var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)lastNameObjectInitializationParameterEntryNode.ExpressionNode;
+		        Assert.Equal("lastName", ambiguousIdentifierExpressionNode.Token.TextSpan.GetText());
 	    	}
 	    	
 	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
