@@ -926,10 +926,7 @@ var aaa = 1;
 
 		// FunctionParametersListingNode
 		{
-			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+			Assert.Null(constructorInvocationExpressionNode.FunctionParametersListingNode);
 		}
 	    
 	    // ObjectInitializationParametersListingNode
@@ -994,10 +991,7 @@ var aaa = 1;
 
 		// FunctionParametersListingNode
 		{
-			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+			Assert.Null(constructorInvocationExpressionNode.FunctionParametersListingNode);
 		}
 	    
 	    // ObjectInitializationParametersListingNode
@@ -1054,10 +1048,7 @@ var aaa = 1;
 
 		// FunctionParametersListingNode
 		{
-			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+			Assert.Null(constructorInvocationExpressionNode.FunctionParametersListingNode);
 		}
 	    
 	    // ObjectInitializationParametersListingNode
@@ -1098,10 +1089,7 @@ var aaa = 1;
 
 		// FunctionParametersListingNode
 		{
-			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
-			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+			Assert.Null(constructorInvocationExpressionNode.FunctionParametersListingNode);
 		}
 	    
 	    // ObjectInitializationParametersListingNode

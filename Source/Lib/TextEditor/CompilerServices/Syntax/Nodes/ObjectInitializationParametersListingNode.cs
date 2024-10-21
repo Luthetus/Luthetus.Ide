@@ -19,13 +19,21 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
 
     public OpenBraceToken OpenBraceToken { get; }
     public List<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
-    public CloseBraceToken CloseBraceToken { get; }
+    public CloseBraceToken CloseBraceToken { get; private set; }
 
     public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParametersListingNode;
+    
+    public ObjectInitializationParametersListingNode SetCloseBraceToken(CloseBraceToken closeBraceToken)
+    {
+    	CloseBraceToken = closeBraceToken;
+    	
+    	SetChildList();
+    	return this;
+    }
     
     public void SetChildList()
     {

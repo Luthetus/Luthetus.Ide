@@ -277,14 +277,22 @@ public class Binder_TEST
 				
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.ObjectInitializationParameters;
 				session.ShortCircuitList.Add((SyntaxKind.CloseBraceToken, constructorInvocationExpressionNode));
+				session.ShortCircuitList.Add((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
 				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			case SyntaxKind.CloseBraceToken:
+				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
+				constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.SetCloseBraceToken((CloseBraceToken)token);
+				return constructorInvocationExpressionNode;
 			case SyntaxKind.CommaToken:
 				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.EqualsToken:
-				 if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters &&
-					 constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
+				session.ShortCircuitList.Add((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
+				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+				
+				if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters &&
+					constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
 				{
 					var wasHandled = false;
 				
@@ -302,7 +310,7 @@ public class Binder_TEST
 					if (!wasHandled)
 						goto default;
 					
-					return constructorInvocationExpressionNode;
+					return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 				}
 				
 				goto default;
@@ -314,6 +322,16 @@ public class Binder_TEST
 	public IExpressionNode ConstructorInvocationMergeExpression(
 		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, IExpressionNode expressionSecondary, ExpressionSession session)
 	{
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+			var text = ambiguousIdentifierExpressionNode.Token.TextSpan.GetText();
+			if (text == "LastName")
+			{
+				Console.WriteLine("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+			}
+		}
+	
 		switch (expressionSecondary.SyntaxKind)
 		{
 			case SyntaxKind.EmptyExpressionNode:
@@ -359,6 +377,8 @@ public class Binder_TEST
 				
 					if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)
 					{
+						Console.WriteLine("if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)");
+					
 						var lastParameter = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
 						
 						if (!lastParameter.PropertyIdentifierToken.ConstructorWasInvoked &&
@@ -377,12 +397,18 @@ public class Binder_TEST
 								var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
 								
 								if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
+								{
 									identifierToken = (IdentifierToken)ambiguousIdentifierExpressionNode.Token;
+								}
 								else
+								{
+									Console.WriteLine("else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)");
 									return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+								}
 							}
 							else
 							{
+								Console.WriteLine("above wasHandled = true;");
 								return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 							}
 							
@@ -391,6 +417,8 @@ public class Binder_TEST
 						}
 						else if (!lastParameter.EqualsToken.ConstructorWasInvoked)
 						{
+							Console.WriteLine("else if (!lastParameter.EqualsToken.ConstructorWasInvoked)");
+							Console.WriteLine($"constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count: {constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count}");
 							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 						}
 						else if (lastParameter.ExpressionNode.SyntaxKind == SyntaxKind.EmptyNode)
@@ -404,6 +432,7 @@ public class Binder_TEST
 							(expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode ||
 							 expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode))
 					{
+						Console.WriteLine("if (!wasHandled");
 						IdentifierToken identifierToken;
 							
 						if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
@@ -416,12 +445,18 @@ public class Binder_TEST
 							var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
 							
 							if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
+							{
 								identifierToken = (IdentifierToken)ambiguousIdentifierExpressionNode.Token;
+							}
 							else
+							{
+								Console.WriteLine("!wasHandled == SyntaxKind.AmbiguousIdentifierExpressionNode");
 								return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+							}
 						}
 						else
 						{
+							Console.WriteLine("!wasHandled else");
 							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 						}
 					
@@ -437,6 +472,7 @@ public class Binder_TEST
 				}
 				else
 				{
+					Console.WriteLine("END");
 					return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 				}
 		}
