@@ -894,5 +894,127 @@ var aaa = 1;
 	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
     }
     
-    // TODO: Object initialization and Collection initialization
+    [Fact]
+    public void ObjectInitializationNode_A()
+    {
+    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new MyClass { FirstName = firstName, LastName = lastName };
+				Fabricate.New(),
+				Fabricate.Identifier("MyClass"),
+				Fabricate.OpenBrace(),
+				/**/Fabricate.Identifier("FirstName"),
+				/**/Fabricate.Equals(),
+				/**/Fabricate.Identifier("firstName"),
+				/**/Fabricate.Comma("firstName"),
+				/**/Fabricate.Identifier("LastName"),
+				/**/Fabricate.Equals(),
+				/**/Fabricate.Identifier("lastName"),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+    }
+    
+    [Fact]
+    public void ObjectInitializationNode_B()
+    {
+    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new MyClassAaa { FirstName = firstName, LastName = lastName, };
+				Fabricate.New(),
+				Fabricate.Identifier("MyClass"),
+				Fabricate.OpenBrace(),
+				/**/Fabricate.Identifier("FirstName"),
+				/**/Fabricate.Equals(),
+				/**/Fabricate.Identifier("firstName"),
+				/**/Fabricate.Comma("firstName"),
+				/**/Fabricate.Identifier("LastName"),
+				/**/Fabricate.Equals(),
+				/**/Fabricate.Identifier("lastName"),
+				/**/Fabricate.Comma("firstName"),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+    }
+    
+    [Fact]
+    public void ObjectInitializationNode_C()
+    {
+    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new MyClassAaa { };
+				Fabricate.New(),
+				Fabricate.Identifier("MyClass"),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+    }
+    
+    [Fact]
+    public void ObjectInitializationNode_D()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// This one should NOT be correct.
+				// new MyClassAaa { , };
+				Fabricate.New(),
+				Fabricate.Identifier("MyClass"),
+				Fabricate.OpenBrace(),
+				/**/Fabricate.Comma(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+    }
+    
+    [Fact]
+    public void ObjectInitializationNode_E()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new MyClassAaa() { };
+				Fabricate.New(),
+				Fabricate.Identifier("MyClass"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+    }
+    
+    // TODO: Collection initialization
 }
