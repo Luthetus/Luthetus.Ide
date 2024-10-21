@@ -373,68 +373,42 @@ public class Binder_TEST
 				else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters &&
 						 constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
 				{
-					var wasHandled = false;
-				
+					var needNewNode = true;
+					
+					ObjectInitializationParameterEntryNode objectInitializationParameterEntryNode;
+					
 					if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)
 					{
-						Console.WriteLine("if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count > 0)");
-					
-						var lastParameter = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
+						objectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Last();
 						
-						if (!lastParameter.PropertyIdentifierToken.ConstructorWasInvoked &&
-								(expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode ||
-								 expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode))
+						if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked ||
+							//!lastParameter.EqualsToken.ConstructorWasInvoked ||
+							objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyNode)
 						{
-							IdentifierToken identifierToken;
-							
-							if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
-							{
-								var variableReferenceNode = (VariableReferenceNode)expressionSecondary; 
-								identifierToken = variableReferenceNode.VariableIdentifierToken;
-							}
-							else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-							{
-								var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
-								
-								if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
-								{
-									identifierToken = (IdentifierToken)ambiguousIdentifierExpressionNode.Token;
-								}
-								else
-								{
-									Console.WriteLine("else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)");
-									return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
-								}
-							}
-							else
-							{
-								Console.WriteLine("above wasHandled = true;");
-								return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
-							}
-							
-							wasHandled = true;
-							lastParameter.PropertyIdentifierToken = identifierToken;
-						}
-						else if (!lastParameter.EqualsToken.ConstructorWasInvoked)
-						{
-							Console.WriteLine("else if (!lastParameter.EqualsToken.ConstructorWasInvoked)");
-							Console.WriteLine($"constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count: {constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count}");
-							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
-						}
-						else if (lastParameter.ExpressionNode.SyntaxKind == SyntaxKind.EmptyNode)
-						{
-							wasHandled = true;
-							lastParameter.ExpressionNode = expressionSecondary;
+							needNewNode = false;
 						}
 					}
 					
-					if (!wasHandled &&
+					if (needNewNode)
+					{
+						objectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
+					        propertyIdentifierToken: default,
+					        equalsToken: default,
+					        expressionNode: new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
+					    
+					    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(objectInitializationParameterEntryNode);
+					}
+					else
+					{
+						return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+					}
+				    
+					if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked &&
 							(expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode ||
 							 expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode))
 					{
-						Console.WriteLine("if (!wasHandled");
 						IdentifierToken identifierToken;
-							
+						
 						if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 						{
 							var variableReferenceNode = (VariableReferenceNode)expressionSecondary; 
@@ -450,22 +424,27 @@ public class Binder_TEST
 							}
 							else
 							{
-								Console.WriteLine("!wasHandled == SyntaxKind.AmbiguousIdentifierExpressionNode");
+								Console.WriteLine("else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)");
 								return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 							}
 						}
 						else
 						{
-							Console.WriteLine("!wasHandled else");
+							Console.WriteLine("above wasHandled = true;");
 							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
 						}
-					
-						var objectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
-					        identifierToken,
-					        equalsToken: default,
-					        expressionNode: new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
-					    
-					    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(objectInitializationParameterEntryNode);
+						
+						objectInitializationParameterEntryNode.PropertyIdentifierToken = identifierToken;
+					}
+					//else if (!lastParameter.EqualsToken.ConstructorWasInvoked)
+					//{
+					//	Console.WriteLine("else if (!lastParameter.EqualsToken.ConstructorWasInvoked)");
+					//	Console.WriteLine($"constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count: {constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count}");
+					//	return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+					//}
+					else if (objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyNode)
+					{
+						objectInitializationParameterEntryNode.ExpressionNode = expressionSecondary;
 					}
 					
 					return constructorInvocationExpressionNode;
