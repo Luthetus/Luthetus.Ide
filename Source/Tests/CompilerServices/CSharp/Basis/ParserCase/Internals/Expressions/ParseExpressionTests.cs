@@ -1147,5 +1147,149 @@ var aaa = 1;
 	    }
     }
     
-    // TODO: Collection initialization
+    [Fact]
+    public void CollectionInitializationNode_A()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new List<int> { 1, 2 };
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+	    
+	    throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void CollectionInitializationNode_B()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new List<Person> { new Person(1, "John"), new(2, "Jane"), };
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+	    
+	    throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void CollectionInitializationNode_C()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new List<int> { };
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+	    
+	    throw new NotImplementedException();
+    }
+	
+	[Fact]
+    public void CollectionInitializationNode_D()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// This one should NOT be correct.
+				// new List<Person> { , };
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+	    
+	    throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void CollectionInitializationNode_E()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new List<Person>() { };
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+	    
+	    throw new NotImplementedException();
+    }
 }
