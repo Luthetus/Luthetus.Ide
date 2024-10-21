@@ -895,6 +895,36 @@ var aaa = 1;
     }
     
     [Fact]
+    public void ConstructorInvocationNode_E()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// new(0, "Test")
+				Fabricate.New(),
+				Fabricate.Identifier("Dictionary"),
+				Fabricate.OpenAngleBracket(),
+				/**/Fabricate.Int(),
+				/**/Fabricate.Comma(),
+				/**/Fabricate.Identifier("Person"),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				/**/Fabricate.Number("0"),
+				/**/Fabricate.Comma(),
+				/**/Fabricate.String("Test"),
+				Fabricate.CloseParenthesis(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
     public void ObjectInitializationNode_A()
     {
     	var session = new ExpressionSession(
