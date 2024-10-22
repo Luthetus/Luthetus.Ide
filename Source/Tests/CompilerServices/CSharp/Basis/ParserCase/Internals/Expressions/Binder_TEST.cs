@@ -270,7 +270,6 @@ public class Binder_TEST
 				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.SetCloseAngleBracketToken((CloseAngleBracketToken)token);
 				return constructorInvocationExpressionNode;
 			case SyntaxKind.OpenBraceToken:
-				Console.WriteLine("case SyntaxKind.OpenBraceToken:");
 				var objectInitializationParametersListingNode = new ObjectInitializationParametersListingNode(
 					(OpenBraceToken)token,
 			        new List<ObjectInitializationParameterEntryNode>(),

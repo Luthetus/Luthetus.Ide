@@ -146,8 +146,8 @@ public class Parser_TEST
 		{
 			var constructorInvocationNode = (ConstructorInvocationExpressionNode)syntax;
 			
-			if (!constructorInvocationNode.NewKeywordToken.ConstructorWasInvoked)
-				Console.Write($"new");
+			if (constructorInvocationNode.NewKeywordToken.ConstructorWasInvoked)
+				Console.Write($"new ");
 			else
 				Console.Write($"badnew ");
 			
@@ -157,6 +157,33 @@ public class Parser_TEST
 				WriteSyntax(constructorInvocationNode.FunctionParametersListingNode);
 	        if (constructorInvocationNode.ObjectInitializationParametersListingNode is not null)
 				WriteSyntax(constructorInvocationNode.ObjectInitializationParametersListingNode);
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.ObjectInitializationParametersListingNode)
+		{
+			var objectInitializationParametersListingNode = (ObjectInitializationParametersListingNode)syntax;
+			
+			WriteSyntax(objectInitializationParametersListingNode.OpenBraceToken);
+			
+			for (int i = 0; i < objectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count; i++)
+			{
+				var objectInitializationParameterEntryNode = objectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[i];
+				WriteSyntax(objectInitializationParameterEntryNode);
+				
+				if (i < objectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Count - 1)
+				{
+					Console.Write(',');
+				}
+			}
+	        
+	        WriteSyntax(objectInitializationParametersListingNode.CloseBraceToken);
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.ObjectInitializationParameterEntryNode)
+		{
+			var objectInitializationParameterEntryNode = (ObjectInitializationParameterEntryNode)syntax;
+			
+			WriteSyntax(objectInitializationParameterEntryNode.PropertyIdentifierToken);
+	        WriteSyntax(objectInitializationParameterEntryNode.EqualsToken);
+	        WriteSyntax(objectInitializationParameterEntryNode.ExpressionNode);
 		}
 		else if (syntax.SyntaxKind == SyntaxKind.TypeClauseNode)
 		{
