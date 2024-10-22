@@ -42,18 +42,18 @@ public class Parser_TEST
 		    			var expressionSecondary = expressionPrimary;
 		    			expressionPrimary = tuple.ExpressionNode;
 		    			
-		    			WriteMergeBefore(indentation, $"E_{session.Position}: ", expressionPrimary, expressionSecondary);
+		    			WriteMergeBefore(string.Join(',', session.ShortCircuitList.Select(x => x.DelimiterSyntaxKind)), $"E_{session.Position}: ", expressionPrimary, expressionSecondary);
 		    			expressionPrimary = binder.AnyMergeExpression(expressionPrimary, expressionSecondary, session);
-		    			WriteMergeAfter(indentation, expressionPrimary);
+		    			WriteMergeAfter(string.Join(',', session.ShortCircuitList.Select(x => x.DelimiterSyntaxKind)), expressionPrimary);
 		    			
 		    			break;
 	    			}
 	    		}
     		//}
     		
-    		WriteMergeBefore(session.ShortCircuitList.Count, $"T_{session.Position}: ", expressionPrimary, tokenCurrent);
+    		WriteMergeBefore(string.Join(',', session.ShortCircuitList.Select(x => x.DelimiterSyntaxKind)), $"T_{session.Position}: ", expressionPrimary, tokenCurrent);
     		expressionPrimary = binder.AnyMergeToken(expressionPrimary, tokenCurrent, session);
-    		WriteMergeAfter(session.ShortCircuitList.Count, expressionPrimary);
+    		WriteMergeAfter(string.Join(',', session.ShortCircuitList.Select(x => x.DelimiterSyntaxKind)), expressionPrimary);
     		
     		session.Position++;
     		Console.WriteLine();
@@ -63,13 +63,12 @@ public class Parser_TEST
     }
     
     private static void WriteMergeBefore(
-    	int indentation,
+    	string indentation,
     	string message,
     	IExpressionNode expressionPrimary,
     	ISyntax syntax)
 	{
-		for (int i = 0; i < indentation; i++)
-			Console.Write("====");
+		Console.Write(indentation);
 			
 		Console.Write(message);
 		
@@ -86,10 +85,9 @@ public class Parser_TEST
 		Console.WriteLine();
 	}
 	
-	private static void WriteMergeAfter(int indentation, IExpressionNode expressionResult)
+	private static void WriteMergeAfter(string indentation, IExpressionNode expressionResult)
 	{
-		for (int i = 0; i < indentation; i++)
-			Console.Write("====");
+		Console.Write(indentation);
 			
 		Console.Write($"\t-> ");
 		
@@ -102,6 +100,9 @@ public class Parser_TEST
 	
 	private static void WriteSyntax(ISyntax syntax)
 	{
+		if (syntax is null)
+			return;
+	
 		if (syntax.SyntaxKind == SyntaxKind.BadExpressionNode)
 		{
 			var badExpressionNode = (BadExpressionNode)syntax;
@@ -194,10 +195,50 @@ public class Parser_TEST
 		{
 			var parenthesizedExpressionNode = (ParenthesizedExpressionNode)syntax;
 			
-			
 			WriteSyntax(parenthesizedExpressionNode.OpenParenthesisToken);
 	  	  WriteSyntax(parenthesizedExpressionNode.InnerExpression);
 	        WriteSyntax(parenthesizedExpressionNode.CloseParenthesisToken);
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+		{
+			var functionInvocationNode = (FunctionInvocationNode)syntax;
+			
+			WriteSyntax(functionInvocationNode.ResultTypeClauseNode);
+			
+			Console.Write(' ');
+			
+			WriteSyntax(functionInvocationNode.FunctionInvocationIdentifierToken);
+			WriteSyntax(functionInvocationNode.GenericParametersListingNode);
+	  	  WriteSyntax(functionInvocationNode.FunctionParametersListingNode);
+	  	  
+	  	  // WriteSyntax(functionInvocationNode.FunctionDefinitionNode);
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.FunctionParametersListingNode)
+		{
+			var functionParametersListingNode = (FunctionParametersListingNode)syntax;
+			
+			WriteSyntax(functionParametersListingNode.OpenParenthesisToken);
+			for (int i = 0; i < functionParametersListingNode.FunctionParameterEntryNodeList.Count; i++)
+			{
+				var functionParameterEntryNode = functionParametersListingNode.FunctionParameterEntryNodeList[i];
+				WriteSyntax(functionParameterEntryNode);
+				if (i < functionParametersListingNode.FunctionParameterEntryNodeList.Count - 1)
+					Console.Write(',');
+			}
+	        WriteSyntax(functionParametersListingNode.CloseParenthesisToken);
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.FunctionParameterEntryNode)
+		{
+			var functionParameterEntryNode = (FunctionParameterEntryNode)syntax;
+			
+			WriteSyntax(functionParameterEntryNode.ExpressionNode);
+			
+			if (functionParameterEntryNode.HasOutKeyword)
+	        	Console.Write("out");
+	        if (functionParameterEntryNode.HasInKeyword)
+	        	Console.Write("in");
+	        if (functionParameterEntryNode.HasRefKeyword)
+	        	Console.Write("ref");
 		}
 		else
 		{
@@ -209,7 +250,8 @@ public class Parser_TEST
 				}
 				else
 				{
-					Console.Write("_");
+					Console.Write("__" + syntax.SyntaxKind + "__");
+					//Console.Write("_");
 					
 					/*if (syntax.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 						Console.Write(")");
