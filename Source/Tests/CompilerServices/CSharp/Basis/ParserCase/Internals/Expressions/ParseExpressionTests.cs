@@ -1510,5 +1510,134 @@ var aaa = 1;
 	    }
     }
     
-    // TODO: Lambda functions, named parameters
+    [Fact]
+    public void LambdaFunction_Expression_NoParameter()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// list.Select(() => x.FirstName);
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+    }
+    
+    [Fact]
+    public void LambdaFunction_Expression_SingleParameter()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// list.Select(x => x.FirstName);
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+    }
+    
+    [Fact]
+    public void LambdaFunction_Expression_ManyParameter_Async()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// list.Select(async (x, index) => x.FirstName);
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+    }
+    
+    [Fact]
+    public void LambdaFunction_CodeBlock_NoParameter_Async()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// list.Select(async () => { Console.WriteLine(x.FirstName); return x.FirstName; });
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+    }
+    
+    [Fact]
+    public void LambdaFunction_CodeBlock_SingleParameter_Async()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// list.Select(async x => { return x.FirstName; });
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+    }
+    
+    [Fact]
+    public void LambdaFunction_CodeBlock_ManyParameter()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// list.Select((x, index) => { return x.FirstName; });
+				Fabricate.New(),
+				Fabricate.Identifier("List"),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Int(),
+				Fabricate.CloseAngleBracket(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.OpenBrace(),
+				Fabricate.CloseBrace(),
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+    }
+    
+    // TODO: Named parameters
 }
