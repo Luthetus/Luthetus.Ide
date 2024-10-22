@@ -4,9 +4,17 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed class FunctionInvocationNode : IExpressionNode
+/// <summary>
+/// TODO: Starting implementation of lambda function parsing...
+/// 	  ...This node doesn't exist though, right?
+///       It is just a variable declaration node,
+///       and an extra step of declaring a hidden-static function
+///       and providing the lambda's codeblock as the function's codeblock,
+///       (and arguments, return type, etc...).
+/// </summary>
+public sealed class LambdaFunctionNode : IExpressionNode
 {
-    public FunctionInvocationNode(
+    public LambdaFunctionNode(
         IdentifierToken functionInvocationIdentifierToken,
         FunctionDefinitionNode? functionDefinitionNode,
         GenericParametersListingNode? genericParametersListingNode,

@@ -1522,6 +1522,8 @@ var aaa = 1;
 			shortCircuitList: new());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -1531,20 +1533,13 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select(x => x.FirstName);
-				Fabricate.New(),
-				Fabricate.Identifier("List"),
-				Fabricate.OpenAngleBracket(),
-				Fabricate.Int(),
-				Fabricate.CloseAngleBracket(),
-				Fabricate.OpenParenthesis(),
-				Fabricate.CloseParenthesis(),
-				Fabricate.OpenBrace(),
-				Fabricate.CloseBrace(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -1554,20 +1549,13 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select(async (x, index) => x.FirstName);
-				Fabricate.New(),
-				Fabricate.Identifier("List"),
-				Fabricate.OpenAngleBracket(),
-				Fabricate.Int(),
-				Fabricate.CloseAngleBracket(),
-				Fabricate.OpenParenthesis(),
-				Fabricate.CloseParenthesis(),
-				Fabricate.OpenBrace(),
-				Fabricate.CloseBrace(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -1577,20 +1565,13 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select(async () => { Console.WriteLine(x.FirstName); return x.FirstName; });
-				Fabricate.New(),
-				Fabricate.Identifier("List"),
-				Fabricate.OpenAngleBracket(),
-				Fabricate.Int(),
-				Fabricate.CloseAngleBracket(),
-				Fabricate.OpenParenthesis(),
-				Fabricate.CloseParenthesis(),
-				Fabricate.OpenBrace(),
-				Fabricate.CloseBrace(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -1600,20 +1581,13 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select(async x => { return x.FirstName; });
-				Fabricate.New(),
-				Fabricate.Identifier("List"),
-				Fabricate.OpenAngleBracket(),
-				Fabricate.Int(),
-				Fabricate.CloseAngleBracket(),
-				Fabricate.OpenParenthesis(),
-				Fabricate.CloseParenthesis(),
-				Fabricate.OpenBrace(),
-				Fabricate.CloseBrace(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -1623,21 +1597,165 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select((x, index) => { return x.FirstName; });
-				Fabricate.New(),
-				Fabricate.Identifier("List"),
-				Fabricate.OpenAngleBracket(),
-				Fabricate.Int(),
-				Fabricate.CloseAngleBracket(),
-				Fabricate.OpenParenthesis(),
-				Fabricate.CloseParenthesis(),
-				Fabricate.OpenBrace(),
-				Fabricate.CloseBrace(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
     }
     
-    // TODO: Named parameters
+    [Fact]
+    public void MethodGroup()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// public string GetPersonFirstNameMethod(Person person) { return person.FirstName; }
+				// list.Select(GetPersonFirstNameMethod);
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Action_ImplicitInvocation_NoParameter()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// Action onSubmitAction = () => Console.WriteLine("Submitted");
+				// onSubmitAction();
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Action_ImplicitInvocation_SingleParameter()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// Action<string> onSubmitAction = message => Console.WriteLine(message);
+				// onSubmitAction("Hello World!");
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Action_ImplicitInvocation_ManyParameter()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// Action<string, Action> onSubmitAction = (message, callback) => { Console.WriteLine(message) callback.Invoke(); };
+				// onSubmitAction("Hello World!", () => Console.WriteLine("Callback was invoked."));
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Func_ImplicitInvocation_NoParameter()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// Func<int> onSubmitAction = () => { Console.WriteLine("Submitted"); return 0; };
+				// var statusCode = onSubmitAction();
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Func_ImplicitInvocation_SingleParameter()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// Func<string, Task> writeToConsoleAsync = async message => { await Task.Delay(500); Console.WriteLine(message); };
+				// await writeToConsoleAsync("Hello World!");
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Func_ImplicitInvocation_ManyParameter()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// Func<string, CancellationToken, Task> writeToConsoleAsync = async (message, cancellationToken) => { await Task.Delay(500); Console.WriteLine(message); };
+				// await writeToConsoleAsync("Hello World!", CancellationToken.None);
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void FunctionInvocation_NamedParameters()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// public static Person PersonFactoryMethod(string firstName, string lastName) { return new Person(firstName, lastName); }
+				// PersonFactoryMethod(firstName: "John", lastName: "Doe");
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void ConstructorInvocation_NamedParameters()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// public Person(string firstName, string lastName) { FirstName = firstName; LastName = lastName; }
+				// PersonFactoryMethod(firstName: "John", lastName: "Doe");
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
 }
