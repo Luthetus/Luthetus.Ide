@@ -1388,8 +1388,6 @@ var aaa = 1;
 				Fabricate.OpenAngleBracket(),
 				Fabricate.Int(),
 				Fabricate.CloseAngleBracket(),
-				Fabricate.OpenParenthesis(),
-				Fabricate.CloseParenthesis(),
 				Fabricate.OpenBrace(),
 				Fabricate.CloseBrace(),
 			},
@@ -1401,8 +1399,23 @@ var aaa = 1;
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
         
         Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.Null(constructorInvocationExpressionNode.FunctionParametersListingNode);
+		}
 	    
-	    throw new NotImplementedException();
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	Assert.Empty(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList);
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
 	
 	[Fact]
@@ -1418,9 +1431,8 @@ var aaa = 1;
 				Fabricate.OpenAngleBracket(),
 				Fabricate.Int(),
 				Fabricate.CloseAngleBracket(),
-				Fabricate.OpenParenthesis(),
-				Fabricate.CloseParenthesis(),
 				Fabricate.OpenBrace(),
+				/**/Fabricate.Comma(),
 				Fabricate.CloseBrace(),
 			},
 			expressionStack: new Stack<ISyntax>(),
@@ -1431,8 +1443,23 @@ var aaa = 1;
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
         
         Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.Null(constructorInvocationExpressionNode.FunctionParametersListingNode);
+		}
 	    
-	    throw new NotImplementedException();
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	Assert.Empty(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList);
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
     
     [Fact]
@@ -1460,9 +1487,28 @@ var aaa = 1;
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
         
         Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+			
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+	        Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+	        Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
 	    
-	    throw new NotImplementedException();
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	Assert.Empty(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList);
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
     
-    // TODO: Lambda functions
+    // TODO: Lambda functions, named parameters
 }
