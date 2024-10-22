@@ -1292,22 +1292,84 @@ var aaa = 1;
 	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
 	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
 	    	
-	    	// { 1, 2 };
+	    	// { new Person(1, "John"), new(2, "Jane"), };
+	    	//
+	    	// new Person(1, "John"),
 	    	{
 	    		var firstCollectionInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[0];
 				Assert.True(firstCollectionInitializationParameterEntryNode.IsCollectionInitialization);
 	    		
-	    		var literalExpressionNode = (LiteralExpressionNode)firstCollectionInitializationParameterEntryNode.ExpressionNode;
-	    		Assert.Equal("1", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
-		        Assert.True(literalExpressionNode.LiteralSyntaxToken.ConstructorWasInvoked);
+	    		var innerConstructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)firstCollectionInitializationParameterEntryNode.ExpressionNode;
+	    		
+	    		Assert.True(innerConstructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		        // Assert.Equal(innerConstructorInvocationExpressionNode.ResultTypeClauseNode);
+		        
+		        // innerFunctionParametersListingNode (1, "John"),
+		        {
+		        	// 1,
+		        	{
+		        		var innerFunctionParametersListingNode = innerConstructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList[0];
+		        		
+		        		var literalExpressionNode = (LiteralExpressionNode)innerFunctionParametersListingNode.ExpressionNode;
+		        		Assert.Equal("1", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		        		
+				        Assert.False(innerFunctionParametersListingNode.HasOutKeyword);
+				        Assert.False(innerFunctionParametersListingNode.HasInKeyword);
+				        Assert.False(innerFunctionParametersListingNode.HasRefKeyword);
+		        	}
+		        	// "John"
+		        	{
+		        		var innerFunctionParametersListingNode = innerConstructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList[1];
+		        		
+		        		var literalExpressionNode = (LiteralExpressionNode)innerFunctionParametersListingNode.ExpressionNode;
+		        		Assert.Equal("John", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		        		
+				        Assert.False(innerFunctionParametersListingNode.HasOutKeyword);
+				        Assert.False(innerFunctionParametersListingNode.HasInKeyword);
+				        Assert.False(innerFunctionParametersListingNode.HasRefKeyword);
+		        	}
+		        }
+		        
+		        Assert.Null(innerConstructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
 	    	}
+	    	// new(2, "Jane"),
 	    	{
 	    		var secondCollectionInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
 	    		Assert.True(secondCollectionInitializationParameterEntryNode.IsCollectionInitialization);
 	    		
-	    		var literalExpressionNode = (LiteralExpressionNode)secondCollectionInitializationParameterEntryNode.ExpressionNode;
-	    		Assert.Equal("2", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
-		        Assert.True(literalExpressionNode.LiteralSyntaxToken.ConstructorWasInvoked);
+	    		var innerConstructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)secondCollectionInitializationParameterEntryNode.ExpressionNode;
+	    		Assert.True(innerConstructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+	    		
+	    		// innerFunctionParametersListingNode (2, "Jane"),
+		        {
+		        	// 2,
+		        	{
+		        		var innerFunctionParametersListingNode = innerConstructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList[0];
+		        		
+		        		var literalExpressionNode = (LiteralExpressionNode)innerFunctionParametersListingNode.ExpressionNode;
+		        		Assert.Equal("2", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		        		
+				        Assert.False(innerFunctionParametersListingNode.HasOutKeyword);
+				        Assert.False(innerFunctionParametersListingNode.HasInKeyword);
+				        Assert.False(innerFunctionParametersListingNode.HasRefKeyword);
+		        	}
+		        	// "Jane"
+		        	{
+		        		var innerFunctionParametersListingNode = innerConstructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList[1];
+		        		
+		        		var literalExpressionNode = (LiteralExpressionNode)innerFunctionParametersListingNode.ExpressionNode;
+		        		Assert.Equal("Jane", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		        		
+				        Assert.False(innerFunctionParametersListingNode.HasOutKeyword);
+				        Assert.False(innerFunctionParametersListingNode.HasInKeyword);
+				        Assert.False(innerFunctionParametersListingNode.HasRefKeyword);
+		        	}
+		        }
+	    		
+	    		//Assert.Equal("2", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		        //Assert.True(literalExpressionNode.LiteralSyntaxToken.ConstructorWasInvoked);
+		        
+		        Assert.Null(innerConstructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
 	    	}
 	    	
 	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);

@@ -194,7 +194,15 @@ public class Parser_TEST
 		else if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
 		{
 			var identifierToken = (IdentifierToken)syntax;
-			Console.Write($"{identifierToken.TextSpan.GetText()}");
+			
+			try
+			{
+				Console.Write($"{identifierToken.TextSpan.GetText()}");
+			}
+			catch (Exception e)
+			{
+				Console.Write($"EXCEPTIONidentifierToken.TextSpan.GetText()EXCEPTION");
+			}
 		}
 		else if (syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode)
 		{
