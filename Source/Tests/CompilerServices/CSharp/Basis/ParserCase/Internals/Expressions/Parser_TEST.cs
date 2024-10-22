@@ -14,6 +14,8 @@ public class Parser_TEST
 {
 	public static IExpressionNode ParseExpression(ExpressionSession session)
     {
+    	Console.WriteLine();
+    	
     	var binder = new Binder_TEST();
     	IExpressionNode expressionPrimary = new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
     	session.Position = 0;
@@ -23,6 +25,8 @@ public class Parser_TEST
     		var tokenCurrent = session.TokenList[session.Position];
     		if (tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
     			break;
+    			
+    		var indentation = session.ShortCircuitList.Count;
     		
     		// Check if the tokenCurrent is a token that is used as a end-delimiter before iterating the list?
     		//if (tokenCurrent.SyntaxKind == SyntaxKind.CloseParenthesisToken)
@@ -38,38 +42,61 @@ public class Parser_TEST
 		    			var expressionSecondary = expressionPrimary;
 		    			expressionPrimary = tuple.ExpressionNode;
 		    			
-		    			var expressionResult = binder.AnyMergeExpression(expressionPrimary, expressionSecondary, session);
-		    			WriteMerge(expressionPrimary, expressionSecondary, expressionResult);
+		    			WriteMergeBefore(indentation, $"E_{session.Position}: ", expressionPrimary, expressionSecondary);
+		    			expressionPrimary = binder.AnyMergeExpression(expressionPrimary, expressionSecondary, session);
+		    			WriteMergeAfter(indentation, expressionPrimary);
 		    			
-		    			expressionPrimary = expressionResult;
 		    			break;
 	    			}
 	    		}
     		//}
     		
+    		WriteMergeBefore(session.ShortCircuitList.Count, $"T_{session.Position}: ", expressionPrimary, tokenCurrent);
     		expressionPrimary = binder.AnyMergeToken(expressionPrimary, tokenCurrent, session);
-
+    		WriteMergeAfter(session.ShortCircuitList.Count, expressionPrimary);
+    		
     		session.Position++;
+    		Console.WriteLine();
     	}
     	
     	return expressionPrimary;
     }
     
-    /// <summary>This method is nasty I'm just logging to console for debug purposes.</summary>
-    private static void WriteMerge(
+    private static void WriteMergeBefore(
+    	int indentation,
+    	string message,
     	IExpressionNode expressionPrimary,
-    	IExpressionNode expressionSecondary,
-    	IExpressionNode expressionResult)
+    	ISyntax syntax)
 	{
-		Console.Write("MERGE: ");
+		for (int i = 0; i < indentation; i++)
+			Console.Write("====");
+			
+		Console.Write(message);
 		
+		Console.Write("'");
 		WriteSyntax(expressionPrimary);
-		Console.Write(" + ");
-		WriteSyntax(expressionSecondary);
-		Console.WriteLine();
+		Console.Write("'");
 		
+		Console.Write(" + ");
+		
+		Console.Write("'");
+		WriteSyntax(syntax);
+		Console.Write("'");
+		
+		Console.WriteLine();
+	}
+	
+	private static void WriteMergeAfter(int indentation, IExpressionNode expressionResult)
+	{
+		for (int i = 0; i < indentation; i++)
+			Console.Write("====");
+			
 		Console.Write($"\t-> ");
+		
+		Console.Write("'");
 		WriteSyntax(expressionResult);
+		Console.Write("'");
+		
 		Console.WriteLine();
 	}
 	
@@ -79,19 +106,21 @@ public class Parser_TEST
 		{
 			var badExpressionNode = (BadExpressionNode)syntax;
 			
-			Console.Write($"{badExpressionNode.SyntaxKind} {{");
-		
-			foreach (var child in badExpressionNode.SyntaxList)
+			Console.Write("b{");
+			for (var i = 0; i < badExpressionNode.SyntaxList.Count; i++)
 			{
+				var child = badExpressionNode.SyntaxList[i];
 				WriteSyntax(child);
+				
+				if (i < badExpressionNode.SyntaxList.Count - 1)
+					Console.Write(",");
 			}
-			
-			Console.Write(" }, ");
+			Console.Write("}");
 		}
 		else if (syntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
 			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)syntax;
-			Console.Write($"AIEN_{ambiguousIdentifierExpressionNode.Token.TextSpan.GetText()}");
+			Console.Write($"a{ambiguousIdentifierExpressionNode.Token.TextSpan.GetText()}");
 			
 			if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is not null)
 			{
@@ -112,9 +141,86 @@ public class Parser_TEST
 			}
 			Console.Write(">");
 		}
+		else if (syntax.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
+		{
+			var constructorInvocationNode = (ConstructorInvocationExpressionNode)syntax;
+			
+			if (!constructorInvocationNode.NewKeywordToken.ConstructorWasInvoked)
+				Console.Write($"new");
+			else
+				Console.Write($"badnew ");
+			
+	        if (constructorInvocationNode.ResultTypeClauseNode is not null)
+				WriteSyntax(constructorInvocationNode.ResultTypeClauseNode);
+	        if (constructorInvocationNode.FunctionParametersListingNode is not null)
+				WriteSyntax(constructorInvocationNode.FunctionParametersListingNode);
+	        if (constructorInvocationNode.ObjectInitializationParametersListingNode is not null)
+				WriteSyntax(constructorInvocationNode.ObjectInitializationParametersListingNode);
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.TypeClauseNode)
+		{
+			var typeClauseNode = (TypeClauseNode)syntax;
+			WriteSyntax(typeClauseNode.TypeIdentifierToken);
+			WriteSyntax(typeClauseNode.GenericParametersListingNode);
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
+		{
+			var identifierToken = (IdentifierToken)syntax;
+			Console.Write($"{identifierToken.TextSpan.GetText()}");
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode)
+		{
+			var literalExpressionNode = (LiteralExpressionNode)syntax;
+			Console.Write($"{literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText()}");
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+		{
+			var binaryExpressionNode = (BinaryExpressionNode)syntax;
+			
+			WriteSyntax(binaryExpressionNode.LeftExpressionNode);
+	        WriteSyntax(binaryExpressionNode.BinaryOperatorNode);
+	        WriteSyntax(binaryExpressionNode.RightExpressionNode);
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.BinaryOperatorNode)
+		{
+			var binaryOperatorNode = (BinaryOperatorNode)syntax;
+			WriteSyntax(binaryOperatorNode.OperatorToken);
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+		{
+			Console.Write("e");
+		}
+		else if (syntax.SyntaxKind == SyntaxKind.ParenthesizedExpressionNode)
+		{
+			var parenthesizedExpressionNode = (ParenthesizedExpressionNode)syntax;
+			
+			
+			WriteSyntax(parenthesizedExpressionNode.OpenParenthesisToken);
+	  	  WriteSyntax(parenthesizedExpressionNode.InnerExpression);
+	        WriteSyntax(parenthesizedExpressionNode.CloseParenthesisToken);
+		}
 		else
 		{
-			Console.Write($"{syntax.SyntaxKind}, ");
+			if (syntax is ISyntaxToken token)
+			{
+				if (token.ConstructorWasInvoked)
+				{
+					Console.Write(token.TextSpan.GetText());
+				}
+				else
+				{
+					Console.Write("_");
+					
+					/*if (syntax.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+						Console.Write(")");
+					else
+						Console.Write(syntax.SyntaxKind);*/
+				}
+			}
+			else
+			{
+				Console.Write($"{syntax.SyntaxKind}");
+			}
 		}
 	}
 }

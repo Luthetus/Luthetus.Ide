@@ -577,7 +577,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void FunctionInvocationNode_A()
+    public void FunctionInvocationNode_Basic()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -601,7 +601,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void FunctionInvocationNode_B()
+    public void FunctionInvocationNode_Parameters()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -636,7 +636,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void FunctionInvocationNode_C()
+    public void FunctionInvocationNode_Generic()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -677,7 +677,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void FunctionInvocationNode_D()
+    public void FunctionInvocationNode_Generic_Parameters()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -731,7 +731,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void ConstructorInvocationNode_A()
+    public void ConstructorInvocationNode_Basic()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -764,7 +764,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void ConstructorInvocationNode_B()
+    public void ConstructorInvocationNode_Parameters()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -804,7 +804,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void ConstructorInvocationNode_C()
+    public void ConstructorInvocationNode_Generic()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -846,7 +846,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void ConstructorInvocationNode_D()
+    public void ConstructorInvocationNode_Generic_Parameters()
     {
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
     	var session = new ExpressionSession(
@@ -895,23 +895,14 @@ var aaa = 1;
     }
     
     [Fact]
-    public void ConstructorInvocationNode_E()
+    public void ConstructorInvocationNode_NoTypeClauseNode()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				// new(0, "Test")
+				// new()
 				Fabricate.New(),
-				Fabricate.Identifier("Dictionary"),
-				Fabricate.OpenAngleBracket(),
-				/**/Fabricate.Int(),
-				/**/Fabricate.Comma(),
-				/**/Fabricate.Identifier("Person"),
-				Fabricate.CloseAngleBracket(),
 				Fabricate.OpenParenthesis(),
-				/**/Fabricate.Number("0"),
-				/**/Fabricate.Comma(),
-				/**/Fabricate.String("Test"),
 				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
@@ -920,12 +911,24 @@ var aaa = 1;
 		var expression = Parser_TEST.ParseExpression(session);
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
+        
+        Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
 		
-		throw new NotImplementedException();
+	    Assert.Null(constructorInvocationExpressionNode.ResultTypeClauseNode);
+
+		// FunctionParametersListingNode
+		{
+			Assert.NotNull(constructorInvocationExpressionNode.FunctionParametersListingNode);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+			Assert.Empty(constructorInvocationExpressionNode.FunctionParametersListingNode.FunctionParameterEntryNodeList);
+			Assert.True(constructorInvocationExpressionNode.FunctionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
+	    
+	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
     }
     
     [Fact]
-    public void ObjectInitializationNode_A()
+    public void ObjectInitializationNode_Parameters_NoTrailingComma()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -989,7 +992,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void ObjectInitializationNode_B()
+    public void ObjectInitializationNode__Parameters_WithTrailingComma()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -1054,7 +1057,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void ObjectInitializationNode_C()
+    public void ObjectInitializationNode_NoParameters_NoTrailingComma()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -1093,7 +1096,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void ObjectInitializationNode_D()
+    public void ObjectInitializationNode_NoParameters_WithTrailingComma()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -1134,7 +1137,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void ObjectInitializationNode_E()
+    public void ObjectInitializationNode_WithParenthesis()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -1178,7 +1181,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void CollectionInitializationNode_A()
+    public void CollectionInitializationNode_Parameters_NoTrailingComma()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -1239,7 +1242,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void CollectionInitializationNode_B()
+    public void CollectionInitializationNode_Parameters_WithTrailingComma()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -1263,12 +1266,43 @@ var aaa = 1;
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)expression;
         
         Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
+		
+	    // constructorInvocationExpressionNode.ResultTypeClauseNode
+
+		// FunctionParametersListingNode
+		{
+			Assert.Null(constructorInvocationExpressionNode.FunctionParametersListingNode);
+		}
 	    
-	    throw new NotImplementedException();
+	    // ObjectInitializationParametersListingNode
+	    {
+	    	Assert.NotNull(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.OpenBraceToken.ConstructorWasInvoked);
+	    	
+	    	// { 1, 2 };
+	    	{
+	    		var firstCollectionInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[0];
+				Assert.True(firstCollectionInitializationParameterEntryNode.IsCollectionInitialization);
+	    		
+	    		var literalExpressionNode = (LiteralExpressionNode)firstCollectionInitializationParameterEntryNode.ExpressionNode;
+	    		Assert.Equal("1", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		        Assert.True(literalExpressionNode.LiteralSyntaxToken.ConstructorWasInvoked);
+	    	}
+	    	{
+	    		var secondCollectionInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
+	    		Assert.True(secondCollectionInitializationParameterEntryNode.IsCollectionInitialization);
+	    		
+	    		var literalExpressionNode = (LiteralExpressionNode)secondCollectionInitializationParameterEntryNode.ExpressionNode;
+	    		Assert.Equal("2", literalExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+		        Assert.True(literalExpressionNode.LiteralSyntaxToken.ConstructorWasInvoked);
+	    	}
+	    	
+	    	Assert.True(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.CloseBraceToken.ConstructorWasInvoked);
+	    }
     }
     
     [Fact]
-    public void CollectionInitializationNode_C()
+    public void CollectionInitializationNode_NoParameters_NoTrailingComma()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -1297,7 +1331,7 @@ var aaa = 1;
     }
 	
 	[Fact]
-    public void CollectionInitializationNode_D()
+    public void CollectionInitializationNode_NoParameters_WithTrailingComma()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -1327,7 +1361,7 @@ var aaa = 1;
     }
     
     [Fact]
-    public void CollectionInitializationNode_E()
+    public void CollectionInitializationNode_WithParenthesis()
     {
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
@@ -1354,4 +1388,6 @@ var aaa = 1;
 	    
 	    throw new NotImplementedException();
     }
+    
+    // TODO: Lambda functions
 }

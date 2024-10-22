@@ -26,8 +26,6 @@ public sealed class BadExpressionNode : IExpressionNode
     public BadExpressionNode(TypeClauseNode resultTypeClauseNode, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
     	: this(resultTypeClauseNode, new List<ISyntax> { syntaxPrimary, syntaxSecondary })
     {
-    	if (syntaxPrimary.SyntaxKind != SyntaxKind.EmptyExpressionNode)
-    		Console.WriteLine($"{nameof(BadExpressionNode)}: syntaxPrimary.SyntaxKind: {syntaxPrimary.SyntaxKind}, syntaxSecondary.SyntaxKind: {syntaxSecondary.SyntaxKind}");
     }
 
     public List<ISyntax> SyntaxList { get; }
