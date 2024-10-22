@@ -1758,4 +1758,20 @@ var aaa = 1;
 		
 		throw new NotImplementedException();
     }
+    
+    [Fact]
+    public void Record_With_Keyword()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				// person = person with { FirstName = "Jane", LastName = "Doe", }
+			},
+			expressionStack: new Stack<ISyntax>(),
+			shortCircuitList: new());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
 }
