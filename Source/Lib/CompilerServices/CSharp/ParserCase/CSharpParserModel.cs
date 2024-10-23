@@ -1,6 +1,7 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.CompilerServices.CSharp.BinderCase;
@@ -14,7 +15,6 @@ public class CSharpParserModel : IParserModel
         CSharpBinderSession binderSession,
         TokenWalker tokenWalker,
         Stack<ISyntax> syntaxStack,
-        Stack<ISyntax> expressionStack,
         DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder,
@@ -25,7 +25,6 @@ public class CSharpParserModel : IParserModel
         BinderSession = binderSession;
         TokenWalker = tokenWalker;
         SyntaxStack = syntaxStack;
-        ExpressionStack = expressionStack;
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
@@ -37,7 +36,7 @@ public class CSharpParserModel : IParserModel
     public CSharpBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
-    public Stack<ISyntax> ExpressionStack { get; set; }
+    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

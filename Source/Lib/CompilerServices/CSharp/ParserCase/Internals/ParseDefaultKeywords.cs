@@ -317,6 +317,9 @@ public class ParseDefaultKeywords
         		//     = 0;
         		var equalsToken = (EqualsToken)model.TokenWalker.Match(SyntaxKind.EqualsToken);
         		
+        		initializationExpressionNode = ParseOthers.ParseExpression(model);
+        		// TODO: Support setting CloseParenthesisToken as delimiter from outside the invocation  to 'ParseExpression(...)'
+        		/*
         		ParseOthers.HandleExpression(
 			        null,
 			        null,
@@ -333,6 +336,7 @@ public class ParseDefaultKeywords
 			        },
 			        model);
 			    initializationExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+			    */
 			    
 			    initializationStatementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         	}
@@ -348,6 +352,8 @@ public class ParseDefaultKeywords
         	// Condition Case Two
         	//     i < 10;
         
+        	conditionExpressionNode = ParseOthers.ParseExpression(model);
+        	/* (2024-10-23)
         	ParseOthers.HandleExpression(
 		        null,
 		        null,
@@ -364,6 +370,7 @@ public class ParseDefaultKeywords
 		        },
 		        model);
 		    conditionExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+		    */
 		    
 		    conditionStatementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
@@ -375,6 +382,8 @@ public class ParseDefaultKeywords
         
         if (closeParenthesisToken.IsFabricated)
         {
+        	updationExpressionNode = ParseOthers.ParseExpression(model);
+        	/* (2024-10-23)
         	ParseOthers.HandleExpression(
 		        null,
 		        null,
@@ -391,6 +400,7 @@ public class ParseDefaultKeywords
 		        },
 		        model);
 		    updationExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+		    */
 		    
 		    closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		    
@@ -438,6 +448,8 @@ public class ParseDefaultKeywords
     	
     	var inKeywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.InTokenKeyword);
     	
+    	var expressionNode = ParseOthers.ParseExpression(model);
+    	/* (2024-10-23)
     	ParseOthers.HandleExpression(
 	        null,
 	        null,
@@ -455,6 +467,7 @@ public class ParseDefaultKeywords
 	        model);
 	        
 		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+		*/
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var foreachStatementNode = new ForeachStatementNode(
@@ -511,6 +524,8 @@ public class ParseDefaultKeywords
     {
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
+    	var expressionNode = ParseOthers.ParseExpression(model);
+    	/* (2024-10-23)
     	ParseOthers.HandleExpression(
 	        null,
 	        null,
@@ -528,6 +543,8 @@ public class ParseDefaultKeywords
 	        model);
 	        
 		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+		*/
+		
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var lockStatementNode = new LockStatementNode(
@@ -654,6 +671,8 @@ public class ParseDefaultKeywords
     {
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
+    	var expressionNode = ParseOthers.ParseExpression(model);
+    	/* (2024-10-23)
     	ParseOthers.HandleExpression(
 	        null,
 	        null,
@@ -671,6 +690,8 @@ public class ParseDefaultKeywords
 	        model);
 	        
 		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+		*/
+		
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var switchStatementNode = new SwitchStatementNode(
@@ -791,6 +812,8 @@ public class ParseDefaultKeywords
     {    
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
+    	var expressionNode = ParseOthers.ParseExpression(model);
+    	/*
     	ParseOthers.HandleExpression(
 	        null,
 	        null,
@@ -808,6 +831,8 @@ public class ParseDefaultKeywords
 	        model);
 	        
 		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+		*/
+		
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		if (model.SyntaxStack.TryPeek(out var syntax) &&
@@ -1052,6 +1077,9 @@ public class ParseDefaultKeywords
         if (openParenthesisToken.IsFabricated)
             return;
 
+		var expression = ParseOthers.ParseExpression(model);
+		
+		/* (2024-10-23)
         ParseOthers.HandleExpression(
             null,
             null,
@@ -1069,6 +1097,7 @@ public class ParseDefaultKeywords
             model);
 
         var expression = (IExpressionNode)model.SyntaxStack.Pop();
+        */
 
         var boundIfStatementNode = model.Binder.BindIfStatementNode(consumedKeywordToken, expression);
         model.SyntaxStack.Push(boundIfStatementNode);
@@ -1295,6 +1324,9 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
+    	var returnExpression = ParseOthers.ParseExpression(model);
+    	
+    	/*
         ParseOthers.HandleExpression(
             null,
             null,
@@ -1305,6 +1337,7 @@ public class ParseDefaultKeywords
             model);
 
         var returnExpression = (IExpressionNode)model.SyntaxStack.Pop();
+        */
 
         var returnStatementNode = model.Binder.BindReturnStatementNode(
             consumedKeywordToken,

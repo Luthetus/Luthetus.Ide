@@ -16,17 +16,8 @@ public static class ParseTokens
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(
-            (IExpressionNode)model.SyntaxStack.Pop());
+        var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
 	public static void ParseCharLiteralToken(
@@ -35,17 +26,8 @@ public static class ParseTokens
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(
-            (IExpressionNode)model.SyntaxStack.Pop());
+        var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseStringLiteralToken(
@@ -54,17 +36,8 @@ public static class ParseTokens
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(
-            (IExpressionNode)model.SyntaxStack.Pop());
+        var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParsePreprocessorDirectiveToken(
@@ -428,17 +401,8 @@ public static class ParseTokens
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(
-            (IExpressionNode)model.SyntaxStack.Pop());
+        var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParsePlusPlusToken(
@@ -468,17 +432,8 @@ public static class ParseTokens
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(
-            (IExpressionNode)model.SyntaxStack.Pop());
+        var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseStarToken(
@@ -487,17 +442,8 @@ public static class ParseTokens
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(
-            (IExpressionNode)model.SyntaxStack.Pop());
+        var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseDollarSignToken(
@@ -506,17 +452,8 @@ public static class ParseTokens
     {
         // The handle expression won't see this token unless backtracked.
         model.TokenWalker.Backtrack();
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(
-            (IExpressionNode)model.SyntaxStack.Pop());
+        var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseColonToken(
@@ -675,33 +612,20 @@ public static class ParseTokens
             return;
         }
 
-        // The handle expression won't see this token unless backtracked.
-        model.TokenWalker.Backtrack();
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
+		// NONSENSE OLD CODE
+		// =================
+        //// The handle expression won't see this token unless backtracked.
+        //model.TokenWalker.Backtrack();
+        //var expression = ParseOthers.ParseExpression(model);
+        //var parenthesizedExpression = ParseOthers.ParseExpression(model);
+		//
+        //// Example: (3 + 4) * 3
+        ////
+        //// Complete expression would be binary multiplication.
+        //var expression = ParseOthers.ParseExpression(model);
 
-        var parenthesizedExpression = (IExpressionNode)model.SyntaxStack.Pop();
-
-        // Example: (3 + 4) * 3
-        //
-        // Complete expression would be binary multiplication.
-        ParseOthers.HandleExpression(
-            parenthesizedExpression,
-            parenthesizedExpression,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(
-            (IExpressionNode)model.SyntaxStack.Pop());
+		var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseCloseParenthesisToken(
@@ -794,16 +718,7 @@ public static class ParseTokens
             {
                 var closeAngleBracketToken = model.TokenWalker.Consume();
 
-                ParseOthers.HandleExpression(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    model);
-                
-                var expression = model.SyntaxStack.Pop();
+				var expression = ParseOthers.ParseExpression(model);
                 var codeBlockNode = new CodeBlockNode(new ISyntax[] 
                 {
                     expression
