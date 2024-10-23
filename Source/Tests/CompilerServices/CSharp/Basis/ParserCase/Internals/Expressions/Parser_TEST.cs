@@ -20,11 +20,11 @@ public class Parser_TEST
     	IExpressionNode expressionPrimary = new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
     	session.Position = 0;
     	
+    	session.AddShortCircuit((SyntaxKind.StatementDelimiterToken, null));
+    	
     	while (session.Position < session.TokenList.Count)
     	{
     		var tokenCurrent = session.TokenList[session.Position];
-    		if (tokenCurrent.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-    			break;
     			
     		var indentation = session.ShortCircuitList.Count;
     		
@@ -37,23 +37,41 @@ public class Parser_TEST
 	    			
 	    			if (tuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
 	    			{
-	    				session.ShortCircuitList.RemoveRange(i, session.ShortCircuitList.Count - i);
+	    				session.RemoveRangeShortCircuit(i, session.ShortCircuitList.Count - i);
+	    				
+	    				// This is a hack to have SyntaxKind.StatementDelimiterToken break out of the expression.
+	    				// The parser is adding as the 0th item that
+	    				// 'SyntaxKind.StatementDelimiterToken' returns the primary expression to be 'null'.
+	    				//
+	    				// One isn't supposed to deal with nulls here, instead using EmptyExpressionNode.
+	    				// So, if i==0 && tuple.ExpressionNode is null then
+	    				// this special case to break out of the expresion logic exists.
+	    				//
+	    				// It needs to be part of the session.ShortCircuitList however,
+	    				// because if an expression uses 'SyntaxKind.StatementDelimiterToken'
+	    				// in their expression, they can override this 0th index entry
+	    				// and have primary expression "short circuit" to their choosing
+	    				// and the loop will continue parsing more expressions.
+	    				//
+	    				// LambdaExpressionNode for example, needs to override 'SyntaxKind.StatementDelimiterToken'.
+	    				if (i == 0 && tuple.ExpressionNode is null)
+	    					return expressionPrimary;
 	    				
 		    			var expressionSecondary = expressionPrimary;
 		    			expressionPrimary = tuple.ExpressionNode;
 		    			
-		    			WriteMergeBefore(string.Join(',', session.ShortCircuitList.Select(x => x.DelimiterSyntaxKind)), $"E_{session.Position}: ", expressionPrimary, expressionSecondary);
+		    			WriteMergeBefore(session.ShortCircuitListStringified, $"E_{session.Position}: ", expressionPrimary, expressionSecondary);
 		    			expressionPrimary = binder.AnyMergeExpression(expressionPrimary, expressionSecondary, session);
-		    			WriteMergeAfter(string.Join(',', session.ShortCircuitList.Select(x => x.DelimiterSyntaxKind)), expressionPrimary);
+		    			WriteMergeAfter(session.ShortCircuitListStringified, expressionPrimary);
 		    			
 		    			break;
 	    			}
 	    		}
     		//}
     		
-    		WriteMergeBefore(string.Join(',', session.ShortCircuitList.Select(x => x.DelimiterSyntaxKind)), $"T_{session.Position}: ", expressionPrimary, tokenCurrent);
+    		WriteMergeBefore(session.ShortCircuitListStringified, $"T_{session.Position}: ", expressionPrimary, tokenCurrent);
     		expressionPrimary = binder.AnyMergeToken(expressionPrimary, tokenCurrent, session);
-    		WriteMergeAfter(string.Join(',', session.ShortCircuitList.Select(x => x.DelimiterSyntaxKind)), expressionPrimary);
+    		WriteMergeAfter(session.ShortCircuitListStringified, expressionPrimary);
     		
     		session.Position++;
     		Console.WriteLine();

@@ -33,6 +33,8 @@ public class Binder_TEST
 				return ParenthesizedMergeToken((ParenthesizedExpressionNode)expressionPrimary, token, session);
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, token, session);
+			case SyntaxKind.LambdaExpressionNode:
+				return LambdaMergeToken((LambdaExpressionNode)expressionPrimary, token, session);
 			case SyntaxKind.ConstructorInvocationExpressionNode:
 				return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, token, session);
 			case SyntaxKind.ExplicitCastNode:
@@ -59,6 +61,8 @@ public class Binder_TEST
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, session);
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, session);
+			case SyntaxKind.LambdaExpressionNode:
+				return LambdaMergeExpression((LambdaExpressionNode)expressionPrimary, expressionSecondary, session);
 			case SyntaxKind.ConstructorInvocationExpressionNode:
 				expressionPrimary = ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)expressionPrimary, expressionSecondary, session);
 				Console.WriteLine();
@@ -91,8 +95,8 @@ public class Binder_TEST
 		        functionParametersListingNode,
 		        CSharpFacts.Types.Void.ToTypeClause());
 			
-			session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
-			session.ShortCircuitList.Add((SyntaxKind.CommaToken, functionInvocationNode));
+			session.AddShortCircuit((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
+			session.AddShortCircuit((SyntaxKind.CommaToken, functionInvocationNode));
 			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 		}
 		else if (token.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
@@ -106,8 +110,8 @@ public class Binder_TEST
 				        closeAngleBracketToken: default));
 			}
 			
-		    session.ShortCircuitList.Add((SyntaxKind.CloseAngleBracketToken, ambiguousIdentifierExpressionNode));
-			session.ShortCircuitList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
+		    session.AddShortCircuit((SyntaxKind.CloseAngleBracketToken, ambiguousIdentifierExpressionNode));
+			session.AddShortCircuit((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
 			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 		}
 		else if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
@@ -117,7 +121,7 @@ public class Binder_TEST
 		}
 		else if (token.SyntaxKind == SyntaxKind.CommaToken)
 		{
-			session.ShortCircuitList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
+			session.AddShortCircuit((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
 			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 		}
 	
@@ -245,8 +249,8 @@ public class Binder_TEST
 			    constructorInvocationExpressionNode.SetFunctionParametersListingNode(functionParametersListingNode);
 				
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.FunctionParameters;
-				session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, constructorInvocationExpressionNode));
-				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+				session.AddShortCircuit((SyntaxKind.CloseParenthesisToken, constructorInvocationExpressionNode));
+				session.AddShortCircuit((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.CloseParenthesisToken:
 				constructorInvocationExpressionNode.FunctionParametersListingNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
@@ -262,8 +266,8 @@ public class Binder_TEST
 				}
 				
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
-			    session.ShortCircuitList.Add((SyntaxKind.CloseAngleBracketToken, constructorInvocationExpressionNode));
-				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+			    session.AddShortCircuit((SyntaxKind.CloseAngleBracketToken, constructorInvocationExpressionNode));
+				session.AddShortCircuit((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.CloseAngleBracketToken:
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
@@ -278,20 +282,20 @@ public class Binder_TEST
 			    constructorInvocationExpressionNode.SetObjectInitializationParametersListingNode(objectInitializationParametersListingNode);
 				
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.ObjectInitializationParameters;
-				session.ShortCircuitList.Add((SyntaxKind.CloseBraceToken, constructorInvocationExpressionNode));
-				session.ShortCircuitList.Add((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
-				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+				session.AddShortCircuit((SyntaxKind.CloseBraceToken, constructorInvocationExpressionNode));
+				session.AddShortCircuit((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
+				session.AddShortCircuit((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.CloseBraceToken:
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 				constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.SetCloseBraceToken((CloseBraceToken)token);
 				return constructorInvocationExpressionNode;
 			case SyntaxKind.CommaToken:
-				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+				session.AddShortCircuit((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.EqualsToken:
-				session.ShortCircuitList.Add((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
-				session.ShortCircuitList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+				session.AddShortCircuit((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
+				session.AddShortCircuit((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
 				
 				if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.ObjectInitializationParameters &&
 					constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
@@ -519,7 +523,7 @@ public class Binder_TEST
 				return new LiteralExpressionNode(token, tokenTypeClauseNode);
 			case SyntaxKind.OpenParenthesisToken:
 				var parenthesizedExpressionNode = new ParenthesizedExpressionNode((OpenParenthesisToken)token, CSharpFacts.Types.Void.ToTypeClause());
-				session.ShortCircuitList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
+				session.AddShortCircuit((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.NewTokenKeyword:
 				return new ConstructorInvocationExpressionNode(
@@ -541,6 +545,68 @@ public class Binder_TEST
 				return explicitCastNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), explicitCastNode, token);
+		}
+	}
+	
+	public IExpressionNode LambdaMergeToken(
+		LambdaExpressionNode lambdaExpressionNode, ISyntaxToken token, ExpressionSession session)
+	{
+		if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+		{
+			if (session.Position < session.TokenList.Count - 1)
+			{
+				var nextToken = session.TokenList[session.Position + 1];
+				
+				if (nextToken.SyntaxKind == SyntaxKind.OpenBraceToken)
+				{
+					lambdaExpressionNode.CodeBlockNodeIsExpression = false;
+				
+					session.AddShortCircuit((SyntaxKind.CloseBraceToken, lambdaExpressionNode));
+					session.AddShortCircuit((SyntaxKind.StatementDelimiterToken, lambdaExpressionNode));
+					return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				}
+			}
+			
+			
+			session.AddShortCircuit((SyntaxKind.StatementDelimiterToken, lambdaExpressionNode));
+			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+		}
+		else if (token.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+		{
+			if (lambdaExpressionNode.CodeBlockNodeIsExpression)
+			{
+				return lambdaExpressionNode;
+			}
+			else
+			{
+				session.AddShortCircuit((SyntaxKind.StatementDelimiterToken, lambdaExpressionNode));
+				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			}
+		}
+		else if (token.SyntaxKind == SyntaxKind.CloseBraceToken)
+		{
+			if (lambdaExpressionNode.CodeBlockNodeIsExpression)
+			{
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), lambdaExpressionNode, token);
+			}
+			else
+			{
+				return lambdaExpressionNode;
+			}
+		}
+		else
+		{
+			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), lambdaExpressionNode, token);
+		}
+	}
+	
+	public IExpressionNode LambdaMergeExpression(
+		LambdaExpressionNode lambdaExpressionNode, IExpressionNode expressionSecondary, ExpressionSession session)
+	{
+		switch (expressionSecondary.SyntaxKind)
+		{
+			default:
+				return lambdaExpressionNode;
 		}
 	}
 
@@ -578,6 +644,18 @@ public class Binder_TEST
 		{
 			case SyntaxKind.CloseParenthesisToken:
 				return parenthesizedExpressionNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
+			case SyntaxKind.EqualsToken:
+				if (session.Position < session.TokenList.Count - 1)
+				{
+					var nextToken = session.TokenList[session.Position + 1];
+					
+					if (nextToken.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+					{
+						return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+					}
+				}
+				
+				return parenthesizedExpressionNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), parenthesizedExpressionNode, token);
 		}
@@ -614,7 +692,7 @@ public class Binder_TEST
 				functionInvocationNode.FunctionParametersListingNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
 				return functionInvocationNode;
 			case SyntaxKind.CommaToken:
-				session.ShortCircuitList.Add((SyntaxKind.CommaToken, functionInvocationNode));
+				session.AddShortCircuit((SyntaxKind.CommaToken, functionInvocationNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), functionInvocationNode, token);
