@@ -1517,6 +1517,18 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select(() => x.FirstName);
+				Fabricate.Identifier("list"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("Select"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.Equals(),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Identifier("x"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("FirstName"),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
@@ -1533,6 +1545,17 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select(x => x.FirstName);
+				Fabricate.Identifier("list"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("Select"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.Identifier("x"),
+				Fabricate.Equals(),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Identifier("x"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("FirstName"),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
@@ -1549,6 +1572,22 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select(async (x, index) => x.FirstName);
+				Fabricate.Identifier("list"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("Select"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.Async(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.Identifier("x"),
+				Fabricate.Comma(),
+				Fabricate.Identifier("index"),
+				Fabricate.CloseParenthesis(),
+				Fabricate.Equals(),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.Identifier("x"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("FirstName"),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
@@ -1565,6 +1604,32 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select(async () => { Console.WriteLine(x.FirstName); return x.FirstName; });
+				Fabricate.Identifier("list"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("Select"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.Async(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.CloseParenthesis(),
+				Fabricate.Equals(),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.OpenBrace(),
+				Fabricate.Identifier("Console"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("WriteLine"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.Identifier("x"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("FirstName"),
+				Fabricate.CloseParenthesis(),
+				Fabricate.StatementDelimiter(),
+				Fabricate.Return(),
+				Fabricate.Identifier("x"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("FirstName"),
+				Fabricate.StatementDelimiter(),
+				Fabricate.CloseBrace(),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
@@ -1581,6 +1646,22 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select(async x => { return x.FirstName; });
+				Fabricate.Identifier("list"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("Select"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.Async(),
+				Fabricate.Identifier("x"),
+				Fabricate.Equals(),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.OpenBrace(),
+				Fabricate.Return(),
+				Fabricate.Identifier("x"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("FirstName"),
+				Fabricate.StatementDelimiter(),
+				Fabricate.CloseBrace(),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
@@ -1597,6 +1678,25 @@ var aaa = 1;
 			tokenList: new List<ISyntaxToken>
 			{
 				// list.Select((x, index) => { return x.FirstName; });
+				Fabricate.Identifier("list"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("Select"),
+				Fabricate.OpenParenthesis(),
+				Fabricate.OpenParenthesis(),
+				Fabricate.Identifier("x"),
+				Fabricate.Comma(),
+				Fabricate.Identifier("index"),
+				Fabricate.CloseParenthesis(),
+				Fabricate.Equals(),
+				Fabricate.OpenAngleBracket(),
+				Fabricate.OpenBrace(),
+				Fabricate.Return(),
+				Fabricate.Identifier("x"),
+				Fabricate.MemberAccess(),
+				Fabricate.Identifier("FirstName"),
+				Fabricate.StatementDelimiter(),
+				Fabricate.CloseBrace(),
+				Fabricate.CloseParenthesis(),
 			},
 			expressionStack: new Stack<ISyntax>(),
 			shortCircuitList: new());
