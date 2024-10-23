@@ -58,6 +58,16 @@ public static class Fabricate
     	return new KeywordToken(TextSpan("new"), SyntaxKind.NewTokenKeyword);
     }
     
+    public static KeywordToken Return()
+    {
+    	return new KeywordToken(TextSpan("return"), SyntaxKind.ReturnTokenKeyword);
+    }
+    
+    public static KeywordContextualToken Async()
+    {
+    	return new KeywordContextualToken(TextSpan("async"), SyntaxKind.AsyncTokenContextualKeyword);
+    }
+    
     public static IdentifierToken Identifier(string text)
     {
     	return new IdentifierToken(TextSpan(text));
@@ -66,6 +76,16 @@ public static class Fabricate
     public static CommaToken Comma()
     {
     	return new CommaToken(TextSpan(","));
+    }
+    
+    public static MemberAccessToken MemberAccess()
+    {
+    	return new MemberAccessToken(TextSpan("."));
+    }
+    
+    public static StatementDelimiterToken StatementDelimiter()
+    {
+    	return new StatementDelimiterToken(TextSpan(";"));
     }
     
     public static PlusToken Plus()
