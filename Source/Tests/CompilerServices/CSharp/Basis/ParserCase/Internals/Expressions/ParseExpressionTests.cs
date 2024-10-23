@@ -1569,22 +1569,18 @@ var aaa = 1;
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				// list.Select(x => x.FirstName);
-				Fabricate.Identifier("list"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("Select"),
-				Fabricate.OpenParenthesis(),
+				// x => "Abc";
 				Fabricate.Identifier("x"),
 				Fabricate.EqualsToken(),
 				Fabricate.CloseAngleBracket(),
-				Fabricate.Identifier("x"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("FirstName"),
-				Fabricate.CloseParenthesis(),
+				Fabricate.String("Abc"),
+				Fabricate.StatementDelimiter(),
 			},
 			expressionStack: new Stack<ISyntax>());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		var lambdaExpressionNode = (LambdaExpressionNode)expression;
 		
 		throw new NotImplementedException();
     }
@@ -1592,14 +1588,16 @@ var aaa = 1;
     [Fact]
     public void LambdaFunction_Expression_ManyParameter_Async()
     {
+    	// I decided that I am going to get all of the 'LambdaFunction' tests to return
+    	// a 'LambdaExpressionNode', then go back to the previous tests and
+    	// fix any that broke.
+    	//
+    	// I'm just looking for any kind of progress I can find at the moment.
+    
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				// list.Select(async (x, index) => x.FirstName);
-				Fabricate.Identifier("list"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("Select"),
-				Fabricate.OpenParenthesis(),
+				// async (x, index) => "Abc";
 				Fabricate.Async(),
 				Fabricate.OpenParenthesis(),
 				Fabricate.Identifier("x"),
@@ -1608,14 +1606,14 @@ var aaa = 1;
 				Fabricate.CloseParenthesis(),
 				Fabricate.EqualsToken(),
 				Fabricate.CloseAngleBracket(),
-				Fabricate.Identifier("x"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("FirstName"),
-				Fabricate.CloseParenthesis(),
+				Fabricate.String("Abc"),
+				Fabricate.StatementDelimiter(),
 			},
 			expressionStack: new Stack<ISyntax>());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		var lambdaExpressionNode = (LambdaExpressionNode)expression;
 		
 		throw new NotImplementedException();
     }
@@ -1626,37 +1624,29 @@ var aaa = 1;
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				// list.Select(async () => { Console.WriteLine(x.FirstName); return x.FirstName; });
-				Fabricate.Identifier("list"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("Select"),
-				Fabricate.OpenParenthesis(),
+				// async () => { WriteLine("Abc"); return "Cba"; };
 				Fabricate.Async(),
 				Fabricate.OpenParenthesis(),
 				Fabricate.CloseParenthesis(),
 				Fabricate.EqualsToken(),
 				Fabricate.CloseAngleBracket(),
 				Fabricate.OpenBrace(),
-				Fabricate.Identifier("Console"),
-				Fabricate.MemberAccess(),
 				Fabricate.Identifier("WriteLine"),
 				Fabricate.OpenParenthesis(),
-				Fabricate.Identifier("x"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("FirstName"),
+				Fabricate.String("Abc"),
 				Fabricate.CloseParenthesis(),
 				Fabricate.StatementDelimiter(),
 				Fabricate.Return(),
-				Fabricate.Identifier("x"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("FirstName"),
+				Fabricate.String("Cba"),
 				Fabricate.StatementDelimiter(),
 				Fabricate.CloseBrace(),
-				Fabricate.CloseParenthesis(),
+				Fabricate.StatementDelimiter(),
 			},
 			expressionStack: new Stack<ISyntax>());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		var lambdaExpressionNode = (LambdaExpressionNode)expression;
 		
 		throw new NotImplementedException();
     }
@@ -1667,27 +1657,23 @@ var aaa = 1;
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				// list.Select(async x => { return x.FirstName; });
-				Fabricate.Identifier("list"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("Select"),
-				Fabricate.OpenParenthesis(),
+				// async x => { return "Abc"; };
 				Fabricate.Async(),
 				Fabricate.Identifier("x"),
 				Fabricate.EqualsToken(),
 				Fabricate.CloseAngleBracket(),
 				Fabricate.OpenBrace(),
 				Fabricate.Return(),
-				Fabricate.Identifier("x"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("FirstName"),
+				Fabricate.String("Abc"),
 				Fabricate.StatementDelimiter(),
 				Fabricate.CloseBrace(),
-				Fabricate.CloseParenthesis(),
+				Fabricate.StatementDelimiter(),
 			},
 			expressionStack: new Stack<ISyntax>());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		var lambdaExpressionNode = (LambdaExpressionNode)expression;
 		
 		throw new NotImplementedException();
     }
@@ -1698,11 +1684,7 @@ var aaa = 1;
     	var session = new ExpressionSession(
 			tokenList: new List<ISyntaxToken>
 			{
-				// list.Select((x, index) => { return x.FirstName; });
-				Fabricate.Identifier("list"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("Select"),
-				Fabricate.OpenParenthesis(),
+				// (x, index) => { return "Abc"; };
 				Fabricate.OpenParenthesis(),
 				Fabricate.Identifier("x"),
 				Fabricate.Comma(),
@@ -1712,16 +1694,16 @@ var aaa = 1;
 				Fabricate.CloseAngleBracket(),
 				Fabricate.OpenBrace(),
 				Fabricate.Return(),
-				Fabricate.Identifier("x"),
-				Fabricate.MemberAccess(),
-				Fabricate.Identifier("FirstName"),
+				Fabricate.String("Abc"),
 				Fabricate.StatementDelimiter(),
 				Fabricate.CloseBrace(),
-				Fabricate.CloseParenthesis(),
+				Fabricate.StatementDelimiter(),
 			},
 			expressionStack: new Stack<ISyntax>());
 		
 		var expression = Parser_TEST.ParseExpression(session);
+		
+		var lambdaExpressionNode = (LambdaExpressionNode)expression;
 		
 		throw new NotImplementedException();
     }
@@ -1929,4 +1911,23 @@ var aaa = 1;
 		
 		throw new NotImplementedException();
     }
+    
+    [Fact]
+    public void MemberAccess()
+    {
+    	var session = new ExpressionSession(
+			tokenList: new List<ISyntaxToken>
+			{
+				/*
+	// x => x.FirstName;
+				*/
+			},
+			expressionStack: new Stack<ISyntax>());
+		
+		var expression = Parser_TEST.ParseExpression(session);
+		
+		throw new NotImplementedException();
+    }
+    
+    
 }

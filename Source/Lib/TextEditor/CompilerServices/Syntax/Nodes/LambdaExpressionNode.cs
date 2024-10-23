@@ -37,6 +37,7 @@ public sealed class LambdaExpressionNode : IExpressionNode
     ///     Then this property is false;
     /// </summary>
     public bool CodeBlockNodeIsExpression { get; set; } = true;
+    public bool HasReadParameters { get; set; }
 
     public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }

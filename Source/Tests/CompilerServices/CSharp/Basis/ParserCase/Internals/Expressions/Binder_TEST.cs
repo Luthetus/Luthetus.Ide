@@ -124,6 +124,19 @@ public class Binder_TEST
 			session.AddShortCircuit((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
 			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 		}
+		else if (token.SyntaxKind == SyntaxKind.EqualsToken)
+		{
+			if (session.Position < session.TokenList.Count - 1)
+			{
+				var nextToken = session.TokenList[session.Position + 1];
+				
+				if (nextToken.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+					return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			}
+			
+			session.AddShortCircuit((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
+			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+		}
 	
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, token);
 	}
@@ -531,6 +544,8 @@ public class Binder_TEST
 			        typeClauseNode: null,
 			        functionParametersListingNode: null,
 			        objectInitializationParametersListingNode: null);
+			case SyntaxKind.AsyncTokenContextualKeyword:
+				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
 		}
@@ -591,6 +606,53 @@ public class Binder_TEST
 			}
 			else
 			{
+				return lambdaExpressionNode;
+			}
+		}
+		else if (token.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+		{
+			if (lambdaExpressionNode.HasReadParameters)
+			{
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), lambdaExpressionNode, token);
+			}
+			else
+			{
+				lambdaExpressionNode.HasReadParameters = true;
+				session.AddShortCircuit((SyntaxKind.CloseParenthesisToken, lambdaExpressionNode));
+				session.AddShortCircuit((SyntaxKind.CommaToken, lambdaExpressionNode));
+				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			}
+		}
+		else if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+		{
+			return lambdaExpressionNode;
+		}
+		else if (token.SyntaxKind == SyntaxKind.EqualsToken)
+		{
+			if (session.Position < session.TokenList.Count - 1)
+			{
+				var nextToken = session.TokenList[session.Position + 1];
+				
+				if (nextToken.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+					return lambdaExpressionNode;
+			}
+			
+			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), lambdaExpressionNode, token);
+		}
+		else if (token.SyntaxKind == SyntaxKind.CommaToken)
+		{
+			session.AddShortCircuit((SyntaxKind.CommaToken, lambdaExpressionNode));
+			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+		}
+		else if (token.SyntaxKind == SyntaxKind.IdentifierToken)
+		{
+			if (lambdaExpressionNode.HasReadParameters)
+			{
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), lambdaExpressionNode, token);
+			}
+			else
+			{
+				lambdaExpressionNode.HasReadParameters = true;
 				return lambdaExpressionNode;
 			}
 		}
