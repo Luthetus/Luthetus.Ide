@@ -34,7 +34,7 @@ public class ParserModel : IParserModel
     public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
-    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
+    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; } = new();
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
