@@ -9,8 +9,10 @@ public sealed class EmptyNode : ISyntaxNode
 {
     public EmptyNode()
     {
-    	SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
@@ -18,8 +20,14 @@ public sealed class EmptyNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = Array.Empty<ISyntax>();
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
+    	_childList = Array.Empty<ISyntax>();
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

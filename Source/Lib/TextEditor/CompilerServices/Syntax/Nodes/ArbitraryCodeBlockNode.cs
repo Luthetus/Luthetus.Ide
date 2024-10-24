@@ -12,9 +12,10 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
     {
         ParentCodeBlockOwner = parentCodeBlockOwner;
         Parent = ParentCodeBlockOwner;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public ICodeBlockOwner? ParentCodeBlockOwner { get; }
     public OpenBraceToken OpenBraceToken { get; private set; }
@@ -37,7 +38,8 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -47,8 +49,11 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
     	return;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 0;
         if (OpenBraceToken.ConstructorWasInvoked)
     		childCount++;
@@ -63,6 +68,9 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
     	if (CodeBlockNode is not null)
     		childList[i++] = CodeBlockNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

@@ -15,9 +15,10 @@ public sealed class AmbiguousIdentifierNode : ISyntaxNode
     public AmbiguousIdentifierNode(IdentifierToken identifierToken)
     {
         IdentifierToken = identifierToken;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public IdentifierToken IdentifierToken { get; }
 
@@ -27,11 +28,17 @@ public sealed class AmbiguousIdentifierNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = new ISyntax[]
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
+    	_childList = new ISyntax[]
         {
             IdentifierToken,
         };
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

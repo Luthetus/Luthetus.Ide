@@ -22,9 +22,10 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
         FunctionArgumentsListingNode = functionArgumentsListingNode;
         CodeBlockNode = codeBlockNode;
         ConstraintNode = constraintNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TypeClauseNode ReturnTypeClauseNode { get; }
     public IdentifierToken FunctionIdentifier { get; }
@@ -51,7 +52,8 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -66,8 +68,11 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 		}
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	// ReturnTypeClauseNode, FunctionIdentifier, ...FunctionArgumentsListingNode,
         var childCount = 3;
         if (GenericArgumentsListingNode is not null)
@@ -90,6 +95,9 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
         if (ConstraintNode is not null)
             childList[i++] = ConstraintNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

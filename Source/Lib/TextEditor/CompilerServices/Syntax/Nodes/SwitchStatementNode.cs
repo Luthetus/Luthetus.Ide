@@ -20,9 +20,10 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
         ExpressionNode = expressionNode;
         CloseParenthesisToken = closeParenthesisToken;
         CodeBlockNode = codeBlockNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public KeywordToken KeywordToken { get; }
     public OpenParenthesisToken OpenParenthesisToken { get; }
@@ -48,7 +49,8 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -58,8 +60,11 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
     	return;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
         var childCount = 4; //KeywordToken, OpenParenthesisToken, ExpressionNode, CloseParenthesisToken,
         if (OpenBraceToken.ConstructorWasInvoked)
             childCount++;
@@ -78,6 +83,9 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
         if (CodeBlockNode is not null)
             childList[i++] = CodeBlockNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

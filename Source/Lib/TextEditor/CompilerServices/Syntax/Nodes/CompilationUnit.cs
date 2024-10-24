@@ -30,9 +30,10 @@ public sealed class CompilationUnit : ISyntaxNode
         diagnosticsListBuilder.AddRange(Binder.DiagnosticsList);
 
         DiagnosticsList = diagnosticsListBuilder.ToImmutableArray();
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public CodeBlockNode RootCodeBlockNode { get; }
     public ILexer Lexer { get; }
@@ -45,8 +46,11 @@ public sealed class CompilationUnit : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 1; // RootCodeBlockNode,
             
         var childList = new ISyntax[childCount];
@@ -54,6 +58,9 @@ public sealed class CompilationUnit : ISyntaxNode
 
 		childList[i++] = RootCodeBlockNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

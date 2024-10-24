@@ -14,9 +14,10 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
         OpenParenthesisToken = openParenthesisToken;
         InnerExpression = innerExpression;
         CloseParenthesisToken = closeParenthesisToken;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
     
     public ParenthesizedExpressionNode(OpenParenthesisToken openParenthesisToken, TypeClauseNode typeClauseNode)
     	: this(openParenthesisToken, new EmptyExpressionNode(typeClauseNode), default)
@@ -37,19 +38,24 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
     public ParenthesizedExpressionNode SetCloseParenthesisToken(CloseParenthesisToken closeParenthesisToken)
     {
     	CloseParenthesisToken = closeParenthesisToken;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
     public ParenthesizedExpressionNode SetInnerExpression(IExpressionNode innerExpression)
     {
     	InnerExpression = innerExpression;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 4; // OpenParenthesisToken, InnerExpression, CloseParenthesisToken, ResultTypeClauseNode,
             
         var childList = new ISyntax[childCount];
@@ -60,6 +66,9 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
 		childList[i++] = CloseParenthesisToken;
 		childList[i++] = ResultTypeClauseNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

@@ -19,14 +19,15 @@ public sealed class BadExpressionNode : IExpressionNode
     {
     	ResultTypeClauseNode = resultTypeClauseNode;
         SyntaxList = syntaxList;
-
-        SetChildList();
     }
     
     public BadExpressionNode(TypeClauseNode resultTypeClauseNode, ISyntax syntaxPrimary, ISyntax syntaxSecondary)
     	: this(resultTypeClauseNode, new List<ISyntax> { syntaxPrimary, syntaxSecondary })
     {
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public List<ISyntax> SyntaxList { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
@@ -54,8 +55,11 @@ public sealed class BadExpressionNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	// It is a bit odd to set 'ChildList' to an empty array here.
     	//
     	// But, a bad expression might be rather long.
@@ -69,6 +73,9 @@ public sealed class BadExpressionNode : IExpressionNode
     	// or tokens that pertain to this node itself.
     	//
     	// But it is believed to be worth ignoring 'ChildList' for this type.
-    	ChildList = Array.Empty<ISyntax>();
+    	_childList = Array.Empty<ISyntax>();
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

@@ -17,9 +17,10 @@ public sealed class FieldDefinitionNode : IVariableDeclarationNode
         IdentifierToken = identifierToken;
         VariableKind = variableKind;
         IsInitialized = isInitialized;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TypeClauseNode TypeClauseNode { get; }
     public IdentifierToken IdentifierToken { get; }
@@ -48,8 +49,11 @@ public sealed class FieldDefinitionNode : IVariableDeclarationNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FieldDefinitionNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 2; // TypeClauseNode, IdentifierToken,
             
         var childList = new ISyntax[childCount];
@@ -58,6 +62,9 @@ public sealed class FieldDefinitionNode : IVariableDeclarationNode
 		childList[i++] = TypeClauseNode;
 		childList[i++] = IdentifierToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

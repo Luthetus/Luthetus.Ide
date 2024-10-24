@@ -11,9 +11,10 @@ public sealed class UnaryExpressionNode : IExpressionNode
     {
         Expression = expression;
         UnaryOperatorNode = unaryOperatorNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public IExpressionNode Expression { get; }
     public UnaryOperatorNode UnaryOperatorNode { get; }
@@ -25,12 +26,18 @@ public sealed class UnaryExpressionNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = new ISyntax[]
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
+    	_childList = new ISyntax[]
         {
             Expression,
             UnaryOperatorNode,
         };
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

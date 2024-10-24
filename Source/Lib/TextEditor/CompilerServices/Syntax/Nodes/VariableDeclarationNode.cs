@@ -17,9 +17,10 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
         IdentifierToken = identifierToken;
         VariableKind = variableKind;
         IsInitialized = isInitialized;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TypeClauseNode TypeClauseNode { get; }
     public IdentifierToken IdentifierToken { get; }
@@ -48,12 +49,18 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = new ISyntax[]
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
+    	_childList = new ISyntax[]
         {
             TypeClauseNode,
             IdentifierToken,
         };
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

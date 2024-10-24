@@ -22,9 +22,10 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
         PropertyIdentifierToken = propertyIdentifierToken;
         EqualsToken = equalsToken;
         ExpressionNode = expressionNode;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public IdentifierToken PropertyIdentifierToken { get; set; }
     public EqualsToken EqualsToken { get; set; }
@@ -37,8 +38,11 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParameterEntryNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 2; // PropertyIdentifierToken, ExpressionNode,
             
         var childList = new ISyntax[childCount];
@@ -47,6 +51,9 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
 		childList[i++] = PropertyIdentifierToken;
 		childList[i++] = ExpressionNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

@@ -24,9 +24,10 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
         OpenParenthesisToken = openParenthesisToken;
         ExpressionNode = expressionNode;
         CloseParenthesisToken = closeParenthesisToken;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public KeywordToken DoKeywordToken { get; }
     public OpenBraceToken OpenBraceToken { get; private set; }
@@ -53,7 +54,8 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -63,8 +65,11 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
     	return;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 1; // DoKeywordToken,
         if (OpenBraceToken.ConstructorWasInvoked)
             childCount++;
@@ -96,7 +101,10 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
         if (CloseParenthesisToken.ConstructorWasInvoked)
             childList[i++] = CloseParenthesisToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
     
     public void SetWhileProperties(
@@ -109,5 +117,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
     	OpenParenthesisToken = openParenthesisToken;
 	    ExpressionNode = expressionNode;
 	    CloseParenthesisToken = closeParenthesisToken;
+	    
+	    _childListIsDirty = true;
     }
 }

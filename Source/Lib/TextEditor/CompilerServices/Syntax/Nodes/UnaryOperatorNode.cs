@@ -12,9 +12,10 @@ public sealed class UnaryOperatorNode : ISyntaxNode
         OperandTypeClauseNode = operandTypeClauseNode;
         OperatorToken = operatorToken;
         ResultTypeClauseNode = resultTypeClauseNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TypeClauseNode OperandTypeClauseNode { get; }
     public ISyntaxToken OperatorToken { get; }
@@ -26,13 +27,19 @@ public sealed class UnaryOperatorNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryOperatorNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = new ISyntax[]
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
+    	_childList = new ISyntax[]
         {
             OperandTypeClauseNode,
             OperatorToken,
             ResultTypeClauseNode,
         };
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

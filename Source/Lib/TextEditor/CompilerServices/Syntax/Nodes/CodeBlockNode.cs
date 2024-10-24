@@ -11,7 +11,7 @@ public sealed class CodeBlockNode : ISyntaxNode
 {
     public CodeBlockNode(ImmutableArray<ISyntax> childList)
     {
-        ChildList = childList.ToArray();
+        _childList = childList.ToArray();
 
         DiagnosticsList = ImmutableArray<TextEditorDiagnostic>.Empty;
     }
@@ -20,9 +20,12 @@ public sealed class CodeBlockNode : ISyntaxNode
         ImmutableArray<ISyntax> childList,
         ImmutableArray<TextEditorDiagnostic> diagnostics)
     {
-        ChildList = childList.ToArray();
+        _childList = childList.ToArray();
         DiagnosticsList = diagnostics;
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
@@ -31,8 +34,14 @@ public sealed class CodeBlockNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CodeBlockNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	return; // Do nothing
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

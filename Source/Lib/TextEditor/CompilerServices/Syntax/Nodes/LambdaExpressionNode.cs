@@ -24,8 +24,10 @@ public sealed class LambdaExpressionNode : IExpressionNode
     public LambdaExpressionNode(TypeClauseNode resultTypeClauseNode)
     {
     	ResultTypeClauseNode = resultTypeClauseNode;
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TypeClauseNode ResultTypeClauseNode { get; }
     
@@ -45,11 +47,17 @@ public sealed class LambdaExpressionNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = new ISyntax[]
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
+    	_childList = new ISyntax[]
         {
             ResultTypeClauseNode
         };
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

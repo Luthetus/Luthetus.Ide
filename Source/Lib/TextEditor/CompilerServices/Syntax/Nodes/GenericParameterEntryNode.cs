@@ -10,9 +10,10 @@ public sealed class GenericParameterEntryNode : ISyntaxNode
     public GenericParameterEntryNode(TypeClauseNode typeClauseNode)
     {
         TypeClauseNode = typeClauseNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TypeClauseNode TypeClauseNode { get; }
 
@@ -22,8 +23,11 @@ public sealed class GenericParameterEntryNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericParameterEntryNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 1; // TypeClauseNode,
             
         var childList = new ISyntax[childCount];
@@ -31,6 +35,9 @@ public sealed class GenericParameterEntryNode : ISyntaxNode
 
 		childList[i++] = TypeClauseNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

@@ -13,9 +13,10 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
         OpenBraceToken = openBraceToken;
         ObjectInitializationParameterEntryNodeList = objectInitializationParameterEntryNodeList;
         CloseBraceToken = closeBraceToken;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public OpenBraceToken OpenBraceToken { get; }
     public List<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
@@ -31,12 +32,15 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
     {
     	CloseBraceToken = closeBraceToken;
     	
-    	SetChildList();
+    	_childListIsDirty = true;
     	return this;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Length, CloseBraceToken
     	var childCount = 
     		1 +                                                // OpenBraceToken
@@ -53,6 +57,9 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
 		}
 		childList[i++] = CloseBraceToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

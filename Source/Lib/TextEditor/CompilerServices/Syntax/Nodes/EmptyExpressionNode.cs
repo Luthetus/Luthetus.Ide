@@ -12,9 +12,10 @@ public sealed class EmptyExpressionNode : IExpressionNode
     public EmptyExpressionNode(TypeClauseNode typeClauseNode)
     {
         ResultTypeClauseNode = typeClauseNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TypeClauseNode ResultTypeClauseNode { get; }
 
@@ -24,8 +25,11 @@ public sealed class EmptyExpressionNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 1; // ResultTypeClauseNode,
             
         var childList = new ISyntax[childCount];
@@ -33,6 +37,9 @@ public sealed class EmptyExpressionNode : IExpressionNode
 
 		childList[i++] = ResultTypeClauseNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

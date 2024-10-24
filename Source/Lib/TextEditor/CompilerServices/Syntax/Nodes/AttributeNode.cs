@@ -13,9 +13,10 @@ public sealed class AttributeNode : ISyntaxNode
         OpenSquareBracketToken = openSquareBracketToken;
         InnerTokens = innerTokens;
         CloseSquareBracketToken = closeSquareBracketToken;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public OpenSquareBracketToken OpenSquareBracketToken { get; }
     public List<ISyntaxToken> InnerTokens { get; }
@@ -27,8 +28,11 @@ public sealed class AttributeNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	// OpenSquareBracketToken, InnerTokens.Count, CloseSquareBracketToken
     	var childCount = 
     		1 +                 // OpenSquareBracketToken,
@@ -45,6 +49,9 @@ public sealed class AttributeNode : ISyntaxNode
 		}
 		childList[i++] = CloseSquareBracketToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

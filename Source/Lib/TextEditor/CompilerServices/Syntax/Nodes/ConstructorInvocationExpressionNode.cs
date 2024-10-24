@@ -21,9 +21,10 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
         ResultTypeClauseNode = typeClauseNode;
         FunctionParametersListingNode = functionParametersListingNode;
         ObjectInitializationParametersListingNode = objectInitializationParametersListingNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public KeywordToken NewKeywordToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; private set; }
@@ -42,28 +43,31 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
 	{
 		ResultTypeClauseNode = resultTypeClauseNode;
 		
-		SetChildList();
-		return this;
+		_childListIsDirty = true;
+    	return this;
 	}
 
 	public ConstructorInvocationExpressionNode SetFunctionParametersListingNode(FunctionParametersListingNode? functionParametersListingNode)
 	{
 		FunctionParametersListingNode = functionParametersListingNode;
 		
-		SetChildList();
-		return this;
+		_childListIsDirty = true;
+    	return this;
 	}
 
 	public ConstructorInvocationExpressionNode SetObjectInitializationParametersListingNode(ObjectInitializationParametersListingNode? objectInitializationParametersListingNode)
 	{
 		ObjectInitializationParametersListingNode = objectInitializationParametersListingNode;
 		
-		SetChildList();
-		return this;
+		_childListIsDirty = true;
+    	return this;
 	}
    
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 2; // NewKeywordToken, ResultTypeClauseNode,
     	if (FunctionParametersListingNode is not null)
             childCount++;
@@ -80,6 +84,9 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
         if (ObjectInitializationParametersListingNode is not null)
             childList[i++] = ObjectInitializationParametersListingNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

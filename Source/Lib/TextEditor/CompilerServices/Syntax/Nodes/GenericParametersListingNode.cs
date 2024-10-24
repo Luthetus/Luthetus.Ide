@@ -16,9 +16,10 @@ public sealed class GenericParametersListingNode : ISyntaxNode
         OpenAngleBracketToken = openAngleBracketToken;
         GenericParameterEntryNodeList = genericParameterEntryNodes;
         CloseAngleBracketToken = closeAngleBracketToken;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public OpenAngleBracketToken OpenAngleBracketToken { get; }
     public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
@@ -34,12 +35,15 @@ public sealed class GenericParametersListingNode : ISyntaxNode
     {
     	CloseAngleBracketToken = closeAngleBracketToken;
     	
-    	SetChildList();
+    	_childListIsDirty = true;
     	return this;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	// OpenAngleBracketToken, GenericParameterEntryNodeList.Length, CloseAngleBracketToken,
     	var childCount = 
     		1 +                                    // OpenAngleBracketToken,
@@ -56,6 +60,9 @@ public sealed class GenericParametersListingNode : ISyntaxNode
 		}
 		childList[i++] = CloseAngleBracketToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

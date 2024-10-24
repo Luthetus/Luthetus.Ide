@@ -16,9 +16,10 @@ public sealed class FunctionArgumentsListingNode : ISyntaxNode
         OpenParenthesisToken = openParenthesisToken;
         FunctionArgumentEntryNodeList = functionArgumentEntryNodes;
         CloseParenthesisToken = closeParenthesisToken;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public ImmutableArray<FunctionArgumentEntryNode> FunctionArgumentEntryNodeList { get; }
@@ -30,8 +31,11 @@ public sealed class FunctionArgumentsListingNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentsListingNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	// OpenParenthesisToken, FunctionArgumentEntryNodeList.Length, CloseParenthesisToken,
     	var childCount = 
     		1 +                                    // OpenParenthesisToken,
@@ -48,6 +52,9 @@ public sealed class FunctionArgumentsListingNode : ISyntaxNode
 		}
 		childList[i++] = CloseParenthesisToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

@@ -14,9 +14,10 @@ public sealed class ExplicitCastNode : IExpressionNode
         OpenParenthesisToken = openParenthesisToken;
         ResultTypeClauseNode = resultTypeClauseNode;
         CloseParenthesisToken = closeParenthesisToken;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
     
     public ExplicitCastNode(OpenParenthesisToken openParenthesisToken, TypeClauseNode resultTypeClauseNode)
     	: this(openParenthesisToken, resultTypeClauseNode, default)
@@ -37,12 +38,15 @@ public sealed class ExplicitCastNode : IExpressionNode
     {
     	CloseParenthesisToken = closeParenthesisToken;
     	
-    	SetChildList();
+    	_childListIsDirty = true;
     	return this;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 3; // OpenParenthesisToken, ResultTypeClauseNode, CloseParenthesisToken,
             
         var childList = new ISyntax[childCount];
@@ -52,6 +56,9 @@ public sealed class ExplicitCastNode : IExpressionNode
 		childList[i++] = ResultTypeClauseNode;
 		childList[i++] = CloseParenthesisToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

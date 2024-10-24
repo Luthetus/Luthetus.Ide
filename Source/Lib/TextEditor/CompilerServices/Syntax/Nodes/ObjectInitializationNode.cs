@@ -11,9 +11,10 @@ public sealed class ObjectInitializationNode : ISyntaxNode
     {
         OpenBraceToken = openBraceToken;
         CloseBraceToken = closeBraceToken;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public OpenBraceToken OpenBraceToken { get; }
     public CloseBraceToken CloseBraceToken { get; }
@@ -24,8 +25,11 @@ public sealed class ObjectInitializationNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 2; // OpenBraceToken, CloseBraceToken,
             
         var childList = new ISyntax[childCount];
@@ -34,6 +38,9 @@ public sealed class ObjectInitializationNode : ISyntaxNode
 		childList[i++] = OpenBraceToken;
 		childList[i++] = CloseBraceToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

@@ -14,15 +14,15 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
         Token = token;
         GenericParametersListingNode = genericParametersListingNode;
         ResultTypeClauseNode = resultTypeClauseNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public ISyntaxToken Token { get; }
     public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -32,14 +32,20 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
     {
     	GenericParametersListingNode = genericParametersListingNode;
     	
-    	SetChildList();
+    	_childListIsDirty = true;
     	return this;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    		
     	// TODO: This method.
-    	ChildList = Array.Empty<ISyntax>();
+    	_childList = Array.Empty<ISyntax>();
+    	
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }
 

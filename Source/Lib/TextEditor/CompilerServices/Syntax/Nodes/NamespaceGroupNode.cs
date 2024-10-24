@@ -10,9 +10,10 @@ public sealed class NamespaceGroupNode : ISyntaxNode
     {
         NamespaceString = namespaceString;
         NamespaceStatementNodeList = namespaceStatementNodeList;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public string NamespaceString { get; }
     public ImmutableArray<NamespaceStatementNode> NamespaceStatementNodeList { get; }
@@ -37,8 +38,14 @@ public sealed class NamespaceGroupNode : ISyntaxNode
             .ToImmutableArray();
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = NamespaceStatementNodeList.Select(x => (ISyntax)x).ToArray();
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
+    	_childList = NamespaceStatementNodeList.Select(x => (ISyntax)x).ToArray();
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

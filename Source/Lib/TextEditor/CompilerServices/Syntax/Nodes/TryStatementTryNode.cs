@@ -16,9 +16,10 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
     	Parent = parent;
         KeywordToken = keywordToken;
         CodeBlockNode = codeBlockNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public KeywordToken KeywordToken { get; }
     public OpenBraceToken OpenBraceToken { get; private set; }
@@ -41,7 +42,8 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -51,8 +53,11 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
     	return;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 0;
         if (KeywordToken.ConstructorWasInvoked)
             childCount++;
@@ -71,6 +76,9 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
         if (CodeBlockNode is not null)
         	childList[i++] = CodeBlockNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

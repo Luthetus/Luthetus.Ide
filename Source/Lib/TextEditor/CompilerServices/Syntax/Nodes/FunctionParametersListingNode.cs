@@ -26,9 +26,10 @@ public sealed class FunctionParametersListingNode : ISyntaxNode
         OpenParenthesisToken = openParenthesisToken;
         FunctionParameterEntryNodeList = functionParameterEntryNodes;
         CloseParenthesisToken = closeParenthesisToken;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public List<FunctionParameterEntryNode> FunctionParameterEntryNodeList { get; }
@@ -44,12 +45,15 @@ public sealed class FunctionParametersListingNode : ISyntaxNode
     {
     	CloseParenthesisToken = closeParenthesisToken;
     	
-    	SetChildList();
+    	_childListIsDirty = true;
     	return this;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	// OpenParenthesisToken, FunctionParameterEntryNodeList.Length, CloseParenthesisToken,
     	var childCount = 
     		1 +                                     // OpenParenthesisToken,
@@ -66,6 +70,9 @@ public sealed class FunctionParametersListingNode : ISyntaxNode
 		}
 		childList[i++] = CloseParenthesisToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

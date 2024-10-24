@@ -28,9 +28,10 @@ public sealed class ForStatementNode : ICodeBlockOwner
         UpdationExpressionNode = updationExpressionNode;
         CloseParenthesisToken = closeParenthesisToken;
         CodeBlockNode = codeBlockNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public KeywordToken KeywordToken { get; }
     public OpenParenthesisToken OpenParenthesisToken { get; }
@@ -60,7 +61,8 @@ public sealed class ForStatementNode : ICodeBlockOwner
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -70,8 +72,11 @@ public sealed class ForStatementNode : ICodeBlockOwner
     	return;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	// KeywordToken, OpenParenthesisToken, InitializationSyntaxList.Length, InitializationStatementDelimiterToken,
         // ConditionExpressionNode, ConditionStatementDelimiterToken, UpdationExpressionNode, CloseParenthesisToken,
         var childCount =
@@ -108,6 +113,9 @@ public sealed class ForStatementNode : ICodeBlockOwner
         if (CodeBlockNode is not null)
             childList[i++] = CodeBlockNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

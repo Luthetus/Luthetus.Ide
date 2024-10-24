@@ -18,9 +18,10 @@ public sealed class FunctionParameterEntryNode : ISyntaxNode
         HasOutKeyword = hasOutKeyword;
         HasInKeyword = hasInKeyword;
         HasRefKeyword = hasRefKeyword;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public IExpressionNode ExpressionNode { get; }
     public bool HasOutKeyword { get; }
@@ -33,8 +34,11 @@ public sealed class FunctionParameterEntryNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionParameterEntryNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		_childListIsDirty;
+    	
     	var childCount = 1; // ExpressionNode
             
         var childList = new ISyntax[childCount];
@@ -42,6 +46,9 @@ public sealed class FunctionParameterEntryNode : ISyntaxNode
 
 		childList[i++] = ExpressionNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }
