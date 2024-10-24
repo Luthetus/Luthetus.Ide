@@ -36,7 +36,6 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
     public bool HasInKeyword { get; }
     public bool HasRefKeyword { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -45,7 +44,7 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 1; // VariableDeclarationNode,
         if (OptionalCompileTimeConstantToken is not null)

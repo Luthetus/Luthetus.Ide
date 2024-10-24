@@ -22,7 +22,6 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
     public List<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
     public CloseBraceToken CloseBraceToken { get; private set; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -39,7 +38,7 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Length, CloseBraceToken
     	var childCount = 

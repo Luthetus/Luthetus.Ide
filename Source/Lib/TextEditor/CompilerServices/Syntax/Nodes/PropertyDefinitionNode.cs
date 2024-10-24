@@ -46,7 +46,6 @@ public sealed class PropertyDefinitionNode : IVariableDeclarationNode
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -55,7 +54,7 @@ public sealed class PropertyDefinitionNode : IVariableDeclarationNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 2; // TypeClauseNode, IdentifierToken,
             

@@ -26,12 +26,6 @@ public sealed class BadExpressionNode : IExpressionNode
     {
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-
-    public List<ISyntax> SyntaxList { get; }
-    public TypeClauseNode ResultTypeClauseNode { get; }
-
 	/// <summary>
 	/// Use <see cref="SyntaxList"/>, this type is an exception.
 	///
@@ -49,7 +43,12 @@ public sealed class BadExpressionNode : IExpressionNode
 	///
 	/// But it is believed to be worth ignoring 'ChildList' for this type.
 	/// </summary>
-    public ISyntax[] ChildList { get; private set; }
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
+
+    public List<ISyntax> SyntaxList { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
+
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -58,7 +57,7 @@ public sealed class BadExpressionNode : IExpressionNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	// It is a bit odd to set 'ChildList' to an empty array here.
     	//

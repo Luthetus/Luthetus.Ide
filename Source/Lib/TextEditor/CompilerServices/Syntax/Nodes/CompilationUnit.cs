@@ -41,7 +41,6 @@ public sealed class CompilationUnit : ISyntaxNode
     public IBinder Binder { get; }
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
@@ -49,7 +48,7 @@ public sealed class CompilationUnit : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 1; // RootCodeBlockNode,
             

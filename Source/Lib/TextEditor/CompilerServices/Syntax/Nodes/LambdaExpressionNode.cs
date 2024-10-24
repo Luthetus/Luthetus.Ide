@@ -41,7 +41,6 @@ public sealed class LambdaExpressionNode : IExpressionNode
     public bool CodeBlockNodeIsExpression { get; set; } = true;
     public bool HasReadParameters { get; set; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -50,7 +49,7 @@ public sealed class LambdaExpressionNode : IExpressionNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	_childList = new ISyntax[]
         {

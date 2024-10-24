@@ -22,7 +22,6 @@ public sealed class AttributeNode : ISyntaxNode
     public List<ISyntaxToken> InnerTokens { get; }
     public CloseSquareBracketToken CloseSquareBracketToken { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -31,7 +30,7 @@ public sealed class AttributeNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	// OpenSquareBracketToken, InnerTokens.Count, CloseSquareBracketToken
     	var childCount = 

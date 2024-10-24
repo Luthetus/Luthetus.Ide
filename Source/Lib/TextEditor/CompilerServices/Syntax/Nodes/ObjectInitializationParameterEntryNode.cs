@@ -32,7 +32,6 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
     public IExpressionNode ExpressionNode { get; set; }
     public bool IsCollectionInitialization => !PropertyIdentifierToken.ConstructorWasInvoked;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -41,7 +40,7 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 2; // PropertyIdentifierToken, ExpressionNode,
             

@@ -23,7 +23,6 @@ public sealed class VariableAssignmentExpressionNode : ISyntaxNode
     public EqualsToken EqualsToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -32,7 +31,7 @@ public sealed class VariableAssignmentExpressionNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	_childList = new ISyntax[]
         {

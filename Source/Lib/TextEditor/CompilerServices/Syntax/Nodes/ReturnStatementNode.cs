@@ -18,7 +18,6 @@ public sealed class ReturnStatementNode : ISyntaxNode
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -27,7 +26,7 @@ public sealed class ReturnStatementNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 2; // KeywordToken, ExpressionNode
             

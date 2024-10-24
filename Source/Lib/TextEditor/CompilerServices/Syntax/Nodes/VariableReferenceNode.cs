@@ -24,7 +24,6 @@ public sealed class VariableReferenceNode : IExpressionNode
     public IVariableDeclarationNode VariableDeclarationNode { get; }
     public TypeClauseNode ResultTypeClauseNode => VariableDeclarationNode.TypeClauseNode;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -33,7 +32,7 @@ public sealed class VariableReferenceNode : IExpressionNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	_childList = new ISyntax[]
         {

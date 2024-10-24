@@ -25,7 +25,6 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
     public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeList { get; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -34,7 +33,7 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	// OpenAngleBracketToken, GenericArgumentEntryNodeList.Length, CloseAngleBracketToken
     	var childCount =

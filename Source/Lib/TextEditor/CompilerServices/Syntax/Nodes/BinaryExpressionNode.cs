@@ -30,7 +30,6 @@ public sealed class BinaryExpressionNode : IExpressionNode
     public IExpressionNode RightExpressionNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode => BinaryOperatorNode.ResultTypeClauseNode;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -39,7 +38,7 @@ public sealed class BinaryExpressionNode : IExpressionNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 3; // LeftExpressionNode, BinaryOperatorNode, RightExpressionNode
             

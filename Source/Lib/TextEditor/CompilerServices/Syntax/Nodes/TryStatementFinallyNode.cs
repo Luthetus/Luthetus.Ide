@@ -27,7 +27,6 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -56,7 +55,7 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
         var childCount = 0;
         if (KeywordToken.ConstructorWasInvoked)

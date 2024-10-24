@@ -39,7 +39,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     		
     	// TODO: This method.
     	_childList = Array.Empty<ISyntax>();

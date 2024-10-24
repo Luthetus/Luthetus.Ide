@@ -28,7 +28,6 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -45,7 +44,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     	if (localCodeBlockNode is null)
     		return ImmutableArray<TypeDefinitionNode>.Empty;
     
-        return localCodeBlockNode.ChildList
+        return localCodeBlockNode.GetChildList()
             .Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             .Select(td => (TypeDefinitionNode)td)
             .ToImmutableArray();
@@ -82,7 +81,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 2; // KeywordToken, IdentifierToken,
         if (OpenBraceToken.ConstructorWasInvoked)

@@ -1475,7 +1475,7 @@ public partial class CSharpBinder : IBinder
 
         ISyntaxNode? RecursiveGetSyntaxNode(int positionIndex, ISyntaxNode targetNode)
         {
-            foreach (var child in targetNode.ChildList)
+            foreach (var child in targetNode.GetChildList())
             {
                 if (child is ISyntaxNode syntaxNode)
                 {

@@ -49,7 +49,6 @@ public sealed class TypeClauseNode : ISyntaxNode
     /// </summary>
     public AttributeNode AttributeNode { get; set; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -66,7 +65,7 @@ public sealed class TypeClauseNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 1; // TypeIdentifierToken
         if (GenericParametersListingNode is not null)

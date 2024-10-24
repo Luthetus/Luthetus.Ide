@@ -14,7 +14,6 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 
     public TypeClauseNode ParentTypeClauseNode { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -23,7 +22,7 @@ public sealed class InheritanceStatementNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 1; // ParentTypeClauseNode
             

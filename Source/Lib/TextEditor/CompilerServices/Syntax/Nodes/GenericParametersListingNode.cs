@@ -25,7 +25,6 @@ public sealed class GenericParametersListingNode : ISyntaxNode
     public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; private set; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -42,7 +41,7 @@ public sealed class GenericParametersListingNode : ISyntaxNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	// OpenAngleBracketToken, GenericParameterEntryNodeList.Length, CloseAngleBracketToken,
     	var childCount = 

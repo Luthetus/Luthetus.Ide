@@ -17,7 +17,6 @@ public sealed class LiteralExpressionNode : IExpressionNode
     public ISyntaxToken LiteralSyntaxToken { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -26,7 +25,7 @@ public sealed class LiteralExpressionNode : IExpressionNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	var childCount = 2; // LiteralSyntaxToken, ResultTypeClauseNode,
             

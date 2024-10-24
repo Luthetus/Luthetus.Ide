@@ -20,7 +20,6 @@ public sealed class UnaryExpressionNode : IExpressionNode
     public UnaryOperatorNode UnaryOperatorNode { get; }
     public TypeClauseNode ResultTypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -29,7 +28,7 @@ public sealed class UnaryExpressionNode : IExpressionNode
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
-    		_childListIsDirty;
+    		return _childList;
     	
     	_childList = new ISyntax[]
         {
