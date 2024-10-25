@@ -352,25 +352,8 @@ public class ParseDefaultKeywords
         	// Condition Case Two
         	//     i < 10;
         
+        	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         	conditionExpressionNode = ParseOthers.ParseExpression(model);
-        	/* (2024-10-23)
-        	ParseOthers.HandleExpression(
-		        null,
-		        null,
-		        null,
-		        null,
-		        null,
-		        new[]
-		        {
-		            new ExpressionDelimiter(
-		                SyntaxKind.OpenParenthesisToken,
-		                SyntaxKind.CloseParenthesisToken,
-		                null,
-		                null)
-		        },
-		        model);
-		    conditionExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-		    */
 		    
 		    conditionStatementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
@@ -382,25 +365,8 @@ public class ParseDefaultKeywords
         
         if (closeParenthesisToken.IsFabricated)
         {
+        	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         	updationExpressionNode = ParseOthers.ParseExpression(model);
-        	/* (2024-10-23)
-        	ParseOthers.HandleExpression(
-		        null,
-		        null,
-		        null,
-		        null,
-		        null,
-		        new[]
-		        {
-		            new ExpressionDelimiter(
-		                SyntaxKind.OpenParenthesisToken,
-		                SyntaxKind.CloseParenthesisToken,
-		                null,
-		                null)
-		        },
-		        model);
-		    updationExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-		    */
 		    
 		    closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		    
@@ -448,26 +414,8 @@ public class ParseDefaultKeywords
     	
     	var inKeywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.InTokenKeyword);
     	
+    	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
     	var expressionNode = ParseOthers.ParseExpression(model);
-    	/* (2024-10-23)
-    	ParseOthers.HandleExpression(
-	        null,
-	        null,
-	        null,
-	        null,
-	        null,
-	        new[]
-	        {
-	            new ExpressionDelimiter(
-	                SyntaxKind.OpenParenthesisToken,
-	                SyntaxKind.CloseParenthesisToken,
-	                null,
-	                null)
-	        },
-	        model);
-	        
-		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-		*/
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var foreachStatementNode = new ForeachStatementNode(
@@ -524,26 +472,8 @@ public class ParseDefaultKeywords
     {
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
+    	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
     	var expressionNode = ParseOthers.ParseExpression(model);
-    	/* (2024-10-23)
-    	ParseOthers.HandleExpression(
-	        null,
-	        null,
-	        null,
-	        null,
-	        null,
-	        new[]
-	        {
-	            new ExpressionDelimiter(
-	                SyntaxKind.OpenParenthesisToken,
-	                SyntaxKind.CloseParenthesisToken,
-	                null,
-	                null)
-	        },
-	        model);
-	        
-		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-		*/
 		
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
@@ -671,26 +601,8 @@ public class ParseDefaultKeywords
     {
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
+    	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
     	var expressionNode = ParseOthers.ParseExpression(model);
-    	/* (2024-10-23)
-    	ParseOthers.HandleExpression(
-	        null,
-	        null,
-	        null,
-	        null,
-	        null,
-	        new[]
-	        {
-	            new ExpressionDelimiter(
-	                SyntaxKind.OpenParenthesisToken,
-	                SyntaxKind.CloseParenthesisToken,
-	                null,
-	                null)
-	        },
-	        model);
-	        
-		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-		*/
 		
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
@@ -1077,27 +989,8 @@ public class ParseDefaultKeywords
         if (openParenthesisToken.IsFabricated)
             return;
 
+		model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
 		var expression = ParseOthers.ParseExpression(model);
-		
-		/* (2024-10-23)
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            new[]
-            {
-                new ExpressionDelimiter(
-                    SyntaxKind.OpenParenthesisToken,
-                    SyntaxKind.CloseParenthesisToken,
-                    null,
-                    null)
-            },
-            model);
-
-        var expression = (IExpressionNode)model.SyntaxStack.Pop();
-        */
 
         var boundIfStatementNode = model.Binder.BindIfStatementNode(consumedKeywordToken, expression);
         model.SyntaxStack.Push(boundIfStatementNode);

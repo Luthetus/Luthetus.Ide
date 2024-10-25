@@ -219,7 +219,7 @@ public static class ParseTypes
             null,
             null);
 
-        typeClauseNode = model.Binder.BindTypeClauseNode(typeClauseNode, model);
+        model.Binder.BindTypeClauseNode(typeClauseNode, model);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {

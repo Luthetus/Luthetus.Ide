@@ -105,8 +105,7 @@ public static class ParseOthers
 	public static IExpressionNode ParseExpression(CSharpParserModel model)
     {
     	var expressionPrimary = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-    	
-    	model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
+    	var forceExit = false;
     	
     	while (!model.TokenWalker.IsEof)
         {
@@ -121,8 +120,6 @@ public static class ParseOthers
 	    			
 	    			if (delimiterExpressionTuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
 	    			{
-	    				model.ExpressionList.RemoveRange(i, model.ExpressionList.Count - i);
-	    				
 	    				// This is a hack to have SyntaxKind.StatementDelimiterToken break out of the expression.
 	    				// The parser is adding as the 0th item that
 	    				// 'SyntaxKind.StatementDelimiterToken' returns the primary expression to be 'null'.
@@ -138,13 +135,15 @@ public static class ParseOthers
 	    				// and the loop will continue parsing more expressions.
 	    				//
 	    				// LambdaExpressionNode for example, needs to override 'SyntaxKind.StatementDelimiterToken'.
-	    				if (i == 0 && delimiterExpressionTuple.ExpressionNode is null)
+	    				if (delimiterExpressionTuple.ExpressionNode is null)
 	    				{
 	    					// TODO: Better would be to permit a merge with the model.ExpressionList[1] and expressionPrimary if there were to exist a tuple at that index...
 	    					//       ... even better still might be to "bubble" back up the recursion by joining each entry in the model.ExpressionList from last to first.
 	    					//       and the initial merge is done between model.ExpressionList.Last and expressionPrimary.
-	    					return expressionPrimary;
+	    					break;
 	    				}
+	    				
+	    				model.ExpressionList.RemoveRange(i, model.ExpressionList.Count - i);
 	    				
 		    			var expressionSecondary = expressionPrimary;
 		    			expressionPrimary = model.Binder.AnyMergeExpression(
@@ -153,12 +152,45 @@ public static class ParseOthers
 	    			}
 	    		}
     		}
-
+			
+			if (forceExit)
+			{
+				IExpressionNode? previousDelimiterExpressionNode = null;;
+				
+				for (int i =  model.ExpressionList.Count - 1; i > -1; i--)
+	    		{
+	    			var delimiterExpressionTuple = model.ExpressionList[i];
+	    			
+	    			if (delimiterExpressionTuple.ExpressionNode is null)
+	    				break;
+	    			if (Object.ReferenceEquals(previousDelimiterExpressionNode, delimiterExpressionTuple.ExpressionNode))
+	    				continue;
+	    			
+	    			var expressionSecondary = expressionPrimary;
+	    			expressionPrimary = model.Binder.AnyMergeExpression(
+	    				delimiterExpressionTuple.ExpressionNode, expressionSecondary, model);
+	    			break;
+				}
+				
+				break;
+			}
+			
     		expressionPrimary = model.Binder.AnyMergeToken(expressionPrimary, tokenCurrent, model);
             _ = model.TokenWalker.Consume();
         }
     	
+    	// It is vital that this 'clear' and 'add' are done in a way that:
+    	// permits an invoker of the 'ParseExpression' method to
+    	// 'add' a similar 'forceExit' delimiter
+    	// just as 'model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));'
+    	//
+    	// For example, an if statement's expression is written within an OpenParenthesisToken and
+    	// a CloseParenthesisToken. BUT, those parenthesis tokens are not part of the expression.
+    	//
+    	// They are just a 'forceExit' delimiter.
     	model.ExpressionList.Clear();
+    	model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
+    	
     	return expressionPrimary;
     }
     

@@ -545,7 +545,7 @@ public partial class CSharpBinder : IBinder
         AddSymbolReference(namespaceSymbol, model);
     }
 
-    public TypeClauseNode BindTypeClauseNode(
+    public void BindTypeClauseNode(
         TypeClauseNode typeClauseNode,
         CSharpParserModel model)
     {
@@ -564,13 +564,8 @@ public partial class CSharpBinder : IBinder
 
         if (matchingTypeDefintionNode is not null)
         {
-            return new TypeClauseNode(
-                typeClauseNode.TypeIdentifierToken,
-                matchingTypeDefintionNode.ValueType,
-                typeClauseNode.GenericParametersListingNode);
+        	typeClauseNode.SetValueType(matchingTypeDefintionNode.ValueType);
         }
-
-        return typeClauseNode;
     }
 
     public void BindTypeIdentifier(

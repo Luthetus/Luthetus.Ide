@@ -30,13 +30,16 @@ public class CSharpParserModel : IParserModel
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
         FinalizeNamespaceFileScopeCodeBlockNodeAction = finalizeNamespaceFileScopeCodeBlockNodeAction;
         FinalizeCodeBlockNodeActionStack = finalizeCodeBlockNodeActionStack;
+        
+        ExpressionList = new();
+        ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
     }
 
     public CSharpBinder Binder { get; }
     public CSharpBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
-    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; } = new();
+    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

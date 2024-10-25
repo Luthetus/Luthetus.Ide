@@ -34,7 +34,7 @@ public sealed class TypeClauseNode : ISyntaxNode
 	/// In short, <see cref="ValueType"/> is non-null when the
 	/// <see cref="TypeIdentifierToken"/> maps to a C# primitive type.
     /// </summary>
-    public Type? ValueType { get; }
+    public Type? ValueType { get; private set; }
     /// <summary>
     /// Given: 'int[] x = 2;'<br/>
     /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
@@ -57,6 +57,14 @@ public sealed class TypeClauseNode : ISyntaxNode
     public TypeClauseNode SetGenericParametersListingNode(GenericParametersListingNode genericParametersListingNode)
     {
     	GenericParametersListingNode = genericParametersListingNode;
+    	
+    	_childListIsDirty = true;
+    	return this;
+    }
+    
+    public TypeClauseNode SetValueType(Type? valueType)
+    {
+    	ValueType = valueType;
     	
     	_childListIsDirty = true;
     	return this;

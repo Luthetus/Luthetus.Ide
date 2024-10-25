@@ -184,17 +184,7 @@ public static class ParseVariables
         EqualsToken consumedEqualsToken,
         CSharpParserModel model)
     {
-    	var rightHandExpression = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-    	
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.NewTokenKeyword)
-        {
-            ParseFunctions.HandleConstructorInvocation(model);
-            rightHandExpression = (IExpressionNode)model.SyntaxStack.Pop();
-        }
-        else
-        {
-        	rightHandExpression = ParseOthers.ParseExpression(model);
-        }
+    	var rightHandExpression = ParseOthers.ParseExpression(model);
 
         var variableAssignmentExpressionNode = new VariableAssignmentExpressionNode(
             consumedIdentifierToken,

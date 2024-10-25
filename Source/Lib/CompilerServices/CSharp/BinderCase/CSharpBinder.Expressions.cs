@@ -98,6 +98,10 @@ public partial class CSharpBinder
 		        ambiguousIdentifierExpressionNode.GenericParametersListingNode,
 		        functionParametersListingNode,
 		        CSharpFacts.Types.Void.ToTypeClause());
+		        
+		    BindFunctionInvocationNode(
+		        functionInvocationNode,
+		        (CSharpParserModel)model);
 			
 			model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
 			model.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode));
@@ -246,6 +250,10 @@ public partial class CSharpBinder
 							token,
         					valueType: null,
         					genericParametersListingNode: null);
+						
+						BindTypeClauseNode(
+					        typeClauseNode,
+					        (CSharpParserModel)model);
 						
 						return constructorInvocationExpressionNode.SetTypeClauseNode(typeClauseNode);
 					}
@@ -692,6 +700,11 @@ public partial class CSharpBinder
 					 UtilityApi.IsTypeIdentifierKeywordSyntaxKind(badExpressionNode.SyntaxList[1].SyntaxKind)))
 			{
 				var typeClauseNode = new TypeClauseNode((ISyntaxToken)badExpressionNode.SyntaxList[1], valueType: null, genericParametersListingNode: null);
+				
+				BindTypeClauseNode(
+			        typeClauseNode,
+			        (CSharpParserModel)model);
+			        
 				return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
 			}
 		}

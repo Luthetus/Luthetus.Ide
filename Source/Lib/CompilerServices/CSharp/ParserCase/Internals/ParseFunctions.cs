@@ -212,27 +212,9 @@ public class ParseFunctions
             if (equalsToken.IsFabricated)
                 break;
 
+			model.ExpressionList.Add((SyntaxKind.CloseBraceToken, null));
+			model.ExpressionList.Add((SyntaxKind.CommaToken, null));
 			var expressionNode = ParseOthers.ParseExpression(model);
-			/* (2024-10-23)
-            ParseOthers.HandleExpression(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new[]
-                    {
-                        new ExpressionDelimiter(null, SyntaxKind.CommaToken, null, null),
-                        new ExpressionDelimiter(
-                            null,
-                            SyntaxKind.CloseBraceToken,
-                            null,
-                            null)
-                    },
-                    model);
-
-            var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-            */
 
             // TODO: Make a PropertySymbol
             //
@@ -395,28 +377,8 @@ public class ParseFunctions
                 }
             }
 
+			model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
 			var expression = ParseOthers.ParseExpression(model);
-			
-			/* (2024-10-23)
-            ParseOthers.HandleExpression(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new[]
-                    {
-                        new ExpressionDelimiter(null, SyntaxKind.CommaToken, null, null),
-                        new ExpressionDelimiter(
-                            SyntaxKind.OpenParenthesisToken,
-                            SyntaxKind.CloseParenthesisToken,
-                            null,
-                            null)
-                    },
-                    model);
-
-            var expression = (IExpressionNode)model.SyntaxStack.Pop();
-            */
 
             var functionParameterEntryNode = new FunctionParameterEntryNode(
                 expression,
