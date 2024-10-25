@@ -618,6 +618,53 @@ var aaa = 1;
     }
     
     [Fact]
+    public void ConstructorInvocationNode_Generic_Parameters_MISSING_NumericLiteralToken_A()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
+        var sourceText = "new Dictionary<int, Person>(0, \"Test\")";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        
+        foreach (var token in lexer.SyntaxTokenList)
+    	{
+    		Console.WriteLine(token.SyntaxKind);
+    	}
+    }
+    
+    [Fact]
+    public void ConstructorInvocationNode_Generic_Parameters_MISSING_NumericLiteralToken_B()
+    {
+    	/*
+    	It turns out that "0" does not Lex to a NumericLiteralToken.
+    	This is one of the most ridiculous bugs I've ever seen,
+    	because how am I only now seeing this? How long was this an issue for???
+    	
+    	It doesn't Lex to anything, it just returns EndOfFileToken, or if more than "0" is in the text,
+    	it skips over where the 0-token would be.
+    	
+    	Oh my gosh, I've checked the 'CSharpLexer.cs' and in the switch statement that
+    	is within a while loop that goes over every character in the string,
+    	I hardcoded cases 1...9 inclusive both ends but never '0'.
+    	
+    	Someone needs to take away my keyboard because I am dangerously stupid.
+    	
+    	TODO: Anything similar to this in the future should return a 'BadToken' or some sort.
+    	*/
+    
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+    	// The constructor parameters are nonsensical and just exist for the sake of this test case.
+        var sourceText = "0";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        
+        foreach (var token in lexer.SyntaxTokenList)
+    	{
+    		Console.WriteLine(token.SyntaxKind);
+    	}
+    }
+    
+    [Fact]
     public void ConstructorInvocationNode_Generic_Parameters()
     {
     	var resourceUri = new ResourceUri("./unitTesting.txt");

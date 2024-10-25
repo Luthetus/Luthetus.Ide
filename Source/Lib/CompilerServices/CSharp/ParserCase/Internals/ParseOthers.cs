@@ -212,9 +212,7 @@ public static class ParseOthers
     	IExpressionNode? previousDelimiterExpressionNode = null;
     	
     	if (indexExclusiveEnd + 1 < model.ExpressionList.Count)
-    	{
     		triggeredDelimiterTuple = model.ExpressionList[indexExclusiveEnd + 1];
-    	}
 				
 		for (int i = indexStart; i > indexExclusiveEnd; i--)
 		{

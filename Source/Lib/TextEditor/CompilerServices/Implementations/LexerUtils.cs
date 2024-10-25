@@ -28,6 +28,7 @@ public static class LexerUtils
         {
             switch (stringWalker.CurrentCharacter)
             {
+                case '0':
                 case '1':
                 case '2':
                 case '3':
