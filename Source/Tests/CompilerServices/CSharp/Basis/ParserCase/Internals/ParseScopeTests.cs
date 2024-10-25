@@ -37,8 +37,8 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
-        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
         
 		throw new NotImplementedException();
 	}
@@ -61,9 +61,9 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
         
 		throw new NotImplementedException();
 	}
@@ -86,9 +86,9 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
         
 		throw new NotImplementedException();
 	}
@@ -106,8 +106,8 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
-        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
         
 		throw new NotImplementedException();
 	}
@@ -125,8 +125,8 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
-        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
         
 		throw new NotImplementedException();
 	}
@@ -144,8 +144,8 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
-        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
         
 		throw new NotImplementedException();
 	}
@@ -163,8 +163,8 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
-        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
         
 		throw new NotImplementedException();
 	}
@@ -187,18 +187,18 @@ public record MyRecord(int Aaa)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
         
-        foreach (var child in recordDefinitionNode.ChildList)
+        foreach (var child in recordDefinitionNode.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }
         
-        Console.WriteLine(((IdentifierToken)recordDefinitionNode.ChildList[0]).TextSpan.GetText());
+        Console.WriteLine(((IdentifierToken)recordDefinitionNode.GetChildList()[0]).TextSpan.GetText());
         
-        var constructorDefinitionNode = recordDefinitionNode.ChildList[0];
-        var propertyDefinitionNode = recordDefinitionNode.ChildList[1];
-        var functionDefinitionNode = recordDefinitionNode.ChildList[2];
+        var constructorDefinitionNode = recordDefinitionNode.GetChildList()[0];
+        var propertyDefinitionNode = recordDefinitionNode.GetChildList()[1];
+        var functionDefinitionNode = recordDefinitionNode.GetChildList()[2];
         
 		throw new NotImplementedException();
 	}
@@ -230,16 +230,16 @@ public record MyRecord(int Aaa)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
         
-        foreach (var child in recordDefinitionNode.ChildList)
+        foreach (var child in recordDefinitionNode.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }
         
-        var constructorDefinitionNode = recordDefinitionNode.ChildList[0];
-        var propertyDefinitionNode = recordDefinitionNode.ChildList[1];
-        var functionDefinitionNode = recordDefinitionNode.ChildList[2];
+        var constructorDefinitionNode = recordDefinitionNode.GetChildList()[0];
+        var propertyDefinitionNode = recordDefinitionNode.GetChildList()[1];
+        var functionDefinitionNode = recordDefinitionNode.GetChildList()[2];
         
 		throw new NotImplementedException();
 	}
@@ -271,10 +271,10 @@ public record struct MyRecordStruct(int Aaa)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[0];
-        var recordStructDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[1];
-        var classDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[2];
-        Assert.Equal(3, topCodeBlock.ChildList.Length);
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[0];
+        var recordStructDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[1];
+        var classDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[2];
+        Assert.Equal(3, topCodeBlock.GetChildList().Length);
         
 		throw new NotImplementedException();
 	}
@@ -306,10 +306,10 @@ public class MyClass(int Aaa)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[0];
-        var recordStructDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[1];
-        var classDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[2];
-        Assert.Equal(3, topCodeBlock.ChildList.Length);
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[0];
+        var recordStructDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[1];
+        var classDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[2];
+        Assert.Equal(3, topCodeBlock.GetChildList().Length);
         
 		throw new NotImplementedException();
 	}
@@ -340,10 +340,10 @@ public class MyClass(int Aaa)
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[0];
-        var recordStructDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[1];
-        var classDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[2];
-        Assert.Equal(3, topCodeBlock.ChildList.Length);
+        var recordDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[0];
+        var recordStructDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[1];
+        var classDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[2];
+        Assert.Equal(3, topCodeBlock.GetChildList().Length);
         
 		throw new NotImplementedException();
 	}
@@ -368,14 +368,14 @@ public void MyMethod()
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
         
-        foreach (var child in functionDefinitionNode.CodeBlockNode.ChildList)
+        foreach (var child in functionDefinitionNode.CodeBlockNode.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }
         
-        Assert.Equal(4, functionDefinitionNode.CodeBlockNode.ChildList.Length);
+        Assert.Equal(4, functionDefinitionNode.CodeBlockNode.GetChildList().Length);
         
 		throw new NotImplementedException();
 	}
@@ -393,8 +393,8 @@ public void MyMethod()
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
-        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
         
 		throw new NotImplementedException();
 	}
@@ -527,8 +527,8 @@ public class ParseScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
-        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+        var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
         
         throw new NotImplementedException();
     }

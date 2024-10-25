@@ -32,9 +32,9 @@ public class MyClass
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
         
-        foreach (var child in typeDefinitionNode.CodeBlockNode.ChildList)
+        foreach (var child in typeDefinitionNode.CodeBlockNode.GetChildList())
         {
         	Console.WriteLine($"child.SyntaxKind: {child.SyntaxKind}");
         }

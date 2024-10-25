@@ -42,8 +42,8 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        Assert.Single(topCodeBlock.ChildList);
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
         Assert.Equal("int", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -66,8 +66,8 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
         Assert.Equal("Person", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -101,8 +101,8 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
         Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -135,8 +135,8 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
         Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -169,22 +169,22 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
 
         // typeDefinitionNode
         {
-            var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList[0];
+            var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[0];
 
-            var identifierToken = (IdentifierToken)typeDefinitionNode.ChildList[0];
+            var identifierToken = (IdentifierToken)typeDefinitionNode.GetChildList()[0];
             Assert.Equal("var", identifierToken.TextSpan.GetText());
 
-            var codeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildList[1];
-            Assert.Empty(codeBlockNode.ChildList);
+            var codeBlockNode = (CodeBlockNode)typeDefinitionNode.GetChildList()[1];
+            Assert.Empty(codeBlockNode.GetChildList());
         }
 
         // variableDeclarationNode
         {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[1];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[1];
 
             var typeClauseNode = variableDeclarationNode.TypeClauseNode;
             Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -213,8 +213,8 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 
         var identifierToken = variableAssignmentExpressionNode.VariableIdentifierToken;
         Assert.Equal("x", identifierToken.TextSpan.GetText());
@@ -251,8 +251,8 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 
         var identifierToken = variableAssignmentExpressionNode.VariableIdentifierToken;
         Assert.Equal("x", identifierToken.TextSpan.GetText());
@@ -289,8 +289,8 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 
         var identifierToken = variableAssignmentExpressionNode.VariableIdentifierToken;
         Assert.Equal("x", identifierToken.TextSpan.GetText());
@@ -327,8 +327,8 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 
         var identifierToken = variableAssignmentExpressionNode.VariableIdentifierToken;
         Assert.Equal("var", identifierToken.TextSpan.GetText());
@@ -365,11 +365,11 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
 
         // variableDeclarationNode
         {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 
             var typeClauseNode = variableDeclarationNode.TypeClauseNode;
             Assert.Equal("int", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -381,7 +381,7 @@ public class ParseVariablesTests
 
         // variableAssignmentNode
         {
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 
             var identifierToken = variableAssignmentNode.VariableIdentifierToken;
             Assert.Equal("x", identifierToken.TextSpan.GetText());
@@ -408,13 +408,13 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
 
         // variableDeclarationNode
         {
             // TODO: The var TypeClauseNode should be an integer for this case.
 
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 
             var typeClauseNode = variableDeclarationNode.TypeClauseNode;
             Assert.Equal("var", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -426,7 +426,7 @@ public class ParseVariablesTests
 
         // variableAssignmentNode
         {
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 
             var identifierToken = variableAssignmentNode.VariableIdentifierToken;
             Assert.Equal("x", identifierToken.TextSpan.GetText());
@@ -453,11 +453,11 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
 
         // variableDeclarationNode
         {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 
             var typeClauseNode = variableDeclarationNode.TypeClauseNode;
             Assert.Equal("Person", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -469,7 +469,7 @@ public class ParseVariablesTests
 
         // variableAssignmentNode
         {
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 
             var identifierToken = variableAssignmentNode.VariableIdentifierToken;
             Assert.Equal("person", identifierToken.TextSpan.GetText());
@@ -516,11 +516,11 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
 
         // variableDeclarationNode
         {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 
             var typeClauseNode = variableDeclarationNode.TypeClauseNode;
             Assert.Equal("Person", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -532,7 +532,7 @@ public class ParseVariablesTests
 
         // variableAssignmentNode
         {
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 
             var identifierToken = variableAssignmentNode.VariableIdentifierToken;
             Assert.Equal("person", identifierToken.TextSpan.GetText());
@@ -581,11 +581,11 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
 
         // variableDeclarationNode
         {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 
             var typeClauseNode = variableDeclarationNode.TypeClauseNode;
             Assert.Equal("Person", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -597,7 +597,7 @@ public class ParseVariablesTests
 
         // variableAssignmentNode
         {
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 
             var identifierToken = variableAssignmentNode.VariableIdentifierToken;
             Assert.Equal("person", identifierToken.TextSpan.GetText());
@@ -649,11 +649,11 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
 
         // variableDeclarationNode
         {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 
             var typeClauseNode = variableDeclarationNode.TypeClauseNode;
             Assert.Equal("Person", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -665,7 +665,7 @@ public class ParseVariablesTests
 
         // variableAssignmentNode
         {
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 
             var identifierToken = variableAssignmentNode.VariableIdentifierToken;
             Assert.Equal("person", identifierToken.TextSpan.GetText());
@@ -737,11 +737,11 @@ public class ParseVariablesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
 
         // variableDeclarationNode
         {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 
             var typeClauseNode = variableDeclarationNode.TypeClauseNode;
             Assert.Equal("Person", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -753,7 +753,7 @@ public class ParseVariablesTests
 
         // variableAssignmentNode
         {
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 
             var identifierToken = variableAssignmentNode.VariableIdentifierToken;
             Assert.Equal("person", identifierToken.TextSpan.GetText());

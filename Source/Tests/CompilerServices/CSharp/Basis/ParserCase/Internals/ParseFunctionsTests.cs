@@ -59,8 +59,8 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(AccessModifierKind.Public, functionDefinitionNode.AccessModifierKind);
 
@@ -76,9 +76,9 @@ public class ParseFunctionsTests
         Assert.Equal(")", functionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
 
         Assert.NotNull(functionDefinitionNode.CodeBlockNode);
-        Assert.Single(functionDefinitionNode.CodeBlockNode.ChildList);
+        Assert.Single(functionDefinitionNode.CodeBlockNode.GetChildList());
 
-        var returnStatementNode = (ReturnStatementNode)functionDefinitionNode.CodeBlockNode.ChildList.Single();
+        var returnStatementNode = (ReturnStatementNode)functionDefinitionNode.CodeBlockNode.GetChildList().Single();
         Assert.IsType<ReturnStatementNode>(returnStatementNode);
 
         Assert.Empty(compilationUnit.DiagnosticsList);
@@ -95,8 +95,8 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(AccessModifierKind.Public, functionDefinitionNode.AccessModifierKind);
 
@@ -112,9 +112,9 @@ public class ParseFunctionsTests
         Assert.Equal(")", functionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
 
         Assert.NotNull(functionDefinitionNode.CodeBlockNode);
-        Assert.Single(functionDefinitionNode.CodeBlockNode.ChildList);
+        Assert.Single(functionDefinitionNode.CodeBlockNode.GetChildList());
 
-        var expressionNode = (IExpressionNode)functionDefinitionNode.CodeBlockNode.ChildList.Single();
+        var expressionNode = (IExpressionNode)functionDefinitionNode.CodeBlockNode.GetChildList().Single();
         Assert.IsAssignableFrom<IExpressionNode>(expressionNode);
 
         Assert.Empty(compilationUnit.DiagnosticsList);
@@ -131,9 +131,9 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
+        Assert.Single(topCodeBlock.GetChildList());
 
-        var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.ChildList.Single();
+        var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
         Assert.Equal("MyMethod", functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText());
         // In this test the function is undefined
         Assert.Null(functionInvocationNode.FunctionDefinitionNode);
@@ -171,17 +171,17 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Equal(2, topCodeBlock.ChildList.Length);
+        Assert.Equal(2, topCodeBlock.GetChildList().Length);
 
         // variableDeclarationNode
         {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
             Assert.Equal("x", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
         }
 
         // variableAssignmentNode
         {
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 
             var functionInvocationNode = (FunctionInvocationNode)variableAssignmentNode.ExpressionNode;
             
@@ -223,8 +223,8 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var outerFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var outerFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(AccessModifierKind.Public, outerFunctionDefinitionNode.AccessModifierKind);
 
@@ -237,11 +237,11 @@ public class ParseFunctionsTests
         Assert.Equal(")", outerFunctionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
         Assert.False(outerFunctionDefinitionNode.IsFabricated);
         Assert.NotNull(outerFunctionDefinitionNode.CodeBlockNode);
-        Assert.Equal(2, outerFunctionDefinitionNode.CodeBlockNode.ChildList.Length);
+        Assert.Equal(2, outerFunctionDefinitionNode.CodeBlockNode.GetChildList().Length);
 
         // Local FunctionDefinitionNode
         {
-            var localFunctionDefinitionNode = (FunctionDefinitionNode)outerFunctionDefinitionNode.CodeBlockNode.ChildList[0];
+            var localFunctionDefinitionNode = (FunctionDefinitionNode)outerFunctionDefinitionNode.CodeBlockNode.GetChildList()[0];
 
             Assert.Equal("int", localFunctionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
             Assert.Equal(typeof(int), localFunctionDefinitionNode.ReturnTypeClauseNode.ValueType);
@@ -252,9 +252,9 @@ public class ParseFunctionsTests
             Assert.Equal(")", localFunctionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
             Assert.False(localFunctionDefinitionNode.IsFabricated);
             Assert.NotNull(localFunctionDefinitionNode.CodeBlockNode);
-            Assert.Single(localFunctionDefinitionNode.CodeBlockNode.ChildList);
+            Assert.Single(localFunctionDefinitionNode.CodeBlockNode.GetChildList());
 
-            var localReturnStatementNode = (ReturnStatementNode)localFunctionDefinitionNode.CodeBlockNode.ChildList.Single();
+            var localReturnStatementNode = (ReturnStatementNode)localFunctionDefinitionNode.CodeBlockNode.GetChildList().Single();
             var boolLiteralExpressionNode = (LiteralExpressionNode)localReturnStatementNode.ExpressionNode;
             Assert.Equal(typeof(int), boolLiteralExpressionNode.ResultTypeClauseNode.ValueType);
             Assert.Equal("2", boolLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
@@ -262,7 +262,7 @@ public class ParseFunctionsTests
 
         // ReturnStatementNode
         {
-            var outerReturnStatementNode = (ReturnStatementNode)outerFunctionDefinitionNode.CodeBlockNode.ChildList[1];
+            var outerReturnStatementNode = (ReturnStatementNode)outerFunctionDefinitionNode.CodeBlockNode.GetChildList()[1];
             var functionInvocationNode = (FunctionInvocationNode)outerReturnStatementNode.ExpressionNode;
             Assert.Equal(typeof(int), functionInvocationNode.ResultTypeClauseNode.ValueType);
         }
@@ -309,8 +309,8 @@ public class ParseFunctionsTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var outerFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var outerFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(AccessModifierKind.Public, outerFunctionDefinitionNode.AccessModifierKind);
 
@@ -323,11 +323,11 @@ public class ParseFunctionsTests
         Assert.Equal(")", outerFunctionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
         Assert.False(outerFunctionDefinitionNode.IsFabricated);
         Assert.NotNull(outerFunctionDefinitionNode.CodeBlockNode);
-        Assert.Equal(2, outerFunctionDefinitionNode.CodeBlockNode.ChildList.Length);
+        Assert.Equal(2, outerFunctionDefinitionNode.CodeBlockNode.GetChildList().Length);
 
         // Local FunctionDefinitionNode
         {
-            var localFunctionDefinitionNode = (FunctionDefinitionNode)outerFunctionDefinitionNode.CodeBlockNode.ChildList[0];
+            var localFunctionDefinitionNode = (FunctionDefinitionNode)outerFunctionDefinitionNode.CodeBlockNode.GetChildList()[0];
 
             Assert.Equal("bool", localFunctionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
             Assert.Equal(typeof(bool), localFunctionDefinitionNode.ReturnTypeClauseNode.ValueType);
@@ -338,16 +338,16 @@ public class ParseFunctionsTests
             Assert.Equal(")", localFunctionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.TextSpan.GetText());
             Assert.False(localFunctionDefinitionNode.IsFabricated);
             Assert.NotNull(localFunctionDefinitionNode.CodeBlockNode);
-            Assert.Single(localFunctionDefinitionNode.CodeBlockNode.ChildList);
+            Assert.Single(localFunctionDefinitionNode.CodeBlockNode.GetChildList());
 
-            var boolLiteralExpressionNode = (LiteralExpressionNode)localFunctionDefinitionNode.CodeBlockNode.ChildList.Single();
+            var boolLiteralExpressionNode = (LiteralExpressionNode)localFunctionDefinitionNode.CodeBlockNode.GetChildList().Single();
             Assert.Equal(typeof(bool), boolLiteralExpressionNode.ResultTypeClauseNode.ValueType);
             Assert.Equal("true", boolLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
         }
 
         // ReturnStatementNode
         {
-            var outerReturnStatementNode = (ReturnStatementNode)outerFunctionDefinitionNode.CodeBlockNode.ChildList[1];
+            var outerReturnStatementNode = (ReturnStatementNode)outerFunctionDefinitionNode.CodeBlockNode.GetChildList()[1];
             var functionInvocationNode = (FunctionInvocationNode)outerReturnStatementNode.ExpressionNode;
             Assert.Equal(typeof(bool), functionInvocationNode.ResultTypeClauseNode.ValueType);
         }

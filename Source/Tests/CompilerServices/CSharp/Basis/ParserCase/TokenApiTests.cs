@@ -24,8 +24,8 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Single(compilationUnit.RootCodeBlockNode.ChildList);
-        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.Single(compilationUnit.RootCodeBlockNode.GetChildList());
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
         Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
     }
@@ -43,8 +43,8 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Single(compilationUnit.RootCodeBlockNode.ChildList);
-        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.Single(compilationUnit.RootCodeBlockNode.GetChildList());
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
         Assert.Equal(typeof(string), literalExpressionNode.ResultTypeClauseNode.ValueType);
     }
@@ -78,8 +78,8 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Single(compilationUnit.RootCodeBlockNode.ChildList);
-        var ambiguousIdentifierNode = (AmbiguousIdentifierNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        Assert.Single(compilationUnit.RootCodeBlockNode.GetChildList());
+        var ambiguousIdentifierNode = (AmbiguousIdentifierNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.IsType<AmbiguousIdentifierNode>(ambiguousIdentifierNode);
         Assert.Equal(sourceText, ambiguousIdentifierNode.IdentifierToken.TextSpan.GetText());
     }
@@ -97,7 +97,7 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var typeDefinitionNode = (TypeDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.IsType<TypeDefinitionNode>(typeDefinitionNode);
 
         var genericArgumentsListNode = typeDefinitionNode.GenericArgumentsListingNode;
@@ -130,7 +130,7 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.ChildList[0];
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.GetChildList()[0];
 
         var genericParametersListingNode = variableDeclarationNode.TypeClauseNode.GenericParametersListingNode;
         Assert.NotNull(genericParametersListingNode);
@@ -166,14 +166,14 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var typeDefinitionNode = (TypeDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         
-        var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode!.ChildList.Single();
+        var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode!.GetChildList().Single();
 
         Assert.Equal("MyClass", constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal("MyClass", constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText());
         Assert.Empty(constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
-        Assert.Empty(constructorDefinitionNode.CodeBlockNode!.ChildList);
+        Assert.Empty(constructorDefinitionNode.CodeBlockNode!.GetChildList());
     }
 
     /// <summary>
@@ -191,12 +191,12 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
 
         Assert.Equal("string", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
         Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
-        Assert.Empty(functionDefinitionNode.CodeBlockNode!.ChildList);
+        Assert.Empty(functionDefinitionNode.CodeBlockNode!.GetChildList());
     }
 
     /// <summary>
@@ -212,8 +212,8 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.ChildList[0];
-        var variableReferenceNode = (VariableReferenceNode)compilationUnit.RootCodeBlockNode.ChildList[1];
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.GetChildList()[0];
+        var variableReferenceNode = (VariableReferenceNode)compilationUnit.RootCodeBlockNode.GetChildList()[1];
 
         // Compare with the separate VariableDeclarationNode
         {
@@ -249,8 +249,8 @@ public class TokenApiTests
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.ChildList[0];
-        var variableAssignmentNode = (VariableAssignmentExpressionNode)compilationUnit.RootCodeBlockNode.ChildList[1];
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.GetChildList()[0];
+        var variableAssignmentNode = (VariableAssignmentExpressionNode)compilationUnit.RootCodeBlockNode.GetChildList()[1];
 
         Assert.Equal("x", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
         Assert.Equal("x", variableAssignmentNode.VariableIdentifierToken.TextSpan.GetText());
@@ -282,10 +282,10 @@ Clone<int>(3);";
 
         var compilationUnit = parser.Parse();
 
-        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList[0];
+        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.GetChildList()[0];
         Assert.IsType<FunctionDefinitionNode>(functionDefinitionNode);
 
-        var functionInvocationNode = (FunctionInvocationNode)compilationUnit.RootCodeBlockNode.ChildList[1];
+        var functionInvocationNode = (FunctionInvocationNode)compilationUnit.RootCodeBlockNode.GetChildList()[1];
         Assert.Equal("Clone", functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText());
 
         var genericParameterEntryNode = functionInvocationNode.GenericParametersListingNode!.GenericParameterEntryNodeList.Single();
@@ -309,13 +309,13 @@ Clone<int>(3);";
 
         var compilationUnit = parser.Parse();
 
-        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var functionDefinitionNode = (FunctionDefinitionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.Equal("void", functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal(typeof(void), functionDefinitionNode.ReturnTypeClauseNode.ValueType);
         Assert.Equal("MyMethod", functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText());
         Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
         Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
-        Assert.Empty(functionDefinitionNode.CodeBlockNode!.ChildList);
+        Assert.Empty(functionDefinitionNode.CodeBlockNode!.GetChildList());
     }
 
     /// <summary>
@@ -332,7 +332,7 @@ Clone<int>(3);";
 
         var compilationUnit = parser.Parse();
 
-        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var variableDeclarationNode = (VariableDeclarationNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.Equal("int", variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
         Assert.Equal(typeof(int), variableDeclarationNode.TypeClauseNode.ValueType);
         Assert.Equal("x", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
@@ -360,7 +360,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
@@ -377,7 +377,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -393,7 +393,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
@@ -410,7 +410,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
@@ -427,7 +427,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
@@ -445,7 +445,7 @@ Clone<int>(3);";
 
         var compilationUnit = parser.Parse();
         Assert.Single(compilationUnit.DiagnosticsList);
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -461,7 +461,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -477,7 +477,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -493,7 +493,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.ChildList.Single();
+        var literalExpressionNode = (LiteralExpressionNode)compilationUnit.RootCodeBlockNode.GetChildList().Single();
         Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
     }
 
@@ -510,7 +510,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -526,7 +526,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -542,7 +542,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -558,7 +558,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -574,7 +574,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -591,7 +591,7 @@ Clone<int>(3);";
 
         var compilationUnit = parser.Parse();
         Assert.NotEmpty(compilationUnit.DiagnosticsList);
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -607,7 +607,7 @@ Clone<int>(3);";
         var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse();
-        Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+        Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
     }
 
     /// <summary>
@@ -647,7 +647,7 @@ Clone<int>(3);";
             var parser = new CSharpParser(lexer);
 
             var compilationUnit = parser.Parse();
-            Assert.Empty(compilationUnit.RootCodeBlockNode.ChildList);
+            Assert.Empty(compilationUnit.RootCodeBlockNode.GetChildList());
         }
     }
 }
