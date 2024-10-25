@@ -127,12 +127,6 @@ public static class ParseOthers
 	    			
 	    			if (delimiterExpressionTuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
 	    			{
-	    				var delimiterExpressionNodeSyntaxKindString = delimiterExpressionTuple.ExpressionNode?.SyntaxKind.ToString() ?? "null";
-	    				
-	    				#if DEBUG
-	    				Console.Write($"BUBBLE_{delimiterExpressionTuple.DelimiterSyntaxKind}: {expressionPrimary.SyntaxKind} <> {delimiterExpressionNodeSyntaxKindString}\n");
-	    				#endif
-	    			
 	    				if (delimiterExpressionTuple.ExpressionNode is null)
 	    				{
 	    					forceExit = true;
@@ -225,9 +219,13 @@ public static class ParseOthers
 			if (Object.ReferenceEquals(previousDelimiterExpressionNode, delimiterExpressionTuple.ExpressionNode))
 				continue;
 			
+			previousDelimiterExpressionNode = delimiterExpressionTuple.ExpressionNode;
+			
 			var expressionSecondary = expressionPrimary;
 			
 			#if DEBUG
+			var delimiterExpressionNodeSyntaxKindString = delimiterExpressionTuple.ExpressionNode?.SyntaxKind.ToString() ?? "null";
+	    	Console.Write($"BUBBLE_{delimiterExpressionTuple.DelimiterSyntaxKind}: {expressionPrimary.SyntaxKind} <> {delimiterExpressionNodeSyntaxKindString}\n");
 			Console.Write($"{delimiterExpressionTuple.ExpressionNode.SyntaxKind} + {expressionSecondary.SyntaxKind} => ");
 			#endif
 			
