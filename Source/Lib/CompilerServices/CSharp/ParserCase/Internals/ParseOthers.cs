@@ -127,7 +127,7 @@ public static class ParseOthers
 	    			
 	    			if (delimiterExpressionTuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
 	    			{
-	    				var delimiterExpressionNodeSyntaxKindString = delimiterExpressionTuple.ExpressionNode.SyntaxKind.ToString() ?? "null";
+	    				var delimiterExpressionNodeSyntaxKindString = delimiterExpressionTuple.ExpressionNode?.SyntaxKind.ToString() ?? "null";
 	    				
 	    				#if DEBUG
 	    				Console.Write($"BUBBLE_{delimiterExpressionTuple.DelimiterSyntaxKind}: {expressionPrimary.SyntaxKind} <> {delimiterExpressionNodeSyntaxKindString}\n");

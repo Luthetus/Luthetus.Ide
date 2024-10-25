@@ -16,18 +16,25 @@ public class ParseFunctions
     {
         // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
 
-        HandleFunctionParameters(
-            (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
-            model);
+		var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
-        var functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
-
-        var functionInvocationNode = new FunctionInvocationNode(
-            consumedIdentifierToken,
-            null,
-            genericParametersListingNode,
+		var functionParametersListingNode = new FunctionParametersListingNode(
+			openParenthesisToken,
+	        new List<FunctionParameterEntryNode>(),
+	        closeParenthesisToken: default);
+	
+		// TODO: ContextualKeywords as the function identifier?
+		var functionInvocationNode = new FunctionInvocationNode(
+			consumedIdentifierToken,
+	        functionDefinitionNode: null,
+	        genericParametersListingNode,
             functionParametersListingNode,
             Facts.CSharpFacts.Types.Void.ToTypeClause());
+
+		model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
+		model.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode));
+
+        var expressionNode = ParseOthers.ParseExpression(model);
 
         model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
