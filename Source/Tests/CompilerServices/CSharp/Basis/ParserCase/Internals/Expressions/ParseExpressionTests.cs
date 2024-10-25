@@ -65,7 +65,6 @@ var aaa = 1;
 	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
     }
     
-    
     [Fact]
     public void Numeric_Add_BinaryExpressionNode_More()
     {

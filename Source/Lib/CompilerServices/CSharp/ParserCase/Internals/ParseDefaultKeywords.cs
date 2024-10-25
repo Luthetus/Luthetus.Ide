@@ -216,7 +216,9 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        _ = model.TokenWalker.Backtrack();
+    	var expressionNode = ParseOthers.ParseExpression(model);
+    	model.SyntaxStack.Push(expressionNode);
     }
 
     public static void HandleFinallyTokenKeyword(
@@ -317,26 +319,8 @@ public class ParseDefaultKeywords
         		//     = 0;
         		var equalsToken = (EqualsToken)model.TokenWalker.Match(SyntaxKind.EqualsToken);
         		
+        		model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         		initializationExpressionNode = ParseOthers.ParseExpression(model);
-        		// TODO: Support setting CloseParenthesisToken as delimiter from outside the invocation  to 'ParseExpression(...)'
-        		/*
-        		ParseOthers.HandleExpression(
-			        null,
-			        null,
-			        null,
-			        null,
-			        null,
-			        new[]
-			        {
-			            new ExpressionDelimiter(
-			                SyntaxKind.OpenParenthesisToken,
-			                SyntaxKind.CloseParenthesisToken,
-			                null,
-			                null)
-			        },
-			        model);
-			    initializationExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-			    */
 			    
 			    initializationStatementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         	}
@@ -635,7 +619,9 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+    	_ = model.TokenWalker.Backtrack();
+    	var expressionNode = ParseOthers.ParseExpression(model);
+    	model.SyntaxStack.Push(expressionNode);
     }
 
     public static void HandleTryTokenKeyword(

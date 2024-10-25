@@ -120,58 +120,18 @@ public static class ParseOthers
 	    			
 	    			if (delimiterExpressionTuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
 	    			{
-	    				// This is a hack to have SyntaxKind.StatementDelimiterToken break out of the expression.
-	    				// The parser is adding as the 0th item that
-	    				// 'SyntaxKind.StatementDelimiterToken' returns the primary expression to be 'null'.
-	    				//
-	    				// One isn't supposed to deal with nulls here, instead using EmptyExpressionNode.
-	    				// So, if i==0 && delimiterExpressionTuple.ExpressionNode is null then
-	    				// this special case to break out of the expresion logic exists.
-	    				//
-	    				// It needs to be part of the session.ShortCircuitList however,
-	    				// because if an expression uses 'SyntaxKind.StatementDelimiterToken'
-	    				// in their expression, they can override this 0th index entry
-	    				// and have primary expression "short circuit" to their choosing
-	    				// and the loop will continue parsing more expressions.
-	    				//
-	    				// LambdaExpressionNode for example, needs to override 'SyntaxKind.StatementDelimiterToken'.
 	    				if (delimiterExpressionTuple.ExpressionNode is null)
-	    				{
-	    					// TODO: Better would be to permit a merge with the model.ExpressionList[1] and expressionPrimary if there were to exist a tuple at that index...
-	    					//       ... even better still might be to "bubble" back up the recursion by joining each entry in the model.ExpressionList from last to first.
-	    					//       and the initial merge is done between model.ExpressionList.Last and expressionPrimary.
 	    					break;
-	    				}
 	    				
+	    				BubbleUpParseExpression(model.ExpressionList.Count - 1, i - 1, expressionPrimary, model);
 	    				model.ExpressionList.RemoveRange(i, model.ExpressionList.Count - i);
-	    				
-		    			var expressionSecondary = expressionPrimary;
-		    			expressionPrimary = model.Binder.AnyMergeExpression(
-		    				delimiterExpressionTuple.ExpressionNode, expressionSecondary, model);
-		    			break;
 	    			}
 	    		}
     		}
 			
 			if (forceExit)
 			{
-				IExpressionNode? previousDelimiterExpressionNode = null;;
-				
-				for (int i =  model.ExpressionList.Count - 1; i > -1; i--)
-	    		{
-	    			var delimiterExpressionTuple = model.ExpressionList[i];
-	    			
-	    			if (delimiterExpressionTuple.ExpressionNode is null)
-	    				break;
-	    			if (Object.ReferenceEquals(previousDelimiterExpressionNode, delimiterExpressionTuple.ExpressionNode))
-	    				continue;
-	    			
-	    			var expressionSecondary = expressionPrimary;
-	    			expressionPrimary = model.Binder.AnyMergeExpression(
-	    				delimiterExpressionTuple.ExpressionNode, expressionSecondary, model);
-	    			break;
-				}
-				
+				BubbleUpParseExpression(model.ExpressionList.Count - 1, -1, expressionPrimary, model);
 				break;
 			}
 			
@@ -180,8 +140,7 @@ public static class ParseOthers
         }
     	
     	// It is vital that this 'clear' and 'add' are done in a way that:
-    	// permits an invoker of the 'ParseExpression' method to
-    	// 'add' a similar 'forceExit' delimiter
+    	// permits an invoker of the 'ParseExpression' method to 'add' a similar 'forceExit' delimiter
     	// just as 'model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));'
     	//
     	// For example, an if statement's expression is written within an OpenParenthesisToken and
@@ -192,6 +151,53 @@ public static class ParseOthers
     	model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
     	
     	return expressionPrimary;
+    }
+
+	/// <summary>
+	/// 'BubbleUpParseExpression(indexStart: model.ExpressionList.Count - 1, indexExclusiveEnd: -1);'
+	/// 
+    /// This is a hack to have SyntaxKind.StatementDelimiterToken break out of the expression.
+	/// The parser is adding as the 0th item that
+	/// 'SyntaxKind.StatementDelimiterToken' returns the primary expression to be 'null'.
+	///
+	/// One isn't supposed to deal with nulls here, instead using EmptyExpressionNode.
+	/// So, if i==0 && delimiterExpressionTuple.ExpressionNode is null then
+	/// this special case to break out of the expresion logic exists.
+	///
+	/// It needs to be part of the session.ShortCircuitList however,
+	/// because if an expression uses 'SyntaxKind.StatementDelimiterToken'
+	/// in their expression, they can override this 0th index entry
+	/// and have primary expression "short circuit" to their choosing
+	/// and the loop will continue parsing more expressions.
+	///
+	/// LambdaExpressionNode for example, needs to override 'SyntaxKind.StatementDelimiterToken'.
+	///
+	/// TODO: Better would be to permit a merge with the model.ExpressionList[1] and expressionPrimary if there were to exist a tuple at that index...
+	///       ... even better still might be to "bubble" back up the recursion by joining each entry in the model.ExpressionList from last to first.
+	///       and the initial merge is done between model.ExpressionList.Last and expressionPrimary.
+	/// </summary>
+    private static IExpressionNode BubbleUpParseExpression(int indexStart, int indexExclusiveEnd, IExpressionNode expressionPrimary, CSharpParserModel model)
+    {
+    	IExpressionNode? previousDelimiterExpressionNode = null;
+				
+		for (int i = indexStart; i > indexExclusiveEnd; i--)
+		{
+			var delimiterExpressionTuple = model.ExpressionList[i];
+			
+			if (delimiterExpressionTuple.ExpressionNode is null)
+				break;
+			if (Object.ReferenceEquals(previousDelimiterExpressionNode, delimiterExpressionTuple.ExpressionNode))
+				continue;
+			
+			var expressionSecondary = expressionPrimary;
+			
+			expressionPrimary = model.Binder.AnyMergeExpression(
+				delimiterExpressionTuple.ExpressionNode,
+				expressionSecondary,
+				model);
+		}
+		
+		return expressionPrimary;
     }
     
     public static bool SyntaxIsEndDelimiter(SyntaxKind syntaxKind)
