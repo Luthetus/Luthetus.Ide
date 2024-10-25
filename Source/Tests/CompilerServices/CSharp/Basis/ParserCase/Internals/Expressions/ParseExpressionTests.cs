@@ -393,7 +393,7 @@ var aaa = 1;
         var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
-		var parenthesizedExpressionNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
+		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
     }
     
     [Fact]
@@ -407,7 +407,7 @@ var aaa = 1;
         var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
-		var parenthesizedExpressionNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
+		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
     }
     
     [Fact]

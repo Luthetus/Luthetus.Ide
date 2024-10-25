@@ -708,6 +708,42 @@ public partial class CSharpBinder
 				return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
 			}
 		}
+		else if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+			
+			if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
+			{
+				if (TryGetVariableDeclarationNodeByScope(
+	        		model,
+	        		model.BinderSession.ResourceUri,
+	        		model.BinderSession.CurrentScopeKey,
+	        		ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
+	        		out var existingVariableDeclarationNode))
+				{
+					var variableReferenceNode = new VariableReferenceNode(
+						(IdentifierToken)ambiguousIdentifierExpressionNode.Token,
+        				existingVariableDeclarationNode);
+        			
+        			return parenthesizedExpressionNode.SetInnerExpression(variableReferenceNode);
+				}
+			}
+			
+			if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken ||
+				UtilityApi.IsTypeIdentifierKeywordSyntaxKind(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+			{
+				var typeClauseNode = new TypeClauseNode(
+					(ISyntaxToken)ambiguousIdentifierExpressionNode.Token,
+					valueType: null,
+					genericParametersListingNode: null);
+				
+				BindTypeClauseNode(
+			        typeClauseNode,
+			        (CSharpParserModel)model);
+			        
+				return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
+			}
+		}
 			
 		return parenthesizedExpressionNode.SetInnerExpression(expressionSecondary);
 	}
