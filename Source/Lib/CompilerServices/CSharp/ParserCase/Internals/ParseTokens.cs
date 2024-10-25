@@ -612,18 +612,7 @@ public static class ParseTokens
             return;
         }
 
-		// NONSENSE OLD CODE
-		// =================
-        //// The handle expression won't see this token unless backtracked.
-        //model.TokenWalker.Backtrack();
-        //var expression = ParseOthers.ParseExpression(model);
-        //var parenthesizedExpression = ParseOthers.ParseExpression(model);
-		//
-        //// Example: (3 + 4) * 3
-        ////
-        //// Complete expression would be binary multiplication.
-        //var expression = ParseOthers.ParseExpression(model);
-
+		_ = model.TokenWalker.Backtrack();
 		var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }

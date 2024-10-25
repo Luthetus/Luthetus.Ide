@@ -104,6 +104,13 @@ public static class ParseOthers
 	/// </summary>
 	public static IExpressionNode ParseExpression(CSharpParserModel model)
     {
+#if DEBUG
+    	Console.Write("\n=======================================================================================\n");
+    	Console.Write("=======================================================================================\n\n");
+
+		WriteExpressionList(model.ExpressionList);
+#endif
+
     	var expressionPrimary = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
     	var forceExit = false;
     	
@@ -120,22 +127,46 @@ public static class ParseOthers
 	    			
 	    			if (delimiterExpressionTuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
 	    			{
-	    				if (delimiterExpressionTuple.ExpressionNode is null)
-	    					break;
+	    				var delimiterExpressionNodeSyntaxKindString = delimiterExpressionTuple.ExpressionNode.SyntaxKind.ToString() ?? "null";
 	    				
-	    				BubbleUpParseExpression(model.ExpressionList.Count - 1, i - 1, expressionPrimary, model);
+	    				#if DEBUG
+	    				Console.Write($"BUBBLE_{delimiterExpressionTuple.DelimiterSyntaxKind}: {expressionPrimary.SyntaxKind} <> {delimiterExpressionNodeSyntaxKindString}\n");
+	    				#endif
+	    			
+	    				if (delimiterExpressionTuple.ExpressionNode is null)
+	    				{
+	    					forceExit = true;
+	    					break;
+	    				}
+	    				
+	    				expressionPrimary = BubbleUpParseExpression(model.ExpressionList.Count - 1, i - 1, expressionPrimary, model);
 	    				model.ExpressionList.RemoveRange(i, model.ExpressionList.Count - i);
+	    				
+	    				#if DEBUG
+	    				WriteExpressionList(model.ExpressionList);
+	    				#endif
 	    			}
 	    		}
     		}
 			
 			if (forceExit)
 			{
-				BubbleUpParseExpression(model.ExpressionList.Count - 1, -1, expressionPrimary, model);
+				expressionPrimary = BubbleUpParseExpression(model.ExpressionList.Count - 1, -1, expressionPrimary, model);
 				break;
 			}
 			
+			#if DEBUG
+			Console.Write($"{expressionPrimary.SyntaxKind} + {tokenCurrent.SyntaxKind} => ");
+			#endif
+			
     		expressionPrimary = model.Binder.AnyMergeToken(expressionPrimary, tokenCurrent, model);
+    		
+    		#if DEBUG
+    		Console.Write($"{expressionPrimary.SyntaxKind}\n\n");
+    		
+    		WriteExpressionList(model.ExpressionList);
+    		#endif
+    		
             _ = model.TokenWalker.Consume();
         }
     	
@@ -149,6 +180,11 @@ public static class ParseOthers
     	// They are just a 'forceExit' delimiter.
     	model.ExpressionList.Clear();
     	model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
+    	
+    	#if DEBUG
+    	Console.Write("=======================================================================================\n");
+    	Console.Write("=======================================================================================\n\n");
+    	#endif
     	
     	return expressionPrimary;
     }
@@ -191,13 +227,36 @@ public static class ParseOthers
 			
 			var expressionSecondary = expressionPrimary;
 			
+			#if DEBUG
+			Console.Write($"{delimiterExpressionTuple.ExpressionNode.SyntaxKind} + {expressionSecondary.SyntaxKind} => ");
+			#endif
+			
 			expressionPrimary = model.Binder.AnyMergeExpression(
 				delimiterExpressionTuple.ExpressionNode,
 				expressionSecondary,
 				model);
+			
+			#if DEBUG
+			Console.Write($"{expressionPrimary.SyntaxKind}\n\n");
+			#endif
 		}
 		
 		return expressionPrimary;
+    }
+    
+    private static void WriteExpressionList(List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> expressionList)
+    {
+    	foreach (var tuple in expressionList)
+    	{
+    		Console.Write('{');
+    		Console.Write(tuple.DelimiterSyntaxKind);
+    		Console.Write(',');
+    		Console.Write(tuple.ExpressionNode?.SyntaxKind.ToString() ?? "null");
+    		Console.Write('}');
+    		Console.Write(", ");
+    	}
+    	
+    	Console.WriteLine();
     }
     
     public static bool SyntaxIsEndDelimiter(SyntaxKind syntaxKind)

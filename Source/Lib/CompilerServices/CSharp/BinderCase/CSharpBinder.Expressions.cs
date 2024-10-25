@@ -483,9 +483,6 @@ public partial class CSharpBinder
 	public IExpressionNode EmptyMergeToken(
 		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, IParserModel model)
 	{
-		Console.WriteLine("EmptyMergeToken");
-		Console.WriteLine($"token.SyntaxKind: {token.SyntaxKind}");
-	
 		if (token.SyntaxKind == SyntaxKind.IdentifierToken ||
 			UtilityApi.IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
 		{
