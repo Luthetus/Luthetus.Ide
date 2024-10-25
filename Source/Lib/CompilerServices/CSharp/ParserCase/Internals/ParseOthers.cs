@@ -208,7 +208,13 @@ public static class ParseOthers
 	/// </summary>
     private static IExpressionNode BubbleUpParseExpression(int indexStart, int indexExclusiveEnd, IExpressionNode expressionPrimary, CSharpParserModel model)
     {
+    	(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode) triggeredDelimiterTuple = default;
     	IExpressionNode? previousDelimiterExpressionNode = null;
+    	
+    	if (indexExclusiveEnd + 1 < model.ExpressionList.Count)
+    	{
+    		triggeredDelimiterTuple = model.ExpressionList[indexExclusiveEnd + 1];
+    	}
 				
 		for (int i = indexStart; i > indexExclusiveEnd; i--)
 		{
@@ -218,6 +224,20 @@ public static class ParseOthers
 				break;
 			if (Object.ReferenceEquals(previousDelimiterExpressionNode, delimiterExpressionTuple.ExpressionNode))
 				continue;
+				
+			if (delimiterExpressionTuple.ExpressionNode == triggeredDelimiterTuple.ExpressionNode)
+			{
+				// This line isn't ideal. But without it, one can have function invocation add
+				// to the 'model.ExpressionList' (SyntaxKind.CloseParenthesisToken, functionInvocationNode)
+				// and (SyntaxKind.CommaToken, functionInvocationNode).
+				//
+				// Yet, when hitting a 'SyntaxKind.CloseParenthesisToken' the
+				// Console.Write will say that the 'SyntaxKind.CommaToken'
+				// was hit.
+				//
+				// Probably a better way to do this, but this being fixed is low priority I'm open to hacking a fix for now.
+				delimiterExpressionTuple = triggeredDelimiterTuple;
+			}
 			
 			previousDelimiterExpressionNode = delimiterExpressionTuple.ExpressionNode;
 			
