@@ -127,7 +127,7 @@ public partial class CSharpBinder
 			}
 			
 		    model.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, ambiguousIdentifierExpressionNode));
-			model.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
+			model.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode.GenericParametersListingNode));
 			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 		}
 		else if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
@@ -155,22 +155,17 @@ public partial class CSharpBinder
 	public IExpressionNode AmbiguousIdentifierMergeExpression(
 		AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode, IExpressionNode expressionSecondary, IParserModel model)
 	{
-		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is not null &&
+			!ambiguousIdentifierExpressionNode.GenericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked)
 		{
-			var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+			// The final generic parameter won't be parsed by setting the expressionPrimary to the 'GenericParametersListingNode'.
+			// TODO: fix this because it is awkward. Setting 'GenericParametersListingNode' to the expressionPrimary should do all the parameters.
+			_ = GenericParametersListingMergeExpression(
+				ambiguousIdentifierExpressionNode.GenericParametersListingNode,
+				expressionSecondary,
+				model);
 			
-			var typeClauseNode = new TypeClauseNode(
-				expressionSecondaryTyped.Token,
-		        valueType: null,
-		        genericParametersListingNode: null);
-			
-			if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is not null)
-			{
-				ambiguousIdentifierExpressionNode.GenericParametersListingNode.GenericParameterEntryNodeList.Add(
-					new GenericParameterEntryNode(typeClauseNode));
-				
-				return ambiguousIdentifierExpressionNode;
-			}
+			return ambiguousIdentifierExpressionNode;
 		}
 		
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, expressionSecondary);
