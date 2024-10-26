@@ -65,12 +65,6 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeExpression(
 		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, IParserModel model)
 	{
-		//if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-		//{
-		//	expressionSecondary = ForceDecisionAmbiguousIdentifier(expressionPrimary, (AmbiguousIdentifierExpressionNode)expressionSecondary, model);
-		//	Console.Write($"__{expressionSecondary.SyntaxKind}");
-		//}
-		
 		switch (expressionPrimary.SyntaxKind)
 		{
 			case SyntaxKind.ParenthesizedExpressionNode:
@@ -696,6 +690,14 @@ public partial class CSharpBinder
 	{
 		if (expressionSecondary.SyntaxKind == SyntaxKind.EmptyExpressionNode)
 			return functionParametersListingNode;
+			
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			expressionSecondary = ForceDecisionAmbiguousIdentifier(
+				functionParametersListingNode,
+				(AmbiguousIdentifierExpressionNode)expressionSecondary,
+				model);
+		}
 			
 		var functionParameterEntryNode = new FunctionParameterEntryNode(
 	        expressionSecondary,
