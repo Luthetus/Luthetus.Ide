@@ -196,7 +196,7 @@ public partial class CSharpBinder
 			if (TryGetVariableDeclarationNodeByScope(
         		model,
         		model.BinderSession.ResourceUri,
-        		model.BinderSession.CurrentScopeKey,
+        		model.BinderSession.CurrentScopeIndexKey,
         		ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
         		out var existingVariableDeclarationNode))
 			{
@@ -214,7 +214,7 @@ public partial class CSharpBinder
 			if (TryGetTypeDefinitionHierarchically(
         		model,
         		model.BinderSession.ResourceUri,
-                model.BinderSession.CurrentScopeKey,
+                model.BinderSession.CurrentScopeIndexKey,
                 ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
                 out var typeDefinitionNode))
 	        {

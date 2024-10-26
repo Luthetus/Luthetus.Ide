@@ -59,7 +59,7 @@ public sealed class CSharpCompilerService : CompilerService
         while (targetScope is not null)
         {
             autocompleteEntryList.AddRange(
-            	CSharpBinder.GetVariableDeclarationNodesByScope(model: null, textSpan.ResourceUri, targetScope.Key)
+            	CSharpBinder.GetVariableDeclarationNodesByScope(model: null, textSpan.ResourceUri, targetScope.IndexKey)
             	.Select(x => x.IdentifierToken.TextSpan.GetText())
                 .ToArray()
                 .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -74,7 +74,7 @@ public sealed class CSharpCompilerService : CompilerService
                 }));
 
             autocompleteEntryList.AddRange(
-                CSharpBinder.GetFunctionDefinitionNodesByScope(model: null, textSpan.ResourceUri, targetScope.Key)
+                CSharpBinder.GetFunctionDefinitionNodesByScope(model: null, textSpan.ResourceUri, targetScope.IndexKey)
             	.Select(x => x.FunctionIdentifierToken.TextSpan.GetText())
                 .ToArray()
                 .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -88,10 +88,10 @@ public sealed class CSharpCompilerService : CompilerService
                         null);
                 }));
 
-			if (targetScope.ParentKey is null)
+			if (targetScope.ParentIndexKey is null)
 				targetScope = null;
 			else
-            	targetScope = CSharpBinder.GetScope(model: null, textSpan.ResourceUri, targetScope.ParentKey.Value);
+            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(model: null, textSpan.ResourceUri, targetScope.ParentIndexKey.Value);
         }
         
         var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;

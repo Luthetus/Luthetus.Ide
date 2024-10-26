@@ -82,12 +82,17 @@ public partial class CSharpBinder : IBinder
                     SymbolReferences = keep
                 };
         }
-    
-        return new CSharpBinderSession(
+    	
+    	// TODO: Why '_globalScope.IndexKey'? Shouldn't this just be 0, its starting the counter fresh?
+        var cSharpBinderSession = new CSharpBinderSession(
             resourceUri,
             this,
-            _globalScope.Key,
+            0,
             _topLevelNamespaceStatementNode);
+            
+        cSharpBinderSession.ScopeList.Add(_globalScope);
+        
+        return cSharpBinderSession;
     }
 
 	/// <summary><see cref="StartBinderSession"/></summary>
@@ -231,7 +236,7 @@ public partial class CSharpBinder : IBinder
         if (!TryAddFunctionDefinitionNodeByScope(
         		model,
         		model.BinderSession.ResourceUri,
-        		model.BinderSession.CurrentScopeKey,
+        		model.BinderSession.CurrentScopeIndexKey,
         		functionIdentifierText,
                 functionDefinitionNode))
         {
@@ -254,7 +259,7 @@ public partial class CSharpBinder : IBinder
         if (TryGetTypeDefinitionHierarchically(
         		model,
         		model.BinderSession.ResourceUri,
-                model.BinderSession.CurrentScopeKey,
+                model.BinderSession.CurrentScopeIndexKey,
                 argumentTypeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
                 out var typeDefinitionNode)
             || typeDefinitionNode is null)
@@ -374,7 +379,7 @@ public partial class CSharpBinder : IBinder
         if (TryGetVariableDeclarationNodeByScope(
         		model,
         		model.BinderSession.ResourceUri,
-        		model.BinderSession.CurrentScopeKey,
+        		model.BinderSession.CurrentScopeIndexKey,
         		text,
         		out var existingVariableDeclarationNode))
         {
@@ -387,7 +392,7 @@ public partial class CSharpBinder : IBinder
                 SetVariableDeclarationNodeByScope(
         		model,
                 	model.BinderSession.ResourceUri,
-        			model.BinderSession.CurrentScopeKey,
+        			model.BinderSession.CurrentScopeIndexKey,
                 	text,
                 	variableDeclarationNode);
             }
@@ -401,7 +406,7 @@ public partial class CSharpBinder : IBinder
         	_ = TryAddVariableDeclarationNodeByScope(
         		model,
         		model.BinderSession.ResourceUri,
-    			model.BinderSession.CurrentScopeKey,
+    			model.BinderSession.CurrentScopeIndexKey,
             	text,
             	variableDeclarationNode);
         }
@@ -417,7 +422,7 @@ public partial class CSharpBinder : IBinder
         if (TryGetVariableDeclarationHierarchically(
         		model,
                 model.BinderSession.ResourceUri,
-                model.BinderSession.CurrentScopeKey,
+                model.BinderSession.CurrentScopeIndexKey,
                 text,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -460,7 +465,7 @@ public partial class CSharpBinder : IBinder
         if (TryGetVariableDeclarationHierarchically(
         		model,
                 model.BinderSession.ResourceUri,
-                model.BinderSession.CurrentScopeKey,
+                model.BinderSession.CurrentScopeIndexKey,
                 text,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -519,7 +524,7 @@ public partial class CSharpBinder : IBinder
         if (TryGetFunctionHierarchically(
         		model,
                 model.BinderSession.ResourceUri,
-                model.BinderSession.CurrentScopeKey,
+                model.BinderSession.CurrentScopeIndexKey,
                 functionInvocationIdentifierText,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
@@ -626,20 +631,19 @@ public partial class CSharpBinder : IBinder
         CSharpParserModel model)
     {
         var scope = new Scope(
-        	key: Key<IScope>.NewKey(),
-		    parentKey: model.BinderSession.CurrentScopeKey,
-		    model.BinderSession.ResourceUri,
+        	indexKey: model.BinderSession.GetNextIndexKey(),
+		    parentIndexKey: model.BinderSession.CurrentScopeIndexKey,
 		    textSpan.StartingIndexInclusive,
 		    endingIndexExclusive: null);
 		    
-		var indexForInsertion = model.BinderSession.ScopeList.FindIndex(x =>
-			scope.StartingIndexInclusive < x.StartingIndexInclusive);
+		//var indexForInsertion = model.BinderSession.ScopeList.FindIndex(x =>
+		//	scope.StartingIndexInclusive < x.StartingIndexInclusive);
 			
-		if (indexForInsertion == -1)
-        	indexForInsertion = model.BinderSession.ScopeList.Count;
+		//if (indexForInsertion == -1)
+        //	indexForInsertion = model.BinderSession.ScopeList.Count;
         	
-        model.BinderSession.ScopeList.Insert(indexForInsertion, scope);
-        model.BinderSession.CurrentScopeKey = scope.Key;
+        model.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
+        model.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
     }
 
 	void IBinder.AddNamespaceToCurrentScope(string namespaceString, IParserModel model) =>
@@ -659,7 +663,7 @@ public partial class CSharpBinder : IBinder
             	_ = TryAddTypeDefinitionNodeByScope(
         				model,
 	            		model.BinderSession.ResourceUri,
-	            		model.BinderSession.CurrentScopeKey,
+	            		model.BinderSession.CurrentScopeIndexKey,
 	            		typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
 	            		typeDefinitionNode);
             }
@@ -671,21 +675,16 @@ public partial class CSharpBinder : IBinder
         CSharpParserModel model)
     {
     	// Check if it is the global scope, if so return early.
-    	if (model.BinderSession.CurrentScopeKey == Key<IScope>.Empty)
+    	if (model.BinderSession.CurrentScopeIndexKey == 0)
     		return;
     	
     	// It is a struct, but needs to be mutated;
-    	var indexOf = model.BinderSession.ScopeList.FindIndex(x => x.Key == model.BinderSession.CurrentScopeKey);
-    	if (indexOf == -1)
-    		return;
-    	
-    	// "mutate"
-    	var scope = model.BinderSession.ScopeList[indexOf];
+    	var scope = model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey];
     	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
-    	model.BinderSession.ScopeList[indexOf] = scope;
+    	model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey] = scope;
 
-        if (scope.ParentKey is not null)
-            model.BinderSession.CurrentScopeKey = scope.ParentKey.Value;
+        if (scope.ParentIndexKey is not null)
+            model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
     }
 
     public void BindTypeDefinitionNode(
@@ -702,7 +701,7 @@ public partial class CSharpBinder : IBinder
         if (TryGetTypeDefinitionNodeByScope(
         		model,
         		model.BinderSession.ResourceUri,
-        		model.BinderSession.CurrentScopeKey,
+        		model.BinderSession.CurrentScopeIndexKey,
         		typeIdentifierText,
         		out var existingTypeDefinitionNode))
         {
@@ -711,7 +710,7 @@ public partial class CSharpBinder : IBinder
         		SetTypeDefinitionNodeByScope(
         			model,
         			model.BinderSession.ResourceUri,
-	        		model.BinderSession.CurrentScopeKey,
+	        		model.BinderSession.CurrentScopeIndexKey,
 	        		typeIdentifierText,
 	        		typeDefinitionNode);
         	}
@@ -721,7 +720,7 @@ public partial class CSharpBinder : IBinder
         	_ = TryAddTypeDefinitionNodeByScope(
         		model,
     			model.BinderSession.ResourceUri,
-        		model.BinderSession.CurrentScopeKey,
+        		model.BinderSession.CurrentScopeIndexKey,
         		typeIdentifierText,
         		typeDefinitionNode);
         }
@@ -743,10 +742,10 @@ public partial class CSharpBinder : IBinder
     {
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
-            model.BinderSession.CurrentScopeKey);
+            model.BinderSession.CurrentScopeIndexKey);
 
         var symbolDefinition = new SymbolDefinition(
-            model.BinderSession.CurrentScopeKey,
+            model.BinderSession.CurrentScopeIndexKey,
             symbol);
 
         if (!_symbolDefinitions.TryAdd(
@@ -772,14 +771,14 @@ public partial class CSharpBinder : IBinder
     {
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
-            model.BinderSession.CurrentScopeKey);
+            model.BinderSession.CurrentScopeIndexKey);
 
         if (!_symbolDefinitions.TryGetValue(
                 symbolDefinitionId,
                 out var symbolDefinition))
         {
             symbolDefinition = new SymbolDefinition(
-                model.BinderSession.CurrentScopeKey,
+                model.BinderSession.CurrentScopeIndexKey,
                 symbol)
             {
                 IsFabricated = true
@@ -796,7 +795,7 @@ public partial class CSharpBinder : IBinder
 
         symbolDefinition.SymbolReferences.Add(new SymbolReference(
             symbol,
-            model.BinderSession.CurrentScopeKey));
+            model.BinderSession.CurrentScopeIndexKey));
     }
 
     public void CreateVariableSymbol(
@@ -875,28 +874,28 @@ public partial class CSharpBinder : IBinder
     public bool TryGetFunctionHierarchically(
     	IParserModel? parserModel,
         ResourceUri resourceUri,
-    	Key<IScope> initialScopeKey,
+    	int initialScopeIndexKey,
         string identifierText,
         out FunctionDefinitionNode? functionDefinitionNode)
     {
-        var localScope = GetScope(parserModel, resourceUri, initialScopeKey);
+        var localScope = GetScopeByScopeIndexKey(parserModel, resourceUri, initialScopeIndexKey);
 
         while (localScope is not null)
         {
             if (TryGetFunctionDefinitionNodeByScope(
 	        		parserModel,
             		resourceUri,
-            		localScope.Key,
+            		localScope.IndexKey,
             		identifierText,
                     out functionDefinitionNode))
             {
                 return true;
             }
 
-			if (localScope.ParentKey is null)
+			if (localScope.ParentIndexKey is null)
 				localScope = null;
 			else
-            	localScope = GetScope(parserModel, resourceUri, localScope.ParentKey.Value);
+            	localScope = GetScopeByScopeIndexKey(parserModel, resourceUri, localScope.ParentIndexKey.Value);
         }
 
         functionDefinitionNode = null;
@@ -911,28 +910,28 @@ public partial class CSharpBinder : IBinder
     public bool TryGetTypeDefinitionHierarchically(
     	IParserModel? parserModel,
         ResourceUri resourceUri,
-    	Key<IScope> initialScopeKey,
+    	int initialScopeIndexKey,
         string identifierText,
         out TypeDefinitionNode? typeDefinitionNode)
     {
-        var localScope = GetScope(parserModel, resourceUri, initialScopeKey);
+        var localScope = GetScopeByScopeIndexKey(parserModel, resourceUri, initialScopeIndexKey);
 
         while (localScope is not null)
         {
             if (TryGetTypeDefinitionNodeByScope(
 	        		parserModel,
             		resourceUri,
-            		localScope.Key,
+            		localScope.IndexKey,
             		identifierText,
                     out typeDefinitionNode))
             {
                 return true;
             }
 
-            if (localScope.ParentKey is null)
+            if (localScope.ParentIndexKey is null)
 				localScope = null;
 			else
-            	localScope = GetScope(parserModel, resourceUri, localScope.ParentKey.Value);
+            	localScope = GetScopeByScopeIndexKey(parserModel, resourceUri, localScope.ParentIndexKey.Value);
         }
 
         typeDefinitionNode = null;
@@ -947,28 +946,28 @@ public partial class CSharpBinder : IBinder
     public bool TryGetVariableDeclarationHierarchically(
     	IParserModel? parserModel,
     	ResourceUri resourceUri,
-    	Key<IScope> initialScopeKey,
+    	int initialScopeIndexKey,
         string identifierText,
         out IVariableDeclarationNode? variableDeclarationStatementNode)
     {
-        var localScope = GetScope(parserModel, resourceUri, initialScopeKey);
+        var localScope = GetScopeByScopeIndexKey(parserModel, resourceUri, initialScopeIndexKey);
 
         while (localScope is not null)
         {
             if (TryGetVariableDeclarationNodeByScope(
 	        		parserModel,
             		resourceUri,
-            		localScope.Key,
+            		localScope.IndexKey,
             		identifierText,
                     out variableDeclarationStatementNode))
             {
                 return true;
             }
 
-            if (localScope.ParentKey is null)
+            if (localScope.ParentIndexKey is null)
 				localScope = null;
 			else
-            	localScope = GetScope(parserModel, resourceUri, localScope.ParentKey.Value);
+            	localScope = GetScopeByScopeIndexKey(parserModel, resourceUri, localScope.ParentIndexKey.Value);
         }
 
         variableDeclarationStatementNode = null;
@@ -980,13 +979,13 @@ public partial class CSharpBinder : IBinder
     
     public IScope? GetScope(IParserModel? model, TextEditorTextSpan textSpan)
     {
-    	return GetScope(model, textSpan.ResourceUri, textSpan.StartingIndexInclusive);
+    	return GetScopeByPositionIndex(model, textSpan.ResourceUri, textSpan.StartingIndexInclusive);
     }
     
-    IScope? IBinder.GetScope(ResourceUri resourceUri, int positionIndex) =>
-    	GetScope(model: null, resourceUri, positionIndex);
+    IScope? IBinder.GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex) =>
+    	GetScopeByPositionIndex(model: null, resourceUri, positionIndex);
     
-    public IScope? GetScope(IParserModel? model, ResourceUri resourceUri, int positionIndex)
+    public IScope? GetScopeByPositionIndex(IParserModel? model, ResourceUri resourceUri, int positionIndex)
     {
     	var scopeList = new List<IScope>();
     	
@@ -1005,10 +1004,10 @@ public partial class CSharpBinder : IBinder
         return possibleScopes.MinBy(x => positionIndex - x.StartingIndexInclusive);
     }
     
-    IScope? IBinder.GetScope(ResourceUri resourceUri, Key<IScope> scopeKey) =>
-    	GetScope(model: null, resourceUri, scopeKey);
+    IScope? IBinder.GetScopeByScopeIndexKey(ResourceUri resourceUri, int scopeIndexKey) =>
+    	GetScopeByScopeIndexKey(model: null, resourceUri, scopeIndexKey);
     
-    public IScope? GetScope(IParserModel? model, ResourceUri resourceUri, Key<IScope> scopeKey)
+    public IScope? GetScopeByScopeIndexKey(IParserModel? model, ResourceUri resourceUri, int scopeIndexKey)
     {
     	var scopeList = new List<IScope>();
     	
@@ -1017,7 +1016,7 @@ public partial class CSharpBinder : IBinder
 		if (TryGetBinderSession(model, ResourceUri.Empty, out var globalBinderSession))
     		scopeList.AddRange(globalBinderSession.ScopeList);
         
-        return scopeList.FirstOrDefault(x => x.Key == scopeKey);
+        return scopeList[scopeIndexKey];
     }
     
     IScope[]? IBinder.GetScopeList(ResourceUri resourceUri) =>
@@ -1078,34 +1077,34 @@ public partial class CSharpBinder : IBinder
     
     TypeDefinitionNode[] IBinder.GetTypeDefinitionNodesByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey) =>
-	    GetTypeDefinitionNodesByScope(model: null, resourceUri, scopeKey);
+	    	int scopeIndexKey) =>
+	    GetTypeDefinitionNodesByScope(model: null, resourceUri, scopeIndexKey);
     
     public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey)
+    	int scopeIndexKey)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return Array.Empty<TypeDefinitionNode>();
     	
     	return binderSession.ScopeTypeDefinitionMap
-    		.Where(kvp => kvp.Key.ScopeKey == scopeKey)
+    		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey)
     		.Select(kvp => kvp.Value)
     		.ToArray();
     }
     
     bool IBinder.TryGetTypeDefinitionNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey,
+	    	int scopeIndexKey,
 	    	string typeIdentifierText,
 	    	out TypeDefinitionNode typeDefinitionNode) =>
-	    TryGetTypeDefinitionNodeByScope(model: null, resourceUri, scopeKey, typeIdentifierText, out typeDefinitionNode);
+	    TryGetTypeDefinitionNodeByScope(model: null, resourceUri, scopeIndexKey, typeIdentifierText, out typeDefinitionNode);
     
     public bool TryGetTypeDefinitionNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string typeIdentifierText,
     	out TypeDefinitionNode typeDefinitionNode)
     {
@@ -1115,82 +1114,82 @@ public partial class CSharpBinder : IBinder
     		return false;
     	}
     	
-    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, typeIdentifierText);
+    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, typeIdentifierText);
     	return binderSession.ScopeTypeDefinitionMap.TryGetValue(scopeKeyAndIdentifierText, out typeDefinitionNode);
     }
     
     bool IBinder.TryAddTypeDefinitionNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey,
+	    	int scopeIndexKey,
 	    	string typeIdentifierText,
 	        TypeDefinitionNode typeDefinitionNode) =>
-	    TryAddTypeDefinitionNodeByScope(model: null, resourceUri, scopeKey, typeIdentifierText, typeDefinitionNode);
+	    TryAddTypeDefinitionNodeByScope(model: null, resourceUri, scopeIndexKey, typeIdentifierText, typeDefinitionNode);
     
     public bool TryAddTypeDefinitionNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string typeIdentifierText,
         TypeDefinitionNode typeDefinitionNode)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return false;
     		
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, typeIdentifierText);
+		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, typeIdentifierText);
     	return binderSession.ScopeTypeDefinitionMap.TryAdd(scopeKeyAndIdentifierText, typeDefinitionNode);
     }
     
     void IBinder.SetTypeDefinitionNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey,
+	    	int scopeIndexKey,
 	    	string typeIdentifierText,
 	        TypeDefinitionNode typeDefinitionNode) =>
-	    SetTypeDefinitionNodeByScope(model: null, resourceUri, scopeKey, typeIdentifierText, typeDefinitionNode);
+	    SetTypeDefinitionNodeByScope(model: null, resourceUri, scopeIndexKey, typeIdentifierText, typeDefinitionNode);
     
     public void SetTypeDefinitionNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string typeIdentifierText,
         TypeDefinitionNode typeDefinitionNode)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return;
 
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, typeIdentifierText);
+		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, typeIdentifierText);
     	binderSession.ScopeTypeDefinitionMap[scopeKeyAndIdentifierText] = typeDefinitionNode;
     }
     
     FunctionDefinitionNode[] IBinder.GetFunctionDefinitionNodesByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey) =>
-	    GetFunctionDefinitionNodesByScope(model: null, resourceUri, scopeKey);
+	    	int scopeIndexKey) =>
+	    GetFunctionDefinitionNodesByScope(model: null, resourceUri, scopeIndexKey);
     
     public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey)
+    	int scopeIndexKey)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return Array.Empty<FunctionDefinitionNode>();
 
     	return binderSession.ScopeFunctionDefinitionMap
-    		.Where(kvp => kvp.Key.ScopeKey == scopeKey)
+    		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey)
     		.Select(kvp => kvp.Value)
     		.ToArray();
     }
     
     bool IBinder.TryGetFunctionDefinitionNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey,
+	    	int scopeIndexKey,
 	    	string functionIdentifierText,
 	    	out FunctionDefinitionNode functionDefinitionNode) =>
-    	TryGetFunctionDefinitionNodeByScope(model: null, resourceUri, scopeKey, functionIdentifierText, out functionDefinitionNode);
+    	TryGetFunctionDefinitionNodeByScope(model: null, resourceUri, scopeIndexKey, functionIdentifierText, out functionDefinitionNode);
     
     public bool TryGetFunctionDefinitionNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string functionIdentifierText,
     	out FunctionDefinitionNode functionDefinitionNode)
     {
@@ -1200,82 +1199,82 @@ public partial class CSharpBinder : IBinder
     		return false;
     	}
     		
-    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, functionIdentifierText);
+    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, functionIdentifierText);
     	return binderSession.ScopeFunctionDefinitionMap.TryGetValue(scopeKeyAndIdentifierText, out functionDefinitionNode);
     }
     
     bool IBinder.TryAddFunctionDefinitionNodeByScope(
 			ResourceUri resourceUri,
-			Key<IScope> scopeKey,
+			int scopeIndexKey,
 			string functionIdentifierText,
 		    FunctionDefinitionNode functionDefinitionNode) =>
-		TryAddFunctionDefinitionNodeByScope(model: null, resourceUri, scopeKey, functionIdentifierText, functionDefinitionNode);
+		TryAddFunctionDefinitionNodeByScope(model: null, resourceUri, scopeIndexKey, functionIdentifierText, functionDefinitionNode);
     
     public bool TryAddFunctionDefinitionNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string functionIdentifierText,
         FunctionDefinitionNode functionDefinitionNode)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return false;
     	
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, functionIdentifierText);
+		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, functionIdentifierText);
     	return binderSession.ScopeFunctionDefinitionMap.TryAdd(scopeKeyAndIdentifierText, functionDefinitionNode);
     }
     
     void IBinder.SetFunctionDefinitionNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey,
+	    	int scopeIndexKey,
 	    	string functionIdentifierText,
 	        FunctionDefinitionNode functionDefinitionNode) =>
-	    SetFunctionDefinitionNodeByScope(model: null, resourceUri, scopeKey, functionIdentifierText, functionDefinitionNode);
+	    SetFunctionDefinitionNodeByScope(model: null, resourceUri, scopeIndexKey, functionIdentifierText, functionDefinitionNode);
     
     public void SetFunctionDefinitionNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string functionIdentifierText,
         FunctionDefinitionNode functionDefinitionNode)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return;
     	
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, functionIdentifierText);
+		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, functionIdentifierText);
     	binderSession.ScopeFunctionDefinitionMap[scopeKeyAndIdentifierText] = functionDefinitionNode;
     }
 
 	IVariableDeclarationNode[] IBinder.GetVariableDeclarationNodesByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey) =>
-	    GetVariableDeclarationNodesByScope(model: null, resourceUri, scopeKey);
+	    	int scopeIndexKey) =>
+	    GetVariableDeclarationNodesByScope(model: null, resourceUri, scopeIndexKey);
 
     public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey)
+    	int scopeIndexKey)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return Array.Empty<IVariableDeclarationNode>();
     	
     	return binderSession.ScopeVariableDeclarationMap
-    		.Where(kvp => kvp.Key.ScopeKey == scopeKey)
+    		.Where(kvp => kvp.Key.ScopeIndexKey == scopeIndexKey)
     		.Select(kvp => kvp.Value)
     		.ToArray();
     }
     
     bool IBinder.TryGetVariableDeclarationNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey,
+	    	int scopeIndexKey,
 	    	string variableIdentifierText,
 	    	out IVariableDeclarationNode variableDeclarationNode) =>
-    	TryGetVariableDeclarationNodeByScope(model: null, resourceUri, scopeKey, variableIdentifierText, out variableDeclarationNode);
+    	TryGetVariableDeclarationNodeByScope(model: null, resourceUri, scopeIndexKey, variableIdentifierText, out variableDeclarationNode);
     
     public bool TryGetVariableDeclarationNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string variableIdentifierText,
     	out IVariableDeclarationNode variableDeclarationNode)
     {
@@ -1285,66 +1284,66 @@ public partial class CSharpBinder : IBinder
     		return false;
     	}
     		
-    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, variableIdentifierText);
+    	var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, variableIdentifierText);
     	return binderSession.ScopeVariableDeclarationMap.TryGetValue(scopeKeyAndIdentifierText, out variableDeclarationNode);
     }
     
     bool IBinder.TryAddVariableDeclarationNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey,
+	    	int scopeIndexKey,
 	    	string variableIdentifierText,
 	        IVariableDeclarationNode variableDeclarationNode) =>
-	    TryAddVariableDeclarationNodeByScope(model: null, resourceUri, scopeKey, variableIdentifierText, variableDeclarationNode);
+	    TryAddVariableDeclarationNodeByScope(model: null, resourceUri, scopeIndexKey, variableIdentifierText, variableDeclarationNode);
         
     public bool TryAddVariableDeclarationNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string variableIdentifierText,
         IVariableDeclarationNode variableDeclarationNode)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return false;
     		
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, variableIdentifierText);
+		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, variableIdentifierText);
     	return binderSession.ScopeVariableDeclarationMap.TryAdd(scopeKeyAndIdentifierText, variableDeclarationNode);
     }
     
     void IBinder.SetVariableDeclarationNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey,
+	    	int scopeIndexKey,
 	    	string variableIdentifierText,
 	        IVariableDeclarationNode variableDeclarationNode) =>
-	    SetVariableDeclarationNodeByScope(model: null, resourceUri, scopeKey, variableIdentifierText, variableDeclarationNode);
+	    SetVariableDeclarationNodeByScope(model: null, resourceUri, scopeIndexKey, variableIdentifierText, variableDeclarationNode);
         
     public void SetVariableDeclarationNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string variableIdentifierText,
         IVariableDeclarationNode variableDeclarationNode)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return;
     		
-		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeKey, variableIdentifierText);
+		var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, variableIdentifierText);
     	binderSession.ScopeVariableDeclarationMap[scopeKeyAndIdentifierText] = variableDeclarationNode;
     }
     
     TypeClauseNode? IBinder.GetReturnTypeClauseNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey) =>
-	    GetReturnTypeClauseNodeByScope(model: null, resourceUri, scopeKey);
+	    	int scopeIndexKey) =>
+	    GetReturnTypeClauseNodeByScope(model: null, resourceUri, scopeIndexKey);
 
     public TypeClauseNode? GetReturnTypeClauseNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey)
+    	int scopeIndexKey)
     {
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
     		return null;
     	
-    	if (binderSession.ScopeReturnTypeClauseNodeMap.TryGetValue(scopeKey, out var returnTypeClauseNode))
+    	if (binderSession.ScopeReturnTypeClauseNodeMap.TryGetValue(scopeIndexKey, out var returnTypeClauseNode))
     		return returnTypeClauseNode;
     	else
     		return null;
@@ -1352,14 +1351,14 @@ public partial class CSharpBinder : IBinder
     
     bool IBinder.TryAddReturnTypeClauseNodeByScope(
 	    	ResourceUri resourceUri,
-	    	Key<IScope> scopeKey,
+	    	int scopeIndexKey,
 	        TypeClauseNode typeClauseNode) =>
-	    TryAddReturnTypeClauseNodeByScope(model: null, resourceUri, scopeKey, typeClauseNode);
+	    TryAddReturnTypeClauseNodeByScope(model: null, resourceUri, scopeIndexKey, typeClauseNode);
     
     public bool TryAddReturnTypeClauseNodeByScope(
     	IParserModel? model,
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
         TypeClauseNode typeClauseNode)
 	{    	
     	if (!TryGetBinderSession(model, resourceUri, out var binderSession))
@@ -1368,7 +1367,7 @@ public partial class CSharpBinder : IBinder
     		return false;
     	}
     		
-    	return binderSession.ScopeReturnTypeClauseNodeMap.TryAdd(scopeKey, typeClauseNode);
+    	return binderSession.ScopeReturnTypeClauseNodeMap.TryAdd(scopeIndexKey, typeClauseNode);
     }
 
     TextEditorTextSpan? IBinder.GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
@@ -1412,7 +1411,7 @@ public partial class CSharpBinder : IBinder
         		if (TryGetVariableDeclarationHierarchically(
         				model,
         				textSpan.ResourceUri,
-        				boundScope.Key,
+        				boundScope.IndexKey,
 		                textSpan.GetText(),
 		                out var variableDeclarationStatementNode)
 		            && variableDeclarationStatementNode is not null)
@@ -1429,7 +1428,7 @@ public partial class CSharpBinder : IBinder
 	        	if (TryGetFunctionHierarchically(
 	        				 model,
 	        				 textSpan.ResourceUri,
-        					 boundScope.Key,
+        					 boundScope.IndexKey,
 		                     textSpan.GetText(),
 		                     out var functionDefinitionNode)
 		                 && functionDefinitionNode is not null)
@@ -1447,7 +1446,7 @@ public partial class CSharpBinder : IBinder
 	        	if (TryGetTypeDefinitionHierarchically(
 	        				 model,
 	        			     textSpan.ResourceUri,
-        					 boundScope.Key,
+        					 boundScope.IndexKey,
 		                     textSpan.GetText(),
 		                     out var typeDefinitionNode)
 		                 && typeDefinitionNode is not null)

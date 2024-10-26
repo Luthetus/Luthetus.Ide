@@ -195,7 +195,7 @@ public static class ParseTokens
             if (model.Binder.TryGetVariableDeclarationHierarchically(
             		model,
                     model.BinderSession.ResourceUri,
-                    model.BinderSession.CurrentScopeKey,
+                    model.BinderSession.CurrentScopeIndexKey,
                     text,
                     out var variableDeclarationStatementNode) &&
                 variableDeclarationStatementNode is not null)
@@ -209,7 +209,7 @@ public static class ParseTokens
                 if (model.Binder.TryGetTypeDefinitionHierarchically(
                 		model,
                         model.BinderSession.ResourceUri,
-                        model.BinderSession.CurrentScopeKey,
+                        model.BinderSession.CurrentScopeIndexKey,
                         text,
                         out var typeDefinitionNode) &&
                     typeDefinitionNode is not null)
@@ -367,7 +367,7 @@ public static class ParseTokens
             if (!model.Binder.TryGetTypeDefinitionHierarchically(
             		model,
                     model.BinderSession.ResourceUri,
-                    model.BinderSession.CurrentScopeKey,
+                    model.BinderSession.CurrentScopeIndexKey,
                     consumedAmbiguousIdentifierNode.IdentifierToken.TextSpan.GetText(),
                     out var typeDefinitionNode)
                 || typeDefinitionNode is null)

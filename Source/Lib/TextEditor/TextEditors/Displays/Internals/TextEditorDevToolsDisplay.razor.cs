@@ -86,7 +86,7 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 	        var resourceUri = modelModifier.ResourceUri;
 	
 			var targetScope = modelModifier.CompilerService.Binder.
-				GetScope(resourceUri, modelModifier.GetPositionIndex(primaryCursorModifier));
+				GetScopeByPositionIndex(resourceUri, modelModifier.GetPositionIndex(primaryCursorModifier));
 			
 			if (targetScope is null)
 				return Task.CompletedTask;

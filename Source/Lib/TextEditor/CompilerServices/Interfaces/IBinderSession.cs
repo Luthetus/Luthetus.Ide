@@ -30,7 +30,7 @@ public interface IBinderSession
 {
     public ResourceUri ResourceUri { get; }
     public IBinder Binder { get; }
-    public Key<IScope> CurrentScopeKey { get; set; }
+    public int CurrentScopeIndexKey { get; set; }
     public NamespaceStatementNode CurrentNamespaceStatementNode { get; set; }
     public List<UsingStatementNode> CurrentUsingStatementNodeList { get; set; }
     
@@ -54,5 +54,7 @@ public interface IBinderSession
     /// Then: Key == new ScopeKeyAndIdentifierText(ScopeKey, "myVariable")
     /// </summary>
     public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; }
-    public Dictionary<Key<IScope>, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; }
+    public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; }
+    
+    public int GetNextIndexKey();
 }
