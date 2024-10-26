@@ -47,6 +47,8 @@ public partial class CSharpBinder
 				return ExplicitCastMergeToken((ExplicitCastNode)expressionPrimary, token, model);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
 				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, token, model);
+			case SyntaxKind.GenericParametersListingNode:
+				return GenericParametersListingMergeToken((GenericParametersListingNode)expressionPrimary, token, model);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeToken((BadExpressionNode)expressionPrimary, token, model);
 			default:
@@ -184,8 +186,6 @@ public partial class CSharpBinder
 		{
 			forceTypeClauseNode = true;
 		}
-	
-		Console.Write($" __ForceDecisionAmbiguousIdentifier__{ambiguousIdentifierExpressionNode.Token.SyntaxKind}__");
 	
 		if (!forceTypeClauseNode && ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
 		{
@@ -375,7 +375,7 @@ public partial class CSharpBinder
 				
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
 			    model.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, constructorInvocationExpressionNode));
-				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode));
 				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.CloseAngleBracketToken:
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
@@ -398,9 +398,6 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 				constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.SetCloseBraceToken((CloseBraceToken)token);
 				return constructorInvocationExpressionNode;
-			case SyntaxKind.CommaToken:
-				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.EqualsToken:
 				model.ExpressionList.Add((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
 				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
@@ -452,47 +449,12 @@ public partial class CSharpBinder
 		else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.GenericParameters &&
 				 constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode is not null)
 		{
-			if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-			{
-				var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
-				
-				var typeClauseNode = new TypeClauseNode(
-					expressionSecondaryTyped.Token,
-			        valueType: null,
-			        genericParametersListingNode: null);
-				
-				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Add(
-					new GenericParameterEntryNode(typeClauseNode));
-				
-				return constructorInvocationExpressionNode;
-			}
-			else if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
-			{
-				var badExpressionNode = (BadExpressionNode)expressionSecondary;
-			
-				if (badExpressionNode.SyntaxList.Count == 2 &&
-						(badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.TypeClauseNode ||
-						 UtilityApi.IsTypeIdentifierKeywordSyntaxKind(badExpressionNode.SyntaxList[1].SyntaxKind)))
-				{
-					var typeClauseNode = (TypeClauseNode)badExpressionNode.SyntaxList[1];
-					
-					BindTypeClauseNode(
-				        typeClauseNode,
-				        (CSharpParserModel)model);
-				    
-					constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Add(
-						new GenericParameterEntryNode(typeClauseNode));
-					
-					return constructorInvocationExpressionNode;
-				}
-			}
-			else
-			{
-				for (int i = 0; i < 10; i++)
-					Console.WriteLine("????????????????????????");
-			}
-			
-			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, expressionSecondary);
+			// The final generic parameter won't be parsed by setting the expressionPrimary to the 'GenericParametersListingNode'.
+			// TODO: fix this because it is awkward. Setting 'GenericParametersListingNode' to the expressionPrimary should do all the parameters.
+			_ = GenericParametersListingMergeExpression(
+				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode,
+				expressionSecondary,
+				model);
 		}
 		else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.FunctionParameters &&
 				 constructorInvocationExpressionNode.FunctionParametersListingNode is not null)
@@ -671,6 +633,60 @@ public partial class CSharpBinder
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), explicitCastNode, token);
 		}
+	}
+	
+	public IExpressionNode GenericParametersListingMergeToken(
+		GenericParametersListingNode genericParametersListingNode, ISyntaxToken token, IParserModel model)
+	{
+		switch (token.SyntaxKind)
+		{
+			case SyntaxKind.CommaToken:
+				model.ExpressionList.Add((SyntaxKind.CommaToken, genericParametersListingNode));
+				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), genericParametersListingNode, token);
+		}
+	}
+	
+	public IExpressionNode GenericParametersListingMergeExpression(
+		GenericParametersListingNode genericParametersListingNode, IExpressionNode expressionSecondary, IParserModel model)
+	{
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
+			
+			var typeClauseNode = new TypeClauseNode(
+				expressionSecondaryTyped.Token,
+		        valueType: null,
+		        genericParametersListingNode: null);
+			
+			genericParametersListingNode.GenericParameterEntryNodeList.Add(
+				new GenericParameterEntryNode(typeClauseNode));
+			
+			return genericParametersListingNode;
+		}
+		else if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
+		{
+			var badExpressionNode = (BadExpressionNode)expressionSecondary;
+		
+			if (badExpressionNode.SyntaxList.Count == 2 &&
+					(badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.TypeClauseNode ||
+					 UtilityApi.IsTypeIdentifierKeywordSyntaxKind(badExpressionNode.SyntaxList[1].SyntaxKind)))
+			{
+				var typeClauseNode = (TypeClauseNode)badExpressionNode.SyntaxList[1];
+				
+				BindTypeClauseNode(
+			        typeClauseNode,
+			        (CSharpParserModel)model);
+			    
+				genericParametersListingNode.GenericParameterEntryNodeList.Add(
+					new GenericParameterEntryNode(typeClauseNode));
+				
+				return genericParametersListingNode;
+			}
+		}
+		
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), genericParametersListingNode, expressionSecondary);
 	}
 	
 	public IExpressionNode LambdaMergeToken(

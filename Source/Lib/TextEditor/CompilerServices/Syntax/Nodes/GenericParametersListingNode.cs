@@ -1,12 +1,18 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Used when invoking a syntax which contains a generic type.
+///
+/// I'm going to experiment with making this a <see cref="IExpressionNode"/>.
+/// Because the parameters are exclusive to the expression parsing logic,
+/// and having to wrap this in a 'BadExpressionNode' when dealing with
+/// expressions is very hard to read. (2024-10-26)
 /// </summary>
-public sealed class GenericParametersListingNode : ISyntaxNode
+public sealed class GenericParametersListingNode : IExpressionNode
 {
     public GenericParametersListingNode(
         OpenAngleBracketToken openAngleBracketToken,
@@ -24,6 +30,7 @@ public sealed class GenericParametersListingNode : ISyntaxNode
     public OpenAngleBracketToken OpenAngleBracketToken { get; }
     public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; private set; }
+    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public ISyntaxNode? Parent { get; }
 
