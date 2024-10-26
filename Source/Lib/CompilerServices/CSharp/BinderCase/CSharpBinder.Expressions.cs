@@ -81,6 +81,8 @@ public partial class CSharpBinder
 				return ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
 				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, model);
+			case SyntaxKind.GenericParametersListingNode:
+				return GenericParametersListingMergeExpression((GenericParametersListingNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, model);
 			default:
@@ -450,6 +452,8 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode,
 				expressionSecondary,
 				model);
+				
+			return constructorInvocationExpressionNode;
 		}
 		else if (constructorInvocationExpressionNode.ConstructorInvocationStageKind == ConstructorInvocationStageKind.FunctionParameters &&
 				 constructorInvocationExpressionNode.FunctionParametersListingNode is not null)
@@ -654,6 +658,10 @@ public partial class CSharpBinder
 				expressionSecondaryTyped.Token,
 		        valueType: null,
 		        genericParametersListingNode: null);
+			
+			BindTypeClauseNode(
+		        typeClauseNode,
+		        (CSharpParserModel)model);
 			
 			genericParametersListingNode.GenericParameterEntryNodeList.Add(
 				new GenericParameterEntryNode(typeClauseNode));
