@@ -627,6 +627,9 @@ public partial class CSharpBinder
 	public IExpressionNode GenericParametersListingMergeExpression(
 		GenericParametersListingNode genericParametersListingNode, IExpressionNode expressionSecondary, IParserModel model)
 	{
+		if (expressionSecondary.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+			return genericParametersListingNode;
+	
 		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
 			var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
@@ -685,6 +688,9 @@ public partial class CSharpBinder
 	public IExpressionNode FunctionParametersListingMergeExpression(
 		FunctionParametersListingNode functionParametersListingNode, IExpressionNode expressionSecondary, IParserModel model)
 	{
+		if (expressionSecondary.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+			return functionParametersListingNode;
+			
 		var functionParameterEntryNode = new FunctionParameterEntryNode(
 	        expressionSecondary,
 	        hasOutKeyword: false,
