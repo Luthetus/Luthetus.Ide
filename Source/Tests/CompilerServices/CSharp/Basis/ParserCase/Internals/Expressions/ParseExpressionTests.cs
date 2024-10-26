@@ -37,6 +37,32 @@ var aaa = 1;
     }
     
     [Fact]
+	public void VariableReferenceNode()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+var resourceUri = new ResourceUri(""./unitTesting.txt"");
+var sourceText = ""(MyClass)"";
+new CSharpLexer(resourceUri, sourceText);
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+        
+        var identifierToken = (IdentifierToken)variableAssignmentExpressionNode.GetChildList()[0];
+        var equalsToken = (EqualsToken)variableAssignmentExpressionNode.GetChildList()[1];
+        
+        var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.GetChildList()[2];
+    }
+    
+    [Fact]
     public void Numeric_Add_BinaryExpressionNode()
     {
 		var resourceUri = new ResourceUri("./unitTesting.txt");

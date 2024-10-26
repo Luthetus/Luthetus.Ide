@@ -250,6 +250,7 @@ public partial class CSharpBinder : IBinder
     {
         var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode;
 
+		// TODO: Wouldn't this have a '!' at the start? And '... && typeDefinitionNode is not null' (2024-10-25)
         if (TryGetTypeDefinitionHierarchically(
         		model,
         		model.BinderSession.ResourceUri,
