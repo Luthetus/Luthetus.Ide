@@ -22,6 +22,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
     public ISyntaxToken Token { get; }
     public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode { get; }
+    public bool FollowsMemberAccessToken { get; init; }
 
     public ISyntaxNode? Parent { get; }
 

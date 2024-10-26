@@ -27,6 +27,24 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeToken(
 		IExpressionNode expressionPrimary, ISyntaxToken token, IParserModel model)
 	{
+		if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
+		{
+			if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+			{
+				var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
+				
+				if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
+				{
+					ForceDecisionAmbiguousIdentifier(
+						EmptyExpressionNode.Empty,
+						ambiguousIdentifierExpressionNode,
+						model);
+				}
+			}
+			
+			return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+		}
+		
 		switch (expressionPrimary.SyntaxKind)
 		{
 			case SyntaxKind.EmptyExpressionNode:
@@ -113,7 +131,7 @@ public partial class CSharpBinder
 
 			model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
 			model.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode.FunctionParametersListingNode));
-			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			return EmptyExpressionNode.Empty;
 		}
 		else if (token.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
 		{
@@ -128,7 +146,7 @@ public partial class CSharpBinder
 			
 		    model.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, ambiguousIdentifierExpressionNode));
 			model.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode.GenericParametersListingNode));
-			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			return EmptyExpressionNode.Empty;
 		}
 		else if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
@@ -141,7 +159,7 @@ public partial class CSharpBinder
 				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			
 			model.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
-			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			return EmptyExpressionNode.Empty;
 		}
 	
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, token);
@@ -165,6 +183,9 @@ public partial class CSharpBinder
 		IParserModel model,
 		bool forceTypeClauseNode = false)
 	{
+		if (ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
+			return ambiguousIdentifierExpressionNode;
+	
 		if (expressionPrimary.SyntaxKind == SyntaxKind.ParenthesizedExpressionNode)
 		{
 			forceTypeClauseNode = true;
@@ -206,7 +227,7 @@ public partial class CSharpBinder
 			        typeClauseNode,
 			        (CSharpParserModel)model);
 			        
-			    return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()), typeClauseNode);
+			    return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), EmptyExpressionNode.Empty, typeClauseNode);
 	        }
 		}
 		
@@ -233,7 +254,7 @@ public partial class CSharpBinder
 		        typeClauseNode,
 		        (CSharpParserModel)model);
 		        
-		    return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()), typeClauseNode);
+		    return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), EmptyExpressionNode.Empty, typeClauseNode);
 		}
 		
 		return ambiguousIdentifierExpressionNode;
@@ -342,7 +363,7 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.FunctionParameters;
 				model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, constructorInvocationExpressionNode));
 				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode.FunctionParametersListingNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return EmptyExpressionNode.Empty;
 			case SyntaxKind.CloseParenthesisToken:
 				constructorInvocationExpressionNode.FunctionParametersListingNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
 				return constructorInvocationExpressionNode;
@@ -359,7 +380,7 @@ public partial class CSharpBinder
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.GenericParameters;
 			    model.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, constructorInvocationExpressionNode));
 				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return EmptyExpressionNode.Empty;
 			case SyntaxKind.CloseAngleBracketToken:
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 				constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode.SetCloseAngleBracketToken((CloseAngleBracketToken)token);
@@ -376,7 +397,7 @@ public partial class CSharpBinder
 				model.ExpressionList.Add((SyntaxKind.CloseBraceToken, constructorInvocationExpressionNode));
 				model.ExpressionList.Add((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
 				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return EmptyExpressionNode.Empty;
 			case SyntaxKind.CloseBraceToken:
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
 				constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.SetCloseBraceToken((CloseBraceToken)token);
@@ -395,7 +416,7 @@ public partial class CSharpBinder
 						if (!lastParameter.EqualsToken.ConstructorWasInvoked)
 						{
 							lastParameter.EqualsToken = (EqualsToken)token;
-							return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+							return EmptyExpressionNode.Empty;
 						}
 					}
 				}
@@ -461,7 +482,7 @@ public partial class CSharpBinder
 				objectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
 			        propertyIdentifierToken: default,
 			        equalsToken: default,
-			        expressionNode: new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
+			        expressionNode: EmptyExpressionNode.Empty);
 			    
 			    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(objectInitializationParameterEntryNode);
 			}
@@ -518,7 +539,7 @@ public partial class CSharpBinder
 					var nextObjectInitializationParameterEntryNode = new ObjectInitializationParameterEntryNode(
 				        propertyIdentifierToken: default,
 				        equalsToken: default,
-				        expressionNode: new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause()));
+				        expressionNode: EmptyExpressionNode.Empty);
 				    
 				    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(nextObjectInitializationParameterEntryNode);
 				}
@@ -550,7 +571,19 @@ public partial class CSharpBinder
 			var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
 				token,
 		        genericParametersListingNode: null,
-		        CSharpFacts.Types.Void.ToTypeClause());
+		        CSharpFacts.Types.Void.ToTypeClause())
+		    {
+		    	FollowsMemberAccessToken = emptyExpressionNode.FollowsMemberAccessToken
+		    };
+		    
+		    if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken &&
+		    	!ambiguousExpressionNode.FollowsMemberAccessToken)
+		    {
+				ForceDecisionAmbiguousIdentifier(
+					emptyExpressionNode,
+					ambiguousExpressionNode,
+					model);
+		    }
 		    
 		    return ambiguousExpressionNode;
 		}
@@ -579,7 +612,7 @@ public partial class CSharpBinder
 			case SyntaxKind.OpenParenthesisToken:
 				var parenthesizedExpressionNode = new ParenthesizedExpressionNode((OpenParenthesisToken)token, CSharpFacts.Types.Void.ToTypeClause());
 				model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return EmptyExpressionNode.Empty;
 			case SyntaxKind.NewTokenKeyword:
 				return new ConstructorInvocationExpressionNode(
 					(KeywordToken)token,
@@ -606,6 +639,12 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.CloseParenthesisToken:
 				return explicitCastNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
+			case SyntaxKind.IdentifierToken:
+				var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
+					token,
+			        genericParametersListingNode: null,
+			        CSharpFacts.Types.Void.ToTypeClause());
+			    return ambiguousExpressionNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), explicitCastNode, token);
 		}
@@ -618,7 +657,7 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.CommaToken:
 				model.ExpressionList.Add((SyntaxKind.CommaToken, genericParametersListingNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return EmptyExpressionNode.Empty;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), genericParametersListingNode, token);
 		}
@@ -679,7 +718,7 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.CommaToken:
 				model.ExpressionList.Add((SyntaxKind.CommaToken, functionParametersListingNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return EmptyExpressionNode.Empty;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), functionParametersListingNode, token);
 		}
@@ -721,11 +760,11 @@ public partial class CSharpBinder
 			
 				model.ExpressionList.Add((SyntaxKind.CloseBraceToken, lambdaExpressionNode));
 				model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, lambdaExpressionNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return EmptyExpressionNode.Empty;
 			}
 			
 			model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, lambdaExpressionNode));
-			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			return EmptyExpressionNode.Empty;
 		}
 		else if (token.SyntaxKind == SyntaxKind.StatementDelimiterToken)
 		{
@@ -736,7 +775,7 @@ public partial class CSharpBinder
 			else
 			{
 				model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, lambdaExpressionNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return EmptyExpressionNode.Empty;
 			}
 		}
 		else if (token.SyntaxKind == SyntaxKind.CloseBraceToken)
@@ -761,7 +800,7 @@ public partial class CSharpBinder
 				lambdaExpressionNode.HasReadParameters = true;
 				model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, lambdaExpressionNode));
 				model.ExpressionList.Add((SyntaxKind.CommaToken, lambdaExpressionNode));
-				return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				return EmptyExpressionNode.Empty;
 			}
 		}
 		else if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
@@ -778,7 +817,7 @@ public partial class CSharpBinder
 		else if (token.SyntaxKind == SyntaxKind.CommaToken)
 		{
 			model.ExpressionList.Add((SyntaxKind.CommaToken, lambdaExpressionNode));
-			return new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			return EmptyExpressionNode.Empty;
 		}
 		else if (token.SyntaxKind == SyntaxKind.IdentifierToken)
 		{

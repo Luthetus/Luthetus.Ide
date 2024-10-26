@@ -37,14 +37,12 @@ var aaa = 1;
     }
     
     [Fact]
-	public void VariableReferenceNode()
+	public void VariableReferenceNode_A()
 	{
 		var resourceUri = new ResourceUri("./unitTesting.txt");
         var sourceText =
 @"
-var resourceUri = new ResourceUri(""./unitTesting.txt"");
-var sourceText = ""(MyClass)"";
-new CSharpLexer(resourceUri, sourceText);
+var compilationUnit = parser.Parse();
 ";
 
 		var lexer = new CSharpLexer(resourceUri, sourceText);
@@ -52,15 +50,86 @@ new CSharpLexer(resourceUri, sourceText);
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
-        
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
-        
-        var identifierToken = (IdentifierToken)variableAssignmentExpressionNode.GetChildList()[0];
-        var equalsToken = (EqualsToken)variableAssignmentExpressionNode.GetChildList()[1];
-        
-        var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.GetChildList()[2];
     }
+    
+    [Fact]
+	public void VariableReferenceNode_B()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+var compilationUnit = Parse().parser;
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+    
+    [Fact]
+	public void VariableReferenceNode_C()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+    
+    [Fact]
+	public void VariableReferenceNode_D()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+var rememberBinaryExpressionNode = binaryExpressionNode;
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+    
+    /// <summary>
+    /// Goto definition isn't working for the variable assignment that is done to a variable on an outer scope.
+    /// </summary>
+    [Fact]
+	public void VariableReferenceNode_E()
+	{
+		var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
+
+{
+	binaryExpressionNode = leftBinaryExpressionNode;
+}
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    }
+
+/*
+this,
+out,
+in,
+ref,
+???
+*/
     
     [Fact]
     public void Numeric_Add_BinaryExpressionNode()

@@ -9,6 +9,24 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class EmptyExpressionNode : IExpressionNode
 {
+	/// <summary>
+	/// Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseOthers currently
+	/// compares memory locations of nodes in 'public static IExpressionNode ParseExpression(CSharpParserModel model)'
+	///
+	/// So, if one uses this in conjunction with adding it to the IParserModel.ExpressionList then
+	/// two it might result in discarding more entries in the list than was expected.
+	///
+	/// If this is used justs temporarily when instantiating a node, and never added to the
+	/// IParserModel.ExpressionList then there should not be an issue.
+	/// </summary>
+	public static readonly EmptyExpressionNode Empty = new EmptyExpressionNode(TypeFacts.Empty.ToTypeClause());
+	
+	/// <inheritdoc cref="Empty"/>
+	public static readonly EmptyExpressionNode EmptyFollowsMemberAccessToken = new EmptyExpressionNode(TypeFacts.Empty.ToTypeClause())
+	{
+		FollowsMemberAccessToken = true
+	};
+
     public EmptyExpressionNode(TypeClauseNode typeClauseNode)
     {
         ResultTypeClauseNode = typeClauseNode;
@@ -18,6 +36,7 @@ public sealed class EmptyExpressionNode : IExpressionNode
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode ResultTypeClauseNode { get; }
+    public bool FollowsMemberAccessToken { get; init; }
 
     public ISyntaxNode? Parent { get; }
 
