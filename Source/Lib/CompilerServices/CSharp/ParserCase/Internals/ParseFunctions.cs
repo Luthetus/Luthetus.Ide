@@ -32,7 +32,7 @@ public class ParseFunctions
             Facts.CSharpFacts.Types.Void.ToTypeClause());
 
 		model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
-		model.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode));
+		model.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode.FunctionParametersListingNode));
 
         var expressionNode = ParseOthers.ParseExpression(model);
 

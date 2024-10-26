@@ -1,10 +1,16 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Used when invoking a function.
+///
+/// I'm going to experiment with making this a <see cref="IExpressionNode"/>.
+/// Because the parameters are exclusive to the expression parsing logic,
+/// and having to wrap this in a 'BadExpressionNode' when dealing with
+/// expressions is very hard to read. (2024-10-26)
 ///
 /// TODO: I don't like how this type has the 'OpenParenthesisToken, and CloseParenthesisToken'...
 ///       ...It was done this way in order to mirror the generic parameters.
@@ -16,7 +22,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 ///       With the function parameters however, the 'OpenParenthesisToken' does not
 ///       mandate that at least 1 function parameter must be matched.
 /// </summary>
-public sealed class FunctionParametersListingNode : ISyntaxNode
+public sealed class FunctionParametersListingNode : IExpressionNode
 {
     public FunctionParametersListingNode(
         OpenParenthesisToken openParenthesisToken,
@@ -34,6 +40,7 @@ public sealed class FunctionParametersListingNode : ISyntaxNode
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public List<FunctionParameterEntryNode> FunctionParameterEntryNodeList { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; private set; }
+    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public ISyntaxNode? Parent { get; }
 

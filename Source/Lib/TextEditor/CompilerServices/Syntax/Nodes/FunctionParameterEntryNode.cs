@@ -5,8 +5,13 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Used when invoking a function.
+///
+/// I'm going to experiment with making this a <see cref="IExpressionNode"/>.
+/// Because the parameters are exclusive to the expression parsing logic,
+/// and having to wrap this in a 'BadExpressionNode' when dealing with
+/// expressions is very hard to read. (2024-10-26)
 /// </summary>
-public sealed class FunctionParameterEntryNode : ISyntaxNode
+public sealed class FunctionParameterEntryNode : IExpressionNode
 {
     public FunctionParameterEntryNode(
         IExpressionNode expressionNode,
@@ -27,6 +32,7 @@ public sealed class FunctionParameterEntryNode : ISyntaxNode
     public bool HasOutKeyword { get; }
     public bool HasInKeyword { get; }
     public bool HasRefKeyword { get; }
+    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public ISyntaxNode? Parent { get; }
 
