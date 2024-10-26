@@ -10,6 +10,29 @@ using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals.Expressions;
 
+/// <summary>
+/// Thoughts (2024-10-25)
+/// =====================
+/// - Do I want to make a common path for parsing generic arguments ?
+/// - Do I want to make a common path for AmbiguousIdentifierExpressionNode ?
+/// - In response to both of the "common path" questions:
+/// 	- I think the answer is yes. My only worry is that I might need to
+///   		permit a slightly different syntax in the future
+///   		(depending on what node I'm looking at), but I've
+///   		forced myself into this single common path.
+///   		I think I write a opinionated method that will parse generic arguments,
+///   		and if someone for whatever reason in the future needs to parse
+///   		them slightly differently then that is their problem.
+///   		At that point they would implement their own generic argument parsing method
+///   		and probably share it publically, with a description of its own opinions versus the original.
+/// - Another question is whether I want to create a 'GenericParametersListExpression'
+///   	so I can have the primary expression be that, and then have a general case method
+///       that will parse the generic parameters.
+/// - This also similarly is an issue for TypeClauseNode. Because TypeClauseNode isn't an
+///   	expression. All the code works by moving around the expressionPrimary and expressionSecondary.
+/// 	- So when I need to transport a TypeClauseNode, I'm putting it inside of a 'BadExpressionNode'
+///   		and this is extremely annoying to work with.
+/// <summary>
 public class ParseExpressionTests
 {
 	[Fact]
