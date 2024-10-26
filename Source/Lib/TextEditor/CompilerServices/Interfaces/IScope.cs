@@ -10,7 +10,6 @@ public interface IScope
 {
 	public Key<IScope> Key { get; }
     public Key<IScope>? ParentKey { get; }
-    public ResourceUri ResourceUri { get; }
     public int StartingIndexInclusive { get; }
     /// <summary>
     /// Beware of this property's setter,

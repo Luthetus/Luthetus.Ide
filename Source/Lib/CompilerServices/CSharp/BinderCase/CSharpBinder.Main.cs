@@ -1411,7 +1411,7 @@ public partial class CSharpBinder : IBinder
         	{
         		if (TryGetVariableDeclarationHierarchically(
         				model,
-        				boundScope.ResourceUri,
+        				textSpan.ResourceUri,
         				boundScope.Key,
 		                textSpan.GetText(),
 		                out var variableDeclarationStatementNode)
@@ -1428,7 +1428,7 @@ public partial class CSharpBinder : IBinder
 	        {
 	        	if (TryGetFunctionHierarchically(
 	        				 model,
-	        				 boundScope.ResourceUri,
+	        				 textSpan.ResourceUri,
         					 boundScope.Key,
 		                     textSpan.GetText(),
 		                     out var functionDefinitionNode)
@@ -1446,7 +1446,7 @@ public partial class CSharpBinder : IBinder
 	        {
 	        	if (TryGetTypeDefinitionHierarchically(
 	        				 model,
-	        			     boundScope.ResourceUri,
+	        			     textSpan.ResourceUri,
         					 boundScope.Key,
 		                     textSpan.GetText(),
 		                     out var typeDefinitionNode)
