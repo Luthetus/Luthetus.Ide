@@ -455,6 +455,16 @@ public static class ParseTokens
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
+    
+    public static void ParseAtToken(
+        AtToken consumedAtToken,
+        CSharpParserModel model)
+    {
+        // The handle expression won't see this token unless backtracked.
+        model.TokenWalker.Backtrack();
+        var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
+    }
 
     public static void ParseColonToken(
         ColonToken consumedColonToken,

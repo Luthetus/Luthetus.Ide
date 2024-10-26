@@ -594,6 +594,12 @@ public partial class CSharpBinder
 			        objectInitializationParametersListingNode: null);
 			case SyntaxKind.AsyncTokenContextualKeyword:
 				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			case SyntaxKind.DollarSignToken:
+				BindStringInterpolationExpression((DollarSignToken)token, (CSharpParserModel)model);
+				return emptyExpressionNode;
+			case SyntaxKind.AtToken:
+				BindStringVerbatimExpression((AtToken)token, (CSharpParserModel)model);
+				return emptyExpressionNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
 		}
