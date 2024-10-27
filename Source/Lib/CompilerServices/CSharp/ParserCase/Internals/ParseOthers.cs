@@ -105,8 +105,8 @@ public static class ParseOthers
 	public static IExpressionNode ParseExpression(CSharpParserModel model)
     {
 #if DEBUG
-    	Console.Write("\n=======================================================================================\n");
-    	Console.Write("=======================================================================================\n\n");
+    	Console.Write("\n====START==============================================================================\n");
+    	Console.Write("====START==============================================================================\n\n");
 
 		WriteExpressionList(model.ExpressionList);
 #endif
@@ -129,12 +129,16 @@ public static class ParseOthers
 	    			{
 	    				if (delimiterExpressionTuple.ExpressionNode is null)
 	    				{
+	    					//for (int z = 0; z < 10; z++)
+	    					//	Console.WriteLine("forceExit = true;");
+	    					
 	    					forceExit = true;
 	    					break;
 	    				}
 	    				
 	    				expressionPrimary = BubbleUpParseExpression(model.ExpressionList.Count - 1, i - 1, expressionPrimary, model);
 	    				model.ExpressionList.RemoveRange(i, model.ExpressionList.Count - i);
+	    				break;
 	    				
 	    				#if DEBUG
 	    				WriteExpressionList(model.ExpressionList);
@@ -176,8 +180,8 @@ public static class ParseOthers
     	model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
     	
     	#if DEBUG
-    	Console.Write("=======================================================================================\n");
-    	Console.Write("=======================================================================================\n\n");
+    	Console.Write("====END================================================================================\n");
+    	Console.Write("====END================================================================================\n\n");
     	#endif
     	
     	return expressionPrimary;

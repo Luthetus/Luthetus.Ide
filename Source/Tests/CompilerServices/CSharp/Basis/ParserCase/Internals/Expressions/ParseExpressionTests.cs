@@ -1690,7 +1690,7 @@ ref,
     public void WhileLoop_DoNotBreakScope()
     {
     	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"while (false) { }";
+        var sourceText = @"while (().) { ; }";
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer); 
