@@ -736,32 +736,9 @@ public static class ParseTokens
         MemberAccessToken consumedMemberAccessToken,
         CSharpParserModel model)
     {
-        model.SyntaxStack.Push(consumedMemberAccessToken);
-
-        var isValidMemberAccessToken = true;
-
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax is not null)
-        {
-            switch (model.SyntaxStack.Peek().SyntaxKind)
-            {
-                case SyntaxKind.VariableReferenceNode:
-                    var variableReferenceNode = (VariableReferenceNode)model.SyntaxStack.Pop();
-
-                    if (variableReferenceNode.VariableDeclarationNode.IsFabricated)
-                    {
-                        // Undeclared variable, so the Type is unknown.
-                    }
-
-                    break;
-            }
-        }
-        else
-        {
-            isValidMemberAccessToken = false;
-        }
-
-        if (!isValidMemberAccessToken)
-            model.DiagnosticBag.ReportTodoException(consumedMemberAccessToken.TextSpan, "MemberAccessToken needs further implementation.");
+    	model.TokenWalker.Backtrack();
+        var expression = ParseOthers.ParseExpression(model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseStatementDelimiterToken(
