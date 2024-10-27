@@ -736,7 +736,22 @@ public static class ParseTokens
         MemberAccessToken consumedMemberAccessToken,
         CSharpParserModel model)
     {
+    	// Backtrack so that model.TokenWalker.Current is MemberAccessToken
     	model.TokenWalker.Backtrack();
+    	
+    	/*if (model.TokenWalker.Previous.SyntaxKind == SyntaxKind.IdentifierToken)
+    	{
+    		// Backtrack so that model.TokenWalker.Current is the IdentifierToken
+    		// This is presumed to be the full expression, albeit quite naive.
+    		//
+    		// Ex: 'myVariable.SomeProperty'
+    		//
+    		// But, this might not work with method invocations
+    		//
+    		// Ex: 'myMethod().SomeProperty'
+    		model.TokenWalker.Backtrack();
+    	}*/
+    	
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
@@ -784,8 +799,10 @@ public static class ParseTokens
 			
 	        model.Binder.DisposeScope(consumedStatementDelimiterToken.TextSpan, model);
 	
-	        if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
+	        if (model.CurrentCodeBlockBuilder.Parent is not null)
 	            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
+	            
+	        model.CurrentCodeBlockBuilder.PendingChild = null;
         }
     }
 

@@ -1704,6 +1704,49 @@ ref,
     }
     
     [Fact]
+    public void IfStatement_StopExpressionsCreatingScope()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+void Aaa()
+{
+    if (false)
+        return; // Scope is being made here correctly.
+
+    Console.WriteLine(); // But it erroneously continues defining scope at each expression following the if statement.
+    
+    var variable = 2;
+
+    Console.WriteLine(); // But it erroneously continues defining scope at each expression following the if statement.
+}
+";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		((IBinder)parser.Binder).TryGetBinderSession(resourceUri, out var binderSession);
+		Assert.Equal(3, binderSession.ScopeList.Count);
+		
+		foreach (var child in topCodeBlock.GetChildList())
+		{
+			Console.WriteLine(child.SyntaxKind);
+		}
+		
+		Console.WriteLine("aaaFunctionDefinitionNode.CodeBlockNode:");
+		var aaaFunctionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList()[2];
+		foreach (var child in aaaFunctionDefinitionNode.CodeBlockNode.GetChildList())
+		{
+			Console.WriteLine(child.SyntaxKind);
+		}
+		
+		Console.WriteLine(((AmbiguousIdentifierNode)topCodeBlock.GetChildList()[1]).IdentifierToken.TextSpan.GetText());
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
+    }
+    
+    [Fact]
     public void CollectionIndex()
     {
     	/* var queue = _queueContainerMap[queueKey]; */
