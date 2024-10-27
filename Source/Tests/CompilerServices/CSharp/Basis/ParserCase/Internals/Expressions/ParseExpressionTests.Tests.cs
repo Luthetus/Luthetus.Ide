@@ -11,7 +11,7 @@ using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals.Expressions;
 
-public class ParseExpressionTests
+public partial class ParseExpressionTests
 {
 	[Fact]
 	public void Aaa()
@@ -1781,5 +1781,73 @@ void Aaa()
 		throw new NotImplementedException();
     }
     
+    [Fact]
+    public void LessThanBinaryOperator()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = "if (_queue.Count < 0)";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		throw new NotImplementedException();
+    }
     
+    [Fact]
+    public void GreaterThanBinaryOperator()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = "if (_queue.Count > 0)";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void LessThanEqualToBinaryOperator()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = "if (_queue.Count <= 0)";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void GreaterThanEqualToBinaryOperator()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = "if (_queue.Count >= 0)";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void SourceCodeThatIsNotParsing_Test()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = SourceCodeThatIsNotParsing_Data;
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		throw new NotImplementedException();
+    }
 }

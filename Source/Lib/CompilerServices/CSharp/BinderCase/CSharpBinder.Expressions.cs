@@ -150,8 +150,11 @@ public partial class CSharpBinder
 		}
 		else if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
-			ambiguousIdentifierExpressionNode.GenericParametersListingNode.SetCloseAngleBracketToken((CloseAngleBracketToken)token);
-			return ambiguousIdentifierExpressionNode;
+			if (ambiguousIdentifierExpressionNode.GenericParametersListingNode is not null)
+			{
+				ambiguousIdentifierExpressionNode.GenericParametersListingNode.SetCloseAngleBracketToken((CloseAngleBracketToken)token);
+				return ambiguousIdentifierExpressionNode;
+			}
 		}
 		else if (token.SyntaxKind == SyntaxKind.EqualsToken)
 		{
@@ -365,8 +368,15 @@ public partial class CSharpBinder
 				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode.FunctionParametersListingNode));
 				return EmptyExpressionNode.Empty;
 			case SyntaxKind.CloseParenthesisToken:
-				constructorInvocationExpressionNode.FunctionParametersListingNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
-				return constructorInvocationExpressionNode;
+				if (constructorInvocationExpressionNode.FunctionParametersListingNode is not null)
+				{
+					constructorInvocationExpressionNode.FunctionParametersListingNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
+					return constructorInvocationExpressionNode;
+				}
+				else
+				{
+					goto default;
+				}
 			case SyntaxKind.OpenAngleBracketToken:
 				if (constructorInvocationExpressionNode.ResultTypeClauseNode.GenericParametersListingNode is null)
 				{
@@ -400,8 +410,16 @@ public partial class CSharpBinder
 				return EmptyExpressionNode.Empty;
 			case SyntaxKind.CloseBraceToken:
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.Unset;
-				constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.SetCloseBraceToken((CloseBraceToken)token);
-				return constructorInvocationExpressionNode;
+				
+				if (constructorInvocationExpressionNode.ObjectInitializationParametersListingNode is not null)
+				{
+					constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.SetCloseBraceToken((CloseBraceToken)token);
+					return constructorInvocationExpressionNode;
+				}
+				else
+				{
+					goto default;
+				}
 			case SyntaxKind.EqualsToken:
 				model.ExpressionList.Add((SyntaxKind.EqualsToken, constructorInvocationExpressionNode));
 				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
