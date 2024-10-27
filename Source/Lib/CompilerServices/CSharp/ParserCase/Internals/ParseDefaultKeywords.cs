@@ -710,26 +710,8 @@ public class ParseDefaultKeywords
     {    
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
-    	var expressionNode = ParseOthers.ParseExpression(model);
-    	/*
-    	ParseOthers.HandleExpression(
-	        null,
-	        null,
-	        null,
-	        null,
-	        null,
-	        new[]
-	        {
-	            new ExpressionDelimiter(
-	                SyntaxKind.OpenParenthesisToken,
-	                SyntaxKind.CloseParenthesisToken,
-	                null,
-	                null)
-	        },
-	        model);
-	        
-		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
-		*/
+    	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        var expressionNode = ParseOthers.ParseExpression(model);
 		
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
@@ -1109,19 +1091,6 @@ public class ParseDefaultKeywords
         CSharpParserModel model)
     {
     	var returnExpression = ParseOthers.ParseExpression(model);
-    	
-    	/*
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        var returnExpression = (IExpressionNode)model.SyntaxStack.Pop();
-        */
 
         var returnStatementNode = model.Binder.BindReturnStatementNode(
             consumedKeywordToken,

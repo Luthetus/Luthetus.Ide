@@ -1,4 +1,5 @@
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -50,6 +51,8 @@ var compilationUnit = parser.Parse();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        throw new NotImplementedException();
     }
     
     [Fact]
@@ -66,6 +69,8 @@ var compilationUnit = Parse().parser;
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        throw new NotImplementedException();
     }
     
     [Fact]
@@ -82,6 +87,8 @@ var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.Rig
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        throw new NotImplementedException();
     }
     
     [Fact]
@@ -98,6 +105,8 @@ var rememberBinaryExpressionNode = binaryExpressionNode;
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        throw new NotImplementedException();
     }
     
     /// <summary>
@@ -121,6 +130,8 @@ var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Sin
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        
+        throw new NotImplementedException();
     }
 
 /*
@@ -1674,198 +1685,58 @@ ref,
 		throw new NotImplementedException();
     }
     
+    /// <summary>TODO: Repeat this test for all the control keywords</summary>
+    [Fact]
+    public void WhileLoop_DoNotBreakScope()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText = @"while (false) { }";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		var whileStatementNode = (WhileStatementNode)topCodeBlock.GetChildList().Single();
+		
+		((IBinder)parser.Binder).TryGetBinderSession(resourceUri, out var binderSession);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+    }
+    
+    [Fact]
+    public void CollectionIndex()
+    {
+    	/* var queue = _queueContainerMap[queueKey]; */
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void AwaitTask()
+    {
+    	/* await Task.Delay(TimeSpan.FromMilliseconds(100), cancellationToken).ConfigureAwait(false); */
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void SwitchStatement()
+    {
+    	/**/
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Parenthesized_ExplicitCast()
+    {
+    	/* ((IBinder)parser.Binder) */
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void FunctionParameter_OutKeyword()
+    {
+    	/* TryGetBinderSession(resourceUri, out IBinderSession binderSession) */
+		throw new NotImplementedException();
+    }
+    
     
 }
-
-/// <summary>
-	/// Goal: Rewrite expression parsing
-	/// ================================
-	///
-	/// Short description:
-	/// ------------------
-	/// - Use a 'while' loop rather than a recursive method.
-	/// - A parent expression can "short circuit"(wording?) a child expression.
-	/// - Consider the role of the main 'Parse(...)' method.
-	///
-	/// Long description:
-	/// -----------------
-	/// - Use a 'while' loop rather than a recursive method.
-	/// 	asd
-	/// - A parent expression can "short circuit"(wording?) a child expression.
-	/// 	Given: '( 1 + );'
-	/// 	Then:
-	/// 		'(' opens an expression (likely a parenthesized expression),
-	/// 		'1 +' is read as a binary expression node,
-	/// 		But, when the right operand is attempted to be read, a ')' is read instead.
-	/// 		Since ')' is the closing delimiter to the initial '(',
-	/// 			then fill the remainder of the binary expression with fabricated nodes,
-	/// 			and then set the inner expression for the parenthesized expression
-	/// 			to be the binary expression.
-	/// - Consider the role of the main 'Parse(...)' method.
-	/// 	There is a complication where the 'Parse(...)' method needs to
-	/// 		identify a syntax, but not duplicate the code.
-	/// 	What I just wrote was my attempt at wording the issue.
-	/// 		I need to continue thinking about this. I think it is
-	/// 		vitally important that I find my words for this idea.
-	/// 	Consider if I typed the statement: '2;'
-	/// 		The C# compiler will give me an error, because
-	/// 		Literal expressions are not allowed to be statements.
-	/// 		The fact that the C# compiler gives me an error however,
-	/// 		does not stop a user from typing this into the editor.
-	/// 		So, the parser needs to handle this case, and recover when
-	/// 		it reads the semicolon, then move on to the next statement as if all is fine.
-	/// 	On a related note, consider I type the statement: 'var x = 2;'
-	/// 		The parser will see 'var', so it invokes something named similarly to 'ParseVarContextualKeyword(...)'.
-	/// 		Then 'ParseVarContextualKeyword(...)' sees an IdentifierToken follows the 'VarContextualKeywordToken'.
-	/// 		The '{IdentifierToken} {IdentifierToken}' pattern in this situation is nonsensical,
-	/// 			because there is no TypeDeclarationNode with an IdentifierToken of text: "var".
-	/// 			So the 'var' is presumed to be the implicit TypeClauseNode that comes from the 'var' contextual keyword.
-	/// 		To skip ahead to the point... the text 'var x =' results in a variable declaration node,
-	/// 			and a variable assignment node.
-	/// 		But, now we know we need to parse an expression. To make the point more clearly,
-	/// 			we just as in the previous example need to parse the literal expression '2'.
-	/// 		Except now we aren't coming directly from the 'Parse(...)' method,
-	/// 			we are coming from the 'ParseVarContextualKeyword(...)' method.
-	/// 	Okay, I think I know what to do.
-	/// 		There is no 'ParseLiteralToken(...)', instead one immediately turns to 'ParseExpression(...)'.
-	/// 	Otherwise, when given '2;', you go from
-	/// 		'Parse(...)' to
-	/// 		'ParseLiteralToken(...)' to
-	/// 		'ParseExpression'.
-	/// 	This contrasts to being given 'var x = 2;'
-	/// 		'ParseVarContextualKeyword(...)' to
-	/// 		'ParseIdentifierToken(...)' to
-	/// 		'ParseVariableAssignment(...)' to
-	/// 		'ParseExpression(...)' to
-	/// 	The methods I wrote are not an exact replication of what happens in the parser at the moment.
-	/// 		But, they illustrate that 'ParseLiteralToken(...)' is NOT being invoked for the 'var x = 2;' input.
-	/// 		Therefore, any logic tied to 'ParseLiteralToken(...)' is likely irrelevant, or it duplicates code
-	/// 		that also exists in 'ParseExpression(...)'.
-	/// 	I feel like the example I gave comes across as quite underwhelming.
-	/// 		But this situation is all throughout the current parser code.
-	/// 		Every syntax that can appear as an expression, has its own standalone method as well.
-	/// 		Eventually I started to just invoke 'ParseExpression(...)' from the standalone method.
-	/// 		And the standalone method essentially did nothing of its own.
-	/// 	If I add object initialization, and collection initialization,
-	/// 		I need to make sure the code doesn't get duplicated in a standlone method
-	/// 		and in 'ParseExpression(...)'.
-	/// 	The other consideration is, does the main 'Parse(...)' loop only ever start and end a syntax?
-	/// 		i.e.: either you are starting a statement, or at a statement delimiter?
-	/// </summary>
-	
-/*
-		I can make a static method 'ParseExpression(...)' then ignore all the other sections of the parser
-		and have my tests invoke just the one method.
-		
-		Then I move the method to the parser when I'm done.
-		
-		I want to try and make sure the method can be moved without any changes,
-		but I'm open to making some changes when I'm done if it elucidates the answer for the time being.
-		
-		I think all I "need" is 'Stack<ISyntax> expressionStack' for the time being.
-		So I can forgo thinking about the Parser as a whole for a moment.
-		
-		Well... I guess I need an IEnumerable<ISyntaxToken> too
-		*/
-		
-/// <summary>
-    ///        +
-    ///      /   \
-    ///     /     \
-    ///    /       \
-    ///   +         1
-    ///  / \ 
-    /// 1   1
-    /// </summary>
-    
-// The idea:
-		// =========
-		//
-		// Similarly to 'var x = 2;'
-		//
-		// I'm going to break out '() => "Abc";'
-		// into two separate statements.
-		//
-		// Firstly the FunctionDefinitionNode,
-		// but then for the second
-		// statement I want a reference to the 'FunctionDefinitionNode'.
-		
-		// I think the best way to start this is to focus
-		// on parsing a FunctionDefinitionNode from the lambda expression/function.
-		//
-		// This being opposed to worrying about whether the return type of a lambda expression/function
-		// is a method group which contains the singular anonymous method that was declared
-		// from the lambda express/function.
-		
-		// functionDefinitionNode.AccessModifierKind;
-        // functionDefinitionNode.ReturnTypeClauseNode;
-        // functionDefinitionNode.FunctionIdentifierToken;
-        // functionDefinitionNode.GenericArgumentsListingNode;
-        
-        // FunctionArgumentsListingNode
-        //{
-        	//Assert.True(functionDefinitionNode.FunctionArgumentsListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-	        //Assert.Empty(functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
-	        //Assert.True(functionDefinitionNode.FunctionArgumentsListingNode.CloseParenthesisToken.ConstructorWasInvoked);
-        //}
-        
-        // CodeBlockNode
-        //{
-        	// In this scenario, the codeBlockNode is a "single statement codeblock"/expression.
-        	// So I can start by drawing the scope at the semicolon just as I do for if statements.
-        	//
-        	// Then, once again as I do with if statements, I can draw the scope at the braces
-        	// if it is more than just a "single statement codeblock"/expression.
-        	
-        	//Assert.Single(functionDefinitionNode.CodeBlockNode.ChildList);
-        	
-        	// It isn't identical to an if statement that doesn't have braces.
-        	// Because the lambda expression is implicitly returning
-        	// whatever "single statement codeblock" it has.
-        	
-        	// What interactions are these between this and,
-        	// ExplicitCastNode and ParenthesizedExpressionNode?
-        	// It seems like these 3 nodes could clobber eachother's code.
-        	// So it is something to keep mind.
-        	
-        	// 
-        //}
-        
-        // functionDefinitionNode.ConstraintNode;
-        
-        // VariableReferenceNode
-        // Reference to the anonymously defined function is ultimately the TypeClauseNode for the expression's result.
-        
-        // It turns out that I cannot avoid returning an expression.
-        // I'm going to try and get this input to return an EmptyExpressionNode,
-        // instead of what it currently returns which is BadExpressionNode.
-        
-// I decided that I am going to get all of the 'LambdaFunction' tests to return
-    	// a 'LambdaExpressionNode', then go back to the previous tests and
-    	// fix any that broke.
-    	//
-    	// I'm just looking for any kind of progress I can find at the moment.
-    	
-/// <summary>
-/// Thoughts (2024-10-25)
-/// =====================
-/// - Do I want to make a common path for parsing generic arguments ?
-/// - Do I want to make a common path for AmbiguousIdentifierExpressionNode ?
-/// - In response to both of the "common path" questions:
-/// 	- I think the answer is yes. My only worry is that I might need to
-///   		permit a slightly different syntax in the future
-///   		(depending on what node I'm looking at), but I've
-///   		forced myself into this single common path.
-///   		I think I write a opinionated method that will parse generic arguments,
-///   		and if someone for whatever reason in the future needs to parse
-///   		them slightly differently then that is their problem.
-///   		At that point they would implement their own generic argument parsing method
-///   		and probably share it publically, with a description of its own opinions versus the original.
-/// - Another question is whether I want to create a 'GenericParametersListExpression'
-///   	so I can have the primary expression be that, and then have a general case method
-///       that will parse the generic parameters.
-/// - This also similarly is an issue for TypeClauseNode. Because TypeClauseNode isn't an
-///   	expression. All the code works by moving around the expressionPrimary and expressionSecondary.
-/// 	- So when I need to transport a TypeClauseNode, I'm putting it inside of a 'BadExpressionNode'
-///   		and this is extremely annoying to work with.
-/// <summary>
