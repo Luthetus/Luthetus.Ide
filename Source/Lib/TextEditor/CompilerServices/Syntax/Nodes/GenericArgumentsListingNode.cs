@@ -16,22 +16,25 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
         OpenAngleBracketToken = openAngleBracketToken;
         GenericArgumentEntryNodeList = genericArgumentEntryNodeList;
         CloseAngleBracketToken = closeAngleBracketToken;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public OpenAngleBracketToken OpenAngleBracketToken { get; }
     public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeList { get; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentsListingNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	// OpenAngleBracketToken, GenericArgumentEntryNodeList.Length, CloseAngleBracketToken
     	var childCount =
     		1 +                                   // OpenAngleBracketToken,
@@ -48,6 +51,9 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
 		}
 		childList[i++] = CloseAngleBracketToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

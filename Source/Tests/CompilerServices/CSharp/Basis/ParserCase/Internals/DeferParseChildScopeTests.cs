@@ -52,7 +52,7 @@ public class DeferParseChildScopeTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
     }
     
     [Fact]
@@ -240,7 +240,7 @@ public class ClassTwo
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
     }
     
     [Fact]
@@ -316,7 +316,7 @@ public class ClassTwo
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
     }
     
     [Fact]
@@ -343,17 +343,17 @@ public class ClassTwo { }
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNodeClassOne = (TypeDefinitionNode)topCodeBlock.ChildList[0];
+        var typeDefinitionNodeClassOne = (TypeDefinitionNode)topCodeBlock.GetChildList()[0];
         
         Console.WriteLine(typeDefinitionNodeClassOne.SyntaxKind);
         Console.WriteLine(typeDefinitionNodeClassOne.TypeIdentifierToken.TextSpan.GetText());
         
-        foreach (var child in typeDefinitionNodeClassOne.CodeBlockNode.ChildList)
+        foreach (var child in typeDefinitionNodeClassOne.CodeBlockNode.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }
         
-        var typeDefinitionNodeClassTwo = (TypeDefinitionNode)topCodeBlock.ChildList[1];
+        var typeDefinitionNodeClassTwo = (TypeDefinitionNode)topCodeBlock.GetChildList()[1];
         
         // The assertions will fail because ClassTwo will be inserted at index 0 of the child list
         Assert.Equal(typeDefinitionNodeClassOne.TypeIdentifierToken.TextSpan.GetText(), "ClassOne");

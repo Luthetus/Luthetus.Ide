@@ -5,12 +5,12 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 public sealed class SymbolReference
 {
-    public SymbolReference(ISymbol symbol, Key<IScope> scopeKey)
+    public SymbolReference(ISymbol symbol, int scopeIndexKey)
     {
         Symbol = symbol;
-        ScopeKey = scopeKey;
+        ScopeIndexKey = scopeIndexKey;
     }
 
     public ISymbol Symbol { get; }
-    public Key<IScope> ScopeKey { get; }
+    public int ScopeIndexKey { get; }
 }

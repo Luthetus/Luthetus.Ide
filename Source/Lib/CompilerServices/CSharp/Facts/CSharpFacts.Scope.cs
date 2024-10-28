@@ -38,9 +38,8 @@ public partial class CSharpFacts
 	        };
 	        
 			return new Scope(
-				Key<IScope>.Empty,
-			    parentKey: null,
-			    ResourceUri.Empty,
+				indexKey: 0,
+			    parentIndexKey: null,
 			    0,
 			    endingIndexExclusive: null);
         }

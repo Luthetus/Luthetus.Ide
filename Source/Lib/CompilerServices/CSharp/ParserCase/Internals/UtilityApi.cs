@@ -35,7 +35,6 @@ public static class UtilityApi
             case SyntaxKind.DelegateTokenKeyword:
             case SyntaxKind.DoubleTokenKeyword:
             case SyntaxKind.EnumTokenKeyword:
-            case SyntaxKind.FalseTokenKeyword:
             case SyntaxKind.FloatTokenKeyword:
             case SyntaxKind.IntTokenKeyword:
             case SyntaxKind.LongTokenKeyword:
@@ -44,7 +43,6 @@ public static class UtilityApi
             case SyntaxKind.SbyteTokenKeyword:
             case SyntaxKind.ShortTokenKeyword:
             case SyntaxKind.StringTokenKeyword:
-            case SyntaxKind.TrueTokenKeyword:
             case SyntaxKind.UintTokenKeyword:
             case SyntaxKind.UlongTokenKeyword:
             case SyntaxKind.UshortTokenKeyword:

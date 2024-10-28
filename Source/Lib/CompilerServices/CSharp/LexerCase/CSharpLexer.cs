@@ -85,6 +85,7 @@ public class CSharpLexer : Lexer
                 case '_':
                     LexerUtils.LexIdentifierOrKeywordOrKeywordContextual(_stringWalker, _syntaxTokenList, LexerKeywords);
                     break;
+                case '0':
                 case '1':
                 case '2':
                 case '3':

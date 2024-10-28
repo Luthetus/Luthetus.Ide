@@ -121,6 +121,9 @@ public class CSharpParser : IParser
                 case SyntaxKind.DollarSignToken:
                     ParseTokens.ParseDollarSignToken((DollarSignToken)token, model);
                     break;
+                case SyntaxKind.AtToken:
+                    ParseTokens.ParseAtToken((AtToken)token, model);
+                    break;
                 case SyntaxKind.ColonToken:
                     ParseTokens.ParseColonToken((ColonToken)token, model);
                     break;

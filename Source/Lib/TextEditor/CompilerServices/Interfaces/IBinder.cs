@@ -27,75 +27,75 @@ public interface IBinder
     public bool RemoveBinderSession(ResourceUri resourceUri);
     
     public IScope? GetScope(TextEditorTextSpan textSpan);
-    public IScope? GetScope(ResourceUri resourceUri, int positionIndex);
-    public IScope? GetScope(ResourceUri resourceUri, Key<IScope> scopeKey);
+    public IScope? GetScopeByPositionIndex(ResourceUri resourceUri, int positionIndex);
+    public IScope? GetScopeByScopeIndexKey(ResourceUri resourceUri, int scopeIndexKey);
     public IScope[]? GetScopeList(ResourceUri resourceUri);
     
-    public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
+    public TypeDefinitionNode[] GetTypeDefinitionNodesByScope(ResourceUri resourceUri, int scopeIndexKey);
     
     public bool TryGetTypeDefinitionNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string typeIdentifierText,
     	out TypeDefinitionNode typeDefinitionNode);
     
     public bool TryAddTypeDefinitionNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string typeIdentifierText,
         TypeDefinitionNode typeDefinitionNode);
         
     public void SetTypeDefinitionNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string typeIdentifierText,
         TypeDefinitionNode typeDefinitionNode);
     
-    public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
+    public FunctionDefinitionNode[] GetFunctionDefinitionNodesByScope(ResourceUri resourceUri, int scopeIndexKey);
     
     public bool TryGetFunctionDefinitionNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string functionIdentifierText,
     	out FunctionDefinitionNode functionDefinitionNode);
     
     public bool TryAddFunctionDefinitionNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string functionIdentifierText,
         FunctionDefinitionNode functionDefinitionNode);
         
     public void SetFunctionDefinitionNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string functionIdentifierText,
         FunctionDefinitionNode functionDefinitionNode);
     
-    public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
+    public IVariableDeclarationNode[] GetVariableDeclarationNodesByScope(ResourceUri resourceUri, int scopeIndexKey);
     
     public bool TryGetVariableDeclarationNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string variableIdentifierText,
     	out IVariableDeclarationNode variableDeclarationNode);
     
     public bool TryAddVariableDeclarationNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string variableIdentifierText,
         IVariableDeclarationNode variableDeclarationNode);
         
     public void SetVariableDeclarationNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
     	string variableIdentifierText,
         IVariableDeclarationNode variableDeclarationNode);
     
-    public TypeClauseNode? GetReturnTypeClauseNodeByScope(ResourceUri resourceUri, Key<IScope> scopeKey);
+    public TypeClauseNode? GetReturnTypeClauseNodeByScope(ResourceUri resourceUri, int scopeIndexKey);
     
     public bool TryAddReturnTypeClauseNodeByScope(
     	ResourceUri resourceUri,
-    	Key<IScope> scopeKey,
+    	int scopeIndexKey,
         TypeClauseNode typeClauseNode);
     
     public void ClearStateByResourceUri(ResourceUri resourceUri);

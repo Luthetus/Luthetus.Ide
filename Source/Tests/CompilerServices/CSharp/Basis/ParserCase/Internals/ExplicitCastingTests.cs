@@ -21,16 +21,16 @@ public class ExplicitCastingTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
         
-        var identifierToken = (IdentifierToken)variableAssignmentExpressionNode.ChildList[0];
-        var equalsToken = (EqualsToken)variableAssignmentExpressionNode.ChildList[1];
+        var identifierToken = (IdentifierToken)variableAssignmentExpressionNode.GetChildList()[0];
+        var equalsToken = (EqualsToken)variableAssignmentExpressionNode.GetChildList()[1];
         
-        // var parenthesizedExpressionNode = (ParenthesizedExpressionNode)variableAssignmentExpressionNode.ChildList[2];
-        var explicitCastNode = (ExplicitCastNode)variableAssignmentExpressionNode.ChildList[2];
+        // var parenthesizedExpressionNode = (ParenthesizedExpressionNode)variableAssignmentExpressionNode.GetChildList()[2];
+        var explicitCastNode = (ExplicitCastNode)variableAssignmentExpressionNode.GetChildList()[2];
         
-        foreach (var child in variableAssignmentExpressionNode.ChildList)
+        foreach (var child in variableAssignmentExpressionNode.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }
@@ -41,7 +41,7 @@ public class ExplicitCastingTests
 
                                    CastExplicitNode
                                   /                \
-TypeClauseNode (ParenthesizedExpressionNode)        variableAssignmentExpressionNode.ChildList[2]
+TypeClauseNode (ParenthesizedExpressionNode)        variableAssignmentExpressionNode.GetChildList()[2]
 										             |
 										             IndexOperator
 										             |

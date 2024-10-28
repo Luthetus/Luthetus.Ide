@@ -10,21 +10,24 @@ public sealed class ReturnStatementNode : ISyntaxNode
     {
         KeywordToken = keywordToken;
         ExpressionNode = expressionNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 2; // KeywordToken, ExpressionNode
             
         var childList = new ISyntax[childCount];
@@ -33,6 +36,9 @@ public sealed class ReturnStatementNode : ISyntaxNode
 		childList[i++] = KeywordToken;
 		childList[i++] = ExpressionNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

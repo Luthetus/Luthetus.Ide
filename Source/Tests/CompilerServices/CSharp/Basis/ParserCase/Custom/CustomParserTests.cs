@@ -26,14 +26,14 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var ambiguousIdentifierNode = (AmbiguousIdentifierNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var ambiguousIdentifierNode = (AmbiguousIdentifierNode)topCodeBlock.GetChildList().Single();
 
         // Assert ChildList
         {
             var i = 0;
 
-            var identifierToken = ambiguousIdentifierNode.ChildList[i++];
+            var identifierToken = ambiguousIdentifierNode.GetChildList()[i++];
             Assert.IsType<IdentifierToken>(identifierToken);
         }
 
@@ -77,9 +77,9 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
-        var variableDeclarationNode = (VariableDeclarationNode)typeDefinitionNode.CodeBlockNode!.ChildList.Single();
+        var variableDeclarationNode = (VariableDeclarationNode)typeDefinitionNode.CodeBlockNode!.GetChildList().Single();
 
         var attributeNode = variableDeclarationNode.TypeClauseNode.AttributeNode;
 
@@ -87,13 +87,13 @@ public class CustomParserTests
         {
             var i = 0;
 
-            var openSquareBracketToken = (OpenSquareBracketToken)attributeNode.ChildList[i++];
+            var openSquareBracketToken = (OpenSquareBracketToken)attributeNode.GetChildList()[i++];
             Assert.IsType<OpenSquareBracketToken>(openSquareBracketToken);
 
-            var identifierToken = (IdentifierToken)attributeNode.ChildList[i++];
+            var identifierToken = (IdentifierToken)attributeNode.GetChildList()[i++];
             Assert.IsType<IdentifierToken>(identifierToken);
 
-            var closeSquareBracketToken = (CloseSquareBracketToken)attributeNode.ChildList[i++];
+            var closeSquareBracketToken = (CloseSquareBracketToken)attributeNode.GetChildList()[i++];
             Assert.IsType<CloseSquareBracketToken>(closeSquareBracketToken);
         }
 
@@ -180,7 +180,7 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.ChildList.Single();
+        var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 
         var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
         var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
@@ -206,7 +206,7 @@ public class CustomParserTests
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
         var binaryOperatorNode =
-            ((BinaryExpressionNode)topCodeBlock.ChildList.Single())
+            ((BinaryExpressionNode)topCodeBlock.GetChildList().Single())
             .BinaryOperatorNode;
 
         Assert.Equal(typeof(int), binaryOperatorNode.LeftOperandTypeClauseNode.ValueType);
@@ -232,8 +232,8 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
         var constraintNode = functionDefinitionNode.ConstraintNode;
 
         Assert.NotNull(constraintNode);
@@ -242,16 +242,16 @@ public class CustomParserTests
         {
             var i = 0;
 
-            var keywordContextualToken = (KeywordContextualToken)constraintNode.ChildList[i++];
+            var keywordContextualToken = (KeywordContextualToken)constraintNode.GetChildList()[i++];
             Assert.IsType<KeywordContextualToken>(keywordContextualToken);
 
-            var identifierToken = (IdentifierToken)constraintNode.ChildList[i++];
+            var identifierToken = (IdentifierToken)constraintNode.GetChildList()[i++];
             Assert.IsType<IdentifierToken>(identifierToken);
 
-            var colonToken = (ColonToken)constraintNode.ChildList[i++];
+            var colonToken = (ColonToken)constraintNode.GetChildList()[i++];
             Assert.IsType<ColonToken>(colonToken);
 
-            var keywordToken = (KeywordToken)constraintNode.ChildList[i++];
+            var keywordToken = (KeywordToken)constraintNode.GetChildList()[i++];
             Assert.IsType<KeywordToken>(keywordToken);
         }
 
@@ -294,8 +294,8 @@ public class CustomParserTests
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
         var constructorDefinitionNode = (ConstructorDefinitionNode)
-            ((TypeDefinitionNode)topCodeBlock.ChildList.Single())
-            .CodeBlockNode!.ChildList.Single();
+            ((TypeDefinitionNode)topCodeBlock.GetChildList().Single())
+            .CodeBlockNode!.GetChildList().Single();
 
         Assert.Equal(className,
             constructorDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -307,7 +307,7 @@ public class CustomParserTests
             .FunctionArgumentsListingNode
             .FunctionArgumentEntryNodeList);
 
-        Assert.Empty(constructorDefinitionNode.CodeBlockNode!.ChildList);
+        Assert.Empty(constructorDefinitionNode.CodeBlockNode!.GetChildList());
         Assert.Null(constructorDefinitionNode.ConstraintNode);
         Assert.False(constructorDefinitionNode.IsFabricated);
         Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
@@ -326,32 +326,32 @@ public class CustomParserTests
 
         // VariableDeclarationNode
         {
-            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
+            var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
             Assert.IsType<VariableDeclarationNode>(variableDeclarationNode);
         }
 
         // VariableAssignmentNode
         {
-            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+            var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
             Assert.IsType<VariableAssignmentExpressionNode>(variableAssignmentNode);
 
             var i = 0;
 
-            var identifierToken = (IdentifierToken)variableAssignmentNode.ChildList[i++];
+            var identifierToken = (IdentifierToken)variableAssignmentNode.GetChildList()[i++];
             Assert.IsType<IdentifierToken>(identifierToken);
 
-            var equalsToken = (EqualsToken)variableAssignmentNode.ChildList[i++];
+            var equalsToken = (EqualsToken)variableAssignmentNode.GetChildList()[i++];
             Assert.IsType<EqualsToken>(equalsToken);
 
             // ConstructorInvocationExpressionNode
             {
-                var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)variableAssignmentNode.ChildList[i++];
+                var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)variableAssignmentNode.GetChildList()[i++];
                 Assert.IsType<ConstructorInvocationExpressionNode>(constructorInvocationExpressionNode);
 
-                var keywordToken = (KeywordToken)constructorInvocationExpressionNode.ChildList[0];
+                var keywordToken = (KeywordToken)constructorInvocationExpressionNode.GetChildList()[0];
                 Assert.IsType<KeywordToken>(keywordToken);
 
-                var typeClauseNode = (TypeClauseNode)constructorInvocationExpressionNode.ChildList[1];
+                var typeClauseNode = (TypeClauseNode)constructorInvocationExpressionNode.GetChildList()[1];
                 Assert.IsType<TypeClauseNode>(typeClauseNode);
                 Assert.Equal("List", typeClauseNode.TypeIdentifierToken.TextSpan.GetText());
                 Assert.NotNull(typeClauseNode.GenericParametersListingNode);
@@ -381,7 +381,7 @@ public class CustomParserTests
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
         var functionDefinitionNode =
-            (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+            (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Single(
             functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList);
@@ -432,7 +432,7 @@ public class CustomParserTests
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
         var functionDefinitionNode =
-            (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+            (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(2, functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList.Length);
     }
@@ -455,7 +455,7 @@ public class CustomParserTests
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
         var functionDefinitionNode =
-            (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+            (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(returnTypeText,
             functionDefinitionNode.ReturnTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -468,7 +468,7 @@ public class CustomParserTests
 
         Assert.Null(functionDefinitionNode.GenericArgumentsListingNode);
         Assert.NotNull(functionDefinitionNode.FunctionArgumentsListingNode);
-        Assert.Empty(functionDefinitionNode.CodeBlockNode!.ChildList);
+        Assert.Empty(functionDefinitionNode.CodeBlockNode!.GetChildList());
         Assert.Null(functionDefinitionNode.ConstraintNode);
 
         Assert.False(functionDefinitionNode.IsFabricated);
@@ -489,7 +489,7 @@ public class CustomParserTests
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
         var functionInvocationNode =
-            (FunctionInvocationNode)topCodeBlock.ChildList.Single();
+            (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(functionName,
             functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText());
@@ -519,7 +519,7 @@ public class CustomParserTests
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
         var functionParameterEntryNode =
-            ((FunctionInvocationNode)topCodeBlock.ChildList.Single())
+            ((FunctionInvocationNode)topCodeBlock.GetChildList().Single())
             .FunctionParametersListingNode
             .FunctionParameterEntryNodeList.Single();
 
@@ -547,11 +547,11 @@ public class CustomParserTests
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
         var functionParametersListingNode =
-            ((FunctionInvocationNode)topCodeBlock.ChildList.Single())
+            ((FunctionInvocationNode)topCodeBlock.GetChildList().Single())
             .FunctionParametersListingNode;
 
         Assert.NotNull(functionParametersListingNode.OpenParenthesisToken);
-        Assert.Equal(2, functionParametersListingNode.FunctionParameterEntryNodeList.Length);
+        Assert.Equal(2, functionParametersListingNode.FunctionParameterEntryNodeList.Count);
         Assert.NotNull(functionParametersListingNode.CloseParenthesisToken);
 
         Assert.False(functionParametersListingNode.IsFabricated);
@@ -571,7 +571,7 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
         var genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
         Assert.NotNull(genericArgumentsListingNode);
@@ -579,9 +579,9 @@ public class CustomParserTests
         var genericArgumentEntryNode = genericArgumentsListingNode.GenericArgumentEntryNodeList
             .Single();
 
-        // genericArgumentEntryNode.ChildList
+        // genericArgumentEntryNode.GetChildList()
         {
-            var typeClauseNode = (TypeClauseNode)genericArgumentEntryNode.ChildList.Single();
+            var typeClauseNode = (TypeClauseNode)genericArgumentEntryNode.GetChildList().Single();
             Assert.IsType<TypeClauseNode>(typeClauseNode);
         }
 
@@ -597,9 +597,9 @@ public class CustomParserTests
                 Assert.Null(typeClauseNode.AttributeNode);
             }
 
-            // typeClauseNode.ChildList
+            // typeClauseNode.GetChildList()
             {
-                var identifierToken = (IdentifierToken)typeClauseNode.ChildList.Single();
+                var identifierToken = (IdentifierToken)typeClauseNode.GetChildList().Single();
                 Assert.IsType<IdentifierToken>(identifierToken);
             }
 
@@ -649,25 +649,25 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
         var genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
         Assert.NotNull(genericArgumentsListingNode);
 
-        // genericArgumentsListingNode.ChildList
+        // genericArgumentsListingNode.GetChildList()
         {
             var i = 0;
 
-            var openAngleBracketToken = (OpenAngleBracketToken)genericArgumentsListingNode.ChildList[i++];
+            var openAngleBracketToken = (OpenAngleBracketToken)genericArgumentsListingNode.GetChildList()[i++];
             Assert.IsType<OpenAngleBracketToken>(openAngleBracketToken);
 
-            var genericArgumentEntryNodeFirst = (GenericArgumentEntryNode)genericArgumentsListingNode.ChildList[i++];
+            var genericArgumentEntryNodeFirst = (GenericArgumentEntryNode)genericArgumentsListingNode.GetChildList()[i++];
             Assert.IsType<GenericArgumentEntryNode>(genericArgumentEntryNodeFirst);
 
-            var genericArgumentEntryNodeSecond = (GenericArgumentEntryNode)genericArgumentsListingNode.ChildList[i++];
+            var genericArgumentEntryNodeSecond = (GenericArgumentEntryNode)genericArgumentsListingNode.GetChildList()[i++];
             Assert.IsType<GenericArgumentEntryNode>(genericArgumentEntryNodeSecond);
 
-            var closeAngleBracketToken = (CloseAngleBracketToken)genericArgumentsListingNode.ChildList[i++];
+            var closeAngleBracketToken = (CloseAngleBracketToken)genericArgumentsListingNode.GetChildList()[i++];
             Assert.IsType<CloseAngleBracketToken>(closeAngleBracketToken);
         }
 
@@ -702,7 +702,7 @@ public class CustomParserTests
 
                 // genericArgumentEntryNodeFirst.ChildList
                 {
-                    var typeClauseNode = (TypeClauseNode)genericArgumentEntryNodeFirst.ChildList
+                    var typeClauseNode = (TypeClauseNode)genericArgumentEntryNodeFirst.GetChildList()
                         .Single();
 
                     Assert.IsType<TypeClauseNode>(typeClauseNode);
@@ -717,9 +717,9 @@ public class CustomParserTests
 
                     Assert.Null(typeClauseNode.AttributeNode);
 
-                    // typeClauseNode.ChildList
+                    // typeClauseNode.GetChildList()
                     {
-                        var identifierToken = (IdentifierToken)typeClauseNode.ChildList.Single();
+                        var identifierToken = (IdentifierToken)typeClauseNode.GetChildList().Single();
                         Assert.IsType<IdentifierToken>(identifierToken);
                     }
 
@@ -759,7 +759,7 @@ public class CustomParserTests
 
                 // genericArgumentEntryNodeSecond.ChildList
                 {
-                    var typeClauseNode = (TypeClauseNode)genericArgumentEntryNodeSecond.ChildList.Single();
+                    var typeClauseNode = (TypeClauseNode)genericArgumentEntryNodeSecond.GetChildList().Single();
                     Assert.IsType<TypeClauseNode>(typeClauseNode);
                 }
 
@@ -772,9 +772,9 @@ public class CustomParserTests
 
                     Assert.Null(typeClauseNode.AttributeNode);
 
-                    // typeClauseNode.ChildList
+                    // typeClauseNode.GetChildList()
                     {
-                        var identifierToken = (IdentifierToken)typeClauseNode.ChildList.Single();
+                        var identifierToken = (IdentifierToken)typeClauseNode.GetChildList().Single();
                         Assert.IsType<IdentifierToken>(identifierToken);
                     }
 
@@ -846,7 +846,7 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 
         var genericParametersListingNode = variableDeclarationNode.TypeClauseNode.GenericParametersListingNode;
         Assert.NotNull(genericParametersListingNode);
@@ -854,9 +854,9 @@ public class CustomParserTests
         var genericParameterEntryNode = genericParametersListingNode.GenericParameterEntryNodeList
             .Single();
 
-        // genericParameterEntryNode.ChildList
+        // genericParameterEntryNode.GetChildList()
         {
-            var typeClauseNode = genericParameterEntryNode.ChildList.Single();
+            var typeClauseNode = genericParameterEntryNode.GetChildList().Single();
             Assert.IsType<TypeClauseNode>(typeClauseNode);
         }
 
@@ -869,9 +869,9 @@ public class CustomParserTests
 
             Assert.Null(typeClauseNode.AttributeNode);
 
-            // typeClauseNode.ChildList
+            // typeClauseNode.GetChildList()
             {
-                var keywordToken = (KeywordToken)typeClauseNode.ChildList.Single();
+                var keywordToken = (KeywordToken)typeClauseNode.GetChildList().Single();
                 Assert.IsType<KeywordToken>(keywordToken);
             }
 
@@ -915,25 +915,25 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 
         var genericParametersListingNode = variableDeclarationNode.TypeClauseNode.GenericParametersListingNode;
         Assert.NotNull(genericParametersListingNode);
 
-        // genericParametersListingNode.ChildList
+        // genericParametersListingNode.GetChildList()
         {
             var i = 0;
 
-            var openAngleBracketToken = genericParametersListingNode.ChildList[i++];
+            var openAngleBracketToken = genericParametersListingNode.GetChildList()[i++];
             Assert.IsType<OpenAngleBracketToken>(openAngleBracketToken);
 
-            var genericParameterEntryNodeFirst = genericParametersListingNode.ChildList[i++];
+            var genericParameterEntryNodeFirst = genericParametersListingNode.GetChildList()[i++];
             Assert.IsType<GenericParameterEntryNode>(genericParameterEntryNodeFirst);
 
-            var genericParameterEntryNodeSecond = genericParametersListingNode.ChildList[i++];
+            var genericParameterEntryNodeSecond = genericParametersListingNode.GetChildList()[i++];
             Assert.IsType<GenericParameterEntryNode>(genericParameterEntryNodeSecond);
 
-            var closeAngleBracketToken = genericParametersListingNode.ChildList[i++];
+            var closeAngleBracketToken = genericParametersListingNode.GetChildList()[i++];
             Assert.IsType<CloseAngleBracketToken>(closeAngleBracketToken);
         }
 
@@ -968,7 +968,7 @@ public class CustomParserTests
 
                 // genericParameterEntryNodeFirst.ChildList
                 {
-                    var typeClauseNode = (TypeClauseNode)genericParameterEntryNodeFirst.ChildList.Single();
+                    var typeClauseNode = (TypeClauseNode)genericParameterEntryNodeFirst.GetChildList().Single();
                     Assert.IsType<TypeClauseNode>(typeClauseNode);
                 }
 
@@ -981,9 +981,9 @@ public class CustomParserTests
 
                     Assert.Null(typeClauseNode.AttributeNode);
 
-                    // typeClauseNode.ChildList
+                    // typeClauseNode.GetChildList()
                     {
-                        var keywordToken = (KeywordToken)typeClauseNode.ChildList.Single();
+                        var keywordToken = (KeywordToken)typeClauseNode.GetChildList().Single();
                         Assert.IsType<KeywordToken>(keywordToken);
                     }
 
@@ -1022,7 +1022,7 @@ public class CustomParserTests
 
                 // genericParameterEntryNodeSecond.ChildList
                 {
-                    var typeClauseNode = (TypeClauseNode)genericParameterEntryNodeSecond.ChildList.Single();
+                    var typeClauseNode = (TypeClauseNode)genericParameterEntryNodeSecond.GetChildList().Single();
                     Assert.IsType<TypeClauseNode>(typeClauseNode);
                 }
 
@@ -1035,9 +1035,9 @@ public class CustomParserTests
 
                     Assert.Null(typeClauseNode.AttributeNode);
 
-                    // typeClauseNode.ChildList
+                    // typeClauseNode.GetChildList()
                     {
-                        var keywordToken = (KeywordToken)typeClauseNode.ChildList.Single();
+                        var keywordToken = (KeywordToken)typeClauseNode.GetChildList().Single();
                         Assert.IsType<KeywordToken>(keywordToken);
                     }
 
@@ -1114,19 +1114,19 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var ifStatementNode = (IfStatementNode)topCodeBlock.ChildList.Single();
+        var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
 
-        // ifStatementNode.ChildList
+        // ifStatementNode.GetChildList()
         {
             var i = 0;
 
-            var keywordToken = (KeywordToken)ifStatementNode.ChildList[i++];
+            var keywordToken = (KeywordToken)ifStatementNode.GetChildList()[i++];
             Assert.IsType<KeywordToken>(keywordToken);
 
-            var literalExpressionNode = (LiteralExpressionNode)ifStatementNode.ChildList[i++];
+            var literalExpressionNode = (LiteralExpressionNode)ifStatementNode.GetChildList()[i++];
             Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
 
-            var codeBlockNode = (CodeBlockNode)ifStatementNode.ChildList[i++];
+            var codeBlockNode = (CodeBlockNode)ifStatementNode.GetChildList()[i++];
             Assert.IsType<CodeBlockNode>(codeBlockNode);
         }
 
@@ -1134,14 +1134,14 @@ public class CustomParserTests
         {
             var expressionNode = (LiteralExpressionNode)ifStatementNode.ExpressionNode;
 
-            // expressionNode.ChildList
+            // expressionNode.GetChildList()
             {
                 var i = 0;
 
-                var keywordToken = (KeywordToken)expressionNode.ChildList[i++];
+                var keywordToken = (KeywordToken)expressionNode.GetChildList()[i++];
                 Assert.IsType<KeywordToken>(keywordToken);
 
-                var typeClauseNode = (TypeClauseNode)expressionNode.ChildList[i++];
+                var typeClauseNode = (TypeClauseNode)expressionNode.GetChildList()[i++];
                 Assert.IsType<TypeClauseNode>(typeClauseNode);
             }
 
@@ -1176,7 +1176,7 @@ public class CustomParserTests
 
                 // resultTypeClauseNode.ChildList
                 {
-                    var identifierToken = resultTypeClauseNode.ChildList.Single();
+                    var identifierToken = resultTypeClauseNode.GetChildList().Single();
                     Assert.IsType<IdentifierToken>(identifierToken);
                 }
 
@@ -1203,7 +1203,7 @@ public class CustomParserTests
             var ifStatementBodyCodeBlockNode = ifStatementNode.CodeBlockNode;
             Assert.NotNull(ifStatementBodyCodeBlockNode);
 
-            Assert.Empty(ifStatementBodyCodeBlockNode.ChildList);
+            Assert.Empty(ifStatementBodyCodeBlockNode.GetChildList());
             Assert.Empty(ifStatementBodyCodeBlockNode.DiagnosticsList);
             Assert.False(ifStatementBodyCodeBlockNode.IsFabricated);
             Assert.Equal(SyntaxKind.CodeBlockNode, ifStatementBodyCodeBlockNode.SyntaxKind);
@@ -1248,7 +1248,7 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
         Assert.Equal(
             typeIdentifierText,
             typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText());
@@ -1270,7 +1270,7 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.ChildList.Single();
+        var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
         Assert.Equal(typeof(int), literalExpressionNode.ResultTypeClauseNode.ValueType);
     }
 
@@ -1285,7 +1285,7 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
         Assert.Equal(SyntaxKind.NamespaceStatementNode, namespaceStatementNode.SyntaxKind);
     }
 
@@ -1306,22 +1306,22 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.ChildList.Single();
+        var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 
-        // parenthesizedExpressionNode.ChildList
+        // parenthesizedExpressionNode.GetChildList()
         {
             var i = 0;
 
-            var openParenthesisToken = (OpenParenthesisToken)parenthesizedExpressionNode.ChildList[i++];
+            var openParenthesisToken = (OpenParenthesisToken)parenthesizedExpressionNode.GetChildList()[i++];
             Assert.IsType<OpenParenthesisToken>(openParenthesisToken);
 
-            var binaryExpressionNode = (BinaryExpressionNode)parenthesizedExpressionNode.ChildList[i++];
+            var binaryExpressionNode = (BinaryExpressionNode)parenthesizedExpressionNode.GetChildList()[i++];
             Assert.IsType<BinaryExpressionNode>(binaryExpressionNode);
 
-            var closeParenthesisToken = (CloseParenthesisToken)parenthesizedExpressionNode.ChildList[i++];
+            var closeParenthesisToken = (CloseParenthesisToken)parenthesizedExpressionNode.GetChildList()[i++];
             Assert.IsType<CloseParenthesisToken>(closeParenthesisToken);
 
-            var typeClauseNode = (TypeClauseNode)parenthesizedExpressionNode.ChildList[i++];
+            var typeClauseNode = (TypeClauseNode)parenthesizedExpressionNode.GetChildList()[i++];
             Assert.IsType<TypeClauseNode>(typeClauseNode);
         }
 
@@ -1356,7 +1356,7 @@ public class CustomParserTests
 
                 // binaryOperatorNode.ChildList
                 {
-                    var plusToken = binaryOperatorNode.ChildList.Single();
+                    var plusToken = binaryOperatorNode.GetChildList().Single();
                     Assert.IsType<PlusToken>(plusToken);
                 }
 
@@ -1368,9 +1368,9 @@ public class CustomParserTests
 
                     Assert.Null(leftOperandTypeClauseNode.AttributeNode);
 
-                    // leftOperandTypeClauseNode.ChildList
+                    // leftOperandTypeClauseNode.GetChildList()
                     {
-                        var identifierToken = leftOperandTypeClauseNode.ChildList.Single();
+                        var identifierToken = leftOperandTypeClauseNode.GetChildList().Single();
                         Assert.IsType<IdentifierToken>(identifierToken);
                     }
 
@@ -1418,7 +1418,7 @@ public class CustomParserTests
 
                     // resultTypeClauseNode.ChildList
                     {
-                        var identifierToken = resultTypeClauseNode.ChildList.Single();
+                        var identifierToken = resultTypeClauseNode.GetChildList().Single();
                         Assert.IsType<IdentifierToken>(identifierToken);
                     }
 
@@ -1443,9 +1443,9 @@ public class CustomParserTests
 
                     Assert.Null(rightOperandTypeClauseNode.AttributeNode);
 
-                    // rightOperandTypeClauseNode.ChildList
+                    // rightOperandTypeClauseNode.GetChildList()
                     {
-                        var identifierToken = rightOperandTypeClauseNode.ChildList.Single();
+                        var identifierToken = rightOperandTypeClauseNode.GetChildList().Single();
                         Assert.IsType<IdentifierToken>(identifierToken);
                     }
 
@@ -1471,13 +1471,13 @@ public class CustomParserTests
             {
                 var i = 0;
 
-                var literalExpressionNodeFirst = innerExpression.ChildList[i++];
+                var literalExpressionNodeFirst = innerExpression.GetChildList()[i++];
                 Assert.IsType<LiteralExpressionNode>(literalExpressionNodeFirst);
 
-                var binaryOperatorNode = innerExpression.ChildList[i++];
+                var binaryOperatorNode = innerExpression.GetChildList()[i++];
                 Assert.IsType<BinaryOperatorNode>(binaryOperatorNode);
 
-                var literalExpressionNodeSecond = innerExpression.ChildList[i++];
+                var literalExpressionNodeSecond = innerExpression.GetChildList()[i++];
                 Assert.IsType<LiteralExpressionNode>(literalExpressionNodeSecond);
             }
 
@@ -1487,14 +1487,14 @@ public class CustomParserTests
             {
                 var leftExpressionNode = (LiteralExpressionNode)innerExpression.LeftExpressionNode;
 
-                // leftExpressionNode.ChildList
+                // leftExpressionNode.GetChildList()
                 {
                     var i = 0;
 
-                    var numericLiteralToken = leftExpressionNode.ChildList[i++];
+                    var numericLiteralToken = leftExpressionNode.GetChildList()[i++];
                     Assert.IsType<NumericLiteralToken>(numericLiteralToken);
 
-                    var typeClauseNode = leftExpressionNode.ChildList[i++];
+                    var typeClauseNode = leftExpressionNode.GetChildList()[i++];
                     Assert.IsType<TypeClauseNode>(typeClauseNode);
                 }
 
@@ -1529,7 +1529,7 @@ public class CustomParserTests
 
                     // resultTypeClauseNode.ChildList
                     {
-                        var identifierToken = resultTypeClauseNode.ChildList.Single();
+                        var identifierToken = resultTypeClauseNode.GetChildList().Single();
                         Assert.IsType<IdentifierToken>(identifierToken);
                     }
 
@@ -1557,9 +1557,9 @@ public class CustomParserTests
 
                 Assert.Null(resultTypeClauseNode.AttributeNode);
 
-                // resultTypeClauseNode.ChildList
+                // resultTypeClauseNode.GetChildList()
                 {
-                    var identifierToken = resultTypeClauseNode.ChildList.Single();
+                    var identifierToken = resultTypeClauseNode.GetChildList().Single();
                     Assert.IsType<IdentifierToken>(identifierToken);
                 }
 
@@ -1582,14 +1582,14 @@ public class CustomParserTests
             {
                 var rightExpressionNode = (LiteralExpressionNode)innerExpression.RightExpressionNode;
 
-                // rightExpressionNode.ChildList
+                // rightExpressionNode.GetChildList()
                 {
                     var i = 0;
 
-                    var numericLiteralToken = rightExpressionNode.ChildList[i++];
+                    var numericLiteralToken = rightExpressionNode.GetChildList()[i++];
                     Assert.IsType<NumericLiteralToken>(numericLiteralToken);
 
-                    var typeClauseNode = rightExpressionNode.ChildList[i++];
+                    var typeClauseNode = rightExpressionNode.GetChildList()[i++];
                     Assert.IsType<TypeClauseNode>(typeClauseNode);
                 }
 
@@ -1624,7 +1624,7 @@ public class CustomParserTests
 
                     // resultTypeClauseNode.ChildList
                     {
-                        var identifierToken = resultTypeClauseNode.ChildList.Single();
+                        var identifierToken = resultTypeClauseNode.GetChildList().Single();
                         Assert.IsType<IdentifierToken>(identifierToken);
                     }
 
@@ -1680,7 +1680,7 @@ public class CustomParserTests
 
             // resultTypeClauseNode.ChildList
             {
-                var identifierToken = resultTypeClauseNode.ChildList.Single();
+                var identifierToken = resultTypeClauseNode.GetChildList().Single();
                 Assert.IsType<IdentifierToken>(identifierToken);
             }
 
@@ -1722,19 +1722,19 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.ChildList.Single();
+        var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
         Assert.NotNull(functionDefinitionNode.CodeBlockNode);
 
-        var returnStatementNode = (ReturnStatementNode)functionDefinitionNode.CodeBlockNode.ChildList.Single();
+        var returnStatementNode = (ReturnStatementNode)functionDefinitionNode.CodeBlockNode.GetChildList().Single();
 
-        // returnStatementNode.ChildList
+        // returnStatementNode.GetChildList()
         {
             var i = 0;
 
-            var keywordToken = returnStatementNode.ChildList[i++];
+            var keywordToken = returnStatementNode.GetChildList()[i++];
             Assert.IsType<KeywordToken>(keywordToken);
 
-            var literalExpressionNode = returnStatementNode.ChildList[i++];
+            var literalExpressionNode = returnStatementNode.GetChildList()[i++];
             Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
         }
 
@@ -1742,14 +1742,14 @@ public class CustomParserTests
         {
             var expressionNode = (LiteralExpressionNode)returnStatementNode.ExpressionNode;
 
-            // expressionNode.ChildList
+            // expressionNode.GetChildList()
             {
                 var i = 0;
 
-                var numericLiteralToken = expressionNode.ChildList[i++];
+                var numericLiteralToken = expressionNode.GetChildList()[i++];
                 Assert.IsType<NumericLiteralToken>(numericLiteralToken);
 
-                var typeClauseNode = expressionNode.ChildList[i++];
+                var typeClauseNode = expressionNode.GetChildList()[i++];
                 Assert.IsType<TypeClauseNode>(typeClauseNode);
             }
 
@@ -1784,7 +1784,7 @@ public class CustomParserTests
 
                 // resultTypeClauseNode.ChildList
                 {
-                    var identifierToken = resultTypeClauseNode.ChildList.Single();
+                    var identifierToken = resultTypeClauseNode.GetChildList().Single();
                     Assert.IsType<IdentifierToken>(identifierToken);
                 }
 
@@ -1835,15 +1835,15 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 
         var typeClauseNode = variableDeclarationNode.TypeClauseNode;
 
         Assert.Null(typeClauseNode.AttributeNode);
 
-        // typeClauseNode.ChildList
+        // typeClauseNode.GetChildList()
         {
-            var keywordToken = (KeywordToken)typeClauseNode.ChildList.Single();
+            var keywordToken = (KeywordToken)typeClauseNode.GetChildList().Single();
             Assert.IsType<KeywordToken>(keywordToken);
         }
 
@@ -1888,16 +1888,16 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
-        // typeDefinitionNode.ChildList
+        // typeDefinitionNode.GetChildList()
         {
             var i = 0;
 
-            var identifierToken = (IdentifierToken)typeDefinitionNode.ChildList[i++];
+            var identifierToken = (IdentifierToken)typeDefinitionNode.GetChildList()[i++];
             Assert.IsType<IdentifierToken>(identifierToken);
 
-            var codeBlockNode = (CodeBlockNode)typeDefinitionNode.ChildList[i++];
+            var codeBlockNode = (CodeBlockNode)typeDefinitionNode.GetChildList()[i++];
             Assert.IsType<CodeBlockNode>(codeBlockNode);
         }
 
@@ -1912,7 +1912,7 @@ public class CustomParserTests
             var typeBodyCodeBlockNode = typeDefinitionNode.CodeBlockNode;
             Assert.NotNull(typeBodyCodeBlockNode);
 
-            Assert.Empty(typeBodyCodeBlockNode.ChildList);
+            Assert.Empty(typeBodyCodeBlockNode.GetChildList());
             Assert.Empty(typeBodyCodeBlockNode.DiagnosticsList);
             Assert.False(typeBodyCodeBlockNode.IsFabricated);
             Assert.Equal(SyntaxKind.CodeBlockNode, typeBodyCodeBlockNode.SyntaxKind);
@@ -1965,7 +1965,7 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var usingStatementNode = (UsingStatementNode)topCodeBlock.ChildList.Single();
+        var usingStatementNode = (UsingStatementNode)topCodeBlock.GetChildList().Single();
         Assert.Equal(SyntaxKind.UsingStatementNode, usingStatementNode.SyntaxKind);
     }
 
@@ -1982,20 +1982,20 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 
-        // Assert ChildList
+        // Assert GetChildList()
         {
             var i = 0;
 
-            var identifierToken = (IdentifierToken)variableAssignmentExpressionNode.ChildList[i++];
+            var identifierToken = (IdentifierToken)variableAssignmentExpressionNode.GetChildList()[i++];
             Assert.IsType<IdentifierToken>(identifierToken);
 
-            var equalsToken = (EqualsToken)variableAssignmentExpressionNode.ChildList[i++];
+            var equalsToken = (EqualsToken)variableAssignmentExpressionNode.GetChildList()[i++];
             Assert.IsType<EqualsToken>(equalsToken);
 
-            var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.ChildList[i++];
+            var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.GetChildList()[i++];
             Assert.IsType<LiteralExpressionNode>(literalExpressionNode);
         }
 
@@ -2028,10 +2028,10 @@ public class CustomParserTests
             {
                 var i = 0;
 
-                var numericLiteralToken = (NumericLiteralToken)literalExpressionNode.ChildList[i++];
+                var numericLiteralToken = (NumericLiteralToken)literalExpressionNode.GetChildList()[i++];
                 Assert.IsType<NumericLiteralToken>(numericLiteralToken);
 
-                var typeClauseNode = (TypeClauseNode)literalExpressionNode.ChildList[i++];
+                var typeClauseNode = (TypeClauseNode)literalExpressionNode.GetChildList()[i++];
                 Assert.IsType<TypeClauseNode>(typeClauseNode);
             }
 
@@ -2067,7 +2067,7 @@ public class CustomParserTests
                 {
                     var i = 0;
 
-                    var identifierToken = (IdentifierToken)typeClauseNode.ChildList[i++];
+                    var identifierToken = (IdentifierToken)typeClauseNode.GetChildList()[i++];
                     Assert.IsType<IdentifierToken>(identifierToken);
                 }
 
@@ -2129,14 +2129,14 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 
-        // Assert ChildList
+        // Assert GetChildList()
         {
             var i = 0;
-            var typeClauseNode = (TypeClauseNode)variableDeclarationNode.ChildList[i++];
-            var identifierToken = (IdentifierToken)variableDeclarationNode.ChildList[i++];
+            var typeClauseNode = (TypeClauseNode)variableDeclarationNode.GetChildList()[i++];
+            var identifierToken = (IdentifierToken)variableDeclarationNode.GetChildList()[i++];
 
             Assert.NotNull(typeClauseNode);
             Assert.NotNull(identifierToken);
@@ -2182,7 +2182,7 @@ public class CustomParserTests
             // Assert TypeClauseNode.ChildList
             {
                 var i = 0;
-                var keywordToken = (KeywordToken)typeClauseNode.ChildList[i++];
+                var keywordToken = (KeywordToken)typeClauseNode.GetChildList()[i++];
                 Assert.IsType<KeywordToken>(keywordToken);
             }
 
@@ -2228,16 +2228,16 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var variableReferenceNode = (VariableReferenceNode)topCodeBlock.ChildList[1];
+        var variableReferenceNode = (VariableReferenceNode)topCodeBlock.GetChildList()[1];
 
-        // variableReferenceNode.ChildList
+        // variableReferenceNode.GetChildList()
         {
             var i = 0;
 
-            var identifierToken = variableReferenceNode.ChildList[i++];
+            var identifierToken = variableReferenceNode.GetChildList()[i++];
             Assert.IsType<IdentifierToken>(identifierToken);
 
-            var variableDeclarationNode = variableReferenceNode.ChildList[i++];
+            var variableDeclarationNode = variableReferenceNode.GetChildList()[i++];
             Assert.IsType<VariableDeclarationNode>(variableDeclarationNode);
         }
 
@@ -2249,9 +2249,9 @@ public class CustomParserTests
 
             Assert.Null(resultTypeClauseNode.AttributeNode);
 
-            // resultTypeClauseNode.ChildList
+            // resultTypeClauseNode.GetChildList()
             {
-                var keywordToken = resultTypeClauseNode.ChildList.Single();
+                var keywordToken = resultTypeClauseNode.GetChildList().Single();
                 Assert.IsType<KeywordToken>(keywordToken);
             }
 
@@ -2293,10 +2293,10 @@ public class CustomParserTests
             {
                 int i = 0;
 
-                var typeClauseNode = variableDeclarationNode.ChildList[i++];
+                var typeClauseNode = variableDeclarationNode.GetChildList()[i++];
                 Assert.IsType<TypeClauseNode>(typeClauseNode);
 
-                var identifierToken = variableDeclarationNode.ChildList[i++];
+                var identifierToken = variableDeclarationNode.GetChildList()[i++];
                 Assert.IsType<IdentifierToken>(identifierToken);
             }
 
@@ -2338,7 +2338,7 @@ public class CustomParserTests
 
                 // typeClauseNode.ChildList
                 {
-                    var keywordToken = typeClauseNode.ChildList.Single();
+                    var keywordToken = typeClauseNode.GetChildList().Single();
                     Assert.IsType<KeywordToken>(keywordToken);
                 }
 
@@ -2576,7 +2576,7 @@ public class CustomParserTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var aaa = (ISyntaxNode)topCodeBlock.ChildList.First();
+        var aaa = (ISyntaxNode)topCodeBlock.GetChildList().First();
         var bbb = aaa.ConstructTextSpanRecursively();
         var ccc = bbb.GetText();
     }
