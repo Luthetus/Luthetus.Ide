@@ -23,7 +23,7 @@ public class ParseBreadthFirst
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 		Console.WriteLine(typeDefinitionNode);
 	}
 
@@ -53,9 +53,9 @@ public class ParseBreadthFirst
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
-		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList[0];
-		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList[1];
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
+		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList()[0];
+		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList()[1];
 
 		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
 	}
@@ -91,8 +91,8 @@ public class MyClassTwo
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var typeDefinitionNodeOne = (TypeDefinitionNode)topCodeBlock.ChildList[0];
-		var typeDefinitionNodeTwo = (TypeDefinitionNode)topCodeBlock.ChildList[1];
+		var typeDefinitionNodeOne = (TypeDefinitionNode)topCodeBlock.GetChildList()[0];
+		var typeDefinitionNodeTwo = (TypeDefinitionNode)topCodeBlock.GetChildList()[1];
 	}
 
 	[Fact]
@@ -108,7 +108,7 @@ public class MyClassTwo
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
 	}
 
 	[Fact]
@@ -129,9 +129,9 @@ public class MyClass
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
 
-		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
 	}
 
 	[Fact]
@@ -153,9 +153,9 @@ public class MyClass
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
 
-		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
 	}
 
 	[Fact]
@@ -176,11 +176,11 @@ public class MyClass
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
 
-		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
 
-		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList.Single();
+		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList().Single();
 	}
 
 	[Fact]
@@ -206,12 +206,12 @@ public class MyClass
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
 
-		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.ChildList.Single();
+		var typeDefinitionNode = (TypeDefinitionNode)namespaceStatementNode.CodeBlockNode.GetChildList().Single();
 
-		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList[0];
-		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.CodeBlockNode.ChildList[1];
+		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList()[0];
+		var propertyDefinitionNode = (PropertyDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList()[1];
 
 		Assert.Equal(0, compilationUnit.DiagnosticsList.Length);
 	}

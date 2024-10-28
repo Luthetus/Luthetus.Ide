@@ -4,8 +4,6 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 public interface ISyntaxNode : ISyntax
 {
-    public ISyntax[] ChildList { get; }
-    
     /// <summary>
     /// I am working on Quick Actions / Refactoring context menu,
     /// and I don't see a better way of handling "getting a node's parent".
@@ -27,5 +25,5 @@ public interface ISyntaxNode : ISyntax
     /// </summary>
     public ISyntaxNode? Parent { get; }
     
-    public void SetChildList();
+    public ISyntax[] GetChildList();
 }

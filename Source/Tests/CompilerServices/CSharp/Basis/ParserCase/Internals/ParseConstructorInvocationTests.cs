@@ -26,15 +26,15 @@ public class ParseConstructorInvocationTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 		
 		var typeBodyCodeBlockNode = typeDefinitionNode.CodeBlockNode;
 		
-		var functionDefinitionNode = (FunctionDefinitionNode)typeBodyCodeBlockNode.ChildList.Single();
+		var functionDefinitionNode = (FunctionDefinitionNode)typeBodyCodeBlockNode.GetChildList().Single();
 		
 		var functionBodyCodeBlockNode = functionDefinitionNode.CodeBlockNode;
 		
-		var returnStatementNode = (ReturnStatementNode)functionBodyCodeBlockNode.ChildList.Single();
+		var returnStatementNode = (ReturnStatementNode)functionBodyCodeBlockNode.GetChildList().Single();
 		
 		// var expressionNode = (FunctionInvocationNode)returnStatementNode.ExpressionNode;
 		

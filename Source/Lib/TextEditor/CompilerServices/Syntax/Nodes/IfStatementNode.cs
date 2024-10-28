@@ -16,9 +16,10 @@ public sealed class IfStatementNode : ICodeBlockOwner
         KeywordToken = keywordToken;
         ExpressionNode = expressionNode;
         CodeBlockNode = codeBlockNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
@@ -27,7 +28,6 @@ public sealed class IfStatementNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -42,7 +42,8 @@ public sealed class IfStatementNode : ICodeBlockOwner
     {
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -52,8 +53,11 @@ public sealed class IfStatementNode : ICodeBlockOwner
     	return;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 2; // KeywordToken, ExpressionNode,
         if (CodeBlockNode is not null)
             childCount++;
@@ -66,6 +70,9 @@ public sealed class IfStatementNode : ICodeBlockOwner
 		if (CodeBlockNode is not null)
             childList[i++] = CodeBlockNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

@@ -39,8 +39,8 @@ public class ParseTypesTests
                 var compilationUnit = parser.Parse();
                 var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-                Assert.Single(topCodeBlock.ChildList);
-                var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+                Assert.Single(topCodeBlock.GetChildList());
+                var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
                 Assert.Equal(accessModifierKind, typeDefinitionNode.AccessModifierKind);
                 Assert.False(typeDefinitionNode.HasPartialModifier);
@@ -57,7 +57,7 @@ public class ParseTypesTests
 
                     Assert.NotNull(typeBodyCodeBlockNode);
                     Assert.Empty(typeBodyCodeBlockNode.DiagnosticsList);
-                    Assert.Empty(typeBodyCodeBlockNode.ChildList);
+                    Assert.Empty(typeBodyCodeBlockNode.GetChildList());
                     Assert.False(typeBodyCodeBlockNode.IsFabricated);
                 }
 
@@ -92,8 +92,8 @@ public class ParseTypesTests
                 var compilationUnit = parser.Parse();
                 var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-                Assert.Single(topCodeBlock.ChildList);
-                var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+                Assert.Single(topCodeBlock.GetChildList());
+                var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
                 Assert.Equal(accessModifierKind, typeDefinitionNode.AccessModifierKind);
                 Assert.True(typeDefinitionNode.HasPartialModifier);
@@ -110,7 +110,7 @@ public class ParseTypesTests
 
                     Assert.NotNull(typeBodyCodeBlockNode);
                     Assert.Empty(typeBodyCodeBlockNode.DiagnosticsList);
-                    Assert.Empty(typeBodyCodeBlockNode.ChildList);
+                    Assert.Empty(typeBodyCodeBlockNode.GetChildList());
                     Assert.False(typeBodyCodeBlockNode.IsFabricated);
                 }
 
@@ -130,8 +130,8 @@ public class ParseTypesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
         Assert.False(typeDefinitionNode.HasPartialModifier);
@@ -167,8 +167,8 @@ public class ParseTypesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
         Assert.False(typeDefinitionNode.HasPartialModifier);
@@ -222,8 +222,8 @@ public class ParseTypesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
         Assert.False(typeDefinitionNode.HasPartialModifier);
@@ -259,8 +259,8 @@ public class ParseTypesTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        Assert.Single(topCodeBlock.ChildList);
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        Assert.Single(topCodeBlock.GetChildList());
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 
         Assert.Equal(AccessModifierKind.Public, typeDefinitionNode.AccessModifierKind);
         Assert.False(typeDefinitionNode.HasPartialModifier);

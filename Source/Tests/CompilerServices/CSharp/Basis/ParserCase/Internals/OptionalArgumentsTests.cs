@@ -109,7 +109,7 @@ public class ProgressBarModel : IDisposable
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        foreach (var child in topCodeBlock.ChildList)
+        foreach (var child in topCodeBlock.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }
@@ -142,7 +142,7 @@ public class ProgressBarModel : IDisposable
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        foreach (var child in topCodeBlock.ChildList)
+        foreach (var child in topCodeBlock.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }
@@ -239,7 +239,7 @@ public class ProgressBarModel : IDisposable
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        foreach (var child in topCodeBlock.ChildList)
+        foreach (var child in topCodeBlock.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }

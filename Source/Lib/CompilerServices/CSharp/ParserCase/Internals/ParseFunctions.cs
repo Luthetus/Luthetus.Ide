@@ -16,18 +16,25 @@ public class ParseFunctions
     {
         // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
 
-        HandleFunctionParameters(
-            (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
-            model);
+		var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
-        var functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
-
-        var functionInvocationNode = new FunctionInvocationNode(
-            consumedIdentifierToken,
-            null,
-            genericParametersListingNode,
+		var functionParametersListingNode = new FunctionParametersListingNode(
+			openParenthesisToken,
+	        new List<FunctionParameterEntryNode>(),
+	        closeParenthesisToken: default);
+	
+		// TODO: ContextualKeywords as the function identifier?
+		var functionInvocationNode = new FunctionInvocationNode(
+			consumedIdentifierToken,
+	        functionDefinitionNode: null,
+	        genericParametersListingNode,
             functionParametersListingNode,
             Facts.CSharpFacts.Types.Void.ToTypeClause());
+
+		model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
+		model.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode.FunctionParametersListingNode));
+
+        var expressionNode = ParseOthers.ParseExpression(model);
 
         model.Binder.BindFunctionInvocationNode(functionInvocationNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(functionInvocationNode);
@@ -194,7 +201,7 @@ public class ParseFunctions
         {
             model.SyntaxStack.Push(new ObjectInitializationParametersListingNode(
                 consumedOpenBraceToken,
-                ImmutableArray<ObjectInitializationParameterEntryNode>.Empty,
+                new List<ObjectInitializationParameterEntryNode>(),
                 (CloseBraceToken)model.TokenWalker.Consume()));
 
             return;
@@ -212,24 +219,9 @@ public class ParseFunctions
             if (equalsToken.IsFabricated)
                 break;
 
-            ParseOthers.HandleExpression(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new[]
-                    {
-                        new ExpressionDelimiter(null, SyntaxKind.CommaToken, null, null),
-                        new ExpressionDelimiter(
-                            null,
-                            SyntaxKind.CloseBraceToken,
-                            null,
-                            null)
-                    },
-                    model);
-
-            var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+			model.ExpressionList.Add((SyntaxKind.CloseBraceToken, null));
+			model.ExpressionList.Add((SyntaxKind.CommaToken, null));
+			var expressionNode = ParseOthers.ParseExpression(model);
 
             // TODO: Make a PropertySymbol
             //
@@ -265,7 +257,7 @@ public class ParseFunctions
 
         model.SyntaxStack.Push(new ObjectInitializationParametersListingNode(
             consumedOpenBraceToken,
-            mutableObjectInitializationParametersListing.ToImmutableArray(),
+            mutableObjectInitializationParametersListing,
             closeBraceToken));
     }
 
@@ -346,7 +338,7 @@ public class ParseFunctions
         {
             model.SyntaxStack.Push(new FunctionParametersListingNode(
                 consumedOpenParenthesisToken,
-                ImmutableArray<FunctionParameterEntryNode>.Empty,
+                new List<FunctionParameterEntryNode>(),
                 (CloseParenthesisToken)model.TokenWalker.Consume()));
 
             return;
@@ -392,24 +384,8 @@ public class ParseFunctions
                 }
             }
 
-            ParseOthers.HandleExpression(
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new[]
-                    {
-                        new ExpressionDelimiter(null, SyntaxKind.CommaToken, null, null),
-                        new ExpressionDelimiter(
-                            SyntaxKind.OpenParenthesisToken,
-                            SyntaxKind.CloseParenthesisToken,
-                            null,
-                            null)
-                    },
-                    model);
-
-            var expression = (IExpressionNode)model.SyntaxStack.Pop();
+			model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+			var expression = ParseOthers.ParseExpression(model);
 
             var functionParameterEntryNode = new FunctionParameterEntryNode(
                 expression,
@@ -439,7 +415,7 @@ public class ParseFunctions
 
         model.SyntaxStack.Push(new FunctionParametersListingNode(
             consumedOpenParenthesisToken,
-            mutableFunctionParametersListing.ToImmutableArray(),
+            mutableFunctionParametersListing,
             closeParenthesisToken));
     }
 

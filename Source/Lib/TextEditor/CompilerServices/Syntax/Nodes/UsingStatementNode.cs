@@ -9,25 +9,31 @@ public sealed class UsingStatementNode : ISyntaxNode
     {
         KeywordToken = keywordToken;
         NamespaceIdentifier = namespaceIdentifier;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public KeywordToken KeywordToken { get; }
     public IdentifierToken NamespaceIdentifier { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = new ISyntax[]
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
+    	_childList = new ISyntax[]
         {
             KeywordToken,
             NamespaceIdentifier
         };
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

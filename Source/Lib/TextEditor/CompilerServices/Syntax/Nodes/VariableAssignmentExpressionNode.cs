@@ -14,27 +14,33 @@ public sealed class VariableAssignmentExpressionNode : ISyntaxNode
         VariableIdentifierToken = variableIdentifierToken;
         EqualsToken = equalsToken;
         ExpressionNode = expressionNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public IdentifierToken VariableIdentifierToken { get; }
     public EqualsToken EqualsToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableAssignmentExpressionNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = new ISyntax[]
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
+    	_childList = new ISyntax[]
         {
             VariableIdentifierToken,
             EqualsToken,
             ExpressionNode,
         };
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

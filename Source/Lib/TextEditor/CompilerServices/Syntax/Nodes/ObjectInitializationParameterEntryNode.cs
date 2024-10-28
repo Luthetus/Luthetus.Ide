@@ -4,6 +4,14 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
+/// <summary>
+/// I'm not sure how to go about property initialization of an object versus collection initialization.
+/// For now I'll rather hackily set the <see cref="ExpressionNode"/> only if a comma immediately follows it.
+///
+/// Then to know if an instance of this type represents collection initialization
+/// one can check <see cref="IsCollectionInitialization"/> to know whether
+/// the token was 'default' or not.
+/// </summary>
 public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
 {
     public ObjectInitializationParameterEntryNode(
@@ -14,22 +22,26 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
         PropertyIdentifierToken = propertyIdentifierToken;
         EqualsToken = equalsToken;
         ExpressionNode = expressionNode;
-        
-        SetChildList();
     }
 
-    public IdentifierToken PropertyIdentifierToken { get; }
-    public EqualsToken EqualsToken { get; }
-    public IExpressionNode ExpressionNode { get; }
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
-    public ISyntax[] ChildList { get; private set; }
+    public IdentifierToken PropertyIdentifierToken { get; set; }
+    public EqualsToken EqualsToken { get; set; }
+    public IExpressionNode ExpressionNode { get; set; }
+    public bool IsCollectionInitialization => !PropertyIdentifierToken.ConstructorWasInvoked;
+
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParameterEntryNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 2; // PropertyIdentifierToken, ExpressionNode,
             
         var childList = new ISyntax[childCount];
@@ -38,6 +50,9 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
 		childList[i++] = PropertyIdentifierToken;
 		childList[i++] = ExpressionNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

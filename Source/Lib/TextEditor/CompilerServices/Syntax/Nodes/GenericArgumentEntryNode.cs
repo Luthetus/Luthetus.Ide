@@ -10,20 +10,23 @@ public sealed class GenericArgumentEntryNode : ISyntaxNode
     public GenericArgumentEntryNode(TypeClauseNode typeClauseNode)
     {
         TypeClauseNode = typeClauseNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TypeClauseNode TypeClauseNode { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentEntryNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 1; // TypeClauseNode,
             
         var childList = new ISyntax[childCount];
@@ -31,6 +34,9 @@ public sealed class GenericArgumentEntryNode : ISyntaxNode
 
 		childList[i++] = TypeClauseNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

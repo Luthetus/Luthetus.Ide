@@ -216,7 +216,9 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        _ = model.TokenWalker.Backtrack();
+    	var expressionNode = ParseOthers.ParseExpression(model);
+    	model.SyntaxStack.Push(expressionNode);
     }
 
     public static void HandleFinallyTokenKeyword(
@@ -317,22 +319,8 @@ public class ParseDefaultKeywords
         		//     = 0;
         		var equalsToken = (EqualsToken)model.TokenWalker.Match(SyntaxKind.EqualsToken);
         		
-        		ParseOthers.HandleExpression(
-			        null,
-			        null,
-			        null,
-			        null,
-			        null,
-			        new[]
-			        {
-			            new ExpressionDelimiter(
-			                SyntaxKind.OpenParenthesisToken,
-			                SyntaxKind.CloseParenthesisToken,
-			                null,
-			                null)
-			        },
-			        model);
-			    initializationExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+        		model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        		initializationExpressionNode = ParseOthers.ParseExpression(model);
 			    
 			    initializationStatementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         	}
@@ -348,22 +336,8 @@ public class ParseDefaultKeywords
         	// Condition Case Two
         	//     i < 10;
         
-        	ParseOthers.HandleExpression(
-		        null,
-		        null,
-		        null,
-		        null,
-		        null,
-		        new[]
-		        {
-		            new ExpressionDelimiter(
-		                SyntaxKind.OpenParenthesisToken,
-		                SyntaxKind.CloseParenthesisToken,
-		                null,
-		                null)
-		        },
-		        model);
-		    conditionExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+        	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        	conditionExpressionNode = ParseOthers.ParseExpression(model);
 		    
 		    conditionStatementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
@@ -375,22 +349,8 @@ public class ParseDefaultKeywords
         
         if (closeParenthesisToken.IsFabricated)
         {
-        	ParseOthers.HandleExpression(
-		        null,
-		        null,
-		        null,
-		        null,
-		        null,
-		        new[]
-		        {
-		            new ExpressionDelimiter(
-		                SyntaxKind.OpenParenthesisToken,
-		                SyntaxKind.CloseParenthesisToken,
-		                null,
-		                null)
-		        },
-		        model);
-		    updationExpressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+        	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        	updationExpressionNode = ParseOthers.ParseExpression(model);
 		    
 		    closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		    
@@ -438,23 +398,8 @@ public class ParseDefaultKeywords
     	
     	var inKeywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.InTokenKeyword);
     	
-    	ParseOthers.HandleExpression(
-	        null,
-	        null,
-	        null,
-	        null,
-	        null,
-	        new[]
-	        {
-	            new ExpressionDelimiter(
-	                SyntaxKind.OpenParenthesisToken,
-	                SyntaxKind.CloseParenthesisToken,
-	                null,
-	                null)
-	        },
-	        model);
-	        
-		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+    	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+    	var expressionNode = ParseOthers.ParseExpression(model);
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var foreachStatementNode = new ForeachStatementNode(
@@ -511,23 +456,9 @@ public class ParseDefaultKeywords
     {
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
-    	ParseOthers.HandleExpression(
-	        null,
-	        null,
-	        null,
-	        null,
-	        null,
-	        new[]
-	        {
-	            new ExpressionDelimiter(
-	                SyntaxKind.OpenParenthesisToken,
-	                SyntaxKind.CloseParenthesisToken,
-	                null,
-	                null)
-	        },
-	        model);
-	        
-		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+    	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+    	var expressionNode = ParseOthers.ParseExpression(model);
+		
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var lockStatementNode = new LockStatementNode(
@@ -654,23 +585,9 @@ public class ParseDefaultKeywords
     {
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
-    	ParseOthers.HandleExpression(
-	        null,
-	        null,
-	        null,
-	        null,
-	        null,
-	        new[]
-	        {
-	            new ExpressionDelimiter(
-	                SyntaxKind.OpenParenthesisToken,
-	                SyntaxKind.CloseParenthesisToken,
-	                null,
-	                null)
-	        },
-	        model);
-	        
-		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+    	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+    	var expressionNode = ParseOthers.ParseExpression(model);
+		
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var switchStatementNode = new SwitchStatementNode(
@@ -702,7 +619,9 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+    	_ = model.TokenWalker.Backtrack();
+    	var expressionNode = ParseOthers.ParseExpression(model);
+    	model.SyntaxStack.Push(expressionNode);
     }
 
     public static void HandleTryTokenKeyword(
@@ -791,23 +710,9 @@ public class ParseDefaultKeywords
     {    
         var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
-    	ParseOthers.HandleExpression(
-	        null,
-	        null,
-	        null,
-	        null,
-	        null,
-	        new[]
-	        {
-	            new ExpressionDelimiter(
-	                SyntaxKind.OpenParenthesisToken,
-	                SyntaxKind.CloseParenthesisToken,
-	                null,
-	                null)
-	        },
-	        model);
-	        
-		var expressionNode = (IExpressionNode)model.SyntaxStack.Pop();
+    	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        var expressionNode = ParseOthers.ParseExpression(model);
+		
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		if (model.SyntaxStack.TryPeek(out var syntax) &&
@@ -884,107 +789,12 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        var typeClauseToken = model.TokenWalker.MatchTypeClauseNode(model);
-
-        if (model.TokenWalker.Peek(0).SyntaxKind == SyntaxKind.MemberAccessToken)
-        {
-            // "explicit namespace qualification" OR "nested class"
-
-            var memberAccessToken = (MemberAccessToken)model.TokenWalker.Peek(0);
-
-            model.DiagnosticBag.ReportTodoException(
-                memberAccessToken.TextSpan,
-                $"Implement: \"explicit namespace qualification\" OR \"nested class\"");
-        }
-
-        // TODO: Fix _cSharpParser.model.Binder.TryGetClassReferenceHierarchically, it broke on (2023-07-26)
-        //
-        // _cSharpParser.model.Binder.TryGetClassReferenceHierarchically(typeClauseToken, null, out boundClassReferenceNode);
-
-        // TODO: combine the logic for 'new()' without a type identifier and 'new List<int>()' with a type identifier. To start I am going to isolate them in their own if conditional blocks.
-        if (typeClauseToken.IsFabricated)
-        {
-            // If "new()" LACKS a type identifier then the OpenParenthesisToken must be there. This is true even still for when there is object initialization OpenBraceToken. For new() the parenthesis are required.
-            // valid inputs:
-            //     new()
-            //     new(){}
-            //     new(...)
-            //     new(...){}
-            ParseFunctions.HandleFunctionParameters(
-                (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
-                model);
-
-            ObjectInitializationNode? boundObjectInitializationNode = null;
-
-            if (model.TokenWalker.Peek(0).SyntaxKind == SyntaxKind.OpenBraceToken)
-            {
-                ParseTypes.HandleObjectInitialization(
-                    (OpenBraceToken)model.TokenWalker.Consume(),
-                    model);
-
-                boundObjectInitializationNode = (ObjectInitializationNode?)model.SyntaxStack.Pop();
-            }
-
-            // TODO: Fix _cSharpParser.model.Binder.BindConstructorInvocationNode, it broke on (2023-07-26)
-            //
-            // var boundConstructorInvocationNode = _cSharpParser.model.Binder.BindConstructorInvocationNode(
-            //     keywordToken,
-            //     boundClassReferenceNode,
-            //     boundFunctionArgumentsNode,
-            //     boundObjectInitializationNode);
-            //
-            // _cSharpParser._currentCodeBlockBuilder.Children.Add(boundConstructorInvocationNode);
-        }
-        else
-        {
-            // If "new List<int>()" HAS a type identifier then the OpenParenthesisToken is optional, given that the object initializer syntax OpenBraceToken is found, and one wishes to invoke the parameterless constructor.
-            // valid inputs:
-            //     new List<int>()
-            //     new List<int>(){}
-            //     new List<int>{}
-            //     new List<int>(...)
-            //     new List<int>(...){}
-            //     new string(...){}
-
-            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-            {
-                ParseTypes.HandleGenericArguments(
-                    (OpenAngleBracketToken)model.TokenWalker.Consume(),
-                    model);
-            }
-
-            FunctionParametersListingNode? functionParametersListingNode = null;
-
-            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-            {
-                ParseFunctions.HandleFunctionParameters(
-                    (OpenParenthesisToken)model.TokenWalker.Consume(),
-                    model);
-
-                functionParametersListingNode = (FunctionParametersListingNode?)model.SyntaxStack.Pop();
-            }
-
-            ObjectInitializationNode? boundObjectInitializationNode = null;
-
-            if (model.TokenWalker.Peek(0).SyntaxKind == SyntaxKind.OpenBraceToken)
-            {
-                ParseTypes.HandleObjectInitialization(
-                    (OpenBraceToken)model.TokenWalker.Consume(),
-                    model);
-
-                boundObjectInitializationNode = (ObjectInitializationNode?)model.SyntaxStack.Pop();
-            }
-
-            // TODO: Fix _cSharpParser.model.Binder.BindConstructorInvocationNode, it broke on (2023-07-26)
-            //
-            // var boundConstructorInvocationNode = _cSharpParser.model.Binder.BindConstructorInvocationNode(
-            //     keywordToken,
-            //     boundClassReferenceNode,
-            //     functionParametersListingNode,
-            //     boundObjectInitializationNode);
-            //
-            // _cSharpParser._currentCodeBlockBuilder.Children.Add(boundConstructorInvocationNode);
-        }
+    	_ = model.TokenWalker.Backtrack();
+    	var constructorInvocationNode = ParseOthers.ParseExpression(model);
+    	model.SyntaxStack.Push(constructorInvocationNode);
+    
+		// "explicit namespace qualification" OR "nested class"
+		// if (model.TokenWalker.Peek(0).SyntaxKind == SyntaxKind.MemberAccessToken)
     }
 
     public static void HandlePublicTokenKeyword(
@@ -1052,23 +862,8 @@ public class ParseDefaultKeywords
         if (openParenthesisToken.IsFabricated)
             return;
 
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            new[]
-            {
-                new ExpressionDelimiter(
-                    SyntaxKind.OpenParenthesisToken,
-                    SyntaxKind.CloseParenthesisToken,
-                    null,
-                    null)
-            },
-            model);
-
-        var expression = (IExpressionNode)model.SyntaxStack.Pop();
+		model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+		var expression = ParseOthers.ParseExpression(model);
 
         var boundIfStatementNode = model.Binder.BindIfStatementNode(consumedKeywordToken, expression);
         model.SyntaxStack.Push(boundIfStatementNode);
@@ -1295,16 +1090,7 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
-        var returnExpression = (IExpressionNode)model.SyntaxStack.Pop();
+    	var returnExpression = ParseOthers.ParseExpression(model);
 
         var returnStatementNode = model.Binder.BindReturnStatementNode(
             consumedKeywordToken,

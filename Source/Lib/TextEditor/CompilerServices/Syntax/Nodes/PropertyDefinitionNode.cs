@@ -20,9 +20,10 @@ public sealed class PropertyDefinitionNode : IVariableDeclarationNode
         IsInitialized = isInitialized;
         
         Parent = parent;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TypeClauseNode TypeClauseNode { get; }
     public IdentifierToken IdentifierToken { get; }
@@ -45,14 +46,16 @@ public sealed class PropertyDefinitionNode : IVariableDeclarationNode
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PropertyDefinitionNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 2; // TypeClauseNode, IdentifierToken,
             
         var childList = new ISyntax[childCount];
@@ -61,6 +64,9 @@ public sealed class PropertyDefinitionNode : IVariableDeclarationNode
 		childList[i++] = TypeClauseNode;
 		childList[i++] = IdentifierToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

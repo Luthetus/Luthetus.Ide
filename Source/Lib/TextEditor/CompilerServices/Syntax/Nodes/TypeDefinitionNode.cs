@@ -33,9 +33,10 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         InheritedTypeClauseNode = inheritedTypeClauseNode;
         OpenBraceToken = openBraceToken;
         CodeBlockNode = codeBlockNode;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
 	private TypeClauseNode? _toTypeClauseNodeResult;
 
@@ -72,7 +73,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -85,7 +85,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         if (CodeBlockNode is null)
             return ImmutableArray<FunctionDefinitionNode>.Empty;
 
-        return CodeBlockNode.ChildList
+        return CodeBlockNode.GetChildList()
             .Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
             .Select(fd => (FunctionDefinitionNode)fd)
             .ToImmutableArray();
@@ -109,7 +109,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
     	
-    	SetChildList();
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -131,7 +131,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     {
     	PrimaryConstructorFunctionArgumentsListingNode = functionArgumentsListingNode;
     	
-    	SetChildList();
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -139,12 +139,15 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     {
     	InheritedTypeClauseNode = typeClauseNode;
     	
-    	SetChildList();
+    	_childListIsDirty = true;
     	return this;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 1; // TypeIdentifierToken
         if (GenericArgumentsListingNode is not null)
             childCount++;
@@ -164,6 +167,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         if (CodeBlockNode is not null)
             childList[i++] = CodeBlockNode;
 
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

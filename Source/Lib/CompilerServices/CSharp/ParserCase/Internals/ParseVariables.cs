@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -174,15 +175,7 @@ public static class ParseVariables
         CloseAngleBracketToken consumedCloseAngleBracketToken,
         CSharpParserModel model)
     {
-        ParseOthers.HandleExpression(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            model);
-
+    	var expression = ParseOthers.ParseExpression(model);
         consumedVariableDeclarationNode.HasGetter = true;
     }
 
@@ -191,23 +184,7 @@ public static class ParseVariables
         EqualsToken consumedEqualsToken,
         CSharpParserModel model)
     {
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.NewTokenKeyword)
-        {
-            ParseFunctions.HandleConstructorInvocation(model);
-        }
-        else
-        {
-            ParseOthers.HandleExpression(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                model);
-        }
-
-        var rightHandExpression = (IExpressionNode)model.SyntaxStack.Pop();
+    	var rightHandExpression = ParseOthers.ParseExpression(model);
 
         var variableAssignmentExpressionNode = new VariableAssignmentExpressionNode(
             consumedIdentifierToken,

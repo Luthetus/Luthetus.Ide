@@ -23,9 +23,10 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
         HasOutKeyword = hasOutKeyword;
         HasInKeyword = hasInKeyword;
         HasRefKeyword = hasRefKeyword;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public VariableDeclarationNode VariableDeclarationNode { get; }
     public ISyntaxToken? OptionalCompileTimeConstantToken { get; }
@@ -35,14 +36,16 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
     public bool HasInKeyword { get; }
     public bool HasRefKeyword { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentEntryNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 1; // VariableDeclarationNode,
         if (OptionalCompileTimeConstantToken is not null)
             childCount++;
@@ -54,6 +57,9 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
         if (OptionalCompileTimeConstantToken is not null)
             childList[i++] = OptionalCompileTimeConstantToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

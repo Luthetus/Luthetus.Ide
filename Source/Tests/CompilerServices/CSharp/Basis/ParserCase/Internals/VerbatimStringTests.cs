@@ -21,10 +21,10 @@ public class VerbatimStringTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
         
-        foreach (var child in variableAssignmentExpressionNode.ChildList)
+        foreach (var child in variableAssignmentExpressionNode.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }
@@ -43,10 +43,10 @@ public class VerbatimStringTests
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.ChildList[0];
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.ChildList[1];
+        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
         
-        foreach (var child in variableAssignmentExpressionNode.ChildList)
+        foreach (var child in variableAssignmentExpressionNode.GetChildList())
         {
         	Console.WriteLine(child.SyntaxKind);
         }

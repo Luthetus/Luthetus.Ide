@@ -13,23 +13,33 @@ public sealed class BinaryExpressionNode : IExpressionNode
         LeftExpressionNode = leftExpressionNode;
         BinaryOperatorNode = binaryOperatorNode;
         RightExpressionNode = rightExpressionNode;
-
-        SetChildList();
     }
+    
+    public BinaryExpressionNode(
+	        IExpressionNode leftExpressionNode,
+	        BinaryOperatorNode binaryOperatorNode)
+        : this(leftExpressionNode, binaryOperatorNode, new EmptyExpressionNode(binaryOperatorNode.RightOperandTypeClauseNode))
+    {
+    }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public IExpressionNode LeftExpressionNode { get; }
     public BinaryOperatorNode BinaryOperatorNode { get; }
-    public IExpressionNode RightExpressionNode { get; }
+    public IExpressionNode RightExpressionNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode => BinaryOperatorNode.ResultTypeClauseNode;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 3; // LeftExpressionNode, BinaryOperatorNode, RightExpressionNode
             
         var childList = new ISyntax[childCount];
@@ -39,6 +49,17 @@ public sealed class BinaryExpressionNode : IExpressionNode
 		childList[i++] = BinaryOperatorNode;
 		childList[i++] = RightExpressionNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+        _childListIsDirty = false;
+    	return _childList;
+    }
+    
+    public BinaryExpressionNode SetRightExpressionNode(IExpressionNode rightExpressionNode)
+    {
+    	RightExpressionNode = rightExpressionNode;
+    	
+    	_childListIsDirty = true;
+    	return this;
     }
 }

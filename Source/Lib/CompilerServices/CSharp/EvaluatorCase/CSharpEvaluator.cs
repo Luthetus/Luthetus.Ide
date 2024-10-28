@@ -31,7 +31,7 @@ public class CSharpEvaluator
             throw new NotImplementedException("TODO: What should be done when there are error diagnostics?");
         }
 
-        var expressionNode = (IExpressionNode)_compilationUnit.RootCodeBlockNode.ChildList
+        var expressionNode = (IExpressionNode)_compilationUnit.RootCodeBlockNode.GetChildList()
             .Single();
         
         return EvaluateExpression(expressionNode);

@@ -1,4 +1,4 @@
-﻿using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
@@ -12,7 +12,7 @@ public static class FunctionHelper
         this FunctionParametersListingNode functionParametersListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode)
     {
-        if (functionParametersListingNode.FunctionParameterEntryNodeList.Length !=
+        if (functionParametersListingNode.FunctionParameterEntryNodeList.Count !=
             functionArgumentsListingNode.FunctionArgumentEntryNodeList.Length)
         {
             return false;
@@ -20,7 +20,7 @@ public static class FunctionHelper
 
         var isValid = true;
 
-        for (int i = 0; i < functionParametersListingNode.FunctionParameterEntryNodeList.Length; i++)
+        for (int i = 0; i < functionParametersListingNode.FunctionParameterEntryNodeList.Count; i++)
         {
             var parameter = functionParametersListingNode.FunctionParameterEntryNodeList[i];
             var argument = functionArgumentsListingNode.FunctionArgumentEntryNodeList[i];

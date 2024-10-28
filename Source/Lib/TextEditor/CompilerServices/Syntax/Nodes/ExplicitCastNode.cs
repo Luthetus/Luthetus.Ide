@@ -4,45 +4,60 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed class ExplicitCastNode : ISyntaxNode
+public sealed class ExplicitCastNode : IExpressionNode
 {
 	public ExplicitCastNode(
         OpenParenthesisToken openParenthesisToken,
-        TypeClauseNode typeClauseNode,
-        CloseParenthesisToken closeParenthesisToken,
-        IExpressionNode expressionNode)
+        TypeClauseNode resultTypeClauseNode,
+        CloseParenthesisToken closeParenthesisToken)
     {
         OpenParenthesisToken = openParenthesisToken;
-        TypeClauseNode = typeClauseNode;
+        ResultTypeClauseNode = resultTypeClauseNode;
         CloseParenthesisToken = closeParenthesisToken;
-        ExpressionNode = expressionNode;
+    }
 
-        SetChildList();
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
+    
+    public ExplicitCastNode(OpenParenthesisToken openParenthesisToken, TypeClauseNode resultTypeClauseNode)
+    	: this(openParenthesisToken, resultTypeClauseNode, default)
+    {
     }
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
-    public TypeClauseNode TypeClauseNode { get; }
-    public CloseParenthesisToken CloseParenthesisToken { get; }
-    public IExpressionNode ExpressionNode { get; }
+    public TypeClauseNode ResultTypeClauseNode { get; }
+    public CloseParenthesisToken CloseParenthesisToken { get; private set; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
     
-    public void SetChildList()
+    public ExplicitCastNode SetCloseParenthesisToken(CloseParenthesisToken closeParenthesisToken)
     {
-    	var childCount = 4; // OpenParenthesisToken, TypeClauseNode, CloseParenthesisToken, ExpressionNode,
+    	CloseParenthesisToken = closeParenthesisToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+    }
+    
+    public ISyntax[] GetChildList()
+    {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
+    	var childCount = 3; // OpenParenthesisToken, ResultTypeClauseNode, CloseParenthesisToken,
             
         var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = OpenParenthesisToken;
-		childList[i++] = TypeClauseNode;
+		childList[i++] = ResultTypeClauseNode;
 		childList[i++] = CloseParenthesisToken;
-		childList[i++] = ExpressionNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

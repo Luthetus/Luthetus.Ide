@@ -299,7 +299,7 @@ public static class RuntimeAssembliesLoaderFactory
                 // Generic Parameters Listing
                 genericParametersListingNode = new GenericParametersListingNode(
                     openAngleBracketToken,
-                    genericParameterEntryNodeList.ToImmutableArray(),
+                    genericParameterEntryNodeList,
                     closeAngleBracketToken);
             }
 

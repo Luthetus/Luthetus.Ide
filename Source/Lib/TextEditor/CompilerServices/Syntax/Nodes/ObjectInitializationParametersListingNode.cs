@@ -7,32 +7,43 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
 {
     public ObjectInitializationParametersListingNode(
         OpenBraceToken openBraceToken,
-        ImmutableArray<ObjectInitializationParameterEntryNode> objectInitializationParameterEntryNodeList,
+        List<ObjectInitializationParameterEntryNode> objectInitializationParameterEntryNodeList,
         CloseBraceToken closeBraceToken)
     {
         OpenBraceToken = openBraceToken;
         ObjectInitializationParameterEntryNodeList = objectInitializationParameterEntryNodeList;
         CloseBraceToken = closeBraceToken;
-
-        SetChildList();
     }
 
-    public OpenBraceToken OpenBraceToken { get; }
-    public ImmutableArray<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
-    public CloseBraceToken CloseBraceToken { get; }
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
-    public ISyntax[] ChildList { get; private set; }
+    public OpenBraceToken OpenBraceToken { get; }
+    public List<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
+    public CloseBraceToken CloseBraceToken { get; private set; }
+
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParametersListingNode;
     
-    public void SetChildList()
+    public ObjectInitializationParametersListingNode SetCloseBraceToken(CloseBraceToken closeBraceToken)
     {
+    	CloseBraceToken = closeBraceToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+    }
+    
+    public ISyntax[] GetChildList()
+    {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	// OpenBraceToken, ObjectInitializationParameterEntryNodeList.Length, CloseBraceToken
     	var childCount = 
     		1 +                                                // OpenBraceToken
-    		ObjectInitializationParameterEntryNodeList.Length + // ObjectInitializationParameterEntryNodeList.Length
+    		ObjectInitializationParameterEntryNodeList.Count + // ObjectInitializationParameterEntryNodeList.Count
     		1;                                                 // CloseBraceToken
             
         var childList = new ISyntax[childCount];
@@ -45,6 +56,9 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
 		}
 		childList[i++] = CloseBraceToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }
