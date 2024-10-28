@@ -21,14 +21,19 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
 	
-	private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(1_000);
+	private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(500);
 
 	/// <summary>byte is used as TArgs just as a "throwaway" type. It isn't used.</summary>
-	private ThrottleOptimized<byte> _throttleRender;
+	private Debounce<byte> _throttleRender;
+	
+	private int _lineIndexPrevious = -1;
+	private int _columnIndexPrevious = -1;
+	
+	private CancellationTokenSource _cancellationTokenSource = new();
 	
 	protected override void OnInitialized()
     {
-    	_throttleRender = new(ThrottleTimeSpan, async (_, _) =>
+    	_throttleRender = new(ThrottleTimeSpan, _cancellationTokenSource.Token, async (_, _) =>
     	{
     		DrawScopeInTextEditor();
     	});
@@ -41,6 +46,17 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 
 	private void OnRenderBatchChanged()
     {
+    	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
+    	
+    	if (renderBatch is null)
+    		return;
+    
+    	if (renderBatch.ViewModel.PrimaryCursor.LineIndex == _lineIndexPrevious &&
+        	renderBatch.ViewModel.PrimaryCursor.ColumnIndex == _columnIndexPrevious)
+        {
+			return;
+        }
+        
     	_throttleRender.Run(0);
     }
     
@@ -60,6 +76,9 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 
             if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
                 return Task.CompletedTask;
+            
+            _lineIndexPrevious = primaryCursorModifier.LineIndex;
+            _columnIndexPrevious = primaryCursorModifier.ColumnIndex;
             
             if (!viewModelModifier.ViewModel.FirstPresentationLayerKeysList.Contains(
             		TextEditorDevToolsPresentationFacts.PresentationKey))
@@ -122,5 +141,8 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 	public void Dispose()
     {
     	TextEditorViewModelDisplay.RenderBatchChanged -= OnRenderBatchChanged;
+    	
+    	_cancellationTokenSource.Cancel();
+    	_cancellationTokenSource.Dispose();
     }
 }
