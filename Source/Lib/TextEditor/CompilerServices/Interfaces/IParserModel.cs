@@ -1,5 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -10,10 +11,20 @@ public interface IParserModel
     public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     
-    /// <summary>
-    /// TODO: This is an idea; maybe two stacks: 1 for inter-statement syntax, and another for intra-statement syntax? (2024-10-17)
-    /// </summary>
     public Stack<ISyntax> SyntaxStack { get; set; }
+    
+    /// <summary>
+    /// This list permits primitive recursion via a while loop for the expression parsing logic.
+    ///
+    /// Each entry in the list is a "short circuit" such that if a child expression encounters
+    /// the entry's DelimiterSyntaxKind, it will set the primary expression to the entry's ExpressionNode
+    /// (of which is an ancestor expression to the child).
+    ///
+    /// After that, the restored primary expression "combines" with the child expression that "short circuit"-ed.
+    ///
+    /// Then, the new primary expression expression node parses the 'DelimiterSyntaxKind' which triggered the "short circuit".
+    /// </summary>
+    public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
     
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }

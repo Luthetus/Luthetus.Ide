@@ -68,7 +68,7 @@ public static class ParseTypes
         {
             model.SyntaxStack.Push(new GenericParametersListingNode(
                 consumedOpenAngleBracketToken,
-                ImmutableArray<GenericParameterEntryNode>.Empty,
+                new List<GenericParameterEntryNode>(),
                 (CloseAngleBracketToken)model.TokenWalker.Consume()));
 
             return;
@@ -105,7 +105,7 @@ public static class ParseTypes
 
         model.SyntaxStack.Push(new GenericParametersListingNode(
             consumedOpenAngleBracketToken,
-            mutableGenericParametersListing.ToImmutableArray(),
+            mutableGenericParametersListing,
             closeAngleBracketToken));
     }
 
@@ -219,7 +219,7 @@ public static class ParseTypes
             null,
             null);
 
-        typeClauseNode = model.Binder.BindTypeClauseNode(typeClauseNode, model);
+        model.Binder.BindTypeClauseNode(typeClauseNode, model);
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
@@ -257,7 +257,7 @@ public static class ParseTypes
                 {
                     IsFabricated = true
                 },
-                new GenericParameterEntryNode[] { genericParameterEntryNode }.ToImmutableArray(),
+                new List<GenericParameterEntryNode> { genericParameterEntryNode },
                 new CloseAngleBracketToken(closeSquareBracketToken.TextSpan)
                 {
                     IsFabricated = true

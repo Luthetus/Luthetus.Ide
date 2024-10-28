@@ -15,9 +15,10 @@ public sealed class TryStatementNode : ISyntaxNode
         TryNode = tryNode;
         CatchNode = catchNode;
         FinallyNode = finallyNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public TryStatementTryNode? TryNode { get; private set; }
     public TryStatementCatchNode? CatchNode { get; private set; }
@@ -25,14 +26,16 @@ public sealed class TryStatementNode : ISyntaxNode
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
         var childCount = 0;
         if (TryNode is not null)
             childCount++;
@@ -51,24 +54,27 @@ public sealed class TryStatementNode : ISyntaxNode
         if (FinallyNode is not null)
             childList[i++] = FinallyNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
     
     public void SetTryStatementTryNode(TryStatementTryNode tryStatementTryNode)
     {
     	TryNode = tryStatementTryNode;
-    	SetChildList();
+    	_childListIsDirty = true;
     }
     
     public void SetTryStatementCatchNode(TryStatementCatchNode tryStatementCatchNode)
     {
     	CatchNode = tryStatementCatchNode;
-    	SetChildList();
+    	_childListIsDirty = true;
     }
     
     public void SetTryStatementFinallyNode(TryStatementFinallyNode tryStatementFinallyNode)
     {
     	FinallyNode = tryStatementFinallyNode;
-    	SetChildList();
+    	_childListIsDirty = true;
     }
 }

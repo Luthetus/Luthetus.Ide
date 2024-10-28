@@ -172,7 +172,32 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.6.9 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.0 </em> (2024-10-28)</div>
+                <ul>
+                    <li>
+                    	C# Parser:
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/ParserCase/Internals/ParseOthers.cs#L105">
+                    		expression parsing was re-rewritten
+                    	</a>
+                    	(see also: <a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/BinderCase/CSharpBinder.Expressions.cs">CSharpBinder.Expressions.cs</a>)
+                    	as well more improvements to expression parsing will come in the next update.
+                    </li>
+                    <li>
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/Reactives/Models/Debounce.cs">Created: Debounce.cs</a>
+                    </li>
+                    <li>
+                    	The scope highlighting is now debounced (<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/Reactives/Models/Debounce.cs">Debounce.cs</a>) rather than throttled (<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/Common/Reactives/Models/ThrottleOptimized.cs">ThrottleOptimized.cs</a>).
+                    </li>
+                    <li>
+                    	Changes to <a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Interfaces/IScope.cs">IScope.cs</a>.
+                    	The 'public ResourceUri ResourceUri { get; }' was removed, and the Key&lt;IScope&gt; is now an int, of which is the scope's index within the IBinderSession's ScopeList.
+                    	So, IScope is a lighter datatype, and its lookups are directly into the list rather than searched for
+                    	(this is being said from the perspective of the Binder, the UI only has the positionIndex so it still has to search for the corresponding scope).
+                    </li>
+                </ul>
+            </div>
+			<div>
+                <div>v <em class="luth_em">0.9.6.9 </em> (2024-10-17)</div>
                 <ul>
                 	<li>
                 		Text Editor: fix presentation layer background highlighting.

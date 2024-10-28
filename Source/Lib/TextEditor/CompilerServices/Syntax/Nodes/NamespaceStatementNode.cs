@@ -16,9 +16,10 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
         KeywordToken = keywordToken;
         IdentifierToken = identifierToken;
         CodeBlockNode = codeBlockNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public KeywordToken KeywordToken { get; }
     public IdentifierToken IdentifierToken { get; }
@@ -27,7 +28,6 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -44,7 +44,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     	if (localCodeBlockNode is null)
     		return ImmutableArray<TypeDefinitionNode>.Empty;
     
-        return localCodeBlockNode.ChildList
+        return localCodeBlockNode.GetChildList()
             .Where(innerC => innerC.SyntaxKind == SyntaxKind.TypeDefinitionNode)
             .Select(td => (TypeDefinitionNode)td)
             .ToImmutableArray();
@@ -59,7 +59,8 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     {    
     	OpenBraceToken = openBraceToken;
     	CodeBlockNode = codeBlockNode;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
@@ -72,12 +73,16 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     public ICodeBlockOwner SetFileScoped(CodeBlockNode codeBlockNode)
     {    
     	CodeBlockNode = codeBlockNode;
-    	SetChildList();
+    	
+    	_childListIsDirty = true;
     	return this;
     }
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 2; // KeywordToken, IdentifierToken,
         if (OpenBraceToken.ConstructorWasInvoked)
     		childCount++;
@@ -94,6 +99,9 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     	if (CodeBlockNode is not null)
     		childList[i++] = CodeBlockNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

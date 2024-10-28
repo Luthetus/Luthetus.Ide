@@ -15,9 +15,10 @@ public sealed class TypeClauseNode : ISyntaxNode
         TypeIdentifierToken = typeIdentifier;
         ValueType = valueType;
         GenericParametersListingNode = genericParametersListingNode;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     /// <summary>
     /// Given: 'int x = 2;'<br/>
@@ -33,7 +34,7 @@ public sealed class TypeClauseNode : ISyntaxNode
 	/// In short, <see cref="ValueType"/> is non-null when the
 	/// <see cref="TypeIdentifierToken"/> maps to a C# primitive type.
     /// </summary>
-    public Type? ValueType { get; }
+    public Type? ValueType { get; private set; }
     /// <summary>
     /// Given: 'int[] x = 2;'<br/>
     /// Then: 'Array&lt;T&gt;' is the <see cref="TypeIdentifierToken"/><br/>
@@ -48,7 +49,6 @@ public sealed class TypeClauseNode : ISyntaxNode
     /// </summary>
     public AttributeNode AttributeNode { get; set; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
@@ -58,12 +58,23 @@ public sealed class TypeClauseNode : ISyntaxNode
     {
     	GenericParametersListingNode = genericParametersListingNode;
     	
-    	SetChildList();
+    	_childListIsDirty = true;
     	return this;
     }
     
-    public void SetChildList()
+    public TypeClauseNode SetValueType(Type? valueType)
     {
+    	ValueType = valueType;
+    	
+    	_childListIsDirty = true;
+    	return this;
+    }
+    
+    public ISyntax[] GetChildList()
+    {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 1; // TypeIdentifierToken
         if (GenericParametersListingNode is not null)
             childCount++;
@@ -75,6 +86,9 @@ public sealed class TypeClauseNode : ISyntaxNode
 		if (GenericParametersListingNode is not null)
             childList[i++] = GenericParametersListingNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

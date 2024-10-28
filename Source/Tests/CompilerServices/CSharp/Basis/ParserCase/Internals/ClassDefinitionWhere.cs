@@ -31,7 +31,7 @@ public class ClassDefinitionWhere
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
     }
     
     [Fact]
@@ -57,7 +57,7 @@ public class ClassDefinitionWhere
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
         
-        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.ChildList.Single();
+        var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
     }
 }
 

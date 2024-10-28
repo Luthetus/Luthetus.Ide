@@ -1,29 +1,39 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Used when invoking a syntax which contains a generic type.
+///
+/// I'm going to experiment with making this a <see cref="IExpressionNode"/>.
+/// Because the parameters are exclusive to the expression parsing logic,
+/// and having to wrap this in a 'BadExpressionNode' when dealing with
+/// expressions is very hard to read. (2024-10-26)
 /// </summary>
-public sealed class GenericParameterEntryNode : ISyntaxNode
+public sealed class GenericParameterEntryNode : IExpressionNode
 {
     public GenericParameterEntryNode(TypeClauseNode typeClauseNode)
     {
         TypeClauseNode = typeClauseNode;
-
-        SetChildList();
     }
 
-    public TypeClauseNode TypeClauseNode { get; }
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
-    public ISyntax[] ChildList { get; private set; }
+    public TypeClauseNode TypeClauseNode { get; }
+    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
+
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericParameterEntryNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 1; // TypeClauseNode,
             
         var childList = new ISyntax[childCount];
@@ -31,6 +41,9 @@ public sealed class GenericParameterEntryNode : ISyntaxNode
 
 		childList[i++] = TypeClauseNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

@@ -9,17 +9,24 @@ public sealed class EmptyNode : ISyntaxNode
 {
     public EmptyNode()
     {
-    	SetChildList();
     }
 
-    public ISyntax[] ChildList { get; private set; }
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
+
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = Array.Empty<ISyntax>();
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
+    	_childList = Array.Empty<ISyntax>();
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

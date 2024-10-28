@@ -1,6 +1,6 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -18,9 +18,10 @@ public sealed class FunctionInvocationNode : IExpressionNode
         GenericParametersListingNode = genericParametersListingNode;
         FunctionParametersListingNode = functionParametersListingNode;
         ResultTypeClauseNode = resultTypeClauseNode;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public IdentifierToken FunctionInvocationIdentifierToken { get; }
     public FunctionDefinitionNode? FunctionDefinitionNode { get; }
@@ -28,14 +29,16 @@ public sealed class FunctionInvocationNode : IExpressionNode
     public FunctionParametersListingNode FunctionParametersListingNode { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
 
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 3; // FunctionInvocationIdentifierToken, ...FunctionParametersListingNode, ResultTypeClauseNode,
         if (FunctionDefinitionNode is not null)
             childCount++;
@@ -53,6 +56,9 @@ public sealed class FunctionInvocationNode : IExpressionNode
 		childList[i++] = FunctionParametersListingNode;
 		childList[i++] = ResultTypeClauseNode;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

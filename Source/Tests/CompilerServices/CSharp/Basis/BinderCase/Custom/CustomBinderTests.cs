@@ -27,7 +27,7 @@ public class MyClass
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
         var namespaceGroupNodes = parser.Binder.NamespaceGroupNodes;
 
         var getTopLevelTypeDefinitionNodesTuples = namespaceGroupNodes
@@ -58,7 +58,7 @@ public class MyClass
         var compilationUnit = parser.Parse();
         var topCodeBlock = compilationUnit.RootCodeBlockNode;
 
-        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.ChildList.Single();
+        var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
         var namespaceGroupNodes = parser.Binder.NamespaceGroupNodes;
 
         var getTopLevelTypeDefinitionNodesTuples = namespaceGroupNodes

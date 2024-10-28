@@ -12,7 +12,7 @@ public static class SyntaxReader
         ResourceUri? resourceUri = null;
         string? sourceText = null;
 
-        foreach (var child in node.ChildList)
+        foreach (var child in node.GetChildList())
         {
             if (child is ISyntaxToken token)
             {

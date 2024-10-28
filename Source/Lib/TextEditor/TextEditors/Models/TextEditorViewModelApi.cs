@@ -714,7 +714,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     		if (cursorIsVisible)
     			return;
     			
-    		Console.WriteLine(nameof(RevealCursor));
+    		// Console.WriteLine(nameof(RevealCursor));
 		
             var cursorPositionIndex = modelModifier.GetPositionIndex(cursorModifier);
 

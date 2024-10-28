@@ -11,21 +11,24 @@ public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
     {
         IncludeDirectiveSyntaxToken = includeDirectiveSyntaxToken;
         LibraryReferenceSyntaxToken = libraryReferenceSyntaxToken;
-        
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
     public ISyntaxToken LibraryReferenceSyntaxToken { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
     	var childCount = 2; // IncludeDirectiveSyntaxToken, LibraryReferenceSyntaxToken,
             
         var childList = new ISyntax[childCount];
@@ -34,6 +37,9 @@ public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
 		childList[i++] = IncludeDirectiveSyntaxToken;
 		childList[i++] = LibraryReferenceSyntaxToken;
             
-        ChildList = childList;
+        _childList = childList;
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

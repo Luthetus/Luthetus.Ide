@@ -6,8 +6,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 public interface ISymbol : ITextEditorSymbol
 {
     /// <summary>The Id for a <see cref="SymbolDefinition"/> is the string concatenation of the <see cref="BoundScopeKey"/>, a '+' character, and the text span's text value.</summary>
-    public static string GetSymbolDefinitionId(string text, Key<IScope> scopeKey)
+    public static string GetSymbolDefinitionId(string text, int scopeIndexKey)
     {
-        return $"{scopeKey.Guid}+{text}";
+        return $"{scopeIndexKey}+{text}";
     }
 }

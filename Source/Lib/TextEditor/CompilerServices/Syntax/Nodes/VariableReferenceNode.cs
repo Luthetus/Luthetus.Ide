@@ -12,9 +12,10 @@ public sealed class VariableReferenceNode : IExpressionNode
     {
         VariableIdentifierToken = variableIdentifierToken;
         VariableDeclarationNode = variableDeclarationNode;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     public IdentifierToken VariableIdentifierToken { get; }
     /// <summary>
@@ -23,18 +24,23 @@ public sealed class VariableReferenceNode : IExpressionNode
     public IVariableDeclarationNode VariableDeclarationNode { get; }
     public TypeClauseNode ResultTypeClauseNode => VariableDeclarationNode.TypeClauseNode;
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = new ISyntax[]
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
+    	_childList = new ISyntax[]
         {
             VariableIdentifierToken,
             VariableDeclarationNode,
         };
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }

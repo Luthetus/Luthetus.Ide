@@ -17,9 +17,10 @@ public sealed class ConstraintNode : ISyntaxNode
     public ConstraintNode(ImmutableArray<ISyntaxToken> innerTokens)
     {
         InnerTokens = innerTokens;
-
-        SetChildList();
     }
+
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
 
     /// <summary>
     /// TODO: For now, just grab all tokens and put them in an array...
@@ -27,14 +28,19 @@ public sealed class ConstraintNode : ISyntaxNode
     /// </summary>
     public ImmutableArray<ISyntaxToken> InnerTokens { get; }
 
-    public ISyntax[] ChildList { get; private set; }
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;
     
-    public void SetChildList()
+    public ISyntax[] GetChildList()
     {
-    	ChildList = InnerTokens.ToArray();
+    	if (!_childListIsDirty)
+    		return _childList;
+    	
+    	_childList = InnerTokens.ToArray();
+        
+    	_childListIsDirty = false;
+    	return _childList;
     }
 }
