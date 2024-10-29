@@ -228,23 +228,235 @@ public class AllCSharpSyntax
     
     public void NonContextualKeywords()
 	{
-		abstract; as;
-		base; bool; break; byte;
-		case; catch; char; checked; class; const; continue;
-		decimal; default; delegate; do; double;
-		else; enum; event; explicit; extern;
-		false; finally; fixed; float; for; foreach;
+		// abstract
+		abstract;
+		
+		// as
+		as;
+		
+		// base
+		base;
+		
+		// bool
+		bool x = true;
+		
+		// break
+		break;
+		
+		// byte
+		byte;
+		
+		// case
+		case;
+		
+		// catch
+		catch;
+		
+		// char
+		char;
+		
+		// checked
+		checked;
+		
+		// class
+		class;
+		
+		// const
+		const;
+		
+		// continue
+		continue;
+		
+		// decimal
+		decimal;
+		
+		// default
+		default;
+		
+		// delegate
+		delegate;
+		
+		// do
+		do;
+		
+		// double
+		double;
+		
+		// else
+		else;
+		
+		// enum
+		enum;
+		
+		// event
+		event;
+		
+		// explicit
+		explicit;
+		
+		// extern
+		extern;
+
+		// false
+		false;
+
+		// finally
+		finally;
+
+		// fixed
+		fixed;
+
+		// float
+		float;
+
+		// for
+		for;
+		
+		// foreach
+		foreach;
+		
+		// goto
 		goto;
-		if; implicit; in; int; interface; internal; is;
-		lock; long;
-		namespace; new; null;
-		object; operator; out; override;
-		params; private; protected; public;
-		readonly; ref; return;
-		sbyte; sealed; short; sizeof; stackalloc; static; string; struct; switch;
-		this; throw; true; try; typeof;
-		uint; ulong; unchecked; unsafe; ushort; using;
-		virtual; void; volatile;
+		
+		// if
+		if;
+		
+		// implicit
+		implicit;
+		
+		// in
+		in;
+		
+		// int
+		int;
+		
+		// interface
+		interface;
+		
+		// internal
+		internal;
+		
+		// is
+		is;
+		
+		// lock
+		lock;
+		
+		// long
+		long;
+		
+		// namespace
+		namespace;
+		
+		// new
+		new;
+		
+		// null
+		null;
+		
+		// object
+		object;
+		
+		// operator
+		operator;
+		
+		// out
+		out;
+		
+		// override
+		override;
+		
+		// params
+		params;
+		
+		// private
+		private;
+		
+		// protected
+		protected;
+		
+		// public
+		public;
+		
+		// readonly
+		readonly;
+		
+		// ref
+		ref;
+		
+		// return
+		return;
+		
+		// sbyte
+		sbyte;
+		
+		// sealed
+		sealed;
+		
+		// short
+		short;
+		
+		// sizeof
+		sizeof;
+		
+		// stackalloc
+		stackalloc;
+		
+		// static
+		static;
+		
+		// string
+		string;
+		
+		// struct
+		struct;
+		
+		// switch
+		switch;
+		
+		// this
+		this;
+		
+		// throw
+		throw;
+		
+		// true
+		true;
+		
+		// try
+		try;
+		
+		// typeof
+		typeof;
+		
+		// uint
+		uint;
+		
+		// ulong
+		ulong;
+		
+		// unchecked
+		unchecked;
+		
+		// unsafe
+		unsafe;
+		
+		// ushort
+		ushort;
+		
+		// using
+		using;
+		
+		// virtual
+		virtual;
+		
+		// void
+		void;
+		
+		// volatile
+		volatile;
+		
+		// while
 		while;
 	}
 	
