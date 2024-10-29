@@ -121,6 +121,11 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_ABSOLUTE_FILE_PATH,
                 InitialSolutionFacts.PERSON_DISPLAY_RAZOR_CONTENTS)
             .ConfigureAwait(false);
+            
+		await FileSystemProvider.File.WriteAllTextAsync(
+                InitialSolutionFacts.BLAZOR_CRUD_APP_ALL_C_SHARP_SYNTAX_ABSOLUTE_FILE_PATH,
+                InitialSolutionFacts.BLAZOR_CRUD_APP_ALL_C_SHARP_SYNTAX_CONTENTS)
+            .ConfigureAwait(false);
         
         // ExampleSolution.sln
         await FileSystemProvider.File.WriteAllTextAsync(

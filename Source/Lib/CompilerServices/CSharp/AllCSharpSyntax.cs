@@ -1,6 +1,9 @@
-namespace Luthetus.CompilerServices.CSharp;
+/*namespace Luthetus.CompilerServices.CSharp;
 
-/// <summary></summary>
+/// <summary>
+/// Aim to type out every possible syntax and combination of syntax in this file
+/// and do so as succinctly as possible (it doesn't have to compile). v1.0.0
+/// </summary>
 public class AllCSharpSyntax
 {
 	public void NonContextualKeywords()
@@ -129,3 +132,4 @@ public class AllCSharpSyntax
 	// Field
 	// Property
 }
+*/
