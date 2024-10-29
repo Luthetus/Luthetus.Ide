@@ -3,155 +3,50 @@ namespace Luthetus.CompilerServices.CSharp;
 /// <summary></summary>
 public class AllCSharpSyntax
 {
-	// Non-Contextual Keywords
-	// =======================
-    // abstract
-    // as
-    // base
-    // bool
-    // break
-    // byte
-    // case
-    // catch
-    // char
-    // checked
-    // class
-    // const
-    // continue
-    // decimal
-    // default
-    // delegate
-    // do
-    // double
-    // else
-    // enum
-    // event
-    // explicit
-    // extern
-    // false
-    // finally
-    // fixed
-    // float
-    // for
-    // foreach
-    // goto
-    // if
-    // implicit
-    // in
-    // int
-    // interface
-    // internal
-    // is
-    // lock
-    // long
-    // namespace
-    // new
-    // null
-    // object
-    // operator
-    // out
-    // override
-    // params
-    // private
-    // protected
-    // public
-    // readonly
-    // ref
-    // return
-    // sbyte
-    // sealed
-    // short
-    // sizeof
-    // stackalloc
-    // static
-    // string
-    // struct
-    // switch
-    // this
-    // throw
-    // true
-    // try
-    // typeof
-    // uint
-    // ulong
-    // unchecked
-    // unsafe
-    // ushort
-    // using
-    // virtual
-    // void
-    // volatile
-    // while
+	public void NonContextualKeywords()
+	{
+	    abstract; as;
+	    base; bool; break; byte;
+	    case; catch; char; checked; class; const; continue;
+	    decimal; default; delegate; do; double;
+	    else; enum; event; explicit; extern;
+	    false; finally; fixed; float; for; foreach;
+	    goto;
+	    if; implicit; in; int; interface; internal; is;
+	    lock; long;
+	    namespace; new; null;
+	    object; operator; out; override;
+	    params; private; protected; public;
+	    readonly; ref; return;
+	    sbyte; sealed; short; sizeof; stackalloc; static; string; struct; switch;
+	    this; throw; true; try; typeof;
+	    uint; ulong; unchecked; unsafe; ushort; using;
+	    virtual; void; volatile;
+	    while;
+    }
 
-    // Contextual Keywords
-    // ===================
-    // add
-    // and
-    // alias
-    // ascending
-    // args
-    // async
-    // await
-    // by
-    // descending
-    // dynamic
-    // equals
-    // file
-    // from
-    // get
-    // global
-    // group
-    // init
-    // into
-    // join
-    // let
-    // managed
-    // nameof
-    // nint
-    // not
-    // notnull
-    // nuint
-    // on
-    // or
-    // orderby
-    // partial
-    // record
-    // remove
-    // required
-    // scoped
-    // select
-    // set
-    // unmanaged
-    // value
-    // var
-    // when
-    // where
-    // with
-    // yield
-    
-    // Access Modifier
-    // ===============
-	// Public
-	// ProtectedInternal
-	// Protected
-	// Internal
-	// PrivateProtected
-	// Private
-
-	// Storage Modifier
-    // ================
-	// Struct
-    // Class
-    // Interface
-    // Enum
-    // Record
-    // RecordStruct
-    
-    // VariableKind
-    // ============
-	// Local
-	// Field
-	// Property
+    public void ContextualKeywords()
+    {
+	    add; and; alias; ascending; args; async; await;
+	    by;
+	    descending; dynamic;
+	    equals;
+	    file; from;
+	    get; global; group;
+	    init; into;
+	    join;
+	    let;
+	    managed;
+	    nameof; nint; not; notnull; nuint;
+	    on; or; orderby;
+	    partial;
+	    record; remove; required;
+	    scoped; select; set;
+	    unmanaged;
+	    value; var;
+	    when; where; with;
+	    yield;
+    }
 	
 	/// <summary>
 	/// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/
@@ -209,4 +104,28 @@ public class AllCSharpSyntax
 		// Assignment and lambda declaration
 		x = y; x += y; x -= y; x *= y; x /= y; x %= y; x &= y; x |= y; x ^= y; x <<= y; x >>= y; x >>>= y; x ??= y; =>;
 	}
+	
+	// Access Modifier
+    // ===============
+	// Public
+	// ProtectedInternal
+	// Protected
+	// Internal
+	// PrivateProtected
+	// Private
+
+	// Storage Modifier
+    // ================
+	// Struct
+    // Class
+    // Interface
+    // Enum
+    // Record
+    // RecordStruct
+    
+    // VariableKind
+    // ============
+	// Local
+	// Field
+	// Property
 }
