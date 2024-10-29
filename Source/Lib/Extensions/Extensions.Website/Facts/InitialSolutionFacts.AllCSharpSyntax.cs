@@ -151,7 +151,47 @@ public class AllCSharpSyntax
 	const int _number = 2;
 	string _text = ""abc"";
 	// ----Property----
-	
+	private List<Person> People { get; set; }
+	private List<Person> People { get; }
+	private List<Person> People { get; } = new List<Person>();
+	private List<Person> People { get; } = new();
+	private List<Person> People { get; } = new() { new Person(""John"", ""Doe""), new Person(""Jane"", ""Doe""), };
+	private List<Person> People { get; } = null!;
+	private List<Person> People => _people;
+	private List<Person> People => new List<Person>();
+	private List<Person> People => new();
+	private List<Person> People => new() { new Person(""John"", ""Doe""), new Person(""Jane"", ""Doe""), };
+	private List<Person> People => null!;
+	private int Number { get; }
+	private Person BobDoe { get; }
+	private Person People
+	{
+		get { return _people; }
+	}
+	private Person People
+	{
+		get => _people;
+	}
+	private Person People
+	{
+		get => _people;
+		set { _people = value; }
+	}
+	private Person People
+	{
+		get => _people;
+		set => _people = value;
+	}
+	private Person People
+	{
+		get { return _people; }
+		set => _people = value;
+	}
+	private Person People
+	{
+		get { return _people; }
+		set { _people = value; }
+	}
 	// ----Closure----
     
     public void NonContextualKeywords()
