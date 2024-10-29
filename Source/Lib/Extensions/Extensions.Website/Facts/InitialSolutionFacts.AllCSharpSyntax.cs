@@ -382,16 +382,22 @@ public class AllCSharpSyntax
 			Console.WriteLine(""Abc"");
 		
 		// lock
-		lock;
+		object obj = new();
+		lock (obj)
+		{
+			return 1;
+		}
+		lock (obj)
+			return 1;
 		
 		// long
-		long;
+		long number = 2;
 		
 		// namespace
 		namespace;
 		
 		// new
-		new;
+		var person = new Person();
 		
 		// null
 		null;
@@ -427,7 +433,7 @@ public class AllCSharpSyntax
 		ref;
 		
 		// return
-		return;
+		return 0;
 		
 		// sbyte
 		sbyte;
@@ -436,10 +442,10 @@ public class AllCSharpSyntax
 		sealed;
 		
 		// short
-		short;
+		short number = 0;
 		
 		// sizeof
-		sizeof;
+		var size = sizeof(int);
 		
 		// stackalloc
 		stackalloc;
@@ -448,34 +454,63 @@ public class AllCSharpSyntax
 		static;
 		
 		// string
-		string;
+		string text = ""Abc"";
 		
 		// struct
 		struct;
 		
 		// switch
-		switch;
+		var character = 'c';
+		switch (character)
+		{
+			case 'a':
+				break;
+			case 'b':
+			case 'c':
+				break;
+			case 'd':
+				if (false)
+					goto default;
+				break;
+			default:
+				break;
+		}
+		return character switch // (TODO: The 'and' logic / other logic)
+		{
+			'a' => 0,
+			_ => 1,
+		};
 		
 		// this
 		this;
 		
 		// throw
-		throw;
+		throw new Exception();
 		
 		// true
-		true;
+		var boolean = true;
 		
 		// try
-		try;
+		try
+		{
+			Console.WriteLine(""Abc"");
+		}
+		try
+			Console.WriteLine(""Abc"");
+		try { Console.WriteLine(""Abc""); }
+		catch (ApplicationException) { Console.WriteLine(""Abc""); }
+		catch (Exception e) { Console.WriteLine(""Abc""); }
+		finally { Console.WriteLine(""Abc""); }
+		
 		
 		// typeof
-		typeof;
+		Type t = typeof(int);
 		
 		// uint
-		uint;
+		uint number = 2;
 		
 		// ulong
-		ulong;
+		ulong number = 2;
 		
 		// unchecked
 		unchecked;
@@ -484,7 +519,7 @@ public class AllCSharpSyntax
 		unsafe;
 		
 		// ushort
-		ushort;
+		ushort number = 2;
 		
 		// using
 		using;
@@ -499,29 +534,143 @@ public class AllCSharpSyntax
 		volatile;
 		
 		// while
-		while;
+		while (false)
+		{
+			break;
+		}
+		while (false)
+			break;
 	}
 	
     public void ContextualKeywords()
     {
-    	add; and; alias; ascending; args; async; await;
+    	// add;
+    	add;
+    	
+    	// and;
+    	and;
+    	
+    	// alias;
+    	alias;
+
+    	// ascending;
+    	ascending;
+
+    	// args;
+    	args;
+
+    	// async;
+    	async;
+
+    	// await;
+    	await;
+
+    	// by;
     	by;
-    	descending; dynamic;
+
+    	// descending;
+    	descending;
+
+    	// dynamic;
+    	dynamic;
+
+    	// equals;
     	equals;
-    	file; from;
-    	get; global; group;
-    	init; into;
+
+    	// file;
+    	file;
+
+    	// from;
+    	from;
+
+    	// get;
+    	get;
+
+    	// global;
+    	global;
+
+    	// group;
+    	group;
+
+    	// init;
+    	init;
+
+    	// into;
+    	into;
+
+    	// join;
     	join;
+
+    	// let;
     	let;
+
+    	// managed;
     	managed;
-    	nameof; nint; not; notnull; nuint;
-    	on; or; orderby;
+
+    	// nameof;
+    	nameof;
+
+    	// nint;
+    	nint;
+
+    	// not;
+    	not;
+
+    	// notnull;
+    	notnull;
+
+    	// nuint;
+    	nuint;
+
+    	// on;
+    	on;
+
+    	// or;
+    	or;
+
+    	// orderby;
+    	orderby;
+
+    	// partial;
     	partial;
-    	record; remove; required;
-    	scoped; select; set;
+
+    	// record;
+    	record;
+
+    	// remove;
+    	remove;
+
+    	// required;
+    	required;
+
+    	// scoped;
+    	scoped;
+
+    	// select;
+    	select;
+
+    	// set;
+    	set;
+
+    	// unmanaged;
     	unmanaged;
-    	value; var;
-    	when; where; with;
+
+    	// value;
+    	value;
+
+    	// var;
+    	var;
+
+    	// when;
+    	when;
+
+    	// where;
+    	where;
+
+    	// with;
+    	with;
+    	
+    	// yield;
     	yield;
     }
     
