@@ -232,10 +232,11 @@ public class AllCSharpSyntax
 		abstract;
 		
 		// as
-		as;
+		var person = new Person();
+		var rectangle = person as Rectangle;
 		
 		// base
-		base;
+		base.ToString();
 		
 		// bool
 		bool x = true;
@@ -244,16 +245,24 @@ public class AllCSharpSyntax
 		break;
 		
 		// byte
-		byte;
+		byte value = default;
 		
 		// case
 		case;
 		
-		// catch
-		catch;
+		// catch (TODO: The pattern matching catch syntax where you can catch more than 1 is vaguely in my mind, should implement that.)
+		catch (Exception)
+		{
+			throw;
+		}
+		catch (Exception e)
+		{
+			// Eat
+		}
 		
 		// char
-		char;
+		char character = 'a';
+		char characterEscaped = '\n';
 		
 		// checked
 		checked;
@@ -262,13 +271,13 @@ public class AllCSharpSyntax
 		class;
 		
 		// const
-		const;
+		const int x = 2;
 		
 		// continue
 		continue;
 		
 		// decimal
-		decimal;
+		decimal number = 2.01;
 		
 		// default
 		default;
@@ -277,13 +286,19 @@ public class AllCSharpSyntax
 		delegate;
 		
 		// do
-		do;
+		do
+		{
+			Console.WriteLine(""Abc"");
+		} while (false);
 		
 		// double
-		double;
+		double number = 2.01;
 		
 		// else
-		else;
+		else
+		{
+			Console.WriteLine(""else"");
+		}
 		
 		// enum
 		enum;
@@ -298,28 +313,51 @@ public class AllCSharpSyntax
 		extern;
 
 		// false
-		false;
+		var x = false;
 
 		// finally
-		finally;
+		finally
+		{
+			Console.WriteLine(""finally"");
+		}
 
 		// fixed
 		fixed;
 
 		// float
-		float;
+		float number = 2.01;
 
 		// for
-		for;
+		for (int i = 0; i < 10; i++)
+		{
+			Console.WriteLine(""Abc"");
+		}
+		for (int i = 0; i < 10; i++)
+			Console.WriteLine(""Abc"");
+		for (var i = 0; i < 10; i++)
+			Console.WriteLine(""Abc"");
+		for (;;)
+			break;
 		
 		// foreach
-		foreach;
+		foreach (var item in list)
+		{
+			Console.WriteLine(""Abc"");
+		}
+		foreach (var item in list)
+			Console.WriteLine(""Abc"");
+		foreach (var item in ExplicitClassReference.GetList())
+			Console.WriteLine(""Abc"");
 		
 		// goto
-		goto;
+		someLabel:
+		if (false)
+			goto someLabel;
 		
 		// if
-		if;
+		var node = new Node();
+		if ((node = node.Next) is null)
+			return;
 		
 		// implicit
 		implicit;
@@ -328,7 +366,7 @@ public class AllCSharpSyntax
 		in;
 		
 		// int
-		int;
+		int number = 2;
 		
 		// interface
 		interface;
@@ -337,7 +375,11 @@ public class AllCSharpSyntax
 		internal;
 		
 		// is
-		is;
+		var person = new Person();
+		if (person is Rectangle)
+			Console.WriteLine(""Abc"");
+		if (person is Rectangle rectangle)
+			Console.WriteLine(""Abc"");
 		
 		// lock
 		lock;
