@@ -193,6 +193,38 @@ public class AllCSharpSyntax
 		set { _people = value; }
 	}
 	// ----Closure----
+	public void SomeMethod()
+	{
+		// Value Type
+		{
+			var x = 2;
+			
+			// Lambda Expression
+			var func = new Func<int>(() => x);
+			
+			// Lambda Function
+			var func = new Func<int>(() =>
+			{
+				Console.WriteLine(x);
+				return x;
+			});
+		}
+		
+		// Reference Type
+		{
+			var person = new Person(""Bob"", ""Doe"");
+			
+			// Lambda Expression
+			var func = new Func<int>(() => person);
+			
+			// Lambda Function
+			var func = new Func<int>(() =>
+			{
+				Console.WriteLine(person);
+				return person;
+			});
+		}
+	}
     
     public void NonContextualKeywords()
 	{
