@@ -9,67 +9,150 @@ public partial class InitialSolutionFacts
 /// <summary> Aim to type out every possible syntax and combination of syntax in this file and do so as succinctly as possible (it doesn't have to compile). https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/ ;v1.0.0 </summary>
 public class AllCSharpSyntax 
 {
-	public void AccessModifiers() {
-		public A;
-		protected internal B;
-		protected C;
-		internal D;
-		private protected E;
-		private F;
-	}
+	// Access Modifiers
+	// ================
+	public A;
+	protected internal B;
+	protected C;
+	internal D;
+	private protected E;
+	private F;
 
-	public void StorageModifiers() {
-		struct A { }
-		class B { }
-		interface C { }
-		enum D { }
-		record E { }
-		record struct F { }
-	}
+	// Storage Modifiers
+	// =================
+	struct A { }
+	class B { }
+	interface C { }
+	enum D { }
+	record E { }
+	record struct F { }
 	
-	public void AccessModifiers_StorageModifiers() {
-		public struct AA { }
-		public class AB { }
-		public interface AC { }
-		public enum AD { }
-		public record AE { }
-		public record struct AF { }
-		
-		protected internal struct BA { }
-		protected internal class BB { }
-		protected internal interface BC { }
-		protected internal enum BD { }
-		protected internal record BE { }
-		protected internal record struct BF { }
-		
-		protected struct CA { }
-		protected class CB { }
-		protected interface CC { }
-		protected enum CD { }
-		protected record CE { }
-		protected record struct CF { }
-		
-		internal struct DA { }
-		internal class DB { }
-		internal interface DC { }
-		internal enum DD { }
-		internal record DE { }
-		internal record struct DF { }
-		
-		private protected struct EA { }
-		private protected class EB { }
-		private protected interface EC { }
-		private protected enum ED { }
-		private protected record EE { }
-		private protected record struct EF { }
-		
-		private struct FA { }
-		private class FB { }
-		private interface FC { }
-		private enum FD { }
-		private record FE { }
-		private record struct FF { }
+	// AccessModifiers and StorageModifiers
+	// ====================================
+	public struct AA { }
+	public class AB { }
+	public interface AC { }
+	public enum AD { }
+	public record AE { }
+	public record struct AF { }
+	//
+	protected internal struct BA { }
+	protected internal class BB { }
+	protected internal interface BC { }
+	protected internal enum BD { }
+	protected internal record BE { }
+	protected internal record struct BF { }
+	//
+	protected struct CA { }
+	protected class CB { }
+	protected interface CC { }
+	protected enum CD { }
+	protected record CE { }
+	protected record struct CF { }
+	//
+	internal struct DA { }
+	internal class DB { }
+	internal interface DC { }
+	internal enum DD { }
+	internal record DE { }
+	internal record struct DF { }
+	//
+	private protected struct EA { }
+	private protected class EB { }
+	private protected interface EC { }
+	private protected enum ED { }
+	private protected record EE { }
+	private protected record struct EF { }
+	//
+	private struct FA { }
+	private class FB { }
+	private interface FC { }
+	private enum FD { }
+	private record FE { }
+	private record struct FF { }
+    
+    // Primary Constructor
+    // ===================
+	struct Aaa(string MyString, Rectangle MyRectangle) { }
+	class Bbb(string MyString, Rectangle MyRectangle) { }
+	interface Ccc(string MyString, Rectangle MyRectangle) { }
+	enum Ddd(string MyString, Rectangle MyRectangle) { }
+	record Eee(string MyString, Rectangle MyRectangle) { }
+	record struct Fff(string MyString, Rectangle MyRectangle) { }
+	
+	// Variables
+    // =========
+    //
+    // ----Local----
+    private void SomeMethod()
+    {
+    	// var/implicit
+    	// 	by expression
+    	// 		by literal
+    	//     	by reference
+    	// 		by invocation
+    	// keyword
+    	// identifier
+    	
+    	int GetInt() => 3;
+    	Person GetPerson() => 3;
+    	
+    	// var/implicit keyword
+    	{
+	    	var a = 2;          // Literal
+	    	var b = a;          // Reference
+	    	var c = GetInt();   // Function Invocation
+	    	var d = new int(4); // Constructor Invocation (does int even have a constructor? this is for demonstration purposes only).
+	    	// Put all the single case expressions into a more complex expression:
+	    	var e = 2 + a + GetInt() + new int(4);
+    	}
+    	
+    	// keyword
+    	{
+	    	int a = 2;          // Literal
+	    	int b = a;          // Reference
+	    	int c = GetInt();   // Function Invocation
+	    	int d = new int(4); // Constructor Invocation (does int even have a constructor? this is for demonstration purposes only).
+	    	// Put all the single case expressions into a more complex expression:
+	    	int e = 2 + a + GetInt() + new int(4);
+    	}
+    	
+    	// var/implicit identifier
+    	{
+    		var a = 2;                             // Literal
+	    	var b = a;                             // Reference
+	    	var c = GetPerson();                   // Function Invocation
+	    	var d = new Person(""John"", ""Doe""); // Constructor Invocation
+	    	// Put all the single case expressions into a more complex expression:
+	    	var e = 2 + a + GetInt() + new int(4);
+    	}
+    	
+    	// identifier
+    	{
+    		Person a = 2;                             // Literal
+	    	Person b = a;                             // Reference
+	    	Person c = GetPerson();                   // Function Invocation
+	    	Person d = new Person(""John"", ""Doe""); // Constructor Invocation
+	    	// Put all the single case expressions into a more complex expression:
+	    	Person e = 2 + a + GetPerson() + new int(4);
+    	}
     }
+    //
+	// ----Field----
+	private List<Person> _people = new List<Person>();
+	private List<Person> _people = new();
+	private List<Person> _people = new() { new Person(""John"", ""Doe""), new Person(""Jane"", ""Doe""), };
+	private List<Person> _people = new() { new Person(""John"", ""Doe""), new Person(""Jane"", ""Doe"") };
+	//
+	private readonly List<Person> _people = new();
+	public static readonly Person BobDoe = new Person(""Bob"", ""Doe"");
+	//
+	readonly List<Person> _people = new();
+	const int _number = 2;
+	string _text = ""abc"";
+	// ----Property----
+	
+	// ----Closure----
     
     public void NonContextualKeywords()
 	{
@@ -149,16 +232,10 @@ public class AllCSharpSyntax
 		/* Null-coalescing operator */
 		x ?? y;
 		/* Conditional operator */
-		c ? t : f
+		c ? t : f;
 		/* Assignment and lambda declaration */
 		x = y; x += y; x -= y; x *= y; x /= y; x %= y; x &= y; x |= y; x ^= y; x <<= y; x >>= y; x >>>= y; x ??= y; =>;
 	}
-    
-    // VariableKind
-    // ============
-	// Local
-	// Field
-	// Property
 }
 ";
 }
