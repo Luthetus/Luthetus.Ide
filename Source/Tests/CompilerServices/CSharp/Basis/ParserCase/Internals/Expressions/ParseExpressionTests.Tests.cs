@@ -1763,7 +1763,104 @@ void Aaa()
     [Fact]
     public void SwitchStatement()
     {
-    	/**/
+    	/*
+    	- The switch statement cannot be part of an expression.
+    	- For this reason, it starts with the keyword switch,
+    	  	so when parsing it can easily be seen at the start of the
+    	  	statement, that it is a switch statement.
+    	- Switch expression can be embedded,
+    	  	and for that reason it starts with the IdentifierToken,
+    	  	in order to enter the expression parsing code,
+    	  	which then goes on to see the 'switch' keyword.
+    	- It isn't to say that the language had to be written this way.
+    	- But instead that it seems extremely intentional.
+    	- The switch statement has a scope for its initial body.
+    	- But, the individual case(s) do not create their own scopes.
+    	- One can put an "arbitrary code block" after the 'case' definition,
+    	  	in order to create a scope for that 'case' specifically.
+    	  	- But note: this just always the case in C# it isn't 'switch' specific.
+    	- In C# a switch statement cannot fall through its case(s) after
+    	  	handling the initial case that jumped to.
+    	- Many labels can be defined for the same "handling code".
+    	- A 'default' label exists.
+    	- 'goto default' also exists, but is this not just normal C#?
+    	  	you can goto any label you have in scope this isn't something special.
+    	- But maybe the 'default' name for the label is uniquely a 'switch' statement permitted name.
+    	- Are you able to goto any of the " case 'a': " label definitions?
+    		  - If you wanted to do this, but could not "goto case 'a': "
+    		    	could you put a normal C# label alongside " case 'a': "
+    		    	and goto the normal C# label?
+    		    	- I presume you could ONLY if you put the normal C# label
+    		    	  	after the 'case' and before the "handling code".
+    		    	  	- You could probably put a label anywhere within the "handling code" too,
+    		    	  	  	but I'm speaking of this example specifically where you
+    		    	  	  	wanted to jump in a equivalent way as "goto case 'a': ".
+    		    	  	  	So in this case you'd  want it after the label, and at the start of the "handling code".
+    	- Is it possible to parse the switch statement's body as normal C# code, if I implemented C# label syntax?
+    	  	- The issue would appear to be with the 'case' keyword that is at the start of "label".
+    	  	- As well, the "label" doesn't have an IdentifierToken, it instead is a unique compile time constant.
+    	- The 'switch' statement would be a code block builder that skips until 'case', then skips until ':'.
+    	- At this point return to the main parser loop.
+    	- Then hit the 'case' keyword which would actually invoke its own method so I could probably do this easily.
+    		- public static void HandleCaseTokenKeyword(KeywordToken consumedKeywordToken, CSharpParserModel model) {...}
+    			- ParseDefaultKeywords.cs:48 is where the method is defined.
+    	- So, the switch statement needs to have its expression parsed (the one within its parentheses).
+    	  	- Then it goes to main loop and starts parsing the code block node.
+    	  	- This then hits the 'case' keyword.
+    	  	- Read until the ':' then return back out again.
+    		  - But, what about the 'default' keyword?
+    		  - If the statement parsing code sees the 'default' keyword,
+    		    	then check if the next token is the ColonToken.
+    		    	- If so, then it is the 'default' leg of the switch statement.
+    	- This sounds like an effective "first approach" to a solution.
+    	*/
+    
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+switch (character)
+{
+	case 'a':
+	{
+		break;
+	}
+	case 'b':
+	case 'c':
+		break;
+	case 'd':
+		if (false)
+			goto default;
+		break;
+	default:
+		break;
+}
+";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		throw new NotImplementedException();
+    }
+    
+    public void SwitchExpression()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+return character switch
+{
+	'a' => 0,
+	_ => 1,
+};
+";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
 		throw new NotImplementedException();
     }
     
