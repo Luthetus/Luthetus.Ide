@@ -1813,6 +1813,15 @@ void Aaa()
     		    	then check if the next token is the ColonToken.
     		    	- If so, then it is the 'default' leg of the switch statement.
     	- This sounds like an effective "first approach" to a solution.
+    	- In order to track each leg of the switch statement I can create a new
+    	  	CodeBlockBuilder but, have this builder act in a special way.
+    	  	- It would capture the statements just as a normal CodeBlockBuilder,
+    	  	  	but when the code block is finished, it moves its nodes to the parentCodeBlockBuilder.
+    	  	  	- In the end, the "special" code block builder for the legs would just track the start and end indices.
+    	  	  	- But, isn't the start the label, and the end the next label or CloseBraceToken?
+		- Currently the expression parser is trying to parse the 'ColonToken' in " case 'a': ".
+		  	- If the statement parser loop could "skip" over this, the parser would be in a better "state" for parsing the
+		  	  	remainder of the file.
     	*/
     
     	var resourceUri = new ResourceUri("./unitTesting.txt");
