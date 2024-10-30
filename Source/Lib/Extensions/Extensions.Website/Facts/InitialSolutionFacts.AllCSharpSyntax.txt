@@ -1,4 +1,4 @@
-namespace Luthetus.Ide.Wasm.Facts;
+/*namespace Luthetus.Ide.Wasm.Facts;
 
 public partial class InitialSolutionFacts
 {
@@ -714,3 +714,4 @@ public class AllCSharpSyntax
 }
 ";
 }
+*/
