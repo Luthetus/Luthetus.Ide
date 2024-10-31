@@ -53,6 +53,7 @@ public class ParseDefaultKeywords
         {
         	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         	{
+        		_ = model.TokenWalker.Consume();
         		break;
         	}
         
