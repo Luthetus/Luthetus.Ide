@@ -20,7 +20,8 @@ public static class ParseVariables
         model.SyntaxStack.Push(variableReferenceNode);
     }
 
-    public static void HandleVariableDeclaration(
+	/// <summary>Function invocation which uses the 'out' keyword.</summary>
+    public static IVariableDeclarationNode? HandleVariableDeclarationExpression(
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
         VariableKind variableKind,
@@ -56,11 +57,28 @@ public static class ParseVariables
 		else
 		{
 			model.DiagnosticBag.ReportTodoException(consumedIdentifierToken.TextSpan, $"The {nameof(VariableKind)}: {variableKind} was not recognized.");
-			return;
+			return null;
 		}
 
         model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+        return variableDeclarationNode;
+    }
+    
+    public static void HandleVariableDeclarationStatement(
+        TypeClauseNode consumedTypeClauseNode,
+        IdentifierToken consumedIdentifierToken,
+        VariableKind variableKind,
+        CSharpParserModel model)
+    {
+		var variableDeclarationNode = HandleVariableDeclarationExpression(
+			consumedTypeClauseNode,
+	        consumedIdentifierToken,
+	        variableKind,
+	        model);
+	        
+	    if (variableDeclarationNode is null)
+	    	return;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         {

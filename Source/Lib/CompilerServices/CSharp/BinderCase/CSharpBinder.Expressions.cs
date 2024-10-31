@@ -646,6 +646,34 @@ public partial class CSharpBinder
 				BindStringVerbatimExpression((AtToken)token, (CSharpParserModel)model);
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
+				if (ParseTypes.IsPossibleTypeClause(model.TokenWalker.Next, (CSharpParserModel)model))
+				{
+					// The code in this block is very confusing due to the Consume() and Backtrack() usages.
+					//
+					// The issue is that the statement loop (the main parser loop) invokes
+					// 'Consume()' at the start of the while loop.
+					//
+					// The expression loop (the secondary parser loop) invokes
+					// 'Consume()' at the end of the while loop.
+					//
+					// TODO: The statement loop (the main parser loop) needs to invoke 'Consume()' at the end of the while loop...
+					//       ...(or vice versa, whichever is deemed a better fit, just be consistent in both loops).
+				
+					_ = model.TokenWalker.Consume();
+					var typeClauseNode = ParseTypes.MatchTypeClause((CSharpParserModel)model);
+					
+					var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+					_ = model.TokenWalker.Backtrack();
+					_ = model.TokenWalker.Backtrack();
+					
+					_ = ParseVariables.HandleVariableDeclarationExpression(
+				        typeClauseNode,
+				        identifierToken,
+				        VariableKind.Local,
+				        (CSharpParserModel)model);
+				}
+				
+				return emptyExpressionNode;
 			case SyntaxKind.InTokenKeyword:
 			case SyntaxKind.RefTokenKeyword:
 				return emptyExpressionNode;

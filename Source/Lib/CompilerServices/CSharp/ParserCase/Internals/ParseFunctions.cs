@@ -365,7 +365,7 @@ public class ParseFunctions
                         var outVariableTypeClause = model.TokenWalker.MatchTypeClauseNode(model);
                         var outVariableIdentifier = (IdentifierToken)model.TokenWalker.Peek(0);
 
-                        ParseVariables.HandleVariableDeclaration(
+                        ParseVariables.HandleVariableDeclarationExpression(
                             outVariableTypeClause,
                             outVariableIdentifier,
                             VariableKind.Local,
