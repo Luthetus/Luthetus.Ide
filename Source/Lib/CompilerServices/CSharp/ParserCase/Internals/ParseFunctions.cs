@@ -444,28 +444,29 @@ public class ParseFunctions
             var hasRefKeyword = false;
 
             // Check for keywords: { 'params', 'out', 'in', 'ref', }
+            // Ignore any unmatched keywords
             {
-                // TODO: Erroneously putting an assortment of the keywords: { 'params', 'out', 'in', 'ref', }
-                if (SyntaxKind.ParamsTokenKeyword == model.TokenWalker.Current.SyntaxKind)
-                {
-                    _ = model.TokenWalker.Consume();
-                    hasParamsKeyword = true;
-                }
-                else if (SyntaxKind.OutTokenKeyword == model.TokenWalker.Current.SyntaxKind)
-                {
-                    _ = model.TokenWalker.Consume();
-                    hasOutKeyword = true;
-                }
-                else if (SyntaxKind.InTokenKeyword == model.TokenWalker.Current.SyntaxKind)
-                {
-                    _ = model.TokenWalker.Consume();
-                    hasInKeyword = true;
-                }
-                else if (SyntaxKind.RefTokenKeyword == model.TokenWalker.Current.SyntaxKind)
-                {
-                    _ = model.TokenWalker.Consume();
-                    hasRefKeyword = true;
-                }
+            	if (UtilityApi.IsKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) &&
+            		!UtilityApi.IsTypeIdentifierKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind))
+            	{
+            		switch (model.TokenWalker.Current.SyntaxKind)
+            		{
+            			case SyntaxKind.ParamsTokenKeyword:
+            				hasParamsKeyword = true;
+            				break;
+            			case SyntaxKind.OutTokenKeyword:
+            				hasOutKeyword = true;
+            				break;
+            			case SyntaxKind.InTokenKeyword:
+            				hasInKeyword = true;
+            				break;
+            			case SyntaxKind.RefTokenKeyword:
+            				hasRefKeyword = true;
+            				break;
+            		}
+
+            		_ = model.TokenWalker.Consume();
+            	}
             }
 
             // TypeClause
