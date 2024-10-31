@@ -49,8 +49,6 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        Console.WriteLine(nameof(HandleCaseTokenKeyword));
-        
         while (!model.TokenWalker.IsEof)
         {
         	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
