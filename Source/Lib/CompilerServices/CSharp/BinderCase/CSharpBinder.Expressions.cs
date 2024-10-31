@@ -645,6 +645,10 @@ public partial class CSharpBinder
 			case SyntaxKind.AtToken:
 				BindStringVerbatimExpression((AtToken)token, (CSharpParserModel)model);
 				return emptyExpressionNode;
+			case SyntaxKind.OutTokenKeyword:
+			case SyntaxKind.InTokenKeyword:
+			case SyntaxKind.RefTokenKeyword:
+				return emptyExpressionNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
 		}
