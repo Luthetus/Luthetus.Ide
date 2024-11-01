@@ -164,6 +164,33 @@ public partial class CSharpBinder
 			model.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
 			return EmptyExpressionNode.Empty;
 		}
+		else if (token.SyntaxKind == SyntaxKind.IsTokenKeyword)
+		{
+			ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				ambiguousIdentifierExpressionNode,
+				model);
+		
+			_ = model.TokenWalker.Consume(); // Consume the IsTokenKeyword
+			
+			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.NotTokenContextualKeyword)
+				_ = model.TokenWalker.Consume(); // Consume the NotTokenKeyword
+			
+			var typeClauseNode = ParseTypes.MatchTypeClause((CSharpParserModel)model);
+			
+			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.IdentifierToken)
+			{
+				var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+				
+				_ = ParseVariables.HandleVariableDeclarationExpression(
+			        typeClauseNode,
+			        identifierToken,
+			        VariableKind.Local,
+			        (CSharpParserModel)model);
+			}
+			
+			return ambiguousIdentifierExpressionNode;
+		}
 	
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, token);
 	}
