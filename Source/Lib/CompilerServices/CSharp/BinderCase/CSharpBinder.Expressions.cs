@@ -690,8 +690,12 @@ public partial class CSharpBinder
 					var typeClauseNode = ParseTypes.MatchTypeClause((CSharpParserModel)model);
 					
 					var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-					_ = model.TokenWalker.Backtrack();
-					_ = model.TokenWalker.Backtrack();
+					
+					// TODO: Why was I Backtracking here? It puts the code at risk for an infinite loop, and doesn't seem necessary.
+					{
+						//_ = model.TokenWalker.Backtrack();
+						//_ = model.TokenWalker.Backtrack();
+					}
 					
 					_ = ParseVariables.HandleVariableDeclarationExpression(
 				        typeClauseNode,
