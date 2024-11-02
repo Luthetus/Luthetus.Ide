@@ -40,12 +40,27 @@
             break;
         case "LambdaSymbol":
             <text>
-                <span class="luth_te_keyword">
-                    lambda
-                </span>
+                <span class="luth_te_keyword">lambda</span><!--
+                
+                -->:<br/>
 
                 <span class="@(string.Empty /* Lambdas do not have their own css class as of (2024-11-02) */)">
+                	
+                	@{ var lambdaSymbol = (LambdaSymbol)localSymbol; }
+                	
+                	()
+                	
+                	@* => *@
                     @localSymbol.TextSpan.GetText()
+                    
+                    @if (lambdaSymbol.LambdaExpressionNode.CodeBlockNodeIsExpression)
+                    {
+                    	<text> ...;</text>
+                    }
+                    else
+                    {
+                    	<text> {...}</text>
+                    }
                 </span>
             </text>
             break;

@@ -851,7 +851,8 @@ public partial class CSharpBinder
 			    token.TextSpan.ResourceUri,
 			    token.TextSpan.SourceText);
 		
-			((CSharpBinder)model.Binder).AddSymbolDefinition(new LambdaSymbol(textSpan), (CSharpParserModel)model);
+			((CSharpBinder)model.Binder).AddSymbolDefinition(
+				new LambdaSymbol(textSpan, lambdaExpressionNode), (CSharpParserModel)model);
 		
 			if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
