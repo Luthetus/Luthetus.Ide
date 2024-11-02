@@ -38,6 +38,17 @@
                 </span>
             </text>
             break;
+        case "LambdaSymbol":
+            <text>
+                <span class="luth_te_keyword">
+                    lambda
+                </span>
+
+                <span class="@(string.Empty /* Lambdas do not have their own css class as of (2024-11-02) */)">
+                    @localSymbol.TextSpan.GetText()
+                </span>
+            </text>
+            break;
         case "VariableSymbol":
             <text>
                 <span class="luth_te_keyword">

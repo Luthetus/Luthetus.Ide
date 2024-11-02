@@ -835,6 +835,24 @@ public partial class CSharpBinder
 	{
 		if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
+			int startInclusiveIndex;
+			
+			if (model.TokenWalker.Previous.SyntaxKind == SyntaxKind.EqualsToken)
+				startInclusiveIndex = model.TokenWalker.Previous.TextSpan.StartingIndexInclusive;
+			else
+				startInclusiveIndex = token.TextSpan.StartingIndexInclusive;
+			
+			var endExclusiveIndex = token.TextSpan.EndingIndexExclusive;
+			
+			var textSpan = new TextEditorTextSpan(
+				startInclusiveIndex,
+			    endExclusiveIndex,
+			    (byte)GenericDecorationKind.None,
+			    token.TextSpan.ResourceUri,
+			    token.TextSpan.SourceText);
+		
+			((CSharpBinder)model.Binder).AddSymbolDefinition(new LambdaSymbol(textSpan), (CSharpParserModel)model);
+		
 			if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
 				lambdaExpressionNode.CodeBlockNodeIsExpression = false;
