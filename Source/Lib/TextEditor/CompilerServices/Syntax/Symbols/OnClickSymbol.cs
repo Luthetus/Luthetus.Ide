@@ -22,7 +22,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 ///       'OnClickSymbol' of which is not supposed to alter the syntax highlighting.
 ///       (it depends on the order that the symbols are applied).
 /// </summary>
-public sealed record OnClickSymbol : ISymbol
+public record struct OnClickSymbol : ISymbol
 {
 	public OnClickSymbol(
 		TextEditorTextSpan textSpan,
