@@ -1,3 +1,4 @@
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -25,7 +26,7 @@ public static class ParseVariables
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
         VariableKind variableKind,
-        CSharpParserModel model)
+        IParserModel model)
     {
 		IVariableDeclarationNode variableDeclarationNode;
 
@@ -69,7 +70,7 @@ public static class ParseVariables
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
         VariableKind variableKind,
-        CSharpParserModel model)
+        IParserModel model)
     {
 		var variableDeclarationNode = HandleVariableDeclarationExpression(
 			consumedTypeClauseNode,
@@ -88,7 +89,7 @@ public static class ParseVariables
                     variableDeclarationNode,
                     (EqualsToken)model.TokenWalker.Consume(),
                     (CloseAngleBracketToken)model.TokenWalker.Consume(),
-                    model);
+                    (CSharpParserModel)model);
             }
             else
             {
@@ -96,7 +97,7 @@ public static class ParseVariables
                 HandleVariableAssignment(
                     consumedIdentifierToken,
                     (EqualsToken)model.TokenWalker.Consume(),
-                    model);
+                    (CSharpParserModel)model);
             }
         }
         else
@@ -115,7 +116,7 @@ public static class ParseVariables
             HandlePropertyDeclaration(
                 variableDeclarationNode,
                 (OpenBraceToken)model.TokenWalker.Consume(),
-                model);
+                (CSharpParserModel)model);
         }
         else
         {

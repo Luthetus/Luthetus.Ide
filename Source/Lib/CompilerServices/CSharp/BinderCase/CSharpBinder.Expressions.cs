@@ -186,7 +186,7 @@ public partial class CSharpBinder
 			        typeClauseNode,
 			        identifierToken,
 			        VariableKind.Local,
-			        (CSharpParserModel)model);
+			        model);
 			}
 			
 			return ambiguousIdentifierExpressionNode;
@@ -701,7 +701,7 @@ public partial class CSharpBinder
 				        typeClauseNode,
 				        identifierToken,
 				        VariableKind.Local,
-				        (CSharpParserModel)model);
+				        model);
 				}
 				
 				return emptyExpressionNode;
@@ -982,7 +982,11 @@ public partial class CSharpBinder
 				return parenthesizedExpressionNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
 			case SyntaxKind.EqualsToken:
 				if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-					return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				{
+					var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+					lambdaExpressionNode.SetVariableDeclarationNodeList(parenthesizedExpressionNode.InnerExpression, model);
+					return lambdaExpressionNode;
+				}
 				
 				return parenthesizedExpressionNode;
 			default:
@@ -993,6 +997,15 @@ public partial class CSharpBinder
 	public IExpressionNode ParenthesizedMergeExpression(
 		ParenthesizedExpressionNode parenthesizedExpressionNode, IExpressionNode expressionSecondary, IParserModel model)
 	{
+		if (model.TokenWalker.Peek(1).SyntaxKind == SyntaxKind.EqualsToken &&
+			model.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+		{
+			Console.Write("Aaa");
+			var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			lambdaExpressionNode.SetVariableDeclarationNodeList(expressionSecondary, model);
+			return lambdaExpressionNode;
+		}
+	
 		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
 			expressionSecondary = ForceDecisionAmbiguousIdentifier(parenthesizedExpressionNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, model);

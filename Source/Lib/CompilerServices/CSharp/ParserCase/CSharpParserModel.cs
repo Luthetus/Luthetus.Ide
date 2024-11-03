@@ -1,9 +1,12 @@
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
@@ -54,6 +57,32 @@ public class CSharpParserModel : IParserModel
     /// That is to say, this action would create the function definition node and then append it.
     /// </summary>
     public Stack<Action<CodeBlockNode>> FinalizeCodeBlockNodeActionStack { get; set; }
+    
+    public IVariableDeclarationNode? HandleVariableDeclarationExpression(
+    	TypeClauseNode consumedTypeClauseNode,
+        IdentifierToken consumedIdentifierToken,
+        VariableKind variableKind,
+        IParserModel model)
+    {
+    	return ParseVariables.HandleVariableDeclarationExpression(
+	        consumedTypeClauseNode,
+	        consumedIdentifierToken,
+	        variableKind,
+	        model);
+    }
+    
+    public void HandleVariableDeclarationStatement(
+        TypeClauseNode consumedTypeClauseNode,
+        IdentifierToken consumedIdentifierToken,
+        VariableKind variableKind,
+        IParserModel model)
+    {
+    	ParseVariables.HandleVariableDeclarationStatement(
+	        consumedTypeClauseNode,
+	        consumedIdentifierToken,
+	        variableKind,
+	        model);
+    }
     
     IBinder IParserModel.Binder => Binder;
     IBinderSession IParserModel.BinderSession => BinderSession;
