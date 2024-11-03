@@ -48,6 +48,10 @@
                 	
                 	@{ var lambdaSymbol = (LambdaSymbol)localSymbol; }
                 	
+                	<!--
+                		This UI for the lambda is super odd to read. I'm working on the lambda parsing and I can't remember off the top of my head how to get rid of a space between
+                		UI elements and I'm not done with the parsing so I really don't wanna waste anytime on this I just put a bunch of comments to line them together.
+                	-->
                 	<span>
 	                	(<!--
 	                	-->@for (int i = 0; i < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count; i++)
