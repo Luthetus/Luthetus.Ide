@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
@@ -1387,15 +1388,88 @@ ref,
     [Fact]
     public void LambdaFunction_Expression_SingleParameter()
     {
+    	/*
+    	Goal: Parse lambda expression variable declarations (2024-11-03)
+    	================================================================
+    	
+    	'intPerson' is to signify 'int' or 'Person' because this is a 'keyword' and an 'identifier'.
+    	So remember the general type clause matching not just an identifier.
+    	
+    	Cases:
+    		================================================================
+    		| () => ...;
+    		| 
+    		| 	BreakList: [(StatementDelimiterToken, null)]
+    		| 	EmptyExpressionNode + OpenParenthesisToken =>
+    		| 	{
+    		| 		Push(new ParenthesizedExpressionNode());
+    		| 		return new EmptyExpressionNode();
+    		| 	}
+    		| 		
+    		| 		BreakList: [(StatementDelimiterToken, null), (CloseParenthesisToken, ParenthesizedExpressionNode)]
+    		| 		EmptyExpressionNode + CloseParenthesisToken =>
+    		| 		{
+    		| 			if (peek(1)==EqualsToken && peek(2)==CloseAngleBracketToken)
+    		| 				return LambdaExpressionNode;
+    		| 			else
+    		| 				return ParenthesizedExpressionNode;
+    		| 		}
+    		|
+    		| Related case of ParenthesizedExpressionNode with empty inner expression then StatementDelimiterToken:
+    		| 	'();'
+    		
+    		================================================================
+    		| x => ...;
+    		
+    		================================================================
+    		| intPerson x => ...;
+    		
+    		================================================================
+    		| (x) => ...;
+    		|
+    		| Related case of explicit casting:
+			| 	'(intPerson)x;'
+			| 		EmptyExpressionNode + OpenParenthesisToken => ParenthesizedExpressionNode;
+			| 		
+			| 	'(intPerson) => ...;'
+			| 		EmptyExpressionNode + OpenParenthesisToken => ParenthesizedExpressionNode;
+    		
+    		================================================================
+    		| (intPerson x) => ...;
+    		
+    		================================================================
+    		| (x, y, *) => ...;
+    		
+    		================================================================
+    		| (intPerson x, y, *) => ...;
+    		
+    		================================================================
+    		| (x, intPerson y, *) => ...;
+    		
+    		================================================================
+    		| (intPerson x, intPerson y, *) => ...;
+    		
+    		================================================================
+    		| async ... => ...;
+    	*/
+    	
     	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "x => \"Abc\";";
+        var sourceText = "(x => \"Abc\")";
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
-		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
+		
+		Assert.Equal(1, lambdaExpressionNode.VariableDeclarationNodeList.Count);
+		
+		var parameter = lambdaExpressionNode.VariableDeclarationNodeList[0];
+		Assert.Equal(CSharpFacts.Types.Void.ToTypeClause(), parameter.TypeClauseNode);
+        Assert.Equal("x", parameter.IdentifierToken.TextSpan.GetText());
+        Assert.Equal(VariableKind.Local, parameter.VariableKind);
 		
 		throw new NotImplementedException();
     }
@@ -1853,6 +1927,7 @@ switch (character)
 		throw new NotImplementedException();
     }
     
+    [Fact]
     public void SwitchExpression()
     {
     	var resourceUri = new ResourceUri("./unitTesting.txt");

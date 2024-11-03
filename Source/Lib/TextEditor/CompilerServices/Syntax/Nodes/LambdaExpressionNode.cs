@@ -40,6 +40,7 @@ public sealed class LambdaExpressionNode : IExpressionNode
     /// </summary>
     public bool CodeBlockNodeIsExpression { get; set; } = true;
     public bool HasReadParameters { get; set; }
+    public List<VariableDeclarationNode> VariableDeclarationNodeList { get; } = new();
 
     public ISyntaxNode? Parent { get; }
 
