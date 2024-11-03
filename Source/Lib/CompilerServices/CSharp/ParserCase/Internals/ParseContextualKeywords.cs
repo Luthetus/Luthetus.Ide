@@ -39,6 +39,7 @@ public class ParseContextualKeywords
             case SyntaxKind.OpenBraceToken:
             case SyntaxKind.CommaToken:
             case SyntaxKind.OpenParenthesisToken:
+            case SyntaxKind.ColonToken:
             case SyntaxKind.BadToken:
             {
 	            // Check if the next token is a second 'var keyword' or an IdentifierToken. Two IdentifierTokens is invalid, and therefore one can contextually take this 'var' as a keyword.

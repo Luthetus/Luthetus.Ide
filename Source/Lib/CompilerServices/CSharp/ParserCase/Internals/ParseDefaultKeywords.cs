@@ -49,7 +49,28 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        // TODO: Implement this method
+        while (!model.TokenWalker.IsEof)
+        {
+        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
+        	{
+        		_ = model.TokenWalker.Consume();
+        		break;
+        	}
+        
+        	// This first-draft-code is very "agressively" parsing for a ColonToken within a while loop,
+        	// To avoid the entire file being parsed in a broken state,
+        	// these "short circuit" cases are here.
+        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken ||
+        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken ||
+        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken ||
+        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
+        	{
+        		break;
+        	}
+        	
+        	_ = model.TokenWalker.Consume();
+        }
     }
 
     public static void HandleCatchTokenKeyword(

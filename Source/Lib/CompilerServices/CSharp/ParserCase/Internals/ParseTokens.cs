@@ -329,7 +329,7 @@ public static class ParseTokens
 
         if (variableKind is not null)
         {
-            ParseVariables.HandleVariableDeclaration(
+            ParseVariables.HandleVariableDeclarationStatement(
                 consumedTypeClauseNode,
                 consumedIdentifierToken,
                 variableKind.Value,

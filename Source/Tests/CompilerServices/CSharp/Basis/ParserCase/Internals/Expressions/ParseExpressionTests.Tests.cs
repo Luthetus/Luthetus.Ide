@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
@@ -1387,15 +1388,166 @@ ref,
     [Fact]
     public void LambdaFunction_Expression_SingleParameter()
     {
+    	/*
+    	Goal: Parse lambda expression variable declarations (2024-11-03)
+    	================================================================
+    	
+    	'intPerson' is to signify 'int' or 'Person' because this is a 'keyword' and an 'identifier'.
+    	So remember the general type clause matching not just an identifier.
+    	
+    		Rename 'x' to 'argsX'?
+    	
+    		Technically 'intPerson' does not encompass the case of a contextual keyword...
+    			-10 points
+    	
+    	Cases:
+    		================================================================
+    		| () => ...;
+    		| 
+    		| 	BreakList: [(StatementDelimiterToken, null)]
+    		| 	EmptyExpressionNode + OpenParenthesisToken =>
+    		| 	{
+    		| 		Push(new ParenthesizedExpressionNode());
+    		| 		return new EmptyExpressionNode();
+    		| 	}
+    		| 		
+    		| 		BreakList: [(StatementDelimiterToken, null), (CloseParenthesisToken, ParenthesizedExpressionNode)]
+    		| 		EmptyExpressionNode + CloseParenthesisToken =>
+    		| 		{
+    		| 			if (peek(1)==EqualsToken && peek(2)==CloseAngleBracketToken)
+    		| 				return LambdaExpressionNode;
+    		| 			else
+    		| 				return ParenthesizedExpressionNode;
+    		| 		}
+    		|
+    		| Related case of ParenthesizedExpressionNode with empty inner expression then StatementDelimiterToken:
+    		| 	();
+    		
+    		================================================================
+    		| x => ...;
+    		|
+    		| Related case of VariableAssignmentExpressionNode:
+    		| 	x = ...;
+    		|
+    		| Related case of FunctionInvocationNode:
+    		| 	x();
+    		
+    		================================================================
+    		| intPerson x => ...;
+    		| 
+    		| 	This case is actually quite unique.
+    		| 		AmbiguousIdentifierNode AmbiguousIdentifierNode => ...;
+    		|
+    		| 	Two consecutive AmbiguousIdentifierNode(s) can happen in other syntax.
+    		|     	But, these other syntax begin with a keyword.
+    		| 		So, the lack of a keyword prior to the two nodes is indicative of it being a lambda expression.
+    		|
+    		|         Perhaps check if following the two nodes there is a '=>' syntax prior to deciding it is a lambda expression.
+    		| 		If there is NOT '=>' then decide it is a BadExpressionNode.
+    		| 
+    		| 		Although, this actually is the exact same scenario as:
+    		| 			(intPerson x) => ...;
+    		|
+    		| 		It is the same because they both start with an EmptyExpressionNode upon encountering the two consecutive
+    		| 		AmbiguousIdentifierNode(s).
+    		|
+    		| 		So, only checking for the next few tokens to be '=>' won't work.
+    		| 		Because there could be an unknown amount of parameters being defined, such that a ',' is found instead of a '=>'.
+    		| 		As well, there could be ')' found if reading the final parameter.
+    		
+    		================================================================
+    		| (x) => ...;
+    		| 
+    		| 	BreakList: [(StatementDelimiterToken, null)]
+    		| 	EmptyExpressionNode + OpenParenthesisToken =>
+    		| 	{
+    		| 		Push(new ParenthesizedExpressionNode());
+    		| 		return new EmptyExpressionNode();
+    		| 	}
+    		| 		
+    		| 		BreakList: [(StatementDelimiterToken, null), (CloseParenthesisToken, ParenthesizedExpressionNode)]
+    		| 		EmptyExpressionNode + IdentifierToken => AmbiguousIdentifierExpressionNode;
+    		|
+    		| 		BreakList: [(StatementDelimiterToken, null), (CloseParenthesisToken, ParenthesizedExpressionNode)]
+    		| 		AmbiguousIdentifierExpressionNode + CloseParenthesisToken =>
+    		| 		{
+    		| 			if (peek(1)==EqualsToken && peek(2)==CloseAngleBracketToken)
+    		| 				return LambdaExpressionNode;
+    		| 			else
+    		| 				return ParenthesizedExpressionNode;
+    		| 		}
+    		|
+    		| Related case of explicit casting:
+			| 	(intPerson)x;
+			| 		EmptyExpressionNode + OpenParenthesisToken => ParenthesizedExpressionNode;
+			| 		
+			| 	(intPerson) => ...;
+			| 		EmptyExpressionNode + OpenParenthesisToken => ParenthesizedExpressionNode;
+    		
+    		================================================================
+    		| (intPerson x) => ...;
+    		|
+    		| 	One of the main issues that I'm having is how to track the 'intPerson x' during the
+    		| 		time spent as a ParenthesizedExpressionNode.
+    		|
+    		| 	The same is true for 'x, y'.
+    		|
+    		| 	Because these syntax are nonsensical to the ParenthesizedExpressionNode.
+    		|
+    		| 	I could store each 'AmbiguousIdentifierNode' in the SyntaxList property of a 'BadExpressionNode'.
+    		|
+    		| 	Then, if I later determine that im looking at a LambdaExpressionNode
+    		| 		I can give the LambdaExpressionNode the 'BadExpressionNode'.
+    		|
+    		| 	At that point the LambdaExpressionNode can then make sense of the 'BadExpressionNode' itself.
+    		|
+    		| 	If the BadExpressionNode's SyntaxList is: { 'intPerson', 'x' }.
+    		| 		Then the LambdaExpressionNode can iterate over each item,
+    		| 		and take two consecutive AmbiguousIdentifierNode(s) to be a TypeClauseNode and "variable identifier".
+    		| 
+    		| 	Maybe if the LambdaExpressionNode finds 3 consecutive AmbiguousIdentifierNode(s),
+    		| 		then the LambdaExpressionNode itself is a BadExpressionNode?
+    		|
+    		| 	If the LambdaExpressionNode finds a CommaToken, then it can start tracking a new parameter.
+    		|
+    		| 	I'd prefer to not construct an instance of ParenthesizedExpressionNode, just to later replace
+    		| 		it with the construction of a LambdaExpressionNode.
+    		|
+    		| 	But, that concern is likely a minor detail relative to the whole of getting the C# Parser to work correctly.
+    		
+    		================================================================
+    		| (x, y, *) => ...;
+    		
+    		================================================================
+    		| (intPerson x, y, *) => ...;
+    		
+    		================================================================
+    		| (x, intPerson y, *) => ...;
+    		
+    		================================================================
+    		| (intPerson x, intPerson y, *) => ...;
+    		
+    		================================================================
+    		| async ... => ...;
+    	*/
+    	
     	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "x => \"Abc\";";
+        var sourceText = "(x => \"Abc\")";
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
-		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
+		
+		Assert.Equal(1, lambdaExpressionNode.VariableDeclarationNodeList.Count);
+		
+		var parameter = lambdaExpressionNode.VariableDeclarationNodeList[0];
+		Assert.Equal(CSharpFacts.Types.Void.ToTypeClause(), parameter.TypeClauseNode);
+        Assert.Equal("x", parameter.IdentifierToken.TextSpan.GetText());
+        Assert.Equal(VariableKind.Local, parameter.VariableKind);
 		
 		throw new NotImplementedException();
     }
@@ -1763,7 +1915,114 @@ void Aaa()
     [Fact]
     public void SwitchStatement()
     {
-    	/**/
+    	/*
+    	- The switch statement cannot be part of an expression.
+    	- For this reason, it starts with the keyword switch,
+    	  	so when parsing it can easily be seen at the start of the
+    	  	statement, that it is a switch statement.
+    	- Switch expression can be embedded,
+    	  	and for that reason it starts with the IdentifierToken,
+    	  	in order to enter the expression parsing code,
+    	  	which then goes on to see the 'switch' keyword.
+    	- It isn't to say that the language had to be written this way.
+    	- But instead that it seems extremely intentional.
+    	- The switch statement has a scope for its initial body.
+    	- But, the individual case(s) do not create their own scopes.
+    	- One can put an "arbitrary code block" after the 'case' definition,
+    	  	in order to create a scope for that 'case' specifically.
+    	  	- But note: this just always the case in C# it isn't 'switch' specific.
+    	- In C# a switch statement cannot fall through its case(s) after
+    	  	handling the initial case that jumped to.
+    	- Many labels can be defined for the same "handling code".
+    	- A 'default' label exists.
+    	- 'goto default' also exists, but is this not just normal C#?
+    	  	you can goto any label you have in scope this isn't something special.
+    	- But maybe the 'default' name for the label is uniquely a 'switch' statement permitted name.
+    	- Are you able to goto any of the " case 'a': " label definitions?
+    		  - If you wanted to do this, but could not "goto case 'a': "
+    		    	could you put a normal C# label alongside " case 'a': "
+    		    	and goto the normal C# label?
+    		    	- I presume you could ONLY if you put the normal C# label
+    		    	  	after the 'case' and before the "handling code".
+    		    	  	- You could probably put a label anywhere within the "handling code" too,
+    		    	  	  	but I'm speaking of this example specifically where you
+    		    	  	  	wanted to jump in a equivalent way as "goto case 'a': ".
+    		    	  	  	So in this case you'd  want it after the label, and at the start of the "handling code".
+    	- Is it possible to parse the switch statement's body as normal C# code, if I implemented C# label syntax?
+    	  	- The issue would appear to be with the 'case' keyword that is at the start of "label".
+    	  	- As well, the "label" doesn't have an IdentifierToken, it instead is a unique compile time constant.
+    	- The 'switch' statement would be a code block builder that skips until 'case', then skips until ':'.
+    	- At this point return to the main parser loop.
+    	- Then hit the 'case' keyword which would actually invoke its own method so I could probably do this easily.
+    		- public static void HandleCaseTokenKeyword(KeywordToken consumedKeywordToken, CSharpParserModel model) {...}
+    			- ParseDefaultKeywords.cs:48 is where the method is defined.
+    	- So, the switch statement needs to have its expression parsed (the one within its parentheses).
+    	  	- Then it goes to main loop and starts parsing the code block node.
+    	  	- This then hits the 'case' keyword.
+    	  	- Read until the ':' then return back out again.
+    		  - But, what about the 'default' keyword?
+    		  - If the statement parsing code sees the 'default' keyword,
+    		    	then check if the next token is the ColonToken.
+    		    	- If so, then it is the 'default' leg of the switch statement.
+    	- This sounds like an effective "first approach" to a solution.
+    	- In order to track each leg of the switch statement I can create a new
+    	  	CodeBlockBuilder but, have this builder act in a special way.
+    	  	- It would capture the statements just as a normal CodeBlockBuilder,
+    	  	  	but when the code block is finished, it moves its nodes to the parentCodeBlockBuilder.
+    	  	  	- In the end, the "special" code block builder for the legs would just track the start and end indices.
+    	  	  	- But, isn't the start the label, and the end the next label or CloseBraceToken?
+		- Currently the expression parser is trying to parse the 'ColonToken' in " case 'a': ".
+		  	- If the statement parser loop could "skip" over this, the parser would be in a better "state" for parsing the
+		  	  	remainder of the file.
+    	*/
+    
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+switch (character)
+{
+	case 'a':
+	{
+		break;
+	}
+	case 'b':
+	case 'c':
+		break;
+	case 'd':
+		if (false)
+			goto default;
+		break;
+	default:
+		break;
+}
+";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void SwitchExpression()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        var sourceText =
+@"
+return character switch
+{
+	'a' => 0,
+	_ => 1,
+};
+";
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
 		throw new NotImplementedException();
     }
     
