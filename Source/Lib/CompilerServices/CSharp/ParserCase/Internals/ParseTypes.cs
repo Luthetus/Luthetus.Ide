@@ -199,14 +199,67 @@ public static class ParseTypes
         }
     }
 
+	/// <summary>
+	/// This method should only be used to disambiguate syntax.
+	/// If it is known that there has to be a TypeClauseNode at the current position,
+	/// then use <see cref="MatchTypeClause"/>.
+	///
+	/// Example: 'someMethod(out var e);'
+	///           In this example the 'out' can continue into a variable reference or declaration.
+	///           Therefore an invocation to this method is performed to determine if it is a declaration.
+	/// 
+	/// Furthermore, because there is a need to disambiguate, more checks are performed in this method
+	/// than in <see cref="MatchTypeClause"/>.
+	/// </summary>
+	public static bool IsPossibleTypeClause(ISyntaxToken syntaxToken, CSharpParserModel model)
+	{
+		if (UtilityApi.IsKeywordSyntaxKind(syntaxToken.SyntaxKind) &&
+                (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(syntaxToken.SyntaxKind) ||
+                UtilityApi.IsVarContextualKeyword(model, syntaxToken.SyntaxKind)))
+        {
+            return true;
+        }
+        
+        if (syntaxToken.SyntaxKind == SyntaxKind.IdentifierToken)
+        {
+        	var text = syntaxToken.TextSpan.GetText();
+        
+        	if (model.Binder.TryGetVariableDeclarationHierarchically(
+	        		model,
+	                model.BinderSession.ResourceUri,
+	                model.BinderSession.CurrentScopeIndexKey,
+	                text,
+	                out var variableDeclarationNode)
+                && variableDeclarationNode is not null)
+            {
+            	return false;
+            }
+            
+            if (model.Binder.TryGetFunctionHierarchically(
+	        		model,
+	                model.BinderSession.ResourceUri,
+	                model.BinderSession.CurrentScopeIndexKey,
+	                text,
+	                out var functionDefinitionNode)
+                && functionDefinitionNode is not null)
+            {
+            	return false;
+            }
+            
+        	return true;
+        }
+        
+        return false;
+	}
+
     public static TypeClauseNode MatchTypeClause(CSharpParserModel model)
     {
         ISyntaxToken syntaxToken;
-
-        if (UtilityApi.IsKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) &&
+		
+		if (UtilityApi.IsKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) &&
                 (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) ||
                 UtilityApi.IsVarContextualKeyword(model, model.TokenWalker.Current.SyntaxKind)))
-        {
+		{
             syntaxToken = model.TokenWalker.Consume();
         }
         else

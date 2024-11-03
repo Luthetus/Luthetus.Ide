@@ -1,3 +1,4 @@
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
@@ -20,11 +21,12 @@ public static class ParseVariables
         model.SyntaxStack.Push(variableReferenceNode);
     }
 
-    public static void HandleVariableDeclaration(
+	/// <summary>Function invocation which uses the 'out' keyword.</summary>
+    public static IVariableDeclarationNode? HandleVariableDeclarationExpression(
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
         VariableKind variableKind,
-        CSharpParserModel model)
+        IParserModel model)
     {
 		IVariableDeclarationNode variableDeclarationNode;
 
@@ -56,11 +58,31 @@ public static class ParseVariables
 		else
 		{
 			model.DiagnosticBag.ReportTodoException(consumedIdentifierToken.TextSpan, $"The {nameof(VariableKind)}: {variableKind} was not recognized.");
-			return;
+			return null;
 		}
 
         model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+        return variableDeclarationNode;
+    }
+    
+    /// <summary>
+    /// TODO: This method should return the 'VariableDeclarationNode?' just the same as <see cref="HandleVariableDeclarationExpression"/>
+    /// </summary>
+    public static void HandleVariableDeclarationStatement(
+        TypeClauseNode consumedTypeClauseNode,
+        IdentifierToken consumedIdentifierToken,
+        VariableKind variableKind,
+        IParserModel model)
+    {
+		var variableDeclarationNode = HandleVariableDeclarationExpression(
+			consumedTypeClauseNode,
+	        consumedIdentifierToken,
+	        variableKind,
+	        model);
+	        
+	    if (variableDeclarationNode is null)
+	    	return;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         {
@@ -70,7 +92,7 @@ public static class ParseVariables
                     variableDeclarationNode,
                     (EqualsToken)model.TokenWalker.Consume(),
                     (CloseAngleBracketToken)model.TokenWalker.Consume(),
-                    model);
+                    (CSharpParserModel)model);
             }
             else
             {
@@ -78,7 +100,7 @@ public static class ParseVariables
                 HandleVariableAssignment(
                     consumedIdentifierToken,
                     (EqualsToken)model.TokenWalker.Consume(),
-                    model);
+                    (CSharpParserModel)model);
             }
         }
         else
@@ -97,7 +119,7 @@ public static class ParseVariables
             HandlePropertyDeclaration(
                 variableDeclarationNode,
                 (OpenBraceToken)model.TokenWalker.Consume(),
-                model);
+                (CSharpParserModel)model);
         }
         else
         {

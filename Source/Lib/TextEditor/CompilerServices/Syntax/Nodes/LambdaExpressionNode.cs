@@ -1,5 +1,8 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -40,11 +43,18 @@ public sealed class LambdaExpressionNode : IExpressionNode
     /// </summary>
     public bool CodeBlockNodeIsExpression { get; set; } = true;
     public bool HasReadParameters { get; set; }
+    public List<IVariableDeclarationNode> VariableDeclarationNodeList { get; } = new();
 
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;
+    
+    public void AddVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode)
+    {
+    	VariableDeclarationNodeList.Add(variableDeclarationNode);
+    	_childListIsDirty = true;
+    }
     
     public ISyntax[] GetChildList()
     {

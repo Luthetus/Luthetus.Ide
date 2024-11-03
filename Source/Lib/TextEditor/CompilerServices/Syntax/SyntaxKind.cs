@@ -241,6 +241,7 @@ public enum SyntaxKind
     TypeSymbol,
     ConstructorSymbol,
     FunctionSymbol,
+    LambdaSymbol,
     VariableSymbol,
     FieldSymbol,
     PropertySymbol,
