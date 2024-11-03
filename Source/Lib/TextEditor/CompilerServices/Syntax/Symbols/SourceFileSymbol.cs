@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
-public sealed record SourceFileSymbol : ISymbol
+public record struct SourceFileSymbol : ISymbol
 {
     public SourceFileSymbol(TextEditorTextSpan textSpan)
     {

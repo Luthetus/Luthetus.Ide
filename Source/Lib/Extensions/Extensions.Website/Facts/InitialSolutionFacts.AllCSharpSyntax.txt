@@ -1,0 +1,717 @@
+/*namespace Luthetus.Ide.Wasm.Facts;
+
+public partial class InitialSolutionFacts
+{
+	public const string BLAZOR_CRUD_APP_ALL_C_SHARP_SYNTAX_ABSOLUTE_FILE_PATH = @"/BlazorCrudApp/BlazorCrudApp.Wasm/AllCSharpSyntax.cs";
+
+    public const string BLAZOR_CRUD_APP_ALL_C_SHARP_SYNTAX_CONTENTS = @"namespace Luthetus.CompilerServices.CSharp;
+
+/// <summary> Aim to type out every possible syntax and combination of syntax in this file and do so as succinctly as possible (it doesn't have to compile). https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/ ;v1.0.0 </summary>
+public class AllCSharpSyntax 
+{
+	// Access Modifiers
+	// ================
+	public A;
+	protected internal B;
+	protected C;
+	internal D;
+	private protected E;
+	private F;
+
+	// Storage Modifiers
+	// =================
+	struct A { }
+	class B { }
+	interface C { }
+	enum D { }
+	record E { }
+	record struct F { }
+	
+	// AccessModifiers and StorageModifiers
+	// ====================================
+	public struct AA { }
+	public class AB { }
+	public interface AC { }
+	public enum AD { }
+	public record AE { }
+	public record struct AF { }
+	//
+	protected internal struct BA { }
+	protected internal class BB { }
+	protected internal interface BC { }
+	protected internal enum BD { }
+	protected internal record BE { }
+	protected internal record struct BF { }
+	//
+	protected struct CA { }
+	protected class CB { }
+	protected interface CC { }
+	protected enum CD { }
+	protected record CE { }
+	protected record struct CF { }
+	//
+	internal struct DA { }
+	internal class DB { }
+	internal interface DC { }
+	internal enum DD { }
+	internal record DE { }
+	internal record struct DF { }
+	//
+	private protected struct EA { }
+	private protected class EB { }
+	private protected interface EC { }
+	private protected enum ED { }
+	private protected record EE { }
+	private protected record struct EF { }
+	//
+	private struct FA { }
+	private class FB { }
+	private interface FC { }
+	private enum FD { }
+	private record FE { }
+	private record struct FF { }
+    
+    // Primary Constructor
+    // ===================
+	struct Aaa(string MyString, Rectangle MyRectangle) { }
+	class Bbb(string MyString, Rectangle MyRectangle) { }
+	interface Ccc(string MyString, Rectangle MyRectangle) { }
+	enum Ddd(string MyString, Rectangle MyRectangle) { }
+	record Eee(string MyString, Rectangle MyRectangle) { }
+	record struct Fff(string MyString, Rectangle MyRectangle) { }
+	
+	// Variables
+    // =========
+    //
+    // ----Local----
+    private void SomeMethod()
+    {
+    	// var/implicit
+    	// 	by expression
+    	// 		by literal
+    	//     	by reference
+    	// 		by invocation
+    	// keyword
+    	// identifier
+    	
+    	int GetInt() => 3;
+    	Person GetPerson() => 3;
+    	
+    	// var/implicit keyword
+    	{
+	    	var a = 2;          // Literal
+	    	var b = a;          // Reference
+	    	var c = GetInt();   // Function Invocation
+	    	var d = new int(4); // Constructor Invocation (does int even have a constructor? this is for demonstration purposes only).
+	    	// Put all the single case expressions into a more complex expression:
+	    	var e = 2 + a + GetInt() + new int(4);
+    	}
+    	
+    	// keyword
+    	{
+	    	int a = 2;          // Literal
+	    	int b = a;          // Reference
+	    	int c = GetInt();   // Function Invocation
+	    	int d = new int(4); // Constructor Invocation (does int even have a constructor? this is for demonstration purposes only).
+	    	// Put all the single case expressions into a more complex expression:
+	    	int e = 2 + a + GetInt() + new int(4);
+    	}
+    	
+    	// var/implicit identifier
+    	{
+    		var a = 2;                             // Literal
+	    	var b = a;                             // Reference
+	    	var c = GetPerson();                   // Function Invocation
+	    	var d = new Person(""John"", ""Doe""); // Constructor Invocation
+	    	// Put all the single case expressions into a more complex expression:
+	    	var e = 2 + a + GetInt() + new int(4);
+    	}
+    	
+    	// identifier
+    	{
+    		Person a = 2;                             // Literal
+	    	Person b = a;                             // Reference
+	    	Person c = GetPerson();                   // Function Invocation
+	    	Person d = new Person(""John"", ""Doe""); // Constructor Invocation
+	    	// Put all the single case expressions into a more complex expression:
+	    	Person e = 2 + a + GetPerson() + new int(4);
+    	}
+    }
+    //
+	// ----Field----
+	private List<Person> _people = new List<Person>();
+	private List<Person> _people = new();
+	private List<Person> _people = new() { new Person(""John"", ""Doe""), new Person(""Jane"", ""Doe""), };
+	private List<Person> _people = new() { new Person(""John"", ""Doe""), new Person(""Jane"", ""Doe"") };
+	//
+	private readonly List<Person> _people = new();
+	public static readonly Person BobDoe = new Person(""Bob"", ""Doe"");
+	//
+	readonly List<Person> _people = new();
+	const int _number = 2;
+	string _text = ""abc"";
+	// ----Property----
+	private List<Person> People { get; set; }
+	private List<Person> People { get; }
+	private List<Person> People { get; } = new List<Person>();
+	private List<Person> People { get; } = new();
+	private List<Person> People { get; } = new() { new Person(""John"", ""Doe""), new Person(""Jane"", ""Doe""), };
+	private List<Person> People { get; } = null!;
+	private List<Person> People => _people;
+	private List<Person> People => new List<Person>();
+	private List<Person> People => new();
+	private List<Person> People => new() { new Person(""John"", ""Doe""), new Person(""Jane"", ""Doe""), };
+	private List<Person> People => null!;
+	private int Number { get; }
+	private Person BobDoe { get; }
+	private Person People
+	{
+		get { return _people; }
+	}
+	private Person People
+	{
+		get => _people;
+	}
+	private Person People
+	{
+		get => _people;
+		set { _people = value; }
+	}
+	private Person People
+	{
+		get => _people;
+		set => _people = value;
+	}
+	private Person People
+	{
+		get { return _people; }
+		set => _people = value;
+	}
+	private Person People
+	{
+		get { return _people; }
+		set { _people = value; }
+	}
+	// ----Closure----
+	public void SomeMethod()
+	{
+		// Value Type
+		{
+			var x = 2;
+			
+			// Lambda Expression
+			var func = new Func<int>(() => x);
+			
+			// Lambda Function
+			var func = new Func<int>(() =>
+			{
+				Console.WriteLine(x);
+				return x;
+			});
+		}
+		
+		// Reference Type
+		{
+			var person = new Person(""Bob"", ""Doe"");
+			
+			// Lambda Expression
+			var func = new Func<int>(() => person);
+			
+			// Lambda Function
+			var func = new Func<int>(() =>
+			{
+				Console.WriteLine(person);
+				return person;
+			});
+		}
+	}
+    
+    public void NonContextualKeywords()
+	{
+		// abstract
+		abstract;
+		
+		// as
+		var person = new Person();
+		var rectangle = person as Rectangle;
+		
+		// base
+		base.ToString();
+		
+		// bool
+		bool x = true;
+		
+		// break
+		break;
+		
+		// byte
+		byte value = default;
+		
+		// case
+		case;
+		
+		// catch (TODO: The pattern matching catch syntax where you can catch more than 1 is vaguely in my mind, should implement that.)
+		catch (Exception)
+		{
+			throw;
+		}
+		catch (Exception e)
+		{
+			// Eat
+		}
+		
+		// char
+		char character = 'a';
+		char characterEscaped = '\n';
+		
+		// checked
+		checked;
+		
+		// class
+		class;
+		
+		// const
+		const int x = 2;
+		
+		// continue
+		continue;
+		
+		// decimal
+		decimal number = 2.01;
+		
+		// default
+		default;
+		
+		// delegate
+		delegate;
+		
+		// do
+		do
+		{
+			Console.WriteLine(""Abc"");
+		} while (false);
+		
+		// double
+		double number = 2.01;
+		
+		// else
+		else
+		{
+			Console.WriteLine(""else"");
+		}
+		
+		// enum
+		enum;
+		
+		// event
+		event;
+		
+		// explicit
+		explicit;
+		
+		// extern
+		extern;
+
+		// false
+		var x = false;
+
+		// finally
+		finally
+		{
+			Console.WriteLine(""finally"");
+		}
+
+		// fixed
+		fixed;
+
+		// float
+		float number = 2.01;
+
+		// for
+		for (int i = 0; i < 10; i++)
+		{
+			Console.WriteLine(""Abc"");
+		}
+		for (int i = 0; i < 10; i++)
+			Console.WriteLine(""Abc"");
+		for (var i = 0; i < 10; i++)
+			Console.WriteLine(""Abc"");
+		for (;;)
+			break;
+		
+		// foreach
+		foreach (var item in list)
+		{
+			Console.WriteLine(""Abc"");
+		}
+		foreach (var item in list)
+			Console.WriteLine(""Abc"");
+		foreach (var item in ExplicitClassReference.GetList())
+			Console.WriteLine(""Abc"");
+		
+		// goto
+		someLabel:
+		if (false)
+			goto someLabel;
+		
+		// if
+		var node = new Node();
+		if ((node = node.Next) is null)
+			return;
+		
+		// implicit
+		implicit;
+		
+		// in
+		in;
+		
+		// int
+		int number = 2;
+		
+		// interface
+		interface;
+		
+		// internal
+		internal;
+		
+		// is
+		var person = new Person();
+		if (person is Rectangle)
+			Console.WriteLine(""Abc"");
+		if (person is Rectangle rectangle)
+			Console.WriteLine(""Abc"");
+		
+		// lock
+		object obj = new();
+		lock (obj)
+		{
+			return 1;
+		}
+		lock (obj)
+			return 1;
+		
+		// long
+		long number = 2;
+		
+		// namespace
+		namespace;
+		
+		// new
+		var person = new Person();
+		
+		// null
+		null;
+		
+		// object
+		object;
+		
+		// operator
+		operator;
+		
+		// out
+		out;
+		
+		// override
+		override;
+		
+		// params
+		params;
+		
+		// private
+		private;
+		
+		// protected
+		protected;
+		
+		// public
+		public;
+		
+		// readonly
+		readonly;
+		
+		// ref
+		ref;
+		
+		// return
+		return 0;
+		
+		// sbyte
+		sbyte;
+		
+		// sealed
+		sealed;
+		
+		// short
+		short number = 0;
+		
+		// sizeof
+		var size = sizeof(int);
+		
+		// stackalloc
+		stackalloc;
+		
+		// static
+		static;
+		
+		// string
+		string text = ""Abc"";
+		
+		// struct
+		struct;
+		
+		// switch
+		var character = 'c';
+		switch (character)
+		{
+			case 'a':
+				break;
+			case 'b':
+			case 'c':
+				break;
+			case 'd':
+				if (false)
+					goto default;
+				break;
+			default:
+				break;
+		}
+		return character switch // (TODO: The 'and' logic / other logic)
+		{
+			'a' => 0,
+			_ => 1,
+		};
+		
+		// this
+		this;
+		
+		// throw
+		throw new Exception();
+		
+		// true
+		var boolean = true;
+		
+		// try
+		try
+		{
+			Console.WriteLine(""Abc"");
+		}
+		try
+			Console.WriteLine(""Abc"");
+		try { Console.WriteLine(""Abc""); }
+		catch (ApplicationException) { Console.WriteLine(""Abc""); }
+		catch (Exception e) { Console.WriteLine(""Abc""); }
+		finally { Console.WriteLine(""Abc""); }
+		
+		
+		// typeof
+		Type t = typeof(int);
+		
+		// uint
+		uint number = 2;
+		
+		// ulong
+		ulong number = 2;
+		
+		// unchecked
+		unchecked;
+		
+		// unsafe
+		unsafe;
+		
+		// ushort
+		ushort number = 2;
+		
+		// using
+		using;
+		
+		// virtual
+		virtual;
+		
+		// void
+		void;
+		
+		// volatile
+		volatile;
+		
+		// while
+		while (false)
+		{
+			break;
+		}
+		while (false)
+			break;
+	}
+	
+    public void ContextualKeywords()
+    {
+    	// add;
+    	add;
+    	
+    	// and;
+    	and;
+    	
+    	// alias;
+    	alias;
+
+    	// ascending;
+    	ascending;
+
+    	// args;
+    	args;
+
+    	// async;
+    	async;
+
+    	// await;
+    	await;
+
+    	// by;
+    	by;
+
+    	// descending;
+    	descending;
+
+    	// dynamic;
+    	dynamic;
+
+    	// equals;
+    	equals;
+
+    	// file;
+    	file;
+
+    	// from;
+    	from;
+
+    	// get;
+    	get;
+
+    	// global;
+    	global;
+
+    	// group;
+    	group;
+
+    	// init;
+    	init;
+
+    	// into;
+    	into;
+
+    	// join;
+    	join;
+
+    	// let;
+    	let;
+
+    	// managed;
+    	managed;
+
+    	// nameof;
+    	nameof;
+
+    	// nint;
+    	nint;
+
+    	// not;
+    	not;
+
+    	// notnull;
+    	notnull;
+
+    	// nuint;
+    	nuint;
+
+    	// on;
+    	on;
+
+    	// or;
+    	or;
+
+    	// orderby;
+    	orderby;
+
+    	// partial;
+    	partial;
+
+    	// record;
+    	record;
+
+    	// remove;
+    	remove;
+
+    	// required;
+    	required;
+
+    	// scoped;
+    	scoped;
+
+    	// select;
+    	select;
+
+    	// set;
+    	set;
+
+    	// unmanaged;
+    	unmanaged;
+
+    	// value;
+    	value;
+
+    	// var;
+    	var;
+
+    	// when;
+    	when;
+
+    	// where;
+    	where;
+
+    	// with;
+    	with;
+    	
+    	// yield;
+    	yield;
+    }
+    
+	public void Operators()
+	{
+		/* Primary */
+		x.y; f(x); a[i]; x?.y; x?[y]; x++; x--; x!; new; typeof; checked; unchecked; default; nameof; delegate; sizeof; stackalloc; x->y;
+		/* Unary */
+		+x; -x; !x; ~x; ++x; --x; ^x; (T)x; await; &x; *x; true and false;
+		/* Range */
+		x..y;
+		/* switch and with expressions */
+		switch; with;
+		/* Multiplicative */
+		x * y; x / y; x % y;
+		/* Additive */
+		x + y; x – y;
+		/* Shift */
+		x << y; x >> y; x >>> y;
+		/* Relational and type-testing */
+		x < y; x > y; x <= y; x >= y; is; as;
+		/* Equality */
+		x == y; x != y;
+		/* Boolean logical AND or bitwise logical AND */
+		x & y;
+		/* Boolean logical XOR or bitwise logical XOR */
+		x ^ y;
+		/* Boolean logical OR or bitwise logical OR */
+		x | y;
+		/* Conditional AND */
+		x && y;
+		/* Conditional OR */
+		x || y;
+		/* Null-coalescing operator */
+		x ?? y;
+		/* Conditional operator */
+		c ? t : f;
+		/* Assignment and lambda declaration */
+		x = y; x += y; x -= y; x *= y; x /= y; x %= y; x &= y; x |= y; x ^= y; x <<= y; x >>= y; x >>>= y; x ??= y; =>;
+	}
+}
+";
+}
+*/

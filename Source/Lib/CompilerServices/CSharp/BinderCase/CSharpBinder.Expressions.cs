@@ -159,10 +159,41 @@ public partial class CSharpBinder
 		else if (token.SyntaxKind == SyntaxKind.EqualsToken)
 		{
 			if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			{
+				var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, ambiguousIdentifierExpressionNode, model);
+				return lambdaExpressionNode;
+			}
 			
 			model.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
 			return EmptyExpressionNode.Empty;
+		}
+		else if (token.SyntaxKind == SyntaxKind.IsTokenKeyword)
+		{
+			ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				ambiguousIdentifierExpressionNode,
+				model);
+		
+			_ = model.TokenWalker.Consume(); // Consume the IsTokenKeyword
+			
+			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.NotTokenContextualKeyword)
+				_ = model.TokenWalker.Consume(); // Consume the NotTokenKeyword
+			
+			var typeClauseNode = ParseTypes.MatchTypeClause((CSharpParserModel)model);
+			
+			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.IdentifierToken)
+			{
+				var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+				
+				_ = ParseVariables.HandleVariableDeclarationExpression(
+			        typeClauseNode,
+			        identifierToken,
+			        VariableKind.Local,
+			        model);
+			}
+			
+			return ambiguousIdentifierExpressionNode;
 		}
 	
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, token);
@@ -645,6 +676,42 @@ public partial class CSharpBinder
 			case SyntaxKind.AtToken:
 				BindStringVerbatimExpression((AtToken)token, (CSharpParserModel)model);
 				return emptyExpressionNode;
+			case SyntaxKind.OutTokenKeyword:
+				if (ParseTypes.IsPossibleTypeClause(model.TokenWalker.Next, (CSharpParserModel)model))
+				{
+					// The code in this block is very confusing due to the Consume() and Backtrack() usages.
+					//
+					// The issue is that the statement loop (the main parser loop) invokes
+					// 'Consume()' at the start of the while loop.
+					//
+					// The expression loop (the secondary parser loop) invokes
+					// 'Consume()' at the end of the while loop.
+					//
+					// TODO: The statement loop (the main parser loop) needs to invoke 'Consume()' at the end of the while loop...
+					//       ...(or vice versa, whichever is deemed a better fit, just be consistent in both loops).
+				
+					_ = model.TokenWalker.Consume();
+					var typeClauseNode = ParseTypes.MatchTypeClause((CSharpParserModel)model);
+					
+					var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+					
+					// TODO: Why was I Backtracking here? It puts the code at risk for an infinite loop, and doesn't seem necessary.
+					{
+						//_ = model.TokenWalker.Backtrack();
+						//_ = model.TokenWalker.Backtrack();
+					}
+					
+					_ = ParseVariables.HandleVariableDeclarationExpression(
+				        typeClauseNode,
+				        identifierToken,
+				        VariableKind.Local,
+				        model);
+				}
+				
+				return emptyExpressionNode;
+			case SyntaxKind.InTokenKeyword:
+			case SyntaxKind.RefTokenKeyword:
+				return emptyExpressionNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
 		}
@@ -772,6 +839,25 @@ public partial class CSharpBinder
 	{
 		if (token.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
+			int startInclusiveIndex;
+			
+			if (model.TokenWalker.Previous.SyntaxKind == SyntaxKind.EqualsToken)
+				startInclusiveIndex = model.TokenWalker.Previous.TextSpan.StartingIndexInclusive;
+			else
+				startInclusiveIndex = token.TextSpan.StartingIndexInclusive;
+			
+			var endExclusiveIndex = token.TextSpan.EndingIndexExclusive;
+			
+			var textSpan = new TextEditorTextSpan(
+				startInclusiveIndex,
+			    endExclusiveIndex,
+			    (byte)GenericDecorationKind.None,
+			    token.TextSpan.ResourceUri,
+			    token.TextSpan.SourceText);
+		
+			((CSharpBinder)model.Binder).AddSymbolDefinition(
+				new LambdaSymbol(textSpan, lambdaExpressionNode), (CSharpParserModel)model);
+		
 			if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
 				lambdaExpressionNode.CodeBlockNodeIsExpression = false;
@@ -900,7 +986,11 @@ public partial class CSharpBinder
 				return parenthesizedExpressionNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
 			case SyntaxKind.EqualsToken:
 				if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-					return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				{
+					var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+					SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, parenthesizedExpressionNode.InnerExpression, model);
+					return lambdaExpressionNode;
+				}
 				
 				return parenthesizedExpressionNode;
 			default:
@@ -911,10 +1001,15 @@ public partial class CSharpBinder
 	public IExpressionNode ParenthesizedMergeExpression(
 		ParenthesizedExpressionNode parenthesizedExpressionNode, IExpressionNode expressionSecondary, IParserModel model)
 	{
-		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		if (model.TokenWalker.Peek(1).SyntaxKind == SyntaxKind.EqualsToken &&
+			model.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
-			expressionSecondary = ForceDecisionAmbiguousIdentifier(parenthesizedExpressionNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, model);
+			var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			return SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, expressionSecondary, model);
 		}
+	
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+			expressionSecondary = ForceDecisionAmbiguousIdentifier(parenthesizedExpressionNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, model);
 	
 		if (parenthesizedExpressionNode.InnerExpression.SyntaxKind != SyntaxKind.EmptyExpressionNode)
 			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), parenthesizedExpressionNode, expressionSecondary);
@@ -990,5 +1085,139 @@ public partial class CSharpBinder
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), functionInvocationNode, expressionSecondary);
 		}
+	}
+	
+	public IExpressionNode SetLambdaExpressionNodeVariableDeclarationNodeList(
+		LambdaExpressionNode lambdaExpressionNode, IExpressionNode expressionNode, IParserModel model)
+	{
+		if (expressionNode.SyntaxKind == SyntaxKind.BadExpressionNode)
+		{
+			var badExpressionNode = (BadExpressionNode)expressionNode;
+		
+			if (badExpressionNode.SyntaxList.Count == 2 &&
+	    		badExpressionNode.SyntaxList[0].SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode &&
+	    		badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken)
+	    	{
+	    		var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)badExpressionNode.SyntaxList[0];
+	    		var typeClauseNode = new TypeClauseNode(ambiguousIdentifierExpressionNode.Token, valueType: null, genericParametersListingNode: null);
+					
+				BindTypeClauseNode(
+			        typeClauseNode,
+			        (CSharpParserModel)model);
+	    		
+	    		var identifierToken = (IdentifierToken)badExpressionNode.SyntaxList[1];
+	    		
+	    		var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+			        typeClauseNode,
+			        identifierToken,
+			        VariableKind.Local,
+			        model);
+			        
+	    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
+	    	}
+	    	else
+	    	{
+	    		var typeClauseNode = TypeFacts.Empty.ToTypeClause();
+	    		ISyntaxToken variableIdentifier = default(IdentifierToken);
+	    	
+	    		for (int i = 0; i < badExpressionNode.SyntaxList.Count; i++)
+	    		{
+	    			var firstSyntax = badExpressionNode.SyntaxList[i];
+	    			
+	    			var wasTyped = false;
+	    			
+	    			if (firstSyntax.SyntaxKind != SyntaxKind.AmbiguousIdentifierExpressionNode &&
+	    				firstSyntax.SyntaxKind != SyntaxKind.IdentifierToken)
+	    			{
+	    				continue;
+	    			}
+	    			
+	    			if (i < badExpressionNode.SyntaxList.Count - 1 &&
+		    				(badExpressionNode.SyntaxList[i + 1].SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode ||
+		    				badExpressionNode.SyntaxList[i + 1].SyntaxKind == SyntaxKind.IdentifierToken))
+	    			{
+    					wasTyped = true;
+    					
+    					if (firstSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+    					{
+    						var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)firstSyntax;
+    						typeClauseNode = new TypeClauseNode(ambiguousIdentifierExpressionNode.Token, valueType: null, genericParametersListingNode: null);
+					
+							BindTypeClauseNode(
+						        typeClauseNode,
+						        (CSharpParserModel)model);
+    					}
+    					else if (firstSyntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    					{
+    						var identifierToken = (IdentifierToken)firstSyntax;
+    						typeClauseNode = new TypeClauseNode(identifierToken, valueType: null, genericParametersListingNode: null);
+					
+							BindTypeClauseNode(
+						        typeClauseNode,
+						        (CSharpParserModel)model);
+    					}
+    					
+    					var secondSyntax = badExpressionNode.SyntaxList[++i];
+    					
+    					if (secondSyntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    					{
+    						variableIdentifier = (IdentifierToken)secondSyntax;
+    					}
+    					else if (secondSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+    					{
+    						var token = ((AmbiguousIdentifierExpressionNode)secondSyntax).Token;
+		
+				    		if (token.SyntaxKind != SyntaxKind.IdentifierToken)
+				    			continue;
+    					}
+	    			}
+	    			
+	    			if (!wasTyped)
+	    			{
+	    				typeClauseNode = TypeFacts.Empty.ToTypeClause();
+	    				
+	    				if (firstSyntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    					{
+    						variableIdentifier = (IdentifierToken)firstSyntax;
+    					}
+    					else if (firstSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+    					{
+    						var token = ((AmbiguousIdentifierExpressionNode)firstSyntax).Token;
+		
+				    		if (token.SyntaxKind != SyntaxKind.IdentifierToken)
+				    			continue;
+    					}
+	    			}
+	    			
+	    			if (variableIdentifier.SyntaxKind != SyntaxKind.IdentifierToken)
+				    	continue;
+	    			
+	    			var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+				        typeClauseNode,
+				        (IdentifierToken)variableIdentifier,
+				        VariableKind.Local,
+				        model);
+				        
+		    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
+	    		}
+	    	}
+    	}
+    	else if (expressionNode.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+    	{
+    		var token = ((AmbiguousIdentifierExpressionNode)expressionNode).Token;
+    		
+    		if (token.SyntaxKind != SyntaxKind.IdentifierToken)
+    			return lambdaExpressionNode;
+    	
+    		var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+		        TypeFacts.Empty.ToTypeClause(),
+		        (IdentifierToken)token,
+		        VariableKind.Local,
+		        model);
+		        
+    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
+    	}
+    	
+    	return lambdaExpressionNode;
 	}
 }
