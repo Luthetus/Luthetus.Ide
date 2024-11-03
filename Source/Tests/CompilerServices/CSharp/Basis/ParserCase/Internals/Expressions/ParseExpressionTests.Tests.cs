@@ -1416,22 +1416,67 @@ ref,
     		| 		}
     		|
     		| Related case of ParenthesizedExpressionNode with empty inner expression then StatementDelimiterToken:
-    		| 	'();'
+    		| 	();
     		
     		================================================================
     		| x => ...;
+    		|
+    		| Related case of VariableAssignmentExpressionNode:
+    		| 	x = ...;
+    		|
+    		| Related case of FunctionInvocationNode:
+    		| 	x();
     		
     		================================================================
     		| intPerson x => ...;
+    		| 
+    		| 	This case is actually quite unique.
+    		| 		AmbiguousIdentifierNode AmbiguousIdentifierNode => ...;
+    		|
+    		| 	Two consecutive AmbiguousIdentifierNode(s) can happen in other syntax.
+    		|     	But, these other syntax begin with a keyword.
+    		| 		So, the lack of a keyword prior to the two nodes is indicative of it being a lambda expression.
+    		|
+    		|         Perhaps check if following the two nodes there is a '=>' syntax prior to deciding it is a lambda expression.
+    		| 		If there is NOT '=>' then decide it is a BadExpressionNode.
+    		| 
+    		| 		Although, this actually is the exact same scenario as:
+    		| 			(intPerson x) => ...;
+    		|
+    		| 		It is the same because they both start with an EmptyExpressionNode upon encountering the two consecutive
+    		| 		AmbiguousIdentifierNode(s).
+    		|
+    		| 		So, only checking for the next few tokens to be '=>' won't work.
+    		| 		Because there could be an unknown amount of parameters being defined, such that a ',' is found instead of a '=>'.
+    		| 		As well, there could be ')' found if reading the final parameter.
     		
     		================================================================
     		| (x) => ...;
+    		| 
+    		| 	BreakList: [(StatementDelimiterToken, null)]
+    		| 	EmptyExpressionNode + OpenParenthesisToken =>
+    		| 	{
+    		| 		Push(new ParenthesizedExpressionNode());
+    		| 		return new EmptyExpressionNode();
+    		| 	}
+    		| 		
+    		| 		BreakList: [(StatementDelimiterToken, null), (CloseParenthesisToken, ParenthesizedExpressionNode)]
+    		| 		EmptyExpressionNode + IdentifierToken => AmbiguousIdentifierExpressionNode;
+    		|
+    		| 		BreakList: [(StatementDelimiterToken, null), (CloseParenthesisToken, ParenthesizedExpressionNode)]
+    		| 		AmbiguousIdentifierExpressionNode + CloseParenthesisToken =>
+    		| 		{
+    		| 			if (peek(1)==EqualsToken && peek(2)==CloseAngleBracketToken)
+    		| 				return LambdaExpressionNode;
+    		| 			else
+    		| 				return ParenthesizedExpressionNode;
+    		| 		}
     		|
     		| Related case of explicit casting:
-			| 	'(intPerson)x;'
+			| 	(intPerson)x;
 			| 		EmptyExpressionNode + OpenParenthesisToken => ParenthesizedExpressionNode;
 			| 		
-			| 	'(intPerson) => ...;'
+			| 	(intPerson) => ...;
 			| 		EmptyExpressionNode + OpenParenthesisToken => ParenthesizedExpressionNode;
     		
     		================================================================
