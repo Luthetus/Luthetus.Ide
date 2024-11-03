@@ -1395,6 +1395,11 @@ ref,
     	'intPerson' is to signify 'int' or 'Person' because this is a 'keyword' and an 'identifier'.
     	So remember the general type clause matching not just an identifier.
     	
+    		Rename 'x' to 'argsX'?
+    	
+    		Technically 'intPerson' does not encompass the case of a contextual keyword...
+    			-10 points
+    	
     	Cases:
     		================================================================
     		| () => ...;
@@ -1481,6 +1486,34 @@ ref,
     		
     		================================================================
     		| (intPerson x) => ...;
+    		|
+    		| 	One of the main issues that I'm having is how to track the 'intPerson x' during the
+    		| 		time spent as a ParenthesizedExpressionNode.
+    		|
+    		| 	The same is true for 'x, y'.
+    		|
+    		| 	Because these syntax are nonsensical to the ParenthesizedExpressionNode.
+    		|
+    		| 	I could store each 'AmbiguousIdentifierNode' in the SyntaxList property of a 'BadExpressionNode'.
+    		|
+    		| 	Then, if I later determine that im looking at a LambdaExpressionNode
+    		| 		I can give the LambdaExpressionNode the 'BadExpressionNode'.
+    		|
+    		| 	At that point the LambdaExpressionNode can then make sense of the 'BadExpressionNode' itself.
+    		|
+    		| 	If the BadExpressionNode's SyntaxList is: { 'intPerson', 'x' }.
+    		| 		Then the LambdaExpressionNode can iterate over each item,
+    		| 		and take two consecutive AmbiguousIdentifierNode(s) to be a TypeClauseNode and "variable identifier".
+    		| 
+    		| 	Maybe if the LambdaExpressionNode finds 3 consecutive AmbiguousIdentifierNode(s),
+    		| 		then the LambdaExpressionNode itself is a BadExpressionNode?
+    		|
+    		| 	If the LambdaExpressionNode finds a CommaToken, then it can start tracking a new parameter.
+    		|
+    		| 	I'd prefer to not construct an instance of ParenthesizedExpressionNode, just to later replace
+    		| 		it with the construction of a LambdaExpressionNode.
+    		|
+    		| 	But, that concern is likely a minor detail relative to the whole of getting the C# Parser to work correctly.
     		
     		================================================================
     		| (x, y, *) => ...;
