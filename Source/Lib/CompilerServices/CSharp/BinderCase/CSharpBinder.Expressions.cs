@@ -1122,25 +1122,50 @@ public partial class CSharpBinder
 	    			
 	    			var wasTyped = false;
 	    			
-	    			if (i < badExpressionNode.SyntaxList.Count - 1)
+	    			if (firstSyntax.SyntaxKind != SyntaxKind.AmbiguousIdentifierExpressionNode &&
+	    				firstSyntax.SyntaxKind != SyntaxKind.IdentifierToken)
 	    			{
-	    				if (firstSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-	    				{
-	    					wasTyped = true;
-	    					var secondSyntax = badExpressionNode.SyntaxList[++i];
-	    					
-	    					if (secondSyntax.SyntaxKind == SyntaxKind.IdentifierToken)
-	    					{
-	    						variableIdentifier = (IdentifierToken)secondSyntax;
-	    					}
-	    					else if (secondSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-	    					{
-	    						var token = ((AmbiguousIdentifierExpressionNode)secondSyntax).Token;
-    		
-					    		if (token.SyntaxKind != SyntaxKind.IdentifierToken)
-					    			continue;
-	    					}
-	    				}
+	    				continue;
+	    			}
+	    			
+	    			if (i < badExpressionNode.SyntaxList.Count - 1 &&
+		    				(badExpressionNode.SyntaxList[i + 1].SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode ||
+		    				badExpressionNode.SyntaxList[i + 1].SyntaxKind == SyntaxKind.IdentifierToken))
+	    			{
+    					wasTyped = true;
+    					
+    					if (firstSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+    					{
+    						var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)firstSyntax;
+    						typeClauseNode = new TypeClauseNode(ambiguousIdentifierExpressionNode.Token, valueType: null, genericParametersListingNode: null);
+					
+							BindTypeClauseNode(
+						        typeClauseNode,
+						        (CSharpParserModel)model);
+    					}
+    					else if (firstSyntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    					{
+    						var identifierToken = (IdentifierToken)firstSyntax;
+    						typeClauseNode = new TypeClauseNode(identifierToken, valueType: null, genericParametersListingNode: null);
+					
+							BindTypeClauseNode(
+						        typeClauseNode,
+						        (CSharpParserModel)model);
+    					}
+    					
+    					var secondSyntax = badExpressionNode.SyntaxList[++i];
+    					
+    					if (secondSyntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    					{
+    						variableIdentifier = (IdentifierToken)secondSyntax;
+    					}
+    					else if (secondSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+    					{
+    						var token = ((AmbiguousIdentifierExpressionNode)secondSyntax).Token;
+		
+				    		if (token.SyntaxKind != SyntaxKind.IdentifierToken)
+				    			continue;
+    					}
 	    			}
 	    			
 	    			if (!wasTyped)
