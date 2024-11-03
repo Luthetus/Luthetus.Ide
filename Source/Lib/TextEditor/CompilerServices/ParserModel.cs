@@ -51,22 +51,4 @@ public class ParserModel : IParserModel
     /// That is to say, this action would create the function definition node and then append it.
     /// </summary>
     public Stack<Action<CodeBlockNode>> FinalizeCodeBlockNodeActionStack { get; set; }
-    
-    public IVariableDeclarationNode? HandleVariableDeclarationExpression(
-    	TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
-        VariableKind variableKind,
-        IParserModel model)
-    {
-    	return null;
-    }
-    
-    public void HandleVariableDeclarationStatement(
-        TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
-        VariableKind variableKind,
-        IParserModel model)
-    {
-    	return;
-    }
 }

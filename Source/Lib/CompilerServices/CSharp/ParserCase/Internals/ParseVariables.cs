@@ -66,6 +66,9 @@ public static class ParseVariables
         return variableDeclarationNode;
     }
     
+    /// <summary>
+    /// TODO: This method should return the 'VariableDeclarationNode?' just the same as <see cref="HandleVariableDeclarationExpression"/>
+    /// </summary>
     public static void HandleVariableDeclarationStatement(
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,

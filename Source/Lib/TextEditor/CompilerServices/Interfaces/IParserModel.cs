@@ -42,20 +42,4 @@ public interface IParserModel
     /// That is to say, this action would create the function definition node and then append it.
     /// </summary>
     public Stack<Action<CodeBlockNode>> FinalizeCodeBlockNodeActionStack { get; set; }
-    
-    /// <summary>Function invocation which uses the 'out' keyword.</summary>
-    public IVariableDeclarationNode? HandleVariableDeclarationExpression(
-    	TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
-        VariableKind variableKind,
-        IParserModel model);
-    
-    /// <summary>
-    /// TODO: This method should return the 'VariableDeclarationNode?' just the same as <see cref="HandleVariableDeclarationExpression"/>
-    /// </summary>
-    public void HandleVariableDeclarationStatement(
-        TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
-        VariableKind variableKind,
-        IParserModel model);
 }

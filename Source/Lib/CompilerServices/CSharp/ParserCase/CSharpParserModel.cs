@@ -58,32 +58,6 @@ public class CSharpParserModel : IParserModel
     /// </summary>
     public Stack<Action<CodeBlockNode>> FinalizeCodeBlockNodeActionStack { get; set; }
     
-    public IVariableDeclarationNode? HandleVariableDeclarationExpression(
-    	TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
-        VariableKind variableKind,
-        IParserModel model)
-    {
-    	return ParseVariables.HandleVariableDeclarationExpression(
-	        consumedTypeClauseNode,
-	        consumedIdentifierToken,
-	        variableKind,
-	        model);
-    }
-    
-    public void HandleVariableDeclarationStatement(
-        TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
-        VariableKind variableKind,
-        IParserModel model)
-    {
-    	ParseVariables.HandleVariableDeclarationStatement(
-	        consumedTypeClauseNode,
-	        consumedIdentifierToken,
-	        variableKind,
-	        model);
-    }
-    
     IBinder IParserModel.Binder => Binder;
     IBinderSession IParserModel.BinderSession => BinderSession;
 }

@@ -50,63 +50,10 @@ public sealed class LambdaExpressionNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.LambdaExpressionNode;
     
-    public LambdaExpressionNode SetVariableDeclarationNodeListFromBadExpressionNode(BadExpressionNode badExpressionNode, IParserModel model)
+    public void AddVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode)
     {
-    	Console.Write("SetVariableDeclarationNodeList_" + badExpressionNode.SyntaxKind + '_');
-    	
-    	Console.Write(badExpressionNode.SyntaxList.Count);
-    	
-    	if (badExpressionNode.SyntaxList.Count > 1)
-    		Console.Write('+' + badExpressionNode.SyntaxList[1].SyntaxKind);
-    	
-    	if (badExpressionNode.SyntaxList.Count == 2 &&
-    		badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken)
-    	{
-    		Console.Write("inside");
-    		var identifierToken = (IdentifierToken)badExpressionNode.SyntaxList[1];
-    		
-    		var variableDeclarationNode = model.HandleVariableDeclarationExpression(
-		        TypeFacts.Empty.ToTypeClause(),
-		        identifierToken,
-		        VariableKind.Local,
-		        model);
-		        
-    		VariableDeclarationNodeList.Add(variableDeclarationNode);
-    	}
-    	else
-    	{
-    		Console.Write("not");
-    	}
-    
+    	VariableDeclarationNodeList.Add(variableDeclarationNode);
     	_childListIsDirty = true;
-    	return this;
-    }
-    
-    public LambdaExpressionNode SetVariableDeclarationNodeList(IExpressionNode expressionNode, IParserModel model)
-    {
-    	if (expressionNode.SyntaxKind == SyntaxKind.BadExpressionNode)
-    		return SetVariableDeclarationNodeListFromBadExpressionNode((BadExpressionNode)expressionNode, model);
-    		
-    	Console.Write("SetVariableDeclarationNodeList_" + expressionNode.SyntaxKind + '_');
-    
-    	if (expressionNode.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-    	{
-    		var token = ((AmbiguousIdentifierExpressionNode)expressionNode).Token;
-    		
-    		if (token.SyntaxKind != SyntaxKind.IdentifierToken)
-    			return this;
-    	
-    		var variableDeclarationNode = model.HandleVariableDeclarationExpression(
-		        TypeFacts.Empty.ToTypeClause(),
-		        (IdentifierToken)token,
-		        VariableKind.Local,
-		        model);
-		        
-    		VariableDeclarationNodeList.Add(variableDeclarationNode);
-    	}
-    
-    	_childListIsDirty = true;
-    	return this;
     }
     
     public ISyntax[] GetChildList()
