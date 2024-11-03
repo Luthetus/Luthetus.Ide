@@ -48,7 +48,22 @@
                 	
                 	@{ var lambdaSymbol = (LambdaSymbol)localSymbol; }
                 	
-                	()
+                	<span>
+	                	(<!--
+	                	-->@for (int i = 0; i < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count; i++)
+	                	{<!--
+	                		-->var index = i;<!--
+	                		-->var variableDeclarationNode = lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList[index];<!--
+	                		--><text><!--
+	                			--><span class="luth_te_type">@variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText()</span> <span class="luth_te_variable">@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span><!--
+	                			-->@if (index < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count - 1)
+	                			{<!--
+	                				--><text>, </text><!--
+	                			-->}<!--
+	                		--></text><!--
+	                	-->}<!--
+	                	-->)
+                	</span>
                 	
                 	@* => *@
                     @localSymbol.TextSpan.GetText()

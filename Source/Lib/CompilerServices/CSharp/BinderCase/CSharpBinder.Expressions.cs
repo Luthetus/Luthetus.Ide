@@ -159,7 +159,11 @@ public partial class CSharpBinder
 		else if (token.SyntaxKind == SyntaxKind.EqualsToken)
 		{
 			if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+			{
+				var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+				SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, ambiguousIdentifierExpressionNode, model);
+				return lambdaExpressionNode;
+			}
 			
 			model.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
 			return EmptyExpressionNode.Empty;
