@@ -294,6 +294,7 @@ public static class ParseOthers
     		case SyntaxKind.CloseParenthesisToken:
 			case SyntaxKind.CommaToken:
 			case SyntaxKind.CloseAngleBracketToken:
+			case SyntaxKind.OpenBraceToken:
 			case SyntaxKind.CloseBraceToken:
 			case SyntaxKind.EqualsToken:
 			case SyntaxKind.StatementDelimiterToken:

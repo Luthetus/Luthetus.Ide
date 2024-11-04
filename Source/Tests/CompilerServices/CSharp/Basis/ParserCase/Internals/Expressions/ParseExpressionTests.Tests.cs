@@ -1776,21 +1776,6 @@ ref,
     }
     
     [Fact]
-    public void ValueTuple()
-    {
-    	/*var session = new ExpressionSession(
-			tokenList: new List<ISyntaxToken>
-			{
-				// List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> shortCircuitList = new();
-			},
-			expressionStack: new Stack<ISyntax>());
-		
-		var expression = Parser_TEST.ParseExpression(session);*/
-		
-		throw new NotImplementedException();
-    }
-    
-    [Fact]
     public void GetterAndSetterThatAreNotAutoImplemented()
     {
     	/*var session = new ExpressionSession(
@@ -2171,6 +2156,50 @@ public void SetProgress(double? decimalPercentProgress, string? message = null, 
 	    //HasInKeyword
 	    //HasRefKeyword
 
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void ConstructorInvokesConstructor()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        
+        var sourceText =
+@"
+public class ProgressBarModel
+{
+	public ProgressBarModel(CancellationToken? cancellationToken)
+		: base(cancellationToken)
+	{
+	}
+}
+";
+        
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void ValueTuple()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        
+        var sourceText =
+@"
+var x = (decimalPercentProgress, null, cancellationToken);
+";
+        
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
 		throw new NotImplementedException();
     }
     

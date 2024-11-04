@@ -105,6 +105,5 @@ public class ProgressBarModel : IDisposable
 			IsDisposed = true;
 			ProgressChanged?.Invoke(true);
 		}
-		
 	}
 }

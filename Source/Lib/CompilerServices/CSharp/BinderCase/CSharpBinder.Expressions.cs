@@ -664,6 +664,7 @@ public partial class CSharpBinder
 			case SyntaxKind.OpenParenthesisToken:
 				var parenthesizedExpressionNode = new ParenthesizedExpressionNode((OpenParenthesisToken)token, CSharpFacts.Types.Void.ToTypeClause());
 				model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
+				model.ExpressionList.Add((SyntaxKind.CommaToken, parenthesizedExpressionNode));
 				return EmptyExpressionNode.Empty;
 			case SyntaxKind.NewTokenKeyword:
 				return new ConstructorInvocationExpressionNode(
@@ -1010,6 +1011,13 @@ public partial class CSharpBinder
 	
 		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 			expressionSecondary = ForceDecisionAmbiguousIdentifier(parenthesizedExpressionNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, model);
+	
+		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+		{
+			var commaSeparatedExpressionNode = new CommaSeparatedExpressionNode();
+			commaSeparatedExpressionNode.AddInnerExpressionNode(parenthesizedExpressionNode);
+			return commaSeparatedExpressionNode; 
+		}
 	
 		if (parenthesizedExpressionNode.InnerExpression.SyntaxKind != SyntaxKind.EmptyExpressionNode)
 			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), parenthesizedExpressionNode, expressionSecondary);

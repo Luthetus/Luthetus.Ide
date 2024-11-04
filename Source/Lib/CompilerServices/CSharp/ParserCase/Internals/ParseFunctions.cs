@@ -149,10 +149,50 @@ public class ParseFunctions
         	}
         	else
         	{
-        		HandleFunctionParameters(
-		        	(OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken),
+        		_ = model.TokenWalker.Consume();
+        		model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+        		model.ExpressionList.Add((SyntaxKind.OpenBraceToken, null));
+        		model.ExpressionList.Add((SyntaxKind.EqualsToken, null));
+        		var functionInvocationNode = ParseOthers.ParseExpression(model);
+        		
+        		/*var openParenthesisIndex = model.TokenWalker.Index;
+        		var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+        		
+        		if (openParenthesisToken.IsFabricated)
+        			return;
+        		
+        		var parenthesisMatchCounter = 1;
+        		var braceMatchCounter = 0;
+        		
+        		while (!model.TokenWalker.IsEof)
+        		{
+        			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+        				parenthesisMatchCounter++;
+        			else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+        				parenthesisMatchCounter--;
+        			else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+        				braceMatchCounter++;
+        			else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+        				braceMatchCounter--;
+        			
+        			if (matchParenthesisCounter == 0)
+        			{
+        				var closeParenthesisIndex = model.TokenWalker.Index;
+        				constructorDefinitionNode.OtherConstructorInvocation = (openParenthesisIndex, closeParenthesisIndex);
+        				break;
+        			}
+        			else if (matchBraceTokenCounter == -1)
+        			{
+        				break;
+        			}
+        		
+        			_ = model.TokenWalker.Consume();
+        		}*/
+        		
+        		/*HandleFunctionParameters(
+		        	,
 			        model);
-				var functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();
+				var functionParametersListingNode = (FunctionParametersListingNode)model.SyntaxStack.Pop();*/
         	}
         }
     }

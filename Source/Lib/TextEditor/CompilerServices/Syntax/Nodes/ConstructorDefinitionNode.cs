@@ -34,6 +34,21 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public ConstraintNode? ConstraintNode { get; }
     public OpenBraceToken OpenBraceToken { get; private set; }
+    
+    /// <summary>
+    /// public MyConstructor(string firstName)
+    /// 	: base(firstName)
+    /// {
+    /// }
+    ///
+    /// This stores the indices of tokens that deliminate the parameters to the 'base()' invocation.
+    /// The reason for this is the invocation needs to have 'string firstName' in scope.
+    /// But, 'string firstName' doesn't come into scope until the '{' token.
+    /// 
+    /// So, remember where the parameters to the 'base()' invocation were,
+    /// then later when 'string firstName' is in scope, parse the parameters.
+    /// </summary>
+    public (int OpenParenthesisIndex,  int CloseParenthesisIndex)? OtherConstructorInvocation { get; set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
@@ -66,6 +81,8 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 				parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
 			else
 				parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);*/
+				
+			
 		}
     }
     
