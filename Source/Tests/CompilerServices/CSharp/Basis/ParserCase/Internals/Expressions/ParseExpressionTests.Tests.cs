@@ -2097,6 +2097,84 @@ return character switch
     }
     
     [Fact]
+    public void FunctionParameterOptional()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+
+        var sourceText = 
+/*@"
+public void SetProgress(double decimalPercentProgress)
+{
+}
+";*/
+
+/*@"
+public void SetProgress(string? message = null)
+{
+}
+";*/
+
+/*@"
+public void SetProgress(double? decimalPercentProgress, string? message = null)
+{
+}
+";*/
+
+@"
+public void SetProgress(double? decimalPercentProgress, string? message = null, string? secondaryMessage = null)
+{
+}
+";
+
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer); 
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		
+		Console.WriteLine("foreach (var child in topCodeBlock.GetChildList())");
+		foreach (var child in topCodeBlock.GetChildList())
+		{
+			Console.WriteLine("\t" + child.SyntaxKind);
+		}
+		Console.WriteLine();
+		
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
+		var functionArgumentEntryNodeList = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList;
+		
+		int indexParameter;
+		
+		indexParameter = 0;
+		{
+			var functionArgumentEntryNode = (FunctionArgumentEntryNode)functionArgumentEntryNodeList[indexParameter];
+			Assert.False(functionArgumentEntryNode.IsOptional);
+		}
+		
+		indexParameter = 1;
+		{
+			var functionArgumentEntryNode = (FunctionArgumentEntryNode)functionArgumentEntryNodeList[indexParameter];
+			Assert.True(functionArgumentEntryNode.IsOptional);
+		}
+		
+		indexParameter = 2;
+		{
+			var functionArgumentEntryNode = (FunctionArgumentEntryNode)functionArgumentEntryNodeList[indexParameter];
+			Assert.True(functionArgumentEntryNode.IsOptional);
+		}
+		//VariableDeclarationNode
+	    //OptionalCompileTimeConstantToken
+	    
+	    
+	    
+	    //HasParamsKeyword
+	    //HasOutKeyword
+	    //HasInKeyword
+	    //HasRefKeyword
+
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
     public void SourceCodeThatIsNotParsing_Test()
     {
     	var resourceUri = new ResourceUri("./unitTesting.txt");

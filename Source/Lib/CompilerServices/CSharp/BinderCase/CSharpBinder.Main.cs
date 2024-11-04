@@ -254,7 +254,8 @@ public partial class CSharpBinder : IBinder
         CSharpParserModel model)
     {
         var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode;
-
+        
+        /*
 		// TODO: Wouldn't this have a '!' at the start? And '... && typeDefinitionNode is not null' (2024-10-25)
         if (TryGetTypeDefinitionHierarchically(
         		model,
@@ -287,6 +288,7 @@ public partial class CSharpBinder : IBinder
                 functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType?.Name ?? "null",
                 literalExpressionNode.ResultTypeClauseNode.ValueType?.Name ?? "null");
         }
+        */
     }
 
     /// <summary>TODO: Validate that the returned bound expression node has the same result type as the enclosing scope.</summary>

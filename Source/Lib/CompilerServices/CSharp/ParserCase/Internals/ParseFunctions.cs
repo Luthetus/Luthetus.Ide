@@ -76,10 +76,12 @@ public class ParseFunctions
 
 			foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 	    	{
-	    		if (argument.IsOptional)
+	    		model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
+	    		
+	    		/*if (argument.IsOptional)
 	    			model.Binder.BindFunctionOptionalArgument(argument, model);
 	    		else
-	    			model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
+	    			model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);*/
 	    	}
         }
     }
@@ -488,19 +490,34 @@ public class ParseFunctions
                 false);
 
 			// Moved binding to be in during parsing of OpenBraceToken (2024-10-08)
-
-            var functionArgumentEntryNode = new FunctionArgumentEntryNode(
-                variableDeclarationStatementNode,
-                optionalCompileTimeConstantToken: null,
-                false,
-                hasParamsKeyword,
-                hasOutKeyword,
-                hasInKeyword,
-                hasRefKeyword);
+			
+			FunctionArgumentEntryNode functionArgumentEntryNode;
 
             if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
             {
-                var equalsToken = (EqualsToken)model.TokenWalker.Consume();
+            	functionArgumentEntryNode = new FunctionArgumentEntryNode(
+		            variableDeclarationStatementNode,
+		            optionalCompileTimeConstantToken: null,
+		            isOptional: true,
+		            hasParamsKeyword,
+		            hasOutKeyword,
+		            hasInKeyword,
+		            hasRefKeyword);
+		            
+		        while (!model.TokenWalker.IsEof)
+		        {
+		        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken ||
+		        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken|| 
+		        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+		        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+		        	{
+		        		break;
+		        	}
+		        
+		        	_ = model.TokenWalker.Consume();
+		        }
+            
+                /*var equalsToken = (EqualsToken)model.TokenWalker.Consume();
 
                 var compileTimeConstantAbleSyntaxKinds = new[]
                 {
@@ -520,7 +537,18 @@ public class ParseFunctions
 		            hasParamsKeyword,
 		            hasOutKeyword,
 		            hasInKeyword,
-		            hasRefKeyword);
+		            hasRefKeyword);*/
+            }
+            else
+            {
+            	functionArgumentEntryNode = new FunctionArgumentEntryNode(
+	                variableDeclarationStatementNode,
+	                optionalCompileTimeConstantToken: null,
+	                false,
+	                hasParamsKeyword,
+	                hasOutKeyword,
+	                hasInKeyword,
+	                hasRefKeyword);
             }
 
             mutableFunctionArgumentListing.Add(functionArgumentEntryNode);

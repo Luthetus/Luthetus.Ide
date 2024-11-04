@@ -60,10 +60,12 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     {
 		foreach (var argument in FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 		{
-			if (argument.IsOptional)
+			parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+		
+			/*if (argument.IsOptional)
 				parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
 			else
-				parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+				parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);*/
 		}
     }
     
