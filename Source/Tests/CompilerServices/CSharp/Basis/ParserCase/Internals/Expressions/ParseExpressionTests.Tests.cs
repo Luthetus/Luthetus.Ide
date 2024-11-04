@@ -2117,12 +2117,7 @@ public void SetProgress(double? decimalPercentProgress, string? message = null, 
         var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
-		Console.WriteLine("foreach (var child in topCodeBlock.GetChildList())");
-		foreach (var child in topCodeBlock.GetChildList())
-		{
-			Console.WriteLine("\t" + child.SyntaxKind);
-		}
-		Console.WriteLine();
+		WriteChildrenIndented(topCodeBlock);
 		
 		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 		var functionArgumentEntryNodeList = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList;
@@ -2200,6 +2195,11 @@ var x = (decimalPercentProgress, null, cancellationToken);
         var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
+		WriteChildrenIndented(topCodeBlock);
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
 		throw new NotImplementedException();
     }
     
@@ -2215,5 +2215,15 @@ var x = (decimalPercentProgress, null, cancellationToken);
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
 		throw new NotImplementedException();
+    }
+    
+    private void WriteChildrenIndented(ISyntaxNode node)
+    {
+    	Console.WriteLine("foreach (var child in node.GetChildList())");
+		foreach (var child in node.GetChildList())
+		{
+			Console.WriteLine("\t" + child.SyntaxKind);
+		}
+		Console.WriteLine();
     }
 }

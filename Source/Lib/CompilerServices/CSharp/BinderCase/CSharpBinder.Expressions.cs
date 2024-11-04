@@ -55,6 +55,8 @@ public partial class CSharpBinder
 				return BinaryMergeToken((BinaryExpressionNode)expressionPrimary, token, model);
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeToken((ParenthesizedExpressionNode)expressionPrimary, token, model);
+			case SyntaxKind.CommaSeparatedExpressionNode:
+				return CommaSeparatedMergeToken((CommaSeparatedExpressionNode)expressionPrimary, token, model);
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, token, model);
 			case SyntaxKind.LambdaExpressionNode:
@@ -87,6 +89,8 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, model);
+			case SyntaxKind.CommaSeparatedExpressionNode:
+				return CommaSeparatedMergeExpression((CommaSeparatedExpressionNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.FunctionInvocationNode:
 				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.LambdaExpressionNode:
@@ -362,6 +366,41 @@ public partial class CSharpBinder
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), binaryExpressionNode, token);
 		}
+	}
+	
+	public IExpressionNode CommaSeparatedMergeToken(
+		CommaSeparatedExpressionNode commaSeparatedExpressionNode, ISyntaxToken token, IParserModel model)
+	{
+		if (token.SyntaxKind == SyntaxKind.CommaToken)
+		{
+			if (!commaSeparatedExpressionNode.CloseParenthesisToken.ConstructorWasInvoked)
+			{
+				model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, commaSeparatedExpressionNode));
+				model.ExpressionList.Add((SyntaxKind.CommaToken, commaSeparatedExpressionNode));
+				return EmptyExpressionNode.Empty;
+			}
+		}
+		
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), commaSeparatedExpressionNode, token);
+	}
+	
+	public IExpressionNode CommaSeparatedMergeExpression(
+		CommaSeparatedExpressionNode commaSeparatedExpressionNode, IExpressionNode expressionSecondary, IParserModel model)
+	{
+		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+		{
+			commaSeparatedExpressionNode.AddInnerExpressionNode(expressionSecondary);
+			model.ExpressionList.Add((SyntaxKind.CommaToken, commaSeparatedExpressionNode));
+			return EmptyExpressionNode.Empty;
+		}
+		
+		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+		{
+			commaSeparatedExpressionNode.AddInnerExpressionNode(expressionSecondary);
+			return commaSeparatedExpressionNode;
+		}
+	
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), commaSeparatedExpressionNode, expressionSecondary);
 	}
 	
 	public IExpressionNode ConstructorInvocationMergeToken(

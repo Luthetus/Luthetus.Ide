@@ -28,11 +28,12 @@ public sealed class CommaSeparatedExpressionNode : IExpressionNode
     public TypeClauseNode ResultTypeClauseNode { get; } = TypeFacts.Pseudo.ToTypeClause();
     
     public List<IExpressionNode> InnerExpressionList { get; } = new();
+    public CloseParenthesisToken CloseParenthesisToken { get; set; }
 
     public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.TupleExpressionNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.CommaSeparatedExpressionNode;
     
     public void AddInnerExpressionNode(IExpressionNode expressionNode)
     {
