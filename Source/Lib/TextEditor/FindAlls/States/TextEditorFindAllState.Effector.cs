@@ -52,7 +52,7 @@ public partial record TextEditorFindAllState
 				}
 				
 				var cancellationToken = textEditorFindAllState._searchCancellationTokenSource.Token;
-				var progressBarModel = new ProgressBarModel();
+				var progressBarModel = new ProgressBarModel(cancellationToken: null);
 
 				ConstructTreeView(textEditorFindAllState);
 

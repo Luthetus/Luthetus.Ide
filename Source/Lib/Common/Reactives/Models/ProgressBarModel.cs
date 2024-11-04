@@ -5,26 +5,37 @@ namespace Luthetus.Common.RazorLib.Reactives.Models;
 public class ProgressBarModel : IDisposable
 {
 	private readonly object _progressLock = new();
-
-	public ProgressBarModel()
-		: this(0, null)
+	private readonly CancellationToken? _cancellationToken;
+	
+	public ProgressBarModel(CancellationToken? cancellationToken)
+		: this(0, null, cancellationToken)
 	{
 	}
 
-	public ProgressBarModel(double decimalPercentProgress)
-		: this(decimalPercentProgress, null)
+	public ProgressBarModel(double decimalPercentProgress, CancellationToken? cancellationToken)
+		: this(decimalPercentProgress, null, cancellationToken)
 	{
 	}
 
-	public ProgressBarModel(double decimalPercentProgress, string? message)
+	public ProgressBarModel(double decimalPercentProgress, string? message, CancellationToken? cancellationToken)
 	{
 		DecimalPercentProgress = decimalPercentProgress;
 		Message = message;
+		_cancellationToken = cancellationToken;
+		
+		if (_cancellationToken is not null)
+		{
+			_stoppingCts = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken.Value);
+		}
 	}
+	
+	private CancellationTokenSource? _stoppingCts;
 
 	public double DecimalPercentProgress { get; private set; }
 	public string? Message { get; private set; }
 	public string? SecondaryMessage { get; private set; }
+	public bool IsCancellable => _cancellationToken is not null;
+	public bool IsCancelled => _cancellationToken.Value.IsCancellationRequested;
 	public bool IsDisposed { get; private set; }
 
 	/// <summary>
@@ -74,6 +85,17 @@ public class ProgressBarModel : IDisposable
 		}
 
 		return decimalPercentProgress;
+	}
+	
+	public void Cancel()
+	{
+		Console.WriteLine("ProgressBarModel.Cancel()");
+	
+		if (_stoppingCts is not null)
+		{
+			_stoppingCts.Cancel();
+			ProgressChanged?.Invoke(false);
+		}
 	}
 
 	public void Dispose()

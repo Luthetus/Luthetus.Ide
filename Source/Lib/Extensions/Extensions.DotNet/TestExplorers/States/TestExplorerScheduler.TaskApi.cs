@@ -183,8 +183,9 @@ public partial class TestExplorerScheduler
 	            return;
 	    	
 	    	var localTestExplorerState = _testExplorerStateWrap.Value;
+	    	var cancellationTokenSource = new CancellationTokenSource();
 	    	
-	    	var progressBarModel = new ProgressBarModel(0, "parsing...");
+	    	var progressBarModel = new ProgressBarModel(0, "parsing...", cancellationToken: cancellationTokenSource.Token);
 
 			NotificationHelper.DispatchProgress(
 				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
@@ -268,6 +269,7 @@ public partial class TestExplorerScheduler
     	var totalTestCount = 0;
     	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
     	
+    	Console.WriteLine($"NoTestsTreeViewGroup.ChildList.Count: {NoTestsTreeViewGroup.ChildList.Count}");
     	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
         {
         	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)

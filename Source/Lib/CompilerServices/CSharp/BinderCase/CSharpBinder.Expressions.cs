@@ -174,7 +174,7 @@ public partial class CSharpBinder
 				EmptyExpressionNode.Empty,
 				ambiguousIdentifierExpressionNode,
 				model);
-		
+				
 			_ = model.TokenWalker.Consume(); // Consume the IsTokenKeyword
 			
 			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.NotTokenContextualKeyword)
@@ -192,6 +192,9 @@ public partial class CSharpBinder
 			        VariableKind.Local,
 			        model);
 			}
+			
+			// Guaranteed to consume 1 further than the secondary loop so have to backtrack 1 time as well.
+			_ = model.TokenWalker.Backtrack();
 			
 			return ambiguousIdentifierExpressionNode;
 		}
@@ -695,11 +698,8 @@ public partial class CSharpBinder
 					
 					var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
 					
-					// TODO: Why was I Backtracking here? It puts the code at risk for an infinite loop, and doesn't seem necessary.
-					{
-						//_ = model.TokenWalker.Backtrack();
-						//_ = model.TokenWalker.Backtrack();
-					}
+					// Guaranteed to consume 1 further than the secondary loop so have to backtrack 1 time as well.
+					_ = model.TokenWalker.Backtrack();
 					
 					_ = ParseVariables.HandleVariableDeclarationExpression(
 				        typeClauseNode,

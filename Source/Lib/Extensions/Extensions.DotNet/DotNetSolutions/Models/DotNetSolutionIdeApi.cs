@@ -323,7 +323,7 @@ Execution Terminal"));
 			
 		_ = Task.Run(async () =>
 		{
-			var progressBarModel = new ProgressBarModel(0, "parsing...");
+			var progressBarModel = new ProgressBarModel(0, "parsing...", cancellationToken: null);
 
 			NotificationHelper.DispatchProgress(
 				$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
