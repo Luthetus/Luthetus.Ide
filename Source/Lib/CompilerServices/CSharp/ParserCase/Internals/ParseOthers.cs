@@ -297,6 +297,7 @@ public static class ParseOthers
 			case SyntaxKind.CloseBraceToken:
 			case SyntaxKind.EqualsToken:
 			case SyntaxKind.StatementDelimiterToken:
+			case SyntaxKind.ColonToken:
     			return true;
     		default:
     			return false;
