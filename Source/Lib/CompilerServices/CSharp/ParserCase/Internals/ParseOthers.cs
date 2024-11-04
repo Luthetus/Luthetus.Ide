@@ -184,6 +184,14 @@ public static class ParseOthers
     	Console.Write("====END================================================================================\n\n");
     	#endif
     	
+    	if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+    	{
+    		expressionPrimary = model.Binder.ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				(AmbiguousIdentifierExpressionNode)expressionPrimary,
+				model);
+    	}
+    	
     	return expressionPrimary;
     }
 
