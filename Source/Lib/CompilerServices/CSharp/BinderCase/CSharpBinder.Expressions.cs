@@ -1053,8 +1053,9 @@ public partial class CSharpBinder
 	
 		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
 		{
+			model.NoLongerRelevantExpressionNode = parenthesizedExpressionNode;
 			var commaSeparatedExpressionNode = new CommaSeparatedExpressionNode();
-			commaSeparatedExpressionNode.AddInnerExpressionNode(parenthesizedExpressionNode);
+			commaSeparatedExpressionNode.AddInnerExpressionNode(expressionSecondary);
 			return commaSeparatedExpressionNode; 
 		}
 	
@@ -1266,5 +1267,30 @@ public partial class CSharpBinder
     	}
     	
     	return lambdaExpressionNode;
+	}
+	
+	/// <summary>
+	/// A ParenthesizedExpressionNode expression will "become" a CommaSeparatedExpressionNode
+	/// upon encounter a CommaToken within its parentheses.
+	///
+	/// An issue arises however, because the model.ExpressionList still says to
+	/// "short circuit" when the CloseParenthesisToken is encountered,
+	/// and to at this point make the ParenthesizedExpressionNode the primary expression.
+	///
+	/// Well, the ParenthesizedExpressionNode should no longer exist, it was deemed
+	/// to be more accurately described by a CommaSeparatedExpressionNode.
+	///
+	/// So, this method will remove any entries in the model.ExpressionList
+	/// that have the 'ParenthesizedExpressionNode' as the to-be primary expression.
+	/// </summary>
+	public void ClearFromExpressionList(IExpressionNode expressionNode, IParserModel model)
+	{
+		for (int i = model.ExpressionList.Count - 1; i > -1; i--)
+		{
+			var delimiterExpressionTuple = model.ExpressionList[i];
+			
+			if (Object.ReferenceEquals(expressionNode, delimiterExpressionTuple.ExpressionNode))
+				model.ExpressionList.RemoveAt(i);
+		}
 	}
 }

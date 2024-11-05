@@ -121,7 +121,7 @@ public static class ParseOthers
     		// Check if the tokenCurrent is a token that is used as a end-delimiter before iterating the list?
     		if (SyntaxIsEndDelimiter(tokenCurrent.SyntaxKind))
     		{
-    			for (int i =  model.ExpressionList.Count - 1; i > -1; i--)
+    			for (int i = model.ExpressionList.Count - 1; i > -1; i--)
 	    		{
 	    			var delimiterExpressionTuple = model.ExpressionList[i];
 	    			
@@ -129,15 +129,19 @@ public static class ParseOthers
 	    			{
 	    				if (delimiterExpressionTuple.ExpressionNode is null)
 	    				{
-	    					//for (int z = 0; z < 10; z++)
-	    					//	Console.WriteLine("forceExit = true;");
-	    					
 	    					forceExit = true;
 	    					break;
 	    				}
 	    				
 	    				expressionPrimary = BubbleUpParseExpression(model.ExpressionList.Count - 1, i - 1, expressionPrimary, model);
 	    				model.ExpressionList.RemoveRange(i, model.ExpressionList.Count - i);
+	    				
+	    				if (model.NoLongerRelevantExpressionNode is not null)
+	    				{
+	    					model.Binder.ClearFromExpressionList(model.NoLongerRelevantExpressionNode, model);
+	    					model.NoLongerRelevantExpressionNode = null;
+	    				}
+	    				
 	    				break;
 	    				
 	    				#if DEBUG

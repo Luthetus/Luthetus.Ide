@@ -2200,6 +2200,14 @@ var x = (decimalPercentProgress, null, cancellationToken);
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 		
+		var commaSeparatedExpressionNode = (CommaSeparatedExpressionNode)variableAssignmentExpressionNode.ExpressionNode;
+		
+		WriteChildrenIndented(commaSeparatedExpressionNode);
+		
+		/*var variableReferenceNode = (VariableReferenceNode)commaSeparatedExpressionNode.InnerExpressionList[0];
+		var nullKeywordToken = (KeywordToken)commaSeparatedExpressionNode.InnerExpressionList[1];
+		var variableReferenceNode = (VariableReferenceNode)commaSeparatedExpressionNode.InnerExpressionList[2];*/
+		
 		throw new NotImplementedException();
     }
     
