@@ -184,8 +184,17 @@ public partial class TestExplorerScheduler
 	    	
 	    	var localTestExplorerState = _testExplorerStateWrap.Value;
 	    	var cancellationTokenSource = new CancellationTokenSource();
+	    	var cancellationToken = cancellationTokenSource.Token;
 	    	
-	    	var progressBarModel = new ProgressBarModel(0, "parsing...", cancellationToken: cancellationTokenSource.Token);
+	    	var progressBarModel = new ProgressBarModel(0, "parsing...")
+	    	{
+	    		OnCancelFunc = () =>
+	    		{
+	    			cancellationTokenSource.Cancel();
+	    			cancellationTokenSource.Dispose();
+	    			return Task.CompletedTask;
+	    		}
+	    	};
 
 			NotificationHelper.DispatchProgress(
 				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
@@ -229,6 +238,8 @@ public partial class TestExplorerScheduler
 							return Task.CompletedTask;
 						});
 		            
+		            	cancellationToken.ThrowIfCancellationRequested();
+		            
 		            	await treeViewProject.LoadChildListAsync();
 			    		projectsHandled++;
 		            }
@@ -244,6 +255,9 @@ public partial class TestExplorerScheduler
 			}
 			catch (Exception e)
 			{
+				if (e is OperationCanceledException)
+					progressBarModel.IsCancelled = true;
+			
 				var currentProgress = progressBarModel.GetProgress();
 				
 				progressThrottle.Run(_ => 

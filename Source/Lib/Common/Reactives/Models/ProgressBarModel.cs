@@ -5,38 +5,34 @@ namespace Luthetus.Common.RazorLib.Reactives.Models;
 public class ProgressBarModel : IDisposable
 {
 	private readonly object _progressLock = new();
-	private readonly CancellationToken? _cancellationToken;
 	
-	public ProgressBarModel(CancellationToken? cancellationToken)
-		: this(0, null, cancellationToken)
+	public ProgressBarModel()
+		: this(0, null)
 	{
 	}
 
-	public ProgressBarModel(double decimalPercentProgress, CancellationToken? cancellationToken)
-		: this(decimalPercentProgress, null, cancellationToken)
+	public ProgressBarModel(double decimalPercentProgress)
+		: this(decimalPercentProgress, null)
 	{
 	}
 
-	public ProgressBarModel(double decimalPercentProgress, string? message, CancellationToken? cancellationToken)
+	public ProgressBarModel(double decimalPercentProgress, string? message)
 	{
 		DecimalPercentProgress = decimalPercentProgress;
 		Message = message;
-		_cancellationToken = cancellationToken;
-		
-		if (_cancellationToken is not null)
-		{
-			_stoppingCts = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken.Value);
-		}
 	}
 	
-	private CancellationTokenSource? _stoppingCts;
-
+	private Task? _cancelTask;
+	
 	public double DecimalPercentProgress { get; private set; }
 	public string? Message { get; private set; }
 	public string? SecondaryMessage { get; private set; }
-	public bool IsCancellable => _cancellationToken is not null;
-	public bool IsCancelled => _cancellationToken.Value.IsCancellationRequested;
+	public bool IsCancellable => OnCancelFunc is not null;
+	public bool IsCancelled { get; set; }
+	public bool IntentToCancel { get; private set; }
 	public bool IsDisposed { get; private set; }
+	
+	public Func<Task>? OnCancelFunc { get; init; }
 
 	/// <summary>
 	/// When <see cref="SetProgress(double)"/> is invoked, then this event is raised
@@ -89,13 +85,27 @@ public class ProgressBarModel : IDisposable
 	
 	public void Cancel()
 	{
-		Console.WriteLine("ProgressBarModel.Cancel()");
-	
-		if (_stoppingCts is not null)
+		lock (_progressLock)
 		{
-			_stoppingCts.Cancel();
-			ProgressChanged?.Invoke(false);
+			if (IntentToCancel)
+				return;
+				
+			IntentToCancel = true;
 		}
+		
+		Task.Run(async () =>
+		{
+			try
+			{
+				_cancelTask = OnCancelFunc.Invoke();
+				ProgressChanged?.Invoke(false);
+				await _cancelTask;
+			}
+			finally
+			{
+				ProgressChanged?.Invoke(false);
+			}
+		});
 	}
 
 	public void Dispose()

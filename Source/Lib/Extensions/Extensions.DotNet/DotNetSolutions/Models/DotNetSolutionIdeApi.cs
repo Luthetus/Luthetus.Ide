@@ -323,7 +323,18 @@ Execution Terminal"));
 			
 		_ = Task.Run(async () =>
 		{
-			var progressBarModel = new ProgressBarModel(0, "parsing...", cancellationToken: null);
+			var cancellationTokenSource = new CancellationTokenSource();
+			var cancellationToken = cancellationTokenSource.Token;
+			
+			var progressBarModel = new ProgressBarModel(0, "parsing...")
+			{
+				OnCancelFunc = () =>
+				{
+					cancellationTokenSource.Cancel();
+					cancellationTokenSource.Dispose();
+					return Task.CompletedTask;
+				}
+			};
 
 			NotificationHelper.DispatchProgress(
 				$"Parse: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
@@ -416,6 +427,7 @@ Execution Terminal"));
 						currentProgress,
 						$"{projectsParsedCount + 1}/{dotNetProjectListLength}: {project.AbsolutePath.NameWithExtension}");
 					
+					cancellationToken.ThrowIfCancellationRequested();
 
 					await DiscoverClassesInProject(project, progressBarModel, progressThrottle, currentProgress, maximumProgressAvailableToProject);
 					projectsParsedCount++;
@@ -425,6 +437,9 @@ Execution Terminal"));
 			}
 			catch (Exception e)
 			{
+				if (e is OperationCanceledException)
+					progressBarModel.IsCancelled = true;
+					
 				var currentProgress = progressBarModel.GetProgress();
 				
 				progressThrottle.Run((ParseSolutionStageKind.C, currentProgress, e.ToString(), null));

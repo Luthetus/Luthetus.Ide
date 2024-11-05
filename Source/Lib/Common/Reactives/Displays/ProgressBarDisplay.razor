@@ -40,17 +40,27 @@
 		@if (localProgressBarModel.IsCancellable)
 		{
 			<div style="width: @(cancelButtonWidthInPercentage)%;">
-				@if (localProgressBarModel.IsCancelled)
-				{
-					<text>IsCancelled</text>
-				}
-				else
-				{
-					<button class="luth_button"
-						    @onclick="localProgressBarModel.Cancel">
-						Asd
-					</button>
-				}
+				<button class="luth_button"
+					    @onclick="localProgressBarModel.Cancel"
+					    disabled=@(localProgressBarModel.IsCancelled || localProgressBarModel.IntentToCancel || localProgressBarModel.IsDisposed)>
+					
+					@if (localProgressBarModel.IsCancelled)
+					{
+						<text>IsCancelled</text>
+					}
+					else if (localProgressBarModel.IntentToCancel)
+					{
+						<text>Cancelling</text>
+					}
+					else if (localProgressBarModel.IsDisposed)
+					{
+						<text>Disposed</text>
+					}
+					else
+					{
+						<text>Cancel</text>
+					}
+				</button>
 			</div>
 		}
     </div>
