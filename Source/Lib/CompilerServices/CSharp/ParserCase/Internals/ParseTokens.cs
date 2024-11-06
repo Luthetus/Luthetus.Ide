@@ -67,23 +67,43 @@ public static class ParseTokens
         IdentifierToken consumedIdentifierToken,
         CSharpParserModel model)
     {
+    	Console.WriteLine("ParseIdentifierToken");
+    
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax is AmbiguousIdentifierNode)
+        {
+        	Console.WriteLine("...is AmbiguousIdentifierNode");
             ResolveAmbiguousIdentifier((AmbiguousIdentifierNode)model.SyntaxStack.Pop(), model);
+        }
 
         if (TryParseTypedIdentifier(consumedIdentifierToken, model))
+        {
+        	Console.WriteLine("TryParseTypedIdentifier");
             return;
+        }
 
         if (TryParseConstructorDefinition(consumedIdentifierToken, model))
+        {
+        	Console.WriteLine("TryParseConstructorDefinition");
             return;
+        }
 
         if (TryParseVariableAssignment(consumedIdentifierToken, model))
+        {
+        	Console.WriteLine("TryParseVariableAssignment");
             return;
+        }
 
         if (TryParseGenericTypeOrFunctionInvocation(consumedIdentifierToken, model))
+        {
+        	Console.WriteLine("TryParseGenericTypeOrFunctionInvocation");
             return;
+        }
 
         if (TryParseReference(consumedIdentifierToken, model))
+        {
+        	Console.WriteLine("TryParseReference");
             return;
+        }
 
         return;
     }
@@ -145,6 +165,8 @@ public static class ParseTokens
     {
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax is TypeClauseNode typeClauseNode)
         {
+        	Console.WriteLine("TryParseTypedIdentifier.is TypeClauseNode typeClauseNode");
+        
             // The variable 'genericArgumentsListingNode' is here for
             // when the syntax is determined to be a function definition.
             // In this case, the typeClauseNode would be the function's return type.
@@ -154,6 +176,7 @@ public static class ParseTokens
             if (TryParseGenericArguments(model) &&
                 model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.GenericArgumentsListingNode)
             {
+            	Console.WriteLine("TryParseTypedIdentifier.TryParseGenericArguments.Success");
                 genericArgumentsListingNode = (GenericArgumentsListingNode)model.SyntaxStack.Pop();
             }
 
@@ -163,6 +186,7 @@ public static class ParseTokens
                 genericArgumentsListingNode,
                 model))
             {
+            	Console.WriteLine("TryParseFunctionDefinition.ReturnTrue");
                 return true;
             }
 
@@ -171,10 +195,12 @@ public static class ParseTokens
                 consumedIdentifierToken,
                 model))
             {
+            	Console.WriteLine("TryParseVariableDeclaration.ReturnTrue");
                 return true;
             }
         }
         
+        Console.WriteLine("TryParseTypedIdentifier.ReturnFalse");
         return false;
     }
 

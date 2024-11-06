@@ -264,6 +264,7 @@ public partial class CSharpBinder
 					valueType: null,
 					genericParametersListingNode: null);
 				
+				Console.WriteLine("BindTypeClauseNode_1");
 				BindTypeClauseNode(
 			        typeClauseNode,
 			        (CSharpParserModel)model);
@@ -291,6 +292,7 @@ public partial class CSharpBinder
 				valueType: null,
 				genericParametersListingNode: null);
 			
+			Console.WriteLine("BindTypeClauseNode_2");
 			BindTypeClauseNode(
 		        typeClauseNode,
 		        (CSharpParserModel)model);
@@ -415,6 +417,7 @@ public partial class CSharpBinder
         					valueType: null,
         					genericParametersListingNode: null);
 						
+						Console.WriteLine("BindTypeClauseNode_3");
 						BindTypeClauseNode(
 					        typeClauseNode,
 					        (CSharpParserModel)model);
@@ -799,6 +802,7 @@ public partial class CSharpBinder
 		        valueType: null,
 		        genericParametersListingNode: null);
 			
+			Console.WriteLine("BindTypeClauseNode_4");
 			BindTypeClauseNode(
 		        typeClauseNode,
 		        (CSharpParserModel)model);
@@ -818,6 +822,7 @@ public partial class CSharpBinder
 			{
 				var typeClauseNode = (TypeClauseNode)badExpressionNode.SyntaxList[1];
 				
+				Console.WriteLine("BindTypeClauseNode_5");
 				BindTypeClauseNode(
 			        typeClauseNode,
 			        (CSharpParserModel)model);
@@ -1073,6 +1078,7 @@ public partial class CSharpBinder
 			{
 				var typeClauseNode = new TypeClauseNode((ISyntaxToken)badExpressionNode.SyntaxList[1], valueType: null, genericParametersListingNode: null);
 				
+				Console.WriteLine("BindTypeClauseNode_6");
 				BindTypeClauseNode(
 			        typeClauseNode,
 			        (CSharpParserModel)model);
@@ -1093,6 +1099,7 @@ public partial class CSharpBinder
 			 {
 			 	var typeClauseNode = new TypeClauseNode(variableReferenceNode.VariableIdentifierToken, valueType: null, genericParametersListingNode: null);
 				
+				Console.WriteLine("BindTypeClauseNode_7");
 				BindTypeClauseNode(
 			        typeClauseNode,
 			        (CSharpParserModel)model);
@@ -1150,6 +1157,7 @@ public partial class CSharpBinder
 	    		var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)badExpressionNode.SyntaxList[0];
 	    		var typeClauseNode = new TypeClauseNode(ambiguousIdentifierExpressionNode.Token, valueType: null, genericParametersListingNode: null);
 					
+				Console.WriteLine("BindTypeClauseNode_8");
 				BindTypeClauseNode(
 			        typeClauseNode,
 			        (CSharpParserModel)model);
@@ -1192,6 +1200,7 @@ public partial class CSharpBinder
     						var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)firstSyntax;
     						typeClauseNode = new TypeClauseNode(ambiguousIdentifierExpressionNode.Token, valueType: null, genericParametersListingNode: null);
 					
+							Console.WriteLine("BindTypeClauseNode_9");
 							BindTypeClauseNode(
 						        typeClauseNode,
 						        (CSharpParserModel)model);
@@ -1201,6 +1210,7 @@ public partial class CSharpBinder
     						var identifierToken = (IdentifierToken)firstSyntax;
     						typeClauseNode = new TypeClauseNode(identifierToken, valueType: null, genericParametersListingNode: null);
 					
+							Console.WriteLine("BindTypeClauseNode_10");
 							BindTypeClauseNode(
 						        typeClauseNode,
 						        (CSharpParserModel)model);

@@ -104,6 +104,8 @@ public static class ParseOthers
 	/// </summary>
 	public static IExpressionNode ParseExpression(CSharpParserModel model)
     {
+    	Console.WriteLine("ParseExpression");
+    	
 #if DEBUG
     	Console.Write("\n====START==============================================================================\n");
     	Console.Write("====START==============================================================================\n\n");
@@ -117,6 +119,10 @@ public static class ParseOthers
     	while (!model.TokenWalker.IsEof)
         {
         	var tokenCurrent = model.TokenWalker.Current;
+        	Console.WriteLine(model.TokenWalker.Current);
+        	Console.WriteLine(model.TokenWalker.Current);
+        	Console.WriteLine(model.TokenWalker.Current);
+        	Console.WriteLine(model.TokenWalker.Current);
     		
     		// The CSharpBinder.Expressions.cs code does not 'remove' from the 'model'ExpressionList'
 			// But, it does at times 'add'.
