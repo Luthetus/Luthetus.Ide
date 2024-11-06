@@ -2172,7 +2172,7 @@ public class ProgressBarModel
         
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
-        var parser = new CSharpParser(lexer); 
+        var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
@@ -2203,6 +2203,10 @@ var x = (decimalPercentProgress, null, cancellationToken);
 		var commaSeparatedExpressionNode = (CommaSeparatedExpressionNode)variableAssignmentExpressionNode.ExpressionNode;
 		
 		WriteChildrenIndented(commaSeparatedExpressionNode);
+		
+		var badExpressionNode = (BadExpressionNode)commaSeparatedExpressionNode.GetChildList()[0];
+		
+		WriteChildrenIndented(badExpressionNode);
 		
 		/*var variableReferenceNode = (VariableReferenceNode)commaSeparatedExpressionNode.InnerExpressionList[0];
 		var nullKeywordToken = (KeywordToken)commaSeparatedExpressionNode.InnerExpressionList[1];

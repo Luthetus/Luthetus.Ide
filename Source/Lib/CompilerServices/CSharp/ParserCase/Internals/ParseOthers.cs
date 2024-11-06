@@ -118,10 +118,15 @@ public static class ParseOthers
         {
         	var tokenCurrent = model.TokenWalker.Current;
     		
+    		// The CSharpBinder.Expressions.cs code does not 'remove' from the 'model'ExpressionList'
+			// But, it does at times 'add'.
+			// Therefore the count needs to be stored ahead of time.
+			var expressionListCount = model.ExpressionList.Count;
+    		
     		// Check if the tokenCurrent is a token that is used as a end-delimiter before iterating the list?
     		if (SyntaxIsEndDelimiter(tokenCurrent.SyntaxKind))
     		{
-    			for (int i = model.ExpressionList.Count - 1; i > -1; i--)
+    			for (int i = expressionListCount - 1; i > -1; i--)
 	    		{
 	    			var delimiterExpressionTuple = model.ExpressionList[i];
 	    			
@@ -133,8 +138,8 @@ public static class ParseOthers
 	    					break;
 	    				}
 	    				
-	    				expressionPrimary = BubbleUpParseExpression(model.ExpressionList.Count - 1, i - 1, expressionPrimary, model);
-	    				model.ExpressionList.RemoveRange(i, model.ExpressionList.Count - i);
+	    				expressionPrimary = BubbleUpParseExpression(expressionListCount - 1, i - 1, expressionPrimary, model, expressionListCount: expressionListCount);
+	    				model.ExpressionList.RemoveRange(i, expressionListCount - i);
 	    				
 	    				if (model.NoLongerRelevantExpressionNode is not null)
 	    				{
@@ -143,17 +148,13 @@ public static class ParseOthers
 	    				}
 	    				
 	    				break;
-	    				
-	    				#if DEBUG
-	    				WriteExpressionList(model.ExpressionList);
-	    				#endif
 	    			}
 	    		}
     		}
 			
 			if (forceExit)
 			{
-				expressionPrimary = BubbleUpParseExpression(model.ExpressionList.Count - 1, -1, expressionPrimary, model);
+				expressionPrimary = BubbleUpParseExpression(expressionListCount - 1, -1, expressionPrimary, model, expressionListCount: expressionListCount);
 				break;
 			}
 			
@@ -200,7 +201,7 @@ public static class ParseOthers
     }
 
 	/// <summary>
-	/// 'BubbleUpParseExpression(indexStart: model.ExpressionList.Count - 1, indexExclusiveEnd: -1);'
+	/// 'BubbleUpParseExpression(indexStart: expressionListCount - 1, indexExclusiveEnd: -1);'
 	/// 
     /// This is a hack to have SyntaxKind.StatementDelimiterToken break out of the expression.
 	/// The parser is adding as the 0th item that
@@ -222,12 +223,12 @@ public static class ParseOthers
 	///       ... even better still might be to "bubble" back up the recursion by joining each entry in the model.ExpressionList from last to first.
 	///       and the initial merge is done between model.ExpressionList.Last and expressionPrimary.
 	/// </summary>
-    private static IExpressionNode BubbleUpParseExpression(int indexStart, int indexExclusiveEnd, IExpressionNode expressionPrimary, CSharpParserModel model)
+    private static IExpressionNode BubbleUpParseExpression(int indexStart, int indexExclusiveEnd, IExpressionNode expressionPrimary, CSharpParserModel model, int expressionListCount)
     {
     	(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode) triggeredDelimiterTuple = default;
     	IExpressionNode? previousDelimiterExpressionNode = null;
     	
-    	if (indexExclusiveEnd + 1 < model.ExpressionList.Count)
+    	if (indexExclusiveEnd + 1 < expressionListCount)
     		triggeredDelimiterTuple = model.ExpressionList[indexExclusiveEnd + 1];
 				
 		for (int i = indexStart; i > indexExclusiveEnd; i--)

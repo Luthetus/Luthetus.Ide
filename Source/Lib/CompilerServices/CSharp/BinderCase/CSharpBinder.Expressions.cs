@@ -375,10 +375,13 @@ public partial class CSharpBinder
 		{
 			if (!commaSeparatedExpressionNode.CloseParenthesisToken.ConstructorWasInvoked)
 			{
-				model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, commaSeparatedExpressionNode));
 				model.ExpressionList.Add((SyntaxKind.CommaToken, commaSeparatedExpressionNode));
 				return EmptyExpressionNode.Empty;
 			}
+		}
+		else if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+		{
+			return commaSeparatedExpressionNode;
 		}
 		
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), commaSeparatedExpressionNode, token);
@@ -387,14 +390,7 @@ public partial class CSharpBinder
 	public IExpressionNode CommaSeparatedMergeExpression(
 		CommaSeparatedExpressionNode commaSeparatedExpressionNode, IExpressionNode expressionSecondary, IParserModel model)
 	{
-		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
-		{
-			commaSeparatedExpressionNode.AddInnerExpressionNode(expressionSecondary);
-			model.ExpressionList.Add((SyntaxKind.CommaToken, commaSeparatedExpressionNode));
-			return EmptyExpressionNode.Empty;
-		}
-		
-		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken || model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 		{
 			commaSeparatedExpressionNode.AddInnerExpressionNode(expressionSecondary);
 			return commaSeparatedExpressionNode;
@@ -1056,6 +1052,11 @@ public partial class CSharpBinder
 			model.NoLongerRelevantExpressionNode = parenthesizedExpressionNode;
 			var commaSeparatedExpressionNode = new CommaSeparatedExpressionNode();
 			commaSeparatedExpressionNode.AddInnerExpressionNode(expressionSecondary);
+			// commaSeparatedExpressionNode never saw the 'OpenParenthesisToken' so the 'ParenthesizedExpressionNode
+			// has to create the ExpressionList entry on behalf of the 'CommaSeparatedExpressionNode'.
+			Console.WriteLine(model.ExpressionList.Count);
+			model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, commaSeparatedExpressionNode));
+			Console.WriteLine(model.ExpressionList.Count);
 			return commaSeparatedExpressionNode; 
 		}
 	
