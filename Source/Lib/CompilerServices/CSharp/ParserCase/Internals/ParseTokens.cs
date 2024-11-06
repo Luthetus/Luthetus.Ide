@@ -791,18 +791,22 @@ public static class ParseTokens
         }
         else if (model.CurrentCodeBlockBuilder.PendingChild is not null)
         {
-        	var pendingChild = model.CurrentCodeBlockBuilder.PendingChild;
-        
-        	model.Binder.RegisterScope(CSharpFacts.Types.Void.ToTypeClause(), consumedStatementDelimiterToken.TextSpan, model);
-			model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, pendingChild);
-			pendingChild.OnBoundScopeCreatedAndSetAsCurrent(model);
-			
-	        model.Binder.DisposeScope(consumedStatementDelimiterToken.TextSpan, model);
-	
-	        if (model.CurrentCodeBlockBuilder.Parent is not null)
-	            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
-	            
-	        model.CurrentCodeBlockBuilder.PendingChild = null;
+        	if (model.CurrentCodeBlockBuilder.Parent is not null && // Not Global Scope
+        		!model.CurrentCodeBlockBuilder.PendingChild.OpenBraceToken.ConstructorWasInvoked) // Not Already Deliminated By an OpenBrace.
+        	{
+	        	var pendingChild = model.CurrentCodeBlockBuilder.PendingChild;
+	        
+	        	model.Binder.RegisterScope(CSharpFacts.Types.Void.ToTypeClause(), consumedStatementDelimiterToken.TextSpan, model);
+				model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, pendingChild);
+				pendingChild.OnBoundScopeCreatedAndSetAsCurrent(model);
+				
+		        model.Binder.DisposeScope(consumedStatementDelimiterToken.TextSpan, model);
+		
+		        if (model.CurrentCodeBlockBuilder.Parent is not null)
+		            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
+		            
+		        model.CurrentCodeBlockBuilder.PendingChild = null;
+        	}
         }
     }
 

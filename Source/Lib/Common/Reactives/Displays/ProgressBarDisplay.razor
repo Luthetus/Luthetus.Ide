@@ -41,8 +41,9 @@
 		{
 			<div style="width: @(cancelButtonWidthInPercentage)%;">
 				<button class="luth_button"
-					    @onclick="localProgressBarModel.Cancel"
-					    disabled=@(localProgressBarModel.IsCancelled || localProgressBarModel.IntentToCancel || localProgressBarModel.IsDisposed)>
+						style="width: 100%; height: 100%;"
+					    disabled=@(localProgressBarModel.IsCancelled || localProgressBarModel.IntentToCancel || localProgressBarModel.IsDisposed)
+					    @onclick="localProgressBarModel.Cancel">
 					
 					@if (localProgressBarModel.IsCancelled)
 					{

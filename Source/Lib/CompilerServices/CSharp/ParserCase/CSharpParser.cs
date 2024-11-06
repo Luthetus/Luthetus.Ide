@@ -61,6 +61,10 @@ public class CSharpParser : IParser
         while (true)
         {
             var token = model.TokenWalker.Consume();
+            
+            #if DEBUG
+            Console.WriteLine("___" + token.SyntaxKind + "___" + token.TextSpan.GetText());
+            #endif
 
             switch (token.SyntaxKind)
             {

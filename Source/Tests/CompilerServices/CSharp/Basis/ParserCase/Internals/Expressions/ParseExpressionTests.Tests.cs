@@ -1,3 +1,4 @@
+using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -2237,6 +2238,53 @@ var x = (decimalPercentProgress, null, cancellationToken);
 		throw new NotImplementedException();
     }
     
+    /// <summary>
+    /// This parses incorrectly: 'Func(decimalPercentProgress);'
+    ///
+    /// Whereas this parses fine: 'var x = Func(decimalPercentProgress);'
+    ///
+    /// The reason is suspected to be the transition from the 'statement' parser loop to the 'expression' parser loop.
+    ///
+    /// It actually seems to be related to 'int decimalPercentProgress;', i.e.: declaring the variable
+    /// results in it erroneously being interpreted as a TypeClauseNode, yet if it is undeclared then it
+    /// comes out to be VariableReferenceNode.
+    /// </summary>
+    [Fact]
+    public void FunctionInvocationExpressionStatement()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        
+        var sourceText =
+@"
+int decimalPercentProgress;
+Func(decimalPercentProgress);
+";
+        
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList()[0];
+		// WriteChildrenIndented(functionInvocationNode, nameof(functionInvocationNode));
+		
+		var identifierToken = (IdentifierToken)functionInvocationNode.GetChildList()[0];
+		
+		var functionParametersListingNode = (FunctionParametersListingNode)functionInvocationNode.GetChildList()[1];
+		{
+			// Assertions relating to functionParametersListingNode's properties are in this code block.
+			Assert.True(functionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+	        Assert.Equal(1, functionParametersListingNode.FunctionParameterEntryNodeList.Count);
+	        Assert.True(functionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}
+		
+		var typeClauseNode = (TypeClauseNode)functionInvocationNode.GetChildList()[2];
+		
+		throw new NotImplementedException();
+    }
+    
     [Fact]
     public void SourceCodeThatIsNotParsing_Test()
     {
@@ -2251,13 +2299,41 @@ var x = (decimalPercentProgress, null, cancellationToken);
 		throw new NotImplementedException();
     }
     
-    private void WriteChildrenIndented(ISyntaxNode node)
+    private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
-    	Console.WriteLine("foreach (var child in node.GetChildList())");
+    	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
 		foreach (var child in node.GetChildList())
 		{
 			Console.WriteLine("\t" + child.SyntaxKind);
 		}
 		Console.WriteLine();
+    }
+    
+    private void WriteChildrenIndentedRecursive(ISyntaxNode node, string name = "node", int indentation = 0)
+    {
+    	var indentationStringBuilder = new StringBuilder();
+    	for (int i = 0; i < indentation; i++)
+    		indentationStringBuilder.Append('\t');
+    	
+    	Console.WriteLine($"{indentationStringBuilder.ToString()}{node.SyntaxKind}");
+    	
+    	// For the child tokens
+    	indentationStringBuilder.Append('\t');
+    	var childIndentation = indentationStringBuilder.ToString();
+    	
+		foreach (var child in node.GetChildList())
+		{
+			if (child is ISyntaxNode syntaxNode)
+			{
+				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
+			}
+			else if (child is ISyntaxToken syntaxToken)
+			{
+				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
+			}
+		}
+		
+		if (indentation == 0)
+			Console.WriteLine();
     }
 }

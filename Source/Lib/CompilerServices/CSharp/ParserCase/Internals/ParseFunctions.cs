@@ -14,6 +14,7 @@ public class ParseFunctions
         GenericParametersListingNode? genericParametersListingNode,
         CSharpParserModel model)
     {
+    	Console.WriteLine("HandleFunctionInvocation");
         // TODO: (2023-06-04) I believe this if block will run for '<' mathematical operator.
 
 		var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
