@@ -1,4 +1,5 @@
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
@@ -1381,8 +1382,8 @@ ref,
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
-		
-		throw new NotImplementedException();
+		Assert.True(lambdaExpressionNode.CodeBlockNodeIsExpression);
+		Assert.Empty(lambdaExpressionNode.VariableDeclarationNodeList);
     }
     
     [Fact]
@@ -1539,33 +1540,54 @@ ref,
         var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
-		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		WriteChildrenIndented(topCodeBlock);
+		
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList()[1];
 		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
+		
+		Assert.True(lambdaExpressionNode.CodeBlockNodeIsExpression);
 		
 		Assert.Equal(1, lambdaExpressionNode.VariableDeclarationNodeList.Count);
 		
 		var parameter = lambdaExpressionNode.VariableDeclarationNodeList[0];
-		Assert.Equal(CSharpFacts.Types.Void.ToTypeClause(), parameter.TypeClauseNode);
+		Assert.Equal(TypeFacts.Empty.ToTypeClause(), parameter.TypeClauseNode);
         Assert.Equal("x", parameter.IdentifierToken.TextSpan.GetText());
         Assert.Equal(VariableKind.Local, parameter.VariableKind);
-		
-		throw new NotImplementedException();
     }
     
     [Fact]
     public void LambdaFunction_Expression_ManyParameter_Async()
     {
     	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "async (x, index) => \"Abc\";";
+        var sourceText = "(async (x, index) => \"Abc\")";
 		var lexer = new CSharpLexer(resourceUri, sourceText);
         lexer.Lex();
         var parser = new CSharpParser(lexer);
         var compilationUnit = parser.Parse();
 		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
-		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
 		
-		throw new NotImplementedException();
+		Assert.True(lambdaExpressionNode.CodeBlockNodeIsExpression);
+		
+		Assert.Equal(2, lambdaExpressionNode.VariableDeclarationNodeList.Count);
+		
+		// First element
+		{
+			var parameter = lambdaExpressionNode.VariableDeclarationNodeList[0];
+			Assert.Equal(TypeFacts.Empty.ToTypeClause(), parameter.TypeClauseNode);
+	        Assert.Equal("x", parameter.IdentifierToken.TextSpan.GetText());
+	        Assert.Equal(VariableKind.Local, parameter.VariableKind);
+        }
+        
+        // Second element
+		{
+			var parameter = lambdaExpressionNode.VariableDeclarationNodeList[1];
+			Assert.Equal(TypeFacts.Empty.ToTypeClause(), parameter.TypeClauseNode);
+	        Assert.Equal("index", parameter.IdentifierToken.TextSpan.GetText());
+	        Assert.Equal(VariableKind.Local, parameter.VariableKind);
+        }
     }
     
     [Fact]
