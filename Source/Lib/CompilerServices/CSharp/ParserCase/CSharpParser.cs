@@ -60,7 +60,9 @@ public class CSharpParser : IParser
             
         while (true)
         {
-            var token = model.TokenWalker.Consume();
+        	// The last statement in this while loop is '_ = model.TokenWalker.Consume();'.
+        	// Knowing this to be the case is extremely important.
+            var token = model.TokenWalker.Current;
             
             #if DEBUG
             Console.WriteLine("___" + token.SyntaxKind + "___" + token.TextSpan.GetText());
@@ -189,6 +191,124 @@ public class CSharpParser : IParser
 					break;
 				}
 			}
+			
+			// In regards to whether to '_ = model.TokenWalker.Consume();'
+			// at the start of the while loop, or at the end:
+			//
+			// The end is better because:
+			// 
+			// - Anytime one wants to check the previous token,
+			// with the 'Consume()' at the end of the loop then one can use 'model.TokenWalker.Previous'.
+			// But, if 'Consume()' is at the start of the loop then one has to use 'model.TokenWalker.Peek(-2)' and that feels very janky.
+			// 
+			// - As well, helps ensure a "handle-syntax" does not 'Consume()' someone elses syntax.
+			// If an individual "syntax" cannot make sense of the current token,
+			// then it can just return to the main loop and the main loop will deal with it.
+			//
+			// On a different note:
+			//
+			// 'should return to the main loop'
+			// - The end of every statement
+			// - The start of a code block
+			// - The end of a code block
+			//
+			// The goal with every iteration of the main loop,
+			// is to narrow down the possible syntax that is occuring.
+			// Then to invoke some other method that will handle that syntax
+			// entirely, and then return to the main loop for the next syntax to start being parsed.
+			//
+			// For example, multiple consecutive keywords might be an ambiguous syntax.
+			// Therefore, the main loop should push these keywords onto the 'StatementStack'.
+			// Then, eventually a disambiguating token will be encountered.
+			// At this point, the corresponding method to handle the syntax can be invoked,
+			// and the method can pop off the 'StatementStack' to see the "related" tokens.
+			//
+			// There are two loops:
+			// - Statement Loop
+			// - Expression Loop
+			//
+			// Statement loop exists in CSharpParser.cs (this file).
+			// Expression loop exists in ParseOthers.cs (a relative path from this file: './Internals/ParseOthers.cs').
+			//
+			// The parser should gracefully handle syntax that does not compile.
+			// i.e.: if a syntactical error can be recovered from, then
+			// the parser is expected to recover.
+			//
+			// For example, "(;"
+			// For the sake of the example, this is presumed to start a ParenthesizedExpressionNode.
+			// It goes on to see a StatementDelimiterToken before it sees a CloseParenthesisToken.
+			// Instead of cascading syntactical errors to the text that comes after this (imagine this is part of a source code file)
+			// the ParenthesizedExpressionNode should report a diagnostic error,
+			// but then return back to the main loop.
+			// The main loop will see a StatementDelimiterToken, and then a new statement will begin
+			// as if nothing went wrong. This allows the rest of the text file to parse with the "same result".
+			// 
+			// The parsing is at times done 'breadth first'.
+			// Because, a class definition might be:
+			//
+			// ````public class MyClass
+			// ````{
+			// ````	public MyClass(string firstName)
+			// ````    {
+			// ````		FirstName = firstName;
+			// ````	}
+			// ````
+			// ````	public string FirstName { get; set; }
+			// ````}
+			//
+			// In this scenario the 'FirstName' property is being referenced from within the class's constructor.
+			// Yet, the constructor is defined above the property it references.
+			//
+			// Instead of parsing 'depth first', in this scenario the index of the token that
+			// starts the code block body of the constructor definition is remembered,
+			// then the parser skips until it finds the matching close brace
+			// (by counting the open brace and close braces until it evens out).
+			//
+			// Once the class definition is finished being parsed, then the deferred parsing will start.
+			// This will modify the 'TokenWalker' such that it now is pointing at the previously "remembered"
+			// token that starts the code block of the constructor definition.
+			//
+			// As well, the 'TokenWalker' is told what index to return to once finished parsing the child scope.
+			// In this case the 'TokenWalker' would return to the index that represents the 'CloseBraceToken'
+			// of the class definition.
+			// 
+			// If there were many child scopes that needed to be 'defer parsed' then the same
+			// code will be hit as was initially, and each time a child scope is 'defer parsed'
+			// it is removed from the list of child scopes that need to be 'defer parsed'.
+			//
+			// Regarding StatementDelimiterToken, OpenBraceToken, and CloseBraceToken:
+			// - These syntax hold a greater meaning than the "individual syntax".
+			// For example: "1;".
+			// In the example '1' is a NumericLiteralToken.
+			// Furthermore, a NumericLiteralToken can be parsed as a 'LiteralExpressionNode'.
+			// But, the ending StatementDelimiterToken does not belong to the 'LiteralExpressionNode'.
+			// It is to be "provided" to the main statement loop, to be processed there.
+			// 
+			// In short, syntax shouldn't consume tokens that don't belong to them.
+			// And it is being stated that 'StatementDelimiterToken, OpenBraceToken, and CloseBraceToken'
+			// in general do not belong to a syntax.
+			//
+			// Some exceptions to this would be a property definition "public string FirstName { get; set; }".
+			// Here, the OpenBraceToken and CloseBraceToken are not being used in the same sense
+			// as they are when defining scope.
+			// 
+			// So, the property definition should consume those OpenBraceToken and CloseBraceToken.
+			//
+			// However, consider this example:
+			//
+			// ````public string FirstName
+			// ````{
+			// ````	get
+			// ````	{
+			// ````		return _firstName;
+			// ````	}
+			// ````	set => _firstName = value;
+			// ````}
+			//
+			// Here, the property's "getter" is defining a code block.
+			// So, the brace tokens that deliminate the "getter", ought to
+			// "visit" the main loop for a moment. Then it can continue on with the property syntax.
+			_ = model.TokenWalker.Consume();
         }
 
         if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null &&

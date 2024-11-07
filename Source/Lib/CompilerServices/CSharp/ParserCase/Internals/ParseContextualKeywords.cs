@@ -13,11 +13,9 @@ public class ParseContextualKeywords
         CSharpParserModel model)
     {
         // Check if previous statement is finished, and a new one is starting.
-        // TODO: 'Peek(-2)' is horribly confusing. The reason for using -2 is that one consumed the 'var' keyword and moved their position forward by 1. So to read the token behind 'var' one must go back 2 tokens. It feels natural to put '-1' and then this evaluates to the wrong token. Should an expression bound property be made for 'Peek(-2)'?
+        var peekNumber = -1;
         
-        var peekNumber = -2;
-        
-        while (model.TokenWalker.Peek(peekNumber).SyntaxKind != SyntaxKind.BadToken)
+        while (model.TokenWalker.Peek(peekNumber).SyntaxKind != SyntaxKind.BadToken && !model.TokenWalker.IsEof)
         {
         	if (model.TokenWalker.Peek(peekNumber).SyntaxKind == SyntaxKind.CommentSingleLineToken ||
         		model.TokenWalker.Peek(peekNumber).SyntaxKind == SyntaxKind.CommentMultiLineToken)
@@ -42,9 +40,10 @@ public class ParseContextualKeywords
             case SyntaxKind.ColonToken:
             case SyntaxKind.BadToken:
             {
-	            // Check if the next token is a second 'var keyword' or an IdentifierToken. Two IdentifierTokens is invalid, and therefore one can contextually take this 'var' as a keyword.
-	            bool nextTokenIsVarKeyword = SyntaxKind.VarTokenContextualKeyword == model.TokenWalker.Current.SyntaxKind;
-	            bool nextTokenIsIdentifierToken = SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind;
+	            // Check if the next token is a second 'var keyword' or an IdentifierToken.
+	            // Two IdentifierTokens is invalid, and therefore one can contextually take this 'var' as a keyword.
+	            bool nextTokenIsVarKeyword = SyntaxKind.VarTokenContextualKeyword == model.TokenWalker.Next.SyntaxKind;
+	            bool nextTokenIsIdentifierToken = SyntaxKind.IdentifierToken == model.TokenWalker.Next.SyntaxKind;
 	
 	            if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
 	            {
@@ -381,8 +380,8 @@ public class ParseContextualKeywords
 
             while (!model.TokenWalker.IsEof)
             {
-                if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-                    model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+                if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken ||
+                    model.TokenWalker.Next.SyntaxKind == SyntaxKind.EqualsToken)
                 {
                     break;
                 }

@@ -138,7 +138,7 @@ public class ParseDefaultKeywords
         CSharpParserModel model)
     {
     	// Switch statement default case.
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
+        if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
         	_ = model.TokenWalker.Consume();
     }
 
@@ -220,7 +220,6 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-        _ = model.TokenWalker.Backtrack();
     	var expressionNode = ParseOthers.ParseExpression(model);
     	model.SyntaxStack.Push(expressionNode);
     }
@@ -362,7 +361,7 @@ public class ParseDefaultKeywords
 		    {
 		    	while (!model.TokenWalker.IsEof)
 		    	{
-		    		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+		    		if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 		    			break;
 		    		
 		    		_ = model.TokenWalker.Consume();
@@ -623,7 +622,6 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-    	_ = model.TokenWalker.Backtrack();
     	var expressionNode = ParseOthers.ParseExpression(model);
     	model.SyntaxStack.Push(expressionNode);
     }
@@ -753,11 +751,8 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-
         if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(consumedKeywordToken.SyntaxKind))
         {
-            // One enters this conditional block with the 'keywordToken' having already been consumed.
-            model.TokenWalker.Backtrack();
             var typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
             model.SyntaxStack.Push(typeClauseNode);
         }
@@ -774,8 +769,6 @@ public class ParseDefaultKeywords
 
         if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(consumedKeywordToken.SyntaxKind))
         {
-            // One enters this conditional block with the 'keywordToken' having already been consumed.
-            model.TokenWalker.Backtrack();
             var typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
 
             if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.AttributeNode)
@@ -793,7 +786,6 @@ public class ParseDefaultKeywords
         KeywordToken consumedKeywordToken,
         CSharpParserModel model)
     {
-    	_ = model.TokenWalker.Backtrack();
     	var constructorInvocationNode = ParseOthers.ParseExpression(model);
     	model.SyntaxStack.Push(constructorInvocationNode);
     

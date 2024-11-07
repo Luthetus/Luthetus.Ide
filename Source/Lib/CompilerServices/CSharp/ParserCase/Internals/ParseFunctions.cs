@@ -47,7 +47,7 @@ public class ParseFunctions
         GenericArgumentsListingNode? consumedGenericArgumentsListingNode,
         CSharpParserModel model)
     {
-        if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
+        if (model.TokenWalker.Next.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
         HandleFunctionArguments(
