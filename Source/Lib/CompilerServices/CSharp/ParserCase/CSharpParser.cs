@@ -103,7 +103,10 @@ public class CSharpParser : IParser
                     ParseTokens.ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)token, model);
                     break;
                 case SyntaxKind.IdentifierToken:
-                    ParseTokens.ParseIdentifierToken(model);
+                	if (model.StatementBuilderStack.Count == 0)
+                	{
+                		ParseOthers.StartStatement_Expression(model);
+                	}
                     break;
                 case SyntaxKind.OpenBraceToken:
                 	model.StatementBuilderStack.Clear();
@@ -410,5 +413,91 @@ public class CSharpParser : IParser
         //   	- The programmer can type any syntax they want, and do so anywhere,
         //       	it just might not compile.
         //       	But, the parser still has to "survive" the ordeal.
+        //
+        // I added that if an IdentifierToken is found by the main loop,
+        // and the 'StatementBuilderStack.Count == 0',
+        // that ParseExpression(...) would be invoked.
+        //
+        // It went from 8 seconds for entire .sln to 26 seconds.
+        // As well a lot of syntax highlighting began to appear,
+        // albeit seemingly incorrect because definitions aren't being parsed
+        // so it cannot tell whether an identifier is a reference to a type or a local, or etc...
+        //
+        // A confusion I remember having was with (I think it was) function definitions.
+        // And their return type. Something to do with it being an ambiguous identifier
+        // while you are stepping through the nodes, and you have to wait to decide what it was.
+        //
+        // I sort of rambled when I said that but I am fairly certain that two ideas can be relied on:
+        // - If you are in an expression, you can look at syntax through the lens of an expression
+        // 	until you are given syntax that brings you back to the possibiity of statements.
+        // 	A lambda statement is confusing. Because it is an expression that wants to
+        //     return to the statement loop, yet its part of a larger expression
+        // 	and being handled by the expression loop.
+        // - There have got to be some keywords that when you come across them,
+        // 	it is immediately apparent that you aren't looking at an expression.
+        // 	Or at the least it could be a path to go down that leads to disambiguation.
+        //
+        // Function definition
+        // ===================
+        // ````int Aaa() => 3;
+        // ````
+        // ````int Bbb()
+        // ````{
+        // ````	return 3;
+        // ````}
+        // 
+        // Class definition
+        // ================
+        // ````class Aaa { }
+        // ````class Bbb(/*primary constructor*/) { }
+        //
+        // Variable declaration
+        // ====================
+        // ````var x = 2;
+        // ````int y = 3;
+        // 
+        // Lambda expression
+        // =================
+        // ````// Is this syntax even legal?
+        // ````int x => 3;
+        // ````
+        // ````(int x) => 3;
+        //
+        // Comma Separated Expression
+        // ==========================
+        // ````// lambda expression
+        // ````(x, y) => 2;
+        // ````(int x, Person y) => 2;
+        // ````// tuple expression
+        // ````(int X, Person Y) tuple = (3, new Person());
+        //
+        // Explicit Cast Expression
+        // ==========================
+        // ````(Person)someVariable;
+        //
+        // Constructor Definition
+        // ======================
+        // ````public class Person
+        // ````{
+        // ````	public Person()
+        // ````	{
+        // ````	}
+        // ````}
+        // 
+        // Constructor Invocation
+        // ======================
+        // ````new Person();
+        // ````// object initialization
+        // ````new Person();
+        // ````new Person { };
+        // ````new Person { FirstName = "John", ... };
+        // ````new Person(id: Guid.NewGuid) { FirstName = "John", ... };
+        // ````// collection initialization
+        // ````new List<int> { 1, 2, 3, };
+        // ````new List<int>(capacity: 5) { 1, 2, 3, };
+        //
+        // I want to write out in order the definitions/expressions, ordered by how similar the syntax is to one another.
+        // 
+        // Types are a "simple" case due to the storage modifier keyword 'class, interface, ...'.
     }
 }
