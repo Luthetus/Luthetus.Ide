@@ -11,53 +11,6 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public static class ParseOthers
 {
-    public static void HandleNamespaceReference(
-        IdentifierToken consumedIdentifierToken,
-        NamespaceGroupNode resolvedNamespaceGroupNode,
-        CSharpParserModel model)
-    {
-        model.Binder.BindNamespaceReference(consumedIdentifierToken, model);
-
-        if (SyntaxKind.MemberAccessToken == model.TokenWalker.Current.SyntaxKind)
-        {
-            var memberAccessToken = model.TokenWalker.Consume();
-            var memberIdentifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-
-            if (memberIdentifierToken.IsFabricated)
-            {
-                model.DiagnosticBag.ReportUnexpectedToken(
-                    model.TokenWalker.Current.TextSpan,
-                    model.TokenWalker.Current.SyntaxKind.ToString(),
-                    SyntaxKind.IdentifierToken.ToString());
-            }
-
-            // Check all the TypeDefinitionNodes that are in the namespace
-            var typeDefinitionNodes = resolvedNamespaceGroupNode.GetTopLevelTypeDefinitionNodes();
-
-            var typeDefinitionNode = typeDefinitionNodes.SingleOrDefault(td =>
-                td.TypeIdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText());
-
-            if (typeDefinitionNode is null)
-            {
-                model.DiagnosticBag.ReportNotDefinedInContext(
-                    model.TokenWalker.Current.TextSpan,
-                    consumedIdentifierToken.TextSpan.GetText());
-            }
-            else
-            {
-                ParseTypes.HandleTypeReference(
-                    memberIdentifierToken,
-                    typeDefinitionNode,
-                    model);
-            }
-        }
-        else
-        {
-            // TODO: (2023-05-28) Report an error diagnostic for 'namespaces are not statements'. Something like this I'm not sure.
-            model.TokenWalker.Consume();
-        }
-    }
-
     public static void HandleNamespaceIdentifier(CSharpParserModel model)
     {
         var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();

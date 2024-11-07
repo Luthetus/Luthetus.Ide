@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
@@ -15,10 +16,23 @@ public class TokenWalker
 
     public TokenWalker(ImmutableArray<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
     {
+    	if (tokenList.Length > 0 &&
+    		tokenList[tokenList.Length - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
+    	{
+    		throw new LuthetusTextEditorException("The last token must be 'SyntaxKind.EndOfFileToken'");
+    	}
+    
         _tokenList = tokenList;
         _diagnosticBag = diagnosticBag;
     }
 
+	public int ConsumeCounter { get; private set; }
+	
+	#if DEBUG
+	public bool SuppressProtectedSyntaxKindConsumption { get; set; } = true;
+	public List<SyntaxKind> ProtectedTokenSyntaxKindList { get; set; }
+	#endif
+	
     public ImmutableArray<ISyntaxToken> TokenList => _tokenList;
     public ISyntaxToken Current => Peek(0);
     public ISyntaxToken Next => Peek(1);
@@ -62,6 +76,15 @@ public class TokenWalker
 		}
 
         var consumedToken = _tokenList[_index++];
+        ConsumeCounter++;
+        
+        #if DEBUG
+		if (!SuppressProtectedSyntaxKindConsumption)
+		{
+			if (ProtectedTokenSyntaxKindList.Contains(consumedToken.SyntaxKind))
+				Console.WriteLine($"The protected syntax kind: '{consumedToken.SyntaxKind}' was unexpectedly consumed.");
+		}
+		#endif
 
         return consumedToken;
     }
@@ -69,7 +92,10 @@ public class TokenWalker
     public ISyntaxToken Backtrack()
     {
         if (_index > 0)
+        {
             _index--;
+            ConsumeCounter--;
+        }
 
         return Peek(_index);
     }
@@ -132,6 +158,11 @@ public class TokenWalker
 	{
 		_index = openTokenIndex;
 		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore, clearStateAction);
+	}
+	
+	public void ConsumeCounterReset()
+	{
+		ConsumeCounter = 0;
 	}
 
     private BadToken GetBadToken() => new BadToken(new(0, 0, 0, ResourceUri.Empty, string.Empty));

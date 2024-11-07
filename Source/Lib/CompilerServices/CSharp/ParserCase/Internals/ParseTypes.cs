@@ -31,84 +31,6 @@ public static class ParseTypes
         model.SyntaxStack.Push(identifierReferenceNode);
     }
 
-    public static void HandleTypeReference(
-        IdentifierToken consumedIdentifierToken,
-        TypeDefinitionNode consumedTypeDefinitionNode,
-        CSharpParserModel model)
-    {
-        model.Binder.BindTypeIdentifier(consumedIdentifierToken, model);
-
-        var memberAccessToken = (MemberAccessToken)model.TokenWalker.Match(SyntaxKind.MemberAccessToken);
-
-        if (memberAccessToken.IsFabricated)
-        	model.DiagnosticBag.ReportTodoException(consumedIdentifierToken.TextSpan, "Implement a static class being member accessed, but the statement ends there --- it is incomplete.");
-
-        var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-
-        if (identifierToken.IsFabricated)
-            model.DiagnosticBag.ReportTodoException(identifierToken.TextSpan, "Implement a static class being member accessed, but the statement ends there --- it is incomplete.");
-
-        var matchingFunctionDefinitionNodes = consumedTypeDefinitionNode
-            .GetFunctionDefinitionNodes()
-            .Where(fd =>
-                fd.FunctionIdentifierToken.TextSpan.GetText() == identifierToken.TextSpan.GetText())
-            .ToImmutableArray();
-
-        ParseFunctions.HandleFunctionReferences(identifierToken, matchingFunctionDefinitionNodes, model);
-    }
-
-    /// <summary>
-    /// This method is used for generic type usage such as, 'var words = new List&lt;string&gt;;'
-    /// </summary>
-    public static void HandleGenericParameters(
-        OpenAngleBracketToken consumedOpenAngleBracketToken,
-        CSharpParserModel model)
-    {
-        if (SyntaxKind.CloseAngleBracketToken == model.TokenWalker.Current.SyntaxKind)
-        {
-            model.SyntaxStack.Push(new GenericParametersListingNode(
-                consumedOpenAngleBracketToken,
-                new List<GenericParameterEntryNode>(),
-                (CloseAngleBracketToken)model.TokenWalker.Consume()));
-
-            return;
-        }
-
-        var mutableGenericParametersListing = new List<GenericParameterEntryNode>();
-
-        while (true)
-        {
-            // TypeClause
-            var typeClauseNode = MatchTypeClause(model);
-
-            if (typeClauseNode.IsFabricated)
-                break;
-
-            var genericParameterEntryNode = new GenericParameterEntryNode(typeClauseNode);
-            mutableGenericParametersListing.Add(genericParameterEntryNode);
-
-            if (SyntaxKind.CommaToken == model.TokenWalker.Current.SyntaxKind)
-            {
-                var commaToken = (CommaToken)model.TokenWalker.Consume();
-
-                // TODO: Track comma tokens?
-                //
-                // functionArgumentListing.Add(commaToken);
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        var closeAngleBracketToken = (CloseAngleBracketToken)model.TokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
-
-        model.SyntaxStack.Push(new GenericParametersListingNode(
-            consumedOpenAngleBracketToken,
-            mutableGenericParametersListing,
-            closeAngleBracketToken));
-    }
-
     /// <summary>
     /// This method is used for generic type definition such as, 'class List&lt;T&gt; { ... }'
     /// </summary>
@@ -276,14 +198,7 @@ public static class ParseTypes
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
-            var openAngleBracketToken = (OpenAngleBracketToken)model.TokenWalker.Consume();
-
-            model.SyntaxStack.Push(openAngleBracketToken);
-            ParseTypes.HandleGenericParameters(openAngleBracketToken, model);
-
-            var genericParametersListingNode = (GenericParametersListingNode)model.SyntaxStack.Pop();
-
-            typeClauseNode.SetGenericParametersListingNode(genericParametersListingNode);
+            Console.WriteLine("model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken");
         }
         
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.QuestionMarkToken)
@@ -325,32 +240,6 @@ public static class ParseTypes
         }
 
         return typeClauseNode;
-    }
-
-    /// <summary>TODO: Correctly parse object initialization. For now, just skip over it when parsing.</summary>
-    public static void HandleObjectInitialization(
-        OpenBraceToken consumedOpenBraceToken,
-        CSharpParserModel model)
-    {
-        ISyntaxToken shouldBeCloseBraceToken = new BadToken(consumedOpenBraceToken.TextSpan);
-
-        while (!model.TokenWalker.IsEof)
-        {
-            shouldBeCloseBraceToken = model.TokenWalker.Consume();
-
-            if (SyntaxKind.EndOfFileToken == shouldBeCloseBraceToken.SyntaxKind ||
-                SyntaxKind.CloseBraceToken == shouldBeCloseBraceToken.SyntaxKind)
-            {
-                break;
-            }
-        }
-
-        if (SyntaxKind.CloseBraceToken != shouldBeCloseBraceToken.SyntaxKind)
-            shouldBeCloseBraceToken = model.TokenWalker.Match(SyntaxKind.CloseBraceToken);
-
-        model.SyntaxStack.Push(new ObjectInitializationNode(
-            consumedOpenBraceToken,
-            (CloseBraceToken)shouldBeCloseBraceToken));
     }
 
     public static void HandlePrimaryConstructorDefinition(

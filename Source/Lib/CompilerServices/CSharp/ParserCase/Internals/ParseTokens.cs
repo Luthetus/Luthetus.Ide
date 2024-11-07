@@ -14,8 +14,6 @@ public static class ParseTokens
         NumericLiteralToken consumedNumericLiteralToken,
         CSharpParserModel model)
     {
-        // The handle expression won't see this token unless backtracked.
-        model.TokenWalker.Backtrack();
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
@@ -24,8 +22,6 @@ public static class ParseTokens
         CharLiteralToken consumedCharLiteralToken,
         CSharpParserModel model)
     {
-        // The handle expression won't see this token unless backtracked.
-        model.TokenWalker.Backtrack();
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
@@ -34,8 +30,6 @@ public static class ParseTokens
         StringLiteralToken consumedStringLiteralToken,
         CSharpParserModel model)
     {
-        // The handle expression won't see this token unless backtracked.
-        model.TokenWalker.Backtrack();
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
@@ -63,49 +57,9 @@ public static class ParseTokens
         }
     }
 
-    public static void ParseIdentifierToken(
-        IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
+    public static void ParseIdentifierToken(CSharpParserModel model)
     {
-    	Console.WriteLine("ParseIdentifierToken");
-    
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax is AmbiguousIdentifierNode)
-        {
-        	Console.WriteLine("...is AmbiguousIdentifierNode");
-            ResolveAmbiguousIdentifier((AmbiguousIdentifierNode)model.SyntaxStack.Pop(), model);
-        }
-
-        if (TryParseTypedIdentifier(consumedIdentifierToken, model))
-        {
-        	Console.WriteLine("TryParseTypedIdentifier");
-            return;
-        }
-
-        if (TryParseConstructorDefinition(consumedIdentifierToken, model))
-        {
-        	Console.WriteLine("TryParseConstructorDefinition");
-            return;
-        }
-
-        if (TryParseVariableAssignment(consumedIdentifierToken, model))
-        {
-        	Console.WriteLine("TryParseVariableAssignment");
-            return;
-        }
-
-        if (TryParseGenericTypeOrFunctionInvocation(consumedIdentifierToken, model))
-        {
-        	Console.WriteLine("TryParseGenericTypeOrFunctionInvocation");
-            return;
-        }
-
-        if (TryParseReference(consumedIdentifierToken, model))
-        {
-        	Console.WriteLine("TryParseReference");
-            return;
-        }
-
-        return;
+    	var identifierToken = (IdentifierToken)model.TokenWalker.Consume();
     }
 
     private static bool TryParseGenericArguments(CSharpParserModel model)
@@ -120,26 +74,6 @@ public static class ParseTokens
         }
         else
         {
-            return false;
-        }
-    }
-
-    private static bool TryParseGenericParameters(
-        CSharpParserModel model,
-        out GenericParametersListingNode? genericParametersListingNode)
-    {
-        if (SyntaxKind.OpenAngleBracketToken == model.TokenWalker.Current.SyntaxKind)
-        {
-            ParseTypes.HandleGenericParameters(
-                (OpenAngleBracketToken)model.TokenWalker.Consume(),
-                model);
-
-            genericParametersListingNode = (GenericParametersListingNode?)model.SyntaxStack.Pop();
-            return true;
-        }
-        else
-        {
-            genericParametersListingNode = null;
             return false;
         }
     }
@@ -204,54 +138,6 @@ public static class ParseTokens
         return false;
     }
 
-    private static bool TryParseReference(
-        IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
-    {
-        var text = consumedIdentifierToken.TextSpan.GetText();
-
-        if (model.Binder.NamespaceGroupNodes.TryGetValue(text, out var namespaceGroupNode) &&
-            namespaceGroupNode is not null)
-        {
-            ParseOthers.HandleNamespaceReference(consumedIdentifierToken, namespaceGroupNode, model);
-            return true;
-        }
-        else
-        {
-            if (model.Binder.TryGetVariableDeclarationHierarchically(
-            		model,
-                    model.BinderSession.ResourceUri,
-                    model.BinderSession.CurrentScopeIndexKey,
-                    text,
-                    out var variableDeclarationStatementNode) &&
-                variableDeclarationStatementNode is not null)
-            {
-                ParseVariables.HandleVariableReference(consumedIdentifierToken, model);
-                return true;
-            }
-            else
-            {
-                // 'static class identifier' OR 'undeclared-variable reference'
-                if (model.Binder.TryGetTypeDefinitionHierarchically(
-                		model,
-                        model.BinderSession.ResourceUri,
-                        model.BinderSession.CurrentScopeIndexKey,
-                        text,
-                        out var typeDefinitionNode) &&
-                    typeDefinitionNode is not null)
-                {
-                    ParseTypes.HandleStaticClassIdentifier(consumedIdentifierToken, model);
-                    return true;
-                }
-                else
-                {
-                    ParseTypes.HandleUndefinedTypeOrNamespaceReference(consumedIdentifierToken, model);
-                    return true;
-                }
-            }
-        }
-    }
-
     private static bool TryParseVariableAssignment(
         IdentifierToken consumedIdentifierToken,
         CSharpParserModel model)
@@ -266,41 +152,6 @@ public static class ParseTokens
         }
 
         return false;
-    }
-
-    private static bool TryParseGenericTypeOrFunctionInvocation(
-        IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
-    {
-        if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken &&
-            model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
-        {
-            return false;
-        }
-
-        if (TryParseGenericParameters(model, out var genericParametersListingNode))
-        {
-            if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
-            {
-                // Generic type
-                var typeClauseNode = new TypeClauseNode(
-                    consumedIdentifierToken,
-                    null,
-                    genericParametersListingNode);
-
-                model.Binder.BindTypeClauseNode(typeClauseNode, model);
-                model.SyntaxStack.Push(typeClauseNode);
-                return true;
-            }
-        }
-
-        // Function invocation
-        ParseFunctions.HandleFunctionInvocation(
-            consumedIdentifierToken,
-            genericParametersListingNode,
-            model);
-
-        return true;
     }
 
     private static bool TryParseFunctionDefinition(
@@ -425,8 +276,6 @@ public static class ParseTokens
         PlusToken consumedPlusToken,
         CSharpParserModel model)
     {
-        // The handle expression won't see this token unless backtracked.
-        model.TokenWalker.Backtrack();
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
@@ -456,8 +305,6 @@ public static class ParseTokens
         MinusToken consumedMinusToken,
         CSharpParserModel model)
     {
-        // The handle expression won't see this token unless backtracked.
-        model.TokenWalker.Backtrack();
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
@@ -466,8 +313,6 @@ public static class ParseTokens
         StarToken consumedStarToken,
         CSharpParserModel model)
     {
-        // The handle expression won't see this token unless backtracked.
-        model.TokenWalker.Backtrack();
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
@@ -476,8 +321,6 @@ public static class ParseTokens
         DollarSignToken consumedDollarSignToken,
         CSharpParserModel model)
     {
-        // The handle expression won't see this token unless backtracked.
-        model.TokenWalker.Backtrack();
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
@@ -486,8 +329,6 @@ public static class ParseTokens
         AtToken consumedAtToken,
         CSharpParserModel model)
     {
-        // The handle expression won't see this token unless backtracked.
-        model.TokenWalker.Backtrack();
         var expression = ParseOthers.ParseExpression(model);
         model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
@@ -762,9 +603,6 @@ public static class ParseTokens
         MemberAccessToken consumedMemberAccessToken,
         CSharpParserModel model)
     {
-    	// Backtrack so that model.TokenWalker.Current is MemberAccessToken
-    	model.TokenWalker.Backtrack();
-    	
     	/*if (model.TokenWalker.Previous.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
     		// Backtrack so that model.TokenWalker.Current is the IdentifierToken
@@ -836,393 +674,389 @@ public static class ParseTokens
         }
     }
 
-    public static void ParseKeywordToken(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void ParseKeywordToken(CSharpParserModel model)
     {
         // 'return', 'if', 'get', etc...
-        switch (consumedKeywordToken.SyntaxKind)
+        switch (model.TokenWalker.Current.SyntaxKind)
         {
             case SyntaxKind.AsTokenKeyword:
-                ParseDefaultKeywords.HandleAsTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleAsTokenKeyword(model);
                 break;
             case SyntaxKind.BaseTokenKeyword:
-                ParseDefaultKeywords.HandleBaseTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleBaseTokenKeyword(model);
                 break;
             case SyntaxKind.BoolTokenKeyword:
-                ParseDefaultKeywords.HandleBoolTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleBoolTokenKeyword(model);
                 break;
             case SyntaxKind.BreakTokenKeyword:
-                ParseDefaultKeywords.HandleBreakTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleBreakTokenKeyword(model);
                 break;
             case SyntaxKind.ByteTokenKeyword:
-                ParseDefaultKeywords.HandleByteTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleByteTokenKeyword(model);
                 break;
             case SyntaxKind.CaseTokenKeyword:
-                ParseDefaultKeywords.HandleCaseTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleCaseTokenKeyword(model);
                 break;
             case SyntaxKind.CatchTokenKeyword:
-                ParseDefaultKeywords.HandleCatchTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleCatchTokenKeyword(model);
                 break;
             case SyntaxKind.CharTokenKeyword:
-                ParseDefaultKeywords.HandleCharTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleCharTokenKeyword(model);
                 break;
             case SyntaxKind.CheckedTokenKeyword:
-                ParseDefaultKeywords.HandleCheckedTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleCheckedTokenKeyword(model);
                 break;
             case SyntaxKind.ConstTokenKeyword:
-                ParseDefaultKeywords.HandleConstTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleConstTokenKeyword(model);
                 break;
             case SyntaxKind.ContinueTokenKeyword:
-                ParseDefaultKeywords.HandleContinueTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleContinueTokenKeyword(model);
                 break;
             case SyntaxKind.DecimalTokenKeyword:
-                ParseDefaultKeywords.HandleDecimalTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleDecimalTokenKeyword(model);
                 break;
             case SyntaxKind.DefaultTokenKeyword:
-                ParseDefaultKeywords.HandleDefaultTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleDefaultTokenKeyword(model);
                 break;
             case SyntaxKind.DelegateTokenKeyword:
-                ParseDefaultKeywords.HandleDelegateTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleDelegateTokenKeyword(model);
                 break;
             case SyntaxKind.DoTokenKeyword:
-                ParseDefaultKeywords.HandleDoTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleDoTokenKeyword(model);
                 break;
             case SyntaxKind.DoubleTokenKeyword:
-                ParseDefaultKeywords.HandleDoubleTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleDoubleTokenKeyword(model);
                 break;
             case SyntaxKind.ElseTokenKeyword:
-                ParseDefaultKeywords.HandleElseTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleElseTokenKeyword(model);
                 break;
             case SyntaxKind.EnumTokenKeyword:
-                ParseDefaultKeywords.HandleEnumTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleEnumTokenKeyword(model);
                 break;
             case SyntaxKind.EventTokenKeyword:
-                ParseDefaultKeywords.HandleEventTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleEventTokenKeyword(model);
                 break;
             case SyntaxKind.ExplicitTokenKeyword:
-                ParseDefaultKeywords.HandleExplicitTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleExplicitTokenKeyword(model);
                 break;
             case SyntaxKind.ExternTokenKeyword:
-                ParseDefaultKeywords.HandleExternTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleExternTokenKeyword(model);
                 break;
             case SyntaxKind.FalseTokenKeyword:
-                ParseDefaultKeywords.HandleFalseTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleFalseTokenKeyword(model);
                 break;
             case SyntaxKind.FinallyTokenKeyword:
-                ParseDefaultKeywords.HandleFinallyTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleFinallyTokenKeyword(model);
                 break;
             case SyntaxKind.FixedTokenKeyword:
-                ParseDefaultKeywords.HandleFixedTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleFixedTokenKeyword(model);
                 break;
             case SyntaxKind.FloatTokenKeyword:
-                ParseDefaultKeywords.HandleFloatTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleFloatTokenKeyword(model);
                 break;
             case SyntaxKind.ForTokenKeyword:
-                ParseDefaultKeywords.HandleForTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleForTokenKeyword(model);
                 break;
             case SyntaxKind.ForeachTokenKeyword:
-                ParseDefaultKeywords.HandleForeachTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleForeachTokenKeyword(model);
                 break;
             case SyntaxKind.GotoTokenKeyword:
-                ParseDefaultKeywords.HandleGotoTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleGotoTokenKeyword(model);
                 break;
             case SyntaxKind.ImplicitTokenKeyword:
-                ParseDefaultKeywords.HandleImplicitTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleImplicitTokenKeyword(model);
                 break;
             case SyntaxKind.InTokenKeyword:
-                ParseDefaultKeywords.HandleInTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleInTokenKeyword(model);
                 break;
             case SyntaxKind.IntTokenKeyword:
-                ParseDefaultKeywords.HandleIntTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleIntTokenKeyword(model);
                 break;
             case SyntaxKind.IsTokenKeyword:
-                ParseDefaultKeywords.HandleIsTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleIsTokenKeyword(model);
                 break;
             case SyntaxKind.LockTokenKeyword:
-                ParseDefaultKeywords.HandleLockTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleLockTokenKeyword(model);
                 break;
             case SyntaxKind.LongTokenKeyword:
-                ParseDefaultKeywords.HandleLongTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleLongTokenKeyword(model);
                 break;
             case SyntaxKind.NullTokenKeyword:
-                ParseDefaultKeywords.HandleNullTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleNullTokenKeyword(model);
                 break;
             case SyntaxKind.ObjectTokenKeyword:
-                ParseDefaultKeywords.HandleObjectTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleObjectTokenKeyword(model);
                 break;
             case SyntaxKind.OperatorTokenKeyword:
-                ParseDefaultKeywords.HandleOperatorTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleOperatorTokenKeyword(model);
                 break;
             case SyntaxKind.OutTokenKeyword:
-                ParseDefaultKeywords.HandleOutTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleOutTokenKeyword(model);
                 break;
             case SyntaxKind.ParamsTokenKeyword:
-                ParseDefaultKeywords.HandleParamsTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleParamsTokenKeyword(model);
                 break;
             case SyntaxKind.ProtectedTokenKeyword:
-                ParseDefaultKeywords.HandleProtectedTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleProtectedTokenKeyword(model);
                 break;
             case SyntaxKind.ReadonlyTokenKeyword:
-                ParseDefaultKeywords.HandleReadonlyTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleReadonlyTokenKeyword(model);
                 break;
             case SyntaxKind.RefTokenKeyword:
-                ParseDefaultKeywords.HandleRefTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleRefTokenKeyword(model);
                 break;
             case SyntaxKind.SbyteTokenKeyword:
-                ParseDefaultKeywords.HandleSbyteTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleSbyteTokenKeyword(model);
                 break;
             case SyntaxKind.ShortTokenKeyword:
-                ParseDefaultKeywords.HandleShortTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleShortTokenKeyword(model);
                 break;
             case SyntaxKind.SizeofTokenKeyword:
-                ParseDefaultKeywords.HandleSizeofTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleSizeofTokenKeyword(model);
                 break;
             case SyntaxKind.StackallocTokenKeyword:
-                ParseDefaultKeywords.HandleStackallocTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleStackallocTokenKeyword(model);
                 break;
             case SyntaxKind.StringTokenKeyword:
-                ParseDefaultKeywords.HandleStringTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleStringTokenKeyword(model);
                 break;
             case SyntaxKind.StructTokenKeyword:
-                ParseDefaultKeywords.HandleStructTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleStructTokenKeyword(model);
                 break;
             case SyntaxKind.SwitchTokenKeyword:
-                ParseDefaultKeywords.HandleSwitchTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleSwitchTokenKeyword(model);
                 break;
             case SyntaxKind.ThisTokenKeyword:
-                ParseDefaultKeywords.HandleThisTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleThisTokenKeyword(model);
                 break;
             case SyntaxKind.ThrowTokenKeyword:
-                ParseDefaultKeywords.HandleThrowTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleThrowTokenKeyword(model);
                 break;
             case SyntaxKind.TrueTokenKeyword:
-                ParseDefaultKeywords.HandleTrueTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleTrueTokenKeyword(model);
                 break;
             case SyntaxKind.TryTokenKeyword:
-                ParseDefaultKeywords.HandleTryTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleTryTokenKeyword(model);
                 break;
             case SyntaxKind.TypeofTokenKeyword:
-                ParseDefaultKeywords.HandleTypeofTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleTypeofTokenKeyword(model);
                 break;
             case SyntaxKind.UintTokenKeyword:
-                ParseDefaultKeywords.HandleUintTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleUintTokenKeyword(model);
                 break;
             case SyntaxKind.UlongTokenKeyword:
-                ParseDefaultKeywords.HandleUlongTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleUlongTokenKeyword(model);
                 break;
             case SyntaxKind.UncheckedTokenKeyword:
-                ParseDefaultKeywords.HandleUncheckedTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleUncheckedTokenKeyword(model);
                 break;
             case SyntaxKind.UnsafeTokenKeyword:
-                ParseDefaultKeywords.HandleUnsafeTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleUnsafeTokenKeyword(model);
                 break;
             case SyntaxKind.UshortTokenKeyword:
-                ParseDefaultKeywords.HandleUshortTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleUshortTokenKeyword(model);
                 break;
             case SyntaxKind.VoidTokenKeyword:
-                ParseDefaultKeywords.HandleVoidTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleVoidTokenKeyword(model);
                 break;
             case SyntaxKind.VolatileTokenKeyword:
-                ParseDefaultKeywords.HandleVolatileTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleVolatileTokenKeyword(model);
                 break;
             case SyntaxKind.WhileTokenKeyword:
-                ParseDefaultKeywords.HandleWhileTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleWhileTokenKeyword(model);
                 break;
             case SyntaxKind.UnrecognizedTokenKeyword:
-                ParseDefaultKeywords.HandleUnrecognizedTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleUnrecognizedTokenKeyword(model);
                 break;
             case SyntaxKind.ReturnTokenKeyword:
-                ParseDefaultKeywords.HandleReturnTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleReturnTokenKeyword(model);
                 break;
             case SyntaxKind.NamespaceTokenKeyword:
-                ParseDefaultKeywords.HandleNamespaceTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleNamespaceTokenKeyword(model);
                 break;
             case SyntaxKind.ClassTokenKeyword:
-                ParseDefaultKeywords.HandleClassTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleClassTokenKeyword(model);
                 break;
             case SyntaxKind.InterfaceTokenKeyword:
-                ParseDefaultKeywords.HandleInterfaceTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleInterfaceTokenKeyword(model);
                 break;
             case SyntaxKind.UsingTokenKeyword:
-                ParseDefaultKeywords.HandleUsingTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleUsingTokenKeyword(model);
                 break;
             case SyntaxKind.PublicTokenKeyword:
-                ParseDefaultKeywords.HandlePublicTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandlePublicTokenKeyword(model);
                 break;
             case SyntaxKind.InternalTokenKeyword:
-                ParseDefaultKeywords.HandleInternalTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleInternalTokenKeyword(model);
                 break;
             case SyntaxKind.PrivateTokenKeyword:
-                ParseDefaultKeywords.HandlePrivateTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandlePrivateTokenKeyword(model);
                 break;
             case SyntaxKind.StaticTokenKeyword:
-                ParseDefaultKeywords.HandleStaticTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleStaticTokenKeyword(model);
                 break;
             case SyntaxKind.OverrideTokenKeyword:
-                ParseDefaultKeywords.HandleOverrideTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleOverrideTokenKeyword(model);
                 break;
             case SyntaxKind.VirtualTokenKeyword:
-                ParseDefaultKeywords.HandleVirtualTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleVirtualTokenKeyword(model);
                 break;
             case SyntaxKind.AbstractTokenKeyword:
-                ParseDefaultKeywords.HandleAbstractTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleAbstractTokenKeyword(model);
                 break;
             case SyntaxKind.SealedTokenKeyword:
-                ParseDefaultKeywords.HandleSealedTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleSealedTokenKeyword(model);
                 break;
             case SyntaxKind.IfTokenKeyword:
-                ParseDefaultKeywords.HandleIfTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleIfTokenKeyword(model);
                 break;
             case SyntaxKind.NewTokenKeyword:
-                ParseDefaultKeywords.HandleNewTokenKeyword(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleNewTokenKeyword(model);
                 break;
             default:
-                ParseDefaultKeywords.HandleDefault(consumedKeywordToken, model);
+                ParseDefaultKeywords.HandleDefault(model);
                 break;
         }
     }
 
-    public static void ParseKeywordContextualToken(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void ParseKeywordContextualToken(CSharpParserModel model)
     {
-        switch (consumedKeywordContextualToken.SyntaxKind)
+        switch (model.TokenWalker.Current.SyntaxKind)
         {
             case SyntaxKind.VarTokenContextualKeyword:
-                ParseContextualKeywords.HandleVarTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleVarTokenContextualKeyword(model);
                 break;
             case SyntaxKind.PartialTokenContextualKeyword:
-                ParseContextualKeywords.HandlePartialTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandlePartialTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AddTokenContextualKeyword:
-                ParseContextualKeywords.HandleAddTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleAddTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AndTokenContextualKeyword:
-                ParseContextualKeywords.HandleAndTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleAndTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AliasTokenContextualKeyword:
-                ParseContextualKeywords.HandleAliasTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleAliasTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AscendingTokenContextualKeyword:
-                ParseContextualKeywords.HandleAscendingTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleAscendingTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ArgsTokenContextualKeyword:
-                ParseContextualKeywords.HandleArgsTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleArgsTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AsyncTokenContextualKeyword:
-                ParseContextualKeywords.HandleAsyncTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleAsyncTokenContextualKeyword(model);
                 break;
             case SyntaxKind.AwaitTokenContextualKeyword:
-                ParseContextualKeywords.HandleAwaitTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleAwaitTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ByTokenContextualKeyword:
-                ParseContextualKeywords.HandleByTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleByTokenContextualKeyword(model);
                 break;
             case SyntaxKind.DescendingTokenContextualKeyword:
-                ParseContextualKeywords.HandleDescendingTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleDescendingTokenContextualKeyword(model);
                 break;
             case SyntaxKind.DynamicTokenContextualKeyword:
-                ParseContextualKeywords.HandleDynamicTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleDynamicTokenContextualKeyword(model);
                 break;
             case SyntaxKind.EqualsTokenContextualKeyword:
-                ParseContextualKeywords.HandleEqualsTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleEqualsTokenContextualKeyword(model);
                 break;
             case SyntaxKind.FileTokenContextualKeyword:
-                ParseContextualKeywords.HandleFileTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleFileTokenContextualKeyword(model);
                 break;
             case SyntaxKind.FromTokenContextualKeyword:
-                ParseContextualKeywords.HandleFromTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleFromTokenContextualKeyword(model);
                 break;
             case SyntaxKind.GetTokenContextualKeyword:
-                ParseContextualKeywords.HandleGetTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleGetTokenContextualKeyword(model);
                 break;
             case SyntaxKind.GlobalTokenContextualKeyword:
-                ParseContextualKeywords.HandleGlobalTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleGlobalTokenContextualKeyword(model);
                 break;
             case SyntaxKind.GroupTokenContextualKeyword:
-                ParseContextualKeywords.HandleGroupTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleGroupTokenContextualKeyword(model);
                 break;
             case SyntaxKind.InitTokenContextualKeyword:
-                ParseContextualKeywords.HandleInitTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleInitTokenContextualKeyword(model);
                 break;
             case SyntaxKind.IntoTokenContextualKeyword:
-                ParseContextualKeywords.HandleIntoTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleIntoTokenContextualKeyword(model);
                 break;
             case SyntaxKind.JoinTokenContextualKeyword:
-                ParseContextualKeywords.HandleJoinTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleJoinTokenContextualKeyword(model);
                 break;
             case SyntaxKind.LetTokenContextualKeyword:
-                ParseContextualKeywords.HandleLetTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleLetTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ManagedTokenContextualKeyword:
-                ParseContextualKeywords.HandleManagedTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleManagedTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NameofTokenContextualKeyword:
-                ParseContextualKeywords.HandleNameofTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleNameofTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NintTokenContextualKeyword:
-                ParseContextualKeywords.HandleNintTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleNintTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NotTokenContextualKeyword:
-                ParseContextualKeywords.HandleNotTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleNotTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NotnullTokenContextualKeyword:
-                ParseContextualKeywords.HandleNotnullTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleNotnullTokenContextualKeyword(model);
                 break;
             case SyntaxKind.NuintTokenContextualKeyword:
-                ParseContextualKeywords.HandleNuintTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleNuintTokenContextualKeyword(model);
                 break;
             case SyntaxKind.OnTokenContextualKeyword:
-                ParseContextualKeywords.HandleOnTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleOnTokenContextualKeyword(model);
                 break;
             case SyntaxKind.OrTokenContextualKeyword:
-                ParseContextualKeywords.HandleOrTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleOrTokenContextualKeyword(model);
                 break;
             case SyntaxKind.OrderbyTokenContextualKeyword:
-                ParseContextualKeywords.HandleOrderbyTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleOrderbyTokenContextualKeyword(model);
                 break;
             case SyntaxKind.RecordTokenContextualKeyword:
-                ParseContextualKeywords.HandleRecordTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleRecordTokenContextualKeyword(model);
                 break;
             case SyntaxKind.RemoveTokenContextualKeyword:
-                ParseContextualKeywords.HandleRemoveTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleRemoveTokenContextualKeyword(model);
                 break;
             case SyntaxKind.RequiredTokenContextualKeyword:
-                ParseContextualKeywords.HandleRequiredTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleRequiredTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ScopedTokenContextualKeyword:
-                ParseContextualKeywords.HandleScopedTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleScopedTokenContextualKeyword(model);
                 break;
             case SyntaxKind.SelectTokenContextualKeyword:
-                ParseContextualKeywords.HandleSelectTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleSelectTokenContextualKeyword(model);
                 break;
             case SyntaxKind.SetTokenContextualKeyword:
-                ParseContextualKeywords.HandleSetTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleSetTokenContextualKeyword(model);
                 break;
             case SyntaxKind.UnmanagedTokenContextualKeyword:
-                ParseContextualKeywords.HandleUnmanagedTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleUnmanagedTokenContextualKeyword(model);
                 break;
             case SyntaxKind.ValueTokenContextualKeyword:
-                ParseContextualKeywords.HandleValueTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleValueTokenContextualKeyword(model);
                 break;
             case SyntaxKind.WhenTokenContextualKeyword:
-                ParseContextualKeywords.HandleWhenTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleWhenTokenContextualKeyword(model);
                 break;
             case SyntaxKind.WhereTokenContextualKeyword:
-                ParseContextualKeywords.HandleWhereTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleWhereTokenContextualKeyword(model);
                 break;
             case SyntaxKind.WithTokenContextualKeyword:
-                ParseContextualKeywords.HandleWithTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleWithTokenContextualKeyword(model);
                 break;
             case SyntaxKind.YieldTokenContextualKeyword:
-                ParseContextualKeywords.HandleYieldTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleYieldTokenContextualKeyword(model);
                 break;
             case SyntaxKind.UnrecognizedTokenContextualKeyword:
-                ParseContextualKeywords.HandleUnrecognizedTokenContextualKeyword(consumedKeywordContextualToken, model);
+                ParseContextualKeywords.HandleUnrecognizedTokenContextualKeyword(model);
                 break;
             default:
-            	model.DiagnosticBag.ReportTodoException(consumedKeywordContextualToken.TextSpan, $"Implement the {consumedKeywordContextualToken.SyntaxKind.ToString()} contextual keyword.");
+            	model.DiagnosticBag.ReportTodoException(model.TokenWalker.Current.TextSpan, $"Implement the {model.TokenWalker.Current.SyntaxKind.ToString()} contextual keyword.");
             	break;
         }
     }

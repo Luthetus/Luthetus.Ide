@@ -8,10 +8,10 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public class ParseContextualKeywords
 {
-    public static void HandleVarTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleVarTokenContextualKeyword(CSharpParserModel model)
     {
+    	var varContextualKeywordToken = model.TokenWalker.Consume();
+    
         // Check if previous statement is finished, and a new one is starting.
         var peekNumber = -1;
         
@@ -48,7 +48,7 @@ public class ParseContextualKeywords
 	            if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
 	            {
 	                var varTypeClauseNode = new TypeClauseNode(
-	                    consumedKeywordContextualToken,
+	                    varContextualKeywordToken,
 	                    null,
 	                    null);
 	
@@ -56,7 +56,7 @@ public class ParseContextualKeywords
 	                		model,
 	                		model.BinderSession.ResourceUri,
 	                		model.BinderSession.CurrentScopeIndexKey,
-	                        consumedKeywordContextualToken.TextSpan.GetText(),
+	                        varContextualKeywordToken.TextSpan.GetText(),
 	                        out var varTypeDefinitionNode) &&
 	                    varTypeDefinitionNode is not null)
 	                {
@@ -72,289 +72,248 @@ public class ParseContextualKeywords
 		}
         
         // Take 'var' as an identifier
-        IdentifierToken varIdentifierToken = new(consumedKeywordContextualToken.TextSpan);
-        ParseTokens.ParseIdentifierToken(varIdentifierToken, model);
+        IdentifierToken varIdentifierToken = new(varContextualKeywordToken.TextSpan);
+        _ = model.TokenWalker.Backtrack();
+        ParseTokens.ParseIdentifierToken(model);
     }
 
-    public static void HandlePartialTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandlePartialTokenContextualKeyword(CSharpParserModel model)
     {
-        model.SyntaxStack.Push(consumedKeywordContextualToken);
+    	var partialContextualKeywordToken = model.TokenWalker.Consume();
+        model.SyntaxStack.Push(partialContextualKeywordToken);
     }
 
-    public static void HandleAddTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleAddTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleAndTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleAndTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleAliasTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleAliasTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleAscendingTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleAscendingTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleArgsTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleArgsTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleAsyncTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleAsyncTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleAwaitTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleAwaitTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleByTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleByTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleDescendingTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleDescendingTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleDynamicTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleDynamicTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleEqualsTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleEqualsTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleFileTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleFileTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleFromTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleFromTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleGetTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleGetTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleGlobalTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleGlobalTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleGroupTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleGroupTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleInitTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleInitTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleIntoTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleIntoTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleJoinTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleJoinTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleLetTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleLetTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleManagedTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleManagedTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleNameofTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleNameofTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleNintTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleNintTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleNotTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleNotTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleNotnullTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleNotnullTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleNuintTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleNuintTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleOnTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleOnTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleOrTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleOrTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleOrderbyTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleOrderbyTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleRecordTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleRecordTokenContextualKeyword(CSharpParserModel model)
     {
-        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(
-            consumedKeywordContextualToken,
-            model);
+        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(model);
     }
 
-    public static void HandleRemoveTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleRemoveTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleRequiredTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleRequiredTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleScopedTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleScopedTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleSelectTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleSelectTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleSetTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleSetTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleUnmanagedTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleUnmanagedTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleValueTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleValueTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleWhenTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleWhenTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleWhereTokenContextualKeyword(
-        KeywordContextualToken consumedWhereKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleWhereTokenContextualKeyword(CSharpParserModel model)
     {
+    	var whereContextualKeywordToken = model.TokenWalker.Consume();
+    	
         if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
         {
             var functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
@@ -375,7 +334,7 @@ public class ParseContextualKeywords
 
             var constraintNodeInnerTokens = new List<ISyntaxToken>
             {
-                consumedWhereKeywordContextualToken
+            	whereContextualKeywordToken
             };
 
             while (!model.TokenWalker.IsEof)
@@ -398,28 +357,25 @@ public class ParseContextualKeywords
         }
         else
         {
-            model.DiagnosticBag.ReportTodoException(consumedWhereKeywordContextualToken.TextSpan, nameof(HandleWhereTokenContextualKeyword));
+            model.DiagnosticBag.ReportTodoException(whereContextualKeywordToken.TextSpan, nameof(HandleWhereTokenContextualKeyword));
         }
     }
 
-    public static void HandleWithTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleWithTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleYieldTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleYieldTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 
-    public static void HandleUnrecognizedTokenContextualKeyword(
-        KeywordContextualToken consumedKeywordContextualToken,
-        CSharpParserModel model)
+    public static void HandleUnrecognizedTokenContextualKeyword(CSharpParserModel model)
     {
+    	var contextualKeywordToken = model.TokenWalker.Consume();
         // TODO: Implement this method
     }
 }

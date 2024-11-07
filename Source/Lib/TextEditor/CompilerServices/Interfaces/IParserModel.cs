@@ -13,7 +13,29 @@ public interface IParserModel
     public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     
+    /// <summary>
+    /// This property is likely to become obsolete.
+    /// It is a hacky sort of 'catch all' case
+    /// where one can push onto it whatever they want.
+    /// 
+    /// <see cref="StatementBuilderStack"/> is being
+    /// added and is expected to fully replace this property.
+    /// </summary>
     public Stack<ISyntax> SyntaxStack { get; set; }
+    
+    /// <summary>
+    /// Unlike <see cref="SyntaxStack"/> there are more
+    /// defined rules for this property.
+    ///
+    /// It will be cleared after every <see cref="StatementDelimiterToken"/>,
+    /// <see cref="OpenBraceToken"/>, and <see cref="CloseBraceToken"/>
+    /// that is handled by the main loop.
+    ///
+    /// The intent is to build up ambiguous syntax by pushing it onto this stack,
+    /// then once it can be disambiguated, pop off all the syntax and construct an
+    /// <see cref="ISyntaxNode"/>.
+    /// </summary>
+    public Stack<ISyntax> StatementBuilderStack { get; set; }
     
     /// <summary>
     /// This list permits primitive recursion via a while loop for the expression parsing logic.

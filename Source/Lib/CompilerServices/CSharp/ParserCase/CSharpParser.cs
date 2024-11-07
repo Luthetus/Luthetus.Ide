@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
@@ -58,9 +59,18 @@ public class CSharpParser : IParser
             null,
             new Stack<Action<CodeBlockNode>>());
             
+        #if DEBUG
+        model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
+        {
+        	SyntaxKind.StatementDelimiterToken,
+        	SyntaxKind.OpenBraceToken,
+        	SyntaxKind.CloseBraceToken,
+        };
+        #endif
+            
         while (true)
         {
-        	// The last statement in this while loop is '_ = model.TokenWalker.Consume();'.
+        	// The last statement in this while loop is conditionally: '_ = model.TokenWalker.Consume();'.
         	// Knowing this to be the case is extremely important.
             var token = model.TokenWalker.Current;
             
@@ -98,7 +108,7 @@ public class CSharpParser : IParser
                     // Do not parse comments.
                     break;
                 case SyntaxKind.IdentifierToken:
-                    ParseTokens.ParseIdentifierToken((IdentifierToken)token, model);
+                    ParseTokens.ParseIdentifierToken(model);
                     break;
                 case SyntaxKind.OpenBraceToken:
                     ParseTokens.ParseOpenBraceToken((OpenBraceToken)token, model);
@@ -167,9 +177,9 @@ public class CSharpParser : IParser
                     break;
                 default:
                     if (UtilityApi.IsContextualKeywordSyntaxKind(token.SyntaxKind))
-                        ParseTokens.ParseKeywordContextualToken((KeywordContextualToken)token, model);
+                        ParseTokens.ParseKeywordContextualToken(model);
                     else if (UtilityApi.IsKeywordSyntaxKind(token.SyntaxKind))
-                        ParseTokens.ParseKeywordToken((KeywordToken)token, model);
+                        ParseTokens.ParseKeywordToken(model);
                     break;
             }
 
@@ -308,7 +318,33 @@ public class CSharpParser : IParser
 			// Here, the property's "getter" is defining a code block.
 			// So, the brace tokens that deliminate the "getter", ought to
 			// "visit" the main loop for a moment. Then it can continue on with the property syntax.
-			_ = model.TokenWalker.Consume();
+			
+			if (model.TokenWalker.ConsumeCounter == 0)
+			{
+				// This means none of the methods for syntax could make sense of the token.
+				//
+				// Note: StatementDelimiterToken, OpenBraceToken, and CloseBraceToken
+				// 	  if used for scope delimination can sometimes end up here
+				//       (most often due to these tokens being contiguous one after another).
+				
+				#if DEBUG
+				model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+				#endif
+				
+				_ = model.TokenWalker.Consume();
+				
+				#if DEBUG
+				model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+				#endif
+			}
+			else if (model.TokenWalker.ConsumeCounter < 0)
+			{
+				// This means that a syntax invoked 'model.TokenWalker.Backtrack()'.
+				// Without invoking an equal amount of 'model.TokenWalker.Consume()' to avoid an infinite loop.
+				throw new LuthetusTextEditorException($"model.TokenWalker.ConsumeCounter:{model.TokenWalker.ConsumeCounter} < 0");
+			}
+			
+			model.TokenWalker.ConsumeCounterReset();
         }
 
         if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null &&
