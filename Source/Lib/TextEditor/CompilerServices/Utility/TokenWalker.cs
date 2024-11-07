@@ -19,7 +19,7 @@ public class TokenWalker
     	if (tokenList.Length > 0 &&
     		tokenList[tokenList.Length - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
     	{
-    		throw new LuthetusTextEditorException("The last token must be 'SyntaxKind.EndOfFileToken'");
+    		throw new LuthetusTextEditorException("The last token must be 'SyntaxKind.EndOfFileToken'... {tokenList.First().TextSpan.ResourceUri.Value}");
     	}
     
         _tokenList = tokenList;

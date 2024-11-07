@@ -11,41 +11,10 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public static class ParseOthers
 {
-    public static void HandleNamespaceIdentifier(CSharpParserModel model)
+    public static void StartStatement_Expression(CSharpParserModel model)
     {
-        var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
-
-        while (!model.TokenWalker.IsEof)
-        {
-            if (combineNamespaceIdentifierIntoOne.Count % 2 == 0)
-            {
-                var matchedToken = model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-                combineNamespaceIdentifierIntoOne.Add(matchedToken);
-
-                if (matchedToken.IsFabricated)
-                    break;
-            }
-            else
-            {
-                if (SyntaxKind.MemberAccessToken == model.TokenWalker.Current.SyntaxKind)
-                    combineNamespaceIdentifierIntoOne.Add(model.TokenWalker.Consume());
-                else
-                    break;
-            }
-        }
-
-        if (combineNamespaceIdentifierIntoOne.Count == 0)
-        {
-            model.SyntaxStack.Push(new EmptyNode());
-            return;
-        }
-
-        var identifierTextSpan = combineNamespaceIdentifierIntoOne.First().TextSpan with
-        {
-            EndingIndexExclusive = combineNamespaceIdentifierIntoOne.Last().TextSpan.EndingIndexExclusive
-        };
-
-        model.SyntaxStack.Push(new IdentifierToken(identifierTextSpan));
+    	var expressionNode = ParseOthers.ParseExpression(model);
+    	model.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
     }
 
 	/// <summary>
@@ -57,8 +26,6 @@ public static class ParseOthers
 	/// </summary>
 	public static IExpressionNode ParseExpression(CSharpParserModel model)
     {
-    	Console.WriteLine("ParseExpression");
-    	
 #if DEBUG
     	Console.Write("\n====START==============================================================================\n");
     	Console.Write("====START==============================================================================\n\n");
@@ -72,10 +39,6 @@ public static class ParseOthers
     	while (!model.TokenWalker.IsEof)
         {
         	var tokenCurrent = model.TokenWalker.Current;
-        	Console.WriteLine(model.TokenWalker.Current);
-        	Console.WriteLine(model.TokenWalker.Current);
-        	Console.WriteLine(model.TokenWalker.Current);
-        	Console.WriteLine(model.TokenWalker.Current);
     		
     		// The CSharpBinder.Expressions.cs code does not 'remove' from the 'model'ExpressionList'
 			// But, it does at times 'add'.

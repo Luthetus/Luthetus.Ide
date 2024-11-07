@@ -81,39 +81,36 @@ public class CSharpParser : IParser
             switch (token.SyntaxKind)
             {
                 case SyntaxKind.NumericLiteralToken:
-                    ParseTokens.ParseNumericLiteralToken((NumericLiteralToken)token, model);
-                    break;
                 case SyntaxKind.CharLiteralToken:
-                    ParseTokens.ParseCharLiteralToken((CharLiteralToken)token, model);
-                    break;
 				case SyntaxKind.StringLiteralToken:
-                    ParseTokens.ParseStringLiteralToken((StringLiteralToken)token, model);
-                    break;
                 case SyntaxKind.PlusToken:
-                    ParseTokens.ParsePlusToken((PlusToken)token, model);
-                    break;
                 case SyntaxKind.PlusPlusToken:
-                    ParseTokens.ParsePlusPlusToken((PlusPlusToken)token, model);
-                    break;
                 case SyntaxKind.MinusToken:
-                    ParseTokens.ParseMinusToken((MinusToken)token, model);
-                    break;
                 case SyntaxKind.StarToken:
-                    ParseTokens.ParseStarToken((StarToken)token, model);
-                    break;
+                case SyntaxKind.DollarSignToken:
+                case SyntaxKind.AtToken:
+                	if (model.StatementBuilderStack.Count == 0)
+                	{
+                		ParseOthers.StartStatement_Expression(model);
+                	}
+                	else
+                	{
+                		var expressionNode = ParseOthers.ParseExpression(model);
+                		model.StatementBuilderStack.Push(expressionNode);
+                	}
+                	break;
                 case SyntaxKind.PreprocessorDirectiveToken:
                     ParseTokens.ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)token, model);
-                    break;
-                case SyntaxKind.CommentSingleLineToken:
-                    // Do not parse comments.
                     break;
                 case SyntaxKind.IdentifierToken:
                     ParseTokens.ParseIdentifierToken(model);
                     break;
                 case SyntaxKind.OpenBraceToken:
+                	model.StatementBuilderStack.Clear();
                     ParseTokens.ParseOpenBraceToken((OpenBraceToken)token, model);
                     break;
                 case SyntaxKind.CloseBraceToken:
+                	model.StatementBuilderStack.Clear();
                     ParseTokens.ParseCloseBraceToken((CloseBraceToken)token, model);
                     break;
                 case SyntaxKind.OpenParenthesisToken:
@@ -134,12 +131,6 @@ public class CSharpParser : IParser
                 case SyntaxKind.CloseSquareBracketToken:
                     ParseTokens.ParseCloseSquareBracketToken((CloseSquareBracketToken)token, model);
                     break;
-                case SyntaxKind.DollarSignToken:
-                    ParseTokens.ParseDollarSignToken((DollarSignToken)token, model);
-                    break;
-                case SyntaxKind.AtToken:
-                    ParseTokens.ParseAtToken((AtToken)token, model);
-                    break;
                 case SyntaxKind.ColonToken:
                     ParseTokens.ParseColonToken((ColonToken)token, model);
                     break;
@@ -150,6 +141,7 @@ public class CSharpParser : IParser
                     ParseTokens.ParseEqualsToken((EqualsToken)token, model);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
+                	model.StatementBuilderStack.Clear();
                     ParseTokens.ParseStatementDelimiterToken((StatementDelimiterToken)token, model);
                     break;
                 case SyntaxKind.EndOfFileToken:

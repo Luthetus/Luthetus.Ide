@@ -10,51 +10,11 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public static class ParseTokens
 {
-    public static void ParseNumericLiteralToken(
-        NumericLiteralToken consumedNumericLiteralToken,
-        CSharpParserModel model)
-    {
-        var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
-    }
-
-	public static void ParseCharLiteralToken(
-        CharLiteralToken consumedCharLiteralToken,
-        CSharpParserModel model)
-    {
-        var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
-    }
-
-    public static void ParseStringLiteralToken(
-        StringLiteralToken consumedStringLiteralToken,
-        CSharpParserModel model)
-    {
-        var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
-    }
-
     public static void ParsePreprocessorDirectiveToken(
         PreprocessorDirectiveToken consumedPreprocessorDirectiveToken,
         CSharpParserModel model)
     {
         var consumedToken = model.TokenWalker.Consume();
-
-        if (consumedToken.SyntaxKind == SyntaxKind.LibraryReferenceToken)
-        {
-            var preprocessorLibraryReferenceStatement = new PreprocessorLibraryReferenceStatementNode(
-                consumedPreprocessorDirectiveToken,
-                consumedToken);
-
-            model.CurrentCodeBlockBuilder.ChildList.Add(preprocessorLibraryReferenceStatement);
-            return;
-        }
-        else
-        {
-            model.DiagnosticBag.ReportTodoException(
-                consumedToken.TextSpan,
-                $"Implement {nameof(ParsePreprocessorDirectiveToken)}");
-        }
     }
 
     public static void ParseIdentifierToken(CSharpParserModel model)
@@ -62,436 +22,64 @@ public static class ParseTokens
     	var identifierToken = (IdentifierToken)model.TokenWalker.Consume();
     }
 
-    private static bool TryParseGenericArguments(CSharpParserModel model)
-    {
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-        {
-            ParseTypes.HandleGenericArguments(
-                (OpenAngleBracketToken)model.TokenWalker.Consume(),
-                model);
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private static bool TryParseConstructorDefinition(
-        IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
-    {
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
-            model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
-            model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-        {
-            ParseFunctions.HandleConstructorDefinition(consumedIdentifierToken, model);
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool TryParseTypedIdentifier(
-        IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
-    {
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax is TypeClauseNode typeClauseNode)
-        {
-        	Console.WriteLine("TryParseTypedIdentifier.is TypeClauseNode typeClauseNode");
-        
-            // The variable 'genericArgumentsListingNode' is here for
-            // when the syntax is determined to be a function definition.
-            // In this case, the typeClauseNode would be the function's return type.
-            // Yet, there may still be generic arguments to the function.
-            var genericArgumentsListingNode = (GenericArgumentsListingNode?)null;
-
-            if (TryParseGenericArguments(model) &&
-                model.SyntaxStack.Peek().SyntaxKind == SyntaxKind.GenericArgumentsListingNode)
-            {
-            	Console.WriteLine("TryParseTypedIdentifier.TryParseGenericArguments.Success");
-                genericArgumentsListingNode = (GenericArgumentsListingNode)model.SyntaxStack.Pop();
-            }
-
-            if (TryParseFunctionDefinition(
-                consumedIdentifierToken,
-                typeClauseNode,
-                genericArgumentsListingNode,
-                model))
-            {
-            	Console.WriteLine("TryParseFunctionDefinition.ReturnTrue");
-                return true;
-            }
-
-            if (TryParseVariableDeclaration(
-                typeClauseNode,
-                consumedIdentifierToken,
-                model))
-            {
-            	Console.WriteLine("TryParseVariableDeclaration.ReturnTrue");
-                return true;
-            }
-        }
-        
-        Console.WriteLine("TryParseTypedIdentifier.ReturnFalse");
-        return false;
-    }
-
-    private static bool TryParseVariableAssignment(
-        IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
-    {
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
-        {
-            ParseVariables.HandleVariableAssignment(
-                consumedIdentifierToken,
-                (EqualsToken)model.TokenWalker.Consume(),
-                model);
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool TryParseFunctionDefinition(
-        IdentifierToken consumedIdentifierToken,
-        TypeClauseNode consumedTypeClauseNode,
-        GenericArgumentsListingNode? consumedGenericArgumentsListingNode,
-        CSharpParserModel model)
-    {
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-        {
-            ParseFunctions.HandleFunctionDefinition(
-                consumedIdentifierToken,
-                consumedTypeClauseNode,
-                consumedGenericArgumentsListingNode,
-                model);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool TryParseVariableDeclaration(
-        TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
-    {
-        var isLocalOrField = model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
-                             model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken;
-
-        var isLambda = model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken;
-
-        var variableKind = (VariableKind?)null;
-
-        if (isLocalOrField && !isLambda)
-        {
-            if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode)
-                variableKind = VariableKind.Field;
-            else
-                variableKind = VariableKind.Local;
-        }
-        else if (isLambda)
-        {
-            // Property (expression bound)
-            variableKind = VariableKind.Property;
-        }
-        else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-        {
-            // Property
-            variableKind = VariableKind.Property;
-        }
-
-        if (variableKind is not null)
-        {
-            ParseVariables.HandleVariableDeclarationStatement(
-                consumedTypeClauseNode,
-                consumedIdentifierToken,
-                variableKind.Value,
-                model);
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public static void ResolveAmbiguousIdentifier(
-        AmbiguousIdentifierNode consumedAmbiguousIdentifierNode,
-        CSharpParserModel model)
-    {
-        var expectingTypeClause = false;
-
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-            expectingTypeClause = true;
-
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
-            expectingTypeClause = true;
-
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken ||
-            model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
-            model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-        {
-            expectingTypeClause = true;
-        }
-
-        if (expectingTypeClause)
-        {
-            if (!model.Binder.TryGetTypeDefinitionHierarchically(
-            		model,
-                    model.BinderSession.ResourceUri,
-                    model.BinderSession.CurrentScopeIndexKey,
-                    consumedAmbiguousIdentifierNode.IdentifierToken.TextSpan.GetText(),
-                    out var typeDefinitionNode)
-                || typeDefinitionNode is null)
-            {
-                var fabricateTypeDefinition = new TypeDefinitionNode(
-                    AccessModifierKind.Public,
-                    false,
-                    StorageModifierKind.Class,
-                    consumedAmbiguousIdentifierNode.IdentifierToken,
-                    null,
-                    null,
-                    null,
-                    null,
-                    openBraceToken: default,
-                    null)
-                {
-                    IsFabricated = true
-                };
-
-                model.Binder.BindTypeDefinitionNode(fabricateTypeDefinition, model);
-                typeDefinitionNode = fabricateTypeDefinition;
-            }
-
-            model.SyntaxStack.Push(typeDefinitionNode.ToTypeClause());
-        }
-    }
-
     public static void ParsePlusToken(
         PlusToken consumedPlusToken,
         CSharpParserModel model)
     {
-        var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParsePlusPlusToken(
         PlusPlusToken consumedPlusPlusToken,
         CSharpParserModel model)
     {
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.VariableReferenceNode)
-        {
-            var variableReferenceNode = (VariableReferenceNode)model.SyntaxStack.Pop();
-
-            var unaryOperatorNode = new UnaryOperatorNode(
-                variableReferenceNode.ResultTypeClauseNode,
-                consumedPlusPlusToken,
-                variableReferenceNode.ResultTypeClauseNode);
-
-            var unaryExpressionNode = new UnaryExpressionNode(
-                variableReferenceNode,
-                unaryOperatorNode);
-
-            model.CurrentCodeBlockBuilder.ChildList.Add(unaryExpressionNode);
-        }
     }
 
     public static void ParseMinusToken(
         MinusToken consumedMinusToken,
         CSharpParserModel model)
     {
-        var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseStarToken(
         StarToken consumedStarToken,
         CSharpParserModel model)
     {
-        var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseDollarSignToken(
         DollarSignToken consumedDollarSignToken,
         CSharpParserModel model)
     {
-        var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
     
     public static void ParseAtToken(
         AtToken consumedAtToken,
         CSharpParserModel model)
     {
-        var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseColonToken(
         ColonToken consumedColonToken,
         CSharpParserModel model)
     {
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-        {
-            var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
-            var inheritedTypeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
-
-            model.Binder.BindTypeClauseNode(inheritedTypeClauseNode, model);
-
-			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
-
-            model.SyntaxStack.Push(typeDefinitionNode);
-            model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
-            
-            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
-	        {
-	        	while (!model.TokenWalker.IsEof)
-	        	{
-	        		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-	        			break;
-	        		
-	        		_ = model.TokenWalker.Consume();
-	        	}
-	        }
-        }
-        else
-        {
-            model.DiagnosticBag.ReportTodoException(consumedColonToken.TextSpan, "Colon is in unexpected place.");
-        }
     }
 
     public static void ParseOpenBraceToken(
         OpenBraceToken consumedOpenBraceToken,
         CSharpParserModel model)
     {
-		var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
-        ICodeBlockOwner? nextCodeBlockOwner = null;
-        TypeClauseNode? scopeReturnTypeClauseNode = null;
-
-		if (closureCurrentCodeBlockBuilder.PendingChild is null)
-		{
-			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(
-				closureCurrentCodeBlockBuilder.CodeBlockOwner);
-		
-			model.SyntaxStack.Push(arbitraryCodeBlockNode);
-        	model.CurrentCodeBlockBuilder.PendingChild = arbitraryCodeBlockNode;
-		}
-
-		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind
-			?? ScopeDirectionKind.Both;
-			
-		bool wasDeferred = false;
-
-		if (parentScopeDirection == ScopeDirectionKind.Both)
-		{
-			// Retrospective: ??? How would two consecutive defers get enqueued if doing '== 0'.
-			//
-			// Response: This seems to be a flag that says a child scope is allowed to be parsed (rather than infinitely enqueueing).
-			//           If so, rename the variable and make it a bool because it being a 'counter' is extremely confusing.
-			if (model.CurrentCodeBlockBuilder.DequeueChildScopeCounter == 0)
-			{
-				model.TokenWalker.DeferParsingOfChildScope(consumedOpenBraceToken, model);
-				return;
-			}
-
-			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter--;
-			wasDeferred = true;
-		}
-
-		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.DequeuedIndexForChildList
-			?? model.CurrentCodeBlockBuilder.ChildList.Count;
-		
-		if (closureCurrentCodeBlockBuilder.PendingChild is null)
-			return;
-		
-		nextCodeBlockOwner = closureCurrentCodeBlockBuilder.PendingChild;
-		
-		var returnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
-		if (returnTypeClauseNode is not null)
-			scopeReturnTypeClauseNode = returnTypeClauseNode;
-		
-		// Awkwardly capturing this variable so the closure on 'FinalizeCodeBlockNodeActionStack'
-		// Reads better. Because it will be used AFTER the code block was read so 'next' is nonsense.
-		var selfCodeBlockOwner = nextCodeBlockOwner;
-		
-		model.FinalizeCodeBlockNodeActionStack.Push(codeBlockNode =>
-        {
-            selfCodeBlockOwner = selfCodeBlockOwner.SetCodeBlockNode(consumedOpenBraceToken, codeBlockNode);
-			
-			/*if (wasDeferred)
-				closureCurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;
-			else
-				closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);*/
-			
-			if (selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
-				selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
-				selfCodeBlockOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
-			{
-				closureCurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);
-			}
-			
-			closureCurrentCodeBlockBuilder.PendingChild = null;
-				
-			if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-				model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)selfCodeBlockOwner, model);
-			else if (selfCodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-				model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)selfCodeBlockOwner, model, true);
-        });
-
-        model.Binder.RegisterScope(scopeReturnTypeClauseNode, consumedOpenBraceToken.TextSpan, model);
-		model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
-		nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(model);
     }
 
     public static void ParseCloseBraceToken(
         CloseBraceToken consumedCloseBraceToken,
         CSharpParserModel model)
     {
-		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var action))
-		{
-			action.Invoke(model.TokenWalker.Index - 1);
-			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter++;
-			return;
-		}
-
-        model.Binder.DisposeScope(consumedCloseBraceToken.TextSpan, model);
-
-        if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
-        {
-            model.FinalizeCodeBlockNodeActionStack
-                .Pop()
-                .Invoke(model.CurrentCodeBlockBuilder.Build());
-
-            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
-        }
     }
 
     public static void ParseOpenParenthesisToken(
         OpenParenthesisToken consumedOpenParenthesisToken,
         CSharpParserModel model)
     {
-        if (model.SyntaxStack.TryPeek(out var syntax) &&
-            syntax is TypeDefinitionNode typeDefinitionNode)
-        {
-            _ = model.SyntaxStack.Pop();
-
-            ParseTypes.HandlePrimaryConstructorDefinition(
-                typeDefinitionNode,
-                consumedOpenParenthesisToken,
-                model);
-
-            return;
-        }
-
-		_ = model.TokenWalker.Backtrack();
-		var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseCloseParenthesisToken(
@@ -504,66 +92,18 @@ public static class ParseTokens
         OpenAngleBracketToken consumedOpenAngleBracketToken,
         CSharpParserModel model)
     {
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-            model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-            model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.BinaryExpressionNode ||
-            /* Prefer the enum comparison. Will short circuit. This "is" cast is for fallback in case someone in the future adds for expression syntax kinds but does not update this if statement TODO: Check if node ends with "ExpressionNode"? */
-            model.SyntaxStack.TryPeek(out syntax) && syntax is IExpressionNode)
-        {
-            // Mathematical angle bracket
-            model.DiagnosticBag.ReportTodoException(
-                consumedOpenAngleBracketToken.TextSpan,
-                $"Implement mathematical angle bracket");
-        }
-        else
-        {
-            // Generic Arguments
-            ParseTypes.HandleGenericArguments(consumedOpenAngleBracketToken, model);
-
-            if (model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-            {
-                var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
-
-                // TODO: Fix boundClassDefinitionNode, it broke on (2023-07-26)
-                //
-                // _cSharpParser._nodeRecent = boundClassDefinitionNode with
-                // {
-                //     BoundGenericArgumentsNode = boundGenericArguments
-                // };
-            }
-        }
     }
 
     public static void ParseCloseAngleBracketToken(
         CloseAngleBracketToken consumedCloseAngleBracketToken,
         CSharpParserModel model)
     {
-        model.DiagnosticBag.ReportTodoException(
-            consumedCloseAngleBracketToken.TextSpan,
-            $"Implement {nameof(ParseCloseAngleBracketToken)}");
     }
 
     public static void ParseOpenSquareBracketToken(
         OpenSquareBracketToken consumedOpenSquareBracketToken,
         CSharpParserModel model)
     {
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-            model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.LiteralExpressionNode ||
-            model.SyntaxStack.TryPeek(out syntax) && syntax.SyntaxKind == SyntaxKind.BinaryExpressionNode ||
-            /* Prefer the enum comparison. Will short circuit. This "is" cast is for fallback in case someone in the future adds for expression syntax kinds but does not update this if statement TODO: Check if node ends with "ExpressionNode"? */
-            model.SyntaxStack.TryPeek(out syntax) && syntax is IExpressionNode)
-        {
-            // Mathematical square bracket
-            model.DiagnosticBag.ReportTodoException(
-                consumedOpenSquareBracketToken.TextSpan,
-                $"Implement mathematical square bracket");
-        }
-        else
-        {
-            // Attribute
-            model.SyntaxStack.Push(consumedOpenSquareBracketToken);
-            ParseTypes.HandleAttribute(consumedOpenSquareBracketToken, model);
-        }
     }
 
     public static void ParseCloseSquareBracketToken(
@@ -576,102 +116,18 @@ public static class ParseTokens
         EqualsToken consumedEqualsToken,
         CSharpParserModel model)
     {
-        if (model.SyntaxStack.TryPeek(out var syntax) &&
-            syntax is FunctionDefinitionNode functionDefinitionNode)
-        {
-            if (functionDefinitionNode.CodeBlockNode is null &&
-                model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-            {
-                var closeAngleBracketToken = model.TokenWalker.Consume();
-
-				var expression = ParseOthers.ParseExpression(model);
-                var codeBlockNode = new CodeBlockNode(new ISyntax[] 
-                {
-                    expression
-                }.ToImmutableArray());
-
-                functionDefinitionNode = (FunctionDefinitionNode)model.SyntaxStack.Pop();
-                functionDefinitionNode.SetExpressionBody(codeBlockNode);
-
-                model.CurrentCodeBlockBuilder.ChildList.Add(functionDefinitionNode);
-                model.CurrentCodeBlockBuilder.PendingChild = null;
-            }
-        }
     }
 
     public static void ParseMemberAccessToken(
         MemberAccessToken consumedMemberAccessToken,
         CSharpParserModel model)
     {
-    	/*if (model.TokenWalker.Previous.SyntaxKind == SyntaxKind.IdentifierToken)
-    	{
-    		// Backtrack so that model.TokenWalker.Current is the IdentifierToken
-    		// This is presumed to be the full expression, albeit quite naive.
-    		//
-    		// Ex: 'myVariable.SomeProperty'
-    		//
-    		// But, this might not work with method invocations
-    		//
-    		// Ex: 'myMethod().SomeProperty'
-    		model.TokenWalker.Backtrack();
-    	}*/
-    	
-        var expression = ParseOthers.ParseExpression(model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     }
 
     public static void ParseStatementDelimiterToken(
         StatementDelimiterToken consumedStatementDelimiterToken,
         CSharpParserModel model)
     {
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-        {
-            var closureCurrentCompilationUnitBuilder = model.CurrentCodeBlockBuilder;
-            ICodeBlockOwner? nextCodeBlockOwner = null;
-            TypeClauseNode? scopeReturnTypeClauseNode = null;
-
-            var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
-            nextCodeBlockOwner = namespaceStatementNode;
-
-            model.FinalizeNamespaceFileScopeCodeBlockNodeAction = codeBlockNode =>
-            {
-                namespaceStatementNode.SetFileScoped(codeBlockNode);
-
-				model.CurrentCodeBlockBuilder.PendingChild = null;
-                closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
-                model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
-            };
-
-            model.Binder.RegisterScope(
-                scopeReturnTypeClauseNode,
-                consumedStatementDelimiterToken.TextSpan,
-                model);
-
-            model.Binder.AddNamespaceToCurrentScope(
-                namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
-                model);
-
-            model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
-        }
-        else if (model.CurrentCodeBlockBuilder.PendingChild is not null)
-        {
-        	if (model.CurrentCodeBlockBuilder.Parent is not null && // Not Global Scope
-        		!model.CurrentCodeBlockBuilder.PendingChild.OpenBraceToken.ConstructorWasInvoked) // Not Already Deliminated By an OpenBrace.
-        	{
-	        	var pendingChild = model.CurrentCodeBlockBuilder.PendingChild;
-	        
-	        	model.Binder.RegisterScope(CSharpFacts.Types.Void.ToTypeClause(), consumedStatementDelimiterToken.TextSpan, model);
-				model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, pendingChild);
-				pendingChild.OnBoundScopeCreatedAndSetAsCurrent(model);
-				
-		        model.Binder.DisposeScope(consumedStatementDelimiterToken.TextSpan, model);
-		
-		        if (model.CurrentCodeBlockBuilder.Parent is not null)
-		            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
-		            
-		        model.CurrentCodeBlockBuilder.PendingChild = null;
-        	}
-        }
     }
 
     public static void ParseKeywordToken(CSharpParserModel model)
