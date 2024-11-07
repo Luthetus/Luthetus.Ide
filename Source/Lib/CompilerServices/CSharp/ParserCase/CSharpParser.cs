@@ -365,5 +365,50 @@ public class CSharpParser : IParser
             Lexer,
             this,
             Binder);
+            
+        // Goal: re-write the parser a bit (2024-11-07)
+        // ============================================
+        // It took 8 seconds for the Luthetus.Ide.sln to parse after turning off much of the syntax.
+        // 	(i.e.: the lexer ran entirely, but the parser was just iterating the while loop without doing much of anything).
+        //     (upon further inspection the parser's while loop still is doing a bit more than I thought,
+        // 		but still the baseline time of 8 seconds can be compared with the time after I make a change.)
+        //
+        // With the syntax on it was taking 1 minute 13 seconds.
+        //
+        // Task Manager after the solution was parsed on Windows using a published version of the code.
+        // --------------------------------------------------------------------------------------------
+        // Apps:
+        // 	'.NET Host' 278 MB
+        // Background processes
+        // 	'.NET Host' 492 MB
+        // 	'.NET Host' 265 MB
+        //
+        // After about 5 minutes the Task Manager looks like this (5 minutes is not at all an accurate timespan, but it "felt" like 5 minutes had passed)
+        // -----------------------------------------------------------------------------------------------------------------------------------------------
+        // Apps:
+        // 	'.NET Host' 370 MB
+        // Background processes
+        // 	(these are gone now)
+        //
+        // So, now I can move back from git history each syntax one by one and see the impact of adding that specific syntax back.
+        //
+        // Most pressing is:
+        // - Determining whether syntax is an 'expression' or 'statement'.
+        // - As well the handling of 'ambiguous syntax'.
+        //
+        // Suspicions:
+        // - Anytime a 'statement' and a 'expression' are ambiguous,
+        // 	then there will be a keyword to disambiguate.
+        // - If I add back the 'expression' code first,
+        // 	then the statements will be far clearer
+        // 	because I hadn't implemented the 'expression' code
+        // 	with any "complexity" of whether it actually is a statement.
+        // 	I'll have a very "simple" version of the parser to look at,
+        // 	and it is thought that the statement disambiguation will be obvious.
+        // - I don't think I can rely on the surrounding code block's "kind"
+        // 	and whether that code block allows a certain syntax.
+        //   	- The programmer can type any syntax they want, and do so anywhere,
+        //       	it just might not compile.
+        //       	But, the parser still has to "survive" the ordeal.
     }
 }
