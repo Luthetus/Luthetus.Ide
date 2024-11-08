@@ -60,14 +60,14 @@ public static class ParseTokens
     {
     	var openBraceToken = (OpenBraceToken)model.TokenWalker.Consume();
     
-		var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
+		var currentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
         ICodeBlockOwner? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
 
-		if (closureCurrentCodeBlockBuilder.PendingChild is null)
+		if (currentCodeBlockBuilder.PendingChild is null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(
-				closureCurrentCodeBlockBuilder.CodeBlockOwner);
+				currentCodeBlockBuilder.CodeBlockOwner);
 		
 			model.SyntaxStack.Push(arbitraryCodeBlockNode);
         	model.CurrentCodeBlockBuilder.PendingChild = arbitraryCodeBlockNode;
@@ -99,10 +99,10 @@ public static class ParseTokens
 		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.DequeuedIndexForChildList
 			?? model.CurrentCodeBlockBuilder.ChildList.Count;
 		
-		if (closureCurrentCodeBlockBuilder.PendingChild is null)
+		if (currentCodeBlockBuilder.PendingChild is null)
 			return;
 		
-		nextCodeBlockOwner = closureCurrentCodeBlockBuilder.PendingChild;
+		nextCodeBlockOwner = currentCodeBlockBuilder.PendingChild;
 		
 		var returnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
 		if (returnTypeClauseNode is not null)
@@ -117,11 +117,9 @@ public static class ParseTokens
     {
     	var closeBraceToken = (CloseBraceToken)model.TokenWalker.Consume();
     	
-    	// TODO: ParseChildScopeQueue needs to NOT be an action, just store the parameters needed.
-		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var action))
+		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 		{
-			action.Invoke(model.TokenWalker.Index - 1);
-			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter++;
+			deferredChildScope.Run(model.TokenWalker.Index - 1, model);
 			return;
 		}
 

@@ -716,17 +716,11 @@ public partial class CSharpBinder : IBinder
 			model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, model, true);
 		
 		// Return to the parent
-		if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
-        {
-            model.FinalizeCodeBlockNodeActionStack
-                .Pop()
-                .Invoke(model.CurrentCodeBlockBuilder.Build());
-
-            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
-        }
-	
-		if (scope.ParentIndexKey is not null)
-        	model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
+		if (model.CurrentCodeBlockBuilder.Parent is not null && scope.ParentIndexKey is not null)
+		{
+			model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
+			model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
+		}
     }
 
     public void BindTypeDefinitionNode(

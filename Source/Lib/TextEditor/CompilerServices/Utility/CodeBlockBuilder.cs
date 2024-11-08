@@ -54,7 +54,7 @@ public class CodeBlockBuilder
     /// </summary>
     public ICodeBlockOwner? PendingChild { get; set; }
     
-    public Queue<Action<int>> ParseChildScopeQueue { get; set; } = new();
+    public Queue<DeferredChildScope> ParseChildScopeQueue { get; set; } = new();
 	public int DequeueChildScopeCounter { get; set; }
 	public int? DequeuedIndexForChildList { get; set; }
 

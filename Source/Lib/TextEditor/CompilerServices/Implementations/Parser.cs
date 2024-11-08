@@ -46,8 +46,7 @@ public class Parser : IParser
             diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder,
-            null,
-            new Stack<Action<CodeBlockNode>>());
+            null);
 		
         DiagnosticsList = DiagnosticsList.AddRange(model.DiagnosticBag.ToImmutableArray());
 

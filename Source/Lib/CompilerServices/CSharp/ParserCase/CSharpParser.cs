@@ -56,8 +56,7 @@ public class CSharpParser : IParser
             diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder,
-            null,
-            new Stack<Action<CodeBlockNode>>());
+            null);
             
         #if DEBUG
         model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
@@ -197,21 +196,10 @@ public class CSharpParser : IParser
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
-				if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var action))
-				{
-					// TODO: After the child scope is parsed the current code block builder
-					//       needs to be restored.
-					
-					// TODO: Why would 'DequeueChildScopeCounter' be incremented after the fact (instead of before)?
-					// Response: maybe it returns to the main while loop in CSharpParser.cs so it doesn't matter the order.
-				
-					action.Invoke(model.TokenWalker.Index - 1);
-					model.CurrentCodeBlockBuilder.DequeueChildScopeCounter++;
-				}
+				if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+					deferredChildScope.Run(model.TokenWalker.Index, model);
 				else
-				{
 					break;
-				}
 			}
 			
 			// In regards to whether to '_ = model.TokenWalker.Consume();'

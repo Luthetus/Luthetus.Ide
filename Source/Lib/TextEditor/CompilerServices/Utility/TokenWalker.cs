@@ -12,7 +12,7 @@ public class TokenWalker
     private readonly DiagnosticBag _diagnosticBag;
 
     private int _index;
-	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore, Action clearStateAction)? _deferredParsingTuple;
+	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)? _deferredParsingTuple;
 
     public TokenWalker(ImmutableArray<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
     {
@@ -69,7 +69,6 @@ public class TokenWalker
 			{
 				var closeChildScopeToken = _tokenList[_index];
 				_index = _deferredParsingTuple.Value.tokenIndexToRestore;
-				_deferredParsingTuple.Value.clearStateAction.Invoke();
 				_deferredParsingTuple = null;
 				return closeChildScopeToken;
 			}
@@ -153,11 +152,10 @@ public class TokenWalker
 	public void DeferredParsing(
 		int openTokenIndex,
 		int closeTokenIndex,
-		int tokenIndexToRestore,
-		Action clearStateAction)
+		int tokenIndexToRestore)
 	{
 		_index = openTokenIndex;
-		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore, clearStateAction);
+		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore);
 	}
 	
 	public void ConsumeCounterReset()

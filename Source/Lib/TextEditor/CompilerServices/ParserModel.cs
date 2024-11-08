@@ -18,8 +18,7 @@ public class ParserModel : IParserModel
         DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder,
-        Action<CodeBlockNode>? finalizeNamespaceFileScopeCodeBlockNodeAction,
-        Stack<Action<CodeBlockNode>> finalizeCodeBlockNodeActionStack)
+        Action<CodeBlockNode>? finalizeNamespaceFileScopeCodeBlockNodeAction)
     {
         Binder = binder;
         BinderSession = binderSession;
@@ -29,7 +28,6 @@ public class ParserModel : IParserModel
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
         FinalizeNamespaceFileScopeCodeBlockNodeAction = finalizeNamespaceFileScopeCodeBlockNodeAction;
-        FinalizeCodeBlockNodeActionStack = finalizeCodeBlockNodeActionStack;
     }
 
     public IBinder Binder { get; }
@@ -48,10 +46,4 @@ public class ParserModel : IParserModel
     /// so that prior to finishing the parser constructs the namespace node.
     /// </summary>
     public Action<CodeBlockNode>? FinalizeNamespaceFileScopeCodeBlockNodeAction { get; set; }
-    /// <summary>
-    /// When parsing the body of a function this is used in order to keep the function
-    /// definition node itself in the syntax tree immutable.<br/><br/>
-    /// That is to say, this action would create the function definition node and then append it.
-    /// </summary>
-    public Stack<Action<CodeBlockNode>> FinalizeCodeBlockNodeActionStack { get; set; }
 }

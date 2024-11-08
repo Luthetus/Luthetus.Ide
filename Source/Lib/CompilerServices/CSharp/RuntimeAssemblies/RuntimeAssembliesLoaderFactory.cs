@@ -66,8 +66,7 @@ public static class RuntimeAssembliesLoaderFactory
                 diagnosticBag,
                 globalCodeBlockBuilder,
                 currentCodeBlockBuilder,
-                null,
-                new Stack<Action<CodeBlockNode>>());
+                null);
 
             // TODO: Do not use 'System.IO.Directory' because this doesn't work...
             // ... when running the website
