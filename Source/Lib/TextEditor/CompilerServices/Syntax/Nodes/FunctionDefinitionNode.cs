@@ -68,15 +68,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
-    {
-    	OpenBraceToken = openBraceToken;
-    	CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
     public ICodeBlockOwner SetExpressionBody(CodeBlockNode codeBlockNode)
     {
     	CodeBlockNode = codeBlockNode;

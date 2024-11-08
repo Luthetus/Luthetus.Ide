@@ -378,15 +378,8 @@ public static class ParseTokens
 
             var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = namespaceStatementNode;
-
-            model.FinalizeNamespaceFileScopeCodeBlockNodeAction = codeBlockNode =>
-            {
-                namespaceStatementNode.SetFileScoped(codeBlockNode);
-
-				model.CurrentCodeBlockBuilder.PendingChild = null;
-                closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
-                model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
-            };
+            
+            namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken);
 
             model.Binder.OpenScope(
                 scopeReturnTypeClauseNode,

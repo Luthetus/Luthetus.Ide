@@ -67,15 +67,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
-    {
-    	OpenBraceToken = openBraceToken;
-    	CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
 		foreach (var argument in FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)

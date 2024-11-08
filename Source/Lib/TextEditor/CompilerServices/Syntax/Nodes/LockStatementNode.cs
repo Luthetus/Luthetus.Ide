@@ -51,15 +51,6 @@ public sealed class LockStatementNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
-    {
-    	OpenBraceToken = openBraceToken;
-    	CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
     	// Do nothing.

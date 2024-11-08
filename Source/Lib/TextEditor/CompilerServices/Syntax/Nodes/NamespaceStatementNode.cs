@@ -62,27 +62,10 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
-    {    
-    	OpenBraceToken = openBraceToken;
-    	CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
         var namespaceString = IdentifierToken.TextSpan.GetText();
         parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, parserModel);
-    }
-    
-    public ICodeBlockOwner SetFileScoped(CodeBlockNode codeBlockNode)
-    {    
-    	CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
     }
     
     // (2024-11-08)

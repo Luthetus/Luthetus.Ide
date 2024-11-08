@@ -111,15 +111,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
-    {
-    	OpenBraceToken = openBraceToken;
-    	CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
     // (2024-11-08)
 	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken)
 	{

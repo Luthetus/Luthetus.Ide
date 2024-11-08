@@ -695,6 +695,13 @@ public partial class CSharpBinder : IBinder
 		}
 		
         codeBlockOwner.SetCodeBlockNode(model.CurrentCodeBlockBuilder.Build());
+        
+        if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+		{
+			model.CurrentCodeBlockBuilder.PendingChild = null;
+            model.CurrentCodeBlockBuilder.Parent.ChildList.Add(codeBlockOwner);
+            model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, model);
+		}
 		
 		/*if (wasDeferred)
 			model.CurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;
