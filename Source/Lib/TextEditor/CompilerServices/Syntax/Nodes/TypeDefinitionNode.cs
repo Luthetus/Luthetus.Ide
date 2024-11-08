@@ -71,6 +71,13 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
+	// (2024-11-08)
+	public CloseBraceToken CloseBraceToken { get; private set; }
+	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
+	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
+
+	
+
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
     public ISyntaxNode? Parent { get; }
@@ -112,6 +119,50 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	_childListIsDirty = true;
     	return this;
     }
+    
+    // (2024-11-08)
+	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken)
+	{
+		if (StatementDelimiterToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException();
+	
+		OpenBraceToken = openBraceToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken)
+	{
+		if (StatementDelimiterToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException();
+	
+		CloseBraceToken = closeBraceToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken)
+	{
+		if (OpenBraceToken.ConstructorWasInvoked || CloseBraceToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException();
+	
+		StatementDelimiterToken = statementDelimiterToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode)
+	{
+		if (CodeBlockNode is not null)
+			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException();
+	
+		CodeBlockNode = codeBlockNode;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+    
+    
     
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {

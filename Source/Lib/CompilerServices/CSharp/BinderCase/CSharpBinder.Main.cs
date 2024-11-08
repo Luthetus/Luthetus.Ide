@@ -627,7 +627,7 @@ public partial class CSharpBinder : IBinder
             closeSquareBracketToken);
     }
 
-    public void RegisterScope(
+    public void OpenScope(
         TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textSpan,
         CSharpParserModel model)
@@ -672,7 +672,7 @@ public partial class CSharpBinder : IBinder
         }
     }
 
-    public void DisposeScope(
+    public void CloseScope(
         TextEditorTextSpan textSpan,
         CSharpParserModel model)
     {
@@ -680,13 +680,53 @@ public partial class CSharpBinder : IBinder
     	if (model.BinderSession.CurrentScopeIndexKey == 0)
     		return;
     	
-    	// It is a struct, but needs to be mutated;
+    	// Update the Scope instance
     	var scope = model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey];
     	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
     	model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey] = scope;
+    	
+    	// Update the CodeBlockBuilder instance
+		var codeBlockOwner = model.CurrentCodeBlockBuilder.PendingChild;
+	
+		if (codeBlockOwner is null)
+		{
+			return;
+			// throw new Exception("if (codeBlockOwner is null)");
+		}
+		
+        codeBlockOwner.SetCodeBlockNode(model.CurrentCodeBlockBuilder.Build());
+		
+		/*if (wasDeferred)
+			model.CurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;
+		else
+			model.CurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);*/
+		
+		if (codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
+			codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
+			codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+		{
+			model.CurrentCodeBlockBuilder.ChildList.Add(codeBlockOwner);
+		}
+		
+		model.CurrentCodeBlockBuilder.PendingChild = null;
+			
+		if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+			model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, model);
+		else if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+			model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, model, true);
+		
+		// Return to the parent
+		if (model.CurrentCodeBlockBuilder.Parent is not null && model.FinalizeCodeBlockNodeActionStack.Any())
+        {
+            model.FinalizeCodeBlockNodeActionStack
+                .Pop()
+                .Invoke(model.CurrentCodeBlockBuilder.Build());
 
-        if (scope.ParentIndexKey is not null)
-            model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
+            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
+        }
+	
+		if (scope.ParentIndexKey is not null)
+        	model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
     }
 
     public void BindTypeDefinitionNode(

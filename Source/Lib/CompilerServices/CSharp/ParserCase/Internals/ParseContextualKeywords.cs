@@ -10,7 +10,67 @@ public class ParseContextualKeywords
 {
     public static void HandleVarTokenContextualKeyword(CSharpParserModel model)
     {
-    	var varContextualKeywordToken = model.TokenWalker.Consume();
+        var peekNumber = -1;
+        
+        while (model.TokenWalker.Peek(peekNumber).SyntaxKind != SyntaxKind.BadToken)
+        {
+        	if (model.TokenWalker.Peek(peekNumber).SyntaxKind == SyntaxKind.CommentSingleLineToken ||
+        		model.TokenWalker.Peek(peekNumber).SyntaxKind == SyntaxKind.CommentMultiLineToken)
+        	{
+        		peekNumber--;
+        	}
+        	else
+        	{
+        		break;
+        	}
+        }
+        
+        var previousToken = model.TokenWalker.Peek(peekNumber);
+        
+		switch (previousToken.SyntaxKind)
+		{
+			case SyntaxKind.StatementDelimiterToken:
+            case SyntaxKind.CloseBraceToken:
+            case SyntaxKind.OpenBraceToken:
+            case SyntaxKind.CommaToken:
+            case SyntaxKind.OpenParenthesisToken:
+            case SyntaxKind.ColonToken:
+            case SyntaxKind.BadToken:
+            {
+	            // Check if the next token is a second 'var keyword' or an IdentifierToken. Two IdentifierTokens is invalid, and therefore one can contextually take this 'var' as a keyword.
+	            bool nextTokenIsVarKeyword = SyntaxKind.VarTokenContextualKeyword == model.TokenWalker.Current.SyntaxKind;
+	            bool nextTokenIsIdentifierToken = SyntaxKind.IdentifierToken == model.TokenWalker.Current.SyntaxKind;
+	
+	            if (nextTokenIsVarKeyword || nextTokenIsIdentifierToken)
+	            {
+	            	var varContextualKeywordToken = model.TokenWalker.Consume();
+	            	
+	                var varTypeClauseNode = new TypeClauseNode(
+	                    varContextualKeywordToken,
+	                    null,
+	                    null);
+	
+	                if (model.Binder.TryGetTypeDefinitionHierarchically(
+	                		model,
+	                		model.BinderSession.ResourceUri,
+	                		model.BinderSession.CurrentScopeIndexKey,
+	                        varContextualKeywordToken.TextSpan.GetText(),
+	                        out var varTypeDefinitionNode) &&
+	                    varTypeDefinitionNode is not null)
+	                {
+	                    varTypeClauseNode = varTypeDefinitionNode.ToTypeClause();
+	                }
+	
+	                model.SyntaxStack.Push(varTypeClauseNode);
+	                return;
+	            }
+	            
+	            break;
+            }
+		}
+        
+        // Take 'var' as an 
+        ParseTokens.ParseIdentifierToken(model);
     }
 
     public static void HandlePartialTokenContextualKeyword(CSharpParserModel model)

@@ -36,7 +36,7 @@ public class ParserModel : IParserModel
     public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
-    public Stack<ISyntax> StatementBuilderStack { get; set; } = new();
+    public StatementBuilder StatementBuilder { get; set; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; } = new();
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     public SyntaxKind? ForceParseExpressionSyntaxKind { get; set; }

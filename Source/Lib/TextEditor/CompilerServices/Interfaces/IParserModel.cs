@@ -39,7 +39,7 @@ public interface IParserModel
     /// So, to parse a <see cref="TypeDefinitionNode"/> one would check this for the
     /// access modifier (public, private, etc...).
     /// </summary>
-    public Stack<ISyntax> StatementBuilderStack { get; set; }
+    public StatementBuilder StatementBuilder { get; set; }
     
     /// <summary>
     /// This list permits primitive recursion via a while loop for the expression parsing logic.

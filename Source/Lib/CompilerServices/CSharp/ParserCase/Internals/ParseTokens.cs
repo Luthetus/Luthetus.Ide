@@ -19,43 +19,19 @@ public static class ParseTokens
 
     public static void ParseIdentifierToken(CSharpParserModel model)
     {
-    	var identifierToken = (IdentifierToken)model.TokenWalker.Consume();
-    }
-
-    public static void ParsePlusToken(
-        PlusToken consumedPlusToken,
-        CSharpParserModel model)
-    {
-    }
-
-    public static void ParsePlusPlusToken(
-        PlusPlusToken consumedPlusPlusToken,
-        CSharpParserModel model)
-    {
-    }
-
-    public static void ParseMinusToken(
-        MinusToken consumedMinusToken,
-        CSharpParserModel model)
-    {
-    }
-
-    public static void ParseStarToken(
-        StarToken consumedStarToken,
-        CSharpParserModel model)
-    {
-    }
-
-    public static void ParseDollarSignToken(
-        DollarSignToken consumedDollarSignToken,
-        CSharpParserModel model)
-    {
-    }
-    
-    public static void ParseAtToken(
-        AtToken consumedAtToken,
-        CSharpParserModel model)
-    {
+    	IdentifierToken identifierToken;
+    	
+    	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.VarTokenContextualKeyword)
+    	{
+    		var varTokenContextualKeyword = model.TokenWalker.Consume();
+    		identifierToken = new IdentifierToken(varTokenContextualKeyword.TextSpan);
+    	}
+    	else
+    	{
+    		identifierToken = (IdentifierToken)model.TokenWalker.Consume();
+    	}
+    	
+    	model.StatementBuilder.ChildList.Add(identifierToken);
     }
 
     public static void ParseColonToken(CSharpParserModel model)
@@ -80,28 +56,93 @@ public static class ParseTokens
         }
     }
 
-    public static void ParseOpenBraceToken(
-        OpenBraceToken consumedOpenBraceToken,
-        CSharpParserModel model)
+    public static void ParseOpenBraceToken(CSharpParserModel model)
     {
+    	var openBraceToken = (OpenBraceToken)model.TokenWalker.Consume();
+    
+		var closureCurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
+        ICodeBlockOwner? nextCodeBlockOwner = null;
+        TypeClauseNode? scopeReturnTypeClauseNode = null;
+
+		if (closureCurrentCodeBlockBuilder.PendingChild is null)
+		{
+			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(
+				closureCurrentCodeBlockBuilder.CodeBlockOwner);
+		
+			model.SyntaxStack.Push(arbitraryCodeBlockNode);
+        	model.CurrentCodeBlockBuilder.PendingChild = arbitraryCodeBlockNode;
+		}
+		
+		model.CurrentCodeBlockBuilder.PendingChild.SetOpenBraceToken(openBraceToken);
+
+		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind
+			?? ScopeDirectionKind.Both;
+			
+		bool wasDeferred = false;
+
+		if (parentScopeDirection == ScopeDirectionKind.Both)
+		{
+			// Retrospective: ??? How would two consecutive defers get enqueued if doing '== 0'.
+			//
+			// Response: This seems to be a flag that says a child scope is allowed to be parsed (rather than infinitely enqueueing).
+			//           If so, rename the variable and make it a bool because it being a 'counter' is extremely confusing.
+			if (model.CurrentCodeBlockBuilder.DequeueChildScopeCounter == 0)
+			{
+				model.TokenWalker.DeferParsingOfChildScope(openBraceToken, model);
+				return;
+			}
+
+			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter--;
+			wasDeferred = true;
+		}
+
+		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.DequeuedIndexForChildList
+			?? model.CurrentCodeBlockBuilder.ChildList.Count;
+		
+		if (closureCurrentCodeBlockBuilder.PendingChild is null)
+			return;
+		
+		nextCodeBlockOwner = closureCurrentCodeBlockBuilder.PendingChild;
+		
+		var returnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
+		if (returnTypeClauseNode is not null)
+			scopeReturnTypeClauseNode = returnTypeClauseNode;
+
+        model.Binder.OpenScope(scopeReturnTypeClauseNode, openBraceToken.TextSpan, model);
+		model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+		nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(model);
     }
 
-    public static void ParseCloseBraceToken(
-        CloseBraceToken consumedCloseBraceToken,
-        CSharpParserModel model)
+    public static void ParseCloseBraceToken(CSharpParserModel model)
     {
+    	var closeBraceToken = (CloseBraceToken)model.TokenWalker.Consume();
+    	
+    	// TODO: ParseChildScopeQueue needs to NOT be an action, just store the parameters needed.
+		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var action))
+		{
+			action.Invoke(model.TokenWalker.Index - 1);
+			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter++;
+			return;
+		}
+
+		if (model.CurrentCodeBlockBuilder.PendingChild is not null)
+		{
+			model.CurrentCodeBlockBuilder.PendingChild.SetCloseBraceToken(closeBraceToken);
+		}
+		
+        model.Binder.CloseScope(closeBraceToken.TextSpan, model);
     }
 
-    public static void ParseOpenParenthesisToken(
-        OpenParenthesisToken consumedOpenParenthesisToken,
-        CSharpParserModel model)
+    public static void ParseOpenParenthesisToken(CSharpParserModel model)
     {
+    	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Consume();
     }
 
     public static void ParseCloseParenthesisToken(
         CloseParenthesisToken consumedCloseParenthesisToken,
         CSharpParserModel model)
     {
+    	var closesParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Consume();
     }
 
     public static void ParseOpenAngleBracketToken(

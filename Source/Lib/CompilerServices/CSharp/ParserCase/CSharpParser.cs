@@ -89,41 +89,52 @@ public class CSharpParser : IParser
                 case SyntaxKind.StarToken:
                 case SyntaxKind.DollarSignToken:
                 case SyntaxKind.AtToken:
-                	if (model.StatementBuilderStack.Count == 0)
+                	if (model.StatementBuilder.ChildList.Count == 0)
                 	{
                 		ParseOthers.StartStatement_Expression(model);
                 	}
                 	else
                 	{
                 		var expressionNode = ParseOthers.ParseExpression(model);
-                		model.StatementBuilderStack.Push(expressionNode);
+                		model.StatementBuilder.ChildList.Add(expressionNode);
                 	}
                 	break;
                 case SyntaxKind.PreprocessorDirectiveToken:
                     ParseTokens.ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)token, model);
                     break;
                 case SyntaxKind.IdentifierToken:
-                	if (model.StatementBuilderStack.Count == 0)
+                	if (model.StatementBuilder.ChildList.Count == 0)
                 	{
                 		ParseOthers.StartStatement_Expression(model);
                 	}
+                	else
+                	{
+                		ParseTokens.ParseIdentifierToken(model);
+                	}
                     break;
                 case SyntaxKind.OpenBraceToken:
-                	model.StatementBuilderStack.Clear();
-                    ParseTokens.ParseOpenBraceToken((OpenBraceToken)token, model);
+                	model.StatementBuilder.ChildList.Clear();
+                    ParseTokens.ParseOpenBraceToken(model);
                     break;
                 case SyntaxKind.CloseBraceToken:
-                	model.StatementBuilderStack.Clear();
-                    ParseTokens.ParseCloseBraceToken((CloseBraceToken)token, model);
+                	model.StatementBuilder.ChildList.Clear();
+                    ParseTokens.ParseCloseBraceToken(model);
                     break;
                 case SyntaxKind.OpenParenthesisToken:
-                    ParseTokens.ParseOpenParenthesisToken((OpenParenthesisToken)token, model);
+                	if (model.StatementBuilder.ChildList.Count == 0)
+                	{
+                		ParseOthers.StartStatement_Expression(model);
+                	}
+                	else
+                	{
+                		ParseTokens.ParseOpenParenthesisToken(model);
+                	}
                     break;
                 case SyntaxKind.CloseParenthesisToken:
                     ParseTokens.ParseCloseParenthesisToken((CloseParenthesisToken)token, model);
                     break;
                 case SyntaxKind.OpenAngleBracketToken:
-                	if (model.StatementBuilderStack.Count == 0)
+                	if (model.StatementBuilder.ChildList.Count == 0)
                 		ParseOthers.StartStatement_Expression(model);
                 	else
                     	ParseTokens.ParseOpenAngleBracketToken((OpenAngleBracketToken)token, model);
@@ -147,7 +158,7 @@ public class CSharpParser : IParser
                     ParseTokens.ParseEqualsToken((EqualsToken)token, model);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
-                	model.StatementBuilderStack.Clear();
+                	model.StatementBuilder.ChildList.Clear();
                     ParseTokens.ParseStatementDelimiterToken((StatementDelimiterToken)token, model);
                     break;
                 case SyntaxKind.EndOfFileToken:
@@ -159,7 +170,10 @@ public class CSharpParser : IParser
 
                     if (model.SyntaxStack.TryPop(out var notUsedSyntax))
                     {
-                        if (notUsedSyntax is IExpressionNode)
+                    	if (notUsedSyntax is null)
+                    	{
+                    	}
+                        else if (notUsedSyntax is IExpressionNode)
                         {
                             model.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
                         }
@@ -349,7 +363,7 @@ public class CSharpParser : IParser
             model.CurrentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
-            Binder.DisposeScope(model.TokenWalker.Current.TextSpan, model);
+            Binder.CloseScope(model.TokenWalker.Current.TextSpan, model);
 
             model.FinalizeNamespaceFileScopeCodeBlockNodeAction.Invoke(
                 model.CurrentCodeBlockBuilder.Build());

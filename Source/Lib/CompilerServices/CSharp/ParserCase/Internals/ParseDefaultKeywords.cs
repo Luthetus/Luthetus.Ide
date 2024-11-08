@@ -136,7 +136,7 @@ public class ParseDefaultKeywords
     public static void HandleFalseTokenKeyword(CSharpParserModel model)
     {
     	var expressionNode = ParseOthers.ParseExpression(model);
-    	model.StatementBuilderStack.Push(expressionNode);
+    	model.StatementBuilder.ChildList.Add(expressionNode);
     }
 
     public static void HandleFinallyTokenKeyword(CSharpParserModel model)
@@ -235,7 +235,7 @@ public class ParseDefaultKeywords
     public static void HandleProtectedTokenKeyword(CSharpParserModel model)
     {
     	var protectedTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
-        model.StatementBuilderStack.Push(protectedTokenKeyword);
+        model.StatementBuilder.ChildList.Add(protectedTokenKeyword);
     }
 
     public static void HandleReadonlyTokenKeyword(CSharpParserModel model)
@@ -302,7 +302,7 @@ public class ParseDefaultKeywords
     public static void HandleTrueTokenKeyword(CSharpParserModel model)
     {
     	var expressionNode = ParseOthers.ParseExpression(model);
-    	model.StatementBuilderStack.Push(expressionNode);
+    	model.StatementBuilder.ChildList.Add(expressionNode);
     }
 
     public static void HandleTryTokenKeyword(CSharpParserModel model)
@@ -386,19 +386,19 @@ public class ParseDefaultKeywords
     public static void HandlePublicTokenKeyword(CSharpParserModel model)
     {
     	var publicKeywordToken = (KeywordToken)model.TokenWalker.Consume();
-        model.StatementBuilderStack.Push(publicKeywordToken);
+        model.StatementBuilder.ChildList.Add(publicKeywordToken);
     }
 
     public static void HandleInternalTokenKeyword(CSharpParserModel model)
     {
     	var internalTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
-        model.StatementBuilderStack.Push(internalTokenKeyword);
+        model.StatementBuilder.ChildList.Add(internalTokenKeyword);
     }
 
     public static void HandlePrivateTokenKeyword(CSharpParserModel model)
     {
     	var privateTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
-        model.StatementBuilderStack.Push(privateTokenKeyword);
+        model.StatementBuilder.ChildList.Add(privateTokenKeyword);
     }
 
     public static void HandleStaticTokenKeyword(CSharpParserModel model)
@@ -464,11 +464,11 @@ public class ParseDefaultKeywords
     	// Given: public partial class MyClass { }
 		// Then: partial
         var hasPartialModifier = false;
-        if (model.StatementBuilderStack.TryPeek(out var syntax) && syntax is ISyntaxToken syntaxToken)
+        if (model.StatementBuilder.TryPeek(out var syntax) && syntax is ISyntaxToken syntaxToken)
         {
             if (syntaxToken.SyntaxKind == SyntaxKind.PartialTokenContextualKeyword)
             {
-                _ = model.StatementBuilderStack.Pop();
+                _ = model.StatementBuilder.Pop();
                 hasPartialModifier = true;
             }
         }
@@ -478,24 +478,24 @@ public class ParseDefaultKeywords
 		// Given: public class MyClass { }
 		// Then: public
 		var accessModifierKind = AccessModifierKind.Public;
-        if (model.StatementBuilderStack.TryPeek(out syntax) && syntax is ISyntaxToken firstSyntaxToken)
+        if (model.StatementBuilder.TryPeek(out syntax) && syntax is ISyntaxToken firstSyntaxToken)
         {
             var firstOutput = UtilityApi.GetAccessModifierKindFromToken(firstSyntaxToken);
 
             if (firstOutput is not null)
             {
-                _ = model.StatementBuilderStack.Pop();
+                _ = model.StatementBuilder.Pop();
                 accessModifierKind = firstOutput.Value;
 
 				// Given: protected internal class MyClass { }
 				// Then: protected internal
-                if (model.StatementBuilderStack.TryPeek(out syntax) && syntax is ISyntaxToken secondSyntaxToken)
+                if (model.StatementBuilder.TryPeek(out syntax) && syntax is ISyntaxToken secondSyntaxToken)
                 {
                     var secondOutput = UtilityApi.GetAccessModifierKindFromToken(secondSyntaxToken);
 
                     if (secondOutput is not null)
                     {
-                        _ = model.StatementBuilderStack.Pop();
+                        _ = model.StatementBuilder.Pop();
 
                         if ((firstOutput.Value.ToString().ToLower() == "protected" &&
                                 secondOutput.Value.ToString().ToLower() == "internal") ||
