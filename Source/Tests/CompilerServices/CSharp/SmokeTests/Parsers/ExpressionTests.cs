@@ -12,7 +12,7 @@ using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 using Luthetus.CompilerServices.CSharp.Facts;
 
-namespace Luthetus.CompilerServices.CSharp.Tests.Basis.ParserCase.Internals.Expressions;
+namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
 public partial class ParseExpressionTests
 {
