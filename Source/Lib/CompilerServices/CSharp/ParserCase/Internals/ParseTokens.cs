@@ -149,7 +149,7 @@ public static class ParseTokens
     	/*
     	(2024-11-08) The issue is:
     	==========================
-    	'int[] x = 2;'
+    	'int[] x = new { 1, 2, 3, };'
     	'int[] MyMethod() { }'
     	
     	In my mind this was an issue, but it wouldn't be an issue because in order
@@ -201,6 +201,39 @@ public static class ParseTokens
 		
 		And there being a number means that it is an expression of some sort,
 		whereas the lack or one means it is a statement of some sort.
+		
+		In the case of:
+		'Person MyMethod() { }'
+		
+		When I read 'Person', is there any ambiguity as to whether it is
+			- TypeClauseNode
+			- IdentifierToken
+		
+		I think the question is:
+		"At what points do I convert a token that can be a 'TypeClauseNode' to a 'TypeClauseNode'?"
+		
+		If the 'TypeClauseNode' is an array, then the array square brackets will not
+		contain a number, and this is the sign that it is a 'TypeClauseNode'.
+		
+		If the 'TypeClauseNode' is just an IdentifierToken, where could things go from there?
+		
+		ConstructorDefinitionNode can occur from the following:
+			- IdentifierToken, OpenParenthesisToken
+		
+		FunctionDefinitionNode can occur from the following:
+			- TypeClauseNode, IdentifierToken, OpenParenthesisToken
+				- This occurs when the first token initially was a 'IdentifierToken' but was not ambiguous and therefore
+					immediately interpreted as a 'TypeClauseNode' rather than as an 'IdentifierToken'.
+			- IdentifierToken, IdentifierToken, OpenParenthesisToken
+			
+		VariableDeclarationNode can occur from the following:
+			- TypeClauseNode, IdentifierToken, EqualsToken
+			
+		TypeDefinitionNode can occur from the following:
+			- SyntaxKind.ClassTokenKeyword, IdentifierToken
+		
+		TypeDefinitionNode can occur from the following:
+			- SyntaxKind.ClassTokenKeyword, IdentifierToken
     	*/
     
     	bool isFunctionDefinition = true;
