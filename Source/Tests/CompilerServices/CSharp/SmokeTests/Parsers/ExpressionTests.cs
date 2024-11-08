@@ -16,20 +16,31 @@ namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
 public partial class ParseExpressionTests
 {
+	public class Test
+	{
+		public Test(string sourceText)
+		{
+			SourceText = sourceText;
+			ResourceUri = new ResourceUri("./unitTesting.txt");
+			Lexer = new CSharpLexer(ResourceUri, SourceText);
+	        Lexer.Lex();
+	        Parser = new CSharpParser(Lexer);
+	        CompilationUnit = Parser.Parse();
+		}
+		
+		public string SourceText { get; set; }
+		public ResourceUri ResourceUri { get; set; }
+		public CSharpLexer Lexer { get; set; }
+		public CSharpParser Parser { get; set; }
+		public CompilationUnit CompilationUnit { get; set; }
+	}
+
 	[Fact]
 	public void Aaa()
 	{
-		var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText =
-@"
-var aaa = 1;
-";
-
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		var test = new Test(@"var aaa = 1;");
+        
+        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
         
         var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
         var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
@@ -43,17 +54,9 @@ var aaa = 1;
     [Fact]
 	public void VariableReferenceNode_A()
 	{
-		var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText =
-@"
-var compilationUnit = parser.Parse();
-";
-
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		var test = new Test(@"var compilationUnit = parser.Parse();");
+        
+        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
         
         throw new NotImplementedException();
     }
@@ -61,17 +64,8 @@ var compilationUnit = parser.Parse();
     [Fact]
 	public void VariableReferenceNode_B()
 	{
-		var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText =
-@"
-var compilationUnit = Parse().parser;
-";
-
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		var test = new Test(@"var compilationUnit = Parse().parser;");
+        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
         
         throw new NotImplementedException();
     }
@@ -79,17 +73,8 @@ var compilationUnit = Parse().parser;
     [Fact]
 	public void VariableReferenceNode_C()
 	{
-		var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText =
-@"
-var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
-";
-
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		var test = new Test(@"var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;");
+        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
         
         throw new NotImplementedException();
     }
@@ -97,17 +82,8 @@ var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.Rig
     [Fact]
 	public void VariableReferenceNode_D()
 	{
-		var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText =
-@"
-var rememberBinaryExpressionNode = binaryExpressionNode;
-";
-
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		var test = new Test(@"var rememberBinaryExpressionNode = binaryExpressionNode;");
+        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
         
         throw new NotImplementedException();
     }
@@ -118,21 +94,16 @@ var rememberBinaryExpressionNode = binaryExpressionNode;
     [Fact]
 	public void VariableReferenceNode_E()
 	{
-		var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText =
+		var test = new Test(
 @"
 var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 
 {
 	binaryExpressionNode = leftBinaryExpressionNode;
 }
-";
+");
 
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-        var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
         
         throw new NotImplementedException();
     }
@@ -148,13 +119,8 @@ ref,
     [Fact]
     public void Numeric_Add_BinaryExpressionNode()
     {
-		var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"1 + 1";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		var test = new Test(@"1 + 1");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -177,13 +143,8 @@ ref,
     [Fact]
     public void Numeric_Add_BinaryExpressionNode_More()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"1 + 1 + 1";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test(@"1 + 1 + 1");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 			
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -241,13 +202,8 @@ ref,
     [Fact]
     public void Numeric_Subtract_BinaryExpressionNode()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"1 - 1";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test(@"1 - 1");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -270,13 +226,8 @@ ref,
     [Fact]
     public void Numeric_Star_BinaryExpressionNode()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"1 * 1";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test(@"1 * 1");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -299,13 +250,8 @@ ref,
     [Fact]
     public void Numeric_Division_BinaryExpressionNode()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"1 / 1";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test(@"1 / 1");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -328,13 +274,8 @@ ref,
     [Fact]
     public void Numeric_EqualsEquals_BinaryExpressionNode()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"1 == 1";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test(@"1 == 1");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -357,13 +298,8 @@ ref,
     [Fact]
     public void String_BinaryExpressionNode()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "\"Asd\" + \"Fgh\"";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("\"Asd\" + \"Fgh\"");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "string";
@@ -386,13 +322,8 @@ ref,
     [Fact]
     public void String_Interpolated()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "$\"asd\"";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("$\"asd\"");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -401,13 +332,8 @@ ref,
     [Fact]
     public void String_Verbatim()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "@\"asd\"";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("@\"asd\"");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -416,13 +342,8 @@ ref,
     [Fact]
     public void String_InterpolatedVerbatim()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "$@\"asd\"";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("$@\"asd\"");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -431,13 +352,8 @@ ref,
     [Fact]
     public void String_VerbatimInterpolated()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "@$\"asd\"";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("@$\"asd\"");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var literalExpressionNode = (LiteralExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal("string", literalExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
@@ -446,13 +362,8 @@ ref,
     [Fact]
     public void Char_BinaryExpressionNode()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "'a' + '\n'";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("'a' + '\n'");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "char";
@@ -475,13 +386,8 @@ ref,
     [Fact]
     public void Bool_BinaryExpressionNode()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "false == true";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("false == true");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "bool";
@@ -504,13 +410,8 @@ ref,
     [Fact]
     public void ParenthesizedExpressionNode_Test()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "(7)";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("(7)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -526,13 +427,8 @@ ref,
     [Fact]
     public void ShortCircuit()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "(1 + )";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("(1 + )");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		var textTypeClause = "int";
@@ -554,13 +450,8 @@ ref,
     [Fact]
     public void ExplicitCastNode_IdentifierToken()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "(MyClass)";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("(MyClass)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
     }
@@ -568,13 +459,8 @@ ref,
     [Fact]
     public void ExplicitCastNode_KeywordToken()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "(int)";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("(int)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
     }
@@ -582,13 +468,8 @@ ref,
     [Fact]
     public void FunctionInvocationNode_Basic()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "MyMethod()";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("MyMethod()");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
 		
@@ -601,13 +482,8 @@ ref,
     [Fact]
     public void FunctionInvocationNode_Parameters()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "MyMethod(7, \"Asdfg\")";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("MyMethod(7, \"Asdfg\")");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
 
@@ -628,13 +504,8 @@ ref,
     [Fact]
     public void FunctionInvocationNode_Generic()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "MyMethod<int, MyClass>()";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("MyMethod<int, MyClass>()");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
 
@@ -659,13 +530,8 @@ ref,
     [Fact]
     public void FunctionInvocationNode_Generic_Parameters()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "MyMethod<int, MyClass>(7, \"Asdfg\")";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("MyMethod<int, MyClass>(7, \"Asdfg\")");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList().Single();
 		
@@ -700,13 +566,8 @@ ref,
     [Fact]
     public void ConstructorInvocationNode_Basic()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new Person()";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new Person()");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
 		
@@ -727,13 +588,8 @@ ref,
     [Fact]
     public void ConstructorInvocationNode_Parameters()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new Person(18, \"John\")";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new Person(18, \"John\")");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
     	
@@ -758,13 +614,8 @@ ref,
     [Fact]
     public void ConstructorInvocationNode_Generic()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new Dictionary<int, Person>()";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new Dictionary<int, Person>()");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
 		
@@ -789,13 +640,10 @@ ref,
     [Fact]
     public void ConstructorInvocationNode_Generic_Parameters_MISSING_NumericLiteralToken_A()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
-        var sourceText = "new Dictionary<int, Person>(0, \"Test\")";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var test = new Test("new Dictionary<int, Person>(0, \"Test\")");
         
-        foreach (var token in lexer.SyntaxTokenList)
+        foreach (var token in test.Lexer.SyntaxTokenList)
     	{
     		Console.WriteLine(token.SyntaxKind);
     	}
@@ -821,13 +669,10 @@ ref,
     	TODO: Anything similar to this in the future should return a 'BadToken' or some sort.
     	*/
     
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
-        var sourceText = "0";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var test = new Test("0");
         
-        foreach (var token in lexer.SyntaxTokenList)
+        foreach (var token in test.Lexer.SyntaxTokenList)
     	{
     		Console.WriteLine(token.SyntaxKind);
     	}
@@ -836,14 +681,9 @@ ref,
     [Fact]
     public void ConstructorInvocationNode_Generic_Parameters()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
-        var sourceText = "new Dictionary<int, Person>(0, \"Test\")";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+        var test = new Test("new Dictionary<int, Person>(0, \"Test\")");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -879,13 +719,8 @@ ref,
     [Fact]
     public void ConstructorInvocationNode_NoTypeClauseNode()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new()";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new()");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -907,13 +742,8 @@ ref,
     [Fact]
     public void ObjectInitializationNode_Parameters_NoTrailingComma()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new MyClass { FirstName = firstName, LastName = lastName }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new MyClass { FirstName = firstName, LastName = lastName }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -958,13 +788,8 @@ ref,
     [Fact]
     public void ObjectInitializationNode__Parameters_WithTrailingComma()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new MyClassAaa { FirstName = firstName, LastName = lastName, }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new MyClassAaa { FirstName = firstName, LastName = lastName, }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -1009,13 +834,8 @@ ref,
     [Fact]
     public void ObjectInitializationNode_NoParameters_NoTrailingComma()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new MyClassAaa { }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new MyClassAaa { }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -1042,13 +862,8 @@ ref,
     [Fact]
     public void ObjectInitializationNode_NoParameters_WithTrailingComma()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new MyClassAaa { , }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new MyClassAaa { , }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -1075,13 +890,8 @@ ref,
     [Fact]
     public void ObjectInitializationNode_WithParenthesis()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new MyClassAaa() { }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new MyClassAaa() { }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -1111,13 +921,8 @@ ref,
     [Fact]
     public void CollectionInitializationNode_Parameters_NoTrailingComma()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new List<int> { 1, 2 }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new List<int> { 1, 2 }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -1160,13 +965,8 @@ ref,
     [Fact]
     public void CollectionInitializationNode_Parameters_WithTrailingComma()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new List<Person> { new Person(1, \"John\"), new(2, \"Jane\"), }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new List<Person> { new Person(1, \"John\"), new(2, \"Jane\"), }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -1271,13 +1071,8 @@ ref,
     [Fact]
     public void CollectionInitializationNode_NoParameters_NoTrailingComma()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new List<int> { }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new List<int> { }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -1304,13 +1099,8 @@ ref,
 	[Fact]
     public void CollectionInitializationNode_NoParameters_WithTrailingComma()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new List<Person> { , }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new List<Person> { , }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -1337,13 +1127,8 @@ ref,
     [Fact]
     public void CollectionInitializationNode_WithParenthesis()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "new List<Person>() { }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("new List<Person>() { }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
@@ -1374,13 +1159,8 @@ ref,
     [Fact]
     public void LambdaFunction_Expression_NoParameter()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "() => \"Abc\";";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("() => \"Abc\";");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.True(lambdaExpressionNode.CodeBlockNodeIsExpression);
@@ -1533,13 +1313,8 @@ ref,
     		| async ... => ...;
     	*/
     	
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "(x => \"Abc\")";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("(x => \"Abc\")");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndented(topCodeBlock);
 		
@@ -1559,13 +1334,8 @@ ref,
     [Fact]
     public void LambdaFunction_Expression_ManyParameter_Async()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "(async (x, index) => \"Abc\")";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("(async (x, index) => \"Abc\")");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
 		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
@@ -1594,13 +1364,8 @@ ref,
     [Fact]
     public void LambdaFunction_CodeBlock_NoParameter_Async()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "async () => { WriteLine(\"Abc\"); return \"Cba\"; };";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("async () => { WriteLine(\"Abc\"); return \"Cba\"; };");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
 		
@@ -1610,13 +1375,8 @@ ref,
     [Fact]
     public void LambdaFunction_CodeBlock_SingleParameter_Async()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "async x => { return \"Abc\"; };";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("async x => { return \"Abc\"; };");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
 		
@@ -1626,13 +1386,8 @@ ref,
     [Fact]
     public void LambdaFunction_CodeBlock_ManyParameter()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "(x, index) => { return \"Abc\"; };";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("(x, index) => { return \"Abc\"; };");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
 		
@@ -1849,25 +1604,19 @@ ref,
     [Fact]
     public void WhileLoop_DoNotBreakScope()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = @"while (().) { ; }";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test(@"while (().) { ; }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var whileStatementNode = (WhileStatementNode)topCodeBlock.GetChildList().Single();
 		
-		((IBinder)parser.Binder).TryGetBinderSession(resourceUri, out var binderSession);
+		((IBinder)test.Parser.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
 		Assert.Equal(2, binderSession.ScopeList.Count);
     }
     
     [Fact]
     public void IfStatement_StopExpressionsCreatingScope()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText =
+    	var test = new Test(
 @"
 void Aaa()
 {
@@ -1880,14 +1629,10 @@ void Aaa()
 
     Console.WriteLine(); // But it erroneously continues defining scope at each expression following the if statement.
 }
-";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		((IBinder)parser.Binder).TryGetBinderSession(resourceUri, out var binderSession);
+		((IBinder)test.Parser.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
 		foreach (var child in topCodeBlock.GetChildList())
@@ -1984,8 +1729,7 @@ void Aaa()
 		  	  	remainder of the file.
     	*/
     
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText =
+    	var test = new Test(
 @"
 switch (character)
 {
@@ -2003,12 +1747,8 @@ switch (character)
 	default:
 		break;
 }
-";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		throw new NotImplementedException();
     }
@@ -2016,20 +1756,15 @@ switch (character)
     [Fact]
     public void SwitchExpression()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText =
+    	var test = new Test(
 @"
 return character switch
 {
 	'a' => 0,
 	_ => 1,
 };
-";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		throw new NotImplementedException();
     }
@@ -2051,13 +1786,8 @@ return character switch
     [Fact]
     public void LessThanBinaryOperator()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "if (_queue.Count < 0)";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("if (_queue.Count < 0)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		throw new NotImplementedException();
     }
@@ -2065,13 +1795,8 @@ return character switch
     [Fact]
     public void GreaterThanBinaryOperator()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "if (_queue.Count > 0)";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("if (_queue.Count > 0)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		throw new NotImplementedException();
     }
@@ -2079,13 +1804,8 @@ return character switch
     [Fact]
     public void LessThanEqualToBinaryOperator()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "if (_queue.Count <= 0)";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("if (_queue.Count <= 0)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		throw new NotImplementedException();
     }
@@ -2093,13 +1813,8 @@ return character switch
     [Fact]
     public void GreaterThanEqualToBinaryOperator()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = "if (_queue.Count >= 0)";
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test("if (_queue.Count >= 0)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		throw new NotImplementedException();
     }
@@ -2107,38 +1822,13 @@ return character switch
     [Fact]
     public void FunctionParameterOptional()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-
-        var sourceText = 
-/*@"
-public void SetProgress(double decimalPercentProgress)
-{
-}
-";*/
-
-/*@"
-public void SetProgress(string? message = null)
-{
-}
-";*/
-
-/*@"
-public void SetProgress(double? decimalPercentProgress, string? message = null)
-{
-}
-";*/
-
+    	var test = new Test(
 @"
 public void SetProgress(double? decimalPercentProgress, string? message = null, string? secondaryMessage = null)
 {
 }
-";
-
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndented(topCodeBlock);
 		
@@ -2180,9 +1870,7 @@ public void SetProgress(double? decimalPercentProgress, string? message = null, 
     [Fact]
     public void ConstructorInvokesConstructor()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        
-        var sourceText =
+    	var test = new Test(
 @"
 public class ProgressBarModel
 {
@@ -2191,13 +1879,8 @@ public class ProgressBarModel
 	{
 	}
 }
-";
-        
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		throw new NotImplementedException();
     }
@@ -2205,18 +1888,8 @@ public class ProgressBarModel
     [Fact]
     public void ValueTuple()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        
-        var sourceText =
-@"
-var x = (decimalPercentProgress, null, cancellationToken);
-";
-        
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+    	var test = new Test(@"var x = (decimalPercentProgress, null, cancellationToken);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndented(topCodeBlock);
 		
@@ -2252,19 +1925,12 @@ var x = (decimalPercentProgress, null, cancellationToken);
     [Fact]
     public void FunctionInvocationExpressionStatement()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        
-        var sourceText =
+    	var test = new Test(
 @"
 int decimalPercentProgress;
 Func(decimalPercentProgress);
-";
-        
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList()[0];
@@ -2288,21 +1954,14 @@ Func(decimalPercentProgress);
     [Fact]
     public void FunctionDefinition()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        
-        var sourceText =
+    	var test = new Test(
 @"
 public void Aaa()
 {
 }
 
-";
-        
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		//var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList()[0];
@@ -2319,20 +1978,6 @@ public void Aaa()
 		}*/
 		
 		// var typeClauseNode = (TypeClauseNode)functionInvocationNode.GetChildList()[2];
-		
-		throw new NotImplementedException();
-    }
-    
-    [Fact]
-    public void SourceCodeThatIsNotParsing_Test()
-    {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
-        var sourceText = SourceCodeThatIsNotParsing_Data;
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer); 
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
 		
 		throw new NotImplementedException();
     }

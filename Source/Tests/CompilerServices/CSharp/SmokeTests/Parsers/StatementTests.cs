@@ -16,41 +16,216 @@ namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
 public class StatementTests
 {
+	public class Test
+	{
+		public Test(string sourceText)
+		{
+			SourceText = sourceText;
+			ResourceUri = new ResourceUri("./unitTesting.txt");
+			Lexer = new CSharpLexer(ResourceUri, SourceText);
+	        Lexer.Lex();
+	        Parser = new CSharpParser(Lexer);
+	        CompilationUnit = Parser.Parse();
+		}
+		
+		public string SourceText { get; set; }
+		public ResourceUri ResourceUri { get; set; }
+		public CSharpLexer Lexer { get; set; }
+		public CSharpParser Parser { get; set; }
+		public CompilationUnit CompilationUnit { get; set; }
+	}
+
 	[Fact]
-    public void FunctionDefinition()
+    public void TypeDefinitionNode_Test()
     {
-    	var resourceUri = new ResourceUri("./unitTesting.txt");
+    	var test = new Test(@"public class Aaa { }");
+		
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void FunctionDefinitionNode_Test()
+    {
+    	var test = new Test(@"public void Aaa() { }");
         
-        var sourceText =
-@"
-public void Aaa()
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void ConstructorDefinitionNode_Test()
+    {
+    	var test = new Test(@"public class Aaa { public Aaa() { } }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var constructorDefinitionNode = (ConstructorDefinitionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void ArbitraryCodeBlockNode_Test()
+    {
+    	var test = new Test(@"{ }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var arbitraryCodeBlockNode = (ArbitraryCodeBlockNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryCodeBlockNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void DoWhileStatementNode_Test()
+    {
+    	var test = new Test(@"do { } while(false);");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var doWhileStatementNode = (DoWhileStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.DoWhileStatementNode, doWhileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void ForeachStatementNode_Test()
+    {
+    	var test = new Test(@"foreach (var item in list) { }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var foreachStatementNode = (ForeachStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ForeachStatementNode, foreachStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void ForStatementNode_Test()
+    {
+    	var test = new Test(@"for (int i = 0; i < list.Count; i++) { }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var forStatementNode = (ForStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ForStatementNode, forStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void IfStatementNode_Test()
+    {
+    	var test = new Test(@"if (false) { }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.IfStatementNode, ifStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void LockStatementNode_Test()
+    {
+    	var test = new Test(@"lock (objectLock) { }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var lockStatementNode = (LockStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.LockStatementNode, lockStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void NamespaceStatementNode_FileScope_Test()
+    {
+    	var test = new Test(@"namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.NamespaceStatementNode, namespaceStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void NamespaceStatementNode_BlockScope_Test()
+    {
+    	var test = new Test(@"namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers { }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.NamespaceStatementNode, namespaceStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void SwitchStatementNode_Test()
+    {
+    	var test = new Test(
+@"switch (character)
+{
+	case 'a':
+		break;
+}");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var switchStatementNode = (SwitchStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.SwitchStatementNode, switchStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void TryStatementNode_Test()
+    {
+    	var test = new Test(
+@"try
 {
 }
+catch (Exception e)
+{
+}
+finally
+{
+}");
 
-";
         
-		var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
-        var parser = new CSharpParser(lexer);
-        var compilationUnit = parser.Parse();
-		var topCodeBlock = compilationUnit.RootCodeBlockNode;
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		
-		//var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList()[0];
-		// WriteChildrenIndented(functionInvocationNode, nameof(functionInvocationNode));
-		
-		//var identifierToken = (IdentifierToken)functionInvocationNode.GetChildList()[0];
-		
-		/*var functionParametersListingNode = (FunctionParametersListingNode)functionInvocationNode.GetChildList()[1];
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var tryStatementNode = (TryStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TryStatementNode, tryStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void WhileStatementNode_Test()
+    {
+    	var test = new Test(@"while (false) { }");
+
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var whileStatementNode = (WhileStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
+    {
+    	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
+		foreach (var child in node.GetChildList())
 		{
-			// Assertions relating to functionParametersListingNode's properties are in this code block.
-			Assert.True(functionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-	        Assert.Equal(1, functionParametersListingNode.FunctionParameterEntryNodeList.Count);
-	        Assert.True(functionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
-		}*/
+			Console.WriteLine("\t" + child.SyntaxKind);
+		}
+		Console.WriteLine();
+    }
+    
+    private void WriteChildrenIndentedRecursive(ISyntaxNode node, string name = "node", int indentation = 0)
+    {
+    	var indentationStringBuilder = new StringBuilder();
+    	for (int i = 0; i < indentation; i++)
+    		indentationStringBuilder.Append('\t');
+    	
+    	Console.WriteLine($"{indentationStringBuilder.ToString()}{node.SyntaxKind}");
+    	
+    	// For the child tokens
+    	indentationStringBuilder.Append('\t');
+    	var childIndentation = indentationStringBuilder.ToString();
+    	
+		foreach (var child in node.GetChildList())
+		{
+			if (child is ISyntaxNode syntaxNode)
+			{
+				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
+			}
+			else if (child is ISyntaxToken syntaxToken)
+			{
+				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
+			}
+		}
 		
-		// var typeClauseNode = (TypeClauseNode)functionInvocationNode.GetChildList()[2];
-		
-		throw new NotImplementedException();
+		if (indentation == 0)
+			Console.WriteLine();
     }
 }
