@@ -158,7 +158,7 @@ public class CSharpParser : IParser
                     break;
                 case SyntaxKind.StatementDelimiterToken:
                 	model.StatementBuilder.ChildList.Clear();
-                    ParseTokens.ParseStatementDelimiterToken((StatementDelimiterToken)token, model);
+                    ParseTokens.ParseStatementDelimiterToken(model);
                     break;
                 case SyntaxKind.EndOfFileToken:
                     if (model.SyntaxStack.TryPeek(out var syntax) &&

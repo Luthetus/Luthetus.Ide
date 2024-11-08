@@ -366,10 +366,54 @@ public static class ParseTokens
     {
     }
 
-    public static void ParseStatementDelimiterToken(
-        StatementDelimiterToken consumedStatementDelimiterToken,
-        CSharpParserModel model)
+    public static void ParseStatementDelimiterToken(CSharpParserModel model)
     {
+    	var statementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Consume();
+    
+    	if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+        {
+            var closureCurrentCompilationUnitBuilder = model.CurrentCodeBlockBuilder;
+            ICodeBlockOwner? nextCodeBlockOwner = null;
+            TypeClauseNode? scopeReturnTypeClauseNode = null;
+
+            var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
+            nextCodeBlockOwner = namespaceStatementNode;
+
+            model.FinalizeNamespaceFileScopeCodeBlockNodeAction = codeBlockNode =>
+            {
+                namespaceStatementNode.SetFileScoped(codeBlockNode);
+
+				model.CurrentCodeBlockBuilder.PendingChild = null;
+                closureCurrentCompilationUnitBuilder.ChildList.Add(namespaceStatementNode);
+                model.Binder.BindNamespaceStatementNode(namespaceStatementNode, model);
+            };
+
+            model.Binder.OpenScope(
+                scopeReturnTypeClauseNode,
+                statementDelimiterToken.TextSpan,
+                model);
+
+            model.Binder.AddNamespaceToCurrentScope(
+                namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
+                model);
+
+            model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+        }
+        else if (model.CurrentCodeBlockBuilder.PendingChild is not null)
+        {
+        	var pendingChild = model.CurrentCodeBlockBuilder.PendingChild;
+        
+        	model.Binder.OpenScope(CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, model);
+			model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, pendingChild);
+			pendingChild.OnBoundScopeCreatedAndSetAsCurrent(model);
+			
+	        model.Binder.CloseScope(statementDelimiterToken.TextSpan, model);
+	
+	        if (model.CurrentCodeBlockBuilder.Parent is not null)
+	            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
+	            
+	        model.CurrentCodeBlockBuilder.PendingChild = null;
+        }
     }
 
     public static void ParseKeywordToken(CSharpParserModel model)
