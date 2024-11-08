@@ -748,6 +748,15 @@ public partial class CSharpBinder
 			case SyntaxKind.InTokenKeyword:
 			case SyntaxKind.RefTokenKeyword:
 				return emptyExpressionNode;
+			case SyntaxKind.OpenAngleBracketToken:
+				var genericParametersListingNode = new GenericParametersListingNode(
+					(OpenAngleBracketToken)token,
+			        new List<GenericParameterEntryNode>(),
+				    closeAngleBracketToken: default);
+				
+				model.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, genericParametersListingNode));    
+				model.ExpressionList.Add((SyntaxKind.CommaToken, genericParametersListingNode));
+				return EmptyExpressionNode.Empty;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
 		}
@@ -779,6 +788,15 @@ public partial class CSharpBinder
 			case SyntaxKind.CommaToken:
 				model.ExpressionList.Add((SyntaxKind.CommaToken, genericParametersListingNode));
 				return EmptyExpressionNode.Empty;
+			case SyntaxKind.CloseAngleBracketToken:
+				// This case only occurs when the text won't compile.
+				// i.e.: "<int>" rather than "MyClass<int>".
+				// The case is for when the user types just the generic parameter listing text without an identifier before it.
+				//
+				// In the case of "SomeMethod<int>()", the FunctionInvocationNode
+				// is expected to have ran 'model.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, functionInvocationNode));'
+				// to receive the genericParametersListingNode.
+				return genericParametersListingNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), genericParametersListingNode, token);
 		}

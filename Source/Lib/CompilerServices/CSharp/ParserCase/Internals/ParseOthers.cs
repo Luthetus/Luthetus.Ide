@@ -16,6 +16,45 @@ public static class ParseOthers
     	var expressionNode = ParseOthers.ParseExpression(model);
     	model.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
     }
+    
+    /// <summary>
+    /// The source code: "<int>" is sort of nonsensical.
+    ///
+    /// But, nothing stops the user from typing this as a statement,
+    /// 	it just is that C# won't compile it.
+    ///
+    /// So, if a statement starts with 'OpenAngleBracketToken',
+    /// what is the best parse we can provide for that?
+    ///
+    /// The idea is to tell the expression parsing code to return a certain SyntaxKind.
+    ///
+    /// So, its another 'forceExit' but instead of matching on 'CloseAngleBracketToken'
+    /// you are saying: when the top most 'SyntaxKind' is completed,
+    /// return it to me (stop parsing expressions).
+    ///
+    /// The wording of 'top most' is referring to the recursive, "nonsensical" syntax
+    /// of <<int>>.
+    ///
+    /// Here the outermost GenericParametersListingNode contains
+    /// a GenericParametersListingNode, and neither of them have an identifier
+    /// that comes before the OpenAngleBracketToken.
+    /// The "more sensible" syntax would be to type 'MyClass<int>;' rather than just '<int>;'
+    /// They both will not compile, but one is on an extreme end of odd syntax
+    /// and needs to be specifically targeted.
+    /// </summary>
+    public static IExpressionNode Force_ParseExpression(SyntaxKind syntaxKind, CSharpParserModel model)
+    {
+    	model.ForceParseExpressionSyntaxKind = syntaxKind;
+    	
+    	try
+    	{
+    		return ParseExpression(model);
+    	}
+    	finally
+    	{
+    		model.ForceParseExpressionSyntaxKind = null;
+    	}
+    }
 
 	/// <summary>
 	/// Invoke this method when 'model.TokenWalker.Current' is the first token of the expression to be parsed.
@@ -35,6 +74,7 @@ public static class ParseOthers
 
     	var expressionPrimary = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
     	var forceExit = false;
+    	var hasSeenExpressionSyntaxKind = false;
     	
     	while (!model.TokenWalker.IsEof)
         {
@@ -65,6 +105,11 @@ public static class ParseOthers
 	    				
 	    				if (model.NoLongerRelevantExpressionNode is not null)
 	    				{
+	    					// try finally is not needed to guarantee setting 'model.NoLongerRelevantExpressionNode = null;'
+	    					// because this is an object reference comparison  'Object.ReferenceEquals'.
+	    					// 
+	    					// Versus something more general that would break future parses
+	    					// if not properly cleared, like a SyntaxKind.
 	    					model.Binder.ClearFromExpressionList(model.NoLongerRelevantExpressionNode, model);
 	    					model.NoLongerRelevantExpressionNode = null;
 	    				}
@@ -92,7 +137,31 @@ public static class ParseOthers
     		WriteExpressionList(model.ExpressionList);
     		#endif
     		
-            _ = model.TokenWalker.Consume();
+    		_ = model.TokenWalker.Consume();
+    		
+    		if (model.ForceParseExpressionSyntaxKind is not null)
+    		{
+    			var allNotEqual = true;
+    			
+    			foreach (var tuple in model.ExpressionList)
+    			{
+    				if (tuple.ExpressionNode is null)
+    					continue;
+    					
+    				if (tuple.ExpressionNode.SyntaxKind == model.ForceParseExpressionSyntaxKind)
+    					allNotEqual = false;
+    			}
+    			
+    			if (allNotEqual)
+    			{
+    				if (hasSeenExpressionSyntaxKind)
+	    				return expressionPrimary;
+    			}
+    			else if (!hasSeenExpressionSyntaxKind)
+    			{
+    				hasSeenExpressionSyntaxKind = true;
+    			}
+    		}
         }
     	
     	// It is vital that this 'clear' and 'add' are done in a way that:

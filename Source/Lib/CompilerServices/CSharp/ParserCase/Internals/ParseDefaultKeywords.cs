@@ -548,13 +548,7 @@ public class ParseDefaultKeywords
 		// Then: <T>
         GenericArgumentsListingNode? genericArgumentsListingNode = null;
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-        {
-            ParseTypes.HandleGenericArguments(
-                (OpenAngleBracketToken)model.TokenWalker.Consume(),
-                model);
-
-            genericArgumentsListingNode = (GenericArgumentsListingNode?)model.StatementBuilderStack.Pop();
-        }
+            genericArgumentsListingNode = ParseTypes.HandleGenericArguments(model);
 
         var typeDefinitionNode = new TypeDefinitionNode(
             accessModifierKind,
@@ -570,22 +564,8 @@ public class ParseDefaultKeywords
 
         model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
         model.Binder.BindTypeIdentifier(identifierToken, model);
-        model.StatementBuilderStack.Push(typeDefinitionNode);
+        model.SyntaxStack.Push(typeDefinitionNode);
         model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
-        
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
-        {
-        	while (!model.TokenWalker.IsEof)
-        	{
-        		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-        			model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-        		{
-        			break;
-        		}
-        		
-        		_ = model.TokenWalker.Consume();
-        	}
-        }
     }
 
     public static void HandleClassTokenKeyword(CSharpParserModel model)

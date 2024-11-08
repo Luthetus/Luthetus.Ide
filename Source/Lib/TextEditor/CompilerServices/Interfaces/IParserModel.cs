@@ -61,7 +61,42 @@ public interface IParserModel
     /// Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseOthers.SyntaxIsEndDelimiter(SyntaxKind syntaxKind) {...}
     /// </summary>
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
+    
+    /// <summary>
+    /// If a ParenthesizedExpressionNode is determined to more accurately be described
+    /// by a CommaSeparatedExpressionNode, then any state related
+    /// to the ParenthesizedExpressionNode instance needs to be cleared.
+    /// </summary>
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
+    
+    /// <summary>
+    /// The source code: "<int>" is sort of nonsensical.
+    ///
+    /// But, nothing stops the user from typing this as a statement,
+    /// 	it just is that C# won't compile it.
+    ///
+    /// So, if a statement starts with 'OpenAngleBracketToken',
+    /// what is the best parse we can provide for that?
+    ///
+    /// The idea is to tell the expression parsing code to return a certain SyntaxKind.
+    ///
+    /// So, its another 'forceExit' but instead of matching on 'CloseAngleBracketToken'
+    /// you are saying: when the top most 'SyntaxKind' is completed,
+    /// return it to me (stop parsing expressions).
+    ///
+    /// The wording of 'top most' is referring to the recursive, "nonsensical" syntax
+    /// of <<int>>.
+    ///
+    /// Here the outermost GenericParametersListingNode contains
+    /// a GenericParametersListingNode, and neither of them have an identifier
+    /// that comes before the OpenAngleBracketToken.
+    /// The "more sensible" syntax would be to type 'MyClass<int>;' rather than just '<int>;'
+    /// They both will not compile, but one is on an extreme end of odd syntax
+    /// and needs to be specifically targeted.
+    ///
+    /// Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseOthers.Force_ParseExpression(SyntaxKind syntaxKind, CSharpParserModel model) {...}
+    /// </summary>
+    public SyntaxKind? ForceParseExpressionSyntaxKind { get; set; }
     
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }

@@ -58,10 +58,26 @@ public static class ParseTokens
     {
     }
 
-    public static void ParseColonToken(
-        ColonToken consumedColonToken,
-        CSharpParserModel model)
+    public static void ParseColonToken(CSharpParserModel model)
     {
+    	var colonToken = (ColonToken)model.TokenWalker.Consume();
+    
+        if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+        {
+            var typeDefinitionNode = (TypeDefinitionNode)model.SyntaxStack.Pop();
+            var inheritedTypeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
+
+            model.Binder.BindTypeClauseNode(inheritedTypeClauseNode, model);
+
+			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
+
+            model.SyntaxStack.Push(typeDefinitionNode);
+            model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
+        }
+        else
+        {
+            model.DiagnosticBag.ReportTodoException(colonToken.TextSpan, "Colon is in unexpected place.");
+        }
     }
 
     public static void ParseOpenBraceToken(

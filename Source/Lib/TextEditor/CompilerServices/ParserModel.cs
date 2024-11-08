@@ -39,6 +39,7 @@ public class ParserModel : IParserModel
     public Stack<ISyntax> StatementBuilderStack { get; set; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; } = new();
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
+    public SyntaxKind? ForceParseExpressionSyntaxKind { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

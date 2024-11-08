@@ -123,7 +123,10 @@ public class CSharpParser : IParser
                     ParseTokens.ParseCloseParenthesisToken((CloseParenthesisToken)token, model);
                     break;
                 case SyntaxKind.OpenAngleBracketToken:
-                    ParseTokens.ParseOpenAngleBracketToken((OpenAngleBracketToken)token, model);
+                	if (model.StatementBuilderStack.Count == 0)
+                		ParseOthers.StartStatement_Expression(model);
+                	else
+                    	ParseTokens.ParseOpenAngleBracketToken((OpenAngleBracketToken)token, model);
                     break;
                 case SyntaxKind.CloseAngleBracketToken:
                     ParseTokens.ParseCloseAngleBracketToken((CloseAngleBracketToken)token, model);
@@ -135,7 +138,7 @@ public class CSharpParser : IParser
                     ParseTokens.ParseCloseSquareBracketToken((CloseSquareBracketToken)token, model);
                     break;
                 case SyntaxKind.ColonToken:
-                    ParseTokens.ParseColonToken((ColonToken)token, model);
+                    ParseTokens.ParseColonToken(model);
                     break;
                 case SyntaxKind.MemberAccessToken:
                     ParseTokens.ParseMemberAccessToken((MemberAccessToken)token, model);

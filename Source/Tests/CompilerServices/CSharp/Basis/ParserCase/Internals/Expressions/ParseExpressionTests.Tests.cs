@@ -2286,6 +2286,47 @@ Func(decimalPercentProgress);
     }
     
     [Fact]
+    public void GenericParametersListingNode()
+    {
+    	var resourceUri = new ResourceUri("./unitTesting.txt");
+        
+        var sourceText =
+@"
+namespace BlazorCrudApp.Wasm;
+
+public class Aaa<T> : Aaa<A>
+{
+	Aaa
+}
+
+";
+        
+		var lexer = new CSharpLexer(resourceUri, sourceText);
+        lexer.Lex();
+        var parser = new CSharpParser(lexer);
+        var compilationUnit = parser.Parse();
+		var topCodeBlock = compilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		//var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList()[0];
+		// WriteChildrenIndented(functionInvocationNode, nameof(functionInvocationNode));
+		
+		//var identifierToken = (IdentifierToken)functionInvocationNode.GetChildList()[0];
+		
+		/*var functionParametersListingNode = (FunctionParametersListingNode)functionInvocationNode.GetChildList()[1];
+		{
+			// Assertions relating to functionParametersListingNode's properties are in this code block.
+			Assert.True(functionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
+	        Assert.Equal(1, functionParametersListingNode.FunctionParameterEntryNodeList.Count);
+	        Assert.True(functionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
+		}*/
+		
+		// var typeClauseNode = (TypeClauseNode)functionInvocationNode.GetChildList()[2];
+		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
     public void SourceCodeThatIsNotParsing_Test()
     {
     	var resourceUri = new ResourceUri("./unitTesting.txt");
