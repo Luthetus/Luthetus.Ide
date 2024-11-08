@@ -446,11 +446,6 @@ public class CSharpParser : IParser
         // ````	return 3;
         // ````}
         // 
-        // Class definition
-        // ================
-        // ````class Aaa { }
-        // ````class Bbb(/*primary constructor*/) { }
-        //
         // Variable declaration
         // ====================
         // ````var x = 2;
@@ -472,6 +467,10 @@ public class CSharpParser : IParser
         // ````(int X, Person Y) tuple = (3, new Person());
         //
         // Explicit Cast Expression
+        // ==========================
+        // ````(Person)someVariable;
+        // 
+        // Parenthesized Expression
         // ==========================
         // ````(Person)someVariable;
         //
@@ -496,8 +495,18 @@ public class CSharpParser : IParser
         // ````new List<int> { 1, 2, 3, };
         // ````new List<int>(capacity: 5) { 1, 2, 3, };
         //
+        // Class definition
+        // ================
+        // ````class Aaa { }
+        // ````class Bbb(/*primary constructor*/) { }
+        //
         // I want to write out in order the definitions/expressions, ordered by how similar the syntax is to one another.
         // 
         // Types are a "simple" case due to the storage modifier keyword 'class, interface, ...'.
+        //
+        // It went from 26 seconds to 28 seconds
+        // after adding TypeDefinitionNode parsing.
+        //
+        // 
     }
 }

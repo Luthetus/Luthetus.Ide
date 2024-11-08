@@ -34,6 +34,10 @@ public interface IParserModel
     /// The intent is to build up ambiguous syntax by pushing it onto this stack,
     /// then once it can be disambiguated, pop off all the syntax and construct an
     /// <see cref="ISyntaxNode"/>.
+    ///
+    /// A syntax for definition is being counted when referring to 'Statement' here.
+    /// So, to parse a <see cref="TypeDefinitionNode"/> one would check this for the
+    /// access modifier (public, private, etc...).
     /// </summary>
     public Stack<ISyntax> StatementBuilderStack { get; set; }
     

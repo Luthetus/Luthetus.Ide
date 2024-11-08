@@ -136,7 +136,7 @@ public class ParseDefaultKeywords
     public static void HandleFalseTokenKeyword(CSharpParserModel model)
     {
     	var expressionNode = ParseOthers.ParseExpression(model);
-    	model.SyntaxStack.Push(expressionNode);
+    	model.StatementBuilderStack.Push(expressionNode);
     }
 
     public static void HandleFinallyTokenKeyword(CSharpParserModel model)
@@ -235,7 +235,7 @@ public class ParseDefaultKeywords
     public static void HandleProtectedTokenKeyword(CSharpParserModel model)
     {
     	var protectedTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
-        model.SyntaxStack.Push(protectedTokenKeyword);
+        model.StatementBuilderStack.Push(protectedTokenKeyword);
     }
 
     public static void HandleReadonlyTokenKeyword(CSharpParserModel model)
@@ -302,7 +302,7 @@ public class ParseDefaultKeywords
     public static void HandleTrueTokenKeyword(CSharpParserModel model)
     {
     	var expressionNode = ParseOthers.ParseExpression(model);
-    	model.SyntaxStack.Push(expressionNode);
+    	model.StatementBuilderStack.Push(expressionNode);
     }
 
     public static void HandleTryTokenKeyword(CSharpParserModel model)
@@ -386,19 +386,19 @@ public class ParseDefaultKeywords
     public static void HandlePublicTokenKeyword(CSharpParserModel model)
     {
     	var publicKeywordToken = (KeywordToken)model.TokenWalker.Consume();
-        model.SyntaxStack.Push(publicKeywordToken);
+        model.StatementBuilderStack.Push(publicKeywordToken);
     }
 
     public static void HandleInternalTokenKeyword(CSharpParserModel model)
     {
     	var internalTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
-        model.SyntaxStack.Push(internalTokenKeyword);
+        model.StatementBuilderStack.Push(internalTokenKeyword);
     }
 
     public static void HandlePrivateTokenKeyword(CSharpParserModel model)
     {
     	var privateTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
-        model.SyntaxStack.Push(privateTokenKeyword);
+        model.StatementBuilderStack.Push(privateTokenKeyword);
     }
 
     public static void HandleStaticTokenKeyword(CSharpParserModel model)
@@ -451,19 +451,141 @@ public class ParseDefaultKeywords
 	/// public class MyClass { }
 	///              ^
 	///
-	/// Given the example the 'MyClass' is the current token
+	/// Given the example the 'MyClass' is the next token
 	/// upon invocation of this method.
 	///
-	/// Invocation of this method implies the previous token was
+	/// Invocation of this method implies the current token was
 	/// class, interface, struct, etc...
-	///
-	/// The syntax token parameter to this method is said
-	/// previous token.
 	/// </summary>
     public static void HandleStorageModifierTokenKeyword(CSharpParserModel model)
     {
-    	// This 'storageModifierToken is used later on, but consumed here to show that the token is consumed.
     	var storageModifierToken = model.TokenWalker.Consume();
+    
+    	// Given: public partial class MyClass { }
+		// Then: partial
+        var hasPartialModifier = false;
+        if (model.StatementBuilderStack.TryPeek(out var syntax) && syntax is ISyntaxToken syntaxToken)
+        {
+            if (syntaxToken.SyntaxKind == SyntaxKind.PartialTokenContextualKeyword)
+            {
+                _ = model.StatementBuilderStack.Pop();
+                hasPartialModifier = true;
+            }
+        }
+    
+    	// TODO: Fix; the code that parses the accessModifierKind is a mess
+		//
+		// Given: public class MyClass { }
+		// Then: public
+		var accessModifierKind = AccessModifierKind.Public;
+        if (model.StatementBuilderStack.TryPeek(out syntax) && syntax is ISyntaxToken firstSyntaxToken)
+        {
+            var firstOutput = UtilityApi.GetAccessModifierKindFromToken(firstSyntaxToken);
+
+            if (firstOutput is not null)
+            {
+                _ = model.StatementBuilderStack.Pop();
+                accessModifierKind = firstOutput.Value;
+
+				// Given: protected internal class MyClass { }
+				// Then: protected internal
+                if (model.StatementBuilderStack.TryPeek(out syntax) && syntax is ISyntaxToken secondSyntaxToken)
+                {
+                    var secondOutput = UtilityApi.GetAccessModifierKindFromToken(secondSyntaxToken);
+
+                    if (secondOutput is not null)
+                    {
+                        _ = model.StatementBuilderStack.Pop();
+
+                        if ((firstOutput.Value.ToString().ToLower() == "protected" &&
+                                secondOutput.Value.ToString().ToLower() == "internal") ||
+                            (firstOutput.Value.ToString().ToLower() == "internal" &&
+                                secondOutput.Value.ToString().ToLower() == "protected"))
+                        {
+                            accessModifierKind = AccessModifierKind.ProtectedInternal;
+                        }
+                        else if ((firstOutput.Value.ToString().ToLower() == "private" &&
+                                    secondOutput.Value.ToString().ToLower() == "protected") ||
+                                (firstOutput.Value.ToString().ToLower() == "protected" &&
+                                    secondOutput.Value.ToString().ToLower() == "private"))
+                        {
+                            accessModifierKind = AccessModifierKind.PrivateProtected;
+                        }
+                        // else use the firstOutput.
+                    }
+                }
+            }
+        }
+    
+    	// TODO: Fix nullability spaghetti code
+        var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(storageModifierToken);
+        if (storageModifierKind is null)
+            return;
+        if (storageModifierKind == StorageModifierKind.Record &&
+        	model.TokenWalker.Current.SyntaxKind == SyntaxKind.StructTokenKeyword)
+        {
+        	var structKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+        	storageModifierKind = StorageModifierKind.RecordStruct;
+        }
+    
+		// Given: public class MyClass<T> { }
+		// Then: MyClass
+		IdentifierToken identifierToken;
+		// Retrospective: What is the purpose of this 'if (contextualKeyword) logic'?
+		// Response: maybe it is because 'var' contextual keyword is allowed to be a class name?
+        if (UtilityApi.IsContextualKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind))
+        {
+            var contextualKeywordToken = (KeywordContextualToken)model.TokenWalker.Consume();
+            // Take the contextual keyword as an identifier
+            identifierToken = new IdentifierToken(contextualKeywordToken.TextSpan);
+        }
+        else
+        {
+            identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+        }
+
+		// Given: public class MyClass<T> { }
+		// Then: <T>
+        GenericArgumentsListingNode? genericArgumentsListingNode = null;
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+        {
+            ParseTypes.HandleGenericArguments(
+                (OpenAngleBracketToken)model.TokenWalker.Consume(),
+                model);
+
+            genericArgumentsListingNode = (GenericArgumentsListingNode?)model.StatementBuilderStack.Pop();
+        }
+
+        var typeDefinitionNode = new TypeDefinitionNode(
+            accessModifierKind,
+            hasPartialModifier,
+            storageModifierKind.Value,
+            identifierToken,
+            valueType: null,
+            genericArgumentsListingNode,
+            primaryConstructorFunctionArgumentsListingNode: null,
+            inheritedTypeClauseNode: null,
+            openBraceToken: default,
+            codeBlockNode: null);
+
+        model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
+        model.Binder.BindTypeIdentifier(identifierToken, model);
+        model.StatementBuilderStack.Push(typeDefinitionNode);
+        model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
+        
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
+        {
+        	while (!model.TokenWalker.IsEof)
+        	{
+        		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+        			model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+        		{
+        			break;
+        		}
+        		
+        		_ = model.TokenWalker.Consume();
+        	}
+        }
     }
 
     public static void HandleClassTokenKeyword(CSharpParserModel model)
