@@ -15,12 +15,103 @@ public class ParseFunctions
         GenericArgumentsListingNode? consumedGenericArgumentsListingNode,
         CSharpParserModel model)
     {
+        if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
+            return;
+
+        HandleFunctionArguments(
+            (OpenParenthesisToken)model.TokenWalker.Consume(),
+            model);
+
+        var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
+
+        var functionDefinitionNode = new FunctionDefinitionNode(
+            AccessModifierKind.Public,
+            consumedTypeClauseNode,
+            consumedIdentifierToken,
+            consumedGenericArgumentsListingNode,
+            functionArgumentsListingNode,
+            null,
+            null);
+
+        model.Binder.BindFunctionDefinitionNode(functionDefinitionNode, model);
+        model.SyntaxStack.Push(functionDefinitionNode);
+        model.CurrentCodeBlockBuilder.PendingChild = functionDefinitionNode;
+
+        if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
+            typeDefinitionNode.IsInterface)
+        {
+            // TODO: Would method constraints break this code? "public T Aaa<T>() where T : OtherClass"
+            var statementDelimiterToken = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+
+			foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
+	    	{
+	    		if (argument.IsOptional)
+	    			model.Binder.BindFunctionOptionalArgument(argument, model);
+	    		else
+	    			model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
+	    	}
+        }
     }
 
     public static void HandleConstructorDefinition(
         IdentifierToken consumedIdentifierToken,
         CSharpParserModel model)
     {
+    	HandleFunctionArguments(
+            (OpenParenthesisToken)model.TokenWalker.Consume(),
+            model);
+
+        var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
+
+        if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not TypeDefinitionNode typeDefinitionNode)
+        {
+            model.DiagnosticBag.ReportConstructorsNeedToBeWithinTypeDefinition(consumedIdentifierToken.TextSpan);
+            typeDefinitionNode = Facts.CSharpFacts.Types.Void;
+        }
+
+        var typeClauseNode = new TypeClauseNode(
+            typeDefinitionNode.TypeIdentifierToken,
+            null,
+            null);
+
+        var constructorDefinitionNode = new ConstructorDefinitionNode(
+            typeClauseNode,
+            consumedIdentifierToken,
+            null,
+            functionArgumentsListingNode,
+            null,
+            null);
+
+        model.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, model);
+        model.SyntaxStack.Push(constructorDefinitionNode);
+        model.CurrentCodeBlockBuilder.PendingChild = constructorDefinitionNode;
+
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
+        {
+        	_ = model.TokenWalker.Consume();
+            // Constructor invokes some other constructor as well
+        	// 'this(...)' or 'base(...)'
+        	
+        	KeywordToken keywordToken;
+        	
+        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
+        		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
+        	else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
+        		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
+        	else
+        		keywordToken = default;
+        	
+        	while (!model.TokenWalker.IsEof)
+            {
+                if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+                    model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+                {
+                    break;
+                }
+
+                _ = model.TokenWalker.Consume();
+            }
+        }
     }
 
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>

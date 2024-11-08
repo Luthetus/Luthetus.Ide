@@ -6,11 +6,18 @@ public class StatementBuilder
 {
 	public List<ISyntax> ChildList { get; } = new();
 	
+	/// <summary>Invokes the other overload with index: ^1</summary>
 	public bool TryPeek(out ISyntax syntax)
+	{
+		return TryPeek(^1, out syntax);
+	}
+	
+	/// <summary>^1 gives the last entry</summary>
+	public bool TryPeek(Index index, out ISyntax syntax)
 	{
 		if (ChildList.Count > 0)
 		{
-			syntax = ChildList[^1];
+			syntax = ChildList[index];
 			return true;
 		}
 		

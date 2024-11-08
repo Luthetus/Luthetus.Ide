@@ -136,6 +136,160 @@ public static class ParseTokens
     public static void ParseOpenParenthesisToken(CSharpParserModel model)
     {
     	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Consume();
+    	
+    	if (TryHandleFunctionDefinition(model))
+    		return;
+    	
+    	if (TryHandleConstructorDefinition(model))
+    		return;
+    }
+    
+    public static bool TryHandleFunctionDefinition(CSharpParserModel model)
+    {
+    	/*
+    	(2024-11-08) The issue is:
+    	==========================
+    	'int[] x = 2;'
+    	'int[] MyMethod() { }'
+    	
+    	In my mind this was an issue, but it wouldn't be an issue because in order
+    	to get to this code I have to see an OpenParenthesisToken.
+    	
+    	The variable assignment doesn't conflict at all.
+    	
+    	But:
+    	'int[] x = new { 1, 2, 3, };'
+    	'int[2] = 7;'
+    	
+    	At the start of a statement, there can be a conflict here,
+    	but given the situation, one can see the second line has a '2' in the array's square brackets
+    	so therefore you know the second line is a variable assignment expression.
+    	(the first line is a variable declaration statement / variable assignment expression).
+
+		https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/arrays
+		=======================================================================================
+			// Declare a single-dimensional array of 5 integers.
+			int[] array1 = new int[5];
+			
+			// Declare and set array element values.
+			int[] array2 = [1, 2, 3, 4, 5, 6];
+			
+			// Declare a two dimensional array.
+			int[,] multiDimensionalArray1 = new int[2, 3];
+			
+			// Declare and set array element values.
+			int[,] multiDimensionalArray2 = { { 1, 2, 3 }, { 4, 5, 6 } };
+			
+			// Declare a jagged array.
+			int[][] jaggedArray = new int[6][];
+			
+			// Set the values of the first array in the jagged array structure.
+			jaggedArray[0] = [1, 2, 3, 4];
+		---------------------------------------------------------------------------------------
+		
+		None of the array declaration examples contain a number inside the
+		array square brackets at the start of the statement.
+		
+		When dealing with a function definition,
+		the TypeClauseNode for its return type might be an array.
+		
+		So I have to properly make sense of the 'int[]'
+		if I have 'int[] MyMethod() { }'.
+		
+		But, I just saw that it seems I can check inside the array brackets
+		whether there is a number or not.
+		
+		And there being a number means that it is an expression of some sort,
+		whereas the lack or one means it is a statement of some sort.
+    	*/
+    
+    	bool isFunctionDefinition = true;
+    	
+    	// These are ordered backwards (i.e. from the current token's position traveling backwards).
+    	GenericArgumentsListingNode? genericArgumentsListingNode = null;
+    	IdentifierToken identifierToken = default;
+    	TypeClauseNode? typeClauseNode = null;
+    	
+		if (model.StatementBuilder.TryPeek(^1, out var existingGenericArgumentsListingNode) &&
+			existingGenericArgumentsListingNode.SyntaxKind == SyntaxKind.GenericArgumentsListingNode)
+		{
+			// public void CreateBox<TItem>() { }
+			isFunctionDefinition = model.StatementBuilder.TryPeek(^2, out var twoTokenBackwards) &&
+					  twoTokenBackwards.SyntaxKind == SyntaxKind.IdentifierToken;
+			
+			if (isFunctionDefinition)
+			{
+				isFunctionDefinition = model.StatementBuilder.TryPeek(^3, out var threeTokenBackwards) &&
+						  twoTokenBackwards.SyntaxKind == SyntaxKind.TypeClauseNode;
+						  
+				if (isFunctionDefinition)
+				{
+					genericArgumentsListingNode = (GenericArgumentsListingNode)existingGenericArgumentsListingNode;
+					identifierToken = (IdentifierToken)twoTokenBackwards;
+					typeClauseNode = (TypeClauseNode)threeTokenBackwards;
+				}
+			}
+		}
+		else
+		{
+			// public void CreateBox() { }
+			isFunctionDefinition = model.StatementBuilder.TryPeek(^1, out var oneTokenBackwards) &&
+					  oneTokenBackwards.SyntaxKind == SyntaxKind.IdentifierToken;
+			
+			if (isFunctionDefinition)
+			{
+				isFunctionDefinition = model.StatementBuilder.TryPeek(^2, out var twoTokenBackwards) &&
+						  twoTokenBackwards.SyntaxKind == SyntaxKind.TypeClauseNode;
+						  
+				if (isFunctionDefinition)
+				{
+					identifierToken = (IdentifierToken)oneTokenBackwards;
+					typeClauseNode = (TypeClauseNode)twoTokenBackwards;
+				}
+			}
+		}
+    	
+    	if (isFunctionDefinition)
+    	{
+	    	ParseFunctions.HandleFunctionDefinition(
+	    		identifierToken,
+	        	typeClauseNode,
+	        	genericArgumentsListingNode,
+	        	model);
+        }
+        
+        return isFunctionDefinition;
+    }
+    
+    public static bool TryHandleConstructorDefinition(CSharpParserModel model)
+    {
+    	bool isConstructorDefinition = true;
+    	
+		// These are ordered backwards (i.e. from the current token's position traveling backwards).
+		IdentifierToken identifierToken = default;
+	
+		/*
+		public class Person
+		{
+			public Person()
+			{
+			}
+		}
+		*/
+		isConstructorDefinition = model.StatementBuilder.TryPeek(^1, out var oneTokenBackwards) &&
+				  oneTokenBackwards.SyntaxKind == SyntaxKind.IdentifierToken;
+		
+		if (isConstructorDefinition)
+			identifierToken = (IdentifierToken)oneTokenBackwards;
+    	
+    	if (isConstructorDefinition)
+    	{
+	    	ParseFunctions.HandleConstructorDefinition(
+	    		identifierToken,
+	        	model);
+        }
+        
+        return isConstructorDefinition;
     }
 
     public static void ParseCloseParenthesisToken(

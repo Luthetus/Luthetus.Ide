@@ -2286,17 +2286,14 @@ Func(decimalPercentProgress);
     }
     
     [Fact]
-    public void GenericParametersListingNode()
+    public void FunctionDefinition()
     {
     	var resourceUri = new ResourceUri("./unitTesting.txt");
         
         var sourceText =
 @"
-namespace BlazorCrudApp.Wasm;
-
-public class Aaa<T> : Aaa<A>
+public void Aaa()
 {
-	Aaa
 }
 
 ";
