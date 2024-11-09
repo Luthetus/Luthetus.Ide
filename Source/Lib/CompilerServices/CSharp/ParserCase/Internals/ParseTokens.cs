@@ -262,10 +262,12 @@ public static class ParseTokens
     {
     }
 
-    public static void ParseStatementDelimiterToken(CSharpParserModel model)
+	/// <summary>
+	/// StatementDelimiterToken is passed in to the method because it is a protected token,
+	/// and is preferably consumed from the main loop so it can be more easily tracked.
+	/// </summary>
+    public static void ParseStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, CSharpParserModel model)
     {
-    	var statementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Consume();
-    
     	if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
             var closureCurrentCompilationUnitBuilder = model.CurrentCodeBlockBuilder;

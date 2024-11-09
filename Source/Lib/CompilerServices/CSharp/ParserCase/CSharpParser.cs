@@ -180,7 +180,18 @@ public class CSharpParser : IParser
                     break;
                 case SyntaxKind.StatementDelimiterToken:
                 	model.StatementBuilder.ChildList.Clear();
-                    ParseTokens.ParseStatementDelimiterToken(model);
+                	
+                	#if DEBUG
+					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+					#endif
+					
+					var statementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Consume();
+					
+					#if DEBUG
+					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+					#endif
+                	
+                    ParseTokens.ParseStatementDelimiterToken(statementDelimiterToken, model);
                     break;
                 case SyntaxKind.EndOfFileToken:
                     if (model.SyntaxStack.TryPeek(out var syntax) &&

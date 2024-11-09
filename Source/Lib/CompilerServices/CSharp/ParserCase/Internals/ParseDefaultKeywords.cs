@@ -643,7 +643,7 @@ public class ParseDefaultKeywords
 	/// </summary>
     public static void HandleDefault(CSharpParserModel model)
     {
-    	var defaultKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleTypeIdentifierKeyword(CSharpParserModel model)
@@ -653,7 +653,7 @@ public class ParseDefaultKeywords
 
     public static void HandleNewTokenKeyword(CSharpParserModel model)
     {
-    	var newKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandlePublicTokenKeyword(CSharpParserModel model)
@@ -718,12 +718,12 @@ public class ParseDefaultKeywords
 
     public static void HandleUsingTokenKeyword(CSharpParserModel model)
     {
-    	var usingTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleInterfaceTokenKeyword(CSharpParserModel model)
     {
-        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(model);
+        model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
 	/// <summary>
@@ -855,11 +855,33 @@ public class ParseDefaultKeywords
 
     public static void HandleNamespaceTokenKeyword(CSharpParserModel model)
     {
-    	var namespaceTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
+    	var namespaceKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(model);
+
+        if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
+        {
+            model.DiagnosticBag.ReportTodoException(namespaceKeywordToken.TextSpan, "Expected a namespace identifier.");
+            return;
+        }
+        var namespaceIdentifier = (IdentifierToken)handleNamespaceIdentifierResult;
+
+        if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null)
+            model.DiagnosticBag.ReportTodoException(namespaceKeywordToken.TextSpan, "Need to add logic to report diagnostic when there is already a file scoped namespace.");
+
+        var namespaceStatementNode = new NamespaceStatementNode(
+            namespaceKeywordToken,
+            namespaceIdentifier,
+            new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
+
+        model.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, model);
+        
+        model.SyntaxStack.Push(namespaceStatementNode);
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = namespaceStatementNode;
     }
 
     public static void HandleReturnTokenKeyword(CSharpParserModel model)
     {
-    	var returnTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 }

@@ -11,6 +11,45 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public static class ParseOthers
 {
+	/// <summary>
+	/// TODO: Delete this method, to parse a namespace identifier one should be able to just invoke 'ParseExpression(...)'
+	/// </summary>
+	public static ISyntax HandleNamespaceIdentifier(CSharpParserModel model)
+    {
+        var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
+
+        while (!model.TokenWalker.IsEof)
+        {
+            if (combineNamespaceIdentifierIntoOne.Count % 2 == 0)
+            {
+                var matchedToken = model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+                combineNamespaceIdentifierIntoOne.Add(matchedToken);
+
+                if (matchedToken.IsFabricated)
+                    break;
+            }
+            else
+            {
+                if (SyntaxKind.MemberAccessToken == model.TokenWalker.Current.SyntaxKind)
+                    combineNamespaceIdentifierIntoOne.Add(model.TokenWalker.Consume());
+                else
+                    break;
+            }
+        }
+
+        if (combineNamespaceIdentifierIntoOne.Count == 0)
+        {
+            return new EmptyNode();
+        }
+
+        var identifierTextSpan = combineNamespaceIdentifierIntoOne.First().TextSpan with
+        {
+            EndingIndexExclusive = combineNamespaceIdentifierIntoOne.Last().TextSpan.EndingIndexExclusive
+        };
+
+        return new IdentifierToken(identifierTextSpan);
+    }
+
     public static void StartStatement_Expression(CSharpParserModel model)
     {
     	var expressionNode = ParseOthers.ParseExpression(model);

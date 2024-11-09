@@ -75,182 +75,152 @@ public class ParseContextualKeywords
 
     public static void HandlePartialTokenContextualKeyword(CSharpParserModel model)
     {
-    	var partialContextualKeywordToken = model.TokenWalker.Consume();
-        model.SyntaxStack.Push(partialContextualKeywordToken);
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleAddTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleAndTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleAliasTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleAscendingTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleArgsTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleAsyncTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleAwaitTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleByTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleDescendingTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleDynamicTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleEqualsTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleFileTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleFromTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleGetTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleGlobalTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleGroupTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleInitTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleIntoTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleJoinTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleLetTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleManagedTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleNameofTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleNintTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleNotTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleNotnullTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleNuintTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleOnTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleOrTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleOrderbyTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleRecordTokenContextualKeyword(CSharpParserModel model)
@@ -260,50 +230,42 @@ public class ParseContextualKeywords
 
     public static void HandleRemoveTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleRequiredTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleScopedTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleSelectTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleSetTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleUnmanagedTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleValueTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleWhenTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleWhereTokenContextualKeyword(CSharpParserModel model)
@@ -327,19 +289,16 @@ public class ParseContextualKeywords
 
     public static void HandleWithTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleYieldTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 
     public static void HandleUnrecognizedTokenContextualKeyword(CSharpParserModel model)
     {
-    	var contextualKeywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordContextualToken)model.TokenWalker.Consume());
     }
 }
