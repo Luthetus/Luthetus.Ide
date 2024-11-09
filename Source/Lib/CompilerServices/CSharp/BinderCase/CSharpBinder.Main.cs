@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -688,7 +689,7 @@ public partial class CSharpBinder : IBinder
     	// Update the CodeBlockBuilder instance
 		var codeBlockOwner = model.CurrentCodeBlockBuilder.CodeBlockOwner;
 		if (codeBlockOwner is null)
-			throw new Exception("if (codeBlockOwner is null)");
+			throw new LuthetusTextEditorException("if (codeBlockOwner is null)");
         codeBlockOwner.SetCodeBlockNode(model.CurrentCodeBlockBuilder.Build());
 		
 		if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)

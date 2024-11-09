@@ -18,11 +18,7 @@ public class ParseFunctions
         if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
-        HandleFunctionArguments(
-            (OpenParenthesisToken)model.TokenWalker.Consume(),
-            model);
-
-        var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
+        var functionArgumentsListingNode = HandleFunctionArguments(model);
 
         var functionDefinitionNode = new FunctionDefinitionNode(
             AccessModifierKind.Public,
@@ -57,11 +53,7 @@ public class ParseFunctions
         IdentifierToken consumedIdentifierToken,
         CSharpParserModel model)
     {
-    	HandleFunctionArguments(
-            (OpenParenthesisToken)model.TokenWalker.Consume(),
-            model);
-
-        var functionArgumentsListingNode = (FunctionArgumentsListingNode)model.SyntaxStack.Pop();
+    	var functionArgumentsListingNode = HandleFunctionArguments(model);
 
         if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not TypeDefinitionNode typeDefinitionNode)
         {
@@ -115,9 +107,42 @@ public class ParseFunctions
     }
 
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
-    public static void HandleFunctionArguments(
-        OpenParenthesisToken consumedOpenParenthesisToken,
-        CSharpParserModel model)
+    public static FunctionArgumentsListingNode HandleFunctionArguments(CSharpParserModel model)
     {
+    	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Consume();
+    	
+    	var openParenthesisCount = 1;
+    	
+    	while (!model.TokenWalker.IsEof)
+        {
+        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+        	{
+        		openParenthesisCount++;
+        	}
+        	else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+        	{
+        		openParenthesisCount--;
+        		
+        		if (openParenthesisCount == 0)
+        		{
+        			break;
+        		}
+        	}
+        	
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+                model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+            {
+                break;
+            }
+
+            _ = model.TokenWalker.Consume();
+        }
+        
+        var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        
+        return new FunctionArgumentsListingNode(
+        	openParenthesisToken,
+	        ImmutableArray<FunctionArgumentEntryNode>.Empty,
+	        closeParenthesisToken);
     }
 }

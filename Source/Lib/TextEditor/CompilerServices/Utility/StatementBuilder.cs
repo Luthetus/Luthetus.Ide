@@ -31,4 +31,16 @@ public class StatementBuilder
 		ChildList.RemoveAt(ChildList.Count - 1);
 		return syntax;
 	}
+	
+	public void WriteToConsole()
+	{
+		Console.Write("StatementBuilder: ");
+	
+		foreach (var child in ChildList)
+		{
+			Console.Write($"{child.SyntaxKind}, ");
+		}
+		
+		Console.WriteLine();
+	}
 }

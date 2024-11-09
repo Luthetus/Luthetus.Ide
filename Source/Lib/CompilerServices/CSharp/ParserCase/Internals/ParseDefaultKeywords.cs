@@ -12,14 +12,12 @@ public class ParseDefaultKeywords
 {
     public static void HandleAsTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+        model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleBaseTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleBoolTokenKeyword(CSharpParserModel model)
@@ -29,8 +27,7 @@ public class ParseDefaultKeywords
 
     public static void HandleBreakTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleByteTokenKeyword(CSharpParserModel model)
@@ -96,20 +93,17 @@ public class ParseDefaultKeywords
 
     public static void HandleCheckedTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleConstTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleContinueTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleDecimalTokenKeyword(CSharpParserModel model)
@@ -122,6 +116,8 @@ public class ParseDefaultKeywords
     	// Switch statement default case.
         if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
         	_ = model.TokenWalker.Consume();
+		else
+			model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleDelegateTokenKeyword(CSharpParserModel model)
@@ -155,8 +151,7 @@ public class ParseDefaultKeywords
 
     public static void HandleElseTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleEnumTokenKeyword(CSharpParserModel model)
@@ -170,20 +165,17 @@ public class ParseDefaultKeywords
 
     public static void HandleEventTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleExplicitTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleExternTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleFalseTokenKeyword(CSharpParserModel model)
@@ -235,8 +227,7 @@ public class ParseDefaultKeywords
 
     public static void HandleFixedTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleFloatTokenKeyword(CSharpParserModel model)
@@ -385,20 +376,17 @@ public class ParseDefaultKeywords
 
     public static void HandleGotoTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleImplicitTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleInTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleIntTokenKeyword(CSharpParserModel model)
@@ -408,8 +396,7 @@ public class ParseDefaultKeywords
 
     public static void HandleIsTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleLockTokenKeyword(CSharpParserModel model)
@@ -451,20 +438,17 @@ public class ParseDefaultKeywords
 
     public static void HandleOperatorTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleOutTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleParamsTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleProtectedTokenKeyword(CSharpParserModel model)
@@ -475,14 +459,12 @@ public class ParseDefaultKeywords
 
     public static void HandleReadonlyTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleRefTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleSbyteTokenKeyword(CSharpParserModel model)
@@ -497,14 +479,12 @@ public class ParseDefaultKeywords
 
     public static void HandleSizeofTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleStackallocTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleStringTokenKeyword(CSharpParserModel model)
@@ -541,14 +521,12 @@ public class ParseDefaultKeywords
 
     public static void HandleThisTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleThrowTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleTrueTokenKeyword(CSharpParserModel model)
@@ -583,8 +561,7 @@ public class ParseDefaultKeywords
 
     public static void HandleTypeofTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleUintTokenKeyword(CSharpParserModel model)
@@ -599,14 +576,12 @@ public class ParseDefaultKeywords
 
     public static void HandleUncheckedTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleUnsafeTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleUshortTokenKeyword(CSharpParserModel model)
@@ -621,8 +596,7 @@ public class ParseDefaultKeywords
 
     public static void HandleVolatileTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleWhileTokenKeyword(CSharpParserModel model)
@@ -661,8 +635,7 @@ public class ParseDefaultKeywords
 
     public static void HandleUnrecognizedTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
 	/// <summary>The 'Default' of this method name is confusing.
@@ -675,7 +648,7 @@ public class ParseDefaultKeywords
 
     public static void HandleTypeIdentifierKeyword(CSharpParserModel model)
     {
-    	var typeIdentifierKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleNewTokenKeyword(CSharpParserModel model)
@@ -703,32 +676,27 @@ public class ParseDefaultKeywords
 
     public static void HandleStaticTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleOverrideTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleVirtualTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleAbstractTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleSealedTokenKeyword(CSharpParserModel model)
     {
-    	var keywordToken = model.TokenWalker.Consume();
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleIfTokenKeyword(CSharpParserModel model)

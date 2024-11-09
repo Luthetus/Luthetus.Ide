@@ -1,4 +1,6 @@
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
@@ -174,5 +176,64 @@ public static class UtilityApi
             default:
                 return null;
         }
+    }
+    
+    public static bool IsConvertibleToTypeClauseNode(SyntaxKind syntaxKind)
+    {
+    	return syntaxKind == SyntaxKind.IdentifierToken ||
+    		   IsTypeIdentifierKeywordSyntaxKind(syntaxKind) ||
+    		   IsContextualKeywordSyntaxKind(syntaxKind);
+    }
+    
+    public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax)
+    {
+    	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    	{
+    		return new TypeClauseNode(
+	    		(IdentifierToken)syntax,
+		        null,
+		        null);
+    	}
+	    else if (IsTypeIdentifierKeywordSyntaxKind(syntax.SyntaxKind))
+	    {
+	    	return new TypeClauseNode(
+	    		(KeywordToken)syntax,
+		        null,
+		        null);
+	    }
+	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
+	    {
+	    	return new TypeClauseNode(
+	    		(KeywordContextualToken)syntax,
+		        null,
+		        null);
+	    }
+	    else
+	    {
+	    	throw new LuthetusTextEditorException($"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");
+	    }
+    }
+    
+    public static bool IsConvertibleToIdentifierToken(SyntaxKind syntaxKind)
+    {
+    	return syntaxKind == SyntaxKind.IdentifierToken ||
+    		   IsContextualKeywordSyntaxKind(syntaxKind);
+    }
+    
+    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax)
+    {
+    	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    	{
+    		return (IdentifierToken)syntax;
+    	}
+	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
+	    {
+	    	var keywordContextualToken = (KeywordContextualToken)syntax;
+	    	return new IdentifierToken(keywordContextualToken.TextSpan);
+	    }
+	    else
+	    {
+	    	throw new LuthetusTextEditorException($"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");
+	    }
     }
 }

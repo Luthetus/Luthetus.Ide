@@ -111,6 +111,8 @@ public static class ParseTokens
 
     public static void ParseOpenParenthesisToken(CSharpParserModel model)
     {
+    	model.StatementBuilder.WriteToConsole();
+    
     	if (TryHandleFunctionDefinition(model))
     		return;
     	
@@ -118,98 +120,18 @@ public static class ParseTokens
     		return;
     }
     
+    /// <summary>
+    /// FunctionDefinitionNode can occur from the following:
+	///	- TypeClauseNode, IdentifierToken, OpenParenthesisToken
+	///		- This occurs when the first token initially was a 'IdentifierToken' but was not ambiguous and therefore
+	///			immediately interpreted as a 'TypeClauseNode' rather than as an 'IdentifierToken'.
+	///	- IdentifierToken, IdentifierToken, OpenParenthesisToken
+	///	- "IsConvertibleToTypeClauseNode", "IsConvertibleToIdentifierToken", OpenParenthesisToken
+	///		- Some keywords are "IsConvertibleToTypeClauseNode".
+	///		- As well, a KeywordContextualToken might be convertable to either a TypeClauseNode or an IdentifierToken;
+    /// </summary>
     public static bool TryHandleFunctionDefinition(CSharpParserModel model)
     {
-    	/*
-    	(2024-11-08) The issue is:
-    	==========================
-    	'int[] x = new { 1, 2, 3, };'
-    	'int[] MyMethod() { }'
-    	
-    	In my mind this was an issue, but it wouldn't be an issue because in order
-    	to get to this code I have to see an OpenParenthesisToken.
-    	
-    	The variable assignment doesn't conflict at all.
-    	
-    	But:
-    	'int[] x = new { 1, 2, 3, };'
-    	'int[2] = 7;'
-    	
-    	At the start of a statement, there can be a conflict here,
-    	but given the situation, one can see the second line has a '2' in the array's square brackets
-    	so therefore you know the second line is a variable assignment expression.
-    	(the first line is a variable declaration statement / variable assignment expression).
-
-		https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/arrays
-		=======================================================================================
-			// Declare a single-dimensional array of 5 integers.
-			int[] array1 = new int[5];
-			
-			// Declare and set array element values.
-			int[] array2 = [1, 2, 3, 4, 5, 6];
-			
-			// Declare a two dimensional array.
-			int[,] multiDimensionalArray1 = new int[2, 3];
-			
-			// Declare and set array element values.
-			int[,] multiDimensionalArray2 = { { 1, 2, 3 }, { 4, 5, 6 } };
-			
-			// Declare a jagged array.
-			int[][] jaggedArray = new int[6][];
-			
-			// Set the values of the first array in the jagged array structure.
-			jaggedArray[0] = [1, 2, 3, 4];
-		---------------------------------------------------------------------------------------
-		
-		None of the array declaration examples contain a number inside the
-		array square brackets at the start of the statement.
-		
-		When dealing with a function definition,
-		the TypeClauseNode for its return type might be an array.
-		
-		So I have to properly make sense of the 'int[]'
-		if I have 'int[] MyMethod() { }'.
-		
-		But, I just saw that it seems I can check inside the array brackets
-		whether there is a number or not.
-		
-		And there being a number means that it is an expression of some sort,
-		whereas the lack or one means it is a statement of some sort.
-		
-		In the case of:
-		'Person MyMethod() { }'
-		
-		When I read 'Person', is there any ambiguity as to whether it is
-			- TypeClauseNode
-			- IdentifierToken
-		
-		I think the question is:
-		"At what points do I convert a token that can be a 'TypeClauseNode' to a 'TypeClauseNode'?"
-		
-		If the 'TypeClauseNode' is an array, then the array square brackets will not
-		contain a number, and this is the sign that it is a 'TypeClauseNode'.
-		
-		If the 'TypeClauseNode' is just an IdentifierToken, where could things go from there?
-		
-		ConstructorDefinitionNode can occur from the following:
-			- IdentifierToken, OpenParenthesisToken
-		
-		FunctionDefinitionNode can occur from the following:
-			- TypeClauseNode, IdentifierToken, OpenParenthesisToken
-				- This occurs when the first token initially was a 'IdentifierToken' but was not ambiguous and therefore
-					immediately interpreted as a 'TypeClauseNode' rather than as an 'IdentifierToken'.
-			- IdentifierToken, IdentifierToken, OpenParenthesisToken
-			
-		VariableDeclarationNode can occur from the following:
-			- TypeClauseNode, IdentifierToken, EqualsToken
-			
-		TypeDefinitionNode can occur from the following:
-			- SyntaxKind.ClassTokenKeyword, IdentifierToken
-		
-		TypeDefinitionNode can occur from the following:
-			- SyntaxKind.ClassTokenKeyword, IdentifierToken
-    	*/
-    
     	bool isFunctionDefinition = true;
     	
     	// These are ordered backwards (i.e. from the current token's position traveling backwards).
@@ -222,18 +144,18 @@ public static class ParseTokens
 		{
 			// public void CreateBox<TItem>() { }
 			isFunctionDefinition = model.StatementBuilder.TryPeek(^2, out var twoTokenBackwards) &&
-					  twoTokenBackwards.SyntaxKind == SyntaxKind.IdentifierToken;
+								   UtilityApi.IsConvertibleToIdentifierToken(twoTokenBackwards.SyntaxKind);
 			
 			if (isFunctionDefinition)
 			{
 				isFunctionDefinition = model.StatementBuilder.TryPeek(^3, out var threeTokenBackwards) &&
-						  twoTokenBackwards.SyntaxKind == SyntaxKind.TypeClauseNode;
+								   	UtilityApi.IsConvertibleToTypeClauseNode(threeTokenBackwards.SyntaxKind);
 						  
 				if (isFunctionDefinition)
 				{
 					genericArgumentsListingNode = (GenericArgumentsListingNode)existingGenericArgumentsListingNode;
-					identifierToken = (IdentifierToken)twoTokenBackwards;
-					typeClauseNode = (TypeClauseNode)threeTokenBackwards;
+					identifierToken = UtilityApi.ConvertToIdentifierToken(twoTokenBackwards);
+					typeClauseNode = UtilityApi.ConvertToTypeClauseNode(threeTokenBackwards);
 				}
 			}
 		}
@@ -241,17 +163,17 @@ public static class ParseTokens
 		{
 			// public void CreateBox() { }
 			isFunctionDefinition = model.StatementBuilder.TryPeek(^1, out var oneTokenBackwards) &&
-					  oneTokenBackwards.SyntaxKind == SyntaxKind.IdentifierToken;
+								   UtilityApi.IsConvertibleToIdentifierToken(oneTokenBackwards.SyntaxKind);
 			
 			if (isFunctionDefinition)
 			{
 				isFunctionDefinition = model.StatementBuilder.TryPeek(^2, out var twoTokenBackwards) &&
-						  twoTokenBackwards.SyntaxKind == SyntaxKind.TypeClauseNode;
+								   	UtilityApi.IsConvertibleToTypeClauseNode(twoTokenBackwards.SyntaxKind);
 						  
 				if (isFunctionDefinition)
 				{
-					identifierToken = (IdentifierToken)oneTokenBackwards;
-					typeClauseNode = (TypeClauseNode)twoTokenBackwards;
+					identifierToken = UtilityApi.ConvertToIdentifierToken(oneTokenBackwards);
+					typeClauseNode = UtilityApi.ConvertToTypeClauseNode(twoTokenBackwards);
 				}
 			}
 		}
@@ -284,10 +206,10 @@ public static class ParseTokens
 		}
 		*/
 		isConstructorDefinition = model.StatementBuilder.TryPeek(^1, out var oneTokenBackwards) &&
-				  oneTokenBackwards.SyntaxKind == SyntaxKind.IdentifierToken;
+				  				UtilityApi.IsConvertibleToIdentifierToken(oneTokenBackwards.SyntaxKind);
 		
 		if (isConstructorDefinition)
-			identifierToken = (IdentifierToken)oneTokenBackwards;
+			identifierToken = UtilityApi.ConvertToIdentifierToken(oneTokenBackwards);
     	
     	if (isConstructorDefinition)
     	{
@@ -772,3 +694,93 @@ public static class ParseTokens
         }
     }
 }
+
+/*
+	(2024-11-08) The issue is:
+	==========================
+	'int[] x = new { 1, 2, 3, };'
+	'int[] MyMethod() { }'
+	
+	In my mind this was an issue, but it wouldn't be an issue because in order
+	to get to this code I have to see an OpenParenthesisToken.
+	
+	The variable assignment doesn't conflict at all.
+	
+	But:
+	'int[] x = new { 1, 2, 3, };'
+	'int[2] = 7;'
+	
+	At the start of a statement, there can be a conflict here,
+	but given the situation, one can see the second line has a '2' in the array's square brackets
+	so therefore you know the second line is a variable assignment expression.
+	(the first line is a variable declaration statement / variable assignment expression).
+
+	https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/arrays
+	=======================================================================================
+		// Declare a single-dimensional array of 5 integers.
+		int[] array1 = new int[5];
+		
+		// Declare and set array element values.
+		int[] array2 = [1, 2, 3, 4, 5, 6];
+		
+		// Declare a two dimensional array.
+		int[,] multiDimensionalArray1 = new int[2, 3];
+		
+		// Declare and set array element values.
+		int[,] multiDimensionalArray2 = { { 1, 2, 3 }, { 4, 5, 6 } };
+		
+		// Declare a jagged array.
+		int[][] jaggedArray = new int[6][];
+		
+		// Set the values of the first array in the jagged array structure.
+		jaggedArray[0] = [1, 2, 3, 4];
+	---------------------------------------------------------------------------------------
+	
+	None of the array declaration examples contain a number inside the
+	array square brackets at the start of the statement.
+	
+	When dealing with a function definition,
+	the TypeClauseNode for its return type might be an array.
+	
+	So I have to properly make sense of the 'int[]'
+	if I have 'int[] MyMethod() { }'.
+	
+	But, I just saw that it seems I can check inside the array brackets
+	whether there is a number or not.
+	
+	And there being a number means that it is an expression of some sort,
+	whereas the lack or one means it is a statement of some sort.
+	
+	In the case of:
+	'Person MyMethod() { }'
+	
+	When I read 'Person', is there any ambiguity as to whether it is
+		- TypeClauseNode
+		- IdentifierToken
+	
+	I think the question is:
+	"At what points do I convert a token that can be a 'TypeClauseNode' to a 'TypeClauseNode'?"
+	
+	If the 'TypeClauseNode' is an array, then the array square brackets will not
+	contain a number, and this is the sign that it is a 'TypeClauseNode'.
+	
+	If the 'TypeClauseNode' is just an IdentifierToken, where could things go from there?
+	
+	ConstructorDefinitionNode can occur from the following:
+		- IdentifierToken, OpenParenthesisToken
+	
+	FunctionDefinitionNode can occur from the following:
+		- TypeClauseNode, IdentifierToken, OpenParenthesisToken
+			- This occurs when the first token initially was a 'IdentifierToken' but was not ambiguous and therefore
+				immediately interpreted as a 'TypeClauseNode' rather than as an 'IdentifierToken'.
+		- IdentifierToken, IdentifierToken, OpenParenthesisToken
+		
+	VariableDeclarationNode can occur from the following:
+		- TypeClauseNode, IdentifierToken, EqualsToken
+		
+	TypeDefinitionNode can occur from the following:
+		- SyntaxKind.ClassTokenKeyword, IdentifierToken
+	
+	TypeDefinitionNode can occur from the following:
+		- SyntaxKind.ClassTokenKeyword, IdentifierToken
+*/
