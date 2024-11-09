@@ -142,6 +142,14 @@ public class CSharpParser : IParser
                 	// I changed the color in Visual Studio that is assigned to namespaces to be different from the default text.
                 	// The color of the text did not change, therefore it was being colored as default text it seems.
                 	
+                	// I am writing the C# Parser statement first but it might be better to do things expression first.
+                	
+                	// Idea: "Everything is an expression unless it is a statement"?
+                	//
+                	// This might just be equivalent to saying "do things expression first".
+                	// But for some reason this wording is sticking out in my mind.
+                	
+                	// But, some expressions can be a statement, so being a statement does not stop something from being an expression.
                 
                 	if (model.StatementBuilder.ChildList.Count == 0)
                 	{
