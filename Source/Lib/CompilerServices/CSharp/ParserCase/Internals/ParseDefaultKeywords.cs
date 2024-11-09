@@ -872,7 +872,7 @@ public class ParseDefaultKeywords
         var namespaceStatementNode = new NamespaceStatementNode(
             namespaceKeywordToken,
             namespaceIdentifier,
-            new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
+            null);
 
         model.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, model);
         
