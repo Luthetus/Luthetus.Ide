@@ -275,6 +275,8 @@ finally
 
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		
 		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);

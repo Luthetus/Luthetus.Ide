@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
@@ -201,6 +202,24 @@ public partial class CSharpBinder
 			_ = model.TokenWalker.Backtrack();
 			
 			return ambiguousIdentifierExpressionNode;
+		}
+		else if (token.SyntaxKind == SyntaxKind.IdentifierToken)
+		{
+			var decidedExpression = ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				ambiguousIdentifierExpressionNode,
+				model);
+			
+			if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)
+				throw new LuthetusTextEditorException("if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");
+		
+			var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+			
+			_ = ParseVariables.HandleVariableDeclarationExpression(
+		        (TypeClauseNode)decidedExpression,
+		        identifierToken,
+		        VariableKind.Local,
+		        model);
 		}
 	
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, token);
