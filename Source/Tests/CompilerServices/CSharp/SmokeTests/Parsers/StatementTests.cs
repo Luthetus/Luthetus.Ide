@@ -61,7 +61,10 @@ public class StatementTests
     	var test = new Test(@"public class Aaa { public Aaa() { } }");
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		var constructorDefinitionNode = (ConstructorDefinitionNode)topCodeBlock.GetChildList().Single();
+		
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
+		
+		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
     }
     

@@ -111,8 +111,6 @@ public static class ParseTokens
 
     public static void ParseOpenParenthesisToken(CSharpParserModel model)
     {
-    	model.StatementBuilder.WriteToConsole();
-    
     	if (TryHandleFunctionDefinition(model))
     		return;
     	
