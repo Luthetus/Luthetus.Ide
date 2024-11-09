@@ -56,10 +56,12 @@ public static class ParseTokens
         }
     }
 
-    public static void ParseOpenBraceToken(CSharpParserModel model)
-    {
-    	var openBraceToken = (OpenBraceToken)model.TokenWalker.Consume();
-    
+	/// <summary>
+	/// OpenBraceToken is passed in to the method because it is a protected token,
+	/// and is preferably consumed from the main loop so it can be more easily tracked.
+	/// </summary>
+    public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpParserModel model)
+    {    
 		var currentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
         ICodeBlockOwner? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
@@ -113,10 +115,12 @@ public static class ParseTokens
 		nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(model);
     }
 
-    public static void ParseCloseBraceToken(CSharpParserModel model)
+	/// <summary>
+	/// CloseBraceToken is passed in to the method because it is a protected token,
+	/// and is preferably consumed from the main loop so it can be more easily tracked.
+	/// </summary>
+    public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, CSharpParserModel model)
     {
-    	var closeBraceToken = (CloseBraceToken)model.TokenWalker.Consume();
-    	
 		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 		{
 			deferredChildScope.Run(model.TokenWalker.Index - 1, model);
@@ -133,8 +137,6 @@ public static class ParseTokens
 
     public static void ParseOpenParenthesisToken(CSharpParserModel model)
     {
-    	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Consume();
-    	
     	if (TryHandleFunctionDefinition(model))
     		return;
     	

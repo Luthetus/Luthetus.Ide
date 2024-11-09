@@ -113,11 +113,33 @@ public class CSharpParser : IParser
                     break;
                 case SyntaxKind.OpenBraceToken:
                 	model.StatementBuilder.ChildList.Clear();
-                    ParseTokens.ParseOpenBraceToken(model);
+                	
+                	#if DEBUG
+					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+					#endif
+					
+					var openBraceToken = (OpenBraceToken)model.TokenWalker.Consume();
+					
+					#if DEBUG
+					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+					#endif
+					
+                    ParseTokens.ParseOpenBraceToken(openBraceToken, model);
                     break;
                 case SyntaxKind.CloseBraceToken:
                 	model.StatementBuilder.ChildList.Clear();
-                    ParseTokens.ParseCloseBraceToken(model);
+                	
+                	#if DEBUG
+					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+					#endif
+					
+					var closeBraceToken = (CloseBraceToken)model.TokenWalker.Consume();
+					
+					#if DEBUG
+					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+					#endif
+                	
+                    ParseTokens.ParseCloseBraceToken(closeBraceToken, model);
                     break;
                 case SyntaxKind.OpenParenthesisToken:
                 	if (model.StatementBuilder.ChildList.Count == 0)
@@ -197,7 +219,7 @@ public class CSharpParser : IParser
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
 				if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
-					deferredChildScope.Run(model.TokenWalker.Index, model);
+					deferredChildScope.Run(model.TokenWalker.Index - 1, model);
 				else
 					break;
 			}

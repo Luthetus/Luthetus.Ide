@@ -771,12 +771,8 @@ public class ParseDefaultKeywords
 	/// </summary>
     public static void HandleStorageModifierTokenKeyword(CSharpParserModel model)
     {
-    	Console.WriteLine("HandleStorageModifierTokenKeyword_2024-11-08");
-    	
     	var storageModifierToken = model.TokenWalker.Consume();
     	
-    	Console.WriteLine($"{storageModifierToken.SyntaxKind}");
-    
     	// Given: public partial class MyClass { }
 		// Then: partial
         var hasPartialModifier = false;
@@ -797,7 +793,6 @@ public class ParseDefaultKeywords
         if (model.StatementBuilder.TryPeek(out syntax) && syntax is ISyntaxToken firstSyntaxToken)
         {
             var firstOutput = UtilityApi.GetAccessModifierKindFromToken(firstSyntaxToken);
-            Console.WriteLine($"firstOutput: {firstOutput}");
 
             if (firstOutput is not null)
             {

@@ -29,6 +29,20 @@ public class DeferredChildScope
 	public int TokenIndexToRestore { get; set; }
 	// () => model.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null { get; }
 	
+	/// <summary>
+	/// The parameter 'tokenIndexToRestore' to this method is confusing.
+	/// It likely is the case that you'd use 'model.TokenWalker.Index - 1'.
+	/// Note the '- 1'.
+	///
+	/// Because, after the TokenWalker changes...
+	/// ...I thought I understood why but I confused myself again
+	/// while trying to write this comment.
+	///
+	/// Maybe I never understood in the first place.
+	/// I think it has to do with returning to the main while loop,
+	/// and whether the automated 'model.TokenWalker.Consume()'
+	/// messed with your perception of what index you were at.
+	/// </summary>
 	public void Run(int tokenIndexToRestore, IParserModel model)
 	{
 		TokenIndexToRestore = tokenIndexToRestore;
