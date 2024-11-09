@@ -23,14 +23,10 @@ public static class ParseVariables
         VariableKind variableKind,
         IParserModel model)
     {
-    	Console.WriteLine("HandleVariableDeclarationExpression");
-    
-		IVariableDeclarationNode variableDeclarationNode;
+    	IVariableDeclarationNode variableDeclarationNode;
 
 		if (variableKind == VariableKind.Local || variableKind == VariableKind.Closure)
 		{
-			Console.WriteLine("if (variableKind == VariableKind.Local || variableKind == VariableKind.Closure)");
-			
 			variableDeclarationNode = new VariableDeclarationNode(
 	            consumedTypeClauseNode,
 	            consumedIdentifierToken,
@@ -74,9 +70,7 @@ public static class ParseVariables
         VariableKind variableKind,
         IParserModel model)
     {
-    	Console.WriteLine("HandleVariableDeclarationStatement");
-    
-		var variableDeclarationNode = HandleVariableDeclarationExpression(
+    	var variableDeclarationNode = HandleVariableDeclarationExpression(
 			consumedTypeClauseNode,
 	        consumedIdentifierToken,
 	        variableKind,
