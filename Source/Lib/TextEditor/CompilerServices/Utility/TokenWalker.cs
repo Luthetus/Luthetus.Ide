@@ -62,13 +62,14 @@ public class TokenWalker
     {
         if (_index >= _tokenList.Length)
             return EOF; // Return the end of file token (the last token)
-
+            
 		if (_deferredParsingTuple is not null)
 		{
 			if (_index == _deferredParsingTuple.Value.closeTokenIndex)
 			{
 				var closeChildScopeToken = _tokenList[_index];
 				_index = _deferredParsingTuple.Value.tokenIndexToRestore;
+				ConsumeCounter++;
 				_deferredParsingTuple = null;
 				return closeChildScopeToken;
 			}
@@ -156,6 +157,7 @@ public class TokenWalker
 	{
 		_index = openTokenIndex;
 		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore);
+		ConsumeCounter++;
 	}
 	
 	public void ConsumeCounterReset()
