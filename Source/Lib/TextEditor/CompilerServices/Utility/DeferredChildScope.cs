@@ -9,25 +9,18 @@ public class DeferredChildScope
 	public DeferredChildScope(
 		int openTokenIndex,
 		int closeTokenIndex,
-		ISyntax syntax,
-		ICodeBlockOwner pendingChild,
-		int indexToUpdateAfterDequeue)
-		//() => model.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null)
+		ICodeBlockOwner pendingCodeBlockOwner)
 	{
 		OpenTokenIndex = openTokenIndex;
 		CloseTokenIndex = closeTokenIndex;
-		Syntax = syntax;
-		PendingChild = pendingChild;
-		IndexToUpdateAfterDequeue = indexToUpdateAfterDequeue;
+		PendingCodeBlockOwner = pendingCodeBlockOwner;
 	}
 	
 	public int OpenTokenIndex { get; }
 	public int CloseTokenIndex { get; }
-	public ISyntax Syntax { get; }
-	public ICodeBlockOwner PendingChild { get; }
-	public int IndexToUpdateAfterDequeue { get; }
-	public int TokenIndexToRestore { get; set; }
-	// () => model.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null { get; }
+	public ICodeBlockOwner PendingCodeBlockOwner { get; }
+	
+	public int TokenIndexToRestore { get; private set; }
 	
 	/// <summary>
 	/// The parameter 'tokenIndexToRestore' to this method is confusing.
@@ -46,7 +39,7 @@ public class DeferredChildScope
 	public void Run(int tokenIndexToRestore, IParserModel model)
 	{
 		TokenIndexToRestore = tokenIndexToRestore;
-		model.CurrentCodeBlockBuilder.DequeueChildScopeCounter++;
+		model.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = true;
 		
 		model.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null;
 		
@@ -55,8 +48,7 @@ public class DeferredChildScope
 			CloseTokenIndex,
 			TokenIndexToRestore);
 		
-		model.SyntaxStack.Push(Syntax);
-		model.CurrentCodeBlockBuilder.PendingChild = PendingChild;
-		model.CurrentCodeBlockBuilder.DequeuedIndexForChildList = IndexToUpdateAfterDequeue;
+		model.SyntaxStack.Push(PendingCodeBlockOwner);
+		model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = PendingCodeBlockOwner;
 	}
 }

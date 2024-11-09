@@ -686,7 +686,7 @@ public partial class CSharpBinder : IBinder
     	model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey] = scope;
     	
     	// Update the CodeBlockBuilder instance
-		var codeBlockOwner = model.CurrentCodeBlockBuilder.PendingChild;
+		var codeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 	
 		if (codeBlockOwner is null)
 		{
@@ -698,7 +698,7 @@ public partial class CSharpBinder : IBinder
         
         if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 		{
-			model.CurrentCodeBlockBuilder.PendingChild = null;
+			model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
             model.CurrentCodeBlockBuilder.Parent.ChildList.Add(codeBlockOwner);
             model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, model);
 		}
@@ -715,7 +715,7 @@ public partial class CSharpBinder : IBinder
 			model.CurrentCodeBlockBuilder.ChildList.Add(codeBlockOwner);
 		}
 		
-		model.CurrentCodeBlockBuilder.PendingChild = null;
+		model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
 			
 		if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 			model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, model);

@@ -35,7 +35,7 @@ public class ParseFunctions
 
         model.Binder.BindFunctionDefinitionNode(functionDefinitionNode, model);
         model.SyntaxStack.Push(functionDefinitionNode);
-        model.CurrentCodeBlockBuilder.PendingChild = functionDefinitionNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = functionDefinitionNode;
 
         if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
             typeDefinitionNode.IsInterface)
@@ -84,7 +84,7 @@ public class ParseFunctions
 
         model.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, model);
         model.SyntaxStack.Push(constructorDefinitionNode);
-        model.CurrentCodeBlockBuilder.PendingChild = constructorDefinitionNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = constructorDefinitionNode;
 
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {

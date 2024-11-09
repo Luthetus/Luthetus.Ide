@@ -85,7 +85,7 @@ public class ParseDefaultKeywords
         
         	tryStatementNode.SetTryStatementCatchNode(catchNode);
         	model.SyntaxStack.Push(catchNode);
-        	model.CurrentCodeBlockBuilder.PendingChild = catchNode;
+        	model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = catchNode;
     	}
     }
 
@@ -145,7 +145,7 @@ public class ParseDefaultKeywords
         // Have to push twice so it is on the stack when the 'while' keyword is parsed.
 		model.SyntaxStack.Push(doWhileStatementNode);
 		model.SyntaxStack.Push(doWhileStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = doWhileStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = doWhileStatementNode;
     }
 
     public static void HandleDoubleTokenKeyword(CSharpParserModel model)
@@ -229,7 +229,7 @@ public class ParseDefaultKeywords
 	    
 	    	tryStatementNode.SetTryStatementFinallyNode(finallyNode);
 	    	model.SyntaxStack.Push(finallyNode);
-        	model.CurrentCodeBlockBuilder.PendingChild = finallyNode;
+        	model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = finallyNode;
     	}
     }
 
@@ -346,7 +346,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(forStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = forStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = forStatementNode;
     }
 
     public static void HandleForeachTokenKeyword(CSharpParserModel model)
@@ -380,7 +380,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(foreachStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = foreachStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = foreachStatementNode;
     }
 
     public static void HandleGotoTokenKeyword(CSharpParserModel model)
@@ -431,7 +431,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(lockStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = lockStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lockStatementNode;
     }
 
     public static void HandleLongTokenKeyword(CSharpParserModel model)
@@ -536,7 +536,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(switchStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = switchStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = switchStatementNode;
     }
 
     public static void HandleThisTokenKeyword(CSharpParserModel model)
@@ -578,7 +578,7 @@ public class ParseDefaultKeywords
 		model.SyntaxStack.Push(tryStatementNode);
 		
 		model.SyntaxStack.Push(tryStatementTryNode);
-        model.CurrentCodeBlockBuilder.PendingChild = tryStatementTryNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = tryStatementTryNode;
     }
 
     public static void HandleTypeofTokenKeyword(CSharpParserModel model)
@@ -655,7 +655,7 @@ public class ParseDefaultKeywords
 		        codeBlockNode: null);
 		        
 	        model.SyntaxStack.Push(whileStatementNode);
-        	model.CurrentCodeBlockBuilder.PendingChild = whileStatementNode;
+        	model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = whileStatementNode;
 		}
     }
 
@@ -745,7 +745,7 @@ public class ParseDefaultKeywords
 
         var boundIfStatementNode = model.Binder.BindIfStatementNode(ifTokenKeyword, expression);
         model.SyntaxStack.Push(boundIfStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = boundIfStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = boundIfStatementNode;
     }
 
     public static void HandleUsingTokenKeyword(CSharpParserModel model)
@@ -877,7 +877,7 @@ public class ParseDefaultKeywords
         model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
         model.Binder.BindTypeIdentifier(identifierToken, model);
         model.SyntaxStack.Push(typeDefinitionNode);
-        model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
     }
 
     public static void HandleClassTokenKeyword(CSharpParserModel model)

@@ -48,10 +48,10 @@ public class CodeBlockBuilder
 	/// But, if there is any syntax between the syntax that identifies
 	/// a code block owner, and the actual code block itself, things get more complicated.
     /// </summary>
-    public ICodeBlockOwner? PendingChild { get; set; }
+    public ICodeBlockOwner? InnerPendingCodeBlockOwner { get; set; }
     
     public Queue<DeferredChildScope> ParseChildScopeQueue { get; set; } = new();
-	public int DequeueChildScopeCounter { get; set; }
+	public bool PermitInnerPendingCodeBlockOwnerToBeParsed { get; set; }
 	public int? DequeuedIndexForChildList { get; set; }
 
     public CodeBlockNode Build()

@@ -48,7 +48,7 @@ public static class ParseTokens
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 
             model.SyntaxStack.Push(typeDefinitionNode);
-            model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
+            model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
         }
         else
         {
@@ -63,19 +63,18 @@ public static class ParseTokens
     public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpParserModel model)
     {    
 		var currentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
-        ICodeBlockOwner? nextCodeBlockOwner = null;
         TypeClauseNode? scopeReturnTypeClauseNode = null;
 
-		if (currentCodeBlockBuilder.PendingChild is null)
+		if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(
-				currentCodeBlockBuilder.CodeBlockOwner);
+				model.CurrentCodeBlockBuilder.CodeBlockOwner);
 		
 			model.SyntaxStack.Push(arbitraryCodeBlockNode);
-        	model.CurrentCodeBlockBuilder.PendingChild = arbitraryCodeBlockNode;
+        	model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = arbitraryCodeBlockNode;
 		}
 		
-		model.CurrentCodeBlockBuilder.PendingChild.SetOpenBraceToken(openBraceToken);
+		model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken);
 
 		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind
 			?? ScopeDirectionKind.Both;
@@ -84,27 +83,23 @@ public static class ParseTokens
 
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
-			// Retrospective: ??? How would two consecutive defers get enqueued if doing '== 0'.
-			//
-			// Response: This seems to be a flag that says a child scope is allowed to be parsed (rather than infinitely enqueueing).
-			//           If so, rename the variable and make it a bool because it being a 'counter' is extremely confusing.
-			if (model.CurrentCodeBlockBuilder.DequeueChildScopeCounter == 0)
+			if (!model.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed)
 			{
 				model.TokenWalker.DeferParsingOfChildScope(openBraceToken, model);
 				return;
 			}
 
-			model.CurrentCodeBlockBuilder.DequeueChildScopeCounter--;
+			model.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = false;
 			wasDeferred = true;
 		}
 
 		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.DequeuedIndexForChildList
 			?? model.CurrentCodeBlockBuilder.ChildList.Count;
 		
-		if (currentCodeBlockBuilder.PendingChild is null)
+		if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
 			return;
 		
-		nextCodeBlockOwner = currentCodeBlockBuilder.PendingChild;
+		var nextCodeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 		
 		var returnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
 		if (returnTypeClauseNode is not null)
@@ -127,9 +122,9 @@ public static class ParseTokens
 			return;
 		}
 
-		if (model.CurrentCodeBlockBuilder.PendingChild is not null)
+		if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null)
 		{
-			model.CurrentCodeBlockBuilder.PendingChild.SetCloseBraceToken(closeBraceToken);
+			model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetCloseBraceToken(closeBraceToken);
 		}
 		
         model.Binder.CloseScope(closeBraceToken.TextSpan, model);
@@ -394,9 +389,9 @@ public static class ParseTokens
 
             model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
         }
-        else if (model.CurrentCodeBlockBuilder.PendingChild is not null)
+        else if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null)
         {
-        	var pendingChild = model.CurrentCodeBlockBuilder.PendingChild;
+        	var pendingChild = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
         
         	model.Binder.OpenScope(CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, model);
 			model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, pendingChild);
@@ -407,7 +402,7 @@ public static class ParseTokens
 	        if (model.CurrentCodeBlockBuilder.Parent is not null)
 	            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
 	            
-	        model.CurrentCodeBlockBuilder.PendingChild = null;
+	        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
         }
     }
 
