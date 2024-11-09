@@ -46,9 +46,19 @@ public class StatementTests
     }
     
     [Fact]
-    public void FunctionDefinitionNode_Test()
+    public void FunctionDefinitionNode_Keyword_Test()
     {
     	var test = new Test(@"public void Aaa() { }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void FunctionDefinitionNode_Identifier_Test()
+    {
+    	var test = new Test(@"public Person Aaa() { }");
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
@@ -194,7 +204,7 @@ finally
     }
     
     [Fact]
-    public void VariableDeclarationNode_Var_Test()
+    public void VariableDeclarationNodeAndAssignment_Var_Test()
     {
     	var test = new Test(@"var aaa = 2;");
 
@@ -207,7 +217,7 @@ finally
     }
     
     [Fact]
-    public void VariableDeclarationNode_IdentifierToken_Test()
+    public void VariableDeclarationNodeAndAssignment_IdentifierToken_Test()
     {
     	var test = new Test(@"Person aaa = 2;");
 
@@ -220,7 +230,7 @@ finally
     }
     
     [Fact]
-    public void VariableDeclarationNode_KeywordToken_Test()
+    public void VariableDeclarationNodeAndAssignment_KeywordToken_Test()
     {
     	var test = new Test(@"int aaa = 2;");
 
@@ -233,7 +243,7 @@ finally
     }
     
     [Fact]
-    public void VariableDeclarationNode_Property_Auto_Test()
+    public void VariableDeclarationNodeAndAssignment_Property_Auto_Test()
     {
     	var test = new Test(@"int Aaa { get; set; } = 2;");
 
@@ -246,7 +256,7 @@ finally
     }
     
     [Fact]
-    public void VariableDeclarationNode_Property_ExpressionBound_Test()
+    public void VariableDeclarationNodeAndAssignment_Property_ExpressionBound_Test()
     {
     	var test = new Test(@"int Aaa => 2;");
 
@@ -254,6 +264,42 @@ finally
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclaration_Keyword_Test()
+    {
+    	var test = new Test(@"int aaa;");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclaration_Identifier_Test()
+    {
+    	var test = new Test(@"Person aaa;");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclaration_Var_Test()
+    {
+    	var test = new Test(@"var aaa;");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		
 		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
     }

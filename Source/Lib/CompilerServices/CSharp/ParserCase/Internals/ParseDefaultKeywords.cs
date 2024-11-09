@@ -648,7 +648,9 @@ public class ParseDefaultKeywords
 
     public static void HandleTypeIdentifierKeyword(CSharpParserModel model)
     {
-    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
+    	ParseOthers.StartStatement_Expression(model);
+    	//ParseTokens.ParseIdentifierTokenWithPeek(model);
+    	//model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
     public static void HandleNewTokenKeyword(CSharpParserModel model)

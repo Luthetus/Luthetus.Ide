@@ -1952,33 +1952,28 @@ Func(decimalPercentProgress);
     }
     
     [Fact]
-    public void FunctionDefinition()
+    public void TypeClauseNode_Identifier()
     {
-    	var test = new Test(
-@"
-public void Aaa()
-{
-}
-
-");
+    	var test = new Test(@"Person");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		
-		//var functionInvocationNode = (FunctionInvocationNode)topCodeBlock.GetChildList()[0];
-		// WriteChildrenIndented(functionInvocationNode, nameof(functionInvocationNode));
-		
-		//var identifierToken = (IdentifierToken)functionInvocationNode.GetChildList()[0];
-		
-		/*var functionParametersListingNode = (FunctionParametersListingNode)functionInvocationNode.GetChildList()[1];
-		{
-			// Assertions relating to functionParametersListingNode's properties are in this code block.
-			Assert.True(functionParametersListingNode.OpenParenthesisToken.ConstructorWasInvoked);
-	        Assert.Equal(1, functionParametersListingNode.FunctionParameterEntryNodeList.Count);
-	        Assert.True(functionParametersListingNode.CloseParenthesisToken.ConstructorWasInvoked);
-		}*/
-		
-		// var typeClauseNode = (TypeClauseNode)functionInvocationNode.GetChildList()[2];
-		
+		Console.WriteLine($"topCodeBlock: {topCodeBlock.GetChildList().Length}");
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void TypeClauseNode_Keyword()
+    {
+    	var test = new Test(@"int");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void TypeClauseNode_Var()
+    {
+    	var test = new Test(@"var");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		throw new NotImplementedException();
     }
     

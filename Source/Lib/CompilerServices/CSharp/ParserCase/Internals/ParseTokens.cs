@@ -17,6 +17,12 @@ public static class ParseTokens
         var consumedToken = model.TokenWalker.Consume();
     }
 
+    public static void ParseIdentifierTokenWithPeek(CSharpParserModel model)
+    {
+    	ParseOthers.Force_ParseExpression(SyntaxKind.TypeClauseNode, model);
+    	// ParseOthers.StartStatement_Expression(model);
+    }
+    
     public static void ParseIdentifierToken(CSharpParserModel model)
     {
     	IdentifierToken identifierToken;

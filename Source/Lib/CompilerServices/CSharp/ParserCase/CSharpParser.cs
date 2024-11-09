@@ -102,9 +102,51 @@ public class CSharpParser : IParser
                     ParseTokens.ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)token, model);
                     break;
                 case SyntaxKind.IdentifierToken:
+                
+                	// I think the key to parsing this properly is having the input "Person" parse properly.
+                	//
+                	// An expression can contain a 'TypeClauseNode', so it ought to be an IExpressionNode.
+                	// An expression can contain a 'TypeClauseNode IdentifierOrContextualToken', so it ought to be an IExpressionNode.
+                	//
+                	// If I open Visual Studio and I type "Person" into a C# file that is completely empty other than that text.
+                	// will it be treated as a type or a variable or something else?
+                	//
+                	// Because it seems that there is a pattern of either 'TypeClause' or 'TypeClauseNode IdentifierOrContextualToken'.
+                	//
+                	// And, the 'TypeClauseNode' could be made up of one or more ISyntaxToken.
+                	// 
+                	// It almost feels like you'd want to parse for 'TypeClause'
+                	// and 'TypeClauseNode IdentifierOrContextualToken'.
+                	// But in the sense of they both get the same starting point in the TokenWalker.
+                	// All the state is separate.
+                	//
+                	// Probably a 'bool TryParse_TypeClause_IdentifierOrContextualToken(out var aaa)'
+                	// and 'bool TryParse_TypeClause(out var aaa)'.
+                	//
+                	// You'd maybe invoke 'TryParse_TypeClause_IdentifierOrContextualToken' first,
+                	// then reset the TokenWalker state back to what it was and invoke
+                	// TryParse_TypeClause' to see that returns true/successful.
+                	//
+                	// Visual Studio treats the text "Person" when it is the only text in a C# file to be:
+                	// "The type or namespace name 'Person' could not be found (are you missing a using directive or an assembly reference?)
+                	//
+                	// If I open the demo website and put the same text into an empty C# file what is it treated as?
+                	// With the 'v 0.9.7.1 :: Release :: Luthetus.Ide.RazorLib' demo it is a Type for the syntax highlighting
+                	// and has a similar error diagnostic with "type or namespace could not be found" wording.
+                	//
+                	// Visual Studio was different in that it for syntax highlighting "did not give the text a color - it was just colored as default text".
+                	// Whereas the demo website colored the text as a Type.
+                	//
+                	// I put the Visual Studio part about default text color in quotes because I believe that is also the color they use for namespaces (default text and namespaces are the same color).
+                	//
+                	// I changed the color in Visual Studio that is assigned to namespaces to be different from the default text.
+                	// The color of the text did not change, therefore it was being colored as default text it seems.
+                	
+                
                 	if (model.StatementBuilder.ChildList.Count == 0)
                 	{
                 		ParseOthers.StartStatement_Expression(model);
+                		//ParseTokens.ParseIdentifierTokenWithPeek(model);
                 	}
                 	else
                 	{
