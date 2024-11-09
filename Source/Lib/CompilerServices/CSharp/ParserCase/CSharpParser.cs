@@ -380,16 +380,10 @@ public class CSharpParser : IParser
 			model.TokenWalker.ConsumeCounterReset();
         }
 
-        if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null &&
-            model.CurrentCodeBlockBuilder.Parent is not null)
+        if (model.CurrentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
             Binder.CloseScope(model.TokenWalker.Current.TextSpan, model);
-
-            model.FinalizeNamespaceFileScopeCodeBlockNodeAction.Invoke(
-                model.CurrentCodeBlockBuilder.Build());
-
-            model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
         }
 
         DiagnosticsList = DiagnosticsList.AddRange(model.DiagnosticBag.ToImmutableArray());

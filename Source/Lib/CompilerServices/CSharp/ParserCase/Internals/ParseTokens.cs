@@ -270,7 +270,7 @@ public static class ParseTokens
     {
     	if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
-            var closureCurrentCompilationUnitBuilder = model.CurrentCodeBlockBuilder;
+        	var closureCurrentCompilationUnitBuilder = model.CurrentCodeBlockBuilder;
             ICodeBlockOwner? nextCodeBlockOwner = null;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
 
