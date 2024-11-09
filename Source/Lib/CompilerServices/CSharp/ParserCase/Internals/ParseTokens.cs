@@ -99,7 +99,7 @@ public static class ParseTokens
     {
 		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 		{
-			deferredChildScope.PrepareMainParserLoop(model.TokenWalker.Index, model);
+			deferredChildScope.PrepareMainParserLoop(model.TokenWalker.Index - 1, model);
 			return;
 		}
 
