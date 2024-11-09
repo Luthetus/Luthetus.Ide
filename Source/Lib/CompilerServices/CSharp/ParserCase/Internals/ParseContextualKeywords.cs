@@ -10,6 +10,9 @@ public class ParseContextualKeywords
 {
     public static void HandleVarTokenContextualKeyword(CSharpParserModel model)
     {
+    	ParseOthers.StartStatement_Expression(model);
+    	
+    	/*
         var peekNumber = -1;
         
         while (model.TokenWalker.Peek(peekNumber).SyntaxKind != SyntaxKind.BadToken)
@@ -72,6 +75,7 @@ public class ParseContextualKeywords
         
         // Take 'var' as an 
         ParseTokens.ParseIdentifierToken(model);
+        */
     }
 
     public static void HandlePartialTokenContextualKeyword(CSharpParserModel model)

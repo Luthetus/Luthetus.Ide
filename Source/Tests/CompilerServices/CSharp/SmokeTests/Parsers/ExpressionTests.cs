@@ -1966,6 +1966,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"int");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		throw new NotImplementedException();
     }
     
@@ -1974,6 +1975,7 @@ Func(decimalPercentProgress);
     {
     	var test = new Test(@"var");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		throw new NotImplementedException();
     }
     
