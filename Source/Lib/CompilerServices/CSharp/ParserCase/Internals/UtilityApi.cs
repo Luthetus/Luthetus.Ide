@@ -180,14 +180,19 @@ public static class UtilityApi
     
     public static bool IsConvertibleToTypeClauseNode(SyntaxKind syntaxKind)
     {
-    	return syntaxKind == SyntaxKind.IdentifierToken ||
+    	return syntaxKind == SyntaxKind.TypeClauseNode ||
+    		   syntaxKind == SyntaxKind.IdentifierToken ||
     		   IsTypeIdentifierKeywordSyntaxKind(syntaxKind) ||
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
     public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax)
     {
-    	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    	if (syntax.SyntaxKind == SyntaxKind.TypeClauseNode)
+    	{
+    		return (TypeClauseNode)syntax;
+    	}
+    	else if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
     		return new TypeClauseNode(
 	    		(IdentifierToken)syntax,

@@ -187,11 +187,75 @@ finally
     public void WhileStatementNode_Test()
     {
     	var test = new Test(@"while (false) { }");
-
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		var whileStatementNode = (WhileStatementNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclarationNode_Var_Test()
+    {
+    	var test = new Test(@"var aaa = 2;");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclarationNode_IdentifierToken_Test()
+    {
+    	var test = new Test(@"Person aaa = 2;");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclarationNode_KeywordToken_Test()
+    {
+    	var test = new Test(@"int aaa = 2;");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclarationNode_Property_Auto_Test()
+    {
+    	var test = new Test(@"int Aaa { get; set; } = 2;");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclarationNode_Property_ExpressionBound_Test()
+    {
+    	var test = new Test(@"int Aaa => 2;");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")

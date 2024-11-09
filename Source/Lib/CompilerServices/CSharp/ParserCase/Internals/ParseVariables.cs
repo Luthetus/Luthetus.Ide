@@ -23,7 +23,46 @@ public static class ParseVariables
         VariableKind variableKind,
         IParserModel model)
     {
-    	return null;
+    	Console.WriteLine("HandleVariableDeclarationExpression");
+    
+		IVariableDeclarationNode variableDeclarationNode;
+
+		if (variableKind == VariableKind.Local || variableKind == VariableKind.Closure)
+		{
+			Console.WriteLine("if (variableKind == VariableKind.Local || variableKind == VariableKind.Closure)");
+			
+			variableDeclarationNode = new VariableDeclarationNode(
+	            consumedTypeClauseNode,
+	            consumedIdentifierToken,
+	            variableKind,
+	            false);
+		}
+		else if (variableKind == VariableKind.Field)
+		{
+			variableDeclarationNode = new FieldDefinitionNode(
+	            consumedTypeClauseNode,
+	            consumedIdentifierToken,
+	            variableKind,
+	            false);
+		}
+		else if (variableKind == VariableKind.Property)
+		{
+			variableDeclarationNode = new PropertyDefinitionNode(
+	            consumedTypeClauseNode,
+	            consumedIdentifierToken,
+	            variableKind,
+	            false,
+	            model.CurrentCodeBlockBuilder.CodeBlockOwner);
+		}
+		else
+		{
+			model.DiagnosticBag.ReportTodoException(consumedIdentifierToken.TextSpan, $"The {nameof(VariableKind)}: {variableKind} was not recognized.");
+			return null;
+		}
+
+        model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+        return variableDeclarationNode;
     }
     
     /// <summary>
@@ -35,6 +74,60 @@ public static class ParseVariables
         VariableKind variableKind,
         IParserModel model)
     {
+    	Console.WriteLine("HandleVariableDeclarationStatement");
+    
+		var variableDeclarationNode = HandleVariableDeclarationExpression(
+			consumedTypeClauseNode,
+	        consumedIdentifierToken,
+	        variableKind,
+	        model);
+	        
+	    if (variableDeclarationNode is null)
+	    	return;
+	    	
+	    // if (variableKind == VariableKind.Local || variableKind == VariableKind.Closure)
+
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+        {
+            if (model.TokenWalker.Peek(1).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            {
+                HandlePropertyExpression(
+                    variableDeclarationNode,
+                    (EqualsToken)model.TokenWalker.Consume(),
+                    (CloseAngleBracketToken)model.TokenWalker.Consume(),
+                    (CSharpParserModel)model);
+            }
+            else
+            {
+                // Variable initialization occurs here.
+                HandleVariableAssignment(
+                    consumedIdentifierToken,
+                    (EqualsToken)model.TokenWalker.Consume(),
+                    (CSharpParserModel)model);
+            }
+        }
+        else
+        {
+            if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.SyntaxKind ==
+                SyntaxKind.VarTokenContextualKeyword)
+            {
+                model.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
+                    consumedIdentifierToken.TextSpan);
+            }
+        }
+
+        if (variableKind == VariableKind.Property &&
+            model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+        {
+            HandlePropertyDeclaration(
+                variableDeclarationNode,
+                (OpenBraceToken)model.TokenWalker.Consume(),
+                (CSharpParserModel)model);
+        }
+        else
+        {
+            _ = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+        }
     }
 
     public static void HandlePropertyDeclaration(

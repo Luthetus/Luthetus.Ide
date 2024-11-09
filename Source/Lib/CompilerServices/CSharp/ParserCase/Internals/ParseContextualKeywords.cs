@@ -62,6 +62,7 @@ public class ParseContextualKeywords
 	                }
 	
 	                model.SyntaxStack.Push(varTypeClauseNode);
+	                model.StatementBuilder.ChildList.Add(varTypeClauseNode);
 	                return;
 	            }
 	            

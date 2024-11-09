@@ -31,7 +31,48 @@ public static class ParseTokens
     		identifierToken = (IdentifierToken)model.TokenWalker.Consume();
     	}
     	
-    	model.StatementBuilder.ChildList.Add(identifierToken);
+    	if (model.StatementBuilder.TryPeek(^1, out var oneTokenBackwards) &&
+			UtilityApi.IsConvertibleToTypeClauseNode(oneTokenBackwards.SyntaxKind))
+    	{
+    		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+    			model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+	    	{
+	    		// One only ends up at this code via the main loop,
+	    		// an expression would never see this code, so we know it is a declaration.
+	    		var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+					UtilityApi.ConvertToTypeClauseNode(oneTokenBackwards),
+			        identifierToken,
+			        VariableKind.Local,
+			        model);
+	    		
+	    		//ParseVariables.HandleVariableDeclarationStatement(
+	    		//	UtilityApi.ConvertToTypeClauseNode(oneTokenBackwards),
+	    		//	identifierToken,
+	    		//	VariableKind.Local,
+	    		//	model);
+	    		
+	    		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+		    	{
+		    		var equalsToken = (EqualsToken)model.TokenWalker.Consume();
+		    		
+		    		model.StatementBuilder.ChildList.Clear();
+		    		model.StatementBuilder.ChildList.Add(identifierToken);
+		    		
+		    		var expressionNode = ParseOthers.ParseExpression(model);
+		    		
+		    		var variableAssignmentExpressionNode = new VariableAssignmentExpressionNode(
+		    			identifierToken,
+				        equalsToken,
+				        expressionNode);
+		    		
+		    		model.CurrentCodeBlockBuilder.ChildList.Add(variableAssignmentExpressionNode);
+		    	}
+	    	}
+    	}
+    	else
+    	{
+    		model.StatementBuilder.ChildList.Add(identifierToken);
+    	}
     }
 
     public static void ParseColonToken(CSharpParserModel model)
