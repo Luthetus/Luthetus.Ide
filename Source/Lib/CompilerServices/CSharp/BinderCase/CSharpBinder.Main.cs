@@ -686,37 +686,11 @@ public partial class CSharpBinder : IBinder
     	model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey] = scope;
     	
     	// Update the CodeBlockBuilder instance
-		var codeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
-	
+		var codeBlockOwner = model.CurrentCodeBlockBuilder.CodeBlockOwner;
 		if (codeBlockOwner is null)
-		{
-			return;
-			// throw new Exception("if (codeBlockOwner is null)");
-		}
-		
+			throw new Exception("if (codeBlockOwner is null)");
         codeBlockOwner.SetCodeBlockNode(model.CurrentCodeBlockBuilder.Build());
-        
-        if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-		{
-			model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
-            model.CurrentCodeBlockBuilder.Parent.ChildList.Add(codeBlockOwner);
-            model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, model);
-		}
 		
-		/*if (wasDeferred)
-			model.CurrentCodeBlockBuilder.ChildList[indexToUpdateAfterDequeue] = selfCodeBlockOwner;
-		else
-			model.CurrentCodeBlockBuilder.ChildList.Add(selfCodeBlockOwner);*/
-		
-		if (codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
-			codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
-			codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
-		{
-			model.CurrentCodeBlockBuilder.ChildList.Add(codeBlockOwner);
-		}
-		
-		model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
-			
 		if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 			model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, model);
 		else if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -727,6 +701,14 @@ public partial class CSharpBinder : IBinder
 		{
 			model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
 			model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
+			model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
+			
+			if (codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
+				codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
+				codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+			{
+				model.CurrentCodeBlockBuilder.ChildList.Add(codeBlockOwner);
+			}
 		}
     }
 

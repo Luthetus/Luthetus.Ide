@@ -103,10 +103,8 @@ public static class ParseTokens
 			return;
 		}
 
-		if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null)
-		{
-			model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetCloseBraceToken(closeBraceToken);
-		}
+		if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
+			model.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken);
 		
         model.Binder.CloseScope(closeBraceToken.TextSpan, model);
     }
