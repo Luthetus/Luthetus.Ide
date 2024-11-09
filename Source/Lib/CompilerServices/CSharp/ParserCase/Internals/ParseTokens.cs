@@ -62,25 +62,16 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpParserModel model)
     {    
-		var currentCodeBlockBuilder = model.CurrentCodeBlockBuilder;
-        TypeClauseNode? scopeReturnTypeClauseNode = null;
-
 		if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
 		{
-			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(
-				model.CurrentCodeBlockBuilder.CodeBlockOwner);
-		
+			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(model.CurrentCodeBlockBuilder.CodeBlockOwner);
 			model.SyntaxStack.Push(arbitraryCodeBlockNode);
         	model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = arbitraryCodeBlockNode;
 		}
 		
 		model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken);
 
-		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind
-			?? ScopeDirectionKind.Both;
-			
-		bool wasDeferred = false;
-
+		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
 			if (!model.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed)
@@ -90,23 +81,13 @@ public static class ParseTokens
 			}
 
 			model.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = false;
-			wasDeferred = true;
 		}
 
-		var indexToUpdateAfterDequeue = model.CurrentCodeBlockBuilder.DequeuedIndexForChildList
-			?? model.CurrentCodeBlockBuilder.ChildList.Count;
-		
-		if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
-			return;
-		
 		var nextCodeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
-		
-		var returnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
-		if (returnTypeClauseNode is not null)
-			scopeReturnTypeClauseNode = returnTypeClauseNode;
+		var nextReturnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
 
-        model.Binder.OpenScope(scopeReturnTypeClauseNode, openBraceToken.TextSpan, model);
-		model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
+        model.Binder.OpenScope(nextReturnTypeClauseNode, openBraceToken.TextSpan, model);
+		model.CurrentCodeBlockBuilder = new(parent: model.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
 		nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(model);
     }
 
@@ -118,7 +99,7 @@ public static class ParseTokens
     {
 		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 		{
-			deferredChildScope.Run(model.TokenWalker.Index - 1, model);
+			deferredChildScope.PrepareMainParserLoop(model.TokenWalker.Index - 1, model);
 			return;
 		}
 

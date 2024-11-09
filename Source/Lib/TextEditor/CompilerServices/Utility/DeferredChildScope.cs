@@ -36,7 +36,7 @@ public class DeferredChildScope
 	/// and whether the automated 'model.TokenWalker.Consume()'
 	/// messed with your perception of what index you were at.
 	/// </summary>
-	public void Run(int tokenIndexToRestore, IParserModel model)
+	public void PrepareMainParserLoop(int tokenIndexToRestore, IParserModel model)
 	{
 		TokenIndexToRestore = tokenIndexToRestore;
 		model.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = true;
