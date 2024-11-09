@@ -215,11 +215,13 @@ public partial class CSharpBinder
 		
 			var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
 			
-			_ = ParseVariables.HandleVariableDeclarationExpression(
+			var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
 		        (TypeClauseNode)decidedExpression,
 		        identifierToken,
 		        VariableKind.Local,
 		        model);
+		        
+		    return variableDeclarationNode;
 		}
 	
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousIdentifierExpressionNode, token);

@@ -44,6 +44,7 @@ public sealed class FieldDefinitionNode : IVariableDeclarationNode
     public bool SetterIsAutoImplemented { get; set; }
 
     public ISyntaxNode? Parent { get; }
+    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FieldDefinitionNode;
