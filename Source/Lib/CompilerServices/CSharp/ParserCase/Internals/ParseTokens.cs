@@ -44,14 +44,20 @@ public static class ParseTokens
     	// 		return new VariableReferenceNode(successName);
     	// 
     	// 2a. Statement loop iteration sees SyntaxKind.OpenAngleBracketToken:
+    	// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
+    	// 		return /* TODO: This case */;
     	// 	var variableDeclarationNode = (VariableDeclarationNode)StatementBuilder.Pop();
     	// 	return new FunctionDefinitionNode(variableDeclarationNode.TypeClauseNode, variableDeclarationNode.Name);
     	//
-    	// 2b. Statement loop iteration sees SyntaxKind.OpenAngleBracketToken:
+    	// 2b. Statement loop iteration sees SyntaxKind.OpenBraceToken:
+    	// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
+    	// 		return /* TODO: This case */;
     	// 	var variableDeclarationNode = (VariableDeclarationNode)StatementBuilder.Pop();
     	// 	return new PropertyDefinitionNode(variableDeclarationNode.TypeClauseNode, variableDeclarationNode.Name);
     	// 
     	// 2c. Statement loop iteration sees SyntaxKind.StatementDelimiterToken:
+    	// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
+    	// 		return /* TODO: This case */;
     	// 	var variableDeclarationNode = (VariableDeclarationNode)StatementBuilder.Pop();
     	// 	if (codeBlockOwner.SyntaxKind == TypeDefinitionNode)
     	// 		return new FieldDefinitionNode(variableDeclarationNode.TypeClauseNode, variableDeclarationNode.Name);
@@ -59,12 +65,22 @@ public static class ParseTokens
     	// 		return variableDeclarationNode;
     	//
     	// 2d. Statement loop iteration sees SyntaxKind.EqualsToken:
+    	// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableReferenceNode &&
+    	// 		StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
+    	// 	{
+    	// 		return /* TODO: This case */;
+    	// 	}
     	// 	// Identifier is only 1 token so this will work.
     	// 	TokenWalker.Backtrack();
     	// 	// Whether the input was 'var x = 2' or 'x = 2' does not matter this works both cases since it only picks up at the identifier.
     	// 	ParseExpression(model);
     	//
     	// 2e. Statement loop iteration sees 'put any binary operator here':
+		// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableReferenceNode &&
+    	// 		StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
+    	// 	{
+    	// 		return /* TODO: This case */;
+    	// 	}    	
     	// 	TokenWalker.Backtrack();
     	// 	ParseExpression(model);
     	
