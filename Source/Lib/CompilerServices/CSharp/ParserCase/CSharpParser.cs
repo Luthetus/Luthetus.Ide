@@ -55,17 +55,16 @@ public class CSharpParser : IParser
             new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
-            currentCodeBlockBuilder,
-            null);
+            currentCodeBlockBuilder);
             
-        #if DEBUG
-        model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
-        {
-        	SyntaxKind.StatementDelimiterToken,
-        	SyntaxKind.OpenBraceToken,
-        	SyntaxKind.CloseBraceToken,
-        };
-        #endif
+#if DEBUG
+model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
+{
+	SyntaxKind.StatementDelimiterToken,
+	SyntaxKind.OpenBraceToken,
+	SyntaxKind.CloseBraceToken,
+};
+#endif
             
         while (true)
         {

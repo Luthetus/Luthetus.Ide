@@ -18,14 +18,13 @@ public interface IParserModel
     /// It is a hacky sort of 'catch all' case
     /// where one can push onto it whatever they want.
     /// 
-    /// <see cref="StatementBuilderStack"/> is being
+    /// <see cref="StatementBuilder"/> is being
     /// added and is expected to fully replace this property.
     /// </summary>
     public Stack<ISyntax> SyntaxStack { get; set; }
     
     /// <summary>
-    /// Unlike <see cref="SyntaxStack"/> there are more
-    /// defined rules for this property.
+    /// Unlike <see cref="SyntaxStack"/> there are more defined rules for this property.
     ///
     /// It will be cleared after every <see cref="StatementDelimiterToken"/>,
     /// <see cref="OpenBraceToken"/>, and <see cref="CloseBraceToken"/>
@@ -35,7 +34,7 @@ public interface IParserModel
     /// then once it can be disambiguated, pop off all the syntax and construct an
     /// <see cref="ISyntaxNode"/>.
     ///
-    /// A syntax for definition is being counted when referring to 'Statement' here.
+    /// A syntax for a definition is being treated as a 'Statement' here.
     /// So, to parse a <see cref="TypeDefinitionNode"/> one would check this for the
     /// access modifier (public, private, etc...).
     /// </summary>
@@ -70,40 +69,18 @@ public interface IParserModel
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     
     /// <summary>
-    /// The source code: "<int>" is sort of nonsensical.
+    /// TypeClauseNode code exists in the expression code.
+	/// As a result, some statements need to read a TypeClauseNode by invoking 'ParseExpression(...)'.
+	///
+	/// In order to "short circut" or "force exit" from the expression code back to the statement code:
+	/// if the root primary expression is not equal to the model.ForceParseExpressionSyntaxKind
+	/// then stop 'ParseExpression(...)' from consuming any further tokens.
     ///
-    /// But, nothing stops the user from typing this as a statement,
-    /// 	it just is that C# won't compile it.
-    ///
-    /// So, if a statement starts with 'OpenAngleBracketToken',
-    /// what is the best parse we can provide for that?
-    ///
-    /// The idea is to tell the expression parsing code to return a certain SyntaxKind.
-    ///
-    /// So, its another 'forceExit' but instead of matching on 'CloseAngleBracketToken'
-    /// you are saying: when the top most 'SyntaxKind' is completed,
-    /// return it to me (stop parsing expressions).
-    ///
-    /// The wording of 'top most' is referring to the recursive, "nonsensical" syntax
-    /// of <<int>>.
-    ///
-    /// Here the outermost GenericParametersListingNode contains
-    /// a GenericParametersListingNode, and neither of them have an identifier
-    /// that comes before the OpenAngleBracketToken.
-    /// The "more sensible" syntax would be to type 'MyClass<int>;' rather than just '<int>;'
-    /// They both will not compile, but one is on an extreme end of odd syntax
-    /// and needs to be specifically targeted.
-    ///
-    /// Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseOthers.Force_ParseExpression(SyntaxKind syntaxKind, CSharpParserModel model) {...}
+    /// Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseOthers.TryParseExpression(SyntaxKind syntaxKind, CSharpParserModel model, out IExpressionNode expressionNode) {...}
     /// </summary>
     public SyntaxKind? ForceParseExpressionSyntaxKind { get; set; }
     
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
-    /// <summary>
-    /// If a file scoped namespace is found, then set this field,
-    /// so that prior to finishing the parser constructs the namespace node.
-    /// </summary>
-    public Action<CodeBlockNode>? FinalizeNamespaceFileScopeCodeBlockNodeAction { get; set; }
 }

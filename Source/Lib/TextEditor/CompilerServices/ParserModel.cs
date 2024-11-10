@@ -17,8 +17,7 @@ public class ParserModel : IParserModel
         Stack<ISyntax> syntaxStack,
         DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
-        CodeBlockBuilder currentCodeBlockBuilder,
-        Action<CodeBlockNode>? finalizeNamespaceFileScopeCodeBlockNodeAction)
+        CodeBlockBuilder currentCodeBlockBuilder)
     {
         Binder = binder;
         BinderSession = binderSession;
@@ -27,7 +26,6 @@ public class ParserModel : IParserModel
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
-        FinalizeNamespaceFileScopeCodeBlockNodeAction = finalizeNamespaceFileScopeCodeBlockNodeAction;
     }
 
     public IBinder Binder { get; }
@@ -41,9 +39,4 @@ public class ParserModel : IParserModel
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
-    /// <summary>
-    /// If a file scoped namespace is found, then set this field,
-    /// so that prior to finishing the parser constructs the namespace node.
-    /// </summary>
-    public Action<CodeBlockNode>? FinalizeNamespaceFileScopeCodeBlockNodeAction { get; set; }
 }

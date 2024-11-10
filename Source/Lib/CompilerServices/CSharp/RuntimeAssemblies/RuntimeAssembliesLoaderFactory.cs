@@ -65,8 +65,7 @@ public static class RuntimeAssembliesLoaderFactory
                 new Stack<ISyntax>(),
                 diagnosticBag,
                 globalCodeBlockBuilder,
-                currentCodeBlockBuilder,
-                null);
+                currentCodeBlockBuilder);
 
             // TODO: Do not use 'System.IO.Directory' because this doesn't work...
             // ... when running the website

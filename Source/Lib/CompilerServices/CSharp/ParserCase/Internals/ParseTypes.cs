@@ -95,7 +95,9 @@ public static class ParseTypes
 
     public static TypeClauseNode MatchTypeClause(CSharpParserModel model)
     {
-        ISyntaxToken syntaxToken;
+    	throw new NotImplementedException("Use ParseOthers.ParseExpression(...)");
+    	
+        /*ISyntaxToken syntaxToken;
 		
 		if (UtilityApi.IsKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) &&
                 (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(model.TokenWalker.Current.SyntaxKind) ||
@@ -163,6 +165,7 @@ public static class ParseTypes
         }
 
         return typeClauseNode;
+        */
     }
 
     public static void HandlePrimaryConstructorDefinition(

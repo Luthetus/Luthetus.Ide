@@ -866,10 +866,8 @@ public class ParseDefaultKeywords
             model.DiagnosticBag.ReportTodoException(namespaceKeywordToken.TextSpan, "Expected a namespace identifier.");
             return;
         }
+        
         var namespaceIdentifier = (IdentifierToken)handleNamespaceIdentifierResult;
-
-        if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null)
-            model.DiagnosticBag.ReportTodoException(namespaceKeywordToken.TextSpan, "Need to add logic to report diagnostic when there is already a file scoped namespace.");
 
         var namespaceStatementNode = new NamespaceStatementNode(
             namespaceKeywordToken,

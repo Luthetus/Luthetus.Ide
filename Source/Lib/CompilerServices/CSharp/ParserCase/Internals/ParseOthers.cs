@@ -56,6 +56,14 @@ public static class ParseOthers
     	model.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
     }
     
+    /// <summary>
+    /// TypeClauseNode code exists in the expression code.
+	/// As a result, some statements need to read a TypeClauseNode by invoking 'ParseExpression(...)'.
+	///
+	/// In order to "short circut" or "force exit" from the expression code back to the statement code,
+	/// if the root primary expression is not equal to the model.ForceParseExpressionSyntaxKind
+	/// then stop.
+    /// </summary>
     public static bool TryParseExpression(SyntaxKind syntaxKind, CSharpParserModel model, out IExpressionNode expressionNode)
     {
     	var originalTokenIndex = model.TokenWalker.Index;
@@ -66,14 +74,20 @@ public static class ParseOthers
     		expressionNode = ParseExpression(model);
     		var success = expressionNode.SyntaxKind == syntaxKind;
     		
+    		Console.WriteLine($"var success = {expressionNode.SyntaxKind} == {syntaxKind};");
+    		
     		if (!success)
     		{
+    			Console.Write($"{originalTokenIndex} -> {model.TokenWalker.Index} -> ");
+    			
     			var distance = model.TokenWalker.Index - originalTokenIndex;
     		
     			for (int i = 0; i < distance; i++)
     			{
     				_ = model.TokenWalker.Backtrack();
     			}
+    			
+    			Console.WriteLine(model.TokenWalker.Index);
     		}
     		
     		return success;
@@ -84,45 +98,6 @@ public static class ParseOthers
     	}
     }
     
-    /// <summary>
-    /// The source code: "<int>" is sort of nonsensical.
-    ///
-    /// But, nothing stops the user from typing this as a statement,
-    /// 	it just is that C# won't compile it.
-    ///
-    /// So, if a statement starts with 'OpenAngleBracketToken',
-    /// what is the best parse we can provide for that?
-    ///
-    /// The idea is to tell the expression parsing code to return a certain SyntaxKind.
-    ///
-    /// So, its another 'forceExit' but instead of matching on 'CloseAngleBracketToken'
-    /// you are saying: when the top most 'SyntaxKind' is completed,
-    /// return it to me (stop parsing expressions).
-    ///
-    /// The wording of 'top most' is referring to the recursive, "nonsensical" syntax
-    /// of <<int>>.
-    ///
-    /// Here the outermost GenericParametersListingNode contains
-    /// a GenericParametersListingNode, and neither of them have an identifier
-    /// that comes before the OpenAngleBracketToken.
-    /// The "more sensible" syntax would be to type 'MyClass<int>;' rather than just '<int>;'
-    /// They both will not compile, but one is on an extreme end of odd syntax
-    /// and needs to be specifically targeted.
-    /// </summary>
-    public static IExpressionNode Force_ParseExpression(SyntaxKind syntaxKind, CSharpParserModel model)
-    {
-    	model.ForceParseExpressionSyntaxKind = syntaxKind;
-    	
-    	try
-    	{
-    		return ParseExpression(model);
-    	}
-    	finally
-    	{
-    		model.ForceParseExpressionSyntaxKind = null;
-    	}
-    }
-
 	/// <summary>
 	/// Invoke this method when 'model.TokenWalker.Current' is the first token of the expression to be parsed.
 	///
@@ -135,13 +110,13 @@ public static class ParseOthers
 #if DEBUG
     	Console.Write("\n====START==============================================================================\n");
     	Console.Write("====START==============================================================================\n\n");
-
 		WriteExpressionList(model.ExpressionList);
 #endif
 
     	var expressionPrimary = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
     	var forceExit = false;
-    	var hasSeenExpressionSyntaxKind = false;
+    	var previousLoopTokenIndex = model.TokenWalker.Index;
+    	var previousRootExpressionPrimary = expressionPrimary;
     	
     	while (!model.TokenWalker.IsEof)
         {
@@ -172,11 +147,9 @@ public static class ParseOthers
 	    				
 	    				if (model.NoLongerRelevantExpressionNode is not null)
 	    				{
-	    					// try finally is not needed to guarantee setting 'model.NoLongerRelevantExpressionNode = null;'
-	    					// because this is an object reference comparison  'Object.ReferenceEquals'.
-	    					// 
-	    					// Versus something more general that would break future parses
-	    					// if not properly cleared, like a SyntaxKind.
+	    					// try finally is not needed to guarantee setting 'model.NoLongerRelevantExpressionNode = null;' because
+	    					// this is an object reference comparison 'Object.ReferenceEquals'.
+	    					// Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
 	    					model.Binder.ClearFromExpressionList(model.NoLongerRelevantExpressionNode, model);
 	    					model.NoLongerRelevantExpressionNode = null;
 	    				}
@@ -192,41 +165,62 @@ public static class ParseOthers
 				break;
 			}
 			
-			#if DEBUG
-			Console.Write($"{expressionPrimary.SyntaxKind} + {tokenCurrent.SyntaxKind} => ");
-			#endif
+#if DEBUG
+Console.Write($"{expressionPrimary.SyntaxKind} + {tokenCurrent.SyntaxKind} => ");
+#endif
 			
     		expressionPrimary = model.Binder.AnyMergeToken(expressionPrimary, tokenCurrent, model);
     		
-    		#if DEBUG
-    		Console.Write($"{expressionPrimary.SyntaxKind}\n\n");
-    		
-    		WriteExpressionList(model.ExpressionList);
-    		#endif
+#if DEBUG
+Console.Write($"{expressionPrimary.SyntaxKind}\n\n");
+WriteExpressionList(model.ExpressionList);
+#endif
     		
     		_ = model.TokenWalker.Consume();
     		
     		if (model.ForceParseExpressionSyntaxKind is not null)
     		{
-    			var allNotEqual = true;
+    			// TypeClauseNode code exists in the expression code.
+    			// As a result, some statements need to read a TypeClauseNode by invoking 'ParseExpression(...)'.
+    			//
+    			// In order to "short circut" or "force exit" from the expression code back to the statement code,
+    			// if the root primary expression is not equal to the model.ForceParseExpressionSyntaxKind
+    			// then stop.
+    			var isExpressionRoot = true;
     			
     			foreach (var tuple in model.ExpressionList)
     			{
     				if (tuple.ExpressionNode is null)
     					continue;
     					
-    				if (tuple.ExpressionNode.SyntaxKind == model.ForceParseExpressionSyntaxKind)
-    					allNotEqual = false;
+    				isExpressionRoot = false;
+    				break;
     			}
     			
-    			if (allNotEqual)
+    			if (isExpressionRoot)
     			{
-    				if (hasSeenExpressionSyntaxKind)
-	    				return expressionPrimary;
-    			}
-    			else if (!hasSeenExpressionSyntaxKind)
-    			{
-    				hasSeenExpressionSyntaxKind = true;
+    				var success = expressionPrimary.SyntaxKind == model.ForceParseExpressionSyntaxKind;
+    				
+    				if (success)
+    				{
+    					previousRootExpressionPrimary = expressionPrimary;
+    					previousLoopTokenIndex = model.TokenWalker.Index;
+    				}
+    				else
+    				{
+    					Console.Write($"{previousLoopTokenIndex} -> {model.TokenWalker.Index} -> ");
+	    			
+		    			var distance = model.TokenWalker.Index - previousLoopTokenIndex;
+		    		
+		    			for (int i = 0; i < distance; i++)
+		    			{
+		    				_ = model.TokenWalker.Backtrack();
+		    			}
+		    			
+		    			Console.WriteLine(model.TokenWalker.Index);
+		    			
+    					return expressionPrimary;
+    				}
     			}
     		}
         }
@@ -242,10 +236,10 @@ public static class ParseOthers
     	model.ExpressionList.Clear();
     	model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
     	
-    	#if DEBUG
-    	Console.Write("====END================================================================================\n");
-    	Console.Write("====END================================================================================\n\n");
-    	#endif
+#if DEBUG
+Console.Write("====END================================================================================\n");
+Console.Write("====END================================================================================\n\n");
+#endif
     	
     	if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
     	{
