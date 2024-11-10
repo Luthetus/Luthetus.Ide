@@ -68,6 +68,8 @@ public partial class CSharpBinder
 				return ExplicitCastMergeToken((ExplicitCastNode)expressionPrimary, token, model);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
 				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, token, model);
+			case SyntaxKind.TypeClauseNode:
+				return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, token, model);
 			case SyntaxKind.GenericParametersListingNode:
 				return GenericParametersListingMergeToken((GenericParametersListingNode)expressionPrimary, token, model);
 			case SyntaxKind.FunctionParametersListingNode:
@@ -100,6 +102,8 @@ public partial class CSharpBinder
 				return ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
 				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, model);
+			case SyntaxKind.TypeClauseNode:
+				return TypeClauseMergeExpression((TypeClauseNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.GenericParametersListingNode:
 				return GenericParametersListingMergeExpression((GenericParametersListingNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.FunctionParametersListingNode:
@@ -1112,6 +1116,47 @@ public partial class CSharpBinder
 		}
 
 		return parenthesizedExpressionNode.SetInnerExpression(expressionSecondary);
+	}
+	
+	public IExpressionNode TypeClauseMergeToken(
+		TypeClauseNode typeClauseNode, ISyntaxToken token, IParserModel model)
+	{
+		switch (token.SyntaxKind)
+		{
+			case SyntaxKind.OpenAngleBracketToken:
+				if (typeClauseNode.GenericParametersListingNode is null)
+				{
+					typeClauseNode.SetGenericParametersListingNode(
+						new GenericParametersListingNode(
+							(OpenAngleBracketToken)token,
+					        new List<GenericParameterEntryNode>(),
+					        closeAngleBracketToken: default));
+				}
+				
+			    model.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, typeClauseNode));
+				model.ExpressionList.Add((SyntaxKind.CommaToken, typeClauseNode.GenericParametersListingNode));
+				return EmptyExpressionNode.Empty;
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), typeClauseNode, token);
+		}
+	}
+	
+	public IExpressionNode TypeClauseMergeExpression(
+		TypeClauseNode typeClauseNode, IExpressionNode expressionSecondary, IParserModel model)
+	{
+		switch (expressionSecondary.SyntaxKind)
+		{
+			case SyntaxKind.GenericParametersListingNode:
+				if (typeClauseNode.GenericParametersListingNode is not null &&
+					!typeClauseNode.GenericParametersListingNode.CloseAngleBracketToken.ConstructorWasInvoked)
+				{
+					return typeClauseNode;
+				}
+				
+				goto default;
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), typeClauseNode, expressionSecondary);
+		}
 	}
 	
 	public IExpressionNode FunctionInvocationMergeToken(
