@@ -651,7 +651,9 @@ public partial class CSharpBinder
 		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, IParserModel model)
 	{
 		if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
-		{			
+		{
+			Console.Write("EmptyMergeToken_");
+		
 			var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
 				token,
 		        genericParametersListingNode: null,
@@ -660,10 +662,13 @@ public partial class CSharpBinder
 		    	FollowsMemberAccessToken = emptyExpressionNode.FollowsMemberAccessToken
 		    };
 		    
-		    if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken &&
-		    		!ambiguousExpressionNode.FollowsMemberAccessToken ||
+		    Console.Write($"{model.ForceParseExpressionSyntaxKind} == {SyntaxKind.TypeClauseNode}");
+		    
+		    if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken && !ambiguousExpressionNode.FollowsMemberAccessToken ||
 		    	model.ForceParseExpressionSyntaxKind == SyntaxKind.TypeClauseNode)
 		    {
+		    	Console.Write("ForceDecisionAmbiguousIdentifier_");
+		    	
 				return ForceDecisionAmbiguousIdentifier(
 					emptyExpressionNode,
 					ambiguousExpressionNode,
