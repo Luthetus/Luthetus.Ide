@@ -647,7 +647,7 @@ public partial class CSharpBinder
 		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, IParserModel model)
 	{
 		if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
-		{
+		{			
 			var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
 				token,
 		        genericParametersListingNode: null,
@@ -657,9 +657,10 @@ public partial class CSharpBinder
 		    };
 		    
 		    if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken &&
-		    	!ambiguousExpressionNode.FollowsMemberAccessToken)
+		    		!ambiguousExpressionNode.FollowsMemberAccessToken ||
+		    	model.ForceParseExpressionSyntaxKind == SyntaxKind.TypeClauseNode)
 		    {
-				ForceDecisionAmbiguousIdentifier(
+				return ForceDecisionAmbiguousIdentifier(
 					emptyExpressionNode,
 					ambiguousExpressionNode,
 					model);

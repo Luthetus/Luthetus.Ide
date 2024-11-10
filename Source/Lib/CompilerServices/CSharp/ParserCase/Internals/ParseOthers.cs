@@ -57,6 +57,17 @@ public static class ParseOthers
     }
     
     /// <summary>
+    /// ParseExpression while expressionPrimary.SyntaxKind == syntaxKind
+    /// 
+    /// if (expressionPrimary.SyntaxKind != syntaxKind)
+    /// 	model.TokenWalker.Backtrack() to either the previous loops tokenIndex where
+    /// 		the syntax kinds did match.
+    /// 
+    /// 	Or, if they never matched then model.TokenWalker.Backtrack()
+    /// 		to the tokenIndex that was had when this function was invoked.
+    ///
+    /// Return true if a match was found, return false if NO match was found.
+    ///
     /// TypeClauseNode code exists in the expression code.
 	/// As a result, some statements need to read a TypeClauseNode by invoking 'ParseExpression(...)'.
 	///
@@ -72,25 +83,7 @@ public static class ParseOthers
     	try
     	{
     		expressionNode = ParseExpression(model);
-    		var success = expressionNode.SyntaxKind == syntaxKind;
-    		
-    		Console.WriteLine($"var success = {expressionNode.SyntaxKind} == {syntaxKind};");
-    		
-    		if (!success)
-    		{
-    			Console.Write($"{originalTokenIndex} -> {model.TokenWalker.Index} -> ");
-    			
-    			var distance = model.TokenWalker.Index - originalTokenIndex;
-    		
-    			for (int i = 0; i < distance; i++)
-    			{
-    				_ = model.TokenWalker.Backtrack();
-    			}
-    			
-    			Console.WriteLine(model.TokenWalker.Index);
-    		}
-    		
-    		return success;
+    		return expressionNode.SyntaxKind == syntaxKind;
     	}
     	finally
     	{
@@ -109,7 +102,6 @@ public static class ParseOthers
     {
 #if DEBUG
     	Console.Write("\n====START==============================================================================\n");
-    	Console.Write("====START==============================================================================\n\n");
 		WriteExpressionList(model.ExpressionList);
 #endif
 
@@ -208,8 +200,6 @@ WriteExpressionList(model.ExpressionList);
     				}
     				else
     				{
-    					Console.Write($"{previousLoopTokenIndex} -> {model.TokenWalker.Index} -> ");
-	    			
 		    			var distance = model.TokenWalker.Index - previousLoopTokenIndex;
 		    		
 		    			for (int i = 0; i < distance; i++)
@@ -237,7 +227,6 @@ WriteExpressionList(model.ExpressionList);
     	model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
     	
 #if DEBUG
-Console.Write("====END================================================================================\n");
 Console.Write("====END================================================================================\n\n");
 #endif
     	
