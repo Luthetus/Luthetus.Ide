@@ -152,16 +152,6 @@ public class CSharpParser : IParser
                 	// But, some expressions can be a statement, so being a statement does not stop something from being an expression.
                 
                 	ParseTokens.ParseIdentifierToken(model);
-                	
-                	/*if (model.StatementBuilder.ChildList.Count == 0)
-                	{
-                		ParseOthers.StartStatement_Expression(model);
-                		//ParseTokens.ParseIdentifierTokenWithPeek(model);
-                	}
-                	else
-                	{
-                		ParseTokens.ParseIdentifierToken(model);
-                	}*/
                     break;
                 case SyntaxKind.OpenBraceToken:
                 	model.StatementBuilder.ChildList.Clear();

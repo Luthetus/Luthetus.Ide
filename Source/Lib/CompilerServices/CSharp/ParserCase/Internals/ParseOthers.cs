@@ -56,6 +56,34 @@ public static class ParseOthers
     	model.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
     }
     
+    public static bool TryParseExpression(SyntaxKind syntaxKind, CSharpParserModel model, out IExpressionNode expressionNode)
+    {
+    	var originalTokenIndex = model.TokenWalker.Index;
+    	model.ForceParseExpressionSyntaxKind = syntaxKind;
+    	
+    	try
+    	{
+    		expressionNode = ParseExpression(model);
+    		var success = expressionNode.SyntaxKind == syntaxKind;
+    		
+    		if (!success)
+    		{
+    			var distance = model.TokenWalker.Index - originalTokenIndex;
+    		
+    			for (int i = 0; i < distance; i++)
+    			{
+    				_ = model.TokenWalker.Backtrack();
+    			}
+    		}
+    		
+    		return success;
+    	}
+    	finally
+    	{
+    		model.ForceParseExpressionSyntaxKind = null;
+    	}
+    }
+    
     /// <summary>
     /// The source code: "<int>" is sort of nonsensical.
     ///

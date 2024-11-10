@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -17,16 +18,8 @@ public static class ParseTokens
         var consumedToken = model.TokenWalker.Consume();
     }
 
-    public static void ParseIdentifierTokenWithPeek(CSharpParserModel model)
-    {
-    	ParseOthers.Force_ParseExpression(SyntaxKind.TypeClauseNode, model);
-    	// ParseOthers.StartStatement_Expression(model);
-    }
-    
     public static void ParseIdentifierToken(CSharpParserModel model)
     {
-    	// ParseOthers.StartStatement_Expression(model);
-    	
     	// Goal: (2024-11-10)
     	// ==================
     	// Everytime that an IdentifierToken is parsed from the main loop,
@@ -84,59 +77,45 @@ public static class ParseTokens
     	// 	TokenWalker.Backtrack();
     	// 	ParseExpression(model);
     	
-    	IdentifierToken identifierToken;
+		var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var typeClauseNode);
+		
+    	var successName = false;
     	
-    	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.VarTokenContextualKeyword)
+    	if (successTypeClauseNode)
     	{
-    		var varTokenContextualKeyword = model.TokenWalker.Consume();
-    		identifierToken = new IdentifierToken(varTokenContextualKeyword.TextSpan);
-    	}
-    	else
-    	{
-    		identifierToken = (IdentifierToken)model.TokenWalker.Consume();
-    	}
-    	
-    	if (model.StatementBuilder.TryPeek(^1, out var oneTokenBackwards) &&
-			UtilityApi.IsConvertibleToTypeClauseNode(oneTokenBackwards.SyntaxKind))
-    	{
-    		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
-    			model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
-	    	{
-	    		// One only ends up at this code via the main loop,
-	    		// an expression would never see this code, so we know it is a declaration.
-	    		var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
-					UtilityApi.ConvertToTypeClauseNode(oneTokenBackwards),
-			        identifierToken,
+    		// 'TypeClauseNode' or 'VariableDeclarationNode'
+    		var successNameableToken = false;
+    		
+    		if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
+    		{
+    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Current);
+    			successNameableToken = true;
+    			
+    			var variableDeclarationNode = new VariableDeclarationNode(
+			        (TypeClauseNode)typeClauseNode,
+    				identifierToken,
 			        VariableKind.Local,
-			        model);
-	    		
-	    		//ParseVariables.HandleVariableDeclarationStatement(
-	    		//	UtilityApi.ConvertToTypeClauseNode(oneTokenBackwards),
-	    		//	identifierToken,
-	    		//	VariableKind.Local,
-	    		//	model);
-	    		
-	    		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
-		    	{
-		    		var equalsToken = (EqualsToken)model.TokenWalker.Consume();
-		    		
-		    		model.StatementBuilder.ChildList.Clear();
-		    		model.StatementBuilder.ChildList.Add(identifierToken);
-		    		
-		    		var expressionNode = ParseOthers.ParseExpression(model);
-		    		
-		    		var variableAssignmentExpressionNode = new VariableAssignmentExpressionNode(
-		    			identifierToken,
-				        equalsToken,
-				        expressionNode);
-		    		
-		    		model.CurrentCodeBlockBuilder.ChildList.Add(variableAssignmentExpressionNode);
-		    	}
-	    	}
+			        isInitialized: false);
+    				
+				model.StatementBuilder.ChildList.Add(variableDeclarationNode);
+    		}
+    		
+    		if (!successNameableToken)
+				model.StatementBuilder.ChildList.Add(typeClauseNode);
     	}
     	else
     	{
-    		model.StatementBuilder.ChildList.Add(identifierToken);
+    		// 'VariableReferenceNode'
+    		var successVariableReferenceNode = ParseOthers.TryParseExpression(SyntaxKind.VariableReferenceNode, model, out var variableReferenceNode);
+    		
+    		if (successVariableReferenceNode)
+    		{
+    			model.StatementBuilder.ChildList.Add(variableReferenceNode);
+    		}
+    		else
+    		{
+    			throw new LuthetusTextEditorException($"nameof(ParseIdentifierToken) TODO case");
+    		}
     	}
     }
 
