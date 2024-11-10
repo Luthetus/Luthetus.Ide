@@ -824,6 +824,15 @@ public partial class CSharpBinder
 			
 			return genericParametersListingNode;
 		}
+		else if (expressionSecondary.SyntaxKind == SyntaxKind.TypeClauseNode)
+		{
+			var typeClauseNode = (TypeClauseNode)expressionSecondary;
+		
+			genericParametersListingNode.GenericParameterEntryNodeList.Add(
+				new GenericParameterEntryNode(typeClauseNode));
+			
+			return genericParametersListingNode;
+		}
 		else if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
 		{
 			var badExpressionNode = (BadExpressionNode)expressionSecondary;
@@ -1136,6 +1145,14 @@ public partial class CSharpBinder
 			    model.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, typeClauseNode));
 				model.ExpressionList.Add((SyntaxKind.CommaToken, typeClauseNode.GenericParametersListingNode));
 				return EmptyExpressionNode.Empty;
+			case SyntaxKind.CloseAngleBracketToken:
+				if (typeClauseNode.GenericParametersListingNode is not null)
+				{
+					typeClauseNode.GenericParametersListingNode.SetCloseAngleBracketToken((CloseAngleBracketToken)token);
+					return typeClauseNode;
+				}
+				
+			    goto default;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), typeClauseNode, token);
 		}
