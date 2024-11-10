@@ -260,6 +260,13 @@ public class CSharpParser : IParser
                                 ambiguousIdentifierNode.IdentifierToken.TextSpan.GetText());
                         }
                     }
+                    else if (model.StatementBuilder.ChildList.Any())
+                    {
+                    	foreach (var item in model.StatementBuilder.ChildList)
+                    	{
+                    		model.CurrentCodeBlockBuilder.ChildList.Add(item);
+                    	}
+                    }
                     break;
                 default:
                     if (UtilityApi.IsContextualKeywordSyntaxKind(token.SyntaxKind))
