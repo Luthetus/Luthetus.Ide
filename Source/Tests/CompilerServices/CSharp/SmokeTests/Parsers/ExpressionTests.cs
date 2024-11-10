@@ -1958,7 +1958,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		Console.WriteLine($"topCodeBlock: {topCodeBlock.GetChildList().Length}");
-		Assert.Equal(SyntaxKind.TypeClauseNode, topCodeBlock.GetChildList().Single().SyntaxKind);
+		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     }
     
     [Fact]
@@ -1967,7 +1968,8 @@ Func(decimalPercentProgress);
     	var test = new Test(@"int");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		Assert.Equal(SyntaxKind.TypeClauseNode, topCodeBlock.GetChildList().Single().SyntaxKind);
+		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     }
     
     [Fact]
@@ -1976,7 +1978,8 @@ Func(decimalPercentProgress);
     	var test = new Test(@"var");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		Assert.Equal(SyntaxKind.TypeClauseNode, topCodeBlock.GetChildList().Single().SyntaxKind);
+		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
