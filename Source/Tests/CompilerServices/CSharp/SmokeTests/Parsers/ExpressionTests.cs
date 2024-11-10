@@ -1993,9 +1993,19 @@ Func(decimalPercentProgress);
     }
     
     [Fact]
-    public void TypeClauseNode_Nullable()
+    public void TypeClauseNode_Nullable_Keyword()
     {
-    	var test = new Test(@"List<int>");
+    	var test = new Test(@"int?");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void TypeClauseNode_Nullable_Identifier()
+    {
+    	var test = new Test(@"Person?");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();

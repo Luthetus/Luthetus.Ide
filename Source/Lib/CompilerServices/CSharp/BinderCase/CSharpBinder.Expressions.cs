@@ -1153,6 +1153,14 @@ public partial class CSharpBinder
 				}
 				
 			    goto default;
+			case SyntaxKind.QuestionMarkToken:
+				if (!typeClauseNode.HasQuestionMark)
+				{
+					typeClauseNode.HasQuestionMark = true;
+					return typeClauseNode;
+				}
+				
+			    goto default;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), typeClauseNode, token);
 		}
