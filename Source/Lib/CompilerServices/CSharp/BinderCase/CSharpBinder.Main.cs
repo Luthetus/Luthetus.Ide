@@ -689,7 +689,11 @@ public partial class CSharpBinder : IBinder
     	// Update the CodeBlockBuilder instance
 		var codeBlockOwner = model.CurrentCodeBlockBuilder.CodeBlockOwner;
 		if (codeBlockOwner is null)
-			throw new LuthetusTextEditorException("if (codeBlockOwner is null)");
+		{
+			model.DiagnosticBag.ReportTodoException(
+	    		model.TokenWalker.Current.TextSpan,
+	    		"if (codeBlockOwner is null)");
+		}
         codeBlockOwner.SetCodeBlockNode(model.CurrentCodeBlockBuilder.Build());
 		
 		if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)

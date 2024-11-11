@@ -182,7 +182,7 @@ public partial class CSharpBinder
 			if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 			{
 				var variableAssignmentNode = new VariableAssignmentExpressionNode(
-					UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token),
+					UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, model),
 			        (EqualsToken)token,
 			        EmptyExpressionNode.Empty);
 			 
@@ -235,7 +235,12 @@ public partial class CSharpBinder
 				model);
 			
 			if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)
-				throw new LuthetusTextEditorException("if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");
+			{
+				model.DiagnosticBag.ReportTodoException(
+		    		model.TokenWalker.Current.TextSpan,
+		    		"if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)");
+				return decidedExpression;
+			}
 		
 			var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
 			
@@ -299,7 +304,7 @@ public partial class CSharpBinder
                 ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
                 out var typeDefinitionNode))
 	        {
-	            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token);
+	            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, model);
 				BindTypeClauseNode(typeClauseNode, (CSharpParserModel)model);
 			    return typeClauseNode;
 	        }
@@ -309,7 +314,7 @@ public partial class CSharpBinder
 		if (!forceVariableReferenceNode ||
 			UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
-            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token);
+            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, model);
 			BindTypeClauseNode(typeClauseNode, (CSharpParserModel)model);
 		    return typeClauseNode;
 		}

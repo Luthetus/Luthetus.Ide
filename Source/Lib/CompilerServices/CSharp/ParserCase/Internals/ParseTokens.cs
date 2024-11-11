@@ -91,7 +91,7 @@ public static class ParseTokens
     		Console.WriteLine(model.TokenWalker.Current.SyntaxKind);
     		if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
     		{
-    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume());
+    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
     			successNameableToken = true;
     			
     			var variableDeclarationNode = new VariableDeclarationNode(
@@ -127,9 +127,15 @@ public static class ParseTokens
     		var successVariableReferenceNode = ParseOthers.TryParseExpression(SyntaxKind.VariableReferenceNode, model, out var variableReferenceNode);
     		
     		if (successVariableReferenceNode)
+    		{
     			model.StatementBuilder.ChildList.Add(variableReferenceNode);
+    		}
     		else
-    			throw new LuthetusTextEditorException($"nameof(ParseIdentifierToken) TODO case");
+    		{
+    			model.DiagnosticBag.ReportTodoException(
+		    		model.TokenWalker.Current.TextSpan,
+		    		$"nameof(ParseIdentifierToken) TODO case");
+    		}
     	}
     }
 
@@ -251,8 +257,8 @@ public static class ParseTokens
 				if (isFunctionDefinition)
 				{
 					genericArgumentsListingNode = (GenericArgumentsListingNode)existingGenericArgumentsListingNode;
-					identifierToken = UtilityApi.ConvertToIdentifierToken(twoTokenBackwards);
-					typeClauseNode = UtilityApi.ConvertToTypeClauseNode(threeTokenBackwards);
+					identifierToken = UtilityApi.ConvertToIdentifierToken(twoTokenBackwards, model);
+					typeClauseNode = UtilityApi.ConvertToTypeClauseNode(threeTokenBackwards, model);
 				}
 			}
 		}
@@ -269,8 +275,8 @@ public static class ParseTokens
 						  
 				if (isFunctionDefinition)
 				{
-					identifierToken = UtilityApi.ConvertToIdentifierToken(oneTokenBackwards);
-					typeClauseNode = UtilityApi.ConvertToTypeClauseNode(twoTokenBackwards);
+					identifierToken = UtilityApi.ConvertToIdentifierToken(oneTokenBackwards, model);
+					typeClauseNode = UtilityApi.ConvertToTypeClauseNode(twoTokenBackwards, model);
 				}
 			}
 		}
@@ -306,7 +312,7 @@ public static class ParseTokens
 				  				UtilityApi.IsConvertibleToIdentifierToken(oneTokenBackwards.SyntaxKind);
 		
 		if (isConstructorDefinition)
-			identifierToken = UtilityApi.ConvertToIdentifierToken(oneTokenBackwards);
+			identifierToken = UtilityApi.ConvertToIdentifierToken(oneTokenBackwards, model);
     	
     	if (isConstructorDefinition)
     	{
