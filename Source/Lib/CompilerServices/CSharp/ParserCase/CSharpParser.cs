@@ -153,7 +153,7 @@ model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
                 	ParseTokens.ParseIdentifierToken(model);
                     break;
                 case SyntaxKind.OpenBraceToken:
-                	model.StatementBuilder.ChildList.Clear();
+                	model.StatementBuilder.FinishStatement(model);
                 	
                 	#if DEBUG
 					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
@@ -168,7 +168,7 @@ model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
                     ParseTokens.ParseOpenBraceToken(openBraceToken, model);
                     break;
                 case SyntaxKind.CloseBraceToken:
-                	model.StatementBuilder.ChildList.Clear();
+                	model.StatementBuilder.FinishStatement(model);
                 	
                 	#if DEBUG
 					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
@@ -213,10 +213,11 @@ model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
                     ParseTokens.ParseMemberAccessToken((MemberAccessToken)token, model);
                     break;
                 case SyntaxKind.EqualsToken:
+                	Console.WriteLine("SyntaxKind.EqualsToken");
                     ParseTokens.ParseEqualsToken(model);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
-                	model.StatementBuilder.ChildList.Clear();
+                	model.StatementBuilder.FinishStatement(model);
                 	
                 	#if DEBUG
 					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;

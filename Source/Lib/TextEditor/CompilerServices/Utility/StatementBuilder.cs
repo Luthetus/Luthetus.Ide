@@ -1,4 +1,6 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
@@ -30,6 +32,37 @@ public class StatementBuilder
 		var syntax = ChildList[^1];
 		ChildList.RemoveAt(ChildList.Count - 1);
 		return syntax;
+	}
+	
+	/// <summary>
+	/// If 'StatementDelimiterToken', 'OpenBraceToken', or 'CloseBraceToken'
+	/// are parsed by the main loop,
+	///
+	/// Then check that the last item in the StatementBuilder.ChildList
+	/// has been added to the model.CurrentCodeBlockBuilder.ChildList.
+	///
+	/// If it was not yet added, then add it.
+	///
+	/// Lastly, clear the StatementBuilder.ChildList.
+	/// </summary>
+	public void FinishStatement(IParserModel model)
+	{
+		if (ChildList.Count == 0)
+			return;
+		
+		var statementSyntax = ChildList[^1];
+		
+		ISyntax codeBlockBuilderSyntax;
+		
+		if (model.CurrentCodeBlockBuilder.ChildList.Count == 0)
+			codeBlockBuilderSyntax = EmptyExpressionNode.Empty;
+		else
+			codeBlockBuilderSyntax = model.CurrentCodeBlockBuilder.ChildList[^1];
+			
+		if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax))
+			model.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
+		
+		ChildList.Clear();
 	}
 	
 	public void WriteToConsole()
