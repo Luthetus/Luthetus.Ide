@@ -204,6 +204,42 @@ finally
     }
     
     [Fact]
+    public void VariableDeclaration_Keyword_Test()
+    {
+    	var test = new Test(@"int aaa;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclaration_Identifier_Test()
+    {
+    	var test = new Test(@"Person aaa;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclaration_Var_Test()
+    {
+    	var test = new Test(@"var aaa;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void VariableDeclarationNodeAndAssignment_Var_Test()
     {
     	var test = new Test(@"var aaa = 2;");
@@ -266,42 +302,6 @@ finally
 		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 		
 		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
-    }
-    
-    [Fact]
-    public void VariableDeclaration_Keyword_Test()
-    {
-    	var test = new Test(@"int aaa;");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
-		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
-    }
-    
-    [Fact]
-    public void VariableDeclaration_Identifier_Test()
-    {
-    	var test = new Test(@"Person aaa;");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
-		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
-    }
-    
-    [Fact]
-    public void VariableDeclaration_Var_Test()
-    {
-    	var test = new Test(@"var aaa;");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
-		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")

@@ -91,8 +91,6 @@ public static class ParseTokens
     		Console.WriteLine(model.TokenWalker.Current.SyntaxKind);
     		if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
     		{
-    			Console.WriteLine($"successNameableToken: {successNameableToken}");
-    			
     			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume());
     			successNameableToken = true;
     			
@@ -103,6 +101,7 @@ public static class ParseTokens
 			        isInitialized: false);
     			
     			model.StatementBuilder.ChildList.Add(variableDeclarationNode);
+    			model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
     		}
     		else if (!successNameableToken &&
     			model.TokenWalker.Current.SyntaxKind != SyntaxKind.StatementDelimiterToken &&
