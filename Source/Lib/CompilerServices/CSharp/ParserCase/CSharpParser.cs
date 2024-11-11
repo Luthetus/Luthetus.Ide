@@ -184,13 +184,9 @@ model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
                     break;
                 case SyntaxKind.OpenParenthesisToken:
                 	if (model.StatementBuilder.ChildList.Count == 0)
-                	{
                 		ParseOthers.StartStatement_Expression(model);
-                	}
                 	else
-                	{
                 		ParseTokens.ParseOpenParenthesisToken(model);
-                	}
                     break;
                 case SyntaxKind.CloseParenthesisToken:
                     ParseTokens.ParseCloseParenthesisToken((CloseParenthesisToken)token, model);
@@ -217,7 +213,7 @@ model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
                     ParseTokens.ParseMemberAccessToken((MemberAccessToken)token, model);
                     break;
                 case SyntaxKind.EqualsToken:
-                    ParseTokens.ParseEqualsToken((EqualsToken)token, model);
+                    ParseTokens.ParseEqualsToken(model);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
                 	model.StatementBuilder.ChildList.Clear();

@@ -70,6 +70,8 @@ public partial class CSharpBinder
 				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, token, model);
 			case SyntaxKind.TypeClauseNode:
 				return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, token, model);
+			case SyntaxKind.VariableAssignmentExpressionNode:
+				return VariableAssignmentMergeToken((VariableAssignmentExpressionNode)expressionPrimary, token, model);
 			case SyntaxKind.GenericParametersListingNode:
 				return GenericParametersListingMergeToken((GenericParametersListingNode)expressionPrimary, token, model);
 			case SyntaxKind.FunctionParametersListingNode:
@@ -104,6 +106,8 @@ public partial class CSharpBinder
 				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.TypeClauseNode:
 				return TypeClauseMergeExpression((TypeClauseNode)expressionPrimary, expressionSecondary, model);
+			case SyntaxKind.VariableAssignmentExpressionNode:
+				return VariableAssignmentMergeExpression((VariableAssignmentExpressionNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.GenericParametersListingNode:
 				return GenericParametersListingMergeExpression((GenericParametersListingNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.FunctionParametersListingNode:
@@ -174,8 +178,24 @@ public partial class CSharpBinder
 				return lambdaExpressionNode;
 			}
 			
-			model.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
-			return EmptyExpressionNode.Empty;
+			// Thinking about: Variable Assignment, Optional Parameters, and other unknowns.
+			if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+			{
+				var variableAssignmentNode = new VariableAssignmentExpressionNode(
+					UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token),
+			        (EqualsToken)token,
+			        EmptyExpressionNode.Empty);
+			 
+			    model.ExpressionList.Add((SyntaxKind.CommaToken, variableAssignmentNode));
+				model.ExpressionList.Add((SyntaxKind.EndOfFileToken, variableAssignmentNode));
+				
+				return EmptyExpressionNode.Empty;
+			}
+			else
+			{
+				model.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousIdentifierExpressionNode));
+				return EmptyExpressionNode.Empty;
+			}
 		}
 		else if (token.SyntaxKind == SyntaxKind.IsTokenKeyword)
 		{
@@ -1180,6 +1200,26 @@ public partial class CSharpBinder
 				goto default;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), typeClauseNode, expressionSecondary);
+		}
+	}
+	
+	public IExpressionNode VariableAssignmentMergeToken(
+		VariableAssignmentExpressionNode variableAssignmentNode, ISyntaxToken token, IParserModel model)
+	{
+		return variableAssignmentNode;
+	}
+	
+	public IExpressionNode VariableAssignmentMergeExpression(
+		VariableAssignmentExpressionNode variableAssignmentNode, IExpressionNode expressionSecondary, IParserModel model)
+	{
+		if (variableAssignmentNode.ExpressionNode == EmptyExpressionNode.Empty)
+		{
+			variableAssignmentNode.SetExpressionNode(expressionSecondary);
+			return variableAssignmentNode;
+		}
+		else
+		{
+			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), variableAssignmentNode, expressionSecondary);
 		}
 	}
 	

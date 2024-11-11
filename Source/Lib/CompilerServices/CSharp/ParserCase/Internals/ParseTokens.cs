@@ -77,6 +77,8 @@ public static class ParseTokens
     	// 	TokenWalker.Backtrack();
     	// 	ParseExpression(model);
     	
+    	var originalTokenIndex = model.TokenWalker.Index;
+    	
 		var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var typeClauseNode);
 		
     	var successName = false;
@@ -101,17 +103,26 @@ public static class ParseTokens
 			        isInitialized: false);
     			
     			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-    			{
     				model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
-    			}
     			else
-    			{
     				model.StatementBuilder.ChildList.Add(variableDeclarationNode);
-    			}
     		}
     		
     		if (!successNameableToken)
+    		{
+    			var distance = model.TokenWalker.Index - originalTokenIndex;
+    			
+    			if (distance == 1)
+    			{
+    				_ = model.TokenWalker.Backtrack();
+    				var expression = ParseOthers.ParseExpression(model);
+    				model.CurrentCodeBlockBuilder.ChildList.Add(expression);
+    			}
+    		}
+    		else
+    		{
 				model.StatementBuilder.ChildList.Add(typeClauseNode);
+			}
     	}
     	else
     	{
@@ -345,11 +356,38 @@ public static class ParseTokens
     {
     }
 
-    public static void ParseEqualsToken(
-        EqualsToken consumedEqualsToken,
-        CSharpParserModel model)
+    public static void ParseEqualsToken(CSharpParserModel model)
     {
-    }
+    	if (model.StatementBuilder.ChildList.Count == 0)
+    	{
+    		ParseOthers.StartStatement_Expression(model);
+    		return;
+    	}
+		
+		if (model.StatementBuilder.TryPeek(out var syntax) &&
+			syntax.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+		{
+			var variableDeclarationNode = (VariableDeclarationNode)syntax;
+			
+			model.TokenWalker.Backtrack();
+			var expression = ParseOthers.ParseExpression(model);
+			
+			if (expression.SyntaxKind != SyntaxKind.VariableAssignmentExpressionNode)
+			{
+				Console.WriteLine($"Expected {nameof(SyntaxKind)} of '{SyntaxKind.VariableAssignmentExpressionNode}' but got '{expression.SyntaxKind}'");
+				return;
+			}
+			
+			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+			{
+				model.CurrentCodeBlockBuilder.ChildList.Add(expression);
+			}
+			else
+			{
+				model.StatementBuilder.ChildList.Add(expression);
+			}
+		}
+	}
 
     public static void ParseMemberAccessToken(
         MemberAccessToken consumedMemberAccessToken,

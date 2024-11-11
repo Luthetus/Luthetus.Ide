@@ -2022,6 +2022,16 @@ Func(decimalPercentProgress);
 		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     }
     
+    [Fact]
+    public void VariableAssignmentExpressionNode()
+    {
+    	var test = new Test(@"someVariable = 2;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
