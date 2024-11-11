@@ -82,9 +82,7 @@ public static class ParseOthers
     	
     	try
     	{
-    		Console.WriteLine("before_" + model.TokenWalker.Index);
     		expressionNode = ParseExpression(model);
-    		Console.WriteLine("after_" + model.TokenWalker.Index);
     		
 #if DEBUG
 Console.WriteLine($"TryParseExpression: {expressionNode.SyntaxKind}");
@@ -208,7 +206,6 @@ WriteExpressionList(model.ExpressionList);
     				else
     				{
 		    			var distance = model.TokenWalker.Index - previousLoopTokenIndex;
-		    			Console.WriteLine($"var distance = {model.TokenWalker.Index} - {previousLoopTokenIndex};");
 		    		
 		    			for (int i = 0; i < distance; i++)
 		    			{
@@ -228,7 +225,6 @@ WriteExpressionList(model.ExpressionList);
 			    			forceExit = true;
 	    					if (forceExit)
 							{
-								Console.WriteLine($"previousRootExpressionPrimary: {previousRootExpressionPrimary.SyntaxKind}");
 								expressionPrimary = BubbleUpParseExpression(expressionListCount - 1, -1, previousRootExpressionPrimary, model, expressionListCount: expressionListCount);
 								break;
 							}

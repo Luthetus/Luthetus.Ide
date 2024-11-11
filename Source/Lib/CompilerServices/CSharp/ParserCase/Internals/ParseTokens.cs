@@ -83,12 +83,15 @@ public static class ParseTokens
     	
     	if (successTypeClauseNode)
     	{
+    		Console.WriteLine($"aaasuccessTypeClauseNode: {successTypeClauseNode}");
+    		
     		// 'TypeClauseNode' or 'VariableDeclarationNode'
     		var successNameableToken = false;
     		
+    		Console.WriteLine(model.TokenWalker.Current.SyntaxKind);
     		if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
     		{
-    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Current);
+    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume());
     			successNameableToken = true;
     			
     			var variableDeclarationNode = new VariableDeclarationNode(
@@ -96,8 +99,15 @@ public static class ParseTokens
     				identifierToken,
 			        VariableKind.Local,
 			        isInitialized: false);
-    				
-				model.StatementBuilder.ChildList.Add(variableDeclarationNode);
+    			
+    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+    			{
+    				model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+    			}
+    			else
+    			{
+    				model.StatementBuilder.ChildList.Add(variableDeclarationNode);
+    			}
     		}
     		
     		if (!successNameableToken)
