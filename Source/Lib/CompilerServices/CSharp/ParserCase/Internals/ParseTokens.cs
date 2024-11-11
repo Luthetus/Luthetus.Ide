@@ -102,13 +102,21 @@ public static class ParseTokens
 			        VariableKind.Local,
 			        isInitialized: false);
     			
-    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+    				model.TokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken)
+    			{
     				model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+    			}
     			else
+    			{
     				model.StatementBuilder.ChildList.Add(variableDeclarationNode);
+    			}
     		}
     		
-    		if (!successNameableToken)
+    		// TODO: I just want to go to bed please add the node to CurrentCodeBlockBuilder
+    		if (!successNameableToken &&
+    			model.TokenWalker.Current.SyntaxKind != SyntaxKind.StatementDelimiterToken &&
+    			model.TokenWalker.Current.SyntaxKind != SyntaxKind.EndOfFileToken)
     		{
     			var distance = model.TokenWalker.Index - originalTokenIndex;
     			
@@ -121,7 +129,22 @@ public static class ParseTokens
     		}
     		else
     		{
-				model.StatementBuilder.ChildList.Add(typeClauseNode);
+    			// TODO: If the main loop finds a StatementDelimiterToken, EOF, or some other thing that clears...
+    			//       ...the StatementBuilder should the 'StatementBuilder' have each syntax added to the 'CurrentCodeBlockBuilder' before clearing?
+    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+    				model.TokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken)
+    			{
+    				model.CurrentCodeBlockBuilder.ChildList.Add(typeClauseNode);
+    			}
+    			else
+    			{
+    				model.StatementBuilder.ChildList.Add(typeClauseNode);
+    			}
+    			
+    			// TODO: My test isn't passing feels bad man...
+    			//       ...I'm writing a bunch of spaghetti code to try and make it pass before
+    			//       I go to bed but I should just take a break
+    			//       Lest all of tomorrow be spent sifting through the nonsense I am about to write, instead of tomorrow being productive.
 			}
     	}
     	else
