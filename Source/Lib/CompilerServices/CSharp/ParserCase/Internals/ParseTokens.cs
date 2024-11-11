@@ -88,7 +88,6 @@ public static class ParseTokens
     		// 'TypeClauseNode' or 'VariableDeclarationNode'
     		var successNameableToken = false;
     		
-    		Console.WriteLine(model.TokenWalker.Current.SyntaxKind);
     		if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
     		{
     			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
@@ -174,7 +173,7 @@ public static class ParseTokens
         	model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = arbitraryCodeBlockNode;
 		}
 		
-		model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken);
+		model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, model);
 
 		var parentScopeDirection = model.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
 		if (parentScopeDirection == ScopeDirectionKind.Both)
@@ -209,7 +208,7 @@ public static class ParseTokens
 		}
 
 		if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
-			model.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken);
+			model.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, model);
 		
         model.Binder.CloseScope(closeBraceToken.TextSpan, model);
     }
@@ -357,12 +356,8 @@ public static class ParseTokens
 
     public static void ParseEqualsToken(CSharpParserModel model)
     {
-    	Console.WriteLine("ParseEqualsToken");
-    
     	if (model.StatementBuilder.ChildList.Count == 0)
     	{
-    		Console.WriteLine("ParseEqualsToken==0");
-    	
     		ParseOthers.StartStatement_Expression(model);
     		return;
     	}
@@ -370,8 +365,6 @@ public static class ParseTokens
 		if (model.StatementBuilder.TryPeek(out var syntax) &&
 			syntax.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
-			Console.WriteLine("ParseEqualsTokenvariableDeclarationNode");
-			
 			var variableDeclarationNode = (VariableDeclarationNode)syntax;
 			
 			model.TokenWalker.Backtrack();
@@ -379,7 +372,7 @@ public static class ParseTokens
 			
 			if (expression.SyntaxKind != SyntaxKind.VariableAssignmentExpressionNode)
 			{
-				Console.WriteLine($"Expected {nameof(SyntaxKind)} of '{SyntaxKind.VariableAssignmentExpressionNode}' but got '{expression.SyntaxKind}'");
+				// TODO: Report a diagnostic
 				return;
 			}
 			
@@ -408,7 +401,7 @@ public static class ParseTokens
             var namespaceStatementNode = (NamespaceStatementNode)model.SyntaxStack.Pop();
             nextCodeBlockOwner = namespaceStatementNode;
             
-            namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken);
+            namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken, model);
 
             model.Binder.OpenScope(
                 scopeReturnTypeClauseNode,

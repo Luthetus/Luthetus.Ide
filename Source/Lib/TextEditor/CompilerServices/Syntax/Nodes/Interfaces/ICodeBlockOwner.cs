@@ -16,10 +16,10 @@ public interface ICodeBlockOwner : ISyntaxNode
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
 	
-	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken);
-	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken);
-	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken);
-	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode);
+	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, IParserModel parserModel);
+	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, IParserModel parserModel);
+	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, IParserModel parserModel);
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, IParserModel parserModel);
 	
 	/// <summary>
 	/// Once the code block owner's scope has been constructed,
@@ -31,9 +31,23 @@ public interface ICodeBlockOwner : ISyntaxNode
 	/// </summary>
 	public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel);
 	
-	public static void ThrowMultipleScopeDelimiterException() =>
-		throw new LuthetusTextEditorException("Scope must be set by either OpenBraceToken and CloseBraceToken; or by StatementDelimiterToken, but not both.");
+	public static void ThrowMultipleScopeDelimiterException(IParserModel parserModel)
+	{
+		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
+    	//
+    	parserModel.DiagnosticBag.ReportTodoException(
+    		parserModel.TokenWalker.Current.TextSpan,
+    		"Scope must be set by either OpenBraceToken and CloseBraceToken; or by StatementDelimiterToken, but not both.");
+	}
 		
-	public static void ThrowAlreadyAssignedCodeBlockNodeException() =>
-		throw new LuthetusTextEditorException($"The {nameof(CodeBlockNode)} was already assigned.");
+	public static void ThrowAlreadyAssignedCodeBlockNodeException(IParserModel parserModel)
+	{
+		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
+    	//
+    	parserModel.DiagnosticBag.ReportTodoException(
+    		parserModel.TokenWalker.Current.TextSpan,
+    		$"The {nameof(CodeBlockNode)} was already assigned.");
+	}
 }

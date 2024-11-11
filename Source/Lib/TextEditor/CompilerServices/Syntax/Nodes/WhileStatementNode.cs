@@ -54,40 +54,40 @@ public sealed class WhileStatementNode : ICodeBlockOwner
     }
     
     // (2024-11-08)
-	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken)
+	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, IParserModel parserModel)
 	{
 		if (StatementDelimiterToken.ConstructorWasInvoked)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException();
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
 	
 		OpenBraceToken = openBraceToken;
     	
     	_childListIsDirty = true;
     	return this;
 	}
-	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken)
+	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, IParserModel parserModel)
 	{
 		if (StatementDelimiterToken.ConstructorWasInvoked)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException();
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
 	
 		CloseBraceToken = closeBraceToken;
     	
     	_childListIsDirty = true;
     	return this;
 	}
-	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken)
+	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, IParserModel parserModel)
 	{
 		if (OpenBraceToken.ConstructorWasInvoked || CloseBraceToken.ConstructorWasInvoked)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException();
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
 	
 		StatementDelimiterToken = statementDelimiterToken;
     	
     	_childListIsDirty = true;
     	return this;
 	}
-	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode)
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, IParserModel parserModel)
 	{
 		if (CodeBlockNode is not null)
-			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException();
+			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(parserModel);
 	
 		CodeBlockNode = codeBlockNode;
     	

@@ -693,8 +693,9 @@ public partial class CSharpBinder : IBinder
 			model.DiagnosticBag.ReportTodoException(
 	    		model.TokenWalker.Current.TextSpan,
 	    		"if (codeBlockOwner is null)");
+	    	return;
 		}
-        codeBlockOwner.SetCodeBlockNode(model.CurrentCodeBlockBuilder.Build());
+        codeBlockOwner.SetCodeBlockNode(model.CurrentCodeBlockBuilder.Build(), model);
 		
 		if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 			model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, model);

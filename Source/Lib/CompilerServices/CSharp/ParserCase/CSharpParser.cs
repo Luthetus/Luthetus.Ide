@@ -213,7 +213,6 @@ model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
                     ParseTokens.ParseMemberAccessToken((MemberAccessToken)token, model);
                     break;
                 case SyntaxKind.EqualsToken:
-                	Console.WriteLine("SyntaxKind.EqualsToken");
                     ParseTokens.ParseEqualsToken(model);
                     break;
                 case SyntaxKind.StatementDelimiterToken:

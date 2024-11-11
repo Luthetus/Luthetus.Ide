@@ -95,7 +95,19 @@ public static class ParseTypes
 
     public static TypeClauseNode MatchTypeClause(CSharpParserModel model)
     {
-    	throw new NotImplementedException("Use ParseOthers.ParseExpression(...)");
+    	if (ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var expressionNode))
+    	{
+    		return (TypeClauseNode)expressionNode;
+    	}
+    	else
+    	{
+    		var syntaxToken = model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+    		
+    		return new TypeClauseNode(
+	            syntaxToken,
+	            null,
+	            null);
+    	}
     	
         /*ISyntaxToken syntaxToken;
 		
