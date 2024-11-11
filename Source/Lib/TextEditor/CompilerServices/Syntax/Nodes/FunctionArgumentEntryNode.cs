@@ -36,8 +36,6 @@ public sealed class FunctionArgumentEntryNode : ISyntaxNode
     public bool HasInKeyword { get; }
     public bool HasRefKeyword { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentEntryNode;
     

@@ -38,8 +38,6 @@ public sealed class EmptyExpressionNode : IExpressionNode
     public TypeClauseNode ResultTypeClauseNode { get; }
     public bool FollowsMemberAccessToken { get; init; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.EmptyExpressionNode;
     

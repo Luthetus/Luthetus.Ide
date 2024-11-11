@@ -51,8 +51,6 @@ public sealed class TypeClauseNode : IExpressionNode
     /// </summary>
     public AttributeNode AttributeNode { get; set; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;
     

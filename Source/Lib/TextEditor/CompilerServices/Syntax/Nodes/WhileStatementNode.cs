@@ -39,8 +39,6 @@ public sealed class WhileStatementNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.WhileStatementNode;
     

@@ -44,8 +44,6 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.DoWhileStatementNode;
     

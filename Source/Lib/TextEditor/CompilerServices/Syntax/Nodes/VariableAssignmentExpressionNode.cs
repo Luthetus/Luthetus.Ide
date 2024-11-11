@@ -24,8 +24,6 @@ public sealed class VariableAssignmentExpressionNode : IExpressionNode
     public IExpressionNode ExpressionNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode => ExpressionNode.ResultTypeClauseNode;
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableAssignmentExpressionNode;
     

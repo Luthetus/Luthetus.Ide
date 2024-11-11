@@ -22,8 +22,6 @@ public sealed class AttributeNode : ISyntaxNode
     public List<ISyntaxToken> InnerTokens { get; }
     public CloseSquareBracketToken CloseSquareBracketToken { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AttributeNode;
     

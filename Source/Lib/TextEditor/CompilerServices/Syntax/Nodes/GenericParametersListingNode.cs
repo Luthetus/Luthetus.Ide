@@ -32,8 +32,6 @@ public sealed class GenericParametersListingNode : IExpressionNode
     public CloseAngleBracketToken CloseAngleBracketToken { get; private set; }
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericParametersListingNode;
     

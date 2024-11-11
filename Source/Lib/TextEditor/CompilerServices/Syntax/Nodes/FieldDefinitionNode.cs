@@ -43,7 +43,6 @@ public sealed class FieldDefinitionNode : IVariableDeclarationNode
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
 
-    public ISyntaxNode? Parent { get; }
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public bool IsFabricated { get; init; }

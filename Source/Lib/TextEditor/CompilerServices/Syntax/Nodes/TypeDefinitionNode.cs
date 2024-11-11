@@ -76,11 +76,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
 	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
 
-	
-
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
-
-    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;

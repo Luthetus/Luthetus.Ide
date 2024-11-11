@@ -11,7 +11,6 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
     public ArbitraryCodeBlockNode(ICodeBlockOwner? parentCodeBlockOwner)
     {
         ParentCodeBlockOwner = parentCodeBlockOwner;
-        Parent = ParentCodeBlockOwner;
     }
 
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
@@ -27,8 +26,6 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
 
 	public ScopeDirectionKind ScopeDirectionKind => ParentCodeBlockOwner.ScopeDirectionKind;
-
-    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ArbitraryCodeBlockNode;

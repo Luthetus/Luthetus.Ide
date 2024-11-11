@@ -25,8 +25,6 @@ public sealed class FunctionArgumentsListingNode : ISyntaxNode
     public ImmutableArray<FunctionArgumentEntryNode> FunctionArgumentEntryNodeList { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentsListingNode;
     

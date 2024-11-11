@@ -25,8 +25,6 @@ public sealed class GenericArgumentsListingNode : ISyntaxNode
     public ImmutableArray<GenericArgumentEntryNode> GenericArgumentEntryNodeList { get; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentsListingNode;
     

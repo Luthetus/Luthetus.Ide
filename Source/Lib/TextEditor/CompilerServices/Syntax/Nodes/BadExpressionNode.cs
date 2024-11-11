@@ -32,8 +32,6 @@ public sealed class BadExpressionNode : IExpressionNode
     public List<ISyntax> SyntaxList { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
     

@@ -20,8 +20,6 @@ public sealed class UnaryExpressionNode : IExpressionNode
     public UnaryOperatorNode UnaryOperatorNode { get; }
     public TypeClauseNode ResultTypeClauseNode => UnaryOperatorNode.ResultTypeClauseNode;
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
     

@@ -18,8 +18,6 @@ public sealed class PropertyDefinitionNode : IVariableDeclarationNode
         IdentifierToken = identifierToken;
         VariableKind = variableKind;
         IsInitialized = isInitialized;
-        
-        Parent = parent;
     }
 
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
@@ -46,7 +44,6 @@ public sealed class PropertyDefinitionNode : IVariableDeclarationNode
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
 
-    public ISyntaxNode? Parent { get; }
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public bool IsFabricated { get; init; }

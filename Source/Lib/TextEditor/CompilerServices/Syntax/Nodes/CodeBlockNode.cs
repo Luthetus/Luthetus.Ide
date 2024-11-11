@@ -28,8 +28,7 @@ public sealed class CodeBlockNode : ISyntaxNode
 	private bool _childListIsDirty = true;
 
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
-
-    public ISyntaxNode? Parent { get; }
+    
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CodeBlockNode;
     

@@ -304,6 +304,71 @@ finally
 		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
     }
     
+    [Fact]
+    public void PropertyDeclaration()
+    {
+    	var test = new Test(@"public string FirstName { get; set; }");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void PropertyDeclaration_Initialization()
+    {
+    	var test = new Test(@"public string FirstName { get; set; } = ""John"";");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void PropertyDeclaration_ExpressionBound()
+    {
+    	var test = new Test(@"public string FirstName => ""John"";");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void PropertyDeclaration_AccessModifiers()
+    {
+    	var test = new Test(@"public string FirstName { get; private set; }");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void PropertyDeclaration_GetterExpression_SetterBlock()
+    {
+    	var test = new Test(@"public string FirstName { get => _firstName; set { _firstName = value; } }");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
