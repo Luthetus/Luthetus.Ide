@@ -103,7 +103,6 @@ public static class ParseTokens
 			        isInitialized: false);
     			
     			model.StatementBuilder.ChildList.Add(variableDeclarationNode);
-    			//model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
     		}
     		else if (!successNameableToken &&
     			model.TokenWalker.Current.SyntaxKind != SyntaxKind.StatementDelimiterToken &&
@@ -116,13 +115,11 @@ public static class ParseTokens
     				_ = model.TokenWalker.Backtrack();
     				var expression = ParseOthers.ParseExpression(model);
     				model.StatementBuilder.ChildList.Add(expression);
-    				//model.CurrentCodeBlockBuilder.ChildList.Add(expression);
     			}
     		}
     		else
     		{
     			model.StatementBuilder.ChildList.Add(typeClauseNode);
-    			//model.CurrentCodeBlockBuilder.ChildList.Add(typeClauseNode);
 			}
     	}
     	else
