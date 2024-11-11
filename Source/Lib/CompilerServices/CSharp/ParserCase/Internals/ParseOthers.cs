@@ -82,7 +82,14 @@ public static class ParseOthers
     	
     	try
     	{
+    		Console.WriteLine("before_" + model.TokenWalker.Index);
     		expressionNode = ParseExpression(model);
+    		Console.WriteLine("after_" + model.TokenWalker.Index);
+    		
+#if DEBUG
+Console.WriteLine($"TryParseExpression: {expressionNode.SyntaxKind}");
+#endif
+    		
     		return expressionNode.SyntaxKind == syntaxKind;
     	}
     	finally
@@ -201,15 +208,31 @@ WriteExpressionList(model.ExpressionList);
     				else
     				{
 		    			var distance = model.TokenWalker.Index - previousLoopTokenIndex;
+		    			Console.WriteLine($"var distance = {model.TokenWalker.Index} - {previousLoopTokenIndex};");
 		    		
 		    			for (int i = 0; i < distance; i++)
 		    			{
 		    				_ = model.TokenWalker.Backtrack();
 		    			}
 		    			
-		    			Console.WriteLine(model.TokenWalker.Index);
-		    			
-    					return expressionPrimary;
+		    			// This code looks weird because it is.
+		    			// It is the duplicated code from above that breaks out of the while loop.
+		    			//
+		    			// But, this 'TryParseExpression(...)' logic was added after the fact
+		    			// and this is in a bad order.
+		    			//
+		    			// TODO: decide how to change the code such that this doesn't have to be duplicated.
+		    			//
+		    			// (I'm still trying to figure out whether the code even works thats why I'm TODO'ing this.)
+		    			{
+			    			forceExit = true;
+	    					if (forceExit)
+							{
+								Console.WriteLine($"previousRootExpressionPrimary: {previousRootExpressionPrimary.SyntaxKind}");
+								expressionPrimary = BubbleUpParseExpression(expressionListCount - 1, -1, previousRootExpressionPrimary, model, expressionListCount: expressionListCount);
+								break;
+							}
+						}
     				}
     			}
     		}
