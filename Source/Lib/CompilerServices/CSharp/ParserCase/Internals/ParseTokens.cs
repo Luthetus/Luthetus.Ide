@@ -93,10 +93,17 @@ public static class ParseTokens
     			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
     			successNameableToken = true;
     			
+    			var variableKind = VariableKind.Local;
+    			
+    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+    				variableKind = VariableKind.Property;
+    			else if (model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+    				variableKind = VariableKind.Field;
+    			
     			var variableDeclarationNode = new VariableDeclarationNode(
 			        (TypeClauseNode)typeClauseNode,
     				identifierToken,
-			        VariableKind.Local,
+			        variableKind,
 			        isInitialized: false);
     			
     			model.StatementBuilder.ChildList.Add(variableDeclarationNode);

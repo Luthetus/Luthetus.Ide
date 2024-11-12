@@ -312,9 +312,7 @@ finally
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
-		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
-		
-		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+		Assert.Equal(VariableKind.Property, variableDeclarationNode.VariableKind);
     }
     
     [Fact]

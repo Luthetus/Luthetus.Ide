@@ -648,10 +648,7 @@ public class ParseDefaultKeywords
 
     public static void HandleTypeIdentifierKeyword(CSharpParserModel model)
     {
-    	if (model.StatementBuilder.ChildList.Count == 0)
-    		ParseTokens.ParseIdentifierToken(model);
-    	else
-    		ParseOthers.StartStatement_Expression(model);
+    	ParseTokens.ParseIdentifierToken(model);
     }
 
     public static void HandleNewTokenKeyword(CSharpParserModel model)

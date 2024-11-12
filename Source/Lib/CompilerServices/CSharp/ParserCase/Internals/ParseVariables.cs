@@ -25,36 +25,11 @@ public static class ParseVariables
     {
     	IVariableDeclarationNode variableDeclarationNode;
 
-		if (variableKind == VariableKind.Local || variableKind == VariableKind.Closure)
-		{
-			variableDeclarationNode = new VariableDeclarationNode(
-	            consumedTypeClauseNode,
-	            consumedIdentifierToken,
-	            variableKind,
-	            false);
-		}
-		else if (variableKind == VariableKind.Field)
-		{
-			variableDeclarationNode = new FieldDefinitionNode(
-	            consumedTypeClauseNode,
-	            consumedIdentifierToken,
-	            variableKind,
-	            false);
-		}
-		else if (variableKind == VariableKind.Property)
-		{
-			variableDeclarationNode = new PropertyDefinitionNode(
-	            consumedTypeClauseNode,
-	            consumedIdentifierToken,
-	            variableKind,
-	            false,
-	            model.CurrentCodeBlockBuilder.CodeBlockOwner);
-		}
-		else
-		{
-			model.DiagnosticBag.ReportTodoException(consumedIdentifierToken.TextSpan, $"The {nameof(VariableKind)}: {variableKind} was not recognized.");
-			return null;
-		}
+		variableDeclarationNode = new VariableDeclarationNode(
+	        consumedTypeClauseNode,
+	        consumedIdentifierToken,
+	        variableKind,
+	        false);
 
         model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
         model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
