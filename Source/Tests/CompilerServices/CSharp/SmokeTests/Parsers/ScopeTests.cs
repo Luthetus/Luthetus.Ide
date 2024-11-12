@@ -14,6 +14,25 @@ using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
+/// <summary>
+/// Scope being incorrectly parsed is an error that cascades further errors in large throughout the rest of the file.
+///
+/// If a singular statement is incorrectly parsed, it is intended to have no impact on the rest of the file,
+/// because once the 'StatementDelimiterToken' or etc... is found to mark the end of the statement.
+/// Then the state related to statements should reset.
+///
+/// It is believed that the number 1 most important detail when writing a programming language parser
+/// is parsing the scope properly.
+///
+/// Following that, every statement, or expression, can be treated as their own "black box".
+/// If you cannot parse it, just continue on to the next statement or expression.
+///
+/// (not that this is ideal, but in terms of programming,
+///  having these well defined start and end points to every issue you encounter is vital).
+/// 
+/// You then (likely) won't have to worry about the entirety of a file when a statement fails to parse.
+/// Instead, you can look at that (relatively) tiny snippet of code by itself.
+/// <summary>
 public class ScopeTests
 {
 	public class Test
