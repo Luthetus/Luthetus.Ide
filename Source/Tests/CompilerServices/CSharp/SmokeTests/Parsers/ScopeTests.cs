@@ -51,6 +51,7 @@ public class ScopeTests
 		public ResourceUri ResourceUri { get; set; }
 		public CSharpLexer Lexer { get; set; }
 		public CSharpParser Parser { get; set; }
+		public IBinder Binder => CompilationUnit.Binder;
 		public CompilationUnit CompilationUnit { get; set; }
 	}
 	
@@ -58,32 +59,125 @@ public class ScopeTests
     public void GlobalScope()
     {
     	var test = new Test(@"");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+    	
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(1, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList.Single();
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		}
     }
     
     [Fact]
     public void GlobalScope_ArbitraryScope()
     {
     	var test = new Test(@"{}");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+    	
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    
+		    { // Arbitrary scope
+			    var arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(0, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(2, arbitraryScope.EndingIndexExclusive);
+			}
+	    }
     }
     
     [Fact]
     public void GlobalScope_ArbitraryScope_ArbitraryScope()
     {
     	var test = new Test(@"{} {}");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(3, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    
+		    { // Arbitrary scope 1
+			    var arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(0, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(2, arbitraryScope.EndingIndexExclusive);
+		    }
+		    
+		    { // Arbitrary scope 2
+			    var arbitraryScope = binderSession.ScopeList[2];
+				Assert.Equal(2, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(3, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(5, arbitraryScope.EndingIndexExclusive);
+			}
+	    }
     }
     
     [Fact]
     public void GlobalScope_ArbitraryScope_Depth_ArbitraryScope_ArbitraryScope()
     {
     	var test = new Test(@"{ {} {} }");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(4, binderSession.ScopeList.Count);
+		
+		IScope arbitraryScope;
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    
+		    { // Arbitrary scope
+			    arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(0, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(9, arbitraryScope.EndingIndexExclusive);
+			    
+			    { // Arbitrary scope 1
+				    arbitraryScope = binderSession.ScopeList[2];
+					Assert.Equal(2, arbitraryScope.IndexKey);
+				    Assert.Equal(1, arbitraryScope.ParentIndexKey);
+				    Assert.Equal(2, arbitraryScope.StartingIndexInclusive);
+				    Assert.Equal(4, arbitraryScope.EndingIndexExclusive);
+				}
+				
+				{ // Arbitrary scope 2
+				    arbitraryScope = binderSession.ScopeList[3];
+					Assert.Equal(3, arbitraryScope.IndexKey);
+				    Assert.Equal(1, arbitraryScope.ParentIndexKey);
+				    Assert.Equal(5, arbitraryScope.StartingIndexInclusive);
+				    Assert.Equal(7, arbitraryScope.EndingIndexExclusive);
+				}
+		    }
+	    }
     }
     
     [Fact]
