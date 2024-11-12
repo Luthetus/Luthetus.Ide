@@ -97,8 +97,11 @@ public static class ParseTokens
     			
     			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
     				variableKind = VariableKind.Property;
-    			else if (model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+    			else if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+    					 model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+    			{
     				variableKind = VariableKind.Field;
+    			}
     			
     			var variableDeclarationNode = new VariableDeclarationNode(
 			        (TypeClauseNode)typeClauseNode,
@@ -108,6 +111,9 @@ public static class ParseTokens
     			
     			model.StatementBuilder.ChildList.Add(variableDeclarationNode);
     			model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+    			
+    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+    				ParsePropertyDefinition(model);
     		}
     		else if (!successNameableToken &&
     			model.TokenWalker.Current.SyntaxKind != SyntaxKind.StatementDelimiterToken &&
@@ -143,6 +149,42 @@ public static class ParseTokens
 		    		$"nameof(ParseIdentifierToken) TODO case");
     		}
     	}
+    }
+    
+    public static void ParsePropertyDefinition(CSharpParserModel model)
+    {
+    	var openBraceToken = (OpenBraceToken)model.TokenWalker.Consume();
+    	
+    	var openBraceCounter = 1;
+		
+		#if DEBUG
+		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		#endif
+		
+		while (true)
+		{
+			if (model.TokenWalker.IsEof)
+				break;
+
+			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			{
+				++openBraceCounter;
+			}
+			else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+			{
+				if (--openBraceCounter <= 0)
+					break;
+			}
+
+			_ = model.TokenWalker.Consume();
+		}
+
+		var closeTokenIndex = model.TokenWalker.Index;
+		var closeBraceToken = (CloseBraceToken)model.TokenWalker.Match(SyntaxKind.CloseBraceToken);
+		
+		#if DEBUG
+		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		#endif
     }
 
     public static void ParseColonToken(CSharpParserModel model)
