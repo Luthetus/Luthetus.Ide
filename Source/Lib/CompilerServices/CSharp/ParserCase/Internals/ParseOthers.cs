@@ -285,15 +285,50 @@ Console.Write("====END==========================================================
 	/// </summary>
     private static IExpressionNode BubbleUpParseExpression(int indexStart, int indexExclusiveEnd, IExpressionNode expressionPrimary, CSharpParserModel model, int expressionListCount)
     {
+    	if (indexStart < 0)
+    	{
+    		model.DiagnosticBag.ReportTodoException(
+	    		model.TokenWalker.Current.TextSpan,
+	    		"BubbleUpParseExpression(...) => {indexStart}:indexStart < 0");
+	    		
+    		return expressionPrimary;
+    	}
+    	
     	(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode) triggeredDelimiterTuple = default;
     	IExpressionNode? previousDelimiterExpressionNode = null;
     	
-    	if (indexExclusiveEnd + 1 < expressionListCount)
-    		triggeredDelimiterTuple = model.ExpressionList[indexExclusiveEnd + 1];
-				
+	    try
+    	{	
+	    	if (indexExclusiveEnd + 1 < expressionListCount)
+	    		triggeredDelimiterTuple = model.ExpressionList[indexExclusiveEnd + 1];
+    	}
+    	catch (Exception e)
+    	{
+    		Console.WriteLine("BubbleUpParseExpression triggeredDelimiterTuple = model.ExpressionList[indexExclusiveEnd + 1];");
+    	}
+		
+		var debug_count = model.ExpressionList.Count;
+		
 		for (int i = indexStart; i > indexExclusiveEnd; i--)
 		{
-			var delimiterExpressionTuple = model.ExpressionList[i];
+			
+			if (model.ExpressionList.Count != debug_count)
+			{
+				debug_count = model.ExpressionList.Count;
+				Console.WriteLine($"debug_count:{debug_count}");
+			}
+			
+			(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode) delimiterExpressionTuple;
+			
+			try
+			{
+				delimiterExpressionTuple = model.ExpressionList[i];
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine($"BubbleUpParseExpression exception {model.ExpressionList.Count}:Count at {i}:Index");
+				continue;
+			}
 			
 			if (delimiterExpressionTuple.ExpressionNode is null)
 				break;
