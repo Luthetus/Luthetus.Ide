@@ -223,7 +223,7 @@ public static class RuntimeAssembliesLoaderFactory
                                     AccessModifierKind.Public,
                                     returnTypeClauseNode,
                                     functionIdentifierToken,
-                                    genericArgumentsListingNode,
+                                    genericArgumentsListingNode: null,
                                     functionArgumentsListingNode,
                                     null,
                                     null);

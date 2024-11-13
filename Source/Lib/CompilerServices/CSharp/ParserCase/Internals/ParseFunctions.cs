@@ -12,13 +12,30 @@ public class ParseFunctions
     public static void HandleFunctionDefinition(
         IdentifierToken consumedIdentifierToken,
         TypeClauseNode consumedTypeClauseNode,
-        GenericArgumentsListingNode? consumedGenericArgumentsListingNode,
+        GenericParametersListingNode? consumedGenericArgumentsListingNode,
         CSharpParserModel model)
     {
+    	Console.WriteLine("HandleFunctionDefinition");
+    	
+    	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+    	{
+    		var successGenericParametersListingNode = ParseOthers.TryParseExpression(
+    			SyntaxKind.GenericParametersListingNode,
+    			model,
+    			out var genericParametersListingNode);
+    			
+    		if (successGenericParametersListingNode)
+    			consumedGenericArgumentsListingNode = (GenericParametersListingNode)genericParametersListingNode;
+    	}
+    
+    	Console.WriteLine($"{model.TokenWalker.Current.SyntaxKind} != SyntaxKind.OpenParenthesisToken");
         if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
+		Console.WriteLine("HandleFunctionArguments");
         var functionArgumentsListingNode = HandleFunctionArguments(model);
+        
+        Console.WriteLine($"model.TokenWalker.Current.SyntaxKind: {model.TokenWalker.Current.SyntaxKind}");
 
         var functionDefinitionNode = new FunctionDefinitionNode(
             AccessModifierKind.Public,
@@ -129,10 +146,15 @@ public class ParseFunctions
         		}
         	}
         	
-            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-                model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
             {
                 break;
+            }
+            
+            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
+            	model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            {
+            	break;
             }
 
             _ = model.TokenWalker.Consume();

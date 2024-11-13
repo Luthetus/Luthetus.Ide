@@ -93,6 +93,18 @@ public static class ParseTokens
     			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
     			successNameableToken = true;
     			
+    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+    				model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+    			{
+    				ParseFunctions.HandleFunctionDefinition(
+    					identifierToken,
+				        (TypeClauseNode)typeClauseNode,
+				        consumedGenericArgumentsListingNode: null,
+				        model);
+				        
+				        return;
+    			}
+    			
     			var variableKind = VariableKind.Local;
     			
     			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
@@ -286,12 +298,12 @@ public static class ParseTokens
     	bool isFunctionDefinition = true;
     	
     	// These are ordered backwards (i.e. from the current token's position traveling backwards).
-    	GenericArgumentsListingNode? genericArgumentsListingNode = null;
+    	GenericParametersListingNode? genericArgumentsListingNode = null;
     	IdentifierToken identifierToken = default;
     	TypeClauseNode? typeClauseNode = null;
     	
 		if (model.StatementBuilder.TryPeek(^1, out var existingGenericArgumentsListingNode) &&
-			existingGenericArgumentsListingNode.SyntaxKind == SyntaxKind.GenericArgumentsListingNode)
+			existingGenericArgumentsListingNode.SyntaxKind == SyntaxKind.GenericParametersListingNode)
 		{
 			// public void CreateBox<TItem>() { }
 			isFunctionDefinition = model.StatementBuilder.TryPeek(^2, out var twoTokenBackwards) &&
@@ -304,7 +316,7 @@ public static class ParseTokens
 						  
 				if (isFunctionDefinition)
 				{
-					genericArgumentsListingNode = (GenericArgumentsListingNode)existingGenericArgumentsListingNode;
+					genericArgumentsListingNode = (GenericParametersListingNode)existingGenericArgumentsListingNode;
 					identifierToken = UtilityApi.ConvertToIdentifierToken(twoTokenBackwards, model);
 					typeClauseNode = UtilityApi.ConvertToTypeClauseNode(threeTokenBackwards, model);
 				}
