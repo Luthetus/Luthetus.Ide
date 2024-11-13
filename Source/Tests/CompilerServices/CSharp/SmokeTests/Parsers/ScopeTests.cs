@@ -419,24 +419,111 @@ public class ScopeTests
     public void GlobalScope_TypeDefinitionNode_Depth_FunctionDefinitionNode()
     {
     	var test = new Test(@"public class Person { public void MyMethod() { } }");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(3, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(50, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+				
+				{ // Function definition
+				    var functionDefinitionScope = binderSession.ScopeList[2];
+					Assert.Equal(2, functionDefinitionScope.IndexKey);
+				    Assert.Equal(1, functionDefinitionScope.ParentIndexKey);
+				    Assert.Equal(45, functionDefinitionScope.StartingIndexInclusive);
+				    Assert.Equal(48, functionDefinitionScope.EndingIndexExclusive);
+					Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionScope.CodeBlockOwner.SyntaxKind);
+				}
+			}
+	    }
     }
     
     [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_ArbitraryCodeBlock()
     {
     	var test = new Test(@"public class Person { { } }");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(3, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(27, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+				
+				{ // Arbitrary scope
+				    var arbitraryScope = binderSession.ScopeList[2];
+					Assert.Equal(2, arbitraryScope.IndexKey);
+				    Assert.Equal(1, arbitraryScope.ParentIndexKey);
+				    Assert.Equal(22, arbitraryScope.StartingIndexInclusive);
+				    Assert.Equal(25, arbitraryScope.EndingIndexExclusive);
+					Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+				}
+			}
+	    }
     }
     
     [Fact]
     public void GlobalScope_FunctionDefinitionNode_Depth_ArbitraryCodeBlock()
     {
     	var test = new Test(@"public void MyMethod() { { } }");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(3, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Function definition
+			    var functionDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, functionDefinitionScope.IndexKey);
+			    Assert.Equal(0, functionDefinitionScope.ParentIndexKey);
+			    Assert.Equal(23, functionDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(30, functionDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionScope.CodeBlockOwner.SyntaxKind);
+				
+				{ // Arbitrary scope
+				    var arbitraryScope = binderSession.ScopeList[2];
+					Assert.Equal(2, arbitraryScope.IndexKey);
+				    Assert.Equal(1, arbitraryScope.ParentIndexKey);
+				    Assert.Equal(25, arbitraryScope.StartingIndexInclusive);
+				    Assert.Equal(28, arbitraryScope.EndingIndexExclusive);
+					Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+				}
+			}
+	    }
     }
     
     [Fact]
