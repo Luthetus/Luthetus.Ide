@@ -15,8 +15,6 @@ public class ParseFunctions
         GenericParametersListingNode? consumedGenericArgumentsListingNode,
         CSharpParserModel model)
     {
-    	Console.WriteLine("HandleFunctionDefinition");
-    	
     	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     	{
     		var successGenericParametersListingNode = ParseOthers.TryParseExpression(
@@ -28,14 +26,10 @@ public class ParseFunctions
     			consumedGenericArgumentsListingNode = (GenericParametersListingNode)genericParametersListingNode;
     	}
     
-    	Console.WriteLine($"{model.TokenWalker.Current.SyntaxKind} != SyntaxKind.OpenParenthesisToken");
         if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
-		Console.WriteLine("HandleFunctionArguments");
         var functionArgumentsListingNode = HandleFunctionArguments(model);
-        
-        Console.WriteLine($"model.TokenWalker.Current.SyntaxKind: {model.TokenWalker.Current.SyntaxKind}");
 
         var functionDefinitionNode = new FunctionDefinitionNode(
             AccessModifierKind.Public,

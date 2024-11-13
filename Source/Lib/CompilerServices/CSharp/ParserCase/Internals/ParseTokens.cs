@@ -100,6 +100,15 @@ public static class ParseTokens
 					        (TypeClauseNode)typeClauseNode,
 					        consumedGenericArgumentsListingNode: null,
 					        model);
+					    
+					    if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
+					    	typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == identifierToken.TextSpan.GetText())
+					    {
+					    	model.Binder.BindConstructorDefinitionIdentifierToken(
+						        identifierToken,
+						        model);
+					    }
+					    
 	    			}
 	    			else
 					{
