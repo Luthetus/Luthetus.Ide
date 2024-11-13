@@ -529,31 +529,86 @@ public class ScopeTests
     [Fact]
     public void GlobalScope_PropertyDefinitionNode()
     {
-    	var test = new Test(@"public string FirstName { get; set; }");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+    	// The property definition node isn't creating scope.
+    	// So, the final 'ArbitraryCodeBlockNode'
+    	// is there to check that the scope logic did not break due to the
+    	// OpenBraceToken and CloseBraceToken being used as part of the property definition node syntax.
+    
+    	var test = new Test(@"public string FirstName { get; set; } {}");
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Arbitrary scope
+				var arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(38, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(40, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+			}
+		}
     }
     
     [Fact]
     public void GlobalScope_PropertyDefinitionNodeGetterAndSetterCodeBlock()
     {
+    	// The property definition node isn't creating scope.
+    	// So, the final 'ArbitraryCodeBlockNode'
+    	// is there to check that the scope logic did not break due to the
+    	// OpenBraceToken and CloseBraceToken being used as part of the property definition node syntax.
+    
     	var test = new Test(
-@"public class Person
+@"public string FirstName
 {
-	public string FirstName
+	get
 	{
-		get
-		{
-			return _firstName;
-		}
-		set
-		{
-			_firstName = value;
-		}
+		return _firstName;
 	}
-}");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+	set
+	{
+		_firstName = value;
+	}
+}
+
+{}".ReplaceLineEndings("\n"));
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Arbitrary scope
+				var arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(94, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(96, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+			}
+		}
     }
     
     [Fact]
@@ -573,10 +628,32 @@ x = x with
 	LastName = ""Doe"",
 }
 
-{}");
+{}".ReplaceLineEndings("\n"));
 
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Arbitrary scope
+				var arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(89, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(91, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+			}
+		}
     }
     
     [Fact]
@@ -594,10 +671,32 @@ x = x with
 	LastName = ""Doe"",
 };
 
-{}");
+{}".ReplaceLineEndings("\n"));
 
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Arbitrary scope
+				var arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(75, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(77, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+			}
+		}
     }
     
     [Fact]
@@ -615,10 +714,32 @@ x = x with
 	2,
 };
 
-{}");
+{}".ReplaceLineEndings("\n"));
 
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Arbitrary scope
+				var arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(36, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(38, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+			}
+		}
     }
     
     [Fact]
@@ -636,10 +757,32 @@ x = x with
 	2,
 };
 
-{}");
+{}".ReplaceLineEndings("\n"));
 
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Arbitrary scope
+				var arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    Assert.Equal(32, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(34, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+			}
+		}
     }
 	
 	private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
