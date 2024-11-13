@@ -201,7 +201,7 @@ model.TokenWalker.ProtectedTokenSyntaxKindList = new List<SyntaxKind>
                     ParseTokens.ParseCloseAngleBracketToken((CloseAngleBracketToken)token, model);
                     break;
                 case SyntaxKind.OpenSquareBracketToken:
-                    ParseTokens.ParseOpenSquareBracketToken((OpenSquareBracketToken)token, model);
+                    ParseTokens.ParseOpenSquareBracketToken(model);
                     break;
                 case SyntaxKind.CloseSquareBracketToken:
                     ParseTokens.ParseCloseSquareBracketToken((CloseSquareBracketToken)token, model);

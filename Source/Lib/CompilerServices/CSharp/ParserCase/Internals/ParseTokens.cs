@@ -376,10 +376,49 @@ public static class ParseTokens
     {
     }
 
-    public static void ParseOpenSquareBracketToken(
-        OpenSquareBracketToken consumedOpenSquareBracketToken,
-        CSharpParserModel model)
+    public static void ParseOpenSquareBracketToken(CSharpParserModel model)
     {
+    	var openSquareBracketToken = (OpenSquareBracketToken)model.TokenWalker.Consume();
+    
+    	if (model.StatementBuilder.ChildList.Count == 0)
+    	{
+	    	var openSquareBracketCounter = 1;
+			
+			#if DEBUG
+			model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+			#endif
+			
+			while (true)
+			{
+				if (model.TokenWalker.IsEof)
+					break;
+	
+				if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
+				{
+					++openSquareBracketCounter;
+				}
+				else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
+				{
+					if (--openSquareBracketCounter <= 0)
+						break;
+				}
+	
+				_ = model.TokenWalker.Consume();
+			}
+	
+			var closeTokenIndex = model.TokenWalker.Index;
+			var closeSquareBracketToken = (CloseSquareBracketToken)model.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
+			
+			#if DEBUG
+			model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+			#endif
+    	}
+    	else
+    	{
+    		model.DiagnosticBag.ReportTodoException(
+	    		openSquareBracketToken.TextSpan,
+	    		$"Unexpected '{nameof(OpenSquareBracketToken)}'");
+    	}
     }
 
     public static void ParseCloseSquareBracketToken(
