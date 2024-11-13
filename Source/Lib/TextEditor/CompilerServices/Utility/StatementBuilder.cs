@@ -17,7 +17,7 @@ public class StatementBuilder
 	/// <summary>^1 gives the last entry</summary>
 	public bool TryPeek(Index index, out ISyntax syntax)
 	{
-		if (ChildList.Count > 0)
+		if (ChildList.Count - index.Value > -1)
 		{
 			syntax = ChildList[index];
 			return true;

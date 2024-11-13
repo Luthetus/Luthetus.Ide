@@ -683,7 +683,7 @@ public partial class CSharpBinder : IBinder
     	var inOwner = inBuilder.CodeBlockOwner;
     	
     	var outBuilder = model.CurrentCodeBlockBuilder.Parent;
-    	var outOwner = outBuilder.CodeBlockOwner;
+    	var outOwner = outBuilder?.CodeBlockOwner;
     	
     	// Update Scope
     	{
@@ -699,6 +699,7 @@ public partial class CSharpBinder : IBinder
     	}
     	
     	// Update CodeBlockOwner
+    	if (inOwner is not null)
     	{
 	        inOwner.SetCodeBlockNode(inBuilder.Build(), model);
 			
