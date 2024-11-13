@@ -517,6 +517,44 @@ public class ScopeTests
 	    }
     }
     
+    /// <summary>
+    /// A constructor is only sensible when defined within a type.
+    /// 
+    /// But the parser still needs to not crash if someone were ever to define a function without
+    /// a return type that exists outside a type definition.
+    ///
+    /// If the function's name is equal to that of the encompasing code block owner,
+    /// and that code block owner is a TypeDefinitionNode,
+    /// then create a constructor symbol instead of a function symbol.
+    /// </summary>
+    [Fact]
+    public void GlobalScope_ConstructorDefinitionNode()
+    {
+    	var test = new Test(@"public Person() { }");
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Function definition
+			    var functionDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, functionDefinitionScope.IndexKey);
+			    Assert.Equal(0, functionDefinitionScope.ParentIndexKey);
+			    Assert.Equal(16, functionDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(19, functionDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionScope.CodeBlockOwner.SyntaxKind);
+			}
+	    }
+    }
+    
     [Fact]
     public void GlobalScope_FunctionDefinitionNode_Depth_ArbitraryCodeBlock()
     {

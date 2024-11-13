@@ -20,63 +20,6 @@ public static class ParseTokens
 
     public static void ParseIdentifierToken(CSharpParserModel model)
     {
-    	// Goal: (2024-11-10)
-    	// ==================
-    	// Everytime that an IdentifierToken is parsed from the main loop,
-    	//
-    	// 1. Statement loop iteration sees SyntaxKind.IdentifierToken:
-    	// 	var successTypeClauseNode = Try read a TypeClauseNode
-    	// 	if (!success)
-    	// 		Reset TokenWalker.Index
-    	// 	var successName = Try read a Name
-    	// 	if (successTypeClauseNode && successName)
-    	// 		return new VariableDeclarationNode(successTypeClauseNode, successName);
-    	// 	else if (successTypeClauseNode)
-    	// 		return new TypeClauseNode(successName);
-    	// 	else if (successName)
-    	// 		return new VariableReferenceNode(successName);
-    	// 
-    	// 2a. Statement loop iteration sees SyntaxKind.OpenAngleBracketToken:
-    	// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
-    	// 		return /* TODO: This case */;
-    	// 	var variableDeclarationNode = (VariableDeclarationNode)StatementBuilder.Pop();
-    	// 	return new FunctionDefinitionNode(variableDeclarationNode.TypeClauseNode, variableDeclarationNode.Name);
-    	//
-    	// 2b. Statement loop iteration sees SyntaxKind.OpenBraceToken:
-    	// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
-    	// 		return /* TODO: This case */;
-    	// 	var variableDeclarationNode = (VariableDeclarationNode)StatementBuilder.Pop();
-    	// 	return new PropertyDefinitionNode(variableDeclarationNode.TypeClauseNode, variableDeclarationNode.Name);
-    	// 
-    	// 2c. Statement loop iteration sees SyntaxKind.StatementDelimiterToken:
-    	// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
-    	// 		return /* TODO: This case */;
-    	// 	var variableDeclarationNode = (VariableDeclarationNode)StatementBuilder.Pop();
-    	// 	if (codeBlockOwner.SyntaxKind == TypeDefinitionNode)
-    	// 		return new FieldDefinitionNode(variableDeclarationNode.TypeClauseNode, variableDeclarationNode.Name);
-    	// 	else
-    	// 		return variableDeclarationNode;
-    	//
-    	// 2d. Statement loop iteration sees SyntaxKind.EqualsToken:
-    	// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableReferenceNode &&
-    	// 		StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
-    	// 	{
-    	// 		return /* TODO: This case */;
-    	// 	}
-    	// 	// Identifier is only 1 token so this will work.
-    	// 	TokenWalker.Backtrack();
-    	// 	// Whether the input was 'var x = 2' or 'x = 2' does not matter this works both cases since it only picks up at the identifier.
-    	// 	ParseExpression(model);
-    	//
-    	// 2e. Statement loop iteration sees 'put any binary operator here':
-		// 	if (StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableReferenceNode &&
-    	// 		StatementBuilder[^1].SyntaxKind != SyntaxKind.VariableDeclarationNode)
-    	// 	{
-    	// 		return /* TODO: This case */;
-    	// 	}    	
-    	// 	TokenWalker.Backtrack();
-    	// 	ParseExpression(model);
-    	
     	var originalTokenIndex = model.TokenWalker.Index;
     	
 		var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var typeClauseNode);
@@ -127,23 +70,44 @@ public static class ParseTokens
     			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
     				ParsePropertyDefinition(model);
     		}
-    		else if (!successNameableToken &&
-    			model.TokenWalker.Current.SyntaxKind != SyntaxKind.StatementDelimiterToken &&
-    			model.TokenWalker.Current.SyntaxKind != SyntaxKind.EndOfFileToken)
+    		
+    		if (!successNameableToken)
     		{
-    			var distance = model.TokenWalker.Index - originalTokenIndex;
-    			
-    			if (distance == 1)
+    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+	    			model.TokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken ||
+	    			model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+	    			model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
     			{
+    				model.StatementBuilder.ChildList.Add(typeClauseNode);
+    			}
+    			else
+    			{
+    				var distance = model.TokenWalker.Index - originalTokenIndex;
+	    			
+	    			if (distance != 1)
+	    				return;
+    				
     				_ = model.TokenWalker.Backtrack();
-    				var expression = ParseOthers.ParseExpression(model);
-    				model.StatementBuilder.ChildList.Add(expression);
+    				
+    				if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind) &&
+    					model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+						model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+		    		{
+		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
+		    			
+						ParseFunctions.HandleFunctionDefinition(
+	    					identifierToken,
+					        (TypeClauseNode)typeClauseNode,
+					        consumedGenericArgumentsListingNode: null,
+					        model);
+	    			}
+	    			else
+					{
+						var expression = ParseOthers.ParseExpression(model);
+						model.StatementBuilder.ChildList.Add(expression);
+					}
     			}
     		}
-    		else
-    		{
-    			model.StatementBuilder.ChildList.Add(typeClauseNode);
-			}
     	}
     	else
     	{
