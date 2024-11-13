@@ -245,11 +245,11 @@ public class ScopeTests
 				
 				{ // Constructor definition
 					var constructorDefinitionScope = binderSession.ScopeList[2];
-					Assert.Equal(2, typeDefinitionScope.IndexKey);
-				    Assert.Equal(1, typeDefinitionScope.ParentIndexKey);
-				    Assert.Equal(38, typeDefinitionScope.StartingIndexInclusive);
-				    Assert.Equal(41, typeDefinitionScope.EndingIndexExclusive);
-					Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+					Assert.Equal(2, constructorDefinitionScope.IndexKey);
+				    Assert.Equal(1, constructorDefinitionScope.ParentIndexKey);
+				    Assert.Equal(38, constructorDefinitionScope.StartingIndexInclusive);
+				    Assert.Equal(41, constructorDefinitionScope.EndingIndexExclusive);
+					Assert.Equal(SyntaxKind.FunctionDefinitionNode, constructorDefinitionScope.CodeBlockOwner.SyntaxKind);
 				}
 			}
 	    }
