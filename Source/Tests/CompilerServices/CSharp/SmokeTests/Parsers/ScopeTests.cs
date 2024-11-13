@@ -286,32 +286,96 @@ public class ScopeTests
     [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_PropertyDefinitionNodeWithAttribute()
     {
+	    // line_1: position_0
+	    // line_2: position_20
+	    // line_3: position_22
+	    // line_4: position_51
+	    // line_5: position_90
     	var test = new Test(
 @"public class Person
 {
 	[Parameter, EditorRequired]
 	public string FirstName { get; set; }
-}");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+}".ReplaceLineEndings("\n"));
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(91, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+			}
+	    }
     }
     
     [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_PropertyDefinitionNodeWithAttributeThatInvokesConstructor()
     {
+    	// line_1: position_0
+	    // line_2: position_20
+	    // line_3: position_22
+	    // line_4: position_68
+	    // line_5: position_107
     	var test = new Test(
 @"public class Person
 {
 	[Parameter(Name=""Aaa""), EditorRequired(3)]
 	public string FirstName { get; set; }
-}");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+}".ReplaceLineEndings("\n"));
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(108, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+			}
+	    }
     }
     
     [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_PropertyDefinitionNodeGetterAndSetterCodeBlock()
     {
+    	// line_~1: position_0
+	    // line_~2: position_20
+	    // line_~3: position_22
+	    // line_~4: position_47
+	    // line_~5: position_50
+	    // line_~6: position_56
+	    // line_~7: position_60
+	    // line_~8: position_82
+	    // line_~9: position_86
+	    // line_10: position_92
+	    // line_11: position_96
+	    // line_12: position_119
+	    // line_13: position_123
+	    // line_14: position_126
     	var test = new Test(
 @"public class Person
 {
@@ -326,21 +390,35 @@ public class ScopeTests
 			_firstName = value;
 		}
 	}
-}");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+}".ReplaceLineEndings("\n"));
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(127, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+			}
+	    }
     }
     
     [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_FunctionDefinitionNode()
     {
-    	var test = new Test(
-@"public class Person
-{
-	public void MyMethod()
-	{
-	}
-}");
+    	var test = new Test(@"public class Person { public void MyMethod() { } }");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		throw new NotImplementedException();
     }
@@ -348,12 +426,7 @@ public class ScopeTests
     [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_ArbitraryCodeBlock()
     {
-    	var test = new Test(
-@"public class Person
-{
-	{
-	}
-}");
+    	var test = new Test(@"public class Person { { } }");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		throw new NotImplementedException();
     }
@@ -361,12 +434,7 @@ public class ScopeTests
     [Fact]
     public void GlobalScope_FunctionDefinitionNode_Depth_ArbitraryCodeBlock()
     {
-    	var test = new Test(
-@"public void MyMethod()
-{
-	{
-	}
-}");
+    	var test = new Test(@"public void MyMethod() { { } }");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		throw new NotImplementedException();
     }
