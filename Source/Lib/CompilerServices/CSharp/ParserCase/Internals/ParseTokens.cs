@@ -239,7 +239,7 @@ public static class ParseTokens
 		var nextCodeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 		var nextReturnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
 
-        model.Binder.OpenScope(nextReturnTypeClauseNode, openBraceToken.TextSpan, model);
+        model.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, model);
 		model.CurrentCodeBlockBuilder = new(parent: model.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
 		nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(model);
     }
@@ -453,6 +453,7 @@ public static class ParseTokens
             namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken, model);
 
             model.Binder.OpenScope(
+            	nextCodeBlockOwner,
                 scopeReturnTypeClauseNode,
                 statementDelimiterToken.TextSpan,
                 model);
@@ -467,7 +468,7 @@ public static class ParseTokens
         {
         	var pendingChild = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
         
-        	model.Binder.OpenScope(CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, model);
+        	model.Binder.OpenScope(pendingChild, CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, model);
 			model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, pendingChild);
 			pendingChild.OnBoundScopeCreatedAndSetAsCurrent(model);
 			

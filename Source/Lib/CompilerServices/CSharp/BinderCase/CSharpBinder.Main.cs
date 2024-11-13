@@ -629,22 +629,18 @@ public partial class CSharpBinder : IBinder
     }
 
     public void OpenScope(
+    	ICodeBlockOwner codeBlockOwner,
         TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textSpan,
         CSharpParserModel model)
     {
         var scope = new Scope(
+        	codeBlockOwner,
         	indexKey: model.BinderSession.GetNextIndexKey(),
 		    parentIndexKey: model.BinderSession.CurrentScopeIndexKey,
 		    textSpan.StartingIndexInclusive,
 		    endingIndexExclusive: null);
-		    
-		//var indexForInsertion = model.BinderSession.ScopeList.FindIndex(x =>
-		//	scope.StartingIndexInclusive < x.StartingIndexInclusive);
-			
-		//if (indexForInsertion == -1)
-        //	indexForInsertion = model.BinderSession.ScopeList.Count;
-        	
+
         model.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
         model.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
     }
@@ -678,42 +674,51 @@ public partial class CSharpBinder : IBinder
         CSharpParserModel model)
     {
     	// Check if it is the global scope, if so return early.
-    	if (model.BinderSession.CurrentScopeIndexKey == 0)
-    		return;
+    	{
+	    	if (model.BinderSession.CurrentScopeIndexKey == 0)
+	    		return;
+    	}
     	
-    	// Update the Scope instance
-    	var scope = model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey];
-    	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
-    	model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey] = scope;
+    	var inBuilder = model.CurrentCodeBlockBuilder;
+    	var inOwner = inBuilder.CodeBlockOwner;
     	
-    	// Update the CodeBlockBuilder instance
-		var codeBlockOwner = model.CurrentCodeBlockBuilder.CodeBlockOwner;
-		if (codeBlockOwner is null)
-		{
-			model.DiagnosticBag.ReportTodoException(
-	    		model.TokenWalker.Current.TextSpan,
-	    		"if (codeBlockOwner is null)");
-	    	return;
-		}
-        codeBlockOwner.SetCodeBlockNode(model.CurrentCodeBlockBuilder.Build(), model);
-		
-		if (codeBlockOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-			model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)codeBlockOwner, model);
-		else if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-			model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)codeBlockOwner, model, true);
-		
-		// Return to the parent
-		if (model.CurrentCodeBlockBuilder.Parent is not null && scope.ParentIndexKey is not null)
-		{
-			model.CurrentCodeBlockBuilder = model.CurrentCodeBlockBuilder.Parent;
-			model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
-			model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
-			
-			if (codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
-				codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
-				codeBlockOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+    	var outBuilder = model.CurrentCodeBlockBuilder.Parent;
+    	var outOwner = outBuilder.CodeBlockOwner;
+    	
+    	// Update Scope
+    	{
+	    	var scope = model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey];
+	    	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
+	    	model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey] = scope;
+	    	
+	    	// Restore Parent Scope
+			if (scope.ParentIndexKey is not null)
 			{
-				model.CurrentCodeBlockBuilder.ChildList.Add(codeBlockOwner);
+				model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
+			}
+    	}
+    	
+    	// Update CodeBlockOwner
+    	{
+	        inOwner.SetCodeBlockNode(inBuilder.Build(), model);
+			
+			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+				model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, model);
+			else if (inOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+				model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)inOwner, model, true);
+			
+			// Restore Parent CodeBlockBuilder
+			if (outBuilder is not null)
+			{
+				model.CurrentCodeBlockBuilder = outBuilder;
+				outBuilder.InnerPendingCodeBlockOwner = null;
+				
+				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
+					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
+					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+				{
+					outBuilder.ChildList.Add(inOwner);
+				}
 			}
 		}
     }

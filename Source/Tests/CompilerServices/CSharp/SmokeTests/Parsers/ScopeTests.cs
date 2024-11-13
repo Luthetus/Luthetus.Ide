@@ -73,6 +73,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
 		}
     }
     
@@ -91,6 +92,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
 		    
 		    { // Arbitrary scope
 			    var arbitraryScope = binderSession.ScopeList[1];
@@ -98,6 +100,7 @@ public class ScopeTests
 			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
 			    Assert.Equal(0, arbitraryScope.StartingIndexInclusive);
 			    Assert.Equal(2, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
 			}
 	    }
     }
@@ -117,6 +120,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
 		    
 		    { // Arbitrary scope 1
 			    var arbitraryScope = binderSession.ScopeList[1];
@@ -124,6 +128,7 @@ public class ScopeTests
 			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
 			    Assert.Equal(0, arbitraryScope.StartingIndexInclusive);
 			    Assert.Equal(2, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
 		    }
 		    
 		    { // Arbitrary scope 2
@@ -132,6 +137,7 @@ public class ScopeTests
 			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
 			    Assert.Equal(3, arbitraryScope.StartingIndexInclusive);
 			    Assert.Equal(5, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
 			}
 	    }
     }
@@ -153,6 +159,7 @@ public class ScopeTests
 		    Assert.Null(globalScope.ParentIndexKey);
 		    Assert.Equal(0, globalScope.StartingIndexInclusive);
 		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
 		    
 		    { // Arbitrary scope
 			    arbitraryScope = binderSession.ScopeList[1];
@@ -160,6 +167,7 @@ public class ScopeTests
 			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
 			    Assert.Equal(0, arbitraryScope.StartingIndexInclusive);
 			    Assert.Equal(9, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
 			    
 			    { // Arbitrary scope 1
 				    arbitraryScope = binderSession.ScopeList[2];
@@ -167,6 +175,7 @@ public class ScopeTests
 				    Assert.Equal(1, arbitraryScope.ParentIndexKey);
 				    Assert.Equal(2, arbitraryScope.StartingIndexInclusive);
 				    Assert.Equal(4, arbitraryScope.EndingIndexExclusive);
+			    	Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
 				}
 				
 				{ // Arbitrary scope 2
@@ -175,6 +184,7 @@ public class ScopeTests
 				    Assert.Equal(1, arbitraryScope.ParentIndexKey);
 				    Assert.Equal(5, arbitraryScope.StartingIndexInclusive);
 				    Assert.Equal(7, arbitraryScope.EndingIndexExclusive);
+			    	Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
 				}
 		    }
 	    }
@@ -184,24 +194,93 @@ public class ScopeTests
     public void GlobalScope_TypeDefinitionNode()
     {
     	var test = new Test(@"public class Person { }");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(23, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+			}
+	    }
     }
     
     [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_ConstructorDefinitionNode()
     {
     	var test = new Test(@"public class Person { public Person() { } }");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(3, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(43, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+				
+				{ // Constructor definition
+					var constructorDefinitionScope = binderSession.ScopeList[2];
+					Assert.Equal(2, typeDefinitionScope.IndexKey);
+				    Assert.Equal(1, typeDefinitionScope.ParentIndexKey);
+				    Assert.Equal(38, typeDefinitionScope.StartingIndexInclusive);
+				    Assert.Equal(41, typeDefinitionScope.EndingIndexExclusive);
+					Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+				}
+			}
+	    }
     }
     
     [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_PropertyDefinitionNode()
     {
     	var test = new Test(@"public class Person { public string FirstName { get; set; } }");
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		throw new NotImplementedException();
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(61, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+			}
+	    }
     }
     
     [Fact]
