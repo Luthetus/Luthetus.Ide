@@ -83,6 +83,7 @@ public class TokenWalker
 		{
 			if (ProtectedTokenSyntaxKindList.Contains(consumedToken.SyntaxKind))
 				Console.WriteLine($"The protected syntax kind: '{consumedToken.SyntaxKind}' was unexpectedly consumed.");
+				// throw new Exception($"The protected syntax kind: '{consumedToken.SyntaxKind}' was unexpectedly consumed.");
 		}
 		#endif
 

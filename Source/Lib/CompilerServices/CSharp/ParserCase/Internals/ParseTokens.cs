@@ -138,13 +138,13 @@ public static class ParseTokens
     
     public static void ParsePropertyDefinition(CSharpParserModel model)
     {
-    	var openBraceToken = (OpenBraceToken)model.TokenWalker.Consume();
-    	
-    	var openBraceCounter = 1;
-		
 		#if DEBUG
 		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
+		
+		var openBraceToken = (OpenBraceToken)model.TokenWalker.Consume();
+    	
+    	var openBraceCounter = 1;
 		
 		while (true)
 		{

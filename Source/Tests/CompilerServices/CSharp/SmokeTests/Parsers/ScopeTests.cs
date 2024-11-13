@@ -321,6 +321,17 @@ public class ScopeTests
 	    }
     }
     
+    /// <summary>
+    /// When I copy and paste this tests input string to a locally running WASM website of the IDE.
+    /// I can paste in the code and it works as it is currently being asserted.
+    /// But it keeps saying
+    ///
+    /// 	Expected: 108
+    /// 	Actual:   106
+    ///
+    /// When I run this test???
+    /// I checked the line ending kinds, that they were all line feed '\n'.
+    /// </summary>
     [Fact]
     public void GlobalScope_TypeDefinitionNode_Depth_PropertyDefinitionNodeWithAttributeThatInvokesConstructor()
     {
