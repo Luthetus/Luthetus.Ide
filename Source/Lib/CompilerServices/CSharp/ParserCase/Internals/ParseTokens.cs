@@ -58,11 +58,11 @@ public static class ParseTokens
     				variableKind = VariableKind.Field;
     			}
     			
-    			var variableDeclarationNode = new VariableDeclarationNode(
+    			var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
 			        (TypeClauseNode)typeClauseNode,
     				identifierToken,
 			        variableKind,
-			        isInitialized: false);
+			        model);
     			
     			model.StatementBuilder.ChildList.Add(variableDeclarationNode);
     			model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
