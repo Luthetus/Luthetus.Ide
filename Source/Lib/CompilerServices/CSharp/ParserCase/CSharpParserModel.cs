@@ -32,6 +32,8 @@ public class CSharpParserModel : IParserModel
         
         ExpressionList = new();
         ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
+        
+        ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     }
 
     public CSharpBinder Binder { get; }
@@ -42,6 +44,7 @@ public class CSharpParserModel : IParserModel
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     public SyntaxKind? ForceParseExpressionSyntaxKind { get; set; }
+    public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

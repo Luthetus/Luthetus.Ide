@@ -93,6 +93,7 @@ Console.WriteLine($"TryParseExpression: {expressionNode.SyntaxKind}");
     	finally
     	{
     		model.ForceParseExpressionSyntaxKind = null;
+    		model.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     	}
     }
     
@@ -110,7 +111,7 @@ Console.WriteLine($"TryParseExpression: {expressionNode.SyntaxKind}");
 		WriteExpressionList(model.ExpressionList);
 #endif
 
-    	var expressionPrimary = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+    	var expressionPrimary = model.ForceParseExpressionInitialPrimaryExpression;
     	var forceExit = false;
     	var previousLoopTokenIndex = model.TokenWalker.Index;
     	var previousRootExpressionPrimary = expressionPrimary;

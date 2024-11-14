@@ -76,6 +76,8 @@ public partial class CSharpBinder
 				return GenericParametersListingMergeToken((GenericParametersListingNode)expressionPrimary, token, model);
 			case SyntaxKind.FunctionParametersListingNode:
 				return FunctionParametersListingMergeToken((FunctionParametersListingNode)expressionPrimary, token, model);
+			case SyntaxKind.FunctionArgumentsListingNode:
+				return FunctionArgumentsListingMergeToken((FunctionArgumentsListingNode)expressionPrimary, token, model);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeToken((BadExpressionNode)expressionPrimary, token, model);
 			default:
@@ -112,6 +114,8 @@ public partial class CSharpBinder
 				return GenericParametersListingMergeExpression((GenericParametersListingNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.FunctionParametersListingNode:
 				return FunctionParametersListingMergeExpression((FunctionParametersListingNode)expressionPrimary, expressionSecondary, model);
+			case SyntaxKind.FunctionArgumentsListingNode:
+				return FunctionArgumentsListingMergeExpression((FunctionArgumentsListingNode)expressionPrimary, expressionSecondary, model);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, model);
 			default:
@@ -917,6 +921,47 @@ public partial class CSharpBinder
 		functionParametersListingNode.FunctionParameterEntryNodeList.Add(functionParameterEntryNode);
 		
 		return functionParametersListingNode;
+	}
+	
+	public IExpressionNode FunctionArgumentsListingMergeToken(
+		FunctionArgumentsListingNode functionArgumentsListingNode, ISyntaxToken token, IParserModel model)
+	{
+		switch (token.SyntaxKind)
+		{
+			case SyntaxKind.CommaToken:
+				model.ExpressionList.Add((SyntaxKind.CommaToken, functionArgumentsListingNode));
+				return EmptyExpressionNode.Empty;
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), functionArgumentsListingNode, token);
+		}
+	}
+	
+	public IExpressionNode FunctionArgumentsListingMergeExpression(
+		FunctionArgumentsListingNode functionArgumentsListingNode, IExpressionNode expressionSecondary, IParserModel model)
+	{
+		if (expressionSecondary.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+			return functionArgumentsListingNode;
+			
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		{
+			expressionSecondary = ForceDecisionAmbiguousIdentifier(
+				functionArgumentsListingNode,
+				(AmbiguousIdentifierExpressionNode)expressionSecondary,
+				model);
+		}
+			
+	    var functionArgumentEntryNode = new FunctionArgumentEntryNode(
+	        variableDeclarationNode: null,
+	        optionalCompileTimeConstantToken: null,
+	        isOptional: false,
+	        hasParamsKeyword: false,
+	        hasOutKeyword: false,
+	        hasInKeyword: false,
+	        hasRefKeyword: false);
+	        
+		functionArgumentsListingNode.FunctionArgumentEntryNodeList.Add(functionArgumentEntryNode);
+		
+		return functionArgumentsListingNode;
 	}
 	
 	public IExpressionNode LambdaMergeToken(

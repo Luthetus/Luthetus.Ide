@@ -180,7 +180,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 // Function Arguments Listing
                                 var functionArgumentsListingNode = new FunctionArgumentsListingNode(
                                     openParenthesisToken,
-                                    functionArgumentEntryNodeList.ToImmutableArray(),
+                                    functionArgumentEntryNodeList,
                                     closeParenthesisToken);
 
                                 GenericArgumentsListingNode? genericArgumentsListingNode = null;

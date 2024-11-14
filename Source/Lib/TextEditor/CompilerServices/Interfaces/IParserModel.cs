@@ -80,6 +80,36 @@ public interface IParserModel
     /// </summary>
     public SyntaxKind? ForceParseExpressionSyntaxKind { get; set; }
     
+    /// <summary>
+    /// Something that is syntactically recursive but without creating a new scope needs
+    /// to be parsed as an expression.
+    ///
+    /// For example: a function definition contains its arguments.
+    ///
+    /// But, the arguments could contain an entry which is a TypeClauseNode
+    /// that has GenericArgumentEntryNode of TypeClauseNode that also goes on to have its own GenericArgumentEntryNode...
+    ///
+    /// So the expression code needs to be temporarily invoked from the statement code.
+    ///
+    /// The example that was described is parsing a FunctionArgumentsListingNode.
+    ///
+    /// The expression code only "naturally" can encounter a FunctionParametersListingNode
+    /// which occurs from function invocation.
+    ///
+    /// So, this property exists in order to change the initial primary expression that is used.
+    ///
+    /// After every invocation of:
+    ///     Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseOthers.TryParseExpression(SyntaxKind syntaxKind, CSharpParserModel model, out IExpressionNode expressionNode) {...}
+    ///
+    /// This property will be reset to 'EmptyExpressionNode.Empty'. (which is quite a hacky manner of going about things).
+    /// TODO: Consider making 'ForceParseExpressionInitialPrimaryExpression' an argument to the 'TryParseExpression' method?
+    ///
+    /// Through this property, one can tell the expression code to parse a FunctionArgumentsListingNode
+    /// by providing it as the initial expression. This must be done because it
+    /// can never occur "naturally" by invoking the expression code and starting with 'EmptyExpressionNode.Empty'.
+    /// </summary>
+    public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
+    
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

@@ -26,11 +26,11 @@ public sealed class FunctionParametersListingNode : IExpressionNode
 {
     public FunctionParametersListingNode(
         OpenParenthesisToken openParenthesisToken,
-        List<FunctionParameterEntryNode> functionParameterEntryNodes,
+        List<FunctionParameterEntryNode> functionParameterEntryNodeList,
         CloseParenthesisToken closeParenthesisToken)
     {
         OpenParenthesisToken = openParenthesisToken;
-        FunctionParameterEntryNodeList = functionParameterEntryNodes;
+        FunctionParameterEntryNodeList = functionParameterEntryNodeList;
         CloseParenthesisToken = closeParenthesisToken;
     }
 

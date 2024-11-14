@@ -1541,15 +1541,7 @@ ref,
     [Fact]
     public void Record_With_Keyword()
     {
-    	/*var session = new ExpressionSession(
-			tokenList: new List<ISyntaxToken>
-			{
-				// person = person with { FirstName = "Jane", LastName = "Doe", }
-			},
-			expressionStack: new Stack<ISyntax>());
-		
-		var expression = Parser_TEST.ParseExpression(session);*/
-		
+    	var test = new Test("person = person with { FirstName = \"Jane\", LastName = \"Doe\", };");
 		throw new NotImplementedException();
     }
     

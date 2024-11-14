@@ -121,8 +121,9 @@ public class ParseFunctions
     public static FunctionArgumentsListingNode HandleFunctionArguments(CSharpParserModel model)
     {
     	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Consume();
-    	
+    	var functionArgumentEntryNodeList = new List<FunctionArgumentEntryNode>();
     	var openParenthesisCount = 1;
+    	var corruptState = false;
     	
     	while (!model.TokenWalker.IsEof)
         {
@@ -139,26 +140,79 @@ public class ParseFunctions
         			break;
         		}
         	}
-        	
-            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+            else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
             {
                 break;
             }
-            
-            if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
-            	model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
+            		 model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
             {
             	break;
+            }
+            else if (!corruptState)
+            {
+            	var originalTokenIndex = model.TokenWalker.Index;
+				var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var typeClauseNode);
+		    	var successName = false;
+		    	
+		    	if (successTypeClauseNode)
+		    	{
+		    		// 'TypeClauseNode' or 'VariableDeclarationNode'
+		    		var successNameableToken = false;
+		    		
+		    		if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
+		    		{
+		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
+		    			successNameableToken = true;
+		    			
+		    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+		    			{
+		    				// Optional
+		    			}
+		    			
+		    			var variableKind = VariableKind.Local;
+		    			
+		    			var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+					        (TypeClauseNode)typeClauseNode,
+		    				identifierToken,
+					        variableKind,
+					        model);
+		    			
+		    			var functionArgumentEntryNode = new FunctionArgumentEntryNode(
+					        (VariableDeclarationNode)variableDeclarationNode,
+					        optionalCompileTimeConstantToken: null,
+					        isOptional: false,
+					        hasParamsKeyword: false,
+					        hasOutKeyword: false,
+					        hasInKeyword: false,
+					        hasRefKeyword: false);
+		    			
+		    			functionArgumentEntryNodeList.Add(functionArgumentEntryNode);
+		    			
+		    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+		    				_ = model.TokenWalker.Consume();
+		    		}
+		    		
+		    		if (!successNameableToken)
+		    			corruptState = true;
+		    	}
+		    	else
+		    	{
+		    		corruptState = true;
+		    	}
             }
 
             _ = model.TokenWalker.Consume();
         }
         
-        var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        var closeParenthesisToken = default(CloseParenthesisToken);
+        
+        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+        	closeParenthesisToken = model.TokenWalker.Consume();
         
         return new FunctionArgumentsListingNode(
         	openParenthesisToken,
-	        ImmutableArray<FunctionArgumentEntryNode>.Empty,
+	        functionArgumentEntryNodeList,
 	        closeParenthesisToken);
     }
 }

@@ -26,6 +26,8 @@ public class ParserModel : IParserModel
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
+        
+        ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     }
 
     public IBinder Binder { get; }
@@ -36,6 +38,7 @@ public class ParserModel : IParserModel
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; } = new();
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     public SyntaxKind? ForceParseExpressionSyntaxKind { get; set; }
+    public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

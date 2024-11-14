@@ -16,11 +16,11 @@ public sealed class GenericParametersListingNode : IExpressionNode
 {
     public GenericParametersListingNode(
         OpenAngleBracketToken openAngleBracketToken,
-        List<GenericParameterEntryNode> genericParameterEntryNodes,
+        List<GenericParameterEntryNode> genericParameterEntryNodeList,
         CloseAngleBracketToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryNodeList = genericParameterEntryNodes;
+        GenericParameterEntryNodeList = genericParameterEntryNodeList;
         CloseAngleBracketToken = closeAngleBracketToken;
     }
 

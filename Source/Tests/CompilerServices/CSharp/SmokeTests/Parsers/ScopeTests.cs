@@ -703,7 +703,7 @@ x = x with
 {
 	FirstName = ""John"",
 	LastName = ""Doe"",
-}
+};
 
 {}".ReplaceLineEndings("\n"));
 

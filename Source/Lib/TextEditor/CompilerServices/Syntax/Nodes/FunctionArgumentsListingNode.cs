@@ -1,20 +1,21 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// Used when defining a function.
 /// </summary>
-public sealed class FunctionArgumentsListingNode : ISyntaxNode
+public sealed class FunctionArgumentsListingNode : IExpressionNode
 {
     public FunctionArgumentsListingNode(
         OpenParenthesisToken openParenthesisToken,
-        ImmutableArray<FunctionArgumentEntryNode> functionArgumentEntryNodes,
+        List<FunctionArgumentEntryNode> functionArgumentEntryNodeList,
         CloseParenthesisToken closeParenthesisToken)
     {
         OpenParenthesisToken = openParenthesisToken;
-        FunctionArgumentEntryNodeList = functionArgumentEntryNodes;
+        FunctionArgumentEntryNodeList = functionArgumentEntryNodeList;
         CloseParenthesisToken = closeParenthesisToken;
     }
 
@@ -22,8 +23,9 @@ public sealed class FunctionArgumentsListingNode : ISyntaxNode
 	private bool _childListIsDirty = true;
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
-    public ImmutableArray<FunctionArgumentEntryNode> FunctionArgumentEntryNodeList { get; }
+    public List<FunctionArgumentEntryNode> FunctionArgumentEntryNodeList { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
+    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentsListingNode;
@@ -33,10 +35,10 @@ public sealed class FunctionArgumentsListingNode : ISyntaxNode
     	if (!_childListIsDirty)
     		return _childList;
     	
-    	// OpenParenthesisToken, FunctionArgumentEntryNodeList.Length, CloseParenthesisToken,
+    	// OpenParenthesisToken, FunctionArgumentEntryNodeList.Count, CloseParenthesisToken,
     	var childCount = 
     		1 +                                    // OpenParenthesisToken,
-    		FunctionArgumentEntryNodeList.Length + // FunctionArgumentEntryNodeList.Length,
+    		FunctionArgumentEntryNodeList.Count + // FunctionArgumentEntryNodeList.Count,
     		1;                                     // CloseParenthesisToken,
             
         var childList = new ISyntax[childCount];
