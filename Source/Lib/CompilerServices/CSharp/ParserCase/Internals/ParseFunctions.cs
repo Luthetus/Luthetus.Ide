@@ -151,7 +151,7 @@ public class ParseFunctions
             }
             else if (!corruptState)
             {
-            	var originalTokenIndex = model.TokenWalker.Index;
+            	var tokenIndexOriginal = model.TokenWalker.Index;
 				var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var typeClauseNode);
 		    	var successName = false;
 		    	
@@ -191,6 +191,9 @@ public class ParseFunctions
 		    			
 		    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
 		    				_ = model.TokenWalker.Consume();
+		    				
+		    			if (tokenIndexOriginal < model.TokenWalker.Index)
+		    				continue; // Already consumed so avoid the one at the end of the while loop
 		    		}
 		    		
 		    		if (!successNameableToken)

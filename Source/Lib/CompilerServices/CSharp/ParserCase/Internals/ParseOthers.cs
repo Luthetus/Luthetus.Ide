@@ -400,6 +400,7 @@ Console.Write("====END==========================================================
 			case SyntaxKind.EqualsToken:
 			case SyntaxKind.StatementDelimiterToken:
 			case SyntaxKind.ColonToken:
+			case SyntaxKind.CloseSquareBracketToken:
     			return true;
     		default:
     			return false;

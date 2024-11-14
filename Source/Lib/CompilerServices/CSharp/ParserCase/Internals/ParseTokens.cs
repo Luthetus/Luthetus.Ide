@@ -407,11 +407,17 @@ public static class ParseTokens
 			}
 			else if (!corruptState)
 			{
+				var tokenIndexOriginal = model.TokenWalker.Index;
+				
 				model.ExpressionList.Add((SyntaxKind.CloseSquareBracketToken, null));
+				model.ExpressionList.Add((SyntaxKind.CommaToken, null));
 				var expression = ParseOthers.ParseExpression(model);
 				
 				if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
 					_ = model.TokenWalker.Consume();
+					
+				if (tokenIndexOriginal < model.TokenWalker.Index)
+					continue; // Already consumed so avoid the one at the end of the while loop
 			}
 
 			_ = model.TokenWalker.Consume();
