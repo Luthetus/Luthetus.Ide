@@ -84,6 +84,8 @@ public interface IParserModel
     /// Something that is syntactically recursive but without creating a new scope needs
     /// to be parsed as an expression.
     ///
+    /// TODO: It was decided to parse function arguments differently than how this example describes...
+    ///       ...This example should be changed to one that is actually in use.
     /// For example: a function definition contains its arguments.
     ///
     /// But, the arguments could contain an entry which is a TypeClauseNode

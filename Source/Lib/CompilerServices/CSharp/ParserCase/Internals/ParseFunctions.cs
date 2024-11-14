@@ -208,7 +208,7 @@ public class ParseFunctions
         var closeParenthesisToken = default(CloseParenthesisToken);
         
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-        	closeParenthesisToken = model.TokenWalker.Consume();
+        	closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Consume();
         
         return new FunctionArgumentsListingNode(
         	openParenthesisToken,

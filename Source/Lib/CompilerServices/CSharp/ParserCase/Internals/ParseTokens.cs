@@ -380,45 +380,49 @@ public static class ParseTokens
     {
     	var openSquareBracketToken = (OpenSquareBracketToken)model.TokenWalker.Consume();
     
-    	if (model.StatementBuilder.ChildList.Count == 0)
-    	{
-	    	var openSquareBracketCounter = 1;
-			
-			#if DEBUG
-			model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-			#endif
-			
-			while (true)
-			{
-				if (model.TokenWalker.IsEof)
-					break;
-	
-				if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
-				{
-					++openSquareBracketCounter;
-				}
-				else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
-				{
-					if (--openSquareBracketCounter <= 0)
-						break;
-				}
-	
-				_ = model.TokenWalker.Consume();
-			}
-	
-			var closeTokenIndex = model.TokenWalker.Index;
-			var closeSquareBracketToken = (CloseSquareBracketToken)model.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
-			
-			#if DEBUG
-			model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-			#endif
-    	}
-    	else
+    	if (model.StatementBuilder.ChildList.Count != 0)
     	{
     		model.DiagnosticBag.ReportTodoException(
 	    		openSquareBracketToken.TextSpan,
 	    		$"Unexpected '{nameof(OpenSquareBracketToken)}'");
-    	}
+	    	return;
+	    }
+    	var openSquareBracketCounter = 1;
+		var corruptState = false;
+		
+		#if DEBUG
+		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		#endif
+		
+		while (!model.TokenWalker.IsEof)
+		{
+			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
+			{
+				++openSquareBracketCounter;
+			}
+			else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
+			{
+				if (--openSquareBracketCounter <= 0)
+					break;
+			}
+			else if (!corruptState)
+			{
+				model.ExpressionList.Add((SyntaxKind.CloseSquareBracketToken, null));
+				var expression = ParseOthers.ParseExpression(model);
+				
+				if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+					_ = model.TokenWalker.Consume();
+			}
+
+			_ = model.TokenWalker.Consume();
+		}
+
+		var closeTokenIndex = model.TokenWalker.Index;
+		var closeSquareBracketToken = (CloseSquareBracketToken)model.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
+		
+		#if DEBUG
+		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		#endif
     }
 
     public static void ParseCloseSquareBracketToken(
