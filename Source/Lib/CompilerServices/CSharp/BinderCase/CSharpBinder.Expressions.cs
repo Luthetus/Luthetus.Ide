@@ -290,8 +290,10 @@ public partial class CSharpBinder
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 			        out var existingVariableDeclarationNode))
 			{
+				var identifierToken = UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, model);
+				
 				var variableReferenceNode = ConstructAndBindVariableReferenceNode(
-					(IdentifierToken)ambiguousIdentifierExpressionNode.Token,
+					identifierToken,
 					(CSharpParserModel)model);
     			
     			return variableReferenceNode;
