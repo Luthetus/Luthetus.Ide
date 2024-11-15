@@ -865,8 +865,11 @@ x = x with
     [Fact]
     public void Find_VariableDeclaration_ThatWasDeclaredInParentScope()
     {
-    	// Erroneous behavior: A variable declared in a parent scope, will not be found as a variable reference
-    	// 					if it is referenced from a child scope.
+    	// Erroneous behavior:
+    	// ===================
+    	//
+    	// A variable declared in a parent scope,
+    	// will not be found as a variable reference if it is referenced from a child scope.
     
     	var test = new Test(
 @"var ccc = 2;
@@ -894,15 +897,85 @@ ccc;
 				var arbitraryScope = binderSession.ScopeList[1];
 				Assert.Equal(1, arbitraryScope.IndexKey);
 			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
-			    //Assert.Equal(14, arbitraryScope.StartingIndexInclusive);
 			    Assert.Equal(18, arbitraryScope.StartingIndexInclusive);
-			    //Assert.Equal(23, arbitraryScope.EndingIndexExclusive);
 			    Assert.Equal(27, arbitraryScope.EndingIndexExclusive);
 			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
 			    
 			    Assert.Equal(2, arbitraryScope.CodeBlockOwner.GetChildList().Length);
 			    Assert.Equal(SyntaxKind.OpenBraceToken, arbitraryScope.CodeBlockOwner.GetChildList()[0].SyntaxKind);
 			    Assert.Equal(SyntaxKind.VariableReferenceNode, arbitraryScope.CodeBlockOwner.CodeBlockNode.GetChildList().Single().SyntaxKind);
+			}
+		}
+    }
+    
+    [Fact]
+    public void Keyword_CreatesScopeWithOpenAndCloseBraceToken_ButGetsSingleStatementBody()
+    {
+    	// Erroneous behavior:
+    	// ===================
+    	//
+    	// A keyword that creates a code block
+    	// (either with OpenBraceToken and CloseBraceToken, or as a "single statement body" deliminated by a semicolon)
+    	// At times will use the 'OpenBraceToken and CloseBraceToken' syntax, yet capture
+    	// the next statement inside 'OpenBraceToken and CloseBraceToken' deliminated code block
+    	// to be '"single statement body" deliminated by a semicolon' syntax.
+    	//
+    	// In the cases where this happens, "simplifying" the keyword's syntax within the parentheses (if it has this syntax)
+    	// can sometimes fix the issue.
+    	//
+    	// As well, it seems that not all statements will be taken erroneously as the "single statement body".
+    	// It is believed that at one point changing a FunctionInvocation statement to a variable declaration
+    	// and assignment statement "fixed" this issue, but this cannot currently be replicated anymore it seems.
+    	//
+    	// More Details:
+    	// -------------
+    	// 
+    	// The following code correctly puts the scope at the OpenBraceToken and CloseBraceToken:
+    	// |
+    	// ````if (false)
+		// ````{
+		// ````	_queue.RemoveLast();
+		// ````}
+		// 
+		// The following code erroneously puts the scope at the StatementDelimiterToken that appears at the end of the 3rd line of the text.
+		// |
+		// ````if (batchEvent is not null)
+		// ````{
+		// ````	_queue.RemoveLast();
+		// ````}
+		//
+		// It appears that the issue is with parsing an expression, and erroneously consuming an OpenBraceToken.
+		// The console messages show that a 'BadExpressionNode + OpenBraceToken => BadExpressionNode'
+		// Note the 'OpenBraceToken', this message is saying that it was consumed.
+    
+    	var test = new Test(
+@"if (batchEvent is not null)
+{
+	_queue.RemoveLast();
+}".ReplaceLineEndings("\n"));
+
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // If statement scope
+				var ifStatementScope = binderSession.ScopeList[1];
+				Assert.Equal(1, ifStatementScope.IndexKey);
+			    Assert.Equal(0, ifStatementScope.ParentIndexKey);
+			    Assert.Equal(28, ifStatementScope.StartingIndexInclusive);
+			    Assert.Equal(53, ifStatementScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.IfStatementNode, ifStatementScope.CodeBlockOwner.SyntaxKind);
 			}
 		}
     }
