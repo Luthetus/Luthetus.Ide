@@ -861,6 +861,51 @@ x = x with
 			}
 		}
     }
+    
+    [Fact]
+    public void Find_VariableDeclaration_ThatWasDeclaredInParentScope()
+    {
+    	// Erroneous behavior: A variable declared in a parent scope, will not be found as a variable reference
+    	// 					if it is referenced from a child scope.
+    
+    	var test = new Test(
+@"var ccc = 2;
+ccc;
+{
+	ccc;
+}".ReplaceLineEndings("\n"));
+
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Arbitrary scope
+				var arbitraryScope = binderSession.ScopeList[1];
+				Assert.Equal(1, arbitraryScope.IndexKey);
+			    Assert.Equal(0, arbitraryScope.ParentIndexKey);
+			    //Assert.Equal(14, arbitraryScope.StartingIndexInclusive);
+			    Assert.Equal(18, arbitraryScope.StartingIndexInclusive);
+			    //Assert.Equal(23, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(27, arbitraryScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.ArbitraryCodeBlockNode, arbitraryScope.CodeBlockOwner.SyntaxKind);
+			    
+			    Assert.Equal(2, arbitraryScope.CodeBlockOwner.GetChildList().Length);
+			    Assert.Equal(SyntaxKind.OpenBraceToken, arbitraryScope.CodeBlockOwner.GetChildList()[0].SyntaxKind);
+			    Assert.Equal(SyntaxKind.VariableReferenceNode, arbitraryScope.CodeBlockOwner.CodeBlockNode.GetChildList().Single().SyntaxKind);
+			}
+		}
+    }
 	
 	private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {

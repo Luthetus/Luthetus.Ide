@@ -281,14 +281,14 @@ public partial class CSharpBinder
 		if (ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
 			return ambiguousIdentifierExpressionNode;
 	
-		if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
+		if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
-			if (TryGetVariableDeclarationNodeByScope(
-        		model,
-        		model.BinderSession.ResourceUri,
-        		model.BinderSession.CurrentScopeIndexKey,
-        		ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
-        		out var existingVariableDeclarationNode))
+			if (TryGetVariableDeclarationHierarchically(
+			    	model,
+			    	model.BinderSession.ResourceUri,
+			    	model.BinderSession.CurrentScopeIndexKey,
+			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
+			        out var existingVariableDeclarationNode))
 			{
 				var variableReferenceNode = ConstructAndBindVariableReferenceNode(
 					(IdentifierToken)ambiguousIdentifierExpressionNode.Token,
@@ -302,11 +302,11 @@ public partial class CSharpBinder
 			UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
 			if (TryGetTypeDefinitionHierarchically(
-        		model,
-        		model.BinderSession.ResourceUri,
-                model.BinderSession.CurrentScopeIndexKey,
-                ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
-                out var typeDefinitionNode))
+	        		model,
+	        		model.BinderSession.ResourceUri,
+	                model.BinderSession.CurrentScopeIndexKey,
+	                ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
+	                out var typeDefinitionNode))
 	        {
 	            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, model);
 				BindTypeClauseNode(typeClauseNode, (CSharpParserModel)model);
@@ -324,10 +324,12 @@ public partial class CSharpBinder
 		}
 		
 		// Bind an undefined-variable
-		if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken)
+		if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
+			var identifierToken = UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, model);
+			
 			var variableReferenceNode = ConstructAndBindVariableReferenceNode(
-				(IdentifierToken)ambiguousIdentifierExpressionNode.Token,
+				identifierToken,
 				(CSharpParserModel)model);
 			
 			return variableReferenceNode;
