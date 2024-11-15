@@ -212,18 +212,14 @@ public partial class CSharpBinder
 			
 			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.NotTokenContextualKeyword)
 				_ = model.TokenWalker.Consume(); // Consume the NotTokenKeyword
-			
-			var typeClauseNode = ParseTypes.MatchTypeClause((CSharpParserModel)model);
-			
-			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.IdentifierToken)
-			{
-				var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
 				
-				_ = ParseVariables.HandleVariableDeclarationExpression(
-			        typeClauseNode,
-			        identifierToken,
-			        VariableKind.Local,
-			        model);
+			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.NullTokenKeyword)
+			{
+				_ = model.TokenWalker.Consume(); // Consume the NullTokenKeyword
+			}
+			else if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
+			{
+				ParseTokens.ParseIdentifierToken((CSharpParserModel)model); // Parse the type pattern matching / variable declaration
 			}
 			
 			// Guaranteed to consume 1 further than the secondary loop so have to backtrack 1 time as well.
@@ -746,32 +742,11 @@ public partial class CSharpBinder
 				BindStringVerbatimExpression((AtToken)token, (CSharpParserModel)model);
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
-				if (ParseTypes.IsPossibleTypeClause(model.TokenWalker.Next, (CSharpParserModel)model))
-				{
-					// The code in this block is very confusing due to the Consume() and Backtrack() usages.
-					//
-					// The issue is that the statement loop (the main parser loop) invokes
-					// 'Consume()' at the start of the while loop.
-					//
-					// The expression loop (the secondary parser loop) invokes
-					// 'Consume()' at the end of the while loop.
-					//
-					// TODO: The statement loop (the main parser loop) needs to invoke 'Consume()' at the end of the while loop...
-					//       ...(or vice versa, whichever is deemed a better fit, just be consistent in both loops).
 				
-					_ = model.TokenWalker.Consume();
-					var typeClauseNode = ParseTypes.MatchTypeClause((CSharpParserModel)model);
-					
-					var identifierToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
-					
-					// Guaranteed to consume 1 further than the secondary loop so have to backtrack 1 time as well.
-					_ = model.TokenWalker.Backtrack();
-					
-					_ = ParseVariables.HandleVariableDeclarationExpression(
-				        typeClauseNode,
-				        identifierToken,
-				        VariableKind.Local,
-				        model);
+				if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
+				{
+					// Parse the variable reference / variable declaration
+					ParseTokens.ParseIdentifierToken((CSharpParserModel)model);
 				}
 				
 				return emptyExpressionNode;

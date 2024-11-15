@@ -979,6 +979,51 @@ ccc;
 			}
 		}
     }
+    
+    [Fact]
+    public void Aaa()
+    {
+    	// Erroneous behavior:
+    	// ===================
+    	//
+    	// 
+    
+    	var test = new Test(
+@"var _queue = 2;
+
+if (false)
+{
+	_queue.RemoveLast();
+}
+
+{
+}".ReplaceLineEndings("\n"));
+
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // If statement scope
+				var ifStatementScope = binderSession.ScopeList[1];
+				Assert.Equal(1, ifStatementScope.IndexKey);
+			    Assert.Equal(0, ifStatementScope.ParentIndexKey);
+			    Assert.Equal(28, ifStatementScope.StartingIndexInclusive);
+			    Assert.Equal(53, ifStatementScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.IfStatementNode, ifStatementScope.CodeBlockOwner.SyntaxKind);
+			}
+		}
+    }
 	
 	private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
