@@ -702,6 +702,7 @@ public partial class ParseExpressionTests
 	    	{
 	    		var firstNameObjectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[0];
 	    		
+	    		Assert.True(firstNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked);
 	    		Assert.Equal("FirstName", firstNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
 		        Assert.True(firstNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
 		        
@@ -711,6 +712,7 @@ public partial class ParseExpressionTests
 	    	{
 	    		var lastNameObjectInitializationParameterEntryNode = constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList[1];
 	    		
+	    		Assert.True(lastNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked);
 	    		Assert.Equal("LastName", lastNameObjectInitializationParameterEntryNode.PropertyIdentifierToken.TextSpan.GetText());
 		        Assert.True(lastNameObjectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked);
 		        

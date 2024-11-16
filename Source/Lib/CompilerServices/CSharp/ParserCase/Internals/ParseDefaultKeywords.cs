@@ -653,7 +653,8 @@ public class ParseDefaultKeywords
 
     public static void HandleNewTokenKeyword(CSharpParserModel model)
     {
-    	if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+    	if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+    		UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Next.SyntaxKind))
     	{
     		var expressionNode = ParseOthers.ParseExpression(model);
     		model.StatementBuilder.ChildList.Add(expressionNode);

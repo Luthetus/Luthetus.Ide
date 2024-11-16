@@ -552,6 +552,9 @@ public partial class CSharpBinder
 				}
 				
 				goto default;
+			case SyntaxKind.CommaToken:
+				model.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode));
+				return EmptyExpressionNode.Empty;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), constructorInvocationExpressionNode, token);
 		}
@@ -560,7 +563,8 @@ public partial class CSharpBinder
 	public IExpressionNode ConstructorInvocationMergeExpression(
 		ConstructorInvocationExpressionNode constructorInvocationExpressionNode, IExpressionNode expressionSecondary, IParserModel model)
 	{
-		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		if (constructorInvocationExpressionNode.ConstructorInvocationStageKind != ConstructorInvocationStageKind.ObjectInitializationParameters &&
+			expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
 			expressionSecondary = ForceDecisionAmbiguousIdentifier(
 				constructorInvocationExpressionNode,
@@ -608,7 +612,7 @@ public partial class CSharpBinder
 			    
 			    constructorInvocationExpressionNode.ObjectInitializationParametersListingNode.ObjectInitializationParameterEntryNodeList.Add(objectInitializationParameterEntryNode);
 			}
-
+			
 			var success = true;
 			
 			// I'm tired and feel like I'm about to pass out.
@@ -621,12 +625,7 @@ public partial class CSharpBinder
 			if (!objectInitializationParameterEntryNode.PropertyIdentifierToken.ConstructorWasInvoked &&
 				(!currentTokenIsComma && !currentTokenIsBrace))
 			{
-				if (expressionSecondary.SyntaxKind != SyntaxKind.VariableReferenceNode &&
-					expressionSecondary.SyntaxKind != SyntaxKind.AmbiguousIdentifierExpressionNode)
-				{
-					success = false;
-				}
-				else if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 				{
 					objectInitializationParameterEntryNode.PropertyIdentifierToken = ((VariableReferenceNode)expressionSecondary).VariableIdentifierToken;
 				}
@@ -642,6 +641,11 @@ public partial class CSharpBinder
 						success = false;
 					}
 				}
+				else if (expressionSecondary.SyntaxKind == SyntaxKind.TypeClauseNode)
+				{
+					var typeClauseNode = (TypeClauseNode)expressionSecondary;
+					objectInitializationParameterEntryNode.PropertyIdentifierToken = (IdentifierToken)typeClauseNode.TypeIdentifierToken;
+				}
 				else
 				{
 					success = false;
@@ -654,6 +658,14 @@ public partial class CSharpBinder
 			}
 			else if (objectInitializationParameterEntryNode.ExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
 			{
+				if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+				{
+					expressionSecondary = ForceDecisionAmbiguousIdentifier(
+						constructorInvocationExpressionNode,
+						(AmbiguousIdentifierExpressionNode)expressionSecondary,
+						model);
+				}
+			
 				objectInitializationParameterEntryNode.ExpressionNode = expressionSecondary;
 				
 				if (!objectInitializationParameterEntryNode.EqualsToken.ConstructorWasInvoked && (currentTokenIsComma || currentTokenIsBrace))
