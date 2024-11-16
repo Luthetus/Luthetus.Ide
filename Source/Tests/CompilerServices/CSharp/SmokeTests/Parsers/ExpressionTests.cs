@@ -35,87 +35,6 @@ public partial class ParseExpressionTests
 		public CompilationUnit CompilationUnit { get; set; }
 	}
 
-	[Fact]
-	public void Aaa()
-	{
-		var test = new Test(@"var aaa = 1;");
-        
-        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-        
-        var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
-        var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
-        
-        var identifierToken = (IdentifierToken)variableAssignmentExpressionNode.GetChildList()[0];
-        var equalsToken = (EqualsToken)variableAssignmentExpressionNode.GetChildList()[1];
-        
-        var literalExpressionNode = (LiteralExpressionNode)variableAssignmentExpressionNode.GetChildList()[2];
-    }
-    
-    [Fact]
-	public void VariableReferenceNode_A()
-	{
-		var test = new Test(@"var compilationUnit = parser.Parse();");
-        
-        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-        
-        throw new NotImplementedException();
-    }
-    
-    [Fact]
-	public void VariableReferenceNode_B()
-	{
-		var test = new Test(@"var compilationUnit = Parse().parser;");
-        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-        
-        throw new NotImplementedException();
-    }
-    
-    [Fact]
-	public void VariableReferenceNode_C()
-	{
-		var test = new Test(@"var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;");
-        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-        
-        throw new NotImplementedException();
-    }
-    
-    [Fact]
-	public void VariableReferenceNode_D()
-	{
-		var test = new Test(@"var rememberBinaryExpressionNode = binaryExpressionNode;");
-        var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-        
-        throw new NotImplementedException();
-    }
-    
-    /// <summary>
-    /// Goto definition isn't working for the variable assignment that is done to a variable on an outer scope.
-    /// </summary>
-    [Fact]
-	public void VariableReferenceNode_E()
-	{
-		var test = new Test(
-@"
-var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
-
-{
-	binaryExpressionNode = leftBinaryExpressionNode;
-}
-");
-
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-        
-        throw new NotImplementedException();
-    }
-
-/*
-this,
-out,
-in,
-ref,
-???
-*/
-    
     [Fact]
     public void Numeric_Add_BinaryExpressionNode()
     {
@@ -452,6 +371,8 @@ ref,
     {
     	var test = new Test("(MyClass)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
     }

@@ -28,6 +28,10 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeToken(
 		IExpressionNode expressionPrimary, ISyntaxToken token, IParserModel model)
 	{
+		#if DEBUG
+		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}");
+		#endif
+	
 		if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
 		{
 			if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
@@ -92,6 +96,10 @@ public partial class CSharpBinder
 	public IExpressionNode AnyMergeExpression(
 		IExpressionNode expressionPrimary, IExpressionNode expressionSecondary, IParserModel model)
 	{
+		#if DEBUG
+		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {expressionSecondary.SyntaxKind}");
+		#endif
+	
 		switch (expressionPrimary.SyntaxKind)
 		{
 			case SyntaxKind.ParenthesizedExpressionNode:
@@ -1092,6 +1100,13 @@ public partial class CSharpBinder
 		switch (token.SyntaxKind)
 		{
 			case SyntaxKind.CloseParenthesisToken:
+				if (parenthesizedExpressionNode.InnerExpression.SyntaxKind == SyntaxKind.TypeClauseNode)
+				{
+					var typeClauseNode = (TypeClauseNode)parenthesizedExpressionNode.InnerExpression;
+					var explicitCastNode = new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
+					return ExplicitCastMergeToken(explicitCastNode, token, model);
+				}
+				
 				return parenthesizedExpressionNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
 			case SyntaxKind.EqualsToken:
 				if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
@@ -1134,29 +1149,8 @@ public partial class CSharpBinder
 		if (parenthesizedExpressionNode.InnerExpression.SyntaxKind != SyntaxKind.EmptyExpressionNode)
 			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), parenthesizedExpressionNode, expressionSecondary);
 		
-		if (expressionSecondary.SyntaxKind == SyntaxKind.BadExpressionNode)
-		{
-			var badExpressionNode = (BadExpressionNode)expressionSecondary;
-			
-			if (badExpressionNode.SyntaxList.Count == 2 &&
-					(badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken ||
-					 UtilityApi.IsTypeIdentifierKeywordSyntaxKind(badExpressionNode.SyntaxList[1].SyntaxKind)))
-			{
-				var typeClauseNode = new TypeClauseNode((ISyntaxToken)badExpressionNode.SyntaxList[1], valueType: null, genericParametersListingNode: null);
-				
-				BindTypeClauseNode(
-			        typeClauseNode,
-			        (CSharpParserModel)model);
-			    
-				return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
-			}
-			else if (badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.TypeClauseNode)
-			{
-				var typeClauseNode = (TypeClauseNode)badExpressionNode.SyntaxList[1];
-				return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
-			}
-		}
-		else if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+		// TODO: This seems like a bad idea?
+		if (expressionSecondary.SyntaxKind == SyntaxKind.VariableReferenceNode)
 		{
 			 var variableReferenceNode = (VariableReferenceNode)expressionSecondary;
 			 

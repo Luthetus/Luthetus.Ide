@@ -1002,7 +1002,7 @@ ccc;
     	// Erroneous behavior:
     	// ===================
     	//
-    	// The issue occurs with the following input (any probably some others):
+    	// The issue occurs with the following input (and probably some others):
     	// ````if (false)
 		// ````{
 		// ````	_queue.RemoveLast();
