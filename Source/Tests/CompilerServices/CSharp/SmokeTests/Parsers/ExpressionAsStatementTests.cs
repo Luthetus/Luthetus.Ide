@@ -14,7 +14,23 @@ using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
-public partial class ExpressionTests
+/// <summary>
+/// Anything parsed starts off as a statement,
+/// then goes on to invoke the expression loop if the syntax is deemed an expression.
+///
+/// So, every test in <see cref="ExpressionTests"/> needs to be replicated
+/// in this file.
+///
+/// And the difference between the tests is that <see cref="ExpressionTests"/>
+/// needs to somehow start parsing the input as an expression.
+///
+/// This file parses the inputs as statements first, and goes into the
+/// expression loop when it is deemed necessary.
+///
+/// This brings up the question... should parsing be "statement first" or "expression first"?
+/// As of making this comment the CSharpParser is "statement first".
+/// </summary>
+public partial class ExpressionAsStatementTests
 {
 	public class Test
 	{
