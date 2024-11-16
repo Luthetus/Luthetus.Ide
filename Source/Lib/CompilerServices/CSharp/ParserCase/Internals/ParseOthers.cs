@@ -202,7 +202,7 @@ public static class ParseOthers
     					continue;
     					
     				isExpressionRoot = false;
-    				rootSyntaxKind = tuple.DelimiterSyntaxKind;
+    				rootSyntaxKind = tuple.ExpressionNode.SyntaxKind;
     				break;
     			}
     			
