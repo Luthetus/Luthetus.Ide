@@ -119,7 +119,7 @@ public static class ParseTokens
             	}
             	else
             	{
-            		// FunctionInvocationNode
+            		// FunctionInvocationNode, ConstructorInvocationNode
             	
             		var distance = model.TokenWalker.Index - originalTokenIndex;
     			
@@ -132,6 +132,12 @@ public static class ParseTokens
 						model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
 						model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
 		    		{
+		    			if (model.TokenWalker.Previous.SyntaxKind == SyntaxKind.NewTokenKeyword)
+						{
+							// ConstructorInvocationNode
+							_ = model.TokenWalker.Backtrack();
+						}
+		    		
 		    			var expression = ParseOthers.ParseExpression(model);
 						model.StatementBuilder.ChildList.Add(expression);
 	    			}
