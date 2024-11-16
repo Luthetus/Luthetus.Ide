@@ -475,8 +475,6 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, CSharpParserModel model)
     {
-    	Console.WriteLine("aaa ParseStatementDelimiterToken");
-    
     	if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
         	var closureCurrentCompilationUnitBuilder = model.CurrentCodeBlockBuilder;

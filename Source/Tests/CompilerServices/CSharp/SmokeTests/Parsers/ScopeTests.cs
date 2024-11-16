@@ -981,22 +981,88 @@ ccc;
     }
     
     [Fact]
-    public void Aaa()
+    public void If_IsPatternMatchVariableDefinition_Misses_OpenBraceToken()
     {
     	// Erroneous behavior:
     	// ===================
     	//
-    	// 
+    	// The OpenBraceToken of the if statement is being missed, and the scope for the IfStatementNode
+    	// is placed at the StatementDelimiterToken which is at the end of the 3rd line of the text.
     
     	var test = new Test(
-@"var _queue = 2;
+@"if (child is ISyntaxNode syntaxNode)
+{
+	WriteChildrenIndentedRecursive(syntaxNode, ""node"", indentation + 1);
+}".ReplaceLineEndings("\n"));
+	}
 
-if (false)
+	[Fact]
+    public void Statement_Inside_If_CodeBlock_Causes_Miss_CloseBraceToken_CaseA()
+    {
+    	// Erroneous behavior:
+    	// ===================
+    	//
+    	// The issue occurs with the following input (any probably some others):
+    	// ````if (false)
+		// ````{
+		// ````	_queue.RemoveLast();
+		// ````}
+		//
+		// But, it does NOT occur with this input:
+		// ````if (false)
+		// ````{
+		// ````	var x = _queue.RemoveLast();
+		// ````}
+		//
+		// The scope should start at the OpenBraceToken, and end at the CloseBraceToken.
+		//
+		// However, in the erroneous example, the CloseBraceToken is somehow skipped over,
+		// and the IfStatementNode will use the next CloseBraceToken as the end of the scope
+		// (if there happens to be another CloseBraceToken deeper in the text file).
+    
+    	var test = new Test(
+@"if (false)
 {
 	_queue.RemoveLast();
-}
+}".ReplaceLineEndings("\n"));
 
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // If statement scope
+				var ifStatementScope = binderSession.ScopeList[1];
+				Assert.Equal(1, ifStatementScope.IndexKey);
+			    Assert.Equal(0, ifStatementScope.ParentIndexKey);
+			    Assert.Equal(28, ifStatementScope.StartingIndexInclusive);
+			    Assert.Equal(53, ifStatementScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.IfStatementNode, ifStatementScope.CodeBlockOwner.SyntaxKind);
+			}
+		}
+    }
+    
+    [Fact]
+    public void Statement_Inside_If_CodeBlock_Causes_Miss_CloseBraceToken_CaseB()
+    {
+    	// See 'Statement_Inside_If_CodeBlock_Causes_Miss_CloseBraceToken_CaseA' above this.
+    	// This is an extra test to ensure that a fix to the erroneous case doesn't break
+    	// the related, and working, case.
+    
+    	var test = new Test(
+@"if (false)
 {
+	var x = _queue.RemoveLast();
 }".ReplaceLineEndings("\n"));
 
 		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
