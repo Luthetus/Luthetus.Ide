@@ -86,6 +86,11 @@ public static class ParseOthers
     	try
     	{
     		expressionNode = ParseExpression(model);
+    		
+    		#if DEBUG
+    		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
+    		#endif
+    		
     		return expressionNode.SyntaxKind == syntaxKind;
     	}
     	finally
@@ -226,6 +231,8 @@ public static class ParseOthers
 	    			{
 	    				_ = model.TokenWalker.Backtrack();
 	    			}
+	    			
+	    			expressionPrimary = expressionPrimaryPreviousRoot;
 	    			
 		    		forceExit = true;
 		    		
