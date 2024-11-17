@@ -500,17 +500,13 @@ public partial class ExpressionAsStatementTests
 		}
     }
     
-    /// <summary>
-    /// TODO: Why is the new keyword being added as the index 0 node of topCodeBlock?...
-    ///       ...Only the 'ConstructorInvocationExpressionNode' should be in the 'GetChildList()' of 'topCodeBlock'.
-    /// </summary>
     [Fact]
     public void ConstructorInvocationNode_Basic()
     {
     	var test = new Test("new Person()");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
 		
 		Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
 		
@@ -526,17 +522,13 @@ public partial class ExpressionAsStatementTests
 	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
     }
     
-    /// <summary>
-    /// TODO: Why is the new keyword being added as the index 0 node of topCodeBlock?...
-    ///       ...Only the 'ConstructorInvocationExpressionNode' should be in the 'GetChildList()' of 'topCodeBlock'.
-    /// </summary>
     [Fact]
     public void ConstructorInvocationNode_Parameters()
     {
     	var test = new Test("new Person(18, \"John\")");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
     	
     	Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
 		
@@ -556,17 +548,13 @@ public partial class ExpressionAsStatementTests
 	    Assert.Null(constructorInvocationExpressionNode.ObjectInitializationParametersListingNode);
     }
     
-    /// <summary>
-    /// TODO: Why is the new keyword being added as the index 0 node of topCodeBlock?...
-    ///       ...Only the 'ConstructorInvocationExpressionNode' should be in the 'GetChildList()' of 'topCodeBlock'.
-    /// </summary>
     [Fact]
     public void ConstructorInvocationNode_Generic()
     {
     	var test = new Test("new Dictionary<int, Person>()");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
 		
         Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
 		
@@ -627,10 +615,6 @@ public partial class ExpressionAsStatementTests
     	}
     }
     
-    /// <summary>
-    /// TODO: Why is the new keyword being added as the index 0 node of topCodeBlock?...
-    ///       ...Only the 'ConstructorInvocationExpressionNode' should be in the 'GetChildList()' of 'topCodeBlock'.
-    /// </summary>
     [Fact]
     public void ConstructorInvocationNode_Generic_Parameters()
     {
@@ -638,7 +622,7 @@ public partial class ExpressionAsStatementTests
         var test = new Test("new Dictionary<int, Person>(0, \"Test\")");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList()[1];
+		var constructorInvocationExpressionNode = (ConstructorInvocationExpressionNode)topCodeBlock.GetChildList().Single();
         
         Assert.True(constructorInvocationExpressionNode.NewKeywordToken.ConstructorWasInvoked);
 		
