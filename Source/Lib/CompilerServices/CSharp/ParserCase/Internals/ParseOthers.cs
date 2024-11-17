@@ -78,10 +78,12 @@ public static class ParseOthers
 	/// if the root primary expression is not equal to the model.ForceParseExpressionSyntaxKind
 	/// then stop.
     /// </summary>
-    public static bool TryParseExpression(SyntaxKind syntaxKind, CSharpParserModel model, out IExpressionNode expressionNode)
+    public static bool TryParseExpression(SyntaxKind? syntaxKind, CSharpParserModel model, out IExpressionNode expressionNode)
     {
     	var originalTokenIndex = model.TokenWalker.Index;
-    	model.ForceParseExpressionSyntaxKind = syntaxKind;
+    	
+    	if (syntaxKind is not null)
+    		model.TryParseExpressionSyntaxKindList.Add(syntaxKind.Value);
     	
     	try
     	{
@@ -91,11 +93,11 @@ public static class ParseOthers
     		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
     		#endif
     		
-    		return expressionNode.SyntaxKind == syntaxKind;
+    		return model.TryParseExpressionSyntaxKindList.Contains(expressionNode.SyntaxKind);
     	}
     	finally
     	{
-    		model.ForceParseExpressionSyntaxKind = null;
+    		model.TryParseExpressionSyntaxKindList.Clear();
     		model.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     	}
     }
@@ -191,7 +193,7 @@ public static class ParseOthers
 				model.NoLongerRelevantExpressionNode = null;
 			}
     		
-    		if (model.ForceParseExpressionSyntaxKind is not null)
+    		if (model.TryParseExpressionSyntaxKindList.Count != 0)
     		{
     			var isExpressionRoot = true;
     			var rootSyntaxKind = SyntaxKind.EmptyExpressionNode;
@@ -210,7 +212,7 @@ public static class ParseOthers
     			
     			if (isExpressionRoot)
     			{
-    				success = expressionPrimary.SyntaxKind == model.ForceParseExpressionSyntaxKind;
+    				success = model.TryParseExpressionSyntaxKindList.Contains(expressionPrimary.SyntaxKind);
     				
     				if (success)
     				{
@@ -220,7 +222,7 @@ public static class ParseOthers
     			}
     			else
     			{
-    				success = rootSyntaxKind == model.ForceParseExpressionSyntaxKind;
+    				success = model.TryParseExpressionSyntaxKindList.Contains(rootSyntaxKind);
     			}
     			
     			if (!success)
@@ -237,7 +239,8 @@ public static class ParseOthers
 		    		forceExit = true;
 		    		
 		    		#if DEBUG
-		    		Console.WriteLine("----ForceParseExpressionSyntaxKind");
+		    		WriteExpressionList(model.ExpressionList);
+		    		Console.WriteLine("----TryParseExpressionSyntaxKindList");
 		    		#endif
     			}
     		}

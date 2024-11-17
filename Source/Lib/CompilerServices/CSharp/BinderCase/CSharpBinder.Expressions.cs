@@ -710,7 +710,7 @@ public partial class CSharpBinder
 		    };
 		    
 		    if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken && !ambiguousExpressionNode.FollowsMemberAccessToken ||
-		    	model.ForceParseExpressionSyntaxKind == SyntaxKind.TypeClauseNode)
+		    	model.TryParseExpressionSyntaxKindList.Contains(SyntaxKind.TypeClauseNode))
 		    {		    	
 				return ForceDecisionAmbiguousIdentifier(
 					emptyExpressionNode,
@@ -1215,6 +1215,32 @@ public partial class CSharpBinder
 				}
 				
 			    goto default;
+			case SyntaxKind.OpenParenthesisToken:
+				if (token.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
+					UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind))
+				{
+					var functionParametersListingNode = new FunctionParametersListingNode(
+						(OpenParenthesisToken)token,
+				        new List<FunctionParameterEntryNode>(),
+				        closeParenthesisToken: default);
+				
+					var functionInvocationNode = new FunctionInvocationNode(
+						UtilityApi.ConvertToIdentifierToken(typeClauseNode.TypeIdentifierToken, model),
+				        functionDefinitionNode: null,
+				        typeClauseNode.GenericParametersListingNode,
+				        functionParametersListingNode,
+				        CSharpFacts.Types.Void.ToTypeClause());
+				        
+				    BindFunctionInvocationNode(
+				        functionInvocationNode,
+				        (CSharpParserModel)model);
+		
+					model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
+					model.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode.FunctionParametersListingNode));
+					return EmptyExpressionNode.Empty;
+				}
+				
+				goto default;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), typeClauseNode, token);
 		}

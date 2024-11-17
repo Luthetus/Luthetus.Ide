@@ -78,7 +78,7 @@ public interface IParserModel
     ///
     /// Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseOthers.TryParseExpression(SyntaxKind syntaxKind, CSharpParserModel model, out IExpressionNode expressionNode) {...}
     /// </summary>
-    public SyntaxKind? ForceParseExpressionSyntaxKind { get; set; }
+    public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; }
     
     /// <summary>
     /// Something that is syntactically recursive but without creating a new scope needs

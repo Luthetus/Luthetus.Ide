@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
@@ -21,145 +22,133 @@ public static class ParseTokens
     public static void ParseIdentifierToken(CSharpParserModel model)
     {
     	var originalTokenIndex = model.TokenWalker.Index;
-		var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var typeClauseNode);
     	
-    	if (successTypeClauseNode)
-    	{
-    		// 'TypeClauseNode', 'VariableDeclarationNode', 'FunctionDefinitionNode', 'ConstructorDefinitionNode'
-    		
-    		if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
-    		{
-    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
-    			
-    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+    	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
+    	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
+    	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableReferenceNode);
+    	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionInvocationNode);
+    	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.ConstructorInvocationExpressionNode);
+    	
+		var successParse = ParseOthers.TryParseExpression(null, model, out var expressionNode);
+		
+		if (!successParse)
+		{
+			model.DiagnosticBag.ReportTodoException(model.TokenWalker.Current.TextSpan, $"nameof(ParseIdentifierToken) TODO case");
+	    	return;
+		}
+		
+		switch (expressionNode.SyntaxKind)
+		{
+			case SyntaxKind.TypeClauseNode:
+				MoveToHandleTypeClauseNode(originalTokenIndex, (TypeClauseNode)expressionNode, model);
+				return;
+			case SyntaxKind.VariableDeclarationNode:
+				if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
     				model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     			{
-    				ParseFunctions.HandleFunctionDefinition(
+    				MoveToHandleFunctionDefinition((VariableDeclarationNode)expressionNode, model);
+				    return;
+    			}
+    			
+    			MoveToHandleVariableDeclarationNode((VariableDeclarationNode)expressionNode, model);
+				return;
+			case SyntaxKind.VariableReferenceNode:
+			case SyntaxKind.FunctionInvocationNode:
+			case SyntaxKind.ConstructorInvocationExpressionNode:
+				model.StatementBuilder.ChildList.Add(expressionNode);
+				return;
+			default:
+				model.DiagnosticBag.ReportTodoException(model.TokenWalker.Current.TextSpan, $"nameof(ParseIdentifierToken) default case");
+				return;
+		}
+    }
+    
+    public static void MoveToHandleFunctionDefinition(VariableDeclarationNode variableDeclarationNode, IParserModel model)
+    {
+    	ParseFunctions.HandleFunctionDefinition(
+			variableDeclarationNode.IdentifierToken,
+	        variableDeclarationNode.TypeClauseNode,
+	        consumedGenericArgumentsListingNode: null,
+	        (CSharpParserModel)model);
+    }
+    
+    public static void MoveToHandleVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, IParserModel model)
+    {
+    	var variableKind = VariableKind.Local;
+    			
+		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+		{
+			variableKind = VariableKind.Property;
+		}
+		else if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+				 model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+		{
+			variableKind = VariableKind.Field;
+		}
+		
+		variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+	        variableDeclarationNode.TypeClauseNode,
+			variableDeclarationNode.IdentifierToken,
+	        variableKind,
+	        model);
+		
+		model.StatementBuilder.ChildList.Add(variableDeclarationNode);
+		model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+		
+		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			ParsePropertyDefinition((CSharpParserModel)model);
+    }
+    
+    public static void MoveToHandleTypeClauseNode(int originalTokenIndex, TypeClauseNode typeClauseNode, IParserModel model)
+    {
+    	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
+			model.TokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken ||
+			model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+			model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+		{
+			model.StatementBuilder.ChildList.Add(typeClauseNode);
+		}
+		else
+		{
+			if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+				model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+        	{
+        		// ConstructorDefinitionNode
+        		
+        		var distance = model.TokenWalker.Index - originalTokenIndex;
+			
+    			if (distance != 1)
+    				return;
+				
+				_ = model.TokenWalker.Backtrack();
+				
+				if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind) &&
+					model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+					model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+	    		{
+	    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
+	    			
+					ParseFunctions.HandleFunctionDefinition(
     					identifierToken,
 				        (TypeClauseNode)typeClauseNode,
 				        consumedGenericArgumentsListingNode: null,
-				        model);
-				        
-				        return;
+				        (CSharpParserModel)model);
+				    
+				    if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
+				    	typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == identifierToken.TextSpan.GetText())
+				    {
+				    	((Luthetus.CompilerServices.CSharp.BinderCase.CSharpBinder)model.Binder).BindConstructorDefinitionIdentifierToken(
+					        identifierToken,
+					        (CSharpParserModel)model);
+				    }
     			}
-    			
-    			var variableKind = VariableKind.Local;
-    			
-    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-    			{
-    				variableKind = VariableKind.Property;
-    			}
-    			else if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
-    					 model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-    			{
-    				variableKind = VariableKind.Field;
-    			}
-    			
-    			var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
-			        (TypeClauseNode)typeClauseNode,
-    				identifierToken,
-			        variableKind,
-			        model);
-    			
-    			model.StatementBuilder.ChildList.Add(variableDeclarationNode);
-    			model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
-    			
-    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
-    				ParsePropertyDefinition(model);
-    			
-    			return;
-    		}
-    		
-			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
-    			model.TokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken ||
-    			model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-    			model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
-			{
-				model.StatementBuilder.ChildList.Add(typeClauseNode);
-			}
-			else
-			{
-				if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
-					model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-            	{
-            		// ConstructorDefinitionNode
-            		
-            		var distance = model.TokenWalker.Index - originalTokenIndex;
-    			
-	    			if (distance != 1)
-	    				return;
-					
-					_ = model.TokenWalker.Backtrack();
-					
-					if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind) &&
-						model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
-						model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-		    		{
-		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
-		    			
-						ParseFunctions.HandleFunctionDefinition(
-	    					identifierToken,
-					        (TypeClauseNode)typeClauseNode,
-					        consumedGenericArgumentsListingNode: null,
-					        model);
-					    
-					    if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
-					    	typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == identifierToken.TextSpan.GetText())
-					    {
-					    	model.Binder.BindConstructorDefinitionIdentifierToken(
-						        identifierToken,
-						        model);
-					    }
-	    			}
-	    			else
-					{
-						var expression = ParseOthers.ParseExpression(model);
-						model.StatementBuilder.ChildList.Add(expression);
-					}
-            	}
-            	else
-            	{
-            		// FunctionInvocationNode, ConstructorInvocationNode
-            	
-            		var distance = model.TokenWalker.Index - originalTokenIndex;
-    			
-	    			if (distance != 1)
-	    				return;
-					
-					_ = model.TokenWalker.Backtrack();
-					
-					if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind) &&
-						model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
-						model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-		    		{
-		    			if (model.TokenWalker.Previous.SyntaxKind == SyntaxKind.NewTokenKeyword)
-						{
-							// ConstructorInvocationNode
-							_ = model.TokenWalker.Backtrack();
-						}
-		    		
-		    			var expression = ParseOthers.ParseExpression(model);
-						model.StatementBuilder.ChildList.Add(expression);
-	    			}
-            	}
-			}
-    	}
-    	else
-    	{
-    		// 'VariableReferenceNode'
-    		var successVariableReferenceNode = ParseOthers.TryParseExpression(SyntaxKind.VariableReferenceNode, model, out var variableReferenceNode);
-    		
-    		if (successVariableReferenceNode)
-    		{
-    			model.StatementBuilder.ChildList.Add(variableReferenceNode);
-    		}
-    		else
-    		{
-    			model.DiagnosticBag.ReportTodoException(
-		    		model.TokenWalker.Current.TextSpan,
-		    		$"nameof(ParseIdentifierToken) TODO case");
-    		}
-    	}
+    			else
+				{
+					var expression = ParseOthers.ParseExpression((CSharpParserModel)model);
+					model.StatementBuilder.ChildList.Add(expression);
+				}
+        	}
+		}
     }
     
     public static void ParsePropertyDefinition(CSharpParserModel model)

@@ -43,7 +43,7 @@ public class CSharpParserModel : IParserModel
     public StatementBuilder StatementBuilder { get; set; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
-    public SyntaxKind? ForceParseExpressionSyntaxKind { get; set; }
+    public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; } = new();
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
