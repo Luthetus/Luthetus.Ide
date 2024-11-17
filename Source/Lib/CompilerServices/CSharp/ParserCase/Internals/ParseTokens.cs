@@ -91,7 +91,9 @@ public static class ParseTokens
     {
     	var variableKind = VariableKind.Local;
     			
-		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+			(model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
+				 model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
 		{
 			variableKind = VariableKind.Property;
 		}
@@ -108,7 +110,14 @@ public static class ParseTokens
 		model.StatementBuilder.ChildList.Add(variableDeclarationNode);
 		
 		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+		{
 			ParsePropertyDefinition((CSharpParserModel)model);
+		}
+		else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
+				 model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+		{
+			ParsePropertyDefinition_ExpressionBound((CSharpParserModel)model);
+		}
     }
     
     public static void MoveToHandleTypeClauseNode(int originalTokenIndex, TypeClauseNode typeClauseNode, IParserModel model)
@@ -176,6 +185,15 @@ public static class ParseTokens
 		#if DEBUG
 		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
+    }
+    
+    public static void ParsePropertyDefinition_ExpressionBound(CSharpParserModel model)
+    {
+		var equalsToken = (EqualsToken)model.TokenWalker.Consume();
+		var closeAngleBracketToken = (CloseAngleBracketToken)model.TokenWalker.Consume();
+		
+		var expressionNode = ParseOthers.ParseExpression(model);
+		var statementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
     }
 
     public static void ParseColonToken(CSharpParserModel model)

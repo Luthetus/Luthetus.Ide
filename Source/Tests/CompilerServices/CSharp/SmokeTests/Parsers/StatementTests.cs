@@ -327,6 +327,8 @@ finally
 
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 		
