@@ -86,14 +86,11 @@ public static class ParseTokens
 			variableKind = VariableKind.Field;
 		}
 		
-		variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
-	        variableDeclarationNode.TypeClauseNode,
-			variableDeclarationNode.IdentifierToken,
-	        variableKind,
-	        model);
+		((VariableDeclarationNode)variableDeclarationNode).VariableKind = variableKind;
 		
+		model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
+        model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 		model.StatementBuilder.ChildList.Add(variableDeclarationNode);
-		model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 		
 		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
 			ParsePropertyDefinition((CSharpParserModel)model);

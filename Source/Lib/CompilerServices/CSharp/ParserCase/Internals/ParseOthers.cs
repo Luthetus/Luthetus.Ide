@@ -296,7 +296,8 @@ public static class ParseOthers
     	var initialExpressionListCount = model.ExpressionList.Count;
     	
     	#if DEBUG
-		Console.WriteLine($"BREAK_({triggeredDelimiterTuple.DelimiterSyntaxKind}, {triggeredDelimiterTuple.ExpressionNode.SyntaxKind})");
+    	var nullNodeSyntaxKindText = "null";
+		Console.WriteLine($"BREAK_({triggeredDelimiterTuple.DelimiterSyntaxKind}, {triggeredDelimiterTuple.ExpressionNode?.SyntaxKind.ToString() ?? nullNodeSyntaxKindText})");
 		#endif
 		
 		for (int i = initialExpressionListCount - 1; i > indexTriggered - 1; i--)

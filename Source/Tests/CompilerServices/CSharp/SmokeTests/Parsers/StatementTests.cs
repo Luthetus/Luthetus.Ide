@@ -51,7 +51,11 @@ public class StatementTests
     	var test = new Test(@"public void Aaa() { }");
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
+		
+		var publicKeywordToken = (KeywordToken)topCodeBlock.GetChildList()[0];
+		Assert.Equal(SyntaxKind.PublicTokenKeyword, publicKeywordToken.SyntaxKind);
+		
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList()[1];
 		Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNode.SyntaxKind);
     }
     
@@ -61,7 +65,11 @@ public class StatementTests
     	var test = new Test(@"public Person Aaa() { }");
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
+		
+		var publicKeywordToken = (KeywordToken)topCodeBlock.GetChildList()[0];
+		Assert.Equal(SyntaxKind.PublicTokenKeyword, publicKeywordToken.SyntaxKind);
+		
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList()[1];
 		Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNode.SyntaxKind);
     }
     
@@ -74,7 +82,10 @@ public class StatementTests
 		
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 		
-		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList().Single();
+		//var publicKeywordToken = (KeywordToken)typeDefinitionNode.GetChildList()[0];
+		//Assert.Equal(SyntaxKind.PublicTokenKeyword, publicKeywordToken.SyntaxKind);
+		
+		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList()[1];
 		Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
     }
     

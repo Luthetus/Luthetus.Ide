@@ -24,7 +24,10 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 
     public TypeClauseNode TypeClauseNode { get; }
     public IdentifierToken IdentifierToken { get; }
-    public VariableKind VariableKind { get; }
+    /// <summary>
+    /// TODO: Remove the 'set;' on this property
+    /// </summary>
+    public VariableKind VariableKind { get; set; }
     public bool IsInitialized { get; set; }
     /// <summary>
     /// TODO: Remove the 'set;' on this property

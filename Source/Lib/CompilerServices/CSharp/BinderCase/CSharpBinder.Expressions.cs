@@ -1242,6 +1242,51 @@ public partial class CSharpBinder
 				
 				goto default;
 			default:
+				if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind))
+				{
+					var identifierToken = UtilityApi.ConvertToIdentifierToken(token, model);
+					var isRootExpression = true;
+					
+					foreach (var tuple in model.ExpressionList)
+					{
+						if (tuple.ExpressionNode is null)
+							continue;
+						
+						isRootExpression = false;
+						break;
+					}
+					
+					IVariableDeclarationNode variableDeclarationNode;
+					
+					if (isRootExpression)
+					{
+						// If isRootExpression do not bind the VariableDeclarationNode
+						// because it could in reality be a FunctionDefinitionNode.
+						//
+						// So, manually create the node, and then eventually return back to the
+						// statement code so it can check for a FunctionDefinitionNode.
+						//
+						// If it truly is a VariableDeclarationNode,
+						// then it is the responsibility of the statement code
+						// to bind the VariableDeclarationNode, and add it to the current code block builder.
+						variableDeclarationNode = new VariableDeclarationNode(
+					        typeClauseNode,
+					        identifierToken,
+					        VariableKind.Local,
+					        false);
+					}
+					else
+					{
+						variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+					        typeClauseNode,
+					        identifierToken,
+					        VariableKind.Local,
+					        model);
+					}
+				        
+				    return variableDeclarationNode;
+				}
+				
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), typeClauseNode, token);
 		}
 	}
