@@ -90,6 +90,24 @@ public class StatementTests
     }
     
     [Fact]
+    public void ConstructorDefinitionNode_Arguments_Test()
+    {
+    	var test = new Test(@"public class Aaa { public Aaa(string firstName, string lastName) { } }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
+		
+		//var publicKeywordToken = (KeywordToken)typeDefinitionNode.GetChildList()[0];
+		//Assert.Equal(SyntaxKind.PublicTokenKeyword, publicKeywordToken.SyntaxKind);
+		
+		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList()[1];
+		Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void ArbitraryCodeBlockNode_Test()
     {
     	var test = new Test(@"{ }");

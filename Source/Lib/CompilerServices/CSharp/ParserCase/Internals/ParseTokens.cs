@@ -26,8 +26,23 @@ public static class ParseTokens
     	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
     	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
     	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableReferenceNode);
-    	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionInvocationNode);
     	model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.ConstructorInvocationExpressionNode);
+    	
+    	if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+			model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+    	{
+    		// There is a syntax conflict between a ConstructorDefinitionNode and a FunctionInvocationNode.
+    		//
+    		// Disambiguation is done based on the 'CodeBlockOwner' until a better solution is found.
+    		//
+    		// If the supposed "ConstructorDefinitionNode" does not have the same name as
+    		// the CodeBlockOwner.
+    		//
+    		// Then, it perhaps should be treated as a function invocation (or function definition).
+    		// The main case for this being someone typing out pseudo code within a CodeBlockOwner
+    		// that is a TypeDefinitionNode.
+    		model.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionInvocationNode);
+    	}
     	
 		var successParse = ParseOthers.TryParseExpression(null, model, out var expressionNode);
 		
@@ -52,8 +67,8 @@ public static class ParseTokens
     			
     			MoveToHandleVariableDeclarationNode((VariableDeclarationNode)expressionNode, model);
 				return;
-			case SyntaxKind.VariableReferenceNode:
-			case SyntaxKind.FunctionInvocationNode:
+	        case SyntaxKind.VariableReferenceNode:
+	        case SyntaxKind.FunctionInvocationNode:
 			case SyntaxKind.ConstructorInvocationExpressionNode:
 				model.StatementBuilder.ChildList.Add(expressionNode);
 				return;
@@ -105,47 +120,38 @@ public static class ParseTokens
 		{
 			model.StatementBuilder.ChildList.Add(typeClauseNode);
 		}
-		else
+		else if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+				 model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
-			if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
-				model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-        	{
-        		// ConstructorDefinitionNode
-        		
-        		var distance = model.TokenWalker.Index - originalTokenIndex;
+			// ConstructorDefinitionNode
 			
-    			if (distance != 1)
-    				return;
-				
-				_ = model.TokenWalker.Backtrack();
-				
-				if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind) &&
-					model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
-					model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-	    		{
-	    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
-	    			
-					ParseFunctions.HandleFunctionDefinition(
-    					identifierToken,
-				        (TypeClauseNode)typeClauseNode,
-				        consumedGenericArgumentsListingNode: null,
+			if (UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
+				model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+				model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+    		{
+    			var identifierToken = UtilityApi.ConvertToIdentifierToken(typeClauseNode.TypeIdentifierToken, model);
+    			
+				ParseFunctions.HandleFunctionDefinition(
+					identifierToken,
+			        (TypeClauseNode)typeClauseNode,
+			        consumedGenericArgumentsListingNode: null,
+			        (CSharpParserModel)model);
+			    
+			    if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
+			    	typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == identifierToken.TextSpan.GetText())
+			    {
+			    	((Luthetus.CompilerServices.CSharp.BinderCase.CSharpBinder)model.Binder).BindConstructorDefinitionIdentifierToken(
+				        identifierToken,
 				        (CSharpParserModel)model);
-				    
-				    if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
-				    	typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == identifierToken.TextSpan.GetText())
-				    {
-				    	((Luthetus.CompilerServices.CSharp.BinderCase.CSharpBinder)model.Binder).BindConstructorDefinitionIdentifierToken(
-					        identifierToken,
-					        (CSharpParserModel)model);
-				    }
-    			}
-    			else
-				{
-					var expression = ParseOthers.ParseExpression((CSharpParserModel)model);
-					model.StatementBuilder.ChildList.Add(expression);
-				}
-        	}
+			    }
+			}
+			else
+			{
+				model.StatementBuilder.ChildList.Add(typeClauseNode);
+			}
 		}
+		
+		return;
     }
     
     public static void ParsePropertyDefinition(CSharpParserModel model)
