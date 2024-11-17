@@ -249,7 +249,66 @@ public class ScopeTests
 				    Assert.Equal(1, constructorDefinitionScope.ParentIndexKey);
 				    Assert.Equal(38, constructorDefinitionScope.StartingIndexInclusive);
 				    Assert.Equal(41, constructorDefinitionScope.EndingIndexExclusive);
-					Assert.Equal(SyntaxKind.FunctionDefinitionNode, constructorDefinitionScope.CodeBlockOwner.SyntaxKind);
+					Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionScope.CodeBlockOwner.SyntaxKind);
+				}
+			}
+	    }
+    }
+    
+    [Fact]
+    public void GlobalScope_TypeDefinitionNode_Depth_ConstructorDefinitionNode_PropertyInitialized()
+    {
+    	// Erroneous behavior:
+    	// ===================
+    	// Property definitions being initialized can break the scope of constructors that appear in source code text-wise above them.
+    	//
+    	// This is not happening if the property definition with initialization is moved above the constructor, only if it is below.
+    	//
+    	// When this behavior occurs, instead of a scope being defined at the constructor's OpenBraceToken
+    	// to its CloseBraceToken.
+    	// |
+    	// It will instead create a scope at the semicolon of the property definition with initialization.
+    	//
+    	// The constructor having or not having arguments has no impact on the behavior.
+    
+    	var test = new Test(
+@"public class Person
+{
+	public Person(string firstName)
+	{
+		FirstName = firstName;
+	}
+	
+	public string FirstName { get; set; } = ""abc"";
+}");
+		
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(3, binderSession.ScopeList.Count);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+			Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // Type definition
+			    var typeDefinitionScope = binderSession.ScopeList[1];
+				Assert.Equal(1, typeDefinitionScope.IndexKey);
+			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
+			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
+			    Assert.Equal(43, typeDefinitionScope.EndingIndexExclusive);
+				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
+				
+				{ // Constructor definition
+					var constructorDefinitionScope = binderSession.ScopeList[2];
+					Assert.Equal(2, constructorDefinitionScope.IndexKey);
+				    Assert.Equal(1, constructorDefinitionScope.ParentIndexKey);
+				    Assert.Equal(38, constructorDefinitionScope.StartingIndexInclusive);
+				    Assert.Equal(41, constructorDefinitionScope.EndingIndexExclusive);
+					Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionScope.CodeBlockOwner.SyntaxKind);
 				}
 			}
 	    }

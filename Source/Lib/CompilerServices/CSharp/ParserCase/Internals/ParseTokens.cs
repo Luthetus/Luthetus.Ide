@@ -120,35 +120,23 @@ public static class ParseTokens
 		{
 			model.StatementBuilder.ChildList.Add(typeClauseNode);
 		}
-		else if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
-				 model.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+		else if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
+				 UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
+				 model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
+			     typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == typeClauseNode.TypeIdentifierToken.TextSpan.GetText())
 		{
 			// ConstructorDefinitionNode
 			
-			if (UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
-				model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
-				model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-    		{
-    			var identifierToken = UtilityApi.ConvertToIdentifierToken(typeClauseNode.TypeIdentifierToken, model);
-    			
-				ParseFunctions.HandleFunctionDefinition(
-					identifierToken,
-			        (TypeClauseNode)typeClauseNode,
-			        consumedGenericArgumentsListingNode: null,
-			        (CSharpParserModel)model);
-			    
-			    if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
-			    	typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == identifierToken.TextSpan.GetText())
-			    {
-			    	((Luthetus.CompilerServices.CSharp.BinderCase.CSharpBinder)model.Binder).BindConstructorDefinitionIdentifierToken(
-				        identifierToken,
-				        (CSharpParserModel)model);
-			    }
-			}
-			else
-			{
-				model.StatementBuilder.ChildList.Add(typeClauseNode);
-			}
+			var identifierToken = UtilityApi.ConvertToIdentifierToken(typeClauseNode.TypeIdentifierToken, model);
+			
+			ParseFunctions.HandleConstructorDefinition(
+				typeDefinitionNode,
+		        identifierToken,
+		        (CSharpParserModel)model);
+		}
+		else
+		{
+			model.StatementBuilder.ChildList.Add(typeClauseNode);
 		}
 		
 		return;
@@ -267,112 +255,6 @@ public static class ParseTokens
 
     public static void ParseOpenParenthesisToken(CSharpParserModel model)
     {
-    	if (TryHandleFunctionDefinition(model))
-    		return;
-    	
-    	if (TryHandleConstructorDefinition(model))
-    		return;
-    }
-    
-    /// <summary>
-    /// FunctionDefinitionNode can occur from the following:
-	///	- TypeClauseNode, IdentifierToken, OpenParenthesisToken
-	///		- This occurs when the first token initially was a 'IdentifierToken' but was not ambiguous and therefore
-	///			immediately interpreted as a 'TypeClauseNode' rather than as an 'IdentifierToken'.
-	///	- IdentifierToken, IdentifierToken, OpenParenthesisToken
-	///	- "IsConvertibleToTypeClauseNode", "IsConvertibleToIdentifierToken", OpenParenthesisToken
-	///		- Some keywords are "IsConvertibleToTypeClauseNode".
-	///		- As well, a KeywordContextualToken might be convertable to either a TypeClauseNode or an IdentifierToken;
-    /// </summary>
-    public static bool TryHandleFunctionDefinition(CSharpParserModel model)
-    {
-    	bool isFunctionDefinition = true;
-    	
-    	// These are ordered backwards (i.e. from the current token's position traveling backwards).
-    	GenericParametersListingNode? genericArgumentsListingNode = null;
-    	IdentifierToken identifierToken = default;
-    	TypeClauseNode? typeClauseNode = null;
-    	
-		if (model.StatementBuilder.TryPeek(^1, out var existingGenericArgumentsListingNode) &&
-			existingGenericArgumentsListingNode.SyntaxKind == SyntaxKind.GenericParametersListingNode)
-		{
-			// public void CreateBox<TItem>() { }
-			isFunctionDefinition = model.StatementBuilder.TryPeek(^2, out var twoTokenBackwards) &&
-								   UtilityApi.IsConvertibleToIdentifierToken(twoTokenBackwards.SyntaxKind);
-			
-			if (isFunctionDefinition)
-			{
-				isFunctionDefinition = model.StatementBuilder.TryPeek(^3, out var threeTokenBackwards) &&
-								   	UtilityApi.IsConvertibleToTypeClauseNode(threeTokenBackwards.SyntaxKind);
-						  
-				if (isFunctionDefinition)
-				{
-					genericArgumentsListingNode = (GenericParametersListingNode)existingGenericArgumentsListingNode;
-					identifierToken = UtilityApi.ConvertToIdentifierToken(twoTokenBackwards, model);
-					typeClauseNode = UtilityApi.ConvertToTypeClauseNode(threeTokenBackwards, model);
-				}
-			}
-		}
-		else
-		{
-			// public void CreateBox() { }
-			isFunctionDefinition = model.StatementBuilder.TryPeek(^1, out var oneTokenBackwards) &&
-								   UtilityApi.IsConvertibleToIdentifierToken(oneTokenBackwards.SyntaxKind);
-			
-			if (isFunctionDefinition)
-			{
-				isFunctionDefinition = model.StatementBuilder.TryPeek(^2, out var twoTokenBackwards) &&
-								   	UtilityApi.IsConvertibleToTypeClauseNode(twoTokenBackwards.SyntaxKind);
-						  
-				if (isFunctionDefinition)
-				{
-					identifierToken = UtilityApi.ConvertToIdentifierToken(oneTokenBackwards, model);
-					typeClauseNode = UtilityApi.ConvertToTypeClauseNode(twoTokenBackwards, model);
-				}
-			}
-		}
-    	
-    	if (isFunctionDefinition)
-    	{
-	    	ParseFunctions.HandleFunctionDefinition(
-	    		identifierToken,
-	        	typeClauseNode,
-	        	genericArgumentsListingNode,
-	        	model);
-        }
-        
-        return isFunctionDefinition;
-    }
-    
-    public static bool TryHandleConstructorDefinition(CSharpParserModel model)
-    {
-    	bool isConstructorDefinition = true;
-    	
-		// These are ordered backwards (i.e. from the current token's position traveling backwards).
-		IdentifierToken identifierToken = default;
-	
-		/*
-		public class Person
-		{
-			public Person()
-			{
-			}
-		}
-		*/
-		isConstructorDefinition = model.StatementBuilder.TryPeek(^1, out var oneTokenBackwards) &&
-				  				UtilityApi.IsConvertibleToIdentifierToken(oneTokenBackwards.SyntaxKind);
-		
-		if (isConstructorDefinition)
-			identifierToken = UtilityApi.ConvertToIdentifierToken(oneTokenBackwards, model);
-    	
-    	if (isConstructorDefinition)
-    	{
-	    	ParseFunctions.HandleConstructorDefinition(
-	    		identifierToken,
-	        	model);
-        }
-        
-        return isConstructorDefinition;
     }
 
     public static void ParseCloseParenthesisToken(

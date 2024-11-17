@@ -61,19 +61,14 @@ public class ParseFunctions
     }
 
     public static void HandleConstructorDefinition(
+    	TypeDefinitionNode typeDefinitionNodeCodeBlockOwner,
         IdentifierToken consumedIdentifierToken,
         CSharpParserModel model)
     {
     	var functionArgumentsListingNode = HandleFunctionArguments(model);
 
-        if (model.CurrentCodeBlockBuilder.CodeBlockOwner is not TypeDefinitionNode typeDefinitionNode)
-        {
-            model.DiagnosticBag.ReportConstructorsNeedToBeWithinTypeDefinition(consumedIdentifierToken.TextSpan);
-            typeDefinitionNode = Facts.CSharpFacts.Types.Void;
-        }
-
         var typeClauseNode = new TypeClauseNode(
-            typeDefinitionNode.TypeIdentifierToken,
+            typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
             null,
             null);
 
@@ -106,6 +101,9 @@ public class ParseFunctions
         	
         	while (!model.TokenWalker.IsEof)
             {
+            	// TODO: This won't work because an OpenBraceToken can appear inside the "other constructor invocation"...
+            	// 	  ...If one were to skip over this syntax for the time being, it should be done by counting the
+            	//       matched OpenParenthesisToken and CloseParenthesisToken until it evens out.
                 if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
                     model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
                 {
@@ -169,17 +167,15 @@ public class ParseFunctions
 		    			{
 		    				// Optional
 		    			}
-		    			
-		    			var variableKind = VariableKind.Local;
-		    			
-		    			var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+					        
+					    var variableDeclarationNode = new VariableDeclarationNode(
 					        (TypeClauseNode)typeClauseNode,
-		    				identifierToken,
-					        variableKind,
-					        model);
+					        identifierToken,
+					        VariableKind.Local,
+					        false);
 		    			
 		    			var functionArgumentEntryNode = new FunctionArgumentEntryNode(
-					        (VariableDeclarationNode)variableDeclarationNode,
+					        variableDeclarationNode,
 					        optionalCompileTimeConstantToken: null,
 					        isOptional: false,
 					        hasParamsKeyword: false,
