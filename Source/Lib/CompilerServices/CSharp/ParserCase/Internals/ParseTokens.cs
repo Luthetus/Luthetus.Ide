@@ -398,7 +398,8 @@ public static class ParseTokens
 
             model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);
         }
-        else if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null)
+        else if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null &&
+        		 !model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
         {
         	var pendingChild = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
         

@@ -282,36 +282,7 @@ public class ScopeTests
 	public string FirstName { get; set; } = ""abc"";
 }");
 		
-		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
-		Assert.True(success);
-		Assert.Equal(3, binderSession.ScopeList.Count);
-		
-		{ // Global
-			var globalScope = binderSession.ScopeList[0];
-			Assert.Equal(0, globalScope.IndexKey);
-		    Assert.Null(globalScope.ParentIndexKey);
-		    Assert.Equal(0, globalScope.StartingIndexInclusive);
-		    Assert.Null(globalScope.EndingIndexExclusive);
-			Assert.Null(globalScope.CodeBlockOwner);
-		    
-		    { // Type definition
-			    var typeDefinitionScope = binderSession.ScopeList[1];
-				Assert.Equal(1, typeDefinitionScope.IndexKey);
-			    Assert.Equal(0, typeDefinitionScope.ParentIndexKey);
-			    Assert.Equal(20, typeDefinitionScope.StartingIndexInclusive);
-			    Assert.Equal(43, typeDefinitionScope.EndingIndexExclusive);
-				Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionScope.CodeBlockOwner.SyntaxKind);
-				
-				{ // Constructor definition
-					var constructorDefinitionScope = binderSession.ScopeList[2];
-					Assert.Equal(2, constructorDefinitionScope.IndexKey);
-				    Assert.Equal(1, constructorDefinitionScope.ParentIndexKey);
-				    Assert.Equal(38, constructorDefinitionScope.StartingIndexInclusive);
-				    Assert.Equal(41, constructorDefinitionScope.EndingIndexExclusive);
-					Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionScope.CodeBlockOwner.SyntaxKind);
-				}
-			}
-	    }
+		throw new NotImplementedException();
     }
     
     [Fact]
