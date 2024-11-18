@@ -34,8 +34,6 @@ public sealed class FunctionParameterEntryNode : IExpressionNode
     public bool HasRefKeyword { get; }
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionParameterEntryNode;
     

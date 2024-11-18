@@ -18,8 +18,6 @@ public sealed class NamespaceGroupNode : ISyntaxNode
     public string NamespaceString { get; }
     public ImmutableArray<NamespaceStatementNode> NamespaceStatementNodeList { get; } = ImmutableArray<NamespaceStatementNode>.Empty;
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceGroupNode;
 

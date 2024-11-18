@@ -14,8 +14,6 @@ public sealed class InheritanceStatementNode : ISyntaxNode
 
     public TypeClauseNode ParentTypeClauseNode { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.InheritanceStatementNode;
     

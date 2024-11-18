@@ -10,73 +10,42 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 public class ParseDefaultKeywords
 {
-    public static void HandleAsTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleAsTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+        model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleBaseTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleBaseTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleBoolTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleBoolTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleBreakTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleBreakTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleByteTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleByteTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleCaseTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleCaseTokenKeyword(CSharpParserModel model)
     {
-        while (!model.TokenWalker.IsEof)
-        {
-        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
-        	{
-        		_ = model.TokenWalker.Consume();
-        		break;
-        	}
-        
-        	// This first-draft-code is very "agressively" parsing for a ColonToken within a while loop,
-        	// To avoid the entire file being parsed in a broken state,
-        	// these "short circuit" cases are here.
-        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
-        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken ||
-        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken ||
-        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseAngleBracketToken ||
-        		model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseSquareBracketToken)
-        	{
-        		break;
-        	}
-        	
-        	_ = model.TokenWalker.Consume();
-        }
+    	model.ExpressionList.Add((SyntaxKind.ColonToken, null));
+		var expressionNode = ParseOthers.ParseExpression(model);
+	    var colonToken = (ColonToken)model.TokenWalker.Match(SyntaxKind.ColonToken);
     }
 
-    public static void HandleCatchTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleCatchTokenKeyword(CSharpParserModel model)
     {
+    	var catchKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
     	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	var typeClause = model.TokenWalker.MatchTypeClauseNode(model);
@@ -106,72 +75,62 @@ public class ParseDefaultKeywords
     	{
     		var catchNode = new TryStatementCatchNode(
 	        	tryStatementNode,
-		        consumedKeywordToken,
+		        catchKeywordToken,
 		        openParenthesisToken,
 		        closeParenthesisToken,
 		        codeBlockNode: null);
         
         	tryStatementNode.SetTryStatementCatchNode(catchNode);
         	model.SyntaxStack.Push(catchNode);
-        	model.CurrentCodeBlockBuilder.PendingChild = catchNode;
+        	model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = catchNode;
     	}
     }
 
-    public static void HandleCharTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleCharTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleCheckedTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleCheckedTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleConstTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleConstTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleContinueTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleContinueTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleDecimalTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleDecimalTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleDefaultTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleDefaultTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	// Switch statement default case.
+        if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.ColonToken)
+        	_ = model.TokenWalker.Consume();
+		else
+			model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleDelegateTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleDelegateTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleDoTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleDoTokenKeyword(CSharpParserModel model)
     {
-        var doWhileStatementNode = new DoWhileStatementNode(
-	    	consumedKeywordToken,
+    	var doKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var doWhileStatementNode = new DoWhileStatementNode(
+	    	doKeywordToken,
 	        openBraceToken: default,
 	        codeBlockNode: null,
 	        whileKeywordToken: default,
@@ -182,70 +141,53 @@ public class ParseDefaultKeywords
         // Have to push twice so it is on the stack when the 'while' keyword is parsed.
 		model.SyntaxStack.Push(doWhileStatementNode);
 		model.SyntaxStack.Push(doWhileStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = doWhileStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = doWhileStatementNode;
     }
 
-    public static void HandleDoubleTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleDoubleTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleElseTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleElseTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleEnumTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleEnumTokenKeyword(CSharpParserModel model)
     {
-        HandleStorageModifierTokenKeyword(
-            consumedKeywordToken,
-            model);
+        HandleStorageModifierTokenKeyword(model);
 
         // Why was this method invocation here? (2024-01-23)
         //
-        // HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        // HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleEventTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleEventTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleExplicitTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleExplicitTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleExternTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleExternTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleFalseTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleFalseTokenKeyword(CSharpParserModel model)
     {
-        _ = model.TokenWalker.Backtrack();
     	var expressionNode = ParseOthers.ParseExpression(model);
-    	model.SyntaxStack.Push(expressionNode);
+    	model.StatementBuilder.ChildList.Add(expressionNode);
     }
 
-    public static void HandleFinallyTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleFinallyTokenKeyword(CSharpParserModel model)
     {
+    	var finallyKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
     	TryStatementNode? tryStatementNode = null;
     	
     	if (model.SyntaxStack.TryPeek(out var syntax) &&
@@ -274,34 +216,30 @@ public class ParseDefaultKeywords
     	{
     		var finallyNode = new TryStatementFinallyNode(
     			tryStatementNode,
-	        	consumedKeywordToken,
+	        	finallyKeywordToken,
 	        	codeBlockNode: null);
 	    
 	    	tryStatementNode.SetTryStatementFinallyNode(finallyNode);
 	    	model.SyntaxStack.Push(finallyNode);
-        	model.CurrentCodeBlockBuilder.PendingChild = finallyNode;
+        	model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = finallyNode;
     	}
     }
 
-    public static void HandleFixedTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleFixedTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleFloatTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleFloatTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleForTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleForTokenKeyword(CSharpParserModel model)
     {
-        var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+    	var forKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
         
         // Initialization Case One
         //     ;
@@ -388,7 +326,7 @@ public class ParseDefaultKeywords
         }
 		
 		var forStatementNode = new ForStatementNode(
-	        consumedKeywordToken,
+	        forKeywordToken,
 	        openParenthesisToken,
 	        ImmutableArray<ISyntax>.Empty,
 	        initializationStatementDelimiterToken,
@@ -399,13 +337,13 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(forStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = forStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = forStatementNode;
     }
 
-    public static void HandleForeachTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleForeachTokenKeyword(CSharpParserModel model)
     {
+    	var foreachKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
     	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	var typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
@@ -424,7 +362,7 @@ public class ParseDefaultKeywords
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var foreachStatementNode = new ForeachStatementNode(
-	        consumedKeywordToken,
+	        foreachKeywordToken,
 	        openParenthesisToken,
 	        variableDeclarationStatementNode,
 	        inKeywordToken,
@@ -433,49 +371,39 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(foreachStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = foreachStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = foreachStatementNode;
     }
 
-    public static void HandleGotoTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleGotoTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleImplicitTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleImplicitTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleInTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleInTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleIntTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleIntTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleIsTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleIsTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleLockTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleLockTokenKeyword(CSharpParserModel model)
     {
-        var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+    	var lockKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
     	var expressionNode = ParseOthers.ParseExpression(model);
@@ -483,128 +411,97 @@ public class ParseDefaultKeywords
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var lockStatementNode = new LockStatementNode(
-			consumedKeywordToken,
+			lockKeywordToken,
 	        openParenthesisToken,
 	        expressionNode,
 	        closeParenthesisToken,
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(lockStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = lockStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lockStatementNode;
     }
 
-    public static void HandleLongTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleLongTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleNullTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleNullTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleObjectTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleObjectTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleOperatorTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleOperatorTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleOutTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleOutTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleParamsTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleParamsTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleProtectedTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleProtectedTokenKeyword(CSharpParserModel model)
     {
-        model.SyntaxStack.Push(consumedKeywordToken);
+    	var protectedTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
+        model.StatementBuilder.ChildList.Add(protectedTokenKeyword);
     }
 
-    public static void HandleReadonlyTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleReadonlyTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleRefTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleRefTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleSbyteTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleSbyteTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleShortTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleShortTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleSizeofTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleSizeofTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleStackallocTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleStackallocTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleStringTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleStringTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleStructTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleStructTokenKeyword(CSharpParserModel model)
     {
-        HandleStorageModifierTokenKeyword(
-            consumedKeywordToken,
-            model);
+        HandleStorageModifierTokenKeyword(model);
     }
 
-    public static void HandleSwitchTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleSwitchTokenKeyword(CSharpParserModel model)
     {
-        var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+    	var switchKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
     	var expressionNode = ParseOthers.ParseExpression(model);
@@ -612,43 +509,36 @@ public class ParseDefaultKeywords
 		var closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var switchStatementNode = new SwitchStatementNode(
-			consumedKeywordToken,
+			switchKeywordToken,
 	        openParenthesisToken,
 	        expressionNode,
 	        closeParenthesisToken,
 	        codeBlockNode: null);
 	        
         model.SyntaxStack.Push(switchStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = switchStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = switchStatementNode;
     }
 
-    public static void HandleThisTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleThisTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleThrowTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleThrowTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleTrueTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleTrueTokenKeyword(CSharpParserModel model)
     {
-    	_ = model.TokenWalker.Backtrack();
     	var expressionNode = ParseOthers.ParseExpression(model);
-    	model.SyntaxStack.Push(expressionNode);
+    	model.StatementBuilder.ChildList.Add(expressionNode);
     }
 
-    public static void HandleTryTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleTryTokenKeyword(CSharpParserModel model)
     {
+    	var tryKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
     	var tryStatementNode = new TryStatementNode(
 			tryNode: null,
 	        catchNode: null,
@@ -656,7 +546,7 @@ public class ParseDefaultKeywords
     
 	    var tryStatementTryNode = new TryStatementTryNode(
 	    	tryStatementNode,
-        	consumedKeywordToken,
+        	tryKeywordToken,
         	codeBlockNode: null);
         	
 		tryStatementNode.SetTryStatementTryNode(tryStatementTryNode);
@@ -666,70 +556,54 @@ public class ParseDefaultKeywords
 		model.SyntaxStack.Push(tryStatementNode);
 		
 		model.SyntaxStack.Push(tryStatementTryNode);
-        model.CurrentCodeBlockBuilder.PendingChild = tryStatementTryNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = tryStatementTryNode;
     }
 
-    public static void HandleTypeofTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleTypeofTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleUintTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleUintTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleUlongTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleUlongTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleUncheckedTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleUncheckedTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleUnsafeTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleUnsafeTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleUshortTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleUshortTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleVoidTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleVoidTokenKeyword(CSharpParserModel model)
     {
-        HandleTypeIdentifierKeyword(consumedKeywordToken, model);
+        HandleTypeIdentifierKeyword(model);
     }
 
-    public static void HandleVolatileTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleVolatileTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleWhileTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
-    {    
-        var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+    public static void HandleWhileTokenKeyword(CSharpParserModel model)
+    {
+    	var whileKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
         var expressionNode = ParseOthers.ParseExpression(model);
@@ -740,7 +614,7 @@ public class ParseDefaultKeywords
     		syntax is DoWhileStatementNode doWhileStatementNode)
     	{
 	        doWhileStatementNode.SetWhileProperties(
-		    	consumedKeywordToken,
+		    	whileKeywordToken,
 		        openParenthesisToken,
 		        expressionNode,
 		        closeParenthesisToken);
@@ -748,137 +622,97 @@ public class ParseDefaultKeywords
 		else
 		{
 			var whileStatementNode = new WhileStatementNode(
-				consumedKeywordToken,
+				whileKeywordToken,
 		        openParenthesisToken,
 		        expressionNode,
 		        closeParenthesisToken,
 		        codeBlockNode: null);
 		        
 	        model.SyntaxStack.Push(whileStatementNode);
-        	model.CurrentCodeBlockBuilder.PendingChild = whileStatementNode;
+        	model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = whileStatementNode;
 		}
     }
 
-    public static void HandleUnrecognizedTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleUnrecognizedTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleDefault(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+	/// <summary>The 'Default' of this method name is confusing.
+	/// It seems to refer to the 'default' of switch statement rather than the 'default' keyword itself?
+	/// </summary>
+    public static void HandleDefault(CSharpParserModel model)
     {
-
-        if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(consumedKeywordToken.SyntaxKind))
-        {
-            // One enters this conditional block with the 'keywordToken' having already been consumed.
-            model.TokenWalker.Backtrack();
-            var typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
-            model.SyntaxStack.Push(typeClauseNode);
-        }
-        else
-        {
-        	model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, $"Implement the {consumedKeywordToken.SyntaxKind} keyword.");
-        }
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleTypeIdentifierKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleTypeIdentifierKeyword(CSharpParserModel model)
     {
-
-        if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(consumedKeywordToken.SyntaxKind))
-        {
-            // One enters this conditional block with the 'keywordToken' having already been consumed.
-            model.TokenWalker.Backtrack();
-            var typeClauseNode = model.TokenWalker.MatchTypeClauseNode(model);
-
-            if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.AttributeNode)
-                typeClauseNode.AttributeNode = (AttributeNode)model.SyntaxStack.Pop();
-
-            model.SyntaxStack.Push(typeClauseNode);
-        }
-        else
-        {
-        	model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, $"Implement the {consumedKeywordToken.SyntaxKind} keyword.");
-        }
+    	ParseTokens.ParseIdentifierToken(model);
     }
 
-    public static void HandleNewTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleNewTokenKeyword(CSharpParserModel model)
     {
-    	_ = model.TokenWalker.Backtrack();
-    	var constructorInvocationNode = ParseOthers.ParseExpression(model);
-    	model.SyntaxStack.Push(constructorInvocationNode);
-    
-		// "explicit namespace qualification" OR "nested class"
-		// if (model.TokenWalker.Peek(0).SyntaxKind == SyntaxKind.MemberAccessToken)
+    	if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+    		UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Next.SyntaxKind))
+    	{
+    		var expressionNode = ParseOthers.ParseExpression(model);
+    		model.StatementBuilder.ChildList.Add(expressionNode);
+    	}
+    	else
+    	{
+    		model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
+    	}
     }
 
-    public static void HandlePublicTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandlePublicTokenKeyword(CSharpParserModel model)
     {
-        model.SyntaxStack.Push(consumedKeywordToken);
+    	var publicKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+        model.StatementBuilder.ChildList.Add(publicKeywordToken);
     }
 
-    public static void HandleInternalTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleInternalTokenKeyword(CSharpParserModel model)
     {
-        model.SyntaxStack.Push(consumedKeywordToken);
+    	var internalTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
+        model.StatementBuilder.ChildList.Add(internalTokenKeyword);
     }
 
-    public static void HandlePrivateTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandlePrivateTokenKeyword(CSharpParserModel model)
     {
-        model.SyntaxStack.Push(consumedKeywordToken);
+    	var privateTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
+        model.StatementBuilder.ChildList.Add(privateTokenKeyword);
     }
 
-    public static void HandleStaticTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleStaticTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleOverrideTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleOverrideTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleVirtualTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleVirtualTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleAbstractTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleAbstractTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleSealedTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleSealedTokenKeyword(CSharpParserModel model)
     {
-        // TODO: Implement this method
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
-    public static void HandleIfTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleIfTokenKeyword(CSharpParserModel model)
     {
-        var openParenthesisToken = model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+    	var ifTokenKeyword = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var openParenthesisToken = model.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
 
         if (openParenthesisToken.IsFabricated)
             return;
@@ -886,42 +720,36 @@ public class ParseDefaultKeywords
 		model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
 		var expression = ParseOthers.ParseExpression(model);
 
-        var boundIfStatementNode = model.Binder.BindIfStatementNode(consumedKeywordToken, expression);
+        var boundIfStatementNode = model.Binder.BindIfStatementNode(ifTokenKeyword, expression);
         model.SyntaxStack.Push(boundIfStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = boundIfStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = boundIfStatementNode;
     }
 
-    public static void HandleUsingTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleUsingTokenKeyword(CSharpParserModel model)
     {
-        ParseOthers.HandleNamespaceIdentifier(model);
-
-        var handleNamespaceIdentifierResult = model.SyntaxStack.Pop();
+    	var usingKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(model);
 
         if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
         {
-            model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, "Expected a namespace identifier.");
+            model.DiagnosticBag.ReportTodoException(usingKeywordToken.TextSpan, "Expected a namespace identifier.");
             return;
         }
+        
         var namespaceIdentifier = (IdentifierToken)handleNamespaceIdentifierResult;
 
-        var boundUsingStatementNode = model.Binder.BindUsingStatementNode(
-            consumedKeywordToken,
-            namespaceIdentifier,
-            model);
+        var usingStatementNode = new UsingStatementNode(
+            usingKeywordToken,
+            namespaceIdentifier);
 
-        model.CurrentCodeBlockBuilder.ChildList.Add(boundUsingStatementNode);
-        model.SyntaxStack.Push(boundUsingStatementNode);
+        model.Binder.BindUsingStatementNode(usingStatementNode, model);
+        model.StatementBuilder.ChildList.Add(usingStatementNode);
     }
 
-    public static void HandleInterfaceTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleInterfaceTokenKeyword(CSharpParserModel model)
     {
-        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(
-            consumedKeywordToken,
-            model);
+        model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 
 	/// <summary>
@@ -929,27 +757,24 @@ public class ParseDefaultKeywords
 	/// public class MyClass { }
 	///              ^
 	///
-	/// Given the example the 'MyClass' is the current token
+	/// Given the example the 'MyClass' is the next token
 	/// upon invocation of this method.
 	///
-	/// Invocation of this method implies the previous token was
+	/// Invocation of this method implies the current token was
 	/// class, interface, struct, etc...
-	///
-	/// The syntax token parameter to this method is said
-	/// previous token.
 	/// </summary>
-    public static void HandleStorageModifierTokenKeyword(
-        ISyntaxToken consumedStorageModifierToken,
-        CSharpParserModel model)
+    public static void HandleStorageModifierTokenKeyword(CSharpParserModel model)
     {
+    	var storageModifierToken = model.TokenWalker.Consume();
+    	
     	// Given: public partial class MyClass { }
 		// Then: partial
         var hasPartialModifier = false;
-        if (model.SyntaxStack.TryPeek(out var syntax) && syntax is ISyntaxToken syntaxToken)
+        if (model.StatementBuilder.TryPeek(out var syntax) && syntax is ISyntaxToken syntaxToken)
         {
             if (syntaxToken.SyntaxKind == SyntaxKind.PartialTokenContextualKeyword)
             {
-                _ = model.SyntaxStack.Pop();
+                _ = model.StatementBuilder.Pop();
                 hasPartialModifier = true;
             }
         }
@@ -959,24 +784,24 @@ public class ParseDefaultKeywords
 		// Given: public class MyClass { }
 		// Then: public
 		var accessModifierKind = AccessModifierKind.Public;
-        if (model.SyntaxStack.TryPeek(out syntax) && syntax is ISyntaxToken firstSyntaxToken)
+        if (model.StatementBuilder.TryPeek(out syntax) && syntax is ISyntaxToken firstSyntaxToken)
         {
             var firstOutput = UtilityApi.GetAccessModifierKindFromToken(firstSyntaxToken);
 
             if (firstOutput is not null)
             {
-                _ = model.SyntaxStack.Pop();
+                _ = model.StatementBuilder.Pop();
                 accessModifierKind = firstOutput.Value;
 
 				// Given: protected internal class MyClass { }
 				// Then: protected internal
-                if (model.SyntaxStack.TryPeek(out syntax) && syntax is ISyntaxToken secondSyntaxToken)
+                if (model.StatementBuilder.TryPeek(out syntax) && syntax is ISyntaxToken secondSyntaxToken)
                 {
                     var secondOutput = UtilityApi.GetAccessModifierKindFromToken(secondSyntaxToken);
 
                     if (secondOutput is not null)
                     {
-                        _ = model.SyntaxStack.Pop();
+                        _ = model.StatementBuilder.Pop();
 
                         if ((firstOutput.Value.ToString().ToLower() == "protected" &&
                                 secondOutput.Value.ToString().ToLower() == "internal") ||
@@ -999,7 +824,7 @@ public class ParseDefaultKeywords
         }
     
     	// TODO: Fix nullability spaghetti code
-        var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(consumedStorageModifierToken);
+        var storageModifierKind = UtilityApi.GetStorageModifierKindFromToken(storageModifierToken);
         if (storageModifierKind is null)
             return;
         if (storageModifierKind == StorageModifierKind.Record &&
@@ -1029,13 +854,7 @@ public class ParseDefaultKeywords
 		// Then: <T>
         GenericArgumentsListingNode? genericArgumentsListingNode = null;
         if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-        {
-            ParseTypes.HandleGenericArguments(
-                (OpenAngleBracketToken)model.TokenWalker.Consume(),
-                model);
-
-            genericArgumentsListingNode = (GenericArgumentsListingNode?)model.SyntaxStack.Pop();
-        }
+            genericArgumentsListingNode = ParseTypes.HandleGenericArguments(model);
 
         var typeDefinitionNode = new TypeDefinitionNode(
             accessModifierKind,
@@ -1052,72 +871,41 @@ public class ParseDefaultKeywords
         model.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
         model.Binder.BindTypeIdentifier(identifierToken, model);
         model.SyntaxStack.Push(typeDefinitionNode);
-        model.CurrentCodeBlockBuilder.PendingChild = typeDefinitionNode;
-        
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.WhereTokenContextualKeyword)
-        {
-        	while (!model.TokenWalker.IsEof)
-        	{
-        		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-        			model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-        		{
-        			break;
-        		}
-        		
-        		_ = model.TokenWalker.Consume();
-        	}
-        }
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
     }
 
-    public static void HandleClassTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleClassTokenKeyword(CSharpParserModel model)
     {
-        HandleStorageModifierTokenKeyword(
-            consumedKeywordToken,
-            model);
+        HandleStorageModifierTokenKeyword(model);
     }
 
-    public static void HandleNamespaceTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleNamespaceTokenKeyword(CSharpParserModel model)
     {
-        ParseOthers.HandleNamespaceIdentifier(model);
-
-        var handleNamespaceIdentifierResult = model.SyntaxStack.Pop();
+    	var namespaceKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(model);
 
         if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
         {
-            model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, "Expected a namespace identifier.");
+            model.DiagnosticBag.ReportTodoException(namespaceKeywordToken.TextSpan, "Expected a namespace identifier.");
             return;
         }
+        
         var namespaceIdentifier = (IdentifierToken)handleNamespaceIdentifierResult;
 
-        if (model.FinalizeNamespaceFileScopeCodeBlockNodeAction is not null)
-            model.DiagnosticBag.ReportTodoException(consumedKeywordToken.TextSpan, "Need to add logic to report diagnostic when there is already a file scoped namespace.");
-
         var namespaceStatementNode = new NamespaceStatementNode(
-            consumedKeywordToken,
+            namespaceKeywordToken,
             namespaceIdentifier,
-            new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
+            null);
 
         model.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, model);
         
         model.SyntaxStack.Push(namespaceStatementNode);
-        model.CurrentCodeBlockBuilder.PendingChild = namespaceStatementNode;
+        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = namespaceStatementNode;
     }
 
-    public static void HandleReturnTokenKeyword(
-        KeywordToken consumedKeywordToken,
-        CSharpParserModel model)
+    public static void HandleReturnTokenKeyword(CSharpParserModel model)
     {
-    	var returnExpression = ParseOthers.ParseExpression(model);
-
-        var returnStatementNode = model.Binder.BindReturnStatementNode(
-            consumedKeywordToken,
-            returnExpression);
-
-        model.CurrentCodeBlockBuilder.ChildList.Add(returnStatementNode);
-        model.SyntaxStack.Push(returnStatementNode);
+    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
     }
 }

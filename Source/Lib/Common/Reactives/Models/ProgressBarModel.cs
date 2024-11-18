@@ -5,7 +5,7 @@ namespace Luthetus.Common.RazorLib.Reactives.Models;
 public class ProgressBarModel : IDisposable
 {
 	private readonly object _progressLock = new();
-
+	
 	public ProgressBarModel()
 		: this(0, null)
 	{
@@ -21,11 +21,18 @@ public class ProgressBarModel : IDisposable
 		DecimalPercentProgress = decimalPercentProgress;
 		Message = message;
 	}
-
+	
+	private Task? _cancelTask;
+	
 	public double DecimalPercentProgress { get; private set; }
 	public string? Message { get; private set; }
 	public string? SecondaryMessage { get; private set; }
+	public bool IsCancellable => OnCancelFunc is not null;
+	public bool IsCancelled { get; set; }
+	public bool IntentToCancel { get; private set; }
 	public bool IsDisposed { get; private set; }
+	
+	public Func<Task>? OnCancelFunc { get; init; }
 
 	/// <summary>
 	/// When <see cref="SetProgress(double)"/> is invoked, then this event is raised
@@ -75,6 +82,31 @@ public class ProgressBarModel : IDisposable
 
 		return decimalPercentProgress;
 	}
+	
+	public void Cancel()
+	{
+		lock (_progressLock)
+		{
+			if (IntentToCancel)
+				return;
+				
+			IntentToCancel = true;
+		}
+		
+		Task.Run(async () =>
+		{
+			try
+			{
+				_cancelTask = OnCancelFunc.Invoke();
+				ProgressChanged?.Invoke(false);
+				await _cancelTask;
+			}
+			finally
+			{
+				ProgressChanged?.Invoke(false);
+			}
+		});
+	}
 
 	public void Dispose()
 	{
@@ -83,6 +115,5 @@ public class ProgressBarModel : IDisposable
 			IsDisposed = true;
 			ProgressChanged?.Invoke(true);
 		}
-		
 	}
 }

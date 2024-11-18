@@ -1,11 +1,12 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 /// <summary>
 /// <see cref="TypeClauseNode"/> is used anywhere a type is referenced.
 /// </summary>
-public sealed class TypeClauseNode : ISyntaxNode
+public sealed class TypeClauseNode : IExpressionNode
 {
     public TypeClauseNode(
         ISyntaxToken typeIdentifier,
@@ -41,6 +42,7 @@ public sealed class TypeClauseNode : ISyntaxNode
     /// And: '&lt;int&gt;' is the <see cref="GenericParametersListingNode"/>
     /// </summary>
     public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
+    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
     
     public bool HasQuestionMark { get; set; }
 
@@ -48,8 +50,6 @@ public sealed class TypeClauseNode : ISyntaxNode
     /// TODO: Change this attribute node property.
     /// </summary>
     public AttributeNode AttributeNode { get; set; }
-
-    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeClauseNode;

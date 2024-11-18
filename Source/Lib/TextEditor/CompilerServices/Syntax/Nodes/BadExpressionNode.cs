@@ -26,30 +26,11 @@ public sealed class BadExpressionNode : IExpressionNode
     {
     }
 
-	/// <summary>
-	/// Use <see cref="SyntaxList"/>, this type is an exception.
-	///
-	/// It is a bit odd to set 'ChildList' to an empty array here.
-	///
-	/// But, a bad expression might be rather long.
-	/// Especially if the parser starts reading the rest of the file
-	/// while thinking it is part of the "bad expression".
-	///
-	/// So, 'SyntaxList' is a 'List<T>' in order to easily
-	/// add all the syntax that is part of this 'bad syntax' as it is parsed.
-	///
-	/// This messes with the convention of 'ChildList' containing all the nodes,
-	/// or tokens that pertain to this node itself.
-	///
-	/// But it is believed to be worth ignoring 'ChildList' for this type.
-	/// </summary>
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public List<ISyntax> SyntaxList { get; }
     public TypeClauseNode ResultTypeClauseNode { get; }
-
-    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BadExpressionNode;
@@ -59,20 +40,7 @@ public sealed class BadExpressionNode : IExpressionNode
     	if (!_childListIsDirty)
     		return _childList;
     	
-    	// It is a bit odd to set 'ChildList' to an empty array here.
-    	//
-    	// But, a bad expression might be rather long.
-    	// Especially if the parser starts reading the rest of the file
-    	// while thinking it is part of the "bad expression".
-    	//
-    	// So, 'SyntaxList' is a 'List<T>' in order to easily
-    	// add all the syntax that is part of this 'bad syntax' as it is parsed.
-    	//
-    	// This messes with the convention of 'ChildList' containing all the nodes,
-    	// or tokens that pertain to this node itself.
-    	//
-    	// But it is believed to be worth ignoring 'ChildList' for this type.
-    	_childList = Array.Empty<ISyntax>();
+    	_childList = SyntaxList.ToArray();
         
     	_childListIsDirty = false;
     	return _childList;

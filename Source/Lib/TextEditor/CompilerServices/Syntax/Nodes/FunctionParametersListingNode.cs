@@ -26,11 +26,11 @@ public sealed class FunctionParametersListingNode : IExpressionNode
 {
     public FunctionParametersListingNode(
         OpenParenthesisToken openParenthesisToken,
-        List<FunctionParameterEntryNode> functionParameterEntryNodes,
+        List<FunctionParameterEntryNode> functionParameterEntryNodeList,
         CloseParenthesisToken closeParenthesisToken)
     {
         OpenParenthesisToken = openParenthesisToken;
-        FunctionParameterEntryNodeList = functionParameterEntryNodes;
+        FunctionParameterEntryNodeList = functionParameterEntryNodeList;
         CloseParenthesisToken = closeParenthesisToken;
     }
 
@@ -41,8 +41,6 @@ public sealed class FunctionParametersListingNode : IExpressionNode
     public List<FunctionParameterEntryNode> FunctionParameterEntryNodeList { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; private set; }
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
-
-    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionParametersListingNode;

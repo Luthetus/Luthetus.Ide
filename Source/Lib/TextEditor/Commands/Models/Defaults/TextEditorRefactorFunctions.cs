@@ -62,6 +62,12 @@ public class TextEditorRefactorFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier primaryCursorModifier)
     {
+    	/*
+    	
+    	// The ISyntaxNode.Parent property is being removed. (2024-11-11)
+    	// ==============================================================
+    	// TODO: Rewrite this block of code but find the parent node by "querying" the Binder.
+    	
 		var compilerService = modelModifier.CompilerService;
 	
 		var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(modelModifier.ResourceUri);
@@ -123,6 +129,7 @@ public class TextEditorRefactorFunctions
 			        nameof(GenerateConstructor), e.ToString(), serviceProvider.GetRequiredService<ICommonComponentRenderers>(), serviceProvider.GetRequiredService<IDispatcher>(), TimeSpan.FromSeconds(6));
 			}
 		}
+		*/
     
         return;
     }

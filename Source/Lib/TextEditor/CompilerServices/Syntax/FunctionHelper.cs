@@ -13,7 +13,7 @@ public static class FunctionHelper
         FunctionArgumentsListingNode functionArgumentsListingNode)
     {
         if (functionParametersListingNode.FunctionParameterEntryNodeList.Count !=
-            functionArgumentsListingNode.FunctionArgumentEntryNodeList.Length)
+            functionArgumentsListingNode.FunctionArgumentEntryNodeList.Count)
         {
             return false;
         }

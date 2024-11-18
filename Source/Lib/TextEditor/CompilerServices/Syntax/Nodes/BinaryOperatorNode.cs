@@ -24,8 +24,6 @@ public sealed class BinaryOperatorNode : ISyntaxNode
     public TypeClauseNode RightOperandTypeClauseNode { get; }
 	public TypeClauseNode ResultTypeClauseNode { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryOperatorNode;
     

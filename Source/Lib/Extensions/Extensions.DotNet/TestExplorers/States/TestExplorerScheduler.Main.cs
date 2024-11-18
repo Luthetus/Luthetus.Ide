@@ -2,7 +2,9 @@ using Fluxor;
 using Luthetus.Common.RazorLib.BackgroundTasks.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.TreeViews.Models;
+using Luthetus.Common.RazorLib.TreeViews.Models.Utils;
 using Luthetus.Common.RazorLib.Reactives.Models;
+using Luthetus.Common.RazorLib.FileSystems.Models;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -22,6 +24,7 @@ public partial class TestExplorerScheduler : IStateScheduler
     private readonly ITreeViewService _treeViewService;
     private readonly ITextEditorService _textEditorService;
     private readonly IBackgroundTaskService _backgroundTaskService;
+    private readonly IFileSystemProvider _fileSystemProvider;
 	private readonly IState<TerminalState> _terminalStateWrap;
 	private readonly IState<TestExplorerState> _testExplorerStateWrap;
 	private readonly IState<DotNetSolutionState> _dotNetSolutionStateWrap;
@@ -37,6 +40,7 @@ public partial class TestExplorerScheduler : IStateScheduler
         ITreeViewService treeViewService,
         ITextEditorService textEditorService,
         IBackgroundTaskService backgroundTaskService,
+        IFileSystemProvider fileSystemProvider,
         DotNetCliOutputParser dotNetCliOutputParser,
         IState<DotNetSolutionState> dotNetSolutionStateWrap,
         IState<TerminalState> terminalStateWrap,
@@ -49,11 +53,17 @@ public partial class TestExplorerScheduler : IStateScheduler
         _treeViewService = treeViewService;
 		_textEditorService = textEditorService;
 		_backgroundTaskService = backgroundTaskService;
+		_fileSystemProvider = fileSystemProvider;
 		_terminalStateWrap = terminalStateWrap;
 		_testExplorerStateWrap = testExplorerStateWrap;
         _dotNetSolutionStateWrap = dotNetSolutionStateWrap;
         _dotNetCliOutputParser = dotNetCliOutputParser;
         _dispatcher = dispatcher;
     }
+    
+    public TreeViewGroup ContainsTestsTreeViewGroup { get; } = new("Have tests", true, true);
+	public TreeViewGroup NoTestsTreeViewGroup { get; } = new("No tests (but still a test-project)", true, true);
+	public TreeViewGroup ThrewAnExceptionTreeViewGroup { get; } = new("Projects that threw an exception during discovery", true, true);
+	public TreeViewGroup NotValidProjectForUnitTestTreeViewGroup { get; } = new("Not a test-project", true, true);
 }
 

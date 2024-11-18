@@ -12,13 +12,13 @@ namespace Luthetus.Extensions.DotNet.TestExplorers.States;
 
 public partial class TestExplorerScheduler
 {
-    public Task Task_ConstructTreeView()
+    public async Task Task_ConstructTreeView()
     {
         var dotNetSolutionState = _dotNetSolutionStateWrap.Value;
         var dotNetSolutionModel = dotNetSolutionState.DotNetSolutionModel;
 
         if (dotNetSolutionModel is null)
-            return Task.CompletedTask;
+            return;
 
         var localDotNetProjectList = dotNetSolutionModel.DotNetProjectList
             .Where(x => x.DotNetProjectKind == DotNetProjectKind.CSharpProject);
@@ -44,7 +44,26 @@ public partial class TestExplorerScheduler
             var treeViewProjectTestModel = (TreeViewProjectTestModel)entry;
 
             if (string.IsNullOrWhiteSpace(treeViewProjectTestModel.Item.DirectoryNameForTestDiscovery))
-                return Task.CompletedTask;
+                return;
+            
+            var projectFileText = await _fileSystemProvider.File.ReadAllTextAsync(treeViewProjectTestModel.Item.AbsolutePath.Value);
+            
+            if (projectFileText.Contains("xunit"))
+            {
+            	if (!NoTestsTreeViewGroup.ChildList.Any(x =>
+            		((TreeViewProjectTestModel)x).Item.AbsolutePath.Value == treeViewProjectTestModel.Item.AbsolutePath.Value))
+            	{
+            		NoTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            	}
+            }
+            else
+            {
+            	if (!NotValidProjectForUnitTestTreeViewGroup.ChildList.Any(x =>
+            		((TreeViewProjectTestModel)x).Item.AbsolutePath.Value == treeViewProjectTestModel.Item.AbsolutePath.Value))
+            	{
+            		NotValidProjectForUnitTestTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            	}
+            }
 
             treeViewProjectTestModel.Item.EnqueueDiscoverTestsFunc = callback =>
             {
@@ -110,12 +129,24 @@ public partial class TestExplorerScheduler
             };
         }
 
-        var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(localTreeViewProjectTestModelList);
+		var adhocRoot = TreeViewAdhoc.ConstructTreeViewAdhoc(new []
+		{
+			ContainsTestsTreeViewGroup,
+        	NoTestsTreeViewGroup,
+        	ThrewAnExceptionTreeViewGroup,
+        	NotValidProjectForUnitTestTreeViewGroup
+		});
+		
+		adhocRoot.LinkChildren(new(), adhocRoot.ChildList);
+		
+		ContainsTestsTreeViewGroup.LinkChildren(new(), ContainsTestsTreeViewGroup.ChildList);
+    	NoTestsTreeViewGroup.LinkChildren(new(), NoTestsTreeViewGroup.ChildList);
+    	ThrewAnExceptionTreeViewGroup.LinkChildren(new(), ThrewAnExceptionTreeViewGroup.ChildList);
+    	NotValidProjectForUnitTestTreeViewGroup.LinkChildren(new(), NotValidProjectForUnitTestTreeViewGroup.ChildList);
+        
         var firstNode = localTreeViewProjectTestModelList.FirstOrDefault();
 
-        var activeNodes = firstNode is null
-            ? Array.Empty<TreeViewNoType>()
-            : new[] { firstNode };
+        var activeNodes = new TreeViewNoType[] { ContainsTestsTreeViewGroup };
 
         if (!_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out _))
         {
@@ -139,8 +170,6 @@ public partial class TestExplorerScheduler
         {
             ProjectTestModelList = localProjectTestModelList.ToImmutableList()
         }));
-		
-        return Task.CompletedTask;
     }
     
     public Task Task_DiscoverTests()
@@ -154,8 +183,18 @@ public partial class TestExplorerScheduler
 	            return;
 	    	
 	    	var localTestExplorerState = _testExplorerStateWrap.Value;
+	    	var cancellationTokenSource = new CancellationTokenSource();
+	    	var cancellationToken = cancellationTokenSource.Token;
 	    	
-	    	var progressBarModel = new ProgressBarModel(0, "parsing...");
+	    	var progressBarModel = new ProgressBarModel(0, "parsing...")
+	    	{
+	    		OnCancelFunc = () =>
+	    		{
+	    			cancellationTokenSource.Cancel();
+	    			cancellationTokenSource.Dispose();
+	    			return Task.CompletedTask;
+	    		}
+	    	};
 
 			NotificationHelper.DispatchProgress(
 				$"Test Discovery: {dotNetSolutionModel.AbsolutePath.NameWithExtension}",
@@ -174,7 +213,7 @@ public partial class TestExplorerScheduler
 					return Task.CompletedTask;
 				});
 			
-				var completionPercentPerProject = 1.0 / (double)localTestExplorerState.ProjectTestModelList.Count;
+				var completionPercentPerProject = 1.0 / (double)NoTestsTreeViewGroup.ChildList.Count;
 	    		var projectsHandled = 0;
 	    		
 	    		if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
@@ -182,9 +221,9 @@ public partial class TestExplorerScheduler
 		        	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
 						return;
 						
-					var dotNetProjectListLength = treeViewAdhoc.ChildList.Count;
+					var dotNetProjectListLength = NoTestsTreeViewGroup.ChildList.Count;
 		        		
-		            foreach (var treeViewProject in treeViewAdhoc.ChildList)
+		            foreach (var treeViewProject in NoTestsTreeViewGroup.ChildList)
 		            {
 		            	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
 		            		continue;
@@ -198,6 +237,8 @@ public partial class TestExplorerScheduler
 								$"{projectsHandled + 1}/{dotNetProjectListLength}: {treeViewProjectTestModel.Item.AbsolutePath.NameWithExtension}");
 							return Task.CompletedTask;
 						});
+		            
+		            	cancellationToken.ThrowIfCancellationRequested();
 		            
 		            	await treeViewProject.LoadChildListAsync();
 			    		projectsHandled++;
@@ -214,6 +255,9 @@ public partial class TestExplorerScheduler
 			}
 			catch (Exception e)
 			{
+				if (e is OperationCanceledException)
+					progressBarModel.IsCancelled = true;
+			
 				var currentProgress = progressBarModel.GetProgress();
 				
 				progressThrottle.Run(_ => 
@@ -239,47 +283,30 @@ public partial class TestExplorerScheduler
     	var totalTestCount = 0;
     	var notRanTestHashSet = ImmutableHashSet<string>.Empty;
     	
-    	var containsTestsTreeViewGroup = new TreeViewGroup(
-	    	"Have tests",
-            true,
-            true);
-            
-        var noTestsTreeViewGroup = new TreeViewGroup(
-	    	"No tests (but still a test-project)",
-            true,
-            true);
-            
-        var threwAnExceptionTreeViewGroup = new TreeViewGroup(
-	    	"Projects that threw an exception during discovery",
-            true,
-            true);
-            
-        var notValidProjectForUnitTestTreeViewGroup = new TreeViewGroup(
-	    	"Not a test-project",
-            true,
-            true);
-    
+    	Console.WriteLine($"NoTestsTreeViewGroup.ChildList.Count: {NoTestsTreeViewGroup.ChildList.Count}");
     	if (_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
         {
         	if (treeViewContainer.RootNode is not TreeViewAdhoc treeViewAdhoc)
         		return Task.CompletedTask;
         		
-            foreach (var treeViewProject in treeViewAdhoc.ChildList)
+            foreach (var treeViewProject in NoTestsTreeViewGroup.ChildList)
             {
             	if (treeViewProject is not TreeViewProjectTestModel treeViewProjectTestModel)
             		return Task.CompletedTask;
             
             	totalTestCount += treeViewProjectTestModel.Item.TestNameFullyQualifiedList?.Count ?? 0;
             	
-            	if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
+            	MoveNodeToCorrectBranch(treeViewProjectTestModel);
+            	
+            	/*if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
             	{
             		if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList.Count > 0)
             		{
-            			containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            			ContainsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
             		}
             		else
             		{
-            			noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            			NoTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
             		}
             	}
             	else
@@ -287,13 +314,13 @@ public partial class TestExplorerScheduler
             		if (treeViewProjectTestModel.Item.TerminalCommandParsed is not null &&
             			treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString().Contains("threw an exception"))
             		{
-            			threwAnExceptionTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            			ThrewAnExceptionTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
             		}
             		else
             		{
-            			notValidProjectForUnitTestTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+            			NotValidProjectForUnitTestTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
             		}
-            	}
+            	}*/
             	
             	if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
             	{
@@ -304,16 +331,16 @@ public partial class TestExplorerScheduler
             	}
             }
             
-            containsTestsTreeViewGroup.LinkChildren(new(), containsTestsTreeViewGroup.ChildList);
-            noTestsTreeViewGroup.LinkChildren(new(), noTestsTreeViewGroup.ChildList);
-            threwAnExceptionTreeViewGroup.LinkChildren(new(), threwAnExceptionTreeViewGroup.ChildList);
-            notValidProjectForUnitTestTreeViewGroup.LinkChildren(new(), notValidProjectForUnitTestTreeViewGroup.ChildList);
+            ContainsTestsTreeViewGroup.LinkChildren(new(), ContainsTestsTreeViewGroup.ChildList);
+            NoTestsTreeViewGroup.LinkChildren(new(), NoTestsTreeViewGroup.ChildList);
+            ThrewAnExceptionTreeViewGroup.LinkChildren(new(), ThrewAnExceptionTreeViewGroup.ChildList);
+            NotValidProjectForUnitTestTreeViewGroup.LinkChildren(new(), NotValidProjectForUnitTestTreeViewGroup.ChildList);
             
             var nextTreeViewAdhoc = TreeViewAdhoc.ConstructTreeViewAdhoc(
-            	containsTestsTreeViewGroup,
-            	noTestsTreeViewGroup,
-            	threwAnExceptionTreeViewGroup,
-            	notValidProjectForUnitTestTreeViewGroup);
+            	ContainsTestsTreeViewGroup,
+            	NoTestsTreeViewGroup,
+            	ThrewAnExceptionTreeViewGroup,
+            	NotValidProjectForUnitTestTreeViewGroup);
             	
             nextTreeViewAdhoc.LinkChildren(new(), nextTreeViewAdhoc.ChildList);
             
@@ -329,4 +356,99 @@ public partial class TestExplorerScheduler
     
         return Task.CompletedTask;
     }
+    
+    /// <summary>
+	/// This is strategic spaghetti code that is part of my master plan.
+	/// Don't @ me on teams; I won't respond.
+	/// </summary>
+	public void MoveNodeToCorrectBranch(TreeViewProjectTestModel treeViewProjectTestModel)
+	{
+		if (treeViewProjectTestModel.Parent is null)
+			return;
+		
+		if (!_treeViewService.TryGetTreeViewContainer(TestExplorerState.TreeViewTestExplorerKey, out var treeViewContainer))
+			return;
+		
+		// containsTestsTreeViewGroup
+		var containsTestsTreeViewGroupList = treeViewContainer.RootNode.ChildList
+			.Where(x =>
+				x is TreeViewGroup tvg &&
+				tvg.Item == "Have tests");
+		if (containsTestsTreeViewGroupList.Count() != 1)
+			return;
+		var containsTestsTreeViewGroup = containsTestsTreeViewGroupList.Single();
+		
+		// noTestsTreeViewGroup
+		var noTestsTreeViewGroupList = treeViewContainer.RootNode.ChildList
+			.Where(x =>
+				x is TreeViewGroup tvg &&
+				tvg.Item == "Have tests");
+		if (noTestsTreeViewGroupList.Count() != 1)
+			return;
+		var noTestsTreeViewGroup = noTestsTreeViewGroupList.Single();
+
+		// threwAnExceptionTreeViewGroup
+		var threwAnExceptionTreeViewGroupList = treeViewContainer.RootNode.ChildList
+			.Where(x =>
+				x is TreeViewGroup tvg &&
+				tvg.Item == "Projects that threw an exception during discovery");
+		if (threwAnExceptionTreeViewGroupList.Count() != 1)
+			return;
+		var threwAnExceptionTreeViewGroup = threwAnExceptionTreeViewGroupList.Single();		
+		
+		// notValidProjectForUnitTestTreeViewGroup
+		var notValidProjectForUnitTestTreeViewGroupList = treeViewContainer.RootNode.ChildList
+			.Where(x =>
+				x is TreeViewGroup tvg &&
+				tvg.Item == "Not a test-project");
+		if (notValidProjectForUnitTestTreeViewGroupList.Count() != 1)
+			return;
+		var notValidProjectForUnitTestTreeViewGroup = notValidProjectForUnitTestTreeViewGroupList.Single();
+			
+		treeViewProjectTestModel.Parent.ChildList.Remove(treeViewProjectTestModel);
+		treeViewProjectTestModel.Parent.LinkChildren(
+			treeViewProjectTestModel.Parent.ChildList,
+			treeViewProjectTestModel.Parent.ChildList);
+		_treeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, treeViewProjectTestModel.Parent);
+				
+		if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList is not null)
+    	{
+    		if (treeViewProjectTestModel.Item.TestNameFullyQualifiedList.Count > 0)
+    		{
+    			containsTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+    			containsTestsTreeViewGroup.LinkChildren(
+					containsTestsTreeViewGroup.ChildList,
+					containsTestsTreeViewGroup.ChildList);
+				_treeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, containsTestsTreeViewGroup);
+    		}
+    		else
+    		{
+    			noTestsTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+    			noTestsTreeViewGroup.LinkChildren(
+					noTestsTreeViewGroup.ChildList,
+					noTestsTreeViewGroup.ChildList);
+				_treeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, noTestsTreeViewGroup);
+    		}
+    	}
+    	else
+    	{
+    		if (treeViewProjectTestModel.Item.TerminalCommandParsed is not null &&
+    			treeViewProjectTestModel.Item.TerminalCommandParsed.OutputCache.ToString().Contains("threw an exception"))
+    		{
+    			threwAnExceptionTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+    			threwAnExceptionTreeViewGroup.LinkChildren(
+					threwAnExceptionTreeViewGroup.ChildList,
+					threwAnExceptionTreeViewGroup.ChildList);
+				_treeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, threwAnExceptionTreeViewGroup);
+    		}
+    		else
+    		{
+    			notValidProjectForUnitTestTreeViewGroup.ChildList.Add(treeViewProjectTestModel);
+    			notValidProjectForUnitTestTreeViewGroup.LinkChildren(
+					notValidProjectForUnitTestTreeViewGroup.ChildList,
+					notValidProjectForUnitTestTreeViewGroup.ChildList);
+				_treeViewService.ReRenderNode(TestExplorerState.TreeViewTestExplorerKey, notValidProjectForUnitTestTreeViewGroup);
+    		}
+    	}
+	}
 }

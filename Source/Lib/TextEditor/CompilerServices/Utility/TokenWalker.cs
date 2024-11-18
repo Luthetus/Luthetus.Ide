@@ -2,6 +2,7 @@ using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
@@ -11,14 +12,27 @@ public class TokenWalker
     private readonly DiagnosticBag _diagnosticBag;
 
     private int _index;
-	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore, Action clearStateAction)? _deferredParsingTuple;
+	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)? _deferredParsingTuple;
 
     public TokenWalker(ImmutableArray<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
     {
+    	if (tokenList.Length > 0 &&
+    		tokenList[tokenList.Length - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
+    	{
+    		throw new LuthetusTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
+    	}
+    
         _tokenList = tokenList;
         _diagnosticBag = diagnosticBag;
     }
 
+	public int ConsumeCounter { get; private set; }
+	
+	#if DEBUG
+	public bool SuppressProtectedSyntaxKindConsumption { get; set; } = true;
+	public List<SyntaxKind> ProtectedTokenSyntaxKindList { get; set; }
+	#endif
+	
     public ImmutableArray<ISyntaxToken> TokenList => _tokenList;
     public ISyntaxToken Current => Peek(0);
     public ISyntaxToken Next => Peek(1);
@@ -48,20 +62,30 @@ public class TokenWalker
     {
         if (_index >= _tokenList.Length)
             return EOF; // Return the end of file token (the last token)
-
+            
 		if (_deferredParsingTuple is not null)
 		{
 			if (_index == _deferredParsingTuple.Value.closeTokenIndex)
 			{
 				var closeChildScopeToken = _tokenList[_index];
 				_index = _deferredParsingTuple.Value.tokenIndexToRestore;
-				_deferredParsingTuple.Value.clearStateAction.Invoke();
+				ConsumeCounter++;
 				_deferredParsingTuple = null;
 				return closeChildScopeToken;
 			}
 		}
 
         var consumedToken = _tokenList[_index++];
+        ConsumeCounter++;
+        
+        #if DEBUG
+		if (!SuppressProtectedSyntaxKindConsumption)
+		{
+			if (ProtectedTokenSyntaxKindList.Contains(consumedToken.SyntaxKind))
+				Console.WriteLine($"The protected syntax kind: '{consumedToken.SyntaxKind}' was unexpectedly consumed.");
+				// throw new Exception($"The protected syntax kind: '{consumedToken.SyntaxKind}' was unexpectedly consumed.");
+		}
+		#endif
 
         return consumedToken;
     }
@@ -69,7 +93,10 @@ public class TokenWalker
     public ISyntaxToken Backtrack()
     {
         if (_index > 0)
+        {
             _index--;
+            ConsumeCounter--;
+        }
 
         return Peek(_index);
     }
@@ -127,11 +154,16 @@ public class TokenWalker
 	public void DeferredParsing(
 		int openTokenIndex,
 		int closeTokenIndex,
-		int tokenIndexToRestore,
-		Action clearStateAction)
+		int tokenIndexToRestore)
 	{
 		_index = openTokenIndex;
-		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore, clearStateAction);
+		_deferredParsingTuple = (openTokenIndex, closeTokenIndex, tokenIndexToRestore);
+		ConsumeCounter++;
+	}
+	
+	public void ConsumeCounterReset()
+	{
+		ConsumeCounter = 0;
 	}
 
     private BadToken GetBadToken() => new BadToken(new(0, 0, 0, ResourceUri.Empty, string.Empty));

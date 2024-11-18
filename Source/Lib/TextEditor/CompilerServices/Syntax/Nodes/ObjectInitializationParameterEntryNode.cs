@@ -32,8 +32,6 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
     public IExpressionNode ExpressionNode { get; set; }
     public bool IsCollectionInitialization => !PropertyIdentifierToken.ConstructorWasInvoked;
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParameterEntryNode;
     
