@@ -172,13 +172,23 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.7.2 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.2 </em> (2024-11-18)</div>
                 <ul>
                     <li>
-                    	Fix: switch and lock expressions not mapping to a variable reference
+                    	Significant improvements to the
+                    	<a href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/ParserCase/CSharpParser.cs">
+                    		C# parser
+                    	</a>
+                    	have been made, and will continue being made.
+                    	(These improvements will be most noticeable to anyone who reads the source code itself).
+                    	Now that the parser is architected more sensibly, it is expected that
+                    	a great deal of C# parsing can start being supported.
                     </li>
                     <li>
                     	Test explorer: identify which projects are tests before running the discovery command
+                    </li>
+                    <li>
+                    	Cancel button for parsing solution wide, and test discovery.
                     </li>
                 </ul>
             </div>
