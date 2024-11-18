@@ -10,8 +10,6 @@ using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
-// 64 77
-
 public static class ParseOthers
 {
 	/// <summary>
@@ -49,6 +47,8 @@ public static class ParseOthers
         {
             EndingIndexExclusive = combineNamespaceIdentifierIntoOne.Last().TextSpan.EndingIndexExclusive
         };
+        
+        identifierTextSpan.ClearTextCache();
 
         return new IdentifierToken(identifierTextSpan);
     }

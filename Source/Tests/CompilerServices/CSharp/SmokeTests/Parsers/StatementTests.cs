@@ -36,6 +36,26 @@ public class StatementTests
 	}
 
 	[Fact]
+    public void NamespaceStatementNode_Test()
+    {
+    	var test = new Test(@"namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;");
+		
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var namespaceStatementNode = (NamespaceStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.NamespaceStatementNode, namespaceStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void UsingStatementNode_Test()
+    {
+    	var test = new Test(@"using Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;");
+		
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var usingStatementNode = (UsingStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.UsingStatementNode, usingStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void TypeDefinitionNode_Test()
     {
     	var test = new Test(@"public class Aaa { }");

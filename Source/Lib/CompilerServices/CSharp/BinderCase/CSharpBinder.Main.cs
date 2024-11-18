@@ -592,21 +592,14 @@ public partial class CSharpBinder : IBinder
         }
     }
 
-    public UsingStatementNode BindUsingStatementNode(
-        KeywordToken usingKeywordToken,
-        IdentifierToken namespaceIdentifierToken,
+    public void BindUsingStatementNode(
+        UsingStatementNode usingStatementNode,
         CSharpParserModel model)
     {
-        AddSymbolReference(new NamespaceSymbol(namespaceIdentifierToken.TextSpan), model);
-
-        var usingStatementNode = new UsingStatementNode(
-            usingKeywordToken,
-            namespaceIdentifierToken);
+        AddSymbolReference(new NamespaceSymbol(usingStatementNode.NamespaceIdentifier.TextSpan), model);
 
         model.BinderSession.CurrentUsingStatementNodeList.Add(usingStatementNode);
-        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(), model);
-
-        return usingStatementNode;
+        AddNamespaceToCurrentScope(usingStatementNode.NamespaceIdentifier.TextSpan.GetText(), model);
     }
 
     /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>

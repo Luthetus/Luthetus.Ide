@@ -727,7 +727,24 @@ public class ParseDefaultKeywords
 
     public static void HandleUsingTokenKeyword(CSharpParserModel model)
     {
-    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
+    	var usingKeywordToken = (KeywordToken)model.TokenWalker.Consume();
+    	
+    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(model);
+
+        if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
+        {
+            model.DiagnosticBag.ReportTodoException(usingKeywordToken.TextSpan, "Expected a namespace identifier.");
+            return;
+        }
+        
+        var namespaceIdentifier = (IdentifierToken)handleNamespaceIdentifierResult;
+
+        var usingStatementNode = new UsingStatementNode(
+            usingKeywordToken,
+            namespaceIdentifier);
+
+        model.Binder.BindUsingStatementNode(usingStatementNode, model);
+        model.StatementBuilder.ChildList.Add(usingStatementNode);
     }
 
     public static void HandleInterfaceTokenKeyword(CSharpParserModel model)
