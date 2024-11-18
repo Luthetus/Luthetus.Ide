@@ -45,10 +45,8 @@ public class Parser : IParser
             new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
-            currentCodeBlockBuilder,
-            null,
-            new Stack<Action<CodeBlockNode>>());
-
+            currentCodeBlockBuilder);
+		
         DiagnosticsList = DiagnosticsList.AddRange(model.DiagnosticBag.ToImmutableArray());
 
         var topLevelStatementsCodeBlock = model.CurrentCodeBlockBuilder.Build(

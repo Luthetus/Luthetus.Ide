@@ -22,8 +22,6 @@ public sealed class ObjectInitializationParametersListingNode : ISyntaxNode
     public List<ObjectInitializationParameterEntryNode> ObjectInitializationParameterEntryNodeList { get; }
     public CloseBraceToken CloseBraceToken { get; private set; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParametersListingNode;
     

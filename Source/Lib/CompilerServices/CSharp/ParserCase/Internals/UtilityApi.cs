@@ -1,6 +1,9 @@
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -174,5 +177,85 @@ public static class UtilityApi
             default:
                 return null;
         }
+    }
+    
+    public static bool IsConvertibleToTypeClauseNode(SyntaxKind syntaxKind)
+    {
+    	return syntaxKind == SyntaxKind.TypeClauseNode ||
+    		   syntaxKind == SyntaxKind.IdentifierToken ||
+    		   IsTypeIdentifierKeywordSyntaxKind(syntaxKind) ||
+    		   IsContextualKeywordSyntaxKind(syntaxKind);
+    }
+    
+    public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax, IParserModel model)
+    {
+    	if (syntax.SyntaxKind == SyntaxKind.TypeClauseNode)
+    	{
+    		return (TypeClauseNode)syntax;
+    	}
+    	else if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    	{
+    		return new TypeClauseNode(
+	    		(IdentifierToken)syntax,
+		        null,
+		        null);
+    	}
+	    else if (IsTypeIdentifierKeywordSyntaxKind(syntax.SyntaxKind))
+	    {
+	    	return new TypeClauseNode(
+	    		(KeywordToken)syntax,
+		        null,
+		        null);
+	    }
+	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
+	    {
+	    	return new TypeClauseNode(
+	    		(KeywordContextualToken)syntax,
+		        null,
+		        null);
+	    }
+	    else
+	    {
+	    	// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
+	    	//
+	    	model.DiagnosticBag.ReportTodoException(
+	    		model.TokenWalker.Current.TextSpan,
+	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");
+	    	
+	    	// TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
+	    	return null;
+	    }
+    }
+    
+    public static bool IsConvertibleToIdentifierToken(SyntaxKind syntaxKind)
+    {
+    	return syntaxKind == SyntaxKind.IdentifierToken ||
+    		   IsContextualKeywordSyntaxKind(syntaxKind);
+    }
+    
+    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax, IParserModel model)
+    {
+    	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
+    	{
+    		return (IdentifierToken)syntax;
+    	}
+	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
+	    {
+	    	var keywordContextualToken = (KeywordContextualToken)syntax;
+	    	return new IdentifierToken(keywordContextualToken.TextSpan);
+	    }
+	    else
+	    {
+	    	// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
+	    	//
+	    	model.DiagnosticBag.ReportTodoException(
+	    		model.TokenWalker.Current.TextSpan,
+	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");
+	    		
+	    	// TODO: Returning default when it can't be converted might be a fine idea? It isn't as bad as returning null.
+	    	return default;
+	    }
     }
 }

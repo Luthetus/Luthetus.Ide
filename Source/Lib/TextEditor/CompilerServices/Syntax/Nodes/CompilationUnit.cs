@@ -41,7 +41,6 @@ public sealed class CompilationUnit : ISyntaxNode
     public IBinder Binder { get; }
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 
-    public ISyntaxNode? Parent { get; }
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.CompilationUnit;
     

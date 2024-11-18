@@ -924,6 +924,12 @@ public class TextEditorCommandDefaultFunctions
 		}
 		else
 		{
+			/*
+			
+			// The ISyntaxNode.Parent property is being removed. (2024-11-11)
+	    	// ==============================================================
+	    	// TODO: Rewrite this block of code but find the parent node by "querying" the Binder.
+			
 			menuOptionList.Add(new MenuOptionRecord(
 				syntaxNode.SyntaxKind.ToString(),
 				MenuOptionKind.Other,
@@ -966,6 +972,7 @@ public class TextEditorCommandDefaultFunctions
 					}
 				}
 			}
+			*/
 		}
 		
 		MenuRecord menu;

@@ -24,7 +24,10 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 
     public TypeClauseNode TypeClauseNode { get; }
     public IdentifierToken IdentifierToken { get; }
-    public VariableKind VariableKind { get; }
+    /// <summary>
+    /// TODO: Remove the 'set;' on this property
+    /// </summary>
+    public VariableKind VariableKind { get; set; }
     public bool IsInitialized { get; set; }
     /// <summary>
     /// TODO: Remove the 'set;' on this property
@@ -43,7 +46,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
     /// </summary>
     public bool SetterIsAutoImplemented { get; set; }
 
-    public ISyntaxNode? Parent { get; }
+    TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;

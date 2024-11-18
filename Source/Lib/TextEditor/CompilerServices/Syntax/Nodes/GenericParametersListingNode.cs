@@ -16,11 +16,11 @@ public sealed class GenericParametersListingNode : IExpressionNode
 {
     public GenericParametersListingNode(
         OpenAngleBracketToken openAngleBracketToken,
-        List<GenericParameterEntryNode> genericParameterEntryNodes,
+        List<GenericParameterEntryNode> genericParameterEntryNodeList,
         CloseAngleBracketToken closeAngleBracketToken)
     {
         OpenAngleBracketToken = openAngleBracketToken;
-        GenericParameterEntryNodeList = genericParameterEntryNodes;
+        GenericParameterEntryNodeList = genericParameterEntryNodeList;
         CloseAngleBracketToken = closeAngleBracketToken;
     }
 
@@ -31,8 +31,6 @@ public sealed class GenericParametersListingNode : IExpressionNode
     public List<GenericParameterEntryNode> GenericParameterEntryNodeList { get; }
     public CloseAngleBracketToken CloseAngleBracketToken { get; private set; }
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
-
-    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericParametersListingNode;

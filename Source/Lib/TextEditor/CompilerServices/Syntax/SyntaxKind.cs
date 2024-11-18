@@ -9,6 +9,9 @@ public enum SyntaxKind
     CommentMultiLineToken,
     CommentSingleLineToken,
     IdentifierToken,
+    // The NameableToken isn't real. It is a parameter given to certain methods in order to indicate that you'll
+    // accept as a returned SyntaxKind either IdentifierToken or KeywordContextualToken.
+    NameableToken,
     NumericLiteralToken,
     CharLiteralToken,
     StringLiteralToken,
@@ -195,6 +198,7 @@ public enum SyntaxKind
     VariableReferenceNode,
     VariableAssignmentExpressionNode,
     VariableExpressionNode,
+    WithExpressionNode,
 	PropertyDefinitionNode,
 	FieldDefinitionNode,
     ConstructorDefinitionNode,
@@ -208,6 +212,8 @@ public enum SyntaxKind
     FunctionParameterEntryNode,
     FunctionInvocationNode,
     LambdaExpressionNode,
+    TupleExpressionNode,
+    CommaSeparatedExpressionNode,
     GenericArgumentsListingNode,
     GenericArgumentEntryNode,
     GenericParametersListingNode,

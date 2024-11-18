@@ -3,7 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
-public interface IVariableDeclarationNode : ISyntaxNode
+public interface IVariableDeclarationNode : IExpressionNode
 {
     public TypeClauseNode TypeClauseNode { get; }
     public IdentifierToken IdentifierToken { get; }

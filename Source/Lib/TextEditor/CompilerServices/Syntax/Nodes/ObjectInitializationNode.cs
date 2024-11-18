@@ -19,8 +19,6 @@ public sealed class ObjectInitializationNode : ISyntaxNode
     public OpenBraceToken OpenBraceToken { get; }
     public CloseBraceToken CloseBraceToken { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;
     

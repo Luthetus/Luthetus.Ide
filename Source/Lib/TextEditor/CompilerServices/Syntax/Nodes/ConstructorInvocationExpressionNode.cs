@@ -32,8 +32,6 @@ public sealed class ConstructorInvocationExpressionNode : IExpressionNode
     public ObjectInitializationParametersListingNode? ObjectInitializationParametersListingNode { get; private set; }
     
     public ConstructorInvocationStageKind ConstructorInvocationStageKind { get; set; } = ConstructorInvocationStageKind.Unset;
-    
-    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorInvocationExpressionNode;

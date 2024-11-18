@@ -22,8 +22,6 @@ public sealed class AmbiguousIdentifierNode : ISyntaxNode
 
     public IdentifierToken IdentifierToken { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
     

@@ -3,11 +3,11 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 
-namespace Luthetus.CompilerServices.CSharp.Tests.Basis.LexerCase.Custom;
+namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Lexers;
 
-public class CustomLexerTests
+public class LexerTests
 {
-    [Fact]
+	[Fact]
     public void LEX_ArraySyntaxToken()
     {
         throw new NotImplementedException();

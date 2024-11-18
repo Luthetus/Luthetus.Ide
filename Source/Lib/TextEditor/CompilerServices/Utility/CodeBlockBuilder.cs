@@ -25,37 +25,33 @@ public class CodeBlockBuilder
     public ICodeBlockOwner? CodeBlockOwner { get; }
     
     /// <summary>
-    /// This property is used to permit "single statement code blocks".
-	/// 
-    /// Preferably, an extra property which exists solely for this purpose
-    /// would not be the solution.
-    ///
-    /// But the worry is whether the <see cref="Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces.IParserModel"/>
-    /// property 'SyntaxStack' is accurately enough managed at the moment.
-    ///
-    /// Because the code is going to parse a StatementDelimiterToken,
-    /// and then check if there is a "pending" ICodeBlockOwner.
-    ///
-    /// The biggest worry regarding the 'SyntaxStack' is with expressions.
-    /// Possibly the final answer is to Peek() the 'SyntaxStack' for an ICodeBlockOwner
-    /// that has a null OpenBraceToken.
-    ///
-    /// But for now, I don't think the 'SyntaxStack' usage is well defined enough yet.
-    ///
-    /// foreach (var item in list)
-    /// {
-	///     Console.WriteLine(item);
-	/// }
+    /// Method with generic type constraint:
+    /// ````public void M<T>(T? item) where T : struct { } // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/where-generic-type-constraint
 	///
-	/// Versus
-	/// 
-	/// foreach (var item in list)
-	///     Console.WriteLine(item);
+	/// Any syntax that goes from parentheses to OpenBraceToken / CloseBraceToken to define a scope:
+	/// ````foreach (var item in list)
+    /// ````{
+	/// ````    Console.WriteLine(item);
+	/// ````}
+	///
+	/// Any syntax that goes from parenthesis to a "single statement body" deliminated by StatementDelimiterToken:
+	/// ````foreach (var item in list)
+	/// ````    Console.WriteLine(item);
+	///
+	/// The idea is that syntax which defines a scope does not necessarily flow
+	/// in a simple way.
+	///
+	/// "Any syntax that goes from parentheses to OpenBraceToken / CloseBraceToken to define a scope"
+	/// is a fairly simple case.
+	/// One could go immediately from the CloseParenthesisToken to the OpenBraceToken.
+	///
+	/// But, if there is any syntax between the syntax that identifies
+	/// a code block owner, and the actual code block itself, things get more complicated.
     /// </summary>
-    public ICodeBlockOwner? PendingChild { get; set; }
+    public ICodeBlockOwner? InnerPendingCodeBlockOwner { get; set; }
     
-    public Queue<Action<int>> ParseChildScopeQueue { get; set; } = new();
-	public int DequeueChildScopeCounter { get; set; }
+    public Queue<DeferredChildScope> ParseChildScopeQueue { get; set; } = new();
+	public bool PermitInnerPendingCodeBlockOwnerToBeParsed { get; set; }
 	public int? DequeuedIndexForChildList { get; set; }
 
     public CodeBlockNode Build()

@@ -17,9 +17,7 @@ public class ParserModel : IParserModel
         Stack<ISyntax> syntaxStack,
         DiagnosticBag diagnosticBag,
         CodeBlockBuilder globalCodeBlockBuilder,
-        CodeBlockBuilder currentCodeBlockBuilder,
-        Action<CodeBlockNode>? finalizeNamespaceFileScopeCodeBlockNodeAction,
-        Stack<Action<CodeBlockNode>> finalizeCodeBlockNodeActionStack)
+        CodeBlockBuilder currentCodeBlockBuilder)
     {
         Binder = binder;
         BinderSession = binderSession;
@@ -28,27 +26,20 @@ public class ParserModel : IParserModel
         DiagnosticBag = diagnosticBag;
         GlobalCodeBlockBuilder = globalCodeBlockBuilder;
         CurrentCodeBlockBuilder = currentCodeBlockBuilder;
-        FinalizeNamespaceFileScopeCodeBlockNodeAction = finalizeNamespaceFileScopeCodeBlockNodeAction;
-        FinalizeCodeBlockNodeActionStack = finalizeCodeBlockNodeActionStack;
+        
+        ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     }
 
     public IBinder Binder { get; }
     public IBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
+    public StatementBuilder StatementBuilder { get; set; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; } = new();
+    public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
+    public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; } = new();
+    public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
-    /// <summary>
-    /// If a file scoped namespace is found, then set this field,
-    /// so that prior to finishing the parser constructs the namespace node.
-    /// </summary>
-    public Action<CodeBlockNode>? FinalizeNamespaceFileScopeCodeBlockNodeAction { get; set; }
-    /// <summary>
-    /// When parsing the body of a function this is used in order to keep the function
-    /// definition node itself in the syntax tree immutable.<br/><br/>
-    /// That is to say, this action would create the function definition node and then append it.
-    /// </summary>
-    public Stack<Action<CodeBlockNode>> FinalizeCodeBlockNodeActionStack { get; set; }
 }

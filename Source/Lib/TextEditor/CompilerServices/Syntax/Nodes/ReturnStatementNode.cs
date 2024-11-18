@@ -18,8 +18,6 @@ public sealed class ReturnStatementNode : ISyntaxNode
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
     

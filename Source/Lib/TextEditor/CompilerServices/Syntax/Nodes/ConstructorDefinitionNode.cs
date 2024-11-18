@@ -33,11 +33,29 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public ConstraintNode? ConstraintNode { get; }
+    
+    // (2024-11-08)
     public OpenBraceToken OpenBraceToken { get; private set; }
+	public CloseBraceToken CloseBraceToken { get; private set; }
+	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
+	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
+    
+    /// <summary>
+    /// public MyConstructor(string firstName)
+    /// 	: base(firstName)
+    /// {
+    /// }
+    ///
+    /// This stores the indices of tokens that deliminate the parameters to the 'base()' invocation.
+    /// The reason for this is the invocation needs to have 'string firstName' in scope.
+    /// But, 'string firstName' doesn't come into scope until the '{' token.
+    /// 
+    /// So, remember where the parameters to the 'base()' invocation were,
+    /// then later when 'string firstName' is in scope, parse the parameters.
+    /// </summary>
+    public (int OpenParenthesisIndex,  int CloseParenthesisIndex)? OtherConstructorInvocation { get; set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
-
-    public ISyntaxNode? Parent { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstructorDefinitionNode;
@@ -47,25 +65,64 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
-    {
-    	OpenBraceToken = openBraceToken;
-    	CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
 		foreach (var argument in FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 		{
-			if (argument.IsOptional)
+			parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+		
+			/*if (argument.IsOptional)
 				parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
 			else
-				parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+				parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);*/
+				
+			
 		}
     }
+    
+    // (2024-11-08)
+	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, IParserModel parserModel)
+	{
+		if (StatementDelimiterToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+	
+		OpenBraceToken = openBraceToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, IParserModel parserModel)
+	{
+		if (StatementDelimiterToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+	
+		CloseBraceToken = closeBraceToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, IParserModel parserModel)
+	{
+		if (OpenBraceToken.ConstructorWasInvoked || CloseBraceToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+	
+		StatementDelimiterToken = statementDelimiterToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, IParserModel parserModel)
+	{
+		if (CodeBlockNode is not null)
+			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(parserModel);
+	
+		CodeBlockNode = codeBlockNode;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+    
+    
     
     public ISyntax[] GetChildList()
     {

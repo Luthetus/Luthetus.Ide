@@ -15,7 +15,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
         AccessModifierKind accessModifierKind,
         TypeClauseNode returnTypeClauseNode,
         IdentifierToken functionIdentifierToken,
-        GenericArgumentsListingNode? genericArgumentsListingNode,
+        GenericParametersListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
         CodeBlockNode? codeBlockNode,
         ConstraintNode? constraintNode)
@@ -35,15 +35,20 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     public AccessModifierKind AccessModifierKind { get; }
     public TypeClauseNode ReturnTypeClauseNode { get; }
     public IdentifierToken FunctionIdentifierToken { get; }
-    public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
+    public GenericParametersListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public ConstraintNode? ConstraintNode { get; private set; }
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 
-	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
+	// (2024-11-08)
+	public CloseBraceToken CloseBraceToken { get; private set; }
+	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
+	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
 
-    public ISyntaxNode? Parent { get; }
+	
+
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionDefinitionNode;
@@ -61,15 +66,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     	return ReturnTypeClauseNode;
     }
     
-    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
-    {
-    	OpenBraceToken = openBraceToken;
-    	CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
     public ICodeBlockOwner SetExpressionBody(CodeBlockNode codeBlockNode)
     {
     	CodeBlockNode = codeBlockNode;
@@ -82,12 +78,58 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     {
     	foreach (var argument in FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
     	{
-    		if (argument.IsOptional)
+    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+    		
+    		/*if (argument.IsOptional)
     			parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
     		else
-    			parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
+    			parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);*/
     	}
     }
+    
+    // (2024-11-08)
+	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, IParserModel parserModel)
+	{
+		if (StatementDelimiterToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+	
+		OpenBraceToken = openBraceToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, IParserModel parserModel)
+	{
+		if (StatementDelimiterToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+	
+		CloseBraceToken = closeBraceToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, IParserModel parserModel)
+	{
+		if (OpenBraceToken.ConstructorWasInvoked || CloseBraceToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+	
+		StatementDelimiterToken = statementDelimiterToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, IParserModel parserModel)
+	{
+		if (CodeBlockNode is not null)
+			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(parserModel);
+	
+		CodeBlockNode = codeBlockNode;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+    
+    
     
     public ISyntax[] GetChildList()
     {

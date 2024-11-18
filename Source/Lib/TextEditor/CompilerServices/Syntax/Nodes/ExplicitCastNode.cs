@@ -28,8 +28,6 @@ public sealed class ExplicitCastNode : IExpressionNode
     public TypeClauseNode ResultTypeClauseNode { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; private set; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ExplicitCastNode;
     
