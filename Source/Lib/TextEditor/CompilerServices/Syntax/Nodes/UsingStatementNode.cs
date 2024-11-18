@@ -17,8 +17,6 @@ public sealed class UsingStatementNode : ISyntaxNode
     public KeywordToken KeywordToken { get; }
     public IdentifierToken NamespaceIdentifier { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UsingStatementNode;
     

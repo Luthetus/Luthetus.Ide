@@ -100,6 +100,7 @@ public class DotNetBackgroundTaskApi
             _treeViewService,
             _textEditorService,
             _backgroundTaskService,
+            _fileSystemProvider,
             _dotNetCliOutputParser,
             _dotNetSolutionStateWrap,
             _terminalStateWrap,

@@ -26,9 +26,12 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 
-	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
+	// (2024-11-08)
+	public CloseBraceToken CloseBraceToken { get; private set; }
+	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
+	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
 
-    public ISyntaxNode? Parent { get; }
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceStatementNode;
@@ -55,28 +58,53 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     	return null;
     }
     
-    public ICodeBlockOwner SetCodeBlockNode(OpenBraceToken openBraceToken, CodeBlockNode codeBlockNode)
-    {    
-    	OpenBraceToken = openBraceToken;
-    	CodeBlockNode = codeBlockNode;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
         var namespaceString = IdentifierToken.TextSpan.GetText();
         parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, parserModel);
     }
     
-    public ICodeBlockOwner SetFileScoped(CodeBlockNode codeBlockNode)
-    {    
-    	CodeBlockNode = codeBlockNode;
+    // (2024-11-08)
+	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, IParserModel parserModel)
+	{
+		if (StatementDelimiterToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+	
+		OpenBraceToken = openBraceToken;
     	
     	_childListIsDirty = true;
     	return this;
-    }
+	}
+	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, IParserModel parserModel)
+	{
+		if (StatementDelimiterToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+	
+		CloseBraceToken = closeBraceToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, IParserModel parserModel)
+	{
+		if (OpenBraceToken.ConstructorWasInvoked || CloseBraceToken.ConstructorWasInvoked)
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+	
+		StatementDelimiterToken = statementDelimiterToken;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, IParserModel parserModel)
+	{
+		if (CodeBlockNode is not null)
+			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(parserModel);
+	
+		CodeBlockNode = codeBlockNode;
+    	
+    	_childListIsDirty = true;
+    	return this;
+	}
     
     public ISyntax[] GetChildList()
     {

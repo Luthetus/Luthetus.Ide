@@ -26,8 +26,6 @@ public sealed class TryStatementNode : ISyntaxNode
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TryStatementNode;
     

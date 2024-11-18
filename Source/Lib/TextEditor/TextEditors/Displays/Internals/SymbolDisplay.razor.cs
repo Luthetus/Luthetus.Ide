@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
+/// <summary>TODO: protect against exceptions that are thrown when rendering the symbol. One happened while hovering a lambda expression on (2024-11-09).</summary>
 public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 {
     [Inject]

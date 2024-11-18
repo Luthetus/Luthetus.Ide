@@ -17,8 +17,6 @@ public sealed class GenericArgumentEntryNode : ISyntaxNode
 
     public TypeClauseNode TypeClauseNode { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentEntryNode;
     

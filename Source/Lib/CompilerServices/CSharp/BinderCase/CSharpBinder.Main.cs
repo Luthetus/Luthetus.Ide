@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -254,7 +255,8 @@ public partial class CSharpBinder : IBinder
         CSharpParserModel model)
     {
         var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode;
-
+        
+        /*
 		// TODO: Wouldn't this have a '!' at the start? And '... && typeDefinitionNode is not null' (2024-10-25)
         if (TryGetTypeDefinitionHierarchically(
         		model,
@@ -287,6 +289,7 @@ public partial class CSharpBinder : IBinder
                 functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType?.Name ?? "null",
                 literalExpressionNode.ResultTypeClauseNode.ValueType?.Name ?? "null");
         }
+        */
     }
 
     /// <summary>TODO: Validate that the returned bound expression node has the same result type as the enclosing scope.</summary>
@@ -589,21 +592,14 @@ public partial class CSharpBinder : IBinder
         }
     }
 
-    public UsingStatementNode BindUsingStatementNode(
-        KeywordToken usingKeywordToken,
-        IdentifierToken namespaceIdentifierToken,
+    public void BindUsingStatementNode(
+        UsingStatementNode usingStatementNode,
         CSharpParserModel model)
     {
-        AddSymbolReference(new NamespaceSymbol(namespaceIdentifierToken.TextSpan), model);
-
-        var usingStatementNode = new UsingStatementNode(
-            usingKeywordToken,
-            namespaceIdentifierToken);
+        AddSymbolReference(new NamespaceSymbol(usingStatementNode.NamespaceIdentifier.TextSpan), model);
 
         model.BinderSession.CurrentUsingStatementNodeList.Add(usingStatementNode);
-        AddNamespaceToCurrentScope(namespaceIdentifierToken.TextSpan.GetText(), model);
-
-        return usingStatementNode;
+        AddNamespaceToCurrentScope(usingStatementNode.NamespaceIdentifier.TextSpan.GetText(), model);
     }
 
     /// <summary>TODO: Correctly implement this method. For now going to skip until the attribute closing square bracket.</summary>
@@ -625,23 +621,19 @@ public partial class CSharpBinder : IBinder
             closeSquareBracketToken);
     }
 
-    public void RegisterScope(
+    public void OpenScope(
+    	ICodeBlockOwner codeBlockOwner,
         TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textSpan,
         CSharpParserModel model)
     {
         var scope = new Scope(
+        	codeBlockOwner,
         	indexKey: model.BinderSession.GetNextIndexKey(),
 		    parentIndexKey: model.BinderSession.CurrentScopeIndexKey,
 		    textSpan.StartingIndexInclusive,
 		    endingIndexExclusive: null);
-		    
-		//var indexForInsertion = model.BinderSession.ScopeList.FindIndex(x =>
-		//	scope.StartingIndexInclusive < x.StartingIndexInclusive);
-			
-		//if (indexForInsertion == -1)
-        //	indexForInsertion = model.BinderSession.ScopeList.Count;
-        	
+
         model.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
         model.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
     }
@@ -670,21 +662,59 @@ public partial class CSharpBinder : IBinder
         }
     }
 
-    public void DisposeScope(
+    public void CloseScope(
         TextEditorTextSpan textSpan,
         CSharpParserModel model)
     {
     	// Check if it is the global scope, if so return early.
-    	if (model.BinderSession.CurrentScopeIndexKey == 0)
-    		return;
+    	{
+	    	if (model.BinderSession.CurrentScopeIndexKey == 0)
+	    		return;
+    	}
     	
-    	// It is a struct, but needs to be mutated;
-    	var scope = model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey];
-    	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
-    	model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey] = scope;
-
-        if (scope.ParentIndexKey is not null)
-            model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
+    	var inBuilder = model.CurrentCodeBlockBuilder;
+    	var inOwner = inBuilder.CodeBlockOwner;
+    	
+    	var outBuilder = model.CurrentCodeBlockBuilder.Parent;
+    	var outOwner = outBuilder?.CodeBlockOwner;
+    	
+    	// Update Scope
+    	{
+	    	var scope = model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey];
+	    	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
+	    	model.BinderSession.ScopeList[model.BinderSession.CurrentScopeIndexKey] = scope;
+	    	
+	    	// Restore Parent Scope
+			if (scope.ParentIndexKey is not null)
+			{
+				model.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
+			}
+    	}
+    	
+    	// Update CodeBlockOwner
+    	if (inOwner is not null)
+    	{
+	        inOwner.SetCodeBlockNode(inBuilder.Build(), model);
+			
+			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
+				model.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, model);
+			else if (inOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+				model.Binder.BindTypeDefinitionNode((TypeDefinitionNode)inOwner, model, true);
+			
+			// Restore Parent CodeBlockBuilder
+			if (outBuilder is not null)
+			{
+				model.CurrentCodeBlockBuilder = outBuilder;
+				outBuilder.InnerPendingCodeBlockOwner = null;
+				
+				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
+					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
+					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)
+				{
+					outBuilder.ChildList.Add(inOwner);
+				}
+			}
+		}
     }
 
     public void BindTypeDefinitionNode(

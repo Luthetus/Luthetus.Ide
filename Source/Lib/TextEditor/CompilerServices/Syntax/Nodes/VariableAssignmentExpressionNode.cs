@@ -4,7 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed class VariableAssignmentExpressionNode : ISyntaxNode
+public sealed class VariableAssignmentExpressionNode : IExpressionNode
 {
     public VariableAssignmentExpressionNode(
         IdentifierToken variableIdentifierToken,
@@ -21,12 +21,18 @@ public sealed class VariableAssignmentExpressionNode : ISyntaxNode
 
     public IdentifierToken VariableIdentifierToken { get; }
     public EqualsToken EqualsToken { get; }
-    public IExpressionNode ExpressionNode { get; }
-
-    public ISyntaxNode? Parent { get; }
+    public IExpressionNode ExpressionNode { get; private set; }
+    public TypeClauseNode ResultTypeClauseNode => ExpressionNode.ResultTypeClauseNode;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableAssignmentExpressionNode;
+    
+    public VariableAssignmentExpressionNode SetExpressionNode(IExpressionNode expressionNode)
+    {
+    	ExpressionNode = expressionNode;
+    	_childListIsDirty = true;
+    	return this;
+    }
     
     public ISyntax[] GetChildList()
     {

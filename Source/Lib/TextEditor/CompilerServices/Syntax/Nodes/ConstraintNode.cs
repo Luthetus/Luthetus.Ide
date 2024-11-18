@@ -28,8 +28,6 @@ public sealed class ConstraintNode : ISyntaxNode
     /// </summary>
     public ImmutableArray<ISyntaxToken> InnerTokens { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ConstraintNode;
     

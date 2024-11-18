@@ -65,9 +65,7 @@ public static class RuntimeAssembliesLoaderFactory
                 new Stack<ISyntax>(),
                 diagnosticBag,
                 globalCodeBlockBuilder,
-                currentCodeBlockBuilder,
-                null,
-                new Stack<Action<CodeBlockNode>>());
+                currentCodeBlockBuilder);
 
             // TODO: Do not use 'System.IO.Directory' because this doesn't work...
             // ... when running the website
@@ -182,7 +180,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 // Function Arguments Listing
                                 var functionArgumentsListingNode = new FunctionArgumentsListingNode(
                                     openParenthesisToken,
-                                    functionArgumentEntryNodeList.ToImmutableArray(),
+                                    functionArgumentEntryNodeList,
                                     closeParenthesisToken);
 
                                 GenericArgumentsListingNode? genericArgumentsListingNode = null;
@@ -225,7 +223,7 @@ public static class RuntimeAssembliesLoaderFactory
                                     AccessModifierKind.Public,
                                     returnTypeClauseNode,
                                     functionIdentifierToken,
-                                    genericArgumentsListingNode,
+                                    genericArgumentsListingNode: null,
                                     functionArgumentsListingNode,
                                     null,
                                     null);

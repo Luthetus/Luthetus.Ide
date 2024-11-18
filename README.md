@@ -2,6 +2,9 @@
 ![Example GIF](./Images/Ide/Gifs/9.5.1BetterGif.gif)
 Gif length is 1 minute 35 seconds
 
+![Example GIF](./Images/Ide/memory0_9_7_2_AfterGarbageCollection.png)
+Memory usage after parsing the entirety of Luthetus.Ide.sln with its own - from scratch - C# parser (v0.9.7.2)
+
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
 
@@ -14,34 +17,29 @@ https://luthetus.github.io/Luthetus.Ide/
 - Runs on Linux, Windows, and Mac
 - Written with the .NET environment: C#, [Blazor UI Framework](https://dotnet.microsoft.com/en-us/apps/aspnet/web-apps/blazor), and a [lightweight Photino webview](https://github.com/tryphotino/photino.Blazor).
 
-***Luthetus.Ide*** is an IDE, but it differentiates itself by being the ultimate PDE, or personal development environment.
+The IDE can support any programming language by way of the 'ICompilerService' interface (see links to source code below).
 
-I'm not sure of the origins for the term "PDE", but I first heard it from a contributor of [Neovim](https://github.com/neovim/neovim) named [
-TJ DeVries](https://www.youtube.com/@teej_dv).
+See for example the C# support:
+- [CSharpParser.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/ParserCase/CSharpParser.cs)
+- [CSharpBinder.Main.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/BinderCase/CSharpBinder.Main.cs)
+- [CSharpBinder.Expressions.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/BinderCase/CSharpBinder.Expressions.cs)
+- [CSharpCompilerService.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/CompilerServiceCase/CSharpCompilerService.cs)
+- [CSharpResource.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/CompilerServices/CSharp/CompilerServiceCase/CSharpResource.cs)
 
-If one programs with a variety of programming languages, its possible they've ended up with multiple different "IDE"(s) downloaded. Where each "IDE" corresponds to a different environment.
+These are links to the interfaces:
+- [IParser.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Interfaces/IParser.cs)
+- [IBinder.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Interfaces/IBinder.cs)
+- [ICompilerService.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Interfaces/ICompilerService.cs)
+- [ICompilerServiceResource.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Interfaces/ICompilerServiceResource.cs)
 
-***Luthetus.Ide*** works by way of the interface, "[ICompilerService](/Source/Lib/TextEditor/CompilerServices/Interfaces/ICompilerService.cs)".
+One maps a file extension to an ICompilerService with the:
+- [ICompilerServiceRegistry.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Interfaces/ICompilerServiceRegistry.cs)
 
-Therefore, any programming language can be supported. And one can choose which ICompilerService(s) to use.
-
-As of this point in development, the [C# compiler service](/Source/Lib/CompilerServices/CSharp/CompilerServiceCase/CSharpCompilerService.cs) is the most developed implementation. I ["dogfood"](https://en.wikipedia.org/wiki/Eating_your_own_dog_food) the IDE, and since the source code is C#, I spend most time on the C# compiler service.
-
-The IDE needs to be language agnostic, if one never will write C# code, then they shouldn't be forced to have that compiler service added.
-
-Furthermore, many IDE(s) that exist run on a single operating system. ***Luthetus.Ide*** does not tie you to any particular operating system, it is fully cross platform with Linux, Mac, and Windows.
-
-### "Why is ***Luthetus.Ide*** free and open source?".
-
-This is not a matter of undercutting the market, nor is it a matter of me attempting to justify a badly coded product.
-
-I believe there needs to exist an IDE that is not proprietary software, and not exclusive to any specific programming environment.
+The colors used for syntax highlighting and presentation are provided with the:
+- [IDecorationMapperRegistry.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/Decorations/Models/IDecorationMapperRegistry.cs)
+- [IDecorationMapper.cs](https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/Decorations/Models/IDecorationMapper.cs)
 
 ## Donations:
-
-I'm in progress of removing references to myself but I need to explain the changes I'm making. I will be getting a full time job so I can ensure funding for this project.
-
-Thank you to everyone who has supported the project financially up to this point. It allowed me a great length of time to get a jumpstart on things and get the ball rolling. As I said, I'll be getting a full time job myself, so I can ensure funding. But if anyone would like to donate, the button is still here.
 
 [![Donate with PayPal](https://raw.githubusercontent.com/Luthetus/paypal-donate-button_Fork/master/paypal-donate-button.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=RCG8QN3KL623Y)
 

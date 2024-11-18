@@ -19,8 +19,6 @@ public sealed class PreprocessorLibraryReferenceStatementNode : IStatementNode
     public ISyntaxToken IncludeDirectiveSyntaxToken { get; }
     public ISyntaxToken LibraryReferenceSyntaxToken { get; }
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.PreprocessorLibraryReferenceStatementNode;
     

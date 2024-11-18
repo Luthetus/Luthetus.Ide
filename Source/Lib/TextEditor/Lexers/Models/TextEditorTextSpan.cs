@@ -108,6 +108,15 @@ public record struct TextEditorTextSpan(
     {
         return _text ??= SourceText.Substring(StartingIndexInclusive, Length);
     }
+    
+    /// <summary>
+    /// When using the record 'with' contextual keyword the <see cref="_text"/>
+    /// might hold the cached value prior to the 'with' result.
+    /// </summary>
+    public string ClearTextCache()
+    {
+        return _text = null;
+    }
 
 #if DEBUG
     /// <summary>This expression bound property is useful because it will evaluate <see cref="GetText"/> immediately upon inspecting the object instance in the debugger.</summary>

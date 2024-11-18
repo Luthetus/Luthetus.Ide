@@ -30,8 +30,6 @@ public sealed class BinaryExpressionNode : IExpressionNode
     public IExpressionNode RightExpressionNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode => BinaryOperatorNode.ResultTypeClauseNode;
 
-    public ISyntaxNode? Parent { get; }
-
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.BinaryExpressionNode;
     
