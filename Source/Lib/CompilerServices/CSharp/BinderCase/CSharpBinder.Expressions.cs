@@ -235,6 +235,56 @@ public partial class CSharpBinder
 			
 			return ambiguousIdentifierExpressionNode;
 		}
+		else if (token.SyntaxKind == SyntaxKind.WithTokenContextualKeyword)
+		{
+			ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				ambiguousIdentifierExpressionNode,
+				model);
+				
+			if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
+			{
+				var withKeywordContextualToken = model.TokenWalker.Consume();
+			
+				#if DEBUG
+				model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+				#endif
+				
+				var openBraceToken = (OpenBraceToken)model.TokenWalker.Consume();
+		    	
+		    	var openBraceCounter = 1;
+				
+				while (true)
+				{
+					if (model.TokenWalker.IsEof)
+						break;
+		
+					if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+					{
+						++openBraceCounter;
+					}
+					else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+					{
+						if (--openBraceCounter <= 0)
+							break;
+					}
+		
+					_ = model.TokenWalker.Consume();
+				}
+		
+				var closeBraceToken = (CloseBraceToken)model.TokenWalker.Match(SyntaxKind.CloseBraceToken);
+				
+				#if DEBUG
+				model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+				#endif
+			}
+			
+			return new WithExpressionNode(
+				variableIdentifierToken: default,
+				openBraceToken: default,
+				closeBraceToken: default,
+				CSharpFacts.Types.Void.ToTypeClause());
+		}
 		else if (token.SyntaxKind == SyntaxKind.IdentifierToken)
 		{
 			var decidedExpression = ForceDecisionAmbiguousIdentifier(
@@ -700,7 +750,7 @@ public partial class CSharpBinder
 		EmptyExpressionNode emptyExpressionNode, ISyntaxToken token, IParserModel model)
 	{
 		if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
-		{		
+		{
 			var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
 				token,
 		        genericParametersListingNode: null,
@@ -710,8 +760,8 @@ public partial class CSharpBinder
 		    };
 		    
 		    if (model.TokenWalker.Next.SyntaxKind == SyntaxKind.StatementDelimiterToken && !ambiguousExpressionNode.FollowsMemberAccessToken ||
-		    	model.TryParseExpressionSyntaxKindList.Contains(SyntaxKind.TypeClauseNode))
-		    {		    	
+		    	model.TryParseExpressionSyntaxKindList.Contains(SyntaxKind.TypeClauseNode) && model.TokenWalker.Next.SyntaxKind != SyntaxKind.WithTokenContextualKeyword)
+		    {
 				return ForceDecisionAmbiguousIdentifier(
 					emptyExpressionNode,
 					ambiguousExpressionNode,
@@ -1240,6 +1290,9 @@ public partial class CSharpBinder
 					return EmptyExpressionNode.Empty;
 				}
 				
+				goto default;
+			case SyntaxKind.WithTokenContextualKeyword:
+				Console.WriteLine("case SyntaxKind.WithTokenContextualKeyword)");
 				goto default;
 			default:
 				if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind))

@@ -48,7 +48,8 @@ public static class ParseTokens
 		
 		if (!successParse)
 		{
-			model.DiagnosticBag.ReportTodoException(model.TokenWalker.Current.TextSpan, $"nameof(ParseIdentifierToken) TODO case");
+			expressionNode = ParseOthers.ParseExpression(model);
+			model.StatementBuilder.ChildList.Add(expressionNode);
 	    	return;
 		}
 		

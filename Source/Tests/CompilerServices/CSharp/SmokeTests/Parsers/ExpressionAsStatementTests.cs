@@ -1480,7 +1480,12 @@ public partial class ExpressionAsStatementTests
     [Fact]
     public void Record_With_Keyword()
     {
-    	var test = new Test("person = person with { FirstName = \"Jane\", LastName = \"Doe\", };");
+    	var test = new Test("person with { FirstName = \"Jane\", LastName = \"Doe\", };");
+		
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
 		throw new NotImplementedException();
     }
     
