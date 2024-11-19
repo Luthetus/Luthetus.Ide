@@ -21,6 +21,14 @@ public sealed class ReturnStatementNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;
     
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
+    }
+    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

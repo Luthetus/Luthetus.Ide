@@ -1491,8 +1491,32 @@ public partial class CSharpBinder : IBinder
         return null;
     }
     
-    public ISyntaxNode? GetDefinitionNode(int positionIndex, ICompilerServiceResource compilerServiceResource)
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
+    	var textSpan = GetDefinitionTextSpan(model: null, textSpan, compilerServiceResource);
+    	var scope = GetScopeByPositionIndex(model: null, textSpan.ResourceUri, textSpan.StartingIndexInclusive);
+    	
+    	// If the global scope is targeted, its CodeBlockOwner is null.
+    	var codeBlockOwner = scope.CodeBlockOwner ?? compilerServiceResource.CompilationUnit.RootCodeBlockNode;
+    	
+    	var childList = codeBlockOwner.GetChildList();
+    	
+        var possibleNodes = childList.Where(x =>
+        {
+            return x.StartingIndexInclusive <= positionIndex &&
+            	   // Global Scope awkwardly has a null ending index exclusive (2023-10-15)
+                   (x.EndingIndexExclusive >= positionIndex || x.EndingIndexExclusive is null);
+        });
+
+        return possibleScopes.MinBy(x => positionIndex - x.StartingIndexInclusive);
+    	
+    	foreach (var child in childList)
+    	{
+    		if ()
+    		{
+    		}
+    	}
+    	
     	return null;
     }
 

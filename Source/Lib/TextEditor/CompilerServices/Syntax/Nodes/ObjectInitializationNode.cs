@@ -22,6 +22,14 @@ public sealed class ObjectInitializationNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationNode;
     
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
+    }
+    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

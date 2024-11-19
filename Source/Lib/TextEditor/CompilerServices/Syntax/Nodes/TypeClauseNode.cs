@@ -70,6 +70,14 @@ public sealed class TypeClauseNode : IExpressionNode
     	return this;
     }
     
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
+    }
+    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

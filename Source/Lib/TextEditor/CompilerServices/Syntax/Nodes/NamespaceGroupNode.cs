@@ -35,6 +35,14 @@ public sealed class NamespaceGroupNode : ISyntaxNode
             .ToImmutableArray();
     }
     
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
+    }
+    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

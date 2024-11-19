@@ -94,8 +94,14 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
     	_childListIsDirty = true;
     	return this;
 	}
+	
+    public int GetStartInclusiveIndex()
+    {
+    }
     
-    
+    public int GetEndExclusiveIndex()
+    {
+    }
     
     public ISyntax[] GetChildList()
     {

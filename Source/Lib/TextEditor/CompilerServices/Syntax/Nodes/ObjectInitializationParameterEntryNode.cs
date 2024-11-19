@@ -35,6 +35,14 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ObjectInitializationParameterEntryNode;
     
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
+    }
+    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

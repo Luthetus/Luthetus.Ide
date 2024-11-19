@@ -39,6 +39,14 @@ public sealed class ExplicitCastNode : IExpressionNode
     	return this;
     }
     
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
+    }
+    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

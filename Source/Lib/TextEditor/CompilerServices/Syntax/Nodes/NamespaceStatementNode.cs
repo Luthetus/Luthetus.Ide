@@ -106,6 +106,14 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     	return this;
 	}
     
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
+    }
+    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

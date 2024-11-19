@@ -149,8 +149,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return this;
 	}
     
-    
-    
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
     	if (PrimaryConstructorFunctionArgumentsListingNode is not null)
@@ -181,6 +179,14 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	
     	_childListIsDirty = true;
     	return this;
+    }
+    
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
     }
     
     public ISyntax[] GetChildList()

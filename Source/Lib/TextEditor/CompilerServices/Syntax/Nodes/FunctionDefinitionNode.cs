@@ -46,8 +46,6 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
 	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
 
-	
-
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 
     public bool IsFabricated { get; init; }
@@ -129,7 +127,13 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     	return this;
 	}
     
+    public int GetStartInclusiveIndex()
+    {
+    }
     
+    public int GetEndExclusiveIndex()
+    {
+    }
     
     public ISyntax[] GetChildList()
     {

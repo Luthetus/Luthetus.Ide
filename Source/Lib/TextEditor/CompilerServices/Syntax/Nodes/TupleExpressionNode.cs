@@ -29,6 +29,14 @@ public sealed class TupleExpressionNode : IExpressionNode
     	_childListIsDirty = true;
     }
     
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
+    }
+    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

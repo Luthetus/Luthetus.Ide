@@ -54,6 +54,14 @@ public sealed class LambdaExpressionNode : IExpressionNode
     	_childListIsDirty = true;
     }
     
+    public int GetStartInclusiveIndex()
+    {
+    }
+    
+    public int GetEndExclusiveIndex()
+    {
+    }
+    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

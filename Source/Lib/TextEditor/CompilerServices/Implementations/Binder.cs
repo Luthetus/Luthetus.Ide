@@ -24,7 +24,7 @@ public class Binder : IBinder
     	return null;
     }
     
-    public ISyntaxNode? GetDefinitionNode(int positionIndex, ICompilerServiceResource compilerServiceResource)
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
     	return null;
     }

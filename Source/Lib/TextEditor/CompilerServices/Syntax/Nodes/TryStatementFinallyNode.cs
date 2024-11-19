@@ -89,7 +89,13 @@ public sealed class TryStatementFinallyNode : ICodeBlockOwner
     	return this;
 	}
     
+    public int GetStartInclusiveIndex()
+    {
+    }
     
+    public int GetEndExclusiveIndex()
+    {
+    }
     
     public ISyntax[] GetChildList()
     {

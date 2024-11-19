@@ -89,7 +89,13 @@ public sealed class SwitchExpressionNode : ICodeBlockOwner
     	return this;
 	}
     
+    public int GetStartInclusiveIndex()
+    {
+    }
     
+    public int GetEndExclusiveIndex()
+    {
+    }
     
     public ISyntax[] GetChildList()
     {
