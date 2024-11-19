@@ -19,7 +19,12 @@ public class Binder : IBinder
     public ImmutableDictionary<ResourceUri, List<IScope>> ScopeList { get; } = ImmutableDictionary<ResourceUri, List<IScope>>.Empty;
     
 
-    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    {
+    	return null;
+    }
+    
+    public ISyntaxNode? GetDefinitionNode(int positionIndex, ICompilerServiceResource compilerServiceResource)
     {
     	return null;
     }

@@ -1046,7 +1046,7 @@ public class TextEditorCommandDefaultFunctions
 		if (compilerServiceResource?.CompilationUnit is null)
 			return;
 
-        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(wordTextSpan.Value, compilerServiceResource);
+        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinitionTextSpan(wordTextSpan.Value, compilerServiceResource);
         if (definitionTextSpan is null)
             return;
 

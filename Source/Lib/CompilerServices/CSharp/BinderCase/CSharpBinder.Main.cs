@@ -1400,10 +1400,10 @@ public partial class CSharpBinder : IBinder
     	return binderSession.ScopeReturnTypeClauseNodeMap.TryAdd(scopeIndexKey, typeClauseNode);
     }
 
-    TextEditorTextSpan? IBinder.GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
-    	GetDefinition(model: null, textSpan, compilerServiceResource);
+    TextEditorTextSpan? IBinder.GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
+    	GetDefinitionTextSpan(model: null, textSpan, compilerServiceResource);
     
-    public TextEditorTextSpan? GetDefinition(IParserModel? model, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    public TextEditorTextSpan? GetDefinitionTextSpan(IParserModel? model, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
         var boundScope = GetScope(model, textSpan);
         
@@ -1489,6 +1489,11 @@ public partial class CSharpBinder : IBinder
         }
 
         return null;
+    }
+    
+    public ISyntaxNode? GetDefinitionNode(int positionIndex, ICompilerServiceResource compilerServiceResource)
+    {
+    	return null;
     }
 
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit)

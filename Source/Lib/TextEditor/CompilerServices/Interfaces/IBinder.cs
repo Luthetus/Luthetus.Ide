@@ -11,8 +11,24 @@ public interface IBinder
 {
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
     public ImmutableArray<ITextEditorSymbol> SymbolsList { get; }
-
-    public TextEditorTextSpan? GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
+	
+	/// <summary>
+	/// Returns the text span at which the definition exists in the source code.
+	/// </summary>
+    public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
+    
+    /// <summary>
+    /// Returns the <see cref="ISyntaxNode"/> that represents the definition in the <see cref="CompilationUnit"/>.
+    ///
+    /// While similar to invoking <see cref="GetDefinitionTextSpan"/>, then <see cref="GetSyntaxNode"/>;
+    /// this is not equivalent because the data in the Binder might change between the
+    /// first invocation, and the second invocation.
+    ///
+    /// This method will ensure a singular <see cref="BinderSession"/> is
+    /// used for both method invocations.
+    /// </summary>
+    public ISyntaxNode? GetDefinitionNode(int positionIndex, ICompilerServiceResource compilerServiceResource);
+    
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit);
     
     /// <summary><see cref="FinalizeBinderSession"/></summary>
