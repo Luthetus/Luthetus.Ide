@@ -27,16 +27,6 @@ public sealed class VariableReferenceNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableReferenceNode;
     
-    public int GetStartInclusiveIndex()
-    {
-    	return VariableIdentifierToken.TextSpan.StartingIndexInclusive;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return VariableIdentifierToken.TextSpan.EndingIndexExclusive;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

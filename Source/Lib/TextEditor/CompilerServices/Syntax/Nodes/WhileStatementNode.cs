@@ -95,23 +95,6 @@ public sealed class WhileStatementNode : ICodeBlockOwner
     	return this;
 	}
     
-    public int GetStartInclusiveIndex()
-    {
-    	return KeywordToken.TextSpan.StartingIndexInclusive;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	if (StatementDelimiterToken.ConstructorWasInvoked)
-    	{
-    		return StatementDelimiterToken.TextSpan.EndingIndexExclusive;
-    	}
-    	else
-    	{
-    		return CloseBraceToken.TextSpan.EndingIndexExclusive;
-    	}
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

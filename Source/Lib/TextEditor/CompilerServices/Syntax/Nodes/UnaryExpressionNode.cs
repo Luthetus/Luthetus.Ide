@@ -23,16 +23,6 @@ public sealed class UnaryExpressionNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.UnaryExpressionNode;
     
-    public int GetStartInclusiveIndex()
-    {
-    	return UnaryOperatorNode.OperatorToken.TextSpan.StartingIndexInclusive;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return UnaryOperatorNode.OperatorToken.TextSpan.EndingIndexExclusive;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

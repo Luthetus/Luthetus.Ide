@@ -34,16 +34,6 @@ public sealed class VariableAssignmentExpressionNode : IExpressionNode
     	return this;
     }
     
-    public int GetStartInclusiveIndex()
-    {
-    	return VariableIdentifierToken.TextSpan.StartingIndexInclusive;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return VariableIdentifierToken.TextSpan.EndingIndexExclusive;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

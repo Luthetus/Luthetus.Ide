@@ -25,16 +25,6 @@ public sealed class AmbiguousIdentifierNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousIdentifierNode;
     
-    public int GetStartInclusiveIndex()
-    {
-    	return IdentifierToken.TextSpan.StartingIndexInclusive;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return IdentifierToken.TextSpan.EndingIndexExclusive;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

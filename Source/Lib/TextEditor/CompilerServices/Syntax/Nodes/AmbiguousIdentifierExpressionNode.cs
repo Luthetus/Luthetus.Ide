@@ -35,16 +35,6 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
     	return this;
     }
     
-    public int GetStartInclusiveIndex()
-    {
-    	return Token.TextSpan.StartingIndexInclusive;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return Token.TextSpan.EndingIndexExclusive;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

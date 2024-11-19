@@ -30,16 +30,6 @@ public sealed class FunctionArgumentsListingNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionArgumentsListingNode;
     
-    public int GetStartInclusiveIndex()
-    {
-    	return 0;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return 0;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

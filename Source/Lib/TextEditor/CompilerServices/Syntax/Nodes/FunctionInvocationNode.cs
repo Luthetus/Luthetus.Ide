@@ -32,16 +32,6 @@ public sealed class FunctionInvocationNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionInvocationNode;
 
-    public int GetStartInclusiveIndex()
-    {
-    	return 0;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return 0;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

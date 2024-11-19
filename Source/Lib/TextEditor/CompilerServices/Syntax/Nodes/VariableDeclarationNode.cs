@@ -51,16 +51,6 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.VariableDeclarationNode;
     
-    public int GetStartInclusiveIndex()
-    {
-    	return TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return IdentifierToken.TextSpan.EndingIndexExclusive;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

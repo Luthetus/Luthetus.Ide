@@ -20,16 +20,6 @@ public sealed class GenericArgumentEntryNode : ISyntaxNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericArgumentEntryNode;
     
-    public int GetStartInclusiveIndex()
-    {
-    	return 0;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return 0;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

@@ -37,16 +37,6 @@ public sealed class FunctionParameterEntryNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.FunctionParameterEntryNode;
     
-    public int GetStartInclusiveIndex()
-    {
-    	return 0;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return 0;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

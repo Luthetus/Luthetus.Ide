@@ -27,16 +27,6 @@ public sealed class GenericParameterEntryNode : IExpressionNode
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.GenericParameterEntryNode;
     
-    public int GetStartInclusiveIndex()
-    {
-    	return 0;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return 0;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

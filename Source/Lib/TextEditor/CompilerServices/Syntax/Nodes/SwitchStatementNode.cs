@@ -95,16 +95,6 @@ public sealed class SwitchStatementNode : ICodeBlockOwner
     	return this;
 	}
 	
-    public int GetStartInclusiveIndex()
-    {
-    	return 0;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return 0;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

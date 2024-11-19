@@ -83,16 +83,6 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
     	return this;
 	}
     
-    public int GetStartInclusiveIndex()
-    {
-    	return OpenBraceToken.TextSpan.StartingIndexInclusive;
-    }
-    
-    public int GetEndExclusiveIndex()
-    {
-    	return CloseBraceToken.TextSpan.EndingIndexExclusive;
-    }
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
