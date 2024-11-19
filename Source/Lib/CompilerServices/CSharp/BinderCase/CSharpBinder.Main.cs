@@ -1405,7 +1405,30 @@ public partial class CSharpBinder : IBinder
     
     public TextEditorTextSpan? GetDefinitionTextSpan(IParserModel? model, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
-        var boundScope = GetScope(model, textSpan);
+        var definitionNode = GetDefinitionNode(model, textSpan, compilerServiceResource);
+        
+        if (definitionNode is null)
+        	return null;
+        
+        switch (definitionNode.SyntaxKind)
+        {
+        	case SyntaxKind.VariableDeclarationNode:
+        		return ((VariableDeclarationNode)definitionNode).IdentifierToken.TextSpan;
+        	case SyntaxKind.FunctionDefinitionNode:
+        		return ((FunctionDefinitionNode)definitionNode).FunctionIdentifierToken.TextSpan;
+        	case SyntaxKind.TypeDefinitionNode:
+	        	return ((TypeDefinitionNode)definitionNode).TypeIdentifierToken.TextSpan;
+	        default:
+	        	return null;
+        }
+    }
+    
+    ISyntaxNode? IBinder.GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
+    	GetDefinitionNode(model: null, textSpan, compilerServiceResource);
+    
+    public ISyntaxNode? GetDefinitionNode(IParserModel? model, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    {
+    	var boundScope = GetScope(model, textSpan);
         
         if (compilerServiceResource.CompilationUnit is null)
         	return null;
@@ -1446,7 +1469,7 @@ public partial class CSharpBinder : IBinder
 		                out var variableDeclarationStatementNode)
 		            && variableDeclarationStatementNode is not null)
 		        {
-		            return variableDeclarationStatementNode.IdentifierToken.TextSpan;
+		            return variableDeclarationStatementNode;
 		        }
 		        
 		        return null;
@@ -1463,7 +1486,7 @@ public partial class CSharpBinder : IBinder
 		                     out var functionDefinitionNode)
 		                 && functionDefinitionNode is not null)
 		        {
-		            return functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+		            return functionDefinitionNode;
 		        }
 		        
 		        return null;
@@ -1481,7 +1504,7 @@ public partial class CSharpBinder : IBinder
 		                     out var typeDefinitionNode)
 		                 && typeDefinitionNode is not null)
 		        {
-		            return typeDefinitionNode.TypeIdentifierToken.TextSpan;
+		            return typeDefinitionNode;
 		        }
 		        
 		        return null;
@@ -1489,35 +1512,6 @@ public partial class CSharpBinder : IBinder
         }
 
         return null;
-    }
-    
-    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
-    {
-    	var textSpan = GetDefinitionTextSpan(model: null, textSpan, compilerServiceResource);
-    	var scope = GetScopeByPositionIndex(model: null, textSpan.ResourceUri, textSpan.StartingIndexInclusive);
-    	
-    	// If the global scope is targeted, its CodeBlockOwner is null.
-    	var codeBlockOwner = scope.CodeBlockOwner ?? compilerServiceResource.CompilationUnit.RootCodeBlockNode;
-    	
-    	var childList = codeBlockOwner.GetChildList();
-    	
-        var possibleNodes = childList.Where(x =>
-        {
-            return x.StartingIndexInclusive <= positionIndex &&
-            	   // Global Scope awkwardly has a null ending index exclusive (2023-10-15)
-                   (x.EndingIndexExclusive >= positionIndex || x.EndingIndexExclusive is null);
-        });
-
-        return possibleScopes.MinBy(x => positionIndex - x.StartingIndexInclusive);
-    	
-    	foreach (var child in childList)
-    	{
-    		if ()
-    		{
-    		}
-    	}
-    	
-    	return null;
     }
 
     public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit)

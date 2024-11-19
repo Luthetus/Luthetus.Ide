@@ -25,10 +25,12 @@ public sealed class UnaryExpressionNode : IExpressionNode
     
     public int GetStartInclusiveIndex()
     {
+    	return UnaryOperatorNode.OperatorToken.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return UnaryOperatorNode.OperatorToken.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

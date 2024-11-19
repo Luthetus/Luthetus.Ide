@@ -38,6 +38,6 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
     	
     	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
 
-    	return compilerService.Binder.GetDefinitionNode(symbolLocal.TextSpan.StartingIndexInclusive, compilerServiceResource);
+    	return compilerService.Binder.GetDefinitionNode(symbolLocal.TextSpan, compilerServiceResource);
     }
 }

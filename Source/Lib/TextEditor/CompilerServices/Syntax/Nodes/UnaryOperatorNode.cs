@@ -26,10 +26,12 @@ public sealed class UnaryOperatorNode : ISyntaxNode
     
     public int GetStartInclusiveIndex()
     {
+    	return OperatorToken.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return OperatorToken.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

@@ -41,10 +41,12 @@ public sealed class CommaSeparatedExpressionNode : IExpressionNode
     
     public int GetStartInclusiveIndex()
     {
+    	return 0;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return 0;
     }
     
     public ISyntax[] GetChildList()

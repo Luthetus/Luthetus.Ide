@@ -27,10 +27,12 @@ public sealed class AttributeNode : ISyntaxNode
     
     public int GetStartInclusiveIndex()
     {
+    	return OpenSquareBracketToken.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return CloseSquareBracketToken.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

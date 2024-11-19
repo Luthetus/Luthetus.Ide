@@ -85,10 +85,12 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
     
     public int GetStartInclusiveIndex()
     {
+    	return OpenBraceToken.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return CloseBraceToken.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

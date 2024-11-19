@@ -37,10 +37,12 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
     
     public int GetStartInclusiveIndex()
     {
+    	return Token.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return Token.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

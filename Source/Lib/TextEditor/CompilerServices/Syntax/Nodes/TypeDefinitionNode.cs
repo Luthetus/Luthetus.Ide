@@ -183,10 +183,12 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     
     public int GetStartInclusiveIndex()
     {
+    	return TypeIdentifierToken.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return TypeIdentifierToken.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

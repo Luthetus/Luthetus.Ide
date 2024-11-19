@@ -31,10 +31,12 @@ public sealed class WithExpressionNode : IExpressionNode
     
     public int GetStartInclusiveIndex()
     {
+    	return IdentifierToken.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return CloseBraceToken.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

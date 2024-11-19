@@ -29,10 +29,12 @@ public sealed class VariableReferenceNode : IExpressionNode
     
     public int GetStartInclusiveIndex()
     {
+    	return VariableIdentifierToken.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return VariableIdentifierToken.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

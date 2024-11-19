@@ -22,10 +22,12 @@ public sealed class UsingStatementNode : ISyntaxNode
     
     public int GetStartInclusiveIndex()
     {
+    	return KeywordToken.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return NamespaceIdentifier.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

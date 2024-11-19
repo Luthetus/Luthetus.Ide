@@ -53,10 +53,12 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
     
     public int GetStartInclusiveIndex()
     {
+    	return TypeClauseNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return IdentifierToken.TextSpan.EndingIndexExclusive;
     }
     
     public ISyntax[] GetChildList()

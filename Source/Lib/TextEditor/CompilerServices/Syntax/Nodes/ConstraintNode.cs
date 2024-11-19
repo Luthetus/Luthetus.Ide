@@ -33,10 +33,12 @@ public sealed class ConstraintNode : ISyntaxNode
     
     public int GetStartInclusiveIndex()
     {
+    	return 0;
     }
     
     public int GetEndExclusiveIndex()
     {
+    	return 0;
     }
     
     public ISyntax[] GetChildList()
