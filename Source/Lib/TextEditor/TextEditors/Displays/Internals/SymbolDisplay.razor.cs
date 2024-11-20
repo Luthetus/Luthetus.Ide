@@ -20,6 +20,25 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
     [Parameter, EditorRequired]
     public ITextEditorSymbol Symbol { get; set; } = null!;
     
+    private int _shouldRenderHashCode = 0;
+    
+    protected override bool ShouldRender()
+    {
+    	var outShouldRenderHashCode = HashCode.Combine(
+    		Symbol.TextSpan.StartingIndexInclusive,
+    		Symbol.TextSpan.EndingIndexExclusive,
+    		Symbol.TextSpan.DecorationByte,
+    		Symbol.TextSpan.ResourceUri.Value);
+    		
+    	if (outShouldRenderHashCode != _shouldRenderHashCode)
+    	{
+    		_shouldRenderHashCode = outShouldRenderHashCode;
+    		return true;
+    	}
+	    
+    	return false;
+    }
+    
     private Task OpenInEditorOnClick(string filePath)
     {
     	return TextEditorService.OpenInEditorAsync(
