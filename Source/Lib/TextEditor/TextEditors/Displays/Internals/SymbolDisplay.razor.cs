@@ -24,19 +24,39 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
     
     protected override bool ShouldRender()
     {
-    	var outShouldRenderHashCode = HashCode.Combine(
-    		Symbol.TextSpan.StartingIndexInclusive,
-    		Symbol.TextSpan.EndingIndexExclusive,
-    		Symbol.TextSpan.DecorationByte,
-    		Symbol.TextSpan.ResourceUri.Value);
-    		
-    	if (outShouldRenderHashCode != _shouldRenderHashCode)
+    	// When reading about 'HashCode.Combine'
+    	// it could not be determined whether it could throw an exception
+    	// (specifically thinking of integer overflow).
+    	//
+    	// The UI under no circumstance should cause a fatal exception,
+    	// especially a tooltip.
+    	//
+    	// Not much time was spent looking into this because far higher priority
+    	// work needs to be done.
+    	//
+    	// Therefore a try catch is being put around this to be safe.
+    
+    	try
     	{
-    		_shouldRenderHashCode = outShouldRenderHashCode;
-    		return true;
+	    	var outShouldRenderHashCode = HashCode.Combine(
+	    		Symbol.TextSpan.StartingIndexInclusive,
+	    		Symbol.TextSpan.EndingIndexExclusive,
+	    		Symbol.TextSpan.DecorationByte,
+	    		Symbol.TextSpan.ResourceUri.Value);
+	    		
+	    	if (outShouldRenderHashCode != _shouldRenderHashCode)
+	    	{
+	    		_shouldRenderHashCode = outShouldRenderHashCode;
+	    		return true;
+	    	}
+		    
+	    	return false;
     	}
-	    
-    	return false;
+    	catch (Exception e)
+    	{
+    		Console.WriteLine(e);
+    		return false;
+    	}
     }
     
     private Task OpenInEditorOnClick(string filePath)

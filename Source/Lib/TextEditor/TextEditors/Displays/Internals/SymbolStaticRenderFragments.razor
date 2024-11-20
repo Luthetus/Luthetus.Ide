@@ -98,4 +98,14 @@
 			}
 		</span>
 	</text>;
+	
+	public static RenderFragment<TypeDefinitionNode> GetTypeDefinitionNodeSymbolRenderFragment = driverTypeDefinitionNode => 
+	@<text>
+		<span style="display: inline-flex;">
+
+			namespace.here.
+			
+			@GetTypeClauseNodeSymbolRenderFragment(driverTypeDefinitionNode.ToTypeClause())
+		</span>
+	</text>;
 }

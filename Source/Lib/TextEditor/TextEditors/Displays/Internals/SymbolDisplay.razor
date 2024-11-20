@@ -1,4 +1,5 @@
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums
 
@@ -11,15 +12,23 @@
 		    {
 		        case "TypeSymbol":
 		        {
-		            <text>
-		                <span class="luth_te_keyword">
-		                    type
-		                </span>
-		                
-		                <span class="luth_te_type">
-		                    @localSymbol.TextSpan.GetText()
-		                </span>
-		            </text>
+		        	var node = GetDefinitionNode();
+		        	
+		        	if (node is TypeClauseNode typeClauseNode)
+		        	{
+		        		@SymbolStaticRenderFragments.GetTypeClauseNodeSymbolRenderFragment(typeClauseNode)
+		        	}
+		        	else if (node is TypeDefinitionNode typeDefinitionNode)
+		        	{
+		        		@SymbolStaticRenderFragments.GetTypeDefinitionNodeSymbolRenderFragment(typeDefinitionNode)
+		        	}
+		        	else
+		        	{
+		        		<text>
+		        			@(node?.GetType().Name ?? "null") is not @nameof(TypeClauseNode)
+		        		</text>
+		        	}
+		            
 		            break;
 		        }
 		        case "ConstructorSymbol":
