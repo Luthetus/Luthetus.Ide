@@ -1,0 +1,101 @@
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces
+
+@code {
+	public static RenderFragment<(ISymbol Symbol, ISyntaxNode Node)> GetVariableSymbolRenderFragment = driver => 
+	@<text>
+		@if (driver.Node is IVariableDeclarationNode variableDeclarationNode)
+    	{
+    		<text>
+                <span>(local)</span>
+                @GetTypeClauseNodeSymbolRenderFragment(variableDeclarationNode.TypeClauseNode)
+                <span class="luth_te_variable">@driver.Symbol.TextSpan.GetText()</span>
+            </text>
+    	}
+    	else
+    	{
+    		<text>
+    			<span>(local)</span>
+                <span class="luth_te_keyword">undefined</span>
+                <span class="luth_te_variable">@driver.Symbol.TextSpan.GetText()</span>
+            </text>
+    	}
+	</text>;
+	
+	public static RenderFragment<(ISymbol Symbol, ISyntaxNode Node)> GetFieldSymbolRenderFragment = driver => 
+	@<text>
+		@if (driver.Node is IVariableDeclarationNode variableDeclarationNode)
+    	{
+    		<text>
+                <span>(field)</span>
+                @GetTypeClauseNodeSymbolRenderFragment(variableDeclarationNode.TypeClauseNode)
+                <span class="luth_te_field">@driver.Symbol.TextSpan.GetText()</span>
+            </text>
+    	}
+    	else
+    	{
+    		<text>
+    			<span>(field)</span>
+                <span class="luth_te_keyword">undefined</span>
+                <span class="luth_te_field">@driver.Symbol.TextSpan.GetText()</span>
+            </text>
+    	}
+	</text>;
+	
+	public static RenderFragment<(ISymbol Symbol, ISyntaxNode Node)> GetPropertySymbolRenderFragment = driver => 
+	@<text>
+		@if (driver.Node is IVariableDeclarationNode variableDeclarationNode)
+    	{
+    		<text>
+                <span>(property)</span>
+                @GetTypeClauseNodeSymbolRenderFragment(variableDeclarationNode.TypeClauseNode)
+                <span class="luth_te_property">@driver.Symbol.TextSpan.GetText()</span>
+            </text>
+    	}
+    	else
+    	{
+    		<text>
+    			<span>(property)</span>
+                <span class="luth_te_keyword">undefined</span>
+                <span class="luth_te_property">@driver.Symbol.TextSpan.GetText()</span>
+            </text>
+    	}
+	</text>;
+	
+	public static RenderFragment<TypeClauseNode> GetTypeClauseNodeSymbolRenderFragment = driverTypeClauseNode => 
+	@<text>
+		<span style="display: inline-flex;">
+
+			@{
+				var parameter = (
+					"luth_te_type",                                               // ClassCssString
+					@driverTypeClauseNode.TypeIdentifierToken.TextSpan.GetText(), // Text
+					@driverTypeClauseNode.TypeIdentifierToken.TextSpan);          // TextSpan
+			}
+		
+			<SymbolOnClick Parameter='parameter'/>
+			
+			@if (driverTypeClauseNode.GenericParametersListingNode is not null)
+			{
+				<text>&lt;</text>
+				
+				@for (int badIndex = 0; badIndex < driverTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
+				{
+					var index = badIndex;
+					var genericParameter = driverTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList[index];
+					
+					@GetTypeClauseNodeSymbolRenderFragment(genericParameter.TypeClauseNode)
+					
+					if (index < driverTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
+					{
+						<text>,</text>
+					}
+				}
+				
+				<text>&gt;</text>
+			}
+		</span>
+	</text>;
+}
