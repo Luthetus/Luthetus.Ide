@@ -1381,7 +1381,7 @@ public class TextEditorCommandDefaultFunctions
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 					{
 						TooltipViewModel = new(
-		                    textEditorComponentRenderers.DiagnosticRendererType,
+		                    modelModifier.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
 		                    parameterMap,
 		                    relativeCoordinatesOnClick,
 		                    null,
@@ -1411,7 +1411,7 @@ public class TextEditorCommandDefaultFunctions
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 					{
 						TooltipViewModel = new(
-	                        textEditorComponentRenderers.SymbolRendererType,
+	                        modelModifier.CompilerService.SymbolRendererType ?? textEditorComponentRenderers.SymbolRendererType,
 	                        parameters,
 	                        relativeCoordinatesOnClick,
 	                        null,

@@ -14,6 +14,9 @@ public interface ICompilerService
 
     public ImmutableArray<ICompilerServiceResource> CompilerServiceResources { get; }
     public IBinder? Binder { get; }
+    
+    public Type? SymbolRendererType { get; }
+    public Type? DiagnosticRendererType { get; }
 
     /// <summary>Expected to be concurrency safe with <see cref="DisposeResource"/></summary>
     public void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified);

@@ -38,6 +38,9 @@ public class CompilerService : ICompilerService
     public event Action? ResourceDisposed;
 
     public virtual IBinder Binder { get; protected set; } = new Binder();
+    
+    public virtual Type? SymbolRendererType { get; protected set; }
+    public virtual Type? DiagnosticRendererType { get; protected set; }
 
     public virtual ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
         _resourceMap.Values.ToImmutableArray();
