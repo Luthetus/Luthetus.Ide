@@ -34,75 +34,17 @@
 		        }
 		        case "ConstructorSymbol":
 		        {
-		            <text>
-		                <span class="luth_te_keyword">
-		                    constructor
-		                </span>
-		
-		                <span class="luth_te_type">
-		                    @localSymbol.TextSpan.GetText()
-		                </span>
-		            </text>
+		            @SymbolStaticRenderFragments.GetConstructorDefinitionNodeSymbolRenderFragment(((ISymbol)localSymbol, GetDefinitionNode()))
 		            break;
 		        }
 		        case "FunctionSymbol":
 		        {
-		            <text>
-		                <span class="luth_te_keyword">
-		                    function
-		                </span>
-		
-		                <span class="luth_te_method">
-		                    @localSymbol.TextSpan.GetText()
-		                </span>
-		            </text>
+		            @SymbolStaticRenderFragments.GetFunctionSymbolRenderFragment(((ISymbol)localSymbol, GetDefinitionNode()))
 		            break;
 		        }
 		        case "LambdaSymbol":
 		        {
-		            <text>
-		                <span class="luth_te_keyword">lambda</span><!--
-		                
-		                -->:<br/>
-		
-		                <span class="@(string.Empty /* Lambdas do not have their own css class as of (2024-11-02) */)">
-		                	
-		                	@{ var lambdaSymbol = (LambdaSymbol)localSymbol; }
-		                	
-		                	<!--
-		                		This UI for the lambda is super odd to read. I'm working on the lambda parsing and I can't remember off the top of my head how to get rid of a space between
-		                		UI elements and I'm not done with the parsing so I really don't wanna waste anytime on this I just put a bunch of comments to line them together.
-		                	-->
-		                	<span>
-			                	(<!--
-			                	-->@for (int i = 0; i < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count; i++)
-			                	{<!--
-			                		-->var index = i;<!--
-			                		-->var variableDeclarationNode = lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList[index];<!--
-			                		--><text><!--
-			                			--><span class="luth_te_type">@variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText()</span> <span class="luth_te_variable">@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span><!--
-			                			-->@if (index < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count - 1)
-			                			{<!--
-			                				--><text>, </text><!--
-			                			-->}<!--
-			                		--></text><!--
-			                	-->}<!--
-			                	-->)
-		                	</span>
-		                	
-		                	@* => *@
-		                    @localSymbol.TextSpan.GetText()
-		                    
-		                    @if (lambdaSymbol.LambdaExpressionNode.CodeBlockNodeIsExpression)
-		                    {
-		                    	<text> ...;</text>
-		                    }
-		                    else
-		                    {
-		                    	<text> {...}</text>
-		                    }
-		                </span>
-		            </text>
+		            @SymbolStaticRenderFragments.GetLambdaSymbolRenderFragment(((ISymbol)localSymbol, GetDefinitionNode()))
 		            break;
 		        }
 		        case "VariableSymbol":
