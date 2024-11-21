@@ -2,6 +2,7 @@
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums
 
 @code {
 	public static RenderFragment<(ISymbol Symbol, ISyntaxNode Node)> GetVariableSymbolRenderFragment = driver => 
@@ -52,6 +53,26 @@
                 <span>(property)</span>
                 @GetTypeClauseNodeSymbolRenderFragment(variableDeclarationNode.TypeClauseNode)
                 <span class="luth_te_property">@driver.Symbol.TextSpan.GetText()</span>
+                
+                @if (variableDeclarationNode.VariableKind == VariableKind.Property)
+                {
+                	<span>
+	                	{
+	                	
+	                	@if (variableDeclarationNode.HasGetter)
+	                	{
+	                		<text><span class="luth_te_keyword"> get</span>;</text>
+	                	}
+	                	
+	                	@if (variableDeclarationNode.HasSetter)
+	                	{
+	                		<text><span class="luth_te_keyword"> set</span>;</text>
+	                	}
+	                	
+	                	}
+                	</span>
+                }
+                
             </text>
     	}
     	else
