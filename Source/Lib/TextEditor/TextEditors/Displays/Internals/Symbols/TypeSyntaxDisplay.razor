@@ -5,64 +5,78 @@
 
 @{
 	var syntaxViewModelLocal = SyntaxViewModel;
-
-	TypeSymbol? symbolLocal = null;
 	
-	if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.TypeSymbol)
+	string? prefixText;
+	string? text;
+	GenericParametersListingNode? genericParametersListingNode;
+	bool? hasQuestionMark;
+	
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
 	{
-		symbolLocal = (TypeSymbol)syntaxViewModelLocal.Symbol;
+		prefixText = "(null)";
+		text = null;
+		genericParametersListingNode = null;
+		hasQuestionMark = null;
 	}
-
-	var targetNodeLocal = syntaxViewModelLocal.TargetNode as TypeClauseNode;
-	var definitionNodeLocal = syntaxViewModelLocal.DefinitionNode as TypeDefinitionNode;
-}
-
-@*
-	Break down the cases as, 'all null' then 'definitionNodeLocal' comes second
-	because it provides the most information in the UI.
-	
-	Continue 'else if' by order of how much information the object can provide.
-*@
-@if (symbolLocal is null && targetNodeLocal is null && definitionNodeLocal is null)
-{
-	<span>
-		@nameof(TypeSyntaxDisplay): symbolLocal is null && targetNodeLocal is null && definitionNodeLocal is null
-	</span>
-}
-else if (definitionNodeLocal is not null)
-{
-	<span>
-		@nameof(TypeSyntaxDisplay): definitionNodeLocal is not null
-	</span>
-}
-else if (targetNodeLocal is not null)
-{
-	<span>
-		@nameof(TypeSyntaxDisplay): targetNodeLocal is not null
-	</span>
-}
-else if (symbolLocal is not null)
-{
-	<span>
-		@nameof(TypeSyntaxDisplay): symbolLocal is not null
-	</span>
+	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+	{
+		prefixText = "(definition)";
+		text = ((TypeDefinitionNode)syntaxViewModelLocal.DefinitionNode).TypeIdentifierToken.TextSpan.GetText();
+		genericParametersListingNode = null;
+		hasQuestionMark = null;
+	}
+	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+	{
+		prefixText = "(reference)";
+		text = ((TypeClauseNode)syntaxViewModelLocal.TargetNode).TypeIdentifierToken.TextSpan.GetText();
+		genericParametersListingNode = null;
+		hasQuestionMark = null;
+	}
+	else if (syntaxViewModelLocal.Symbol is not null && syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.TypeSymbol)
+	{
+		prefixText = "(symbol)";
+		text = ((TypeSymbol)syntaxViewModelLocal.Symbol).TextSpan.GetText();
+		genericParametersListingNode = null;
+		hasQuestionMark = null;
+	}
+	else
+	{
+		prefixText = "(unrecognizable-state)";
+		text = null;
+		genericParametersListingNode = null;
+		hasQuestionMark = null;
+	}
 }
 
 <span style="display: inline-flex;">
 	
-	<span class="luth_te_syntax-onclick luth_te_type"
-		  @onclick="() => HandleOnClick(syntaxViewModelLocal)">
-		@targetNodeLocal.TypeIdentifierToken.TextSpan.GetText()
-	</span>
+	@if (!string.IsNullOrWhiteSpace(prefixText))
+	{
+		<span>
+			@prefixText&nbsp;
+		</span>
+	}
 	
-	@if (targetNodeLocal.GenericParametersListingNode is not null)
+	@if (!string.IsNullOrWhiteSpace(text))
+	{
+		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+			? string.Empty
+			: "luth_te_syntax-onclick";
+	
+		<span class="@classCssString luth_te_type"
+			  @onclick="() => HandleOnClick(syntaxViewModelLocal)">
+			@text
+		</span>
+	}
+	
+	@if (genericParametersListingNode is not null)
 	{
 		<text>&lt;</text>
 		
-		@for (int badIndex = 0; badIndex < targetNodeLocal.GenericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
+		@for (int badIndex = 0; badIndex < genericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
 		{
 			var index = badIndex;
-			var genericParameter = targetNodeLocal.GenericParametersListingNode.GenericParameterEntryNodeList[index];
+			var genericParameter = genericParametersListingNode.GenericParameterEntryNodeList[index];
 			
         	var syntaxViewModel = new SyntaxViewModel(
         		symbol: null,
@@ -70,7 +84,7 @@ else if (symbolLocal is not null)
         		definitionNode: null);
             <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 			
-			if (index < targetNodeLocal.GenericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
+			if (index < genericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
 			{
 				<text>,</text>
 			}
@@ -79,7 +93,7 @@ else if (symbolLocal is not null)
 		<text>&gt;</text>
 	}
 	
-	@if (targetNodeLocal.HasQuestionMark)
+	@if (hasQuestionMark is not null && hasQuestionMark.Value)
 	{
 		<text>?</text>
 	}
