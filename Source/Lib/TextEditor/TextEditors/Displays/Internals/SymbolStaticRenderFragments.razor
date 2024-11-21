@@ -18,12 +18,12 @@
                 }
                 
                 @{
-                	var symbolViewModel = new SymbolViewModel(
+                	var syntaxViewModel = new SyntaxViewModel(
                 		symbol: null,
                 		targetNode: variableDeclarationNode.TypeClauseNode,
                 		definitionNode: null);
                 }
-                <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
+                <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
                 
                 <span class="luth_te_variable">&nbsp;@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span>
             </text>
@@ -46,12 +46,12 @@
                 <span>(field)</span>
                 
                 @{
-                	var symbolViewModel = new SymbolViewModel(
+                	var syntaxViewModel = new SyntaxViewModel(
                 		symbol: null,
                 		targetNode: variableDeclarationNode.TypeClauseNode,
                 		definitionNode: null);
                 }
-                <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
+                <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
                 
                 <span class="luth_te_field">@driver.Symbol.TextSpan.GetText()</span>
             </text>
@@ -74,12 +74,12 @@
                 <span>(property)</span>
                 
                 @{
-                	var symbolViewModel = new SymbolViewModel(
+                	var syntaxViewModel = new SyntaxViewModel(
                 		symbol: null,
                 		targetNode: variableDeclarationNode.TypeClauseNode,
                 		definitionNode: null);
                 }
-                <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
+                <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
                 
                 <span class="luth_te_property">@driver.Symbol.TextSpan.GetText()</span>
                 
@@ -121,12 +121,12 @@
 			namespace.here.
 			
 			@{
-            	var symbolViewModel = new SymbolViewModel(
+            	var syntaxViewModel = new SyntaxViewModel(
             		symbol: null,
             		targetNode: driverTypeDefinitionNode.ToTypeClause(),
             		definitionNode: null);
             }
-            <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
+            <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		</span>
 	</text>;
 	
@@ -157,12 +157,12 @@
                 <span>(function)</span>
                 
                 @{
-	            	var symbolViewModel = new SymbolViewModel(
+	            	var syntaxViewModel = new SyntaxViewModel(
 	            		symbol: null,
 	            		targetNode: functionDefinitionNode.ReturnTypeClauseNode,
 	            		definitionNode: null);
 	            }
-	            <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
+	            <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
                 
                 <span style="display: inline-flex;">
                 	<span class="luth_te_method">@driver.Symbol.TextSpan.GetText()</span>

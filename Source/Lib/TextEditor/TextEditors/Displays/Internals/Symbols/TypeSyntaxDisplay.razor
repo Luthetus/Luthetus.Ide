@@ -4,17 +4,17 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 
 @{
-	var symbolViewModelLocal = SymbolViewModel;
+	var syntaxViewModelLocal = SyntaxViewModel;
 
 	TypeSymbol? symbolLocal = null;
 	
-	if (symbolViewModelLocal.Symbol.SyntaxKind == SyntaxKind.TypeSymbol)
+	if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.TypeSymbol)
 	{
-		symbolLocal = (TypeSymbol)symbolViewModelLocal.Symbol;
+		symbolLocal = (TypeSymbol)syntaxViewModelLocal.Symbol;
 	}
 
-	var targetNodeLocal = symbolViewModelLocal.TargetNode as TypeClauseNode;
-	var definitionNodeLocal = symbolViewModelLocal.DefinitionNode as TypeDefinitionNode;
+	var targetNodeLocal = syntaxViewModelLocal.TargetNode as TypeClauseNode;
+	var definitionNodeLocal = syntaxViewModelLocal.DefinitionNode as TypeDefinitionNode;
 }
 
 @*
@@ -26,37 +26,34 @@
 @if (symbolLocal is null && targetNodeLocal is null && definitionNodeLocal is null)
 {
 	<span>
-		@nameof(TypeClauseNodeDisplay): symbolLocal is null && targetNodeLocal is null && definitionNodeLocal is null
+		@nameof(TypeSyntaxDisplay): symbolLocal is null && targetNodeLocal is null && definitionNodeLocal is null
 	</span>
 }
 else if (definitionNodeLocal is not null)
 {
 	<span>
-		@nameof(TypeClauseNodeDisplay): definitionNodeLocal is not null
+		@nameof(TypeSyntaxDisplay): definitionNodeLocal is not null
 	</span>
 }
 else if (targetNodeLocal is not null)
 {
 	<span>
-		@nameof(TypeClauseNodeDisplay): targetNodeLocal is not null
+		@nameof(TypeSyntaxDisplay): targetNodeLocal is not null
 	</span>
 }
 else if (symbolLocal is not null)
 {
 	<span>
-		@nameof(TypeClauseNodeDisplay): symbolLocal is not null
+		@nameof(TypeSyntaxDisplay): symbolLocal is not null
 	</span>
 }
 
 <span style="display: inline-flex;">
-	@{
-		var parameter = (
-			"luth_te_type",                                          // ClassCssString
-			@targetNodeLocal.TypeIdentifierToken.TextSpan.GetText(), // Text
-			@targetNodeLocal.TypeIdentifierToken.TextSpan);          // TextSpan
-	}
-
-	<SymbolOnClick Parameter='parameter'/>
+	
+	<span class="luth_te_syntax-onclick luth_te_type"
+		  @onclick="() => HandleOnClick(syntaxViewModelLocal)">
+		@targetNodeLocal.TypeIdentifierToken.TextSpan.GetText()
+	</span>
 	
 	@if (targetNodeLocal.GenericParametersListingNode is not null)
 	{
@@ -67,11 +64,11 @@ else if (symbolLocal is not null)
 			var index = badIndex;
 			var genericParameter = targetNodeLocal.GenericParametersListingNode.GenericParameterEntryNodeList[index];
 			
-        	var symbolViewModel = new SymbolViewModel(
+        	var syntaxViewModel = new SyntaxViewModel(
         		symbol: null,
         		targetNode: genericParameter.TypeClauseNode,
         		definitionNode: null);
-            <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
+            <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 			
 			if (index < targetNodeLocal.GenericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
 			{

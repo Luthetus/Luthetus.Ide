@@ -9,9 +9,9 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// 
 /// i.e.:
 /// TypeDefinitionNode renders TypeDefinitionNodeDisplay
-/// 	TypeClauseNodeDisplay
+/// 	TypeSyntaxDisplay
 /// 	GenericArgumentsListingNode
-/// 		TypeClauseNodeDisplay
+/// 		TypeSyntaxDisplay
 /// 		...
 ///
 /// So, the symbol tooltip starts with 'symbol' not being null.
@@ -24,9 +24,9 @@ namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 /// of that, and furthermore because it is a throttled user gesture
 /// so many many loops of rendering this within a short period of time are expected to never occur.
 /// </summary>
-public struct SymbolViewModel
+public struct SyntaxViewModel
 {
-	public SymbolViewModel(ITextEditorSymbol? symbol, ISyntaxNode? targetNode, ISyntaxNode? definitionNode)
+	public SyntaxViewModel(ITextEditorSymbol? symbol, ISyntaxNode? targetNode, ISyntaxNode? definitionNode)
 	{
 		Symbol = symbol;
 		TargetNode = targetNode;

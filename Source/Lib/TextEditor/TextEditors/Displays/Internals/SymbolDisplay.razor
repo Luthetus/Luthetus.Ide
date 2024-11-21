@@ -4,11 +4,17 @@
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.Symbols
 
 @{
 	var symbolLocal = Symbol;
 	var targetNode = GetTargetNode(symbolLocal);
 	var definitionNode = GetDefinitionNode(symbolLocal, targetNode);
+	
+	var syntaxViewModel = new SyntaxViewModel(
+		symbolLocal,
+		targetNode,
+		definitionNode);
 }
 
 <div class="luth_te_symbol">
@@ -18,25 +24,7 @@
 		    {
 		        case "TypeSymbol":
 		        {
-		        	if (targetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
-		        	{
-		            	var symbolViewModel = new SymbolViewModel(
-		            		symbol: symbolLocal,
-		            		targetNode: (TypeClauseNode)targetNode,
-		            		definitionNode: definitionNode);
-			            <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
-		        	}
-		        	else if (definitionNode is TypeDefinitionNode typeDefinitionNode)
-		        	{
-		        		@SymbolStaticRenderFragments.GetTypeDefinitionNodeSymbolRenderFragment(typeDefinitionNode)
-		        	}
-		        	else
-		        	{
-		        		<text>
-		        			@(definitionNode?.GetType().Name ?? "null") is not @nameof(TypeClauseNode)
-		        		</text>
-		        	}
-		            
+			        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		            break;
 		        }
 		        case "ConstructorSymbol":
