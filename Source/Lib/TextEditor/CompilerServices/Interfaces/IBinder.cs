@@ -22,7 +22,7 @@ public interface IBinder
     /// </summary>
     public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
     
-    public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit);
+    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri);
     
     /// <summary><see cref="FinalizeBinderSession"/></summary>
     public IBinderSession StartBinderSession(ResourceUri resourceUri);

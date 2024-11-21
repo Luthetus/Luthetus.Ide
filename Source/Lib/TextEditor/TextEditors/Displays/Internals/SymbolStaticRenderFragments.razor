@@ -3,6 +3,8 @@
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.Symbols;
 
 @code {
 	public static RenderFragment<(ISymbol Symbol, ISyntaxNode Node)> GetVariableSymbolRenderFragment = driver => 
@@ -15,7 +17,13 @@
                 	<span>(local)</span>
                 }
                 
-                @GetTypeClauseNodeSymbolRenderFragment(variableDeclarationNode.TypeClauseNode)
+                @{
+                	var symbolViewModel = new SymbolViewModel(
+                		symbol: null,
+                		targetNode: variableDeclarationNode.TypeClauseNode,
+                		definitionNode: null);
+                }
+                <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
                 
                 <span class="luth_te_variable">&nbsp;@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span>
             </text>
@@ -36,7 +44,15 @@
     	{
     		<text>
                 <span>(field)</span>
-                @GetTypeClauseNodeSymbolRenderFragment(variableDeclarationNode.TypeClauseNode)
+                
+                @{
+                	var symbolViewModel = new SymbolViewModel(
+                		symbol: null,
+                		targetNode: variableDeclarationNode.TypeClauseNode,
+                		definitionNode: null);
+                }
+                <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
+                
                 <span class="luth_te_field">@driver.Symbol.TextSpan.GetText()</span>
             </text>
     	}
@@ -56,7 +72,15 @@
     	{
     		<text>
                 <span>(property)</span>
-                @GetTypeClauseNodeSymbolRenderFragment(variableDeclarationNode.TypeClauseNode)
+                
+                @{
+                	var symbolViewModel = new SymbolViewModel(
+                		symbol: null,
+                		targetNode: variableDeclarationNode.TypeClauseNode,
+                		definitionNode: null);
+                }
+                <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
+                
                 <span class="luth_te_property">@driver.Symbol.TextSpan.GetText()</span>
                 
                 @if (variableDeclarationNode.VariableKind == VariableKind.Property)
@@ -90,53 +114,19 @@
     	}
 	</text>;
 	
-	public static RenderFragment<TypeClauseNode> GetTypeClauseNodeSymbolRenderFragment = driverTypeClauseNode => 
-	@<text>
-		<span style="display: inline-flex;">
-
-			@{
-				var parameter = (
-					"luth_te_type",                                               // ClassCssString
-					@driverTypeClauseNode.TypeIdentifierToken.TextSpan.GetText(), // Text
-					@driverTypeClauseNode.TypeIdentifierToken.TextSpan);          // TextSpan
-			}
-		
-			<SymbolOnClick Parameter='parameter'/>
-			
-			@if (driverTypeClauseNode.GenericParametersListingNode is not null)
-			{
-				<text>&lt;</text>
-				
-				@for (int badIndex = 0; badIndex < driverTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
-				{
-					var index = badIndex;
-					var genericParameter = driverTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList[index];
-					
-					@GetTypeClauseNodeSymbolRenderFragment(genericParameter.TypeClauseNode)
-					
-					if (index < driverTypeClauseNode.GenericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
-					{
-						<text>,</text>
-					}
-				}
-				
-				<text>&gt;</text>
-			}
-			
-			@if (driverTypeClauseNode.HasQuestionMark)
-			{
-				<text>?</text>
-			}
-		</span>
-	</text>;
-	
 	public static RenderFragment<TypeDefinitionNode> GetTypeDefinitionNodeSymbolRenderFragment = driverTypeDefinitionNode => 
 	@<text>
 		<span style="display: inline-flex;">
 
 			namespace.here.
 			
-			@GetTypeClauseNodeSymbolRenderFragment(driverTypeDefinitionNode.ToTypeClause())
+			@{
+            	var symbolViewModel = new SymbolViewModel(
+            		symbol: null,
+            		targetNode: driverTypeDefinitionNode.ToTypeClause(),
+            		definitionNode: null);
+            }
+            <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
 		</span>
 	</text>;
 	
@@ -166,7 +156,13 @@
     		<text>
                 <span>(function)</span>
                 
-                @GetTypeClauseNodeSymbolRenderFragment(functionDefinitionNode.ReturnTypeClauseNode)
+                @{
+	            	var symbolViewModel = new SymbolViewModel(
+	            		symbol: null,
+	            		targetNode: functionDefinitionNode.ReturnTypeClauseNode,
+	            		definitionNode: null);
+	            }
+	            <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
                 
                 <span style="display: inline-flex;">
                 	<span class="luth_te_method">@driver.Symbol.TextSpan.GetText()</span>

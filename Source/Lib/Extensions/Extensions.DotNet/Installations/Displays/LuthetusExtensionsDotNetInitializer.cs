@@ -169,10 +169,10 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 					
 					var compilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
 					
-					if (compilerService is CSharpCompilerService cSharpCompilerService)
+					/*if (compilerService is CSharpCompilerService cSharpCompilerService)
 					{
 						cSharpCompilerService.SetSymbolRendererType(typeof(Luthetus.Extensions.DotNet.TextEditors.Displays.CSharpSymbolDisplay));
-					}
+					}*/
 					
                     return Task.CompletedTask;
                 });

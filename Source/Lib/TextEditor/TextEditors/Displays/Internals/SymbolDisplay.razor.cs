@@ -69,12 +69,45 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 			Key<TextEditorViewModel>.NewKey());
     }
     
-    private ISyntaxNode? GetDefinitionNode()
+    /// <summary>
+    /// A TypeSymbol is used for both a TypeClauseNode and a TypeDefinitionNode.
+	///
+	/// Therefore, if one hovers a TypeSymbol that maps to a TypeClauseNode.
+	/// An additional step is needed to get the actual TypeDefinitionNode that the TypeClauseNode is referencing.
+	///
+	/// The 'targetNode' is whichever node the ISymbol directly mapped to.
+	/// </summary>
+    private ISyntaxNode? GetTargetNode(ITextEditorSymbol symbolLocal)
     {
-    	var symbolLocal = Symbol;
     	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
     	var compilerService = textEditorModel.CompilerService;
+    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+
+    	return compilerService.Binder.GetSyntaxNode(symbolLocal.TextSpan.StartingIndexInclusive, compilerServiceResource.ResourceUri);
+    }
+    
+    /// <summary>
+    /// If the 'targetNode' itself is a definition, then return the 'targetNode'.
+	///
+	/// Otherwise, ask the IBinder for the definition node.
+	/// </summary>
+    private ISyntaxNode? GetDefinitionNode(ITextEditorSymbol symbolLocal, ISyntaxNode targetNode)
+    {
+    	if (targetNode is null)
+    		return null;
     	
+    	switch (targetNode.SyntaxKind)
+    	{
+    		case SyntaxKind.ConstructorDefinitionNode:
+    		case SyntaxKind.FunctionDefinitionNode:
+    		case SyntaxKind.NamespaceStatementNode:
+    		case SyntaxKind.TypeDefinitionNode:
+    		case SyntaxKind.VariableDeclarationNode:
+				return targetNode;
+    	}
+    
+    	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
+    	var compilerService = textEditorModel.CompilerService;
     	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
 
     	return compilerService.Binder.GetDefinitionNode(symbolLocal.TextSpan, compilerServiceResource);

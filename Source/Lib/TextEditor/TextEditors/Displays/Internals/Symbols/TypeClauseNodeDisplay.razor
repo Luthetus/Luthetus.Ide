@@ -1,0 +1,89 @@
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+
+@{
+	var symbolViewModelLocal = SymbolViewModel;
+
+	TypeSymbol? symbolLocal = null;
+	
+	if (symbolViewModelLocal.Symbol.SyntaxKind == SyntaxKind.TypeSymbol)
+	{
+		symbolLocal = (TypeSymbol)symbolViewModelLocal.Symbol;
+	}
+
+	var targetNodeLocal = symbolViewModelLocal.TargetNode as TypeClauseNode;
+	var definitionNodeLocal = symbolViewModelLocal.DefinitionNode as TypeDefinitionNode;
+}
+
+@*
+	Break down the cases as, 'all null' then 'definitionNodeLocal' comes second
+	because it provides the most information in the UI.
+	
+	Continue 'else if' by order of how much information the object can provide.
+*@
+@if (symbolLocal is null && targetNodeLocal is null && definitionNodeLocal is null)
+{
+	<span>
+		@nameof(TypeClauseNodeDisplay): symbolLocal is null && targetNodeLocal is null && definitionNodeLocal is null
+	</span>
+}
+else if (definitionNodeLocal is not null)
+{
+	<span>
+		@nameof(TypeClauseNodeDisplay): definitionNodeLocal is not null
+	</span>
+}
+else if (targetNodeLocal is not null)
+{
+	<span>
+		@nameof(TypeClauseNodeDisplay): targetNodeLocal is not null
+	</span>
+}
+else if (symbolLocal is not null)
+{
+	<span>
+		@nameof(TypeClauseNodeDisplay): symbolLocal is not null
+	</span>
+}
+
+<span style="display: inline-flex;">
+	@{
+		var parameter = (
+			"luth_te_type",                                          // ClassCssString
+			@targetNodeLocal.TypeIdentifierToken.TextSpan.GetText(), // Text
+			@targetNodeLocal.TypeIdentifierToken.TextSpan);          // TextSpan
+	}
+
+	<SymbolOnClick Parameter='parameter'/>
+	
+	@if (targetNodeLocal.GenericParametersListingNode is not null)
+	{
+		<text>&lt;</text>
+		
+		@for (int badIndex = 0; badIndex < targetNodeLocal.GenericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
+		{
+			var index = badIndex;
+			var genericParameter = targetNodeLocal.GenericParametersListingNode.GenericParameterEntryNodeList[index];
+			
+        	var symbolViewModel = new SymbolViewModel(
+        		symbol: null,
+        		targetNode: genericParameter.TypeClauseNode,
+        		definitionNode: null);
+            <TypeClauseNodeDisplay SymbolViewModel="symbolViewModel"/>
+			
+			if (index < targetNodeLocal.GenericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
+			{
+				<text>,</text>
+			}
+		}
+		
+		<text>&gt;</text>
+	}
+	
+	@if (targetNodeLocal.HasQuestionMark)
+	{
+		<text>?</text>
+	}
+</span>

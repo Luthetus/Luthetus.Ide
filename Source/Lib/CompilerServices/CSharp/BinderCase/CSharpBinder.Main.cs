@@ -1514,35 +1514,74 @@ public partial class CSharpBinder : IBinder
         return null;
     }
 
-    public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit)
+	ISyntaxNode? IBinder.GetSyntaxNode(int positionIndex, ResourceUri resourceUri) =>
+    	GetSyntaxNode(model: null, positionIndex, resourceUri);
+
+    public ISyntaxNode? GetSyntaxNode(IParserModel? model, int positionIndex, ResourceUri resourceUri)
     {
-        // First attempt at writing this, will be to start from the root of the compilation unit,
-        // then traverse the syntax tree where the position index is within bounds.
-
-        return RecursiveGetSyntaxNode(positionIndex, compilationUnit.RootCodeBlockNode);
-
-        ISyntaxNode? RecursiveGetSyntaxNode(int positionIndex, ISyntaxNode targetNode)
+        var scope = GetScopeByPositionIndex(model, resourceUri, positionIndex);
+        if (scope is null)
+        	return null;
+        	
+        var codeBlockOwner = scope.CodeBlockOwner;
+        if (codeBlockOwner is null)
+        	return null;
+        
+        var parentNode = (ISyntaxNode)scope.CodeBlockOwner;
+        var childList = parentNode.GetChildList();
+        
+        var possibleNodeList = new List<ISyntaxNode>();
+        
+        foreach (var child in childList)
         {
-            foreach (var child in targetNode.GetChildList())
-            {
-                if (child is ISyntaxNode syntaxNode)
-                {
-                    var innerResult = RecursiveGetSyntaxNode(positionIndex, syntaxNode);
-
-                    if (innerResult is not null)
-                        return innerResult;
-                }
-                else if (child is ISyntaxToken syntaxToken)
-                {
-                    if (syntaxToken.TextSpan.StartingIndexInclusive <= positionIndex &&
-                        syntaxToken.TextSpan.EndingIndexExclusive >= positionIndex)
-                    {
-                        return targetNode;
-                    }
-                }
-            }
-
-            return null;
+        	if (child is not ISyntaxNode node)
+    			continue;
+        
+        	var nodePositionIndices = GetNodePositionIndices(node);
+        	if (nodePositionIndices == (-1, -1))
+        		continue;
+        		
+        	if (nodePositionIndices.StartInclusiveIndex <= positionIndex &&
+        		nodePositionIndices.EndExclusiveIndex >= positionIndex)
+        	{
+        		possibleNodeList.Add(node);
+        	}
         }
+        
+        if (possibleNodeList.Count <= 0)
+        	return null;
+        
+        return possibleNodeList.MinBy(node =>
+        {
+        	// TODO: Wasteful re-invocation of this method, can probably do this in one invocation.
+        	var nodePositionIndices = GetNodePositionIndices(node);
+        	if (nodePositionIndices == (-1, -1))
+        		return int.MaxValue;
+        	
+        	return positionIndex - nodePositionIndices.StartInclusiveIndex;
+        });
+    }
+    
+    /// <summary>
+    /// If the provided syntaxNode's SyntaxKind is not recognized, then (-1, -1) is returned.
+    ///
+    /// Otherwise, this method is meant to understand all of the ISyntaxToken
+    /// that the node encompasses.
+    ///
+    /// With this knowledge, the method can determine the ISyntaxToken that starts, and ends the node
+    /// within the source code.
+    ///
+    /// Then, it returns the indices from the start and end token.
+    ///
+    /// The ISyntaxNode instances are in a large enough count that it was decided not
+    /// to make this an instance method on each ISyntaxNode.
+    /// </summary>
+    public (int StartInclusiveIndex, int EndExclusiveIndex) GetNodePositionIndices(ISyntaxNode syntaxNode)
+    {
+    	switch (syntaxNode)
+    	{
+    		default:
+    			return (-1, -1);
+    	}
     }
 }
