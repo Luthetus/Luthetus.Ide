@@ -10,9 +10,14 @@
 		@if (driver.Node is IVariableDeclarationNode variableDeclarationNode)
     	{
     		<text>
-                <span>(local)</span>
+    			@if (driver.Symbol is not null)
+    			{
+                	<span>(local)</span>
+                }
+                
                 @GetTypeClauseNodeSymbolRenderFragment(variableDeclarationNode.TypeClauseNode)
-                <span class="luth_te_variable">@driver.Symbol.TextSpan.GetText()</span>
+                
+                <span class="luth_te_variable">&nbsp;@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span>
             </text>
     	}
     	else
@@ -160,7 +165,29 @@
     	{
     		<text>
                 <span>(function)</span>
-                <span class="luth_te_method">@driver.Symbol.TextSpan.GetText()</span>
+                
+                <span style="display: inline-flex;">
+                	<span class="luth_te_method">@driver.Symbol.TextSpan.GetText()</span>
+                
+	                <span style="display: inline-flex;">
+	                	(
+	                	
+	                	@for (int badIndex = 0; badIndex < functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList.Count; badIndex++)
+	                	{
+	                		var index = badIndex;
+	                		
+	                		var functionArgumentEntryNode = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList[index];
+	                		@GetVariableSymbolRenderFragment((null, functionArgumentEntryNode.VariableDeclarationNode))
+	                		
+	                		if (index < functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList.Count - 1)
+	                		{
+	                			<text>,&nbsp;</text>
+	                		}
+	                	}
+	                	
+	                	)
+	                </span>
+                </span>
             </text>
     	}
     	else
