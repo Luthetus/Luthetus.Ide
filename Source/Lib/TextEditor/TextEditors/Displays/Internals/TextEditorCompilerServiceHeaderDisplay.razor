@@ -1,0 +1,46 @@
+<div class="luth_te_text-editor-header"
+	 style="display: flex; justify-content: space-evenly;">
+	 
+	@{
+		var showDefaultToolbarLocal = _showDefaultToolbar;
+	} 
+	
+	<select class="luth_te_compiler-service-header-select">
+		<option>Project</option>
+	</select>
+	
+	<select class="luth_te_compiler-service-header-select">
+		<option>Type</option>
+	</select>
+	
+	<select class="luth_te_compiler-service-header-select">
+		<option>Method</option>
+	</select>
+	
+	@{
+    	var iconDriver = new IconDriver(
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+    }
+	
+	@if (showDefaultToolbarLocal)
+	{
+		<div class="luth_te_compiler-service-header-dropdown">
+			<TextEditorDefaultHeaderDisplay TextEditorViewModelDisplay="TextEditorViewModelDisplay"/>
+		</div>
+	}
+	
+	<button class="luth_button"
+			title="Toggle Default Toolbar"
+			@onclick="ToggleDefaultToolbar">
+		
+		@if (showDefaultToolbarLocal)
+		{
+			@IconChevronDownFragment.Render(iconDriver)
+		}
+		else
+		{
+			@IconChevronRightFragment.Render(iconDriver)
+		}
+	</button>
+</div>
