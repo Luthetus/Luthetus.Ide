@@ -74,6 +74,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
+    [Inject]
+    private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
 
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 
@@ -173,6 +175,8 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 					{
 						cSharpCompilerService.SetSymbolRendererType(typeof(Luthetus.Extensions.DotNet.TextEditors.Displays.CSharpSymbolDisplay));
 					}*/
+					
+					TextEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.TextEditorCompilerServiceHeaderDisplay));
 					
                     return Task.CompletedTask;
                 });
