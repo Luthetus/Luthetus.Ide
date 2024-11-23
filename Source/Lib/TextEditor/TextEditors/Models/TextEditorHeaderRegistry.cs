@@ -7,9 +7,9 @@ public class TextEditorHeaderRegistry : ITextEditorHeaderRegistry
 	/// <summary>
 	/// Map an 'extensionNoPeriod' to a 'Type' that inherits 'ComponentBase'.
 	/// </summary>
-	private readonly Dictionary<string, Type> _map = new();
+	private readonly Dictionary<string, Type?> _map = new();
 
-    public Type GetHeader(string extensionNoPeriod)
+    public Type? GetHeader(string extensionNoPeriod)
     {
     	if (_map.TryGetValue(extensionNoPeriod, out var type))
     		return type;
@@ -17,7 +17,7 @@ public class TextEditorHeaderRegistry : ITextEditorHeaderRegistry
     		return typeof(TextEditorDefaultHeaderDisplay);
     }
     
-    public void UpsertHeader(string extensionNoPeriod, Type type)
+    public void UpsertHeader(string extensionNoPeriod, Type? type)
     {
     	if (_map.ContainsKey(extensionNoPeriod))
     		_map[extensionNoPeriod] = type;
