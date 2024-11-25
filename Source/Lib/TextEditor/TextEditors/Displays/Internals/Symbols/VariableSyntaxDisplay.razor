@@ -1,6 +1,7 @@
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 
 @{
@@ -81,4 +82,23 @@
 			@text
 		</span>
 	}
+	
+	@if (variableDeclarationNode is not null && variableDeclarationNode.VariableKind == VariableKind.Property)
+    {
+    	<span>
+        	{
+        	
+        	@if (variableDeclarationNode.HasGetter)
+        	{
+        		<text><span class="luth_te_keyword"> get</span>;</text>
+        	}
+        	
+        	@if (variableDeclarationNode.HasSetter)
+        	{
+        		<text><span class="luth_te_keyword"> set</span>;</text>
+        	}
+        	
+        	}
+    	</span>
+    }
 </span>

@@ -1,0 +1,91 @@
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+
+@{
+	var syntaxViewModelLocal = SyntaxViewModel;
+	
+	string? prefixText;
+	string? text;
+	GenericParametersListingNode? genericParametersListingNode;
+	
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
+	{
+		prefixText = "(null)";
+		text = null;
+		genericParametersListingNode = null;
+	}
+	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+	{
+		prefixText = "(definition)";
+		text = ((FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode).FunctionIdentifierToken.TextSpan.GetText();
+		genericParametersListingNode = ((FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode).GenericArgumentsListingNode;
+	}
+	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.FunctionInvocationNode)
+	{
+		prefixText = "(reference)";
+		text = ((FunctionInvocationNode)syntaxViewModelLocal.TargetNode).FunctionInvocationIdentifierToken.TextSpan.GetText();
+		genericParametersListingNode = ((FunctionInvocationNode)syntaxViewModelLocal.TargetNode).GenericParametersListingNode;
+	}
+	else if (syntaxViewModelLocal.Symbol is not null && syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.FunctionSymbol)
+	{
+		prefixText = "(symbol)";
+		text = ((FunctionSymbol)syntaxViewModelLocal.Symbol).TextSpan.GetText();
+		genericParametersListingNode = null;
+	}
+	else
+	{
+		prefixText = "(unrecognizable-state)";
+		text = null;
+		genericParametersListingNode = null;
+	}
+}
+
+<span style="display: inline-flex;">
+	
+	@if (!string.IsNullOrWhiteSpace(prefixText))
+	{
+		<span>
+			@prefixText&nbsp;
+		</span>
+	}
+	
+	@if (!string.IsNullOrWhiteSpace(text))
+	{
+		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+			? string.Empty
+			: "luth_te_syntax-onclick";
+	
+		<span class="@classCssString luth_te_method"
+			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.TypeDefinitionNode)">
+			@text
+		</span>
+	}
+	
+	@if (genericParametersListingNode is not null)
+	{
+		<text>&lt;</text>
+		
+		@for (int badIndex = 0; badIndex < genericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
+		{
+			var index = badIndex;
+			var genericParameter = genericParametersListingNode.GenericParameterEntryNodeList[index];
+			
+        	var syntaxViewModel = new SyntaxViewModel(
+        		symbol: null,
+        		targetNode: genericParameter.TypeClauseNode,
+        		definitionNode: null);
+            <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+			
+			if (index < genericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
+			{
+				<text>,</text>
+			}
+		}
+		
+		<text>&gt;</text>
+	}
+	
+	()
+</span>
