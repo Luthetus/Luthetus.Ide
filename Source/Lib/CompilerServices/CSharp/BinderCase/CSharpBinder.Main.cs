@@ -1607,6 +1607,15 @@ public partial class CSharpBinder : IBinder
     			
     			goto default;
     		}
+    		case SyntaxKind.FunctionDefinitionNode:
+    		{
+    			var functionDefinitionNode = (FunctionDefinitionNode)syntaxNode;
+    			
+    			if (functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
+    				return (functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive, functionDefinitionNode.FunctionIdentifierToken.TextSpan.EndingIndexExclusive);
+    			
+    			goto default;
+    		}
     		default:
     		{
     			return (-1, -1);

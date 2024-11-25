@@ -50,6 +50,21 @@ public class BinderTests
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, node.SyntaxKind);
     }
     
+    [Fact]
+    public void FunctionDefinitionNode_IdentifierToken()
+    {
+		var test = new Test(@"public void Aaa() { }");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		var binder = test.CompilationUnit.Binder;
+		var node = binder.GetSyntaxNode(12, test.ResourceUri, test.CompilationUnit);
+		
+		Assert.NotNull(node);
+		Assert.Equal(SyntaxKind.FunctionDefinitionNode, node.SyntaxKind);
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
