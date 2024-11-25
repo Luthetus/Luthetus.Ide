@@ -1,11 +1,59 @@
-<text>
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+
+@{
+	var syntaxViewModelLocal = SyntaxViewModel;
+	
+	string? prefixText;
+	string? text;
+	VariableDeclarationNode? variableDeclarationNode;
+	
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
+	{
+		prefixText = "(null)";
+		text = null;
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+	{
+		prefixText = "(definition)";
+		text = ((VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode).IdentifierToken.TextSpan.GetText();
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+	{
+		prefixText = "(reference)";
+		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.GetText();
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.Symbol is not null &&
+			 (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.VariableSymbol ||
+			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.FieldSymbol ||
+			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.PropertySymbol))
+	{
+		prefixText = "(symbol)";
+		text = syntaxViewModelLocal.Symbol.TextSpan.GetText();
+		variableDeclarationNode = null;
+	}
+	else
+	{
+		prefixText = "(unrecognizable-state)";
+		text = null;
+		variableDeclarationNode = null;
+	}
+}
+
+<span>
 	<span class="luth_te_keyword">lambda</span><!--
 	
 	-->:<br/>
 	
 	<span class="@(string.Empty /* Lambdas do not have their own css class as of (2024-11-02) */)">
 		
-		@{ var lambdaSymbol = (LambdaSymbol)driver.Symbol; }
+		@{ var lambdaSymbol = (LambdaSymbol)syntaxViewModelLocal.Symbol; }
 		
 		<!--
 			This UI for the lambda is super odd to read. I'm working on the lambda parsing and I can't remember off the top of my head how to get rid of a space between
@@ -16,9 +64,9 @@
 	    	-->@for (int i = 0; i < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count; i++)
 	    	{<!--
 	    		-->var index = i;<!--
-	    		-->var variableDeclarationNode = lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList[index];<!--
+	    		-->var lambdaVariableDeclarationNode = lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList[index];<!--
 	    		--><text><!--
-	    			--><span class="luth_te_type">@variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText()</span> <span class="luth_te_variable">@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span><!--
+	    			--><span class="luth_te_type">@lambdaVariableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText()</span> <span class="luth_te_variable">@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span><!--
 	    			-->@if (index < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count - 1)
 	    			{<!--
 	    				--><text>, </text><!--
@@ -29,7 +77,7 @@
 		</span>
 		
 		@* => *@
-	    @driver.Symbol.TextSpan.GetText()
+	    @syntaxViewModelLocal.Symbol.TextSpan.GetText()
 	    
 	    @if (lambdaSymbol.LambdaExpressionNode.CodeBlockNodeIsExpression)
 	    {
@@ -40,4 +88,4 @@
 	    	<text> {...}</text>
 	    }
 	</span>
-</text>
+</span>
