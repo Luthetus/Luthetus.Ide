@@ -1597,7 +1597,7 @@ public partial class CSharpBinder : IBinder
     ///
     /// ========================================================================
     /// There is no overhead per-object-instance for adding a method to a class.
-    /// https://stackoverflow.com/questions/48860851/does-c-sharp-method-take-memory
+    /// https://stackoverflow.com/a/48861218/14847452
     /// 
     /// 	"Yes, C#/.Net methods require memory on per-AppDomain basis, there is no per-instance cost of the methods/properties.
 	/// 	
@@ -1608,7 +1608,7 @@ public partial class CSharpBinder : IBinder
 	/// 	So instantiating 1 or 50 objects with 50 methods will not require different amount of memory for methods."
     /// ========================================================================
     ///
-    /// But, there is no overhead to having this be on each implementation of 'ISyntaxNode',
+    /// But, while there is no overhead to having this be on each implementation of 'ISyntaxNode',
     /// it is believed to still belong in the IBinder.
     ///
     /// This is because each language needs to have control over the various nodes.
