@@ -80,10 +80,19 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
     private ISyntaxNode? GetTargetNode(ITextEditorSymbol symbolLocal)
     {
     	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
+    	if (textEditorModel is null)
+    		return null;
+    	
     	var compilerService = textEditorModel.CompilerService;
+    	
     	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+    	if (compilerServiceResource is null)
+    		return null;
 
-    	return compilerService.Binder.GetSyntaxNode(symbolLocal.TextSpan.StartingIndexInclusive, compilerServiceResource.ResourceUri);
+    	return compilerService.Binder.GetSyntaxNode(
+    		symbolLocal.TextSpan.StartingIndexInclusive,
+    		compilerServiceResource.ResourceUri,
+    		compilerServiceResource.CompilationUnit);
     }
     
     /// <summary>

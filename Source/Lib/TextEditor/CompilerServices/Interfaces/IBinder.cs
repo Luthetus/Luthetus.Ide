@@ -22,7 +22,21 @@ public interface IBinder
     /// </summary>
     public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
     
-    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri);
+    /// <summary>
+    /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.
+    ///
+    /// Then, checks the <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/>'s children
+    /// to determine which node exists at the positionIndex.
+    ///
+    /// If the <see cref="IScope"/> cannot be found, then as a fallback the provided compilationUnit's
+    /// <see cref="CompilationUnit.RootCodeBlockNode"/> will be treated
+    /// the same as if it were the <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/>.
+    ///
+    /// If the provided compilationUnit is null, then the fallback step will not occur.
+    /// The fallback step is expected to occur due to the global scope being implemented with a null
+    /// <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/> at the time of this comment.
+    /// </summary>
+    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, CompilationUnit? compilationUnit);
     
     /// <summary><see cref="FinalizeBinderSession"/></summary>
     public IBinderSession StartBinderSession(ResourceUri resourceUri);

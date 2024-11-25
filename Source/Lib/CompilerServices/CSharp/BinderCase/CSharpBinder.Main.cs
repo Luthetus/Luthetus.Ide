@@ -1514,30 +1514,48 @@ public partial class CSharpBinder : IBinder
         return null;
     }
 
-	ISyntaxNode? IBinder.GetSyntaxNode(int positionIndex, ResourceUri resourceUri) =>
-    	GetSyntaxNode(model: null, positionIndex, resourceUri);
+	ISyntaxNode? IBinder.GetSyntaxNode(int positionIndex, ResourceUri resourceUri, CompilationUnit? compilationUnit) =>
+    	GetSyntaxNode(model: null, positionIndex, resourceUri, compilationUnit);
 
-    public ISyntaxNode? GetSyntaxNode(IParserModel? model, int positionIndex, ResourceUri resourceUri)
+    public ISyntaxNode? GetSyntaxNode(IParserModel? model, int positionIndex, ResourceUri resourceUri, CompilationUnit? compilationUnit)
     {
         var scope = GetScopeByPositionIndex(model, resourceUri, positionIndex);
         if (scope is null)
+        {
+        	Console.WriteLine("aaa scope is null");
         	return null;
+        }
+        
+        ISyntaxNode parentNode;
         	
         var codeBlockOwner = scope.CodeBlockOwner;
-        if (codeBlockOwner is null)
-        	return null;
         
-        var parentNode = (ISyntaxNode)scope.CodeBlockOwner;
+        if (codeBlockOwner is not null)
+        {
+        	parentNode = (ISyntaxNode)codeBlockOwner;
+        }
+        else if (compilationUnit is not null)
+        {
+        	parentNode = compilationUnit.RootCodeBlockNode;
+        }
+        else
+        {
+        	Console.WriteLine("aaa codeBlockOwner is null && compilationUnit is null");
+        	return null;
+        }
+        
         var childList = parentNode.GetChildList();
         
         var possibleNodeList = new List<ISyntaxNode>();
         
+        Console.WriteLine($"aaa childList.Length: {childList.Length}");
         foreach (var child in childList)
         {
         	if (child is not ISyntaxNode node)
     			continue;
         
         	var nodePositionIndices = GetNodePositionIndices(node);
+        	Console.WriteLine($"nodePositionIndices: {nodePositionIndices}");
         	if (nodePositionIndices == (-1, -1))
         		continue;
         		
@@ -1578,10 +1596,21 @@ public partial class CSharpBinder : IBinder
     /// </summary>
     public (int StartInclusiveIndex, int EndExclusiveIndex) GetNodePositionIndices(ISyntaxNode syntaxNode)
     {
-    	switch (syntaxNode)
+    	switch (syntaxNode.SyntaxKind)
     	{
+    		case SyntaxKind.TypeDefinitionNode:
+    		{
+    			var typeDefinitionNode = (TypeDefinitionNode)syntaxNode;
+    			
+    			if (typeDefinitionNode.TypeIdentifierToken.ConstructorWasInvoked)
+    				return (typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive, typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive);
+    			
+    			goto default;
+    		}
     		default:
+    		{
     			return (-1, -1);
+    		}
     	}
     }
 }

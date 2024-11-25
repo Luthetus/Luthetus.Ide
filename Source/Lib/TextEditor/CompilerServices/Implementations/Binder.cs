@@ -29,7 +29,7 @@ public class Binder : IBinder
     	return null;
     }
 
-    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri)
+    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, CompilationUnit? compilationUnit)
     {
         return null;
     }
