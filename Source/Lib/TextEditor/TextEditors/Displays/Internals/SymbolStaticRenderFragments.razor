@@ -7,36 +7,7 @@
 @using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.Symbols;
 
 @code {
-	public static RenderFragment<(ISymbol Symbol, ISyntaxNode Node)> GetVariableSymbolRenderFragment = driver => 
-	@<text>
-		@if (driver.Node is IVariableDeclarationNode variableDeclarationNode)
-    	{
-    		<text>
-    			@if (driver.Symbol is not null)
-    			{
-                	<span>(local)</span>
-                }
-                
-                @{
-                	var syntaxViewModel = new SyntaxViewModel(
-                		symbol: null,
-                		targetNode: variableDeclarationNode.TypeClauseNode,
-                		definitionNode: null);
-                }
-                <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
-                
-                <span class="luth_te_variable">&nbsp;@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span>
-            </text>
-    	}
-    	else
-    	{
-    		<text>
-    			<span>(local)</span>
-                <span class="luth_te_keyword">undefined</span>
-                <span class="luth_te_variable">@driver.Symbol.TextSpan.GetText()</span>
-            </text>
-    	}
-	</text>;
+	
 	
 	public static RenderFragment<(ISymbol Symbol, ISyntaxNode Node)> GetFieldSymbolRenderFragment = driver => 
 	@<text>
@@ -175,7 +146,9 @@
 	                		var index = badIndex;
 	                		
 	                		var functionArgumentEntryNode = functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList[index];
-	                		@GetVariableSymbolRenderFragment((null, functionArgumentEntryNode.VariableDeclarationNode))
+	                		
+	                		<text>GetVariableSymbolRenderFragment was here</text>
+	                		// @GetVariableSymbolRenderFragment((null, functionArgumentEntryNode.VariableDeclarationNode))
 	                		
 	                		if (index < functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList.Count - 1)
 	                		{

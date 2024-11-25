@@ -10,7 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.Symbols;
 
-public partial class TypeSyntaxDisplay : ComponentBase
+public partial class MiscSyntaxDisplay : ComponentBase
 {
 	[Inject]
 	private ITextEditorService TextEditorService { get; set; } = null!;

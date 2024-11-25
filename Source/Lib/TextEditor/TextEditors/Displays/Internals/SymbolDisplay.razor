@@ -43,18 +43,10 @@
 		            break;
 		        }
 		        case "VariableSymbol":
-		        {
-		        	@SymbolStaticRenderFragments.GetVariableSymbolRenderFragment(((ISymbol)symbolLocal, GetDefinitionNode(symbolLocal, targetNode)))
-		            break;
-		        }
 		        case "FieldSymbol":
-		        {
-		            @SymbolStaticRenderFragments.GetFieldSymbolRenderFragment(((ISymbol)symbolLocal, GetDefinitionNode(symbolLocal, targetNode)))
-		            break;
-		        }
 		        case "PropertySymbol":
 		        {
-		            @SymbolStaticRenderFragments.GetPropertySymbolRenderFragment(((ISymbol)symbolLocal, GetDefinitionNode(symbolLocal, targetNode)))
+		        	<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		            break;
 		        }
 		        case "StringInterpolationSymbol":

@@ -1,0 +1,84 @@
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+
+@{
+	var syntaxViewModelLocal = SyntaxViewModel;
+	
+	string? prefixText;
+	string? text;
+	VariableDeclarationNode? variableDeclarationNode;
+	
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
+	{
+		prefixText = "(null)";
+		text = null;
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+	{
+		prefixText = "(definition)";
+		text = ((VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode).IdentifierToken.TextSpan.GetText();
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+	{
+		prefixText = "(reference)";
+		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.GetText();
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.Symbol is not null &&
+			 (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.VariableSymbol ||
+			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.FieldSymbol ||
+			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.PropertySymbol))
+	{
+		prefixText = "(symbol)";
+		text = syntaxViewModelLocal.Symbol.TextSpan.GetText();
+		variableDeclarationNode = null;
+	}
+	else
+	{
+		prefixText = "(unrecognizable-state)";
+		text = null;
+		variableDeclarationNode = null;
+	}
+}
+
+<span>
+	@if (!string.IsNullOrWhiteSpace(prefixText))
+	{
+		<span>
+			@prefixText
+			&nbsp;
+		</span>
+	}
+	
+	@if (variableDeclarationNode is not null)
+	{
+		var syntaxViewModel = new SyntaxViewModel(
+			symbol: null,
+			targetNode: variableDeclarationNode.TypeClauseNode,
+			definitionNode: null);
+    	<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+    }
+    else
+    {
+    	<span class="luth_te_keyword">
+    		undefined
+    		&nbsp;
+    	</span>
+    }
+	
+	@if (!string.IsNullOrWhiteSpace(text))
+	{
+		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+			? string.Empty
+			: "luth_te_syntax-onclick";
+	
+		<span class="@classCssString luth_te_variable"
+			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.VariableDeclarationNode)">
+			@text
+		</span>
+	}
+</span>

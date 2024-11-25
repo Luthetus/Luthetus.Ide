@@ -64,7 +64,7 @@
 			: "luth_te_syntax-onclick";
 	
 		<span class="@classCssString luth_te_type"
-			  @onclick="() => HandleOnClick(syntaxViewModelLocal)">
+			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.TypeDefinitionNode)">
 			@text
 		</span>
 	}

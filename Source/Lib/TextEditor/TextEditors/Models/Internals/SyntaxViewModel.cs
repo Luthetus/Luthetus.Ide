@@ -1,4 +1,6 @@
+using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
@@ -36,4 +38,33 @@ public struct SyntaxViewModel
 	public ITextEditorSymbol? Symbol { get; }
 	public ISyntaxNode? TargetNode { get; }
 	public ISyntaxNode? DefinitionNode { get; }
+	
+	public Task HandleOnClick(ITextEditorService textEditorService, SyntaxKind syntaxKindExpected)
+	{
+		if (DefinitionNode is null ||
+			DefinitionNode.SyntaxKind != syntaxKindExpected)
+		{
+			return Task.CompletedTask;
+		}
+		
+		string? resourceUriValue = null;
+		var indexInclusiveStart = -1;
+		
+		if (DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+		{
+			var typeDefinitionNode = (TypeDefinitionNode)DefinitionNode;
+			resourceUriValue = typeDefinitionNode.TypeIdentifierToken.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive;
+		}
+		
+		if (resourceUriValue is null || indexInclusiveStart == -1)
+			return Task.CompletedTask;
+	
+		return textEditorService.OpenInEditorAsync(
+			resourceUriValue,
+			true,
+			indexInclusiveStart,
+			new Category("main"),
+			Key<TextEditorViewModel>.NewKey());
+	}
 }
