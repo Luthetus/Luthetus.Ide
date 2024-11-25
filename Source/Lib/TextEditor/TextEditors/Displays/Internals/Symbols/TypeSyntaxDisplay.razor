@@ -71,26 +71,11 @@
 	
 	@if (genericParametersListingNode is not null)
 	{
-		<text>&lt;</text>
-		
-		@for (int badIndex = 0; badIndex < genericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
-		{
-			var index = badIndex;
-			var genericParameter = genericParametersListingNode.GenericParameterEntryNodeList[index];
-			
-        	var syntaxViewModel = new SyntaxViewModel(
-        		symbol: null,
-        		targetNode: genericParameter.TypeClauseNode,
-        		definitionNode: null);
-            <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
-			
-			if (index < genericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
-			{
-				<text>,</text>
-			}
-		}
-		
-		<text>&gt;</text>
+		var syntaxViewModel = new SyntaxViewModel(
+			symbol: null,
+			targetNode: genericParametersListingNode,
+			definitionNode: null);
+		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}
 	
 	@if (hasQuestionMark is not null && hasQuestionMark.Value)

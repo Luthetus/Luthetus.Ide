@@ -1,0 +1,30 @@
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+
+@{ var syntaxViewModelLocal = SyntaxViewModel; }
+
+@if (syntaxViewModelLocal.TargetNode is GenericParametersListingNode genericParametersListingNode)
+{
+	<text>&lt;</text>
+		
+	@for (int badIndex = 0; badIndex < genericParametersListingNode.GenericParameterEntryNodeList.Count; badIndex++)
+	{
+		var index = badIndex;
+		var genericParameter = genericParametersListingNode.GenericParameterEntryNodeList[index];
+		
+    	var syntaxViewModel = new SyntaxViewModel(
+    		symbol: null,
+    		targetNode: genericParameter.TypeClauseNode,
+    		definitionNode: null);
+        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		
+		if (index < genericParametersListingNode.GenericParameterEntryNodeList.Count - 1)
+		{
+			<text>,</text>
+		}
+	}
+	
+	<text>&gt;</text>
+}
