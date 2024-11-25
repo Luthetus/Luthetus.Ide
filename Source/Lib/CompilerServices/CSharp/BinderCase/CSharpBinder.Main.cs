@@ -1594,6 +1594,29 @@ public partial class CSharpBinder : IBinder
     ///
     /// The ISyntaxNode instances are in a large enough count that it was decided not
     /// to make this an instance method on each ISyntaxNode.
+    ///
+    /// ========================================================================
+    /// There is no overhead per-object-instance for adding a method to a class.
+    /// https://stackoverflow.com/questions/48860851/does-c-sharp-method-take-memory
+    /// 
+    /// 	"Yes, C#/.Net methods require memory on per-AppDomain basis, there is no per-instance cost of the methods/properties.
+	/// 	
+	/// 	Cost comes from:
+	/// 	
+	/// 	methods metadata (part of type) and IL. I'm not sure how long IL stays loaded as it really only needed to JIT so my guess it is loaded as needed and discarded.
+	/// 	after method is JITed machine code stays till AppDomain is unloaded (or if compiled as neutral till process terminates)
+	/// 	So instantiating 1 or 50 objects with 50 methods will not require different amount of memory for methods."
+    /// ========================================================================
+    ///
+    /// But, there is no overhead to having this be on each implementation of 'ISyntaxNode',
+    /// it is believed to still belong in the IBinder.
+    ///
+    /// This is because each language needs to have control over the various nodes.
+    /// As one node in C# is not necessarily read the same as it would be by a python 'ICompilerService'.
+    ///
+    /// The goal with the ISyntaxNode implementations seems to be:
+    /// - Keep them as generalized as possible.
+    /// - Any specific details should be provided by the IBinder.
     /// </summary>
     public (int StartInclusiveIndex, int EndExclusiveIndex) GetNodePositionIndices(ISyntaxNode syntaxNode)
     {
