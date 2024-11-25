@@ -13,23 +13,20 @@
 	{
 		prefixText = "(null)";
 		text = null;
-		variableDeclarationNode = null;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
 		prefixText = "(definition)";
-		text = ((VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode).IdentifierToken.TextSpan.GetText();
-		variableDeclarationNode = null;
+		text = "unknown state";
 	}
 	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 	{
 		prefixText = "(reference)";
-		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.GetText();
-		variableDeclarationNode = null;
+		text = "unknown state";
 	}
 	else if (syntaxViewModelLocal.Symbol is not null &&
 			 (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol ||
-			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol)
+			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol))
 	{
 		if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol)
 		{
