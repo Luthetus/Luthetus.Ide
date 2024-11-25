@@ -1,5 +1,71 @@
-<h3>MiscSyntaxDisplay</h3>
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
 
-@code {
+@{
+	var syntaxViewModelLocal = SyntaxViewModel;
 	
+	string? prefixText;
+	string? text;
+	
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
+	{
+		prefixText = "(null)";
+		text = null;
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+	{
+		prefixText = "(definition)";
+		text = ((VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode).IdentifierToken.TextSpan.GetText();
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+	{
+		prefixText = "(reference)";
+		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.GetText();
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.Symbol is not null &&
+			 (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol ||
+			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol)
+	{
+		if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol)
+		{
+			prefixText = "(string-interpolation)";
+		}
+		else if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol)
+		{
+        	prefixText = "(string-verbatim)";
+		}
+		else if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.InjectedLanguageComponentSymbol)
+		{
+        	prefixText = "(component)";
+		}
+		else
+		{
+			prefixText = "(symbol)";
+		}
+		
+		text = syntaxViewModelLocal.Symbol.TextSpan.GetText();
+	}
+	else
+	{
+		prefixText = "(unrecognizable-state)";
+		text = null;
+	}
 }
+
+<span>
+    <span class="luth_te_keyword">
+        @prefixText
+    </span>
+
+	@if (text is not null)
+	{
+		<span class="luth_te_string-literal">
+	        @text
+	    </span>
+	}
+</span>

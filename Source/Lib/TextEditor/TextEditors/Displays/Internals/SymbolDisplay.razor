@@ -50,29 +50,10 @@
 		            break;
 		        }
 		        case "StringInterpolationSymbol":
-		        {
-		            <text>
-		                <span class="luth_te_keyword">
-		                    string-interpolation
-		                </span>
-		
-		                <span class="luth_te_string-literal">
-		                    @symbolLocal.TextSpan.GetText()
-		                </span>
-		            </text>
-		            break;
-		        }
 		        case "StringVerbatimSymbol":
-		        {
-		            <text>
-		                <span class="luth_te_keyword">
-		                    string-verbatim
-		                </span>
-		
-		                <span class="luth_te_string-literal">
-		                    @symbolLocal.TextSpan.GetText()
-		                </span>
-		            </text>
+		        case "InjectedLanguageComponentSymbol":
+				{
+		            <MiscSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		            break;
 		        }
 		        case "NamespaceSymbol":
@@ -83,19 +64,6 @@
 		                </span>
 		
 		                <span class="@(string.Empty /* Namespaces do not have their own css class as of (2023-07-20) */)">
-		                    @symbolLocal.TextSpan.GetText()
-		                </span>
-		            </text>
-		            break;
-		        }
-		        case "InjectedLanguageComponentSymbol":
-		        {
-		            <text>
-		                <span class="luth_te_keyword">
-		                    component
-		                </span>
-		
-		                <span class="luth_te_injected-language-component">
 		                    @symbolLocal.TextSpan.GetText()
 		                </span>
 		            </text>
