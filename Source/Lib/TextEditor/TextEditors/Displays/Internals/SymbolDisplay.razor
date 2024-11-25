@@ -27,14 +27,10 @@
 			        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		            break;
 		        }
+		        case "FunctionSymbol":
 		        case "ConstructorSymbol":
 		        {
-		            @SymbolStaticRenderFragments.GetConstructorDefinitionNodeSymbolRenderFragment(((ISymbol)symbolLocal, GetDefinitionNode(symbolLocal, targetNode)))
-		            break;
-		        }
-		        case "FunctionSymbol":
-		        {
-		            <FunctionSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		        	<FunctionSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		            break;
 		        }
 		        case "LambdaSymbol":
