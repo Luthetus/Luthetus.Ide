@@ -65,6 +65,30 @@ public class BinderTests
 		Assert.Equal(SyntaxKind.FunctionDefinitionNode, node.SyntaxKind);
     }
     
+    [Fact]
+    public void GlobalScope_ThreeNodes_TypeDefinitionNode()
+    {
+		var test = new Test(
+@"
+using Luthetus.Common.RazorLib.Keys.Models;
+
+namespace Luthetus.Common.RazorLib.BackgroundTasks.Models;
+
+public class BackgroundTask : IBackgroundTask
+{
+}
+".ReplaceLineEndings("\n"));
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		var binder = test.CompilationUnit.Binder;
+		var node = binder.GetSyntaxNode(119, test.ResourceUri, test.CompilationUnit);
+		
+		Assert.NotNull(node);
+		Assert.Equal(SyntaxKind.TypeDefinitionNode, node.SyntaxKind);
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");

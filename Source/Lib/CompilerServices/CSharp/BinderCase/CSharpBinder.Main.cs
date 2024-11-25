@@ -1532,7 +1532,7 @@ public partial class CSharpBinder : IBinder
         
         if (codeBlockOwner is not null)
         {
-        	parentNode = (ISyntaxNode)codeBlockOwner;
+        	parentNode = (ISyntaxNode)codeBlockOwner.CodeBlockNode;
         }
         else if (compilationUnit is not null)
         {
@@ -1551,6 +1551,7 @@ public partial class CSharpBinder : IBinder
         Console.WriteLine($"aaa childList.Length: {childList.Length}");
         foreach (var child in childList)
         {
+        	Console.WriteLine($"child.SyntaxKind: {child.SyntaxKind}");
         	if (child is not ISyntaxNode node)
     			continue;
         
