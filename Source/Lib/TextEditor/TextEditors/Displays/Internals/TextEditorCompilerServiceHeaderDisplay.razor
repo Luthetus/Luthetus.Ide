@@ -10,7 +10,14 @@
 	</select>
 	
 	<select class="luth_te_compiler-service-header-select">
-		<option>Type</option>
+		@if (_codeBlockOwner is null)
+		{
+			<option>global</option>
+		}
+		else
+		{
+			<option>non-null</option>
+		}
 	</select>
 	
 	<select class="luth_te_compiler-service-header-select">
