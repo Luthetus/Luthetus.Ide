@@ -1544,6 +1544,9 @@ public partial class CSharpBinder : IBinder
         	return null;
         }
         
+        if (parentNode is null)
+        	return null;
+        
         var childList = parentNode.GetChildList();
         
         var possibleNodeList = new List<ISyntaxNode>();
