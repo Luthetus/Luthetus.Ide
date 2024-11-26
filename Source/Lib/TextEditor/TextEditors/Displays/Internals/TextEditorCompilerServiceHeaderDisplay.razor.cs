@@ -13,6 +13,8 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
+// Project ---- CurrentCodeBlockOwner --- Definitions inside the code block
+
 public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITextEditorDependentComponent
 {
 	[Inject]

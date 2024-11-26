@@ -10,13 +10,15 @@
 	</select>
 	
 	<select class="luth_te_compiler-service-header-select">
-		@if (_codeBlockOwner is null)
+		@{ var codeBlockOwnerLocal = _codeBlockOwner; }
+		
+		@if (codeBlockOwnerLocal is null)
 		{
 			<option>global</option>
 		}
 		else
 		{
-			<option>non-null</option>
+			<option>@codeBlockOwnerLocal.SyntaxKind</option>
 		}
 	</select>
 	
