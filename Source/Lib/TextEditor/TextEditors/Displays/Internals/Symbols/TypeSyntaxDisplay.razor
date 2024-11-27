@@ -1,3 +1,4 @@
+@using System.Text
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
@@ -7,52 +8,65 @@
 	var syntaxViewModelLocal = SyntaxViewModel;
 	
 	string? prefixText;
+	string? prefixTextCssClass;
 	string? text;
-	GenericParametersListingNode? genericParametersListingNode;
+	GenericArgumentsListingNode? genericArgumentsListingNode;
 	bool? hasQuestionMark;
 	
 	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
 	{
 		prefixText = "(null)";
+		prefixTextCssClass = null;
 		text = null;
-		genericParametersListingNode = null;
+		genericArgumentsListingNode = null;
 		hasQuestionMark = null;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 	{
-		prefixText = "(definition)";
-		text = ((TypeDefinitionNode)syntaxViewModelLocal.DefinitionNode).TypeIdentifierToken.TextSpan.GetText();
-		genericParametersListingNode = null;
+		var typeDefinitionNode = (TypeDefinitionNode)syntaxViewModelLocal.DefinitionNode;
+	
+		var prefixBuilder = new StringBuilder();
+		prefixBuilder.Append(typeDefinitionNode.AccessModifierKind.ToString().ToLower());
+		prefixBuilder.Append(' ');
+		prefixBuilder.Append(typeDefinitionNode.StorageModifierKind.ToString().ToLower());
+		
+		prefixText = prefixBuilder.ToString();
+		prefixTextCssClass = "luth_te_keyword";
+		text = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
+		genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
 		hasQuestionMark = null;
 	}
 	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
 	{
 		prefixText = "(reference)";
+		prefixTextCssClass = null;
 		text = ((TypeClauseNode)syntaxViewModelLocal.TargetNode).TypeIdentifierToken.TextSpan.GetText();
-		genericParametersListingNode = null;
+		genericArgumentsListingNode = null;
 		hasQuestionMark = null;
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null && syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.TypeSymbol)
 	{
 		prefixText = "(symbol)";
+		prefixTextCssClass = null;
 		text = ((TypeSymbol)syntaxViewModelLocal.TargetSymbol).TextSpan.GetText();
-		genericParametersListingNode = null;
+		genericArgumentsListingNode = null;
 		hasQuestionMark = null;
 	}
 	else
 	{
 		prefixText = "(unrecognizable-state)";
+		prefixTextCssClass = null;
 		text = null;
-		genericParametersListingNode = null;
+		genericArgumentsListingNode = null;
 		hasQuestionMark = null;
 	}
 }
 
 <span style="display: inline-flex;">
 	
-	@if (!string.IsNullOrWhiteSpace(prefixText))
+	@if (syntaxViewModelLocal.Depth == 0 && !string.IsNullOrWhiteSpace(prefixText))
 	{
-		<span>
+		<span class="@prefixTextCssClass">
 			@prefixText&nbsp;
 		</span>
 	}
@@ -69,11 +83,11 @@
 		</span>
 	}
 	
-	@if (genericParametersListingNode is not null)
+	@if (genericArgumentsListingNode is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
 			targetSymbol: null,
-			targetNode: genericParametersListingNode,
+			targetNode: genericArgumentsListingNode,
 			definitionNode: null,
 			depth: syntaxViewModelLocal.Depth + 1);
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />

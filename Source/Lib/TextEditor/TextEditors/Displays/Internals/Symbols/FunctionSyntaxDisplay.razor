@@ -124,7 +124,7 @@
 
 <span style="display: inline-flex;">
 	
-	@if (!string.IsNullOrWhiteSpace(prefixText))
+	@if (syntaxViewModelLocal.Depth == 0 && !string.IsNullOrWhiteSpace(prefixText))
 	{
 		<span>
 			@prefixText&nbsp;

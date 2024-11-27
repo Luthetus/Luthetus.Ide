@@ -47,7 +47,7 @@
 }
 
 <span>
-	@if (!string.IsNullOrWhiteSpace(prefixText))
+	@if (syntaxViewModelLocal.Depth == 0 && !string.IsNullOrWhiteSpace(prefixText))
 	{
 		<span>
 			@prefixText
