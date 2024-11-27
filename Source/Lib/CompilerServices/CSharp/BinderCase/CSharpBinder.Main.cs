@@ -1521,10 +1521,7 @@ public partial class CSharpBinder : IBinder
     {
         var scope = GetScopeByPositionIndex(model, resourceUri, positionIndex);
         if (scope is null)
-        {
-        	Console.WriteLine("aaa scope is null");
         	return null;
-        }
         
         ISyntaxNode parentNode;
         	
@@ -1539,10 +1536,7 @@ public partial class CSharpBinder : IBinder
         	parentNode = compilationUnit.RootCodeBlockNode;
         }
         else
-        {
-        	Console.WriteLine("aaa codeBlockOwner is null && compilationUnit is null");
         	return null;
-        }
         
         if (parentNode is null)
         	return null;
@@ -1551,15 +1545,12 @@ public partial class CSharpBinder : IBinder
         
         var possibleNodeList = new List<ISyntaxNode>();
         
-        Console.WriteLine($"aaa childList.Length: {childList.Length}");
         foreach (var child in childList)
         {
-        	Console.WriteLine($"child.SyntaxKind: {child.SyntaxKind}");
         	if (child is not ISyntaxNode node)
     			continue;
         
         	var nodePositionIndices = GetNodePositionIndices(node);
-        	Console.WriteLine($"nodePositionIndices: {nodePositionIndices}");
         	if (nodePositionIndices == (-1, -1))
         		continue;
         		
@@ -1640,6 +1631,15 @@ public partial class CSharpBinder : IBinder
     			
     			if (functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
     				return (functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive, functionDefinitionNode.FunctionIdentifierToken.TextSpan.EndingIndexExclusive);
+    			
+    			goto default;
+    		}
+    		case SyntaxKind.VariableDeclarationNode:
+    		{
+    			var variableDeclarationNode = (VariableDeclarationNode)syntaxNode;
+    			
+    			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
+    				return (variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive, variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive);
     			
     			goto default;
     		}

@@ -11,6 +11,7 @@
 	string? prefixTextCssClass;
 	string? text;
 	GenericArgumentsListingNode? genericArgumentsListingNode;
+	GenericParametersListingNode? genericParametersListingNode;
 	bool? hasQuestionMark;
 	
 	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
@@ -19,6 +20,7 @@
 		prefixTextCssClass = null;
 		text = null;
 		genericArgumentsListingNode = null;
+		genericParametersListingNode = null;
 		hasQuestionMark = null;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
@@ -34,15 +36,19 @@
 		prefixTextCssClass = "luth_te_keyword";
 		text = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
 		genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
+		genericParametersListingNode = null;
 		hasQuestionMark = null;
 	}
 	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
 	{
+		var typeClauseNode = (TypeClauseNode)syntaxViewModelLocal.TargetNode;
+	
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
-		text = ((TypeClauseNode)syntaxViewModelLocal.TargetNode).TypeIdentifierToken.TextSpan.GetText();
+		text = typeClauseNode.TypeIdentifierToken.TextSpan.GetText();
 		genericArgumentsListingNode = null;
-		hasQuestionMark = null;
+		genericParametersListingNode = typeClauseNode.GenericParametersListingNode;
+		hasQuestionMark = typeClauseNode.HasQuestionMark;
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null && syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.TypeSymbol)
 	{
@@ -50,6 +56,7 @@
 		prefixTextCssClass = null;
 		text = ((TypeSymbol)syntaxViewModelLocal.TargetSymbol).TextSpan.GetText();
 		genericArgumentsListingNode = null;
+		genericParametersListingNode = null;
 		hasQuestionMark = null;
 	}
 	else
@@ -58,6 +65,7 @@
 		prefixTextCssClass = null;
 		text = null;
 		genericArgumentsListingNode = null;
+		genericParametersListingNode = null;
 		hasQuestionMark = null;
 	}
 }
@@ -88,6 +96,15 @@
 		var syntaxViewModel = new SyntaxViewModel(
 			targetSymbol: null,
 			targetNode: genericArgumentsListingNode,
+			definitionNode: null,
+			depth: syntaxViewModelLocal.Depth + 1);
+		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
+	}
+	else if (genericParametersListingNode is not null)
+	{
+		var syntaxViewModel = new SyntaxViewModel(
+			targetSymbol: null,
+			targetNode: genericParametersListingNode,
 			definitionNode: null,
 			depth: syntaxViewModelLocal.Depth + 1);
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
