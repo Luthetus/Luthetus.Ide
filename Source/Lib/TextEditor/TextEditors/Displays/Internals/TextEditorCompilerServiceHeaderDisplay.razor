@@ -3,7 +3,15 @@
 
 <div class="luth_te_text-editor-header luth_te_compiler-service-header">
 	 
-	@{ var showDefaultToolbarLocal = _showDefaultToolbar; }
+	@{
+		var showDefaultToolbarLocal = _showDefaultToolbar;
+		
+		var appOptionsState = AppOptionsStateWrap.Value;
+		
+		var iconDriver = new IconDriver(
+			appOptionsState.Options.IconSizeInPixels,
+			appOptionsState.Options.IconSizeInPixels);
+	}
 	
 	<div style="justify-content: space-between; display: flex;">
 		<div title="ICodeBlockOwner">
@@ -21,33 +29,36 @@
 						case SyntaxKind.FunctionDefinitionNode:
 							var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwnerLocal;
 							<text>
-								function:
+								@IconSymbolMethodFragment.Render(iconDriver)
 								@(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText())(...)
 							</text>
 							break;
 						case SyntaxKind.ConstructorDefinitionNode:
 							var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwnerLocal;
 							<text>
-								constructor:
+								@IconBlankFragment.Render(iconDriver)
 								@(constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText())(...)
 							</text>
 							break;
 						case SyntaxKind.TypeDefinitionNode:
 							var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwnerLocal;
 							<text>
-								type:
+								@IconSymbolClassFragment.Render(iconDriver)
 								@typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()
 							</text>
 							break;
 						case SyntaxKind.NamespaceStatementNode:
 							var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwnerLocal;
 							<text>
-								namespace:
+								@IconBlankFragment.Render(iconDriver)
 								@namespaceStatementNode.IdentifierToken.TextSpan.GetText()
 							</text>
 							break;
 						default:
-							<text>@codeBlockOwnerLocal.SyntaxKind</text>
+							<text>
+								@IconBlankFragment.Render(iconDriver)
+								@codeBlockOwnerLocal.SyntaxKind
+							</text>
 							break;
 					}
 				</ErrorBoundary>
@@ -58,9 +69,7 @@
 	<div style="justify-content: space-between; display: flex;">
 	
 		@{
-	    	var iconDriver = new IconDriver(
-				AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-				AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	    	
 	    }
 		
 		@if (showDefaultToolbarLocal)

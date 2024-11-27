@@ -28,7 +28,7 @@
 			 (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
 			  	syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode))
 	{
-		prefixText = "(definition)";
+		prefixText = null;
 		
 		if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
@@ -139,6 +139,7 @@
 			definitionNode: null,
 			depth: syntaxViewModelLocal.Depth + 1);
 		<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		<text>&nbsp;</text>
 	}
 	else if (!string.IsNullOrWhiteSpace(returnTypeClauseNodeText))
 	{
