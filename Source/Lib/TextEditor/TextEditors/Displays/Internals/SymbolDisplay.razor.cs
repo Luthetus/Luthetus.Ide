@@ -98,21 +98,21 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
     /// <summary>
     /// If the 'targetNode' itself is a definition, then return the 'targetNode'.
 	///
-	/// Otherwise, ask the IBinder for the definition node.
+	/// Otherwise, ask the IBinder for the definition node:
 	/// </summary>
     private ISyntaxNode? GetDefinitionNode(ITextEditorSymbol symbolLocal, ISyntaxNode targetNode)
     {
-    	if (targetNode is null)
-    		return null;
-    	
-    	switch (targetNode.SyntaxKind)
+    	if (targetNode is not null)
     	{
-    		case SyntaxKind.ConstructorDefinitionNode:
-    		case SyntaxKind.FunctionDefinitionNode:
-    		case SyntaxKind.NamespaceStatementNode:
-    		case SyntaxKind.TypeDefinitionNode:
-    		case SyntaxKind.VariableDeclarationNode:
-				return targetNode;
+    		switch (targetNode.SyntaxKind)
+	    	{
+	    		case SyntaxKind.ConstructorDefinitionNode:
+	    		case SyntaxKind.FunctionDefinitionNode:
+	    		case SyntaxKind.NamespaceStatementNode:
+	    		case SyntaxKind.TypeDefinitionNode:
+	    		case SyntaxKind.VariableDeclarationNode:
+					return targetNode;
+	    	}
     	}
     
     	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
