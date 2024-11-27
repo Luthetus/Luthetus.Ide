@@ -1,11 +1,12 @@
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+
 <div class="luth_te_text-editor-header luth_te_compiler-service-header">
 	 
 	@{ var showDefaultToolbarLocal = _showDefaultToolbar; }
 	
 	<div style="justify-content: space-between; display: flex;">
-		<div>
-			codeBlockOwner:
-		
+		<div title="ICodeBlockOwner">
 			@{ var codeBlockOwnerLocal = _codeBlockOwner; }
 			
 			@if (codeBlockOwnerLocal is null)
@@ -14,7 +15,42 @@
 			}
 			else
 			{
-				<text>@codeBlockOwnerLocal.SyntaxKind</text>
+				<ErrorBoundary>
+					@switch (codeBlockOwnerLocal.SyntaxKind)
+					{
+						case SyntaxKind.FunctionDefinitionNode:
+							var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwnerLocal;
+							<text>
+								function:
+								@(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText())(...)
+							</text>
+							break;
+						case SyntaxKind.ConstructorDefinitionNode:
+							var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwnerLocal;
+							<text>
+								constructor:
+								@(constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText())(...)
+							</text>
+							break;
+						case SyntaxKind.TypeDefinitionNode:
+							var typeDefinitionNode = (TypeDefinitionNode)codeBlockOwnerLocal;
+							<text>
+								type:
+								@typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText()
+							</text>
+							break;
+						case SyntaxKind.NamespaceStatementNode:
+							var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwnerLocal;
+							<text>
+								namespace:
+								@namespaceStatementNode.IdentifierToken.TextSpan.GetText()
+							</text>
+							break;
+						default:
+							<text>@codeBlockOwnerLocal.SyntaxKind</text>
+							break;
+					}
+				</ErrorBoundary>
 			}
 		</div>
 	</div>
