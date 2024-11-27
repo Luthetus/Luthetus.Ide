@@ -1,55 +1,51 @@
-<div class="luth_te_text-editor-header"
-	 style="display: flex; justify-content: space-evenly;">
+<div class="luth_te_text-editor-header luth_te_compiler-service-header">
 	 
-	@{
-		var showDefaultToolbarLocal = _showDefaultToolbar;
-	} 
+	@{ var showDefaultToolbarLocal = _showDefaultToolbar; }
 	
-	<select class="luth_te_compiler-service-header-select">
-		<option>Project</option>
-	</select>
-	
-	<select class="luth_te_compiler-service-header-select">
-		@{ var codeBlockOwnerLocal = _codeBlockOwner; }
+	<div style="justify-content: space-between; display: flex;">
+		<div>
+			codeBlockOwner:
 		
-		@if (codeBlockOwnerLocal is null)
-		{
-			<option>global</option>
-		}
-		else
-		{
-			<option>@codeBlockOwnerLocal.SyntaxKind</option>
-		}
-	</select>
-	
-	<select class="luth_te_compiler-service-header-select">
-		<option>Method</option>
-	</select>
-	
-	@{
-    	var iconDriver = new IconDriver(
-			AppOptionsStateWrap.Value.Options.IconSizeInPixels,
-			AppOptionsStateWrap.Value.Options.IconSizeInPixels);
-    }
-	
-	@if (showDefaultToolbarLocal)
-	{
-		<div class="luth_te_compiler-service-header-dropdown">
-			<TextEditorDefaultHeaderDisplay TextEditorViewModelDisplay="TextEditorViewModelDisplay"/>
+			@{ var codeBlockOwnerLocal = _codeBlockOwner; }
+			
+			@if (codeBlockOwnerLocal is null)
+			{
+				<text>global</text>
+			}
+			else
+			{
+				<text>@codeBlockOwnerLocal.SyntaxKind</text>
+			}
 		</div>
-	}
+	</div>
 	
-	<button class="luth_button"
-			title="Toggle Default Toolbar"
-			@onclick="ToggleDefaultToolbar">
+	<div style="justify-content: space-between; display: flex;">
+	
+		@{
+	    	var iconDriver = new IconDriver(
+				AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+				AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+	    }
 		
 		@if (showDefaultToolbarLocal)
 		{
-			@IconChevronDownFragment.Render(iconDriver)
+			<div class="luth_te_compiler-service-header-dropdown">
+				<TextEditorDefaultHeaderDisplay TextEditorViewModelDisplay="TextEditorViewModelDisplay"/>
+			</div>
 		}
-		else
-		{
-			@IconChevronRightFragment.Render(iconDriver)
-		}
-	</button>
+	
+		<button class="luth_button"
+				title="Toggle Default Toolbar"
+				@onclick="ToggleDefaultToolbar">
+			
+			@if (showDefaultToolbarLocal)
+			{
+				@IconChevronDownFragment.Render(iconDriver)
+			}
+			else
+			{
+				@IconChevronRightFragment.Render(iconDriver)
+			}
+		</button>
+	</div>
 </div>

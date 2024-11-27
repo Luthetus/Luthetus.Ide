@@ -39,7 +39,13 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
 	private ICodeBlockOwner? _codeBlockOwner;
 	private bool _shouldRender = false;
 	
-	private bool _showDefaultToolbar;
+	/// <summary>
+	/// I'm walking through mud.
+	/// Making this static is the best I have for now.
+	/// Otherwise it keeps reappearing if I go to a '.razor' file then back to a '.cs' file.
+	/// TODO: Don't make this static in order to maintain the state.
+	/// </summary>
+	private static bool _showDefaultToolbar = true;
 	
 	private CancellationTokenSource _cancellationTokenSource = new();
 	
