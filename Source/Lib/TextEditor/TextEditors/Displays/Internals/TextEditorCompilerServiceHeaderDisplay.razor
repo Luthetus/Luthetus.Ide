@@ -19,7 +19,10 @@
 			
 			@if (codeBlockOwnerLocal is null)
 			{
-				<text>global</text>
+				<text>
+					@IconBlankFragment.Render(iconDriver)
+					global
+				</text>
 			}
 			else
 			{
