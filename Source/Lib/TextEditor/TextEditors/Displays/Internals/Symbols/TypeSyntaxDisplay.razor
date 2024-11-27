@@ -11,7 +11,7 @@
 	GenericParametersListingNode? genericParametersListingNode;
 	bool? hasQuestionMark;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
 	{
 		prefixText = "(null)";
 		text = null;
@@ -32,10 +32,10 @@
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
 	}
-	else if (syntaxViewModelLocal.Symbol is not null && syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.TypeSymbol)
+	else if (syntaxViewModelLocal.TargetSymbol is not null && syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.TypeSymbol)
 	{
 		prefixText = "(symbol)";
-		text = ((TypeSymbol)syntaxViewModelLocal.Symbol).TextSpan.GetText();
+		text = ((TypeSymbol)syntaxViewModelLocal.TargetSymbol).TextSpan.GetText();
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
 	}
@@ -72,9 +72,10 @@
 	@if (genericParametersListingNode is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
-			symbol: null,
+			targetSymbol: null,
 			targetNode: genericParametersListingNode,
-			definitionNode: null);
+			definitionNode: null,
+			depth: syntaxViewModelLocal.Depth + 1);
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}
 	

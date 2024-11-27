@@ -11,7 +11,7 @@
 	string? text;
 	VariableDeclarationNode? variableDeclarationNode;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
 	{
 		prefixText = "(null)";
 		text = null;
@@ -29,13 +29,13 @@
 		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.GetText();
 		variableDeclarationNode = null;
 	}
-	else if (syntaxViewModelLocal.Symbol is not null &&
-			 (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.VariableSymbol ||
-			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.FieldSymbol ||
-			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.PropertySymbol))
+	else if (syntaxViewModelLocal.TargetSymbol is not null &&
+			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.VariableSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FieldSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.PropertySymbol))
 	{
 		prefixText = "(symbol)";
-		text = syntaxViewModelLocal.Symbol.TextSpan.GetText();
+		text = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
 		variableDeclarationNode = null;
 	}
 	else
@@ -53,7 +53,7 @@
 	
 	<span class="@(string.Empty /* Lambdas do not have their own css class as of (2024-11-02) */)">
 		
-		@{ var lambdaSymbol = (LambdaSymbol)syntaxViewModelLocal.Symbol; }
+		@{ var lambdaSymbol = (LambdaSymbol)syntaxViewModelLocal.TargetSymbol; }
 		
 		<!--
 			This UI for the lambda is super odd to read. I'm working on the lambda parsing and I can't remember off the top of my head how to get rid of a space between
@@ -77,7 +77,7 @@
 		</span>
 		
 		@* => *@
-	    @syntaxViewModelLocal.Symbol.TextSpan.GetText()
+	    @syntaxViewModelLocal.TargetSymbol.TextSpan.GetText()
 	    
 	    @if (lambdaSymbol.LambdaExpressionNode.CodeBlockNodeIsExpression)
 	    {

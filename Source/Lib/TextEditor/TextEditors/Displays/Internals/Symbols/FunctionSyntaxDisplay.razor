@@ -16,7 +16,7 @@
 	GenericParametersListingNode? genericParametersListingNode;
 	bool isConstructorInvocation = false;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
 	{
 		prefixText = "(null)";
 		returnTypeClauseNode = null;
@@ -84,23 +84,23 @@
 			genericParametersListingNode = null;
 		}
 	}
-	else if (syntaxViewModelLocal.Symbol is not null &&
-			 (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.FunctionSymbol ||
-			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.ConstructorSymbol))
+	else if (syntaxViewModelLocal.TargetSymbol is not null &&
+			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FunctionSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.ConstructorSymbol))
 	{
 		prefixText = "(symbol)";
 	
-		if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.FunctionSymbol)
+		if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FunctionSymbol)
 		{
 			returnTypeClauseNode = null;
 			returnTypeClauseNodeText = null;
-			methodName = syntaxViewModelLocal.Symbol.TextSpan.GetText();
+			methodName = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
 			genericParametersListingNode = null;
 		}
-		else if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.ConstructorSymbol)
+		else if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
 			returnTypeClauseNode = null;
-			returnTypeClauseNodeText = syntaxViewModelLocal.Symbol.TextSpan.GetText();
+			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
 			methodName = null;
 			genericParametersListingNode = null;
 		}
@@ -134,9 +134,10 @@
 	@if (returnTypeClauseNode is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
-			symbol: null,
+			targetSymbol: null,
 			targetNode: returnTypeClauseNode,
-			definitionNode: null);
+			definitionNode: null,
+			depth: syntaxViewModelLocal.Depth + 1);
 		<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 	}
 	else if (!string.IsNullOrWhiteSpace(returnTypeClauseNodeText))
@@ -162,9 +163,10 @@
 	@if (genericParametersListingNode is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
-			symbol: null,
+			targetSymbol: null,
 			targetNode: genericParametersListingNode,
-			definitionNode: null);
+			definitionNode: null,
+			depth: syntaxViewModelLocal.Depth + 1);
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}
 	

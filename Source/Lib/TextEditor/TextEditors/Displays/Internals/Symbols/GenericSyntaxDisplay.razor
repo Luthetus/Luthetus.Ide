@@ -15,9 +15,10 @@
 		var genericParameter = genericParametersListingNode.GenericParameterEntryNodeList[index];
 		
     	var syntaxViewModel = new SyntaxViewModel(
-    		symbol: null,
+    		targetSymbol: null,
     		targetNode: genericParameter.TypeClauseNode,
-    		definitionNode: null);
+    		definitionNode: null,
+			depth: syntaxViewModelLocal.Depth + 1);
         <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
 		
 		if (index < genericParametersListingNode.GenericParameterEntryNodeList.Count - 1)

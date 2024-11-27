@@ -9,7 +9,7 @@
 	string? prefixText;
 	string? text;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
 	{
 		prefixText = "(null)";
 		text = null;
@@ -24,19 +24,19 @@
 		prefixText = "(reference)";
 		text = "unknown state";
 	}
-	else if (syntaxViewModelLocal.Symbol is not null &&
-			 (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol ||
-			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol))
+	else if (syntaxViewModelLocal.TargetSymbol is not null &&
+			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol))
 	{
-		if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol)
+		if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.StringInterpolationSymbol)
 		{
 			prefixText = "(string-interpolation)";
 		}
-		else if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol)
+		else if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.StringVerbatimSymbol)
 		{
         	prefixText = "(string-verbatim)";
 		}
-		else if (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.InjectedLanguageComponentSymbol)
+		else if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.InjectedLanguageComponentSymbol)
 		{
         	prefixText = "(component)";
 		}
@@ -45,7 +45,7 @@
 			prefixText = "(symbol)";
 		}
 		
-		text = syntaxViewModelLocal.Symbol.TextSpan.GetText();
+		text = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
 	}
 	else
 	{

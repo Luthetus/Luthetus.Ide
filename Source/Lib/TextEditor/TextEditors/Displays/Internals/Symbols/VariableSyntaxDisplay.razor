@@ -11,7 +11,7 @@
 	string? text;
 	VariableDeclarationNode? variableDeclarationNode;
 	
-	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.Symbol is null)
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
 	{
 		prefixText = "(null)";
 		text = null;
@@ -29,13 +29,13 @@
 		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.GetText();
 		variableDeclarationNode = null;
 	}
-	else if (syntaxViewModelLocal.Symbol is not null &&
-			 (syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.VariableSymbol ||
-			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.FieldSymbol ||
-			  	syntaxViewModelLocal.Symbol.SyntaxKind == SyntaxKind.PropertySymbol))
+	else if (syntaxViewModelLocal.TargetSymbol is not null &&
+			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.VariableSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FieldSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.PropertySymbol))
 	{
 		prefixText = "(symbol)";
-		text = syntaxViewModelLocal.Symbol.TextSpan.GetText();
+		text = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
 		variableDeclarationNode = null;
 	}
 	else
@@ -58,9 +58,10 @@
 	@if (variableDeclarationNode is not null)
 	{
 		var syntaxViewModel = new SyntaxViewModel(
-			symbol: null,
+			targetSymbol: null,
 			targetNode: variableDeclarationNode.TypeClauseNode,
-			definitionNode: null);
+			definitionNode: null,
+			depth: syntaxViewModelLocal.Depth + 1);
     	<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
     }
     else
