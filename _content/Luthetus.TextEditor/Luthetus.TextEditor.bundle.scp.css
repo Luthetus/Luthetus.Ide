@@ -69,6 +69,23 @@
     background-color: var(--luth_te_scrollbar-background-color);
 }
 /* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/SymbolDisplay.razor.rz.scp.css */
+.luth_te_syntax-onclick:hover[b-rnrsnd28dm]::deep {
+	text-decoration: underline;
+	cursor: pointer;
+}
+/* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/TextEditorCompilerServiceHeaderDisplay.razor.rz.scp.css */
+.luth_te_compiler-service-header[b-ubx7kl9d5n] {
+    padding-left: var(--luth_te_text-editor-header-padding-left);
+    overflow-y: hidden !important;
+    overflow: auto;
+    white-space: nowrap;
+    display: flex;
+    justify-content: space-between;
+}
+
+.luth_te_compiler-service-header-select[b-ubx7kl9d5n] {
+	width: 33.3%;
+}
 /* _content/Luthetus.TextEditor/TextEditors/Displays/Internals/WidgetLayerDisplay.razor.rz.scp.css */
 .luth_te_widget[b-znr7g72e3m] {
     position: absolute;
