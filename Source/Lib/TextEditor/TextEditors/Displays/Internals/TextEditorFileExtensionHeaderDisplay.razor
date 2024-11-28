@@ -1,0 +1,7 @@
+@{ var headerType = TextEditorHeaderRegistry.GetHeader(_fileExtensionCurrent); }
+
+@if (headerType is not null)
+{
+	<DynamicComponent Type="TextEditorHeaderRegistry.GetHeader(_fileExtensionCurrent)"
+				  	Parameters="_componentInnerParameters"/>
+}

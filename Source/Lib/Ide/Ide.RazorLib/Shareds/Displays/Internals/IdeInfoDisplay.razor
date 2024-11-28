@@ -172,6 +172,105 @@
         Recent Changes:
 		<div>
 			<div>
+                <div>v <em class="luth_em">0.9.7.3 </em> (2024-11-28)</div>
+                <ul>
+                	<li>
+                        Text Editor NuGet Package v3.3.0
+                        <a target="_blank" href="https://www.nuget.org/packages/Luthetus.TextEditor/">(nuget.org)</a>
+                    </li>
+                    <li>
+                    	Change the UI for Text Editor Header based on the file extension of the
+                    	
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Models/ITextEditorModel.cs">
+                    		ITextEditorModel
+                    	</a>
+                    	
+                    	.
+                    
+                    	Use: 
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Models/ITextEditorHeaderRegistry.cs">
+                    		ITextEditorHeaderRegistry.cs
+                    	</a>
+                    	
+                    	,
+                    	
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/TextEditorFileExtensionHeaderDisplay.razor">
+                    		TextEditorFileExtensionHeaderDisplay.razor
+                    	</a>
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/TextEditorFileExtensionHeaderDisplay.razor.cs">
+                    		'.cs' codebehind
+                    	</a>
+                    	)
+                    	
+                    	, and
+
+						<pre>                    	
+private ViewModelDisplayOptions _viewModelDisplayOptions = new()
+{
+    HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),
+};
+
+&lt;TextEditorGroupDisplay TextEditorGroupKey="EditorIdeApi.EditorTextEditorGroupKey"
+			ViewModelDisplayOptions="_viewModelDisplayOptions"/&gt;
+						</pre>
+                    </li>
+                    <li>
+                    	Show the nearest
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Syntax/Nodes/Interfaces/ICodeBlockOwner.cs">
+                    		ICodeBlockOwner.cs
+                    	</a>
+                    	that exists at the cursor with:
+                    
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/TextEditorCompilerServiceHeaderDisplay.razor">
+                    		TextEditorCompilerServiceHeaderDisplay.razor
+                    	</a>
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/TextEditorCompilerServiceHeaderDisplay.razor.cs">
+                    		'.cs' codebehind
+                    	</a>
+                    	)
+                    	
+                    	<pre>
+TextEditorHeaderRegistry.UpsertHeader("cs", typeof(TextEditorCompilerServiceHeaderDisplay));
+                    	</pre>
+                    </li>
+                    <li>
+                    	Updated
+                    
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/SymbolDisplay.razor">
+                    		SymbolDisplay.razor
+                    	</a>
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Displays/Internals/SymbolDisplay.razor.cs">
+                    		'.cs' codebehind
+                    	</a>
+                    	)
+                    	
+                    	to map the hovered
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Syntax/Symbols/ISymbol.cs">
+                    		ISymbol.cs
+                    	</a>
+                    	
+                    	to its corresponding
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/CompilerServices/Syntax/ISyntaxNode.cs">
+                    		ISyntaxNode.cs
+                    	</a>
+                    	.
+                    	
+                    	If the corresponding node is a reference to a definition node,
+                    	then map to the definition node as well.
+                    	
+                    	If a definition is found, one can click the text inside the tooltip that renders to 'goto definition'.
+                    	If text has a definition backing it, then an underline will appear and the cursor will turn into a 'pointer'
+                    	to indicate that the text is clickable, when hovered.
+                    </li>
+                </ul>
+            </div>
+			<div>
                 <div>v <em class="luth_em">0.9.7.2 </em> (2024-11-18)</div>
                 <ul>
                     <li>

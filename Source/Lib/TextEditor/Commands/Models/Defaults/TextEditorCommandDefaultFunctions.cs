@@ -907,7 +907,7 @@ public class TextEditorCommandDefaultFunctions
 
 		var syntaxNode = primaryCursorPositionIndex is null || compilerService.Binder is null || compilerServiceResource?.CompilationUnit is null
 			? null
-			: compilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, compilerServiceResource.CompilationUnit);
+			: compilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, compilerServiceResource.ResourceUri, compilerServiceResource?.CompilationUnit);
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 			
@@ -1046,7 +1046,7 @@ public class TextEditorCommandDefaultFunctions
 		if (compilerServiceResource?.CompilationUnit is null)
 			return;
 
-        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinition(wordTextSpan.Value, compilerServiceResource);
+        var definitionTextSpan = modelModifier.CompilerService.Binder.GetDefinitionTextSpan(wordTextSpan.Value, compilerServiceResource);
         if (definitionTextSpan is null)
             return;
 
@@ -1381,7 +1381,7 @@ public class TextEditorCommandDefaultFunctions
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 					{
 						TooltipViewModel = new(
-		                    textEditorComponentRenderers.DiagnosticRendererType,
+		                    modelModifier.CompilerService.DiagnosticRendererType ?? textEditorComponentRenderers.DiagnosticRendererType,
 		                    parameterMap,
 		                    relativeCoordinatesOnClick,
 		                    null,
@@ -1411,7 +1411,7 @@ public class TextEditorCommandDefaultFunctions
                     viewModelModifier.ViewModel = viewModelModifier.ViewModel with
 					{
 						TooltipViewModel = new(
-	                        textEditorComponentRenderers.SymbolRendererType,
+	                        modelModifier.CompilerService.SymbolRendererType ?? textEditorComponentRenderers.SymbolRendererType,
 	                        parameters,
 	                        relativeCoordinatesOnClick,
 	                        null,

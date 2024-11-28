@@ -1,0 +1,121 @@
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+
+@{
+	var syntaxViewModelLocal = SyntaxViewModel;
+	
+	string? prefixText;
+	string? text;
+	string? textCssClass;
+	VariableDeclarationNode? variableDeclarationNode;
+	
+	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
+	{
+		prefixText = "(null)";
+		text = null;
+		textCssClass = "luth_te_variable";
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+	{
+		variableDeclarationNode = (VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode;
+		
+		prefixText = string.Empty;
+		text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
+		
+		if (variableDeclarationNode.VariableKind == VariableKind.Field)
+			textCssClass = "luth_te_field";
+		else if (variableDeclarationNode.VariableKind == VariableKind.Property)
+			textCssClass = "luth_te_property";
+		else
+			textCssClass = "luth_te_variable";
+		
+		// 'variableDeclarationNode' was set at the start of code block.
+	}
+	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+	{
+		prefixText = "(reference)";
+		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.GetText();
+		textCssClass = "luth_te_variable";
+		variableDeclarationNode = null;
+	}
+	else if (syntaxViewModelLocal.TargetSymbol is not null &&
+			 (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.VariableSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.FieldSymbol ||
+			  	syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.PropertySymbol))
+	{
+		prefixText = "(symbol)";
+		text = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
+		textCssClass = "luth_te_variable";
+		variableDeclarationNode = null;
+	}
+	else
+	{
+		prefixText = "(unrecognizable-state)";
+		text = null;
+		textCssClass = "luth_te_variable";
+		variableDeclarationNode = null;
+	}
+}
+
+<span>
+	@if (syntaxViewModelLocal.Depth == 0 && !string.IsNullOrWhiteSpace(prefixText))
+	{
+		<span>
+			@prefixText
+			&nbsp;
+		</span>
+	}
+	
+	@if (variableDeclarationNode is not null)
+	{
+		var syntaxViewModel = new SyntaxViewModel(
+			targetSymbol: null,
+			targetNode: variableDeclarationNode.TypeClauseNode,
+			definitionNode: null,
+			depth: syntaxViewModelLocal.Depth + 1);
+    	<TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+    	<text>&nbsp;</text>
+    }
+    else
+    {
+    	<span class="luth_te_keyword">
+    		undefined
+    		&nbsp;
+    	</span>
+    }
+	
+	@if (!string.IsNullOrWhiteSpace(text))
+	{
+		var classCssString = syntaxViewModelLocal.DefinitionNode is null
+			? string.Empty
+			: "luth_te_syntax-onclick";
+	
+		<span class="@classCssString @textCssClass"
+			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.VariableDeclarationNode)">
+			@text
+		</span>
+	}
+	
+	@if (variableDeclarationNode is not null && variableDeclarationNode.VariableKind == VariableKind.Property)
+    {
+    	<span>
+        	{
+        	
+        	@if (variableDeclarationNode.HasGetter)
+        	{
+        		<text><span class="luth_te_keyword"> get</span>;</text>
+        	}
+        	
+        	@if (variableDeclarationNode.HasSetter)
+        	{
+        		<text><span class="luth_te_keyword"> set</span>;</text>
+        	}
+        	
+        	}
+    	</span>
+    }
+</span>

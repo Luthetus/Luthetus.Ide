@@ -94,7 +94,7 @@ public partial class CompilerServiceEditorDisplay : ComponentBase, IDisposable
 
 			var syntaxNode = primaryCursorPositionIndex is null || localCSharpCompilerService.Binder is null || cSharpResource?.CompilationUnit is null
 				? null
-				: localCSharpCompilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, cSharpResource.CompilationUnit);
+				: localCSharpCompilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, cSharpResource.ResourceUri, cSharpResource?.CompilationUnit);
 
 			_viewModel = new CompilerServiceEditorViewModel
 			{

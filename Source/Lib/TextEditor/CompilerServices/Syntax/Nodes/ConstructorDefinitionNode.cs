@@ -122,8 +122,6 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     	return this;
 	}
     
-    
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

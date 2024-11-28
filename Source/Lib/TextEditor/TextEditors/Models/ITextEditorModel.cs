@@ -111,7 +111,9 @@ public interface ITextEditorModel
     public ResourceUri ResourceUri { get; }
     public DateTime ResourceLastWriteTime { get; }
     /// <summary>
-	/// This is displayed within the<see cref="Displays.Internals.TextEditorFooter"/>.
+	/// This is now being used for <see cref="Displays.Internals.TextEditorFileExtensionHeaderDisplay"/>
+	/// Whereas previously it was purely text (it only appeared as text in the <see cref="Displays.Internals.TextEditorFooter"/>)
+	/// it will now be used to determine what header to display with see <see cref="ITextEditorHeaderRegistry"/>
 	/// </summary>
 	public string FileExtension { get; }
     public IDecorationMapper DecorationMapper { get; }

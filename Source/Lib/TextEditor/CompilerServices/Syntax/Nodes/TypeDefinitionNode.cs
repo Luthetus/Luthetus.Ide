@@ -149,8 +149,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return this;
 	}
     
-    
-    
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
     	if (PrimaryConstructorFunctionArgumentsListingNode is not null)

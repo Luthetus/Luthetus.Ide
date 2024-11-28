@@ -22,7 +22,7 @@ input[type="checkbox"]{
 
 .luth_ide_body {
     display: flex;
-    overflow: auto;
+    overflow: hidden;
     background-color: var(--luth_ide_body-background-color);
 }
 

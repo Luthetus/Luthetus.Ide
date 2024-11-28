@@ -43,7 +43,20 @@ public sealed class CSharpCompilerService : CompilerService
         RuntimeAssembliesLoaderFactory.LoadDotNet6(CSharpBinder);
     }
 
+	public override Type? SymbolRendererType { get; protected set; }
+    public override Type? DiagnosticRendererType { get; protected set; }
+
     public event Action? CursorMovedInSyntaxTree;
+    
+    public void SetSymbolRendererType(Type? symbolRendererType)
+    {
+    	SymbolRendererType = symbolRendererType;
+    }
+    
+    public void SetDiagnosticRendererType(Type? diagnosticRendererType)
+    {
+    	DiagnosticRendererType = diagnosticRendererType;
+    }
 
     public override ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
