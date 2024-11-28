@@ -1400,12 +1400,35 @@ public partial class CSharpBinder : IBinder
     	return binderSession.ScopeReturnTypeClauseNodeMap.TryAdd(scopeIndexKey, typeClauseNode);
     }
 
-    TextEditorTextSpan? IBinder.GetDefinition(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
-    	GetDefinition(model: null, textSpan, compilerServiceResource);
+    TextEditorTextSpan? IBinder.GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
+    	GetDefinitionTextSpan(model: null, textSpan, compilerServiceResource);
     
-    public TextEditorTextSpan? GetDefinition(IParserModel? model, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    public TextEditorTextSpan? GetDefinitionTextSpan(IParserModel? model, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
-        var boundScope = GetScope(model, textSpan);
+        var definitionNode = GetDefinitionNode(model, textSpan, compilerServiceResource);
+        
+        if (definitionNode is null)
+        	return null;
+        
+        switch (definitionNode.SyntaxKind)
+        {
+        	case SyntaxKind.VariableDeclarationNode:
+        		return ((VariableDeclarationNode)definitionNode).IdentifierToken.TextSpan;
+        	case SyntaxKind.FunctionDefinitionNode:
+        		return ((FunctionDefinitionNode)definitionNode).FunctionIdentifierToken.TextSpan;
+        	case SyntaxKind.TypeDefinitionNode:
+	        	return ((TypeDefinitionNode)definitionNode).TypeIdentifierToken.TextSpan;
+	        default:
+	        	return null;
+        }
+    }
+    
+    ISyntaxNode? IBinder.GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
+    	GetDefinitionNode(model: null, textSpan, compilerServiceResource);
+    
+    public ISyntaxNode? GetDefinitionNode(IParserModel? model, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    {
+    	var boundScope = GetScope(model, textSpan);
         
         if (compilerServiceResource.CompilationUnit is null)
         	return null;
@@ -1446,7 +1469,7 @@ public partial class CSharpBinder : IBinder
 		                out var variableDeclarationStatementNode)
 		            && variableDeclarationStatementNode is not null)
 		        {
-		            return variableDeclarationStatementNode.IdentifierToken.TextSpan;
+		            return variableDeclarationStatementNode;
 		        }
 		        
 		        return null;
@@ -1463,7 +1486,7 @@ public partial class CSharpBinder : IBinder
 		                     out var functionDefinitionNode)
 		                 && functionDefinitionNode is not null)
 		        {
-		            return functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+		            return functionDefinitionNode;
 		        }
 		        
 		        return null;
@@ -1481,7 +1504,7 @@ public partial class CSharpBinder : IBinder
 		                     out var typeDefinitionNode)
 		                 && typeDefinitionNode is not null)
 		        {
-		            return typeDefinitionNode.TypeIdentifierToken.TextSpan;
+		            return typeDefinitionNode;
 		        }
 		        
 		        return null;
@@ -1491,35 +1514,139 @@ public partial class CSharpBinder : IBinder
         return null;
     }
 
-    public ISyntaxNode? GetSyntaxNode(int positionIndex, CompilationUnit compilationUnit)
+	ISyntaxNode? IBinder.GetSyntaxNode(int positionIndex, ResourceUri resourceUri, CompilationUnit? compilationUnit) =>
+    	GetSyntaxNode(model: null, positionIndex, resourceUri, compilationUnit);
+
+    public ISyntaxNode? GetSyntaxNode(IParserModel? model, int positionIndex, ResourceUri resourceUri, CompilationUnit? compilationUnit)
     {
-        // First attempt at writing this, will be to start from the root of the compilation unit,
-        // then traverse the syntax tree where the position index is within bounds.
-
-        return RecursiveGetSyntaxNode(positionIndex, compilationUnit.RootCodeBlockNode);
-
-        ISyntaxNode? RecursiveGetSyntaxNode(int positionIndex, ISyntaxNode targetNode)
+        var scope = GetScopeByPositionIndex(model, resourceUri, positionIndex);
+        if (scope is null)
+        	return null;
+        
+        ISyntaxNode parentNode;
+        	
+        var codeBlockOwner = scope.CodeBlockOwner;
+        
+        if (codeBlockOwner is not null)
         {
-            foreach (var child in targetNode.GetChildList())
-            {
-                if (child is ISyntaxNode syntaxNode)
-                {
-                    var innerResult = RecursiveGetSyntaxNode(positionIndex, syntaxNode);
-
-                    if (innerResult is not null)
-                        return innerResult;
-                }
-                else if (child is ISyntaxToken syntaxToken)
-                {
-                    if (syntaxToken.TextSpan.StartingIndexInclusive <= positionIndex &&
-                        syntaxToken.TextSpan.EndingIndexExclusive >= positionIndex)
-                    {
-                        return targetNode;
-                    }
-                }
-            }
-
-            return null;
+        	parentNode = (ISyntaxNode)codeBlockOwner.CodeBlockNode;
         }
+        else if (compilationUnit is not null)
+        {
+        	parentNode = compilationUnit.RootCodeBlockNode;
+        }
+        else
+        	return null;
+        
+        if (parentNode is null)
+        	return null;
+        
+        var childList = parentNode.GetChildList();
+        
+        var possibleNodeList = new List<ISyntaxNode>();
+        
+        foreach (var child in childList)
+        {
+        	if (child is not ISyntaxNode node)
+    			continue;
+        
+        	var nodePositionIndices = GetNodePositionIndices(node);
+        	if (nodePositionIndices == (-1, -1))
+        		continue;
+        		
+        	if (nodePositionIndices.StartInclusiveIndex <= positionIndex &&
+        		nodePositionIndices.EndExclusiveIndex >= positionIndex)
+        	{
+        		possibleNodeList.Add(node);
+        	}
+        }
+        
+        if (possibleNodeList.Count <= 0)
+        	return null;
+        
+        return possibleNodeList.MinBy(node =>
+        {
+        	// TODO: Wasteful re-invocation of this method, can probably do this in one invocation.
+        	var nodePositionIndices = GetNodePositionIndices(node);
+        	if (nodePositionIndices == (-1, -1))
+        		return int.MaxValue;
+        	
+        	return positionIndex - nodePositionIndices.StartInclusiveIndex;
+        });
+    }
+    
+    /// <summary>
+    /// If the provided syntaxNode's SyntaxKind is not recognized, then (-1, -1) is returned.
+    ///
+    /// Otherwise, this method is meant to understand all of the ISyntaxToken
+    /// that the node encompasses.
+    ///
+    /// With this knowledge, the method can determine the ISyntaxToken that starts, and ends the node
+    /// within the source code.
+    ///
+    /// Then, it returns the indices from the start and end token.
+    ///
+    /// The ISyntaxNode instances are in a large enough count that it was decided not
+    /// to make this an instance method on each ISyntaxNode.
+    ///
+    /// ========================================================================
+    /// There is no overhead per-object-instance for adding a method to a class.
+    /// https://stackoverflow.com/a/48861218/14847452
+    /// 
+    /// 	"Yes, C#/.Net methods require memory on per-AppDomain basis, there is no per-instance cost of the methods/properties.
+	/// 	
+	/// 	Cost comes from:
+	/// 	
+	/// 	methods metadata (part of type) and IL. I'm not sure how long IL stays loaded as it really only needed to JIT so my guess it is loaded as needed and discarded.
+	/// 	after method is JITed machine code stays till AppDomain is unloaded (or if compiled as neutral till process terminates)
+	/// 	So instantiating 1 or 50 objects with 50 methods will not require different amount of memory for methods."
+    /// ========================================================================
+    ///
+    /// But, while there is no overhead to having this be on each implementation of 'ISyntaxNode',
+    /// it is believed to still belong in the IBinder.
+    ///
+    /// This is because each language needs to have control over the various nodes.
+    /// As one node in C# is not necessarily read the same as it would be by a python 'ICompilerService'.
+    ///
+    /// The goal with the ISyntaxNode implementations seems to be:
+    /// - Keep them as generalized as possible.
+    /// - Any specific details should be provided by the IBinder.
+    /// </summary>
+    public (int StartInclusiveIndex, int EndExclusiveIndex) GetNodePositionIndices(ISyntaxNode syntaxNode)
+    {
+    	switch (syntaxNode.SyntaxKind)
+    	{
+    		case SyntaxKind.TypeDefinitionNode:
+    		{
+    			var typeDefinitionNode = (TypeDefinitionNode)syntaxNode;
+    			
+    			if (typeDefinitionNode.TypeIdentifierToken.ConstructorWasInvoked)
+    				return (typeDefinitionNode.TypeIdentifierToken.TextSpan.StartingIndexInclusive, typeDefinitionNode.TypeIdentifierToken.TextSpan.EndingIndexExclusive);
+    			
+    			goto default;
+    		}
+    		case SyntaxKind.FunctionDefinitionNode:
+    		{
+    			var functionDefinitionNode = (FunctionDefinitionNode)syntaxNode;
+    			
+    			if (functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
+    				return (functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive, functionDefinitionNode.FunctionIdentifierToken.TextSpan.EndingIndexExclusive);
+    			
+    			goto default;
+    		}
+    		case SyntaxKind.VariableDeclarationNode:
+    		{
+    			var variableDeclarationNode = (VariableDeclarationNode)syntaxNode;
+    			
+    			if (variableDeclarationNode.IdentifierToken.ConstructorWasInvoked)
+    				return (variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive, variableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive);
+    			
+    			goto default;
+    		}
+    		default:
+    		{
+    			return (-1, -1);
+    		}
+    	}
     }
 }

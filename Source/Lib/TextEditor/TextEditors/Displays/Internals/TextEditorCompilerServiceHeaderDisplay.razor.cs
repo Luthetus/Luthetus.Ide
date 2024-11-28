@@ -1,22 +1,26 @@
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Components;
+using Fluxor;
 using Luthetus.Common.RazorLib.Reactives.Models;
 using Luthetus.Common.RazorLib.Keys.Models;
+using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals;
 
-/// <summary>
-/// TODO: Debounce this instead of throttling.
-/// </summary>
-public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDependentComponent
+// Project ---- CurrentCodeBlockOwner --- Definitions inside the code block
+
+public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITextEditorDependentComponent
 {
 	[Inject]
 	public ITextEditorService TextEditorService { get; set; } = null!;
+    [Inject]
+    private IState<AppOptionsState> AppOptionsStateWrap { get; set; } = null!;
 
 	[Parameter, EditorRequired]
 	public TextEditorViewModelDisplay TextEditorViewModelDisplay { get; set; } = null!;
@@ -24,18 +28,26 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 	private static readonly TimeSpan ThrottleTimeSpan = TimeSpan.FromMilliseconds(500);
 
 	/// <summary>byte is used as TArgs just as a "throwaway" type. It isn't used.</summary>
-	private Debounce<byte> _throttleRender;
+	private Debounce<byte> _debounceRender;
+	
+	private ResourceUri _resourceUriPrevious = ResourceUri.Empty;
 	
 	private int _lineIndexPrevious = -1;
 	private int _columnIndexPrevious = -1;
+	
+	private IBinderSession? _binderSessionPrevious = null;
+	private ICodeBlockOwner? _codeBlockOwner;
+	private bool _shouldRender = false;
+	
+	private bool _showDefaultToolbar = false;
 	
 	private CancellationTokenSource _cancellationTokenSource = new();
 	
 	protected override void OnInitialized()
     {
-    	_throttleRender = new(ThrottleTimeSpan, _cancellationTokenSource.Token, async (_, _) =>
+    	_debounceRender = new(ThrottleTimeSpan, _cancellationTokenSource.Token, async (_, _) =>
     	{
-    		DrawScopeInTextEditor();
+    		UpdateUi();
     	});
     
         TextEditorViewModelDisplay.RenderBatchChanged += OnRenderBatchChanged;
@@ -44,12 +56,18 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
         base.OnInitialized();
     }
 
-	private void OnRenderBatchChanged()
+	private async void OnRenderBatchChanged()
     {
     	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
     	
     	if (renderBatch is null)
     		return;
+    		
+    	if (_shouldRender)
+    	{
+    		_shouldRender = false;
+    		await InvokeAsync(StateHasChanged);
+    	}
     
     	if (renderBatch.ViewModel.PrimaryCursor.LineIndex == _lineIndexPrevious &&
         	renderBatch.ViewModel.PrimaryCursor.ColumnIndex == _columnIndexPrevious)
@@ -57,17 +75,21 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 			return;
         }
         
-    	_throttleRender.Run(0);
+    	_debounceRender.Run(0);
     }
     
-    private void DrawScopeInTextEditor()
+    private void ToggleDefaultToolbar()
+    {
+    	_showDefaultToolbar = !_showDefaultToolbar;
+    }
+    
+    private void UpdateUi()
     {
     	var renderBatch = TextEditorViewModelDisplay._storedRenderBatchTuple.Validated;
-    	
     	if (renderBatch is null)
     		return;
     	
-    	TextEditorService.PostUnique(nameof(TextEditorDevToolsDisplay), editContext =>
+    	TextEditorService.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), editContext =>
     	{
     		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
             var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
@@ -133,6 +155,12 @@ public partial class TextEditorDevToolsDisplay : ComponentBase, ITextEditorDepen
 				TextEditorDevToolsPresentationFacts.PresentationKey,
 				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
+				
+			if (_codeBlockOwner != targetScope.CodeBlockOwner)
+			{
+				_codeBlockOwner = targetScope.CodeBlockOwner;
+				_shouldRender = true;
+			}
 	
     		return Task.CompletedTask;
     	});

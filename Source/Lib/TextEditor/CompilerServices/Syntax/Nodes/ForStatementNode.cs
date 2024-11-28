@@ -109,8 +109,6 @@ public sealed class ForStatementNode : ICodeBlockOwner
     	return this;
 	}
     
-    
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

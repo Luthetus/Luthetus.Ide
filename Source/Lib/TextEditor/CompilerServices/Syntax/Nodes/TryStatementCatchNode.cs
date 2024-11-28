@@ -96,8 +96,6 @@ public sealed class TryStatementCatchNode : ICodeBlockOwner
     	return this;
 	}
     
-    
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

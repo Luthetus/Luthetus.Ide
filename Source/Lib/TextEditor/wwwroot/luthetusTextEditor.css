@@ -103,6 +103,11 @@
     color: var(--luth_te_json-property-value-color);
 }
 
+.luth_te_syntax-onclick:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
 .luth_te_measure-character-width-and-row-height-wrapper {
     top: 0;
     left: 0;

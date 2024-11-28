@@ -1,199 +1,114 @@
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols
+@using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces
 @using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums
+@using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals
+@using Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.Symbols
 
-@{ var localSymbol = Symbol; }
+@{
+	var symbolLocal = Symbol;
+	var targetNode = GetTargetNode(symbolLocal);
+	var definitionNode = GetDefinitionNode(symbolLocal, targetNode);
+	
+	var syntaxViewModel = new SyntaxViewModel(
+		symbolLocal,
+		targetNode,
+		definitionNode,
+		depth: 0);
+}
 
 <div class="luth_te_symbol">
-    @switch (localSymbol.SymbolKindString)
-    {
-        case "TypeSymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    type
-                </span>
-                
-                <span class="luth_te_type">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "ConstructorSymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    constructor
-                </span>
-
-                <span class="luth_te_type">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "FunctionSymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    function
-                </span>
-
-                <span class="luth_te_method">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "LambdaSymbol":
-            <text>
-                <span class="luth_te_keyword">lambda</span><!--
-                
-                -->:<br/>
-
-                <span class="@(string.Empty /* Lambdas do not have their own css class as of (2024-11-02) */)">
-                	
-                	@{ var lambdaSymbol = (LambdaSymbol)localSymbol; }
-                	
-                	<!--
-                		This UI for the lambda is super odd to read. I'm working on the lambda parsing and I can't remember off the top of my head how to get rid of a space between
-                		UI elements and I'm not done with the parsing so I really don't wanna waste anytime on this I just put a bunch of comments to line them together.
-                	-->
-                	<span>
-	                	(<!--
-	                	-->@for (int i = 0; i < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count; i++)
-	                	{<!--
-	                		-->var index = i;<!--
-	                		-->var variableDeclarationNode = lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList[index];<!--
-	                		--><text><!--
-	                			--><span class="luth_te_type">@variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText()</span> <span class="luth_te_variable">@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span><!--
-	                			-->@if (index < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count - 1)
-	                			{<!--
-	                				--><text>, </text><!--
-	                			-->}<!--
-	                		--></text><!--
-	                	-->}<!--
-	                	-->)
-                	</span>
-                	
-                	@* => *@
-                    @localSymbol.TextSpan.GetText()
-                    
-                    @if (lambdaSymbol.LambdaExpressionNode.CodeBlockNodeIsExpression)
-                    {
-                    	<text> ...;</text>
-                    }
-                    else
-                    {
-                    	<text> {...}</text>
-                    }
-                </span>
-            </text>
-            break;
-        case "VariableSymbol":
-        	<text>
-                <span class="luth_te_keyword">
-                    variable
-                </span>
-
-                <span class="luth_te_variable">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "FieldSymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    field
-                </span>
-
-                <span class="@(string.Empty /* Fields do not have their own css class as of (2023-07-20) */)">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "PropertySymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    property
-                </span>
-
-                <span class="@(string.Empty /* Properties do not have their own css class as of (2023-07-20) */)">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "StringInterpolationSymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    string-interpolation
-                </span>
-
-                <span class="luth_te_string-literal">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "StringVerbatimSymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    string-verbatim
-                </span>
-
-                <span class="luth_te_string-literal">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "NamespaceSymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    namespace
-                </span>
-
-                <span class="@(string.Empty /* Namespaces do not have their own css class as of (2023-07-20) */)">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "InjectedLanguageComponentSymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    component
-                </span>
-
-                <span class="luth_te_injected-language-component">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-        case "SourceFileSymbol":
-            <text>
-                <span class="luth_te_keyword">
-                    Open in editor:
-                </span>
-
-                <button class="luth_button luth_te_source-file"
-                        @onclick="() => OpenInEditorOnClick(localSymbol.TextSpan.GetText())">
-                    @localSymbol.TextSpan.GetText()
-                </button>
-            </text>
-            break;
-        case "OnClickSymbol":
-        	var onClickSymbol = (OnClickSymbol)localSymbol;
-        
-            <text>
-                <button class="luth_button luth_te_source-file"
-                        @onclick="onClickSymbol.OnClickFunc">
-                    @onClickSymbol.DisplayText
-                </button>
-            </text>
-            break;
-        default:
-            <text>
-                <span class="luth_te_keyword">
-                    unknown-symbol-kind
-                </span>
-
-                <span class="@(string.Empty /* Unknown-symbol-kinds do not have their own css class as of (2023-07-20) */)">
-                    @localSymbol.TextSpan.GetText()
-                </span>
-            </text>
-            break;
-    }
+	<ErrorBoundary>
+		<ChildContent>
+		    @switch (symbolLocal.SymbolKindString)
+		    {
+		        case "TypeSymbol":
+		        {
+			        <TypeSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "FunctionSymbol":
+		        case "ConstructorSymbol":
+		        {
+		        	<FunctionSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "LambdaSymbol":
+		        {
+		            <LambdaSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "VariableSymbol":
+		        case "FieldSymbol":
+		        case "PropertySymbol":
+		        {
+		        	<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "StringInterpolationSymbol":
+		        case "StringVerbatimSymbol":
+		        case "InjectedLanguageComponentSymbol":
+				{
+		            <MiscSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+		            break;
+		        }
+		        case "NamespaceSymbol":
+		        {
+		            <text>
+		                <span class="luth_te_keyword">
+		                    namespace
+		                </span>
+		
+		                <span class="@(string.Empty /* Namespaces do not have their own css class as of (2023-07-20) */)">
+		                    @symbolLocal.TextSpan.GetText()
+		                </span>
+		            </text>
+		            break;
+		        }
+		        case "SourceFileSymbol":
+		        {
+		            <text>
+		                <span class="luth_te_keyword">
+		                    Open in editor:
+		                </span>
+		
+		                <button class="luth_button luth_te_source-file"
+		                        @onclick="() => OpenInEditorOnClick(symbolLocal.TextSpan.GetText())">
+		                    @symbolLocal.TextSpan.GetText()
+		                </button>
+		            </text>
+		            break;
+		        }
+		        case "OnClickSymbol":
+		        {
+		        	var onClickSymbol = (OnClickSymbol)symbolLocal;
+		        
+		            <text>
+		                <button class="luth_button luth_te_source-file"
+		                        @onclick="onClickSymbol.OnClickFunc">
+		                    @onClickSymbol.DisplayText
+		                </button>
+		            </text>
+		            break;
+		        }
+		        default:
+		        {
+		            <text>
+		                <span class="luth_te_keyword">
+		                    unknown-symbol-kind
+		                </span>
+		
+		                <span class="@(string.Empty /* Unknown-symbol-kinds do not have their own css class as of (2023-07-20) */)">
+		                    @symbolLocal.TextSpan.GetText()
+		                </span>
+		            </text>
+		            break;
+		        }
+		    }
+		</ChildContent>
+		<ErrorContent Context="error">
+			@error.ToString()
+		</ErrorContent>
+	</ErrorBoundary>
 </div>
