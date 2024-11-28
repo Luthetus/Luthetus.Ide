@@ -89,8 +89,6 @@ public sealed class SwitchExpressionNode : ICodeBlockOwner
     	return this;
 	}
     
-    
-    
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

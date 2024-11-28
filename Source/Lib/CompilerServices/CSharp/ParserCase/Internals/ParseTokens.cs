@@ -112,7 +112,7 @@ public static class ParseTokens
 		
 		if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
 		{
-			ParsePropertyDefinition((CSharpParserModel)model);
+			ParsePropertyDefinition((CSharpParserModel)model, variableDeclarationNode);
 		}
 		else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
 				 model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
@@ -152,7 +152,7 @@ public static class ParseTokens
 		return;
     }
     
-    public static void ParsePropertyDefinition(CSharpParserModel model)
+    public static void ParsePropertyDefinition(CSharpParserModel model, IVariableDeclarationNode variableDeclarationNode)
     {
 		#if DEBUG
 		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
@@ -175,6 +175,14 @@ public static class ParseTokens
 			{
 				if (--openBraceCounter <= 0)
 					break;
+			}
+			else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.GetTokenContextualKeyword)
+			{
+				variableDeclarationNode.HasGetter = true;
+			}
+			else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.SetTokenContextualKeyword)
+			{
+				variableDeclarationNode.HasSetter = true;
 			}
 
 			_ = model.TokenWalker.Consume();

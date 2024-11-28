@@ -88,9 +88,7 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
     	_childListIsDirty = true;
     	return this;
 	}
-    
-    
-    
+	
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)

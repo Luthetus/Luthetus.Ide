@@ -17,6 +17,9 @@ using Luthetus.Common.RazorLib.Installations.Models;
 using Luthetus.Common.RazorLib.ComponentRenderers.Models;
 using Luthetus.Common.RazorLib.Options.States;
 using Luthetus.Common.RazorLib.Dimensions.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.Ide.RazorLib.Shareds.States;
 using Luthetus.Ide.RazorLib.BackgroundTasks.Models;
 using Luthetus.Ide.RazorLib.Terminals.States;
@@ -69,6 +72,10 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
     private DotNetCliOutputParser DotNetCliOutputParser { get; set; } = null!;
     [Inject]
     private ICommonComponentRenderers CommonComponentRenderers { get; set; } = null!;
+    [Inject]
+    private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
+    [Inject]
+    private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
 
 	private static readonly Key<IDynamicViewModel> _newDotNetSolutionDialogKey = Key<IDynamicViewModel>.NewKey();
 
@@ -161,6 +168,16 @@ public partial class LuthetusExtensionsDotNetInitializer : ComponentBase
 					InitializeMenuRun();
 					
 					Dispatcher.Dispatch(new PanelState.SetActivePanelTabAction(_leftPanelGroupKey, _solutionExplorerPanelKey));
+					
+					var compilerService = CompilerServiceRegistry.GetCompilerService(ExtensionNoPeriodFacts.C_SHARP_CLASS);
+					
+					/*if (compilerService is CSharpCompilerService cSharpCompilerService)
+					{
+						cSharpCompilerService.SetSymbolRendererType(typeof(Luthetus.Extensions.DotNet.TextEditors.Displays.CSharpSymbolDisplay));
+					}*/
+					
+					TextEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.TextEditorCompilerServiceHeaderDisplay));
+					
                     return Task.CompletedTask;
                 });
 		}

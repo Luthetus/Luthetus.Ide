@@ -22,7 +22,7 @@ namespace Luthetus.CompilerServices.CSharp.BinderCase;
 public partial class CSharpBinder
 {
 	/// <summary>
-	/// Returns the new primary expression which will be the passed in 'expressionPrimary'
+	/// Returns the new primary expression which will be 'BadExpressionNode'
 	/// if the parameters were not mergeable.
 	/// </summary>
 	public IExpressionNode AnyMergeToken(
@@ -90,7 +90,7 @@ public partial class CSharpBinder
 	}
 	
 	/// <summary>
-	/// Returns the new primary expression which will be the passed in 'expressionPrimary'
+	/// Returns the new primary expression which will be 'BadExpressionNode'
 	/// if the parameters were not mergeable.
 	/// </summary>
 	public IExpressionNode AnyMergeExpression(

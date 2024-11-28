@@ -29,7 +29,7 @@ public partial class EditorDisplay : ComponentBase
             WrapperClassCssString = "luth_te_demo-text-editor",
             TabIndex = 0,
             HeaderButtonKinds = TextEditorHeaderButtonKindsList,
-            HeaderComponentType = typeof(TextEditorDevToolsAnchorDisplay),
+            HeaderComponentType = typeof(TextEditorFileExtensionHeaderDisplay),
         };
 
         base.OnInitialized();

@@ -1,0 +1,4 @@
+.luth_te_syntax-onclick:hover::deep {
+	text-decoration: underline;
+	cursor: pointer;
+}
