@@ -7,6 +7,32 @@ namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Lexers;
 
 public class LexerTests
 {
+	/// <summary>
+	/// Goal: Track the OpenBraceToken and CloseBraceToken pairs that occur in the text. (2024-12-03)
+	///
+	/// Purpose: Expected to be a noticeable optimization to the Parser speed.
+	///
+	/// Measurements:
+	/// - Before: 
+	/// - After: 
+	///
+	/// Conclusion: 
+	/// 
+	/// ==================
+	/// </summary>
+	///
+	/// <remarks>
+	/// It could be useful to add a timer to the 'ProgressBarModel.cs'.
+	///
+	/// Just by tracking the startingDateTime and the (endDateTime ?? currentDateTime),
+	/// then every render of the notification, the difference between them can be displayed.
+	/// </remarks>
+	[Fact]
+    public void TrackBraceTokenPairs()
+    {
+        throw new NotImplementedException();
+    }
+	
 	[Fact]
     public void LEX_ArraySyntaxToken()
     {
