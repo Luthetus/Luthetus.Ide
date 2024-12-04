@@ -103,17 +103,11 @@ public class CSharpLexer : Lexer
                     LexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
                     break;
                 case '"':
-                	if (_stringWalker.PeekCharacter(1) == '"' && _stringWalker.PeekCharacter(2) == '"')
-                	{
-                		// At least 3 double quotes are required for a raw string.
-                		// The actual counting of how many quotes will be used as a deliminator
-                		// is done inside the method.
-                		LexStringRaw(_stringWalker, _syntaxTokenList);
-                	}
-                	else
-                	{
-                		LexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
-                	}
+                	LexString(
+				    	_stringWalker,
+				    	_syntaxTokenList,
+				    	countDollarSign: 1,
+				    	useVerbatim: false);
                     break;
                 case '/':
                     if (_stringWalker.PeekCharacter(1) == '/')
@@ -188,19 +182,59 @@ public class CSharpLexer : Lexer
                 case '$':
                 	if (_stringWalker.NextCharacter == '"')
                 	{
-                		LexStringEitherInterpolationAndOrVerbatim(
+                		LexString(
 					    	_stringWalker,
 					    	_syntaxTokenList,
-					    	useInterpolation: true,
+					    	countDollarSign: 1,
 					    	useVerbatim: false);
 					}
 					else if (_stringWalker.PeekCharacter(1) == '@' && _stringWalker.PeekCharacter(2) == '"')
 					{
-						LexStringEitherInterpolationAndOrVerbatim(
+						LexString(
 					    	_stringWalker,
 					    	_syntaxTokenList,
-					    	useInterpolation: true,
+					    	countDollarSign: 1,
 					    	useVerbatim: true);
+                	}
+                	else if (_stringWalker.NextCharacter == '$')
+                	{
+                		var entryPositionIndex = _stringWalker.PositionIndex;
+                		
+                		// The while loop starts counting from and including the first dollar sign.
+                		var countDollarSign = 0;
+                	
+                		while (!_stringWalker.IsEof)
+                		{
+                			if (_stringWalker.CurrentCharacter != '$')
+                				break;
+                			
+            				++countDollarSign;
+            				_ = _stringWalker.ReadCharacter();
+                		}
+                		
+                		// Only the last '$' (dollar sign character) will be syntax highlighted
+                		// if this code is NOT included.
+                		var textSpan = new TextEditorTextSpan(
+				            entryPositionIndex,
+				            _stringWalker.PositionIndex,
+				            (byte)GenericDecorationKind.StringLiteral,
+				            _stringWalker.ResourceUri,
+				            _stringWalker.SourceText);
+				        _syntaxTokenList.Add(new StringLiteralToken(textSpan));
+                		
+                		// From the LexString(...) method:
+                		// 	"awkwardly even if there are many of these it is expected
+                		//      that the last one will not have been consumed."
+                		_ = _stringWalker.BacktrackCharacter();
+                		
+                		if (_stringWalker.NextCharacter == '"')
+	                	{
+	                		LexString(
+						    	_stringWalker,
+						    	_syntaxTokenList,
+						    	countDollarSign: countDollarSign,
+						    	useVerbatim: false);
+						}
                 	}
                 	else
                 	{
@@ -210,18 +244,18 @@ public class CSharpLexer : Lexer
                 case '@':
                 	if (_stringWalker.NextCharacter == '"')
                 	{
-                		LexStringEitherInterpolationAndOrVerbatim(
+                		LexString(
 					    	_stringWalker,
 					    	_syntaxTokenList,
-					    	useInterpolation: false,
+					    	countDollarSign: 0,
 					    	useVerbatim: true);
 					}
 					else if (_stringWalker.PeekCharacter(1) == '$' && _stringWalker.PeekCharacter(2) == '"')
 					{
-						LexStringEitherInterpolationAndOrVerbatim(
+						LexString(
 					    	_stringWalker,
 					    	_syntaxTokenList,
-					    	useInterpolation: true,
+					    	countDollarSign: 1,
 					    	useVerbatim: true);
 					}
                 	else
@@ -257,16 +291,42 @@ public class CSharpLexer : Lexer
         _syntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
     }
     
-    private void LexStringEitherInterpolationAndOrVerbatim(
+    /// <summary>
+    /// The invoker of this method is expected to count the amount of '$' (dollar sign characters).
+    /// When it comes to raw strings however, this logic will counted inside of this method.
+    ///
+    /// The reason being: you don't know if it is a string until you've read all of the '$' (dollar sign characters).
+    /// So in order to invoke this method the invoker had to have counted them.
+    /// </summary>
+    private void LexString(
     	StringWalker stringWalker,
     	List<ISyntaxToken> syntaxTokenList,
-    	bool useInterpolation,
+    	int countDollarSign,
     	bool useVerbatim)
     {
     	var entryPositionIndex = stringWalker.PositionIndex;
 
+		var useInterpolation = countDollarSign > 0;
+		var useRaw = false;
+		int countDoubleQuotes = 0;
+    	
+    	if (stringWalker.PeekCharacter(1) == '\"' && stringWalker.PeekCharacter(2) == '\"')
+    	{
+    		useRaw = true;
+    		
+    		// Count the amount of double quotes to be used as the delimiter.
+			while (!stringWalker.IsEof)
+			{
+				if (stringWalker.CurrentCharacter != '\"')
+					break;
+	
+				++countDoubleQuotes;
+				_ = stringWalker.ReadCharacter();
+			}
+    	}
+
 		if (useInterpolation)
-        	_ = stringWalker.ReadCharacter(); // Move past the '$' (dollar sign character)
+        	_ = stringWalker.ReadCharacter(); // Move past the '$' (dollar sign character); awkwardly even if there are many of these it is expected that the last one will not have been consumed.
         if (useVerbatim)
         	_ = stringWalker.ReadCharacter(); // Move past the '@' (at character)
         
@@ -276,7 +336,20 @@ public class CSharpLexer : Lexer
         {
 			if (stringWalker.CurrentCharacter == '\"')
 			{
-				if (useVerbatim && stringWalker.NextCharacter == '\"')
+				if (useRaw)
+				{
+					var matchDoubleQuotes = countDoubleQuotes;
+					while (!stringWalker.IsEof)
+		    		{
+		    			if (stringWalker.CurrentCharacter != '\"')
+		    				break;
+		    			
+		    			_ = stringWalker.ReadCharacter();
+		    			if (--matchDoubleQuotes == 0)
+		    				goto foundEndDelimiter;
+		    		}
+				}
+				else if (useVerbatim && stringWalker.NextCharacter == '\"')
 				{
 					if (_escapeCharacterList is not null)
 					{
@@ -339,6 +412,8 @@ public class CSharpLexer : Lexer
             _ = stringWalker.ReadCharacter();
         }
 
+		foundEndDelimiter:
+
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             stringWalker.PositionIndex,
@@ -373,52 +448,5 @@ public class CSharpLexer : Lexer
 		}
 
 		_ = stringWalker.ReadCharacter();
-    }
-    
-    private void LexStringRaw(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList)
-    {
-    	var entryPositionIndex = stringWalker.PositionIndex;
-    	
-    	int countDoubleQuotes = 0;
-    	
-    	// Count the amount of double quotes to be used as the delimiter.
-		while (!stringWalker.IsEof)
-		{
-			if (stringWalker.CurrentCharacter != '\"')
-				break;
-
-			++countDoubleQuotes;
-			_ = stringWalker.ReadCharacter();
-		}
-
-        while (!stringWalker.IsEof)
-        {
-			if (stringWalker.CurrentCharacter == '\"')
-			{
-				var matchDoubleQuotes = countDoubleQuotes;
-				while (!stringWalker.IsEof)
-	    		{
-	    			if (stringWalker.CurrentCharacter != '\"')
-	    				break;
-	    			
-	    			_ = stringWalker.ReadCharacter();
-	    			if (--matchDoubleQuotes == 0)
-	    				goto foundEndDelimiter;
-	    		}
-			}
-
-            _ = stringWalker.ReadCharacter();
-        }
-        
-        foundEndDelimiter:
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.StringLiteral,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        _syntaxTokenList.Add(new StringLiteralToken(textSpan));
     }
 }
