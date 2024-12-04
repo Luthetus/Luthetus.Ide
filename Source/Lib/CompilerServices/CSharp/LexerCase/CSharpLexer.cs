@@ -1,9 +1,11 @@
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
-using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.CSharp.LexerCase;
 
@@ -174,7 +176,10 @@ public class CSharpLexer : Lexer
                     LexerUtils.LexCloseSquareBracketToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '$':
-                    LexerUtils.LexDollarSignToken(_stringWalker, _syntaxTokenList);
+                	if (_stringWalker.NextCharacter == '"')
+                		LexStringInterpolation(_stringWalker, _syntaxTokenList);
+                	else
+                    	LexerUtils.LexDollarSignToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '@':
                     LexerUtils.LexAtToken(_stringWalker, _syntaxTokenList);
@@ -205,5 +210,87 @@ public class CSharpLexer : Lexer
             _stringWalker.SourceText);
 
         _syntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
+    }
+    
+    private void LexStringInterpolation(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList)
+    {
+    	var entryPositionIndex = stringWalker.PositionIndex;
+
+        _ = stringWalker.ReadCharacter(); // Move past the '$' (dollar sign character)
+        _ = stringWalker.ReadCharacter(); // Move past the '"' (double quote character)
+
+        while (!stringWalker.IsEof)
+        {
+			if (stringWalker.CurrentCharacter == '\"')
+			{
+				_ = stringWalker.ReadCharacter();
+				break;
+			}
+			else if (stringWalker.CurrentCharacter == '\\')
+			{
+				if (_escapeCharacterList is not null)
+				{
+					_escapeCharacterList.Add(new TextEditorTextSpan(
+			            stringWalker.PositionIndex,
+			            stringWalker.PositionIndex + 2,
+			            (byte)GenericDecorationKind.EscapeCharacter,
+			            stringWalker.ResourceUri,
+			            stringWalker.SourceText));
+				}
+
+				// Presuming the escaped text is 2 characters, then read an extra character.
+				_ = stringWalker.ReadCharacter();
+			}
+			else if (stringWalker.CurrentCharacter == '{')
+			{
+				var innerTextSpan = new TextEditorTextSpan(
+		            entryPositionIndex,
+		            stringWalker.PositionIndex,
+		            (byte)GenericDecorationKind.StringLiteral,
+		            stringWalker.ResourceUri,
+		            stringWalker.SourceText);
+		        _syntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
+			
+				LexInterpolatedExpression(stringWalker, syntaxTokenList);
+				entryPositionIndex = stringWalker.PositionIndex;
+			}
+
+            _ = stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.StringLiteral,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        _syntaxTokenList.Add(new StringLiteralToken(textSpan));
+    }
+    
+    private void LexInterpolatedExpression(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList)
+    {
+    	var entryPositionIndex = stringWalker.PositionIndex;
+
+        _ = stringWalker.ReadCharacter(); // Move past the '{' (open brace character)
+        
+    	var unmatchedBraceCounter = 1;
+		
+		while (!stringWalker.IsEof)
+		{
+			if (stringWalker.CurrentCharacter == '{')
+			{
+				++unmatchedBraceCounter;
+			}
+			else if (stringWalker.CurrentCharacter == '}')
+			{
+				if (--unmatchedBraceCounter <= 0)
+					break;
+			}
+
+			_ = stringWalker.ReadCharacter();
+		}
+
+		_ = stringWalker.ReadCharacter();
     }
 }

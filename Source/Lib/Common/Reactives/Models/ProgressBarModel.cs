@@ -20,6 +20,8 @@ public class ProgressBarModel : IDisposable
 	{
 		DecimalPercentProgress = decimalPercentProgress;
 		Message = message;
+		
+		DateTimeStart = DateTime.UtcNow;
 	}
 	
 	private Task? _cancelTask;
@@ -27,6 +29,8 @@ public class ProgressBarModel : IDisposable
 	public double DecimalPercentProgress { get; private set; }
 	public string? Message { get; private set; }
 	public string? SecondaryMessage { get; private set; }
+	public DateTime DateTimeStart { get; set; }
+	public DateTime? DateTimeEnd { get; set; }
 	public bool IsCancellable => OnCancelFunc is not null;
 	public bool IsCancelled { get; set; }
 	public bool IntentToCancel { get; private set; }
@@ -107,12 +111,18 @@ public class ProgressBarModel : IDisposable
 			}
 		});
 	}
+	
+	public TimeSpan GetTimeElapsed()
+	{
+		return (DateTimeEnd ?? DateTime.UtcNow) - DateTimeStart;
+	}
 
 	public void Dispose()
 	{
 		lock (_progressLock)
 		{
 			IsDisposed = true;
+			DateTimeEnd = DateTime.UtcNow;
 			ProgressChanged?.Invoke(true);
 		}
 	}

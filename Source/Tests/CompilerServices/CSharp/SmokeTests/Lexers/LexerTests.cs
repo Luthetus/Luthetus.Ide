@@ -7,13 +7,32 @@ namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Lexers;
 
 public class LexerTests
 {
+	public class Test
+	{
+		public Test(string sourceText)
+		{
+			SourceText = sourceText;
+			ResourceUri = new ResourceUri("./unitTesting.txt");
+			Lexer = new CSharpLexer(ResourceUri, SourceText);
+	        Lexer.Lex();
+	        Parser = new CSharpParser(Lexer);
+	        CompilationUnit = Parser.Parse();
+		}
+		
+		public string SourceText { get; set; }
+		public ResourceUri ResourceUri { get; set; }
+		public CSharpLexer Lexer { get; set; }
+		public CSharpParser Parser { get; set; }
+		public CompilationUnit CompilationUnit { get; set; }
+	}
+	
 	/// <summary>
 	/// Goal: Track the OpenBraceToken and CloseBraceToken pairs that occur in the text. (2024-12-03)
 	///
 	/// Purpose: Expected to be a noticeable optimization to the Parser speed.
 	///
 	/// Measurements:
-	/// - Before: 
+	/// - Before: 63.973 seconds | 65.777 seconds | 64.548 seconds
 	/// - After: 
 	///
 	/// Conclusion: 
@@ -30,7 +49,60 @@ public class LexerTests
 	[Fact]
     public void TrackBraceTokenPairs()
     {
-        throw new NotImplementedException();
+        var test = new Test(
+@"
+TODO
+".ReplaceLineEndings("\n"));
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// Include the new escape sequence syntax,
+    /// i.e.: '""' or two double quotes, is interpreted as one double quotes.
+    /// </summary>
+    [Fact]
+    public void InterpolatedString()
+    {
+        var test = new Test(
+@"
+$""a {3 + 3} aa""
+".ReplaceLineEndings("\n"));
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// Include the new escape sequence syntax,
+    /// i.e.: '{{' or two open brace characters, is interpreted as one open brace character (the same is true for close brace).
+    /// </summary>
+    [Fact]
+    public void VerbatimString()
+    {
+        var test = new Test(
+@"
+TODO
+".ReplaceLineEndings("\n"));
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/strings/#raw-string-literals
+    /// Include the new escape sequence syntax,
+    /// i.e.: the count of double quotes that deliminate the start of the string, is to be matched for the end of the string.
+    ///       As well, interpolation can be modified to by changing the amount of '$' or dollar sign characters
+    ///           that appear prior to the double quotes.
+    /// </summary>
+    [Fact]
+    public void RawString()
+    {
+        var test = new Test(
+@"
+TODO
+".ReplaceLineEndings("\n"));
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		throw new NotImplementedException();
     }
 	
 	[Fact]
@@ -582,5 +654,45 @@ public class LexerTests
 
         // Tokens: 'public' 'class' 'MyClass' '{' '}' 'EndOfFileToken'
         Assert.Equal(6, lexer.SyntaxTokenList.Length);
+    }
+    
+    
+    
+    private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
+    {
+    	Console.WriteLine($"foreach (var child in {name}.GetChildList())");
+		foreach (var child in node.GetChildList())
+		{
+			Console.WriteLine("\t" + child.SyntaxKind);
+		}
+		Console.WriteLine();
+    }
+    
+    private void WriteChildrenIndentedRecursive(ISyntaxNode node, string name = "node", int indentation = 0)
+    {
+    	var indentationStringBuilder = new StringBuilder();
+    	for (int i = 0; i < indentation; i++)
+    		indentationStringBuilder.Append('\t');
+    	
+    	Console.WriteLine($"{indentationStringBuilder.ToString()}{node.SyntaxKind}");
+    	
+    	// For the child tokens
+    	indentationStringBuilder.Append('\t');
+    	var childIndentation = indentationStringBuilder.ToString();
+    	
+		foreach (var child in node.GetChildList())
+		{
+			if (child is ISyntaxNode syntaxNode)
+			{
+				WriteChildrenIndentedRecursive(syntaxNode, "node", indentation + 1);
+			}
+			else if (child is ISyntaxToken syntaxToken)
+			{
+				Console.WriteLine($"{childIndentation}{child.SyntaxKind}__{syntaxToken.TextSpan.GetText()}");
+			}
+		}
+		
+		if (indentation == 0)
+			Console.WriteLine();
     }
 }
