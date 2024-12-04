@@ -106,7 +106,7 @@ public class CSharpLexer : Lexer
                 	LexString(
 				    	_stringWalker,
 				    	_syntaxTokenList,
-				    	countDollarSign: 1,
+				    	countDollarSign: 0,
 				    	useVerbatim: false);
                     break;
                 case '/':
@@ -307,10 +307,16 @@ public class CSharpLexer : Lexer
     	var entryPositionIndex = stringWalker.PositionIndex;
 
 		var useInterpolation = countDollarSign > 0;
+		
+		if (useInterpolation)
+        	_ = stringWalker.ReadCharacter(); // Move past the '$' (dollar sign character); awkwardly even if there are many of these it is expected that the last one will not have been consumed.
+        if (useVerbatim)
+        	_ = stringWalker.ReadCharacter(); // Move past the '@' (at character)
+		
 		var useRaw = false;
 		int countDoubleQuotes = 0;
-    	
-    	if (stringWalker.PeekCharacter(1) == '\"' && stringWalker.PeekCharacter(2) == '\"')
+		
+    	if (!useVerbatim && stringWalker.PeekCharacter(1) == '\"' && stringWalker.PeekCharacter(2) == '\"')
     	{
     		useRaw = true;
     		
@@ -324,13 +330,10 @@ public class CSharpLexer : Lexer
 				_ = stringWalker.ReadCharacter();
 			}
     	}
-
-		if (useInterpolation)
-        	_ = stringWalker.ReadCharacter(); // Move past the '$' (dollar sign character); awkwardly even if there are many of these it is expected that the last one will not have been consumed.
-        if (useVerbatim)
-        	_ = stringWalker.ReadCharacter(); // Move past the '@' (at character)
-        
-        _ = stringWalker.ReadCharacter(); // Move past the '"' (double quote character)
+    	else
+    	{
+        	_ = stringWalker.ReadCharacter(); // Move past the '"' (double quote character)
+        }
 
         while (!stringWalker.IsEof)
         {
@@ -338,16 +341,19 @@ public class CSharpLexer : Lexer
 			{
 				if (useRaw)
 				{
-					var matchDoubleQuotes = countDoubleQuotes;
+					var matchDoubleQuotes = 0;
+					
 					while (!stringWalker.IsEof)
 		    		{
 		    			if (stringWalker.CurrentCharacter != '\"')
 		    				break;
 		    			
 		    			_ = stringWalker.ReadCharacter();
-		    			if (--matchDoubleQuotes == 0)
+		    			if (++matchDoubleQuotes == countDoubleQuotes)
 		    				goto foundEndDelimiter;
 		    		}
+		    		
+		    		continue;
 				}
 				else if (useVerbatim && stringWalker.NextCharacter == '\"')
 				{
