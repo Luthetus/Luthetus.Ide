@@ -187,15 +187,47 @@ public class CSharpLexer : Lexer
                     break;
                 case '$':
                 	if (_stringWalker.NextCharacter == '"')
-                		LexStringInterpolation(_stringWalker, _syntaxTokenList);
+                	{
+                		LexStringEitherInterpolationAndOrVerbatim(
+					    	_stringWalker,
+					    	_syntaxTokenList,
+					    	useInterpolation: true,
+					    	useVerbatim: false);
+					}
+					else if (_stringWalker.PeekCharacter(1) == '@' && _stringWalker.PeekCharacter(2) == '"')
+					{
+						LexStringEitherInterpolationAndOrVerbatim(
+					    	_stringWalker,
+					    	_syntaxTokenList,
+					    	useInterpolation: true,
+					    	useVerbatim: true);
+                	}
                 	else
+                	{
                     	LexerUtils.LexDollarSignToken(_stringWalker, _syntaxTokenList);
+                    }
                     break;
                 case '@':
                 	if (_stringWalker.NextCharacter == '"')
-                		LexStringVerbatim(_stringWalker, _syntaxTokenList);
+                	{
+                		LexStringEitherInterpolationAndOrVerbatim(
+					    	_stringWalker,
+					    	_syntaxTokenList,
+					    	useInterpolation: false,
+					    	useVerbatim: true);
+					}
+					else if (_stringWalker.PeekCharacter(1) == '$' && _stringWalker.PeekCharacter(2) == '"')
+					{
+						LexStringEitherInterpolationAndOrVerbatim(
+					    	_stringWalker,
+					    	_syntaxTokenList,
+					    	useInterpolation: true,
+					    	useVerbatim: true);
+					}
                 	else
+                	{
                     	LexerUtils.LexAtToken(_stringWalker, _syntaxTokenList);
+                    }
                     break;
                 case ':':
                     LexerUtils.LexColonToken(_stringWalker, _syntaxTokenList);
@@ -225,21 +257,46 @@ public class CSharpLexer : Lexer
         _syntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
     }
     
-    private void LexStringInterpolation(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList)
+    private void LexStringEitherInterpolationAndOrVerbatim(
+    	StringWalker stringWalker,
+    	List<ISyntaxToken> syntaxTokenList,
+    	bool useInterpolation,
+    	bool useVerbatim)
     {
     	var entryPositionIndex = stringWalker.PositionIndex;
 
-        _ = stringWalker.ReadCharacter(); // Move past the '$' (dollar sign character)
+		if (useInterpolation)
+        	_ = stringWalker.ReadCharacter(); // Move past the '$' (dollar sign character)
+        if (useVerbatim)
+        	_ = stringWalker.ReadCharacter(); // Move past the '@' (at character)
+        
         _ = stringWalker.ReadCharacter(); // Move past the '"' (double quote character)
 
         while (!stringWalker.IsEof)
         {
 			if (stringWalker.CurrentCharacter == '\"')
 			{
-				_ = stringWalker.ReadCharacter();
-				break;
+				if (useVerbatim && stringWalker.NextCharacter == '\"')
+				{
+					if (_escapeCharacterList is not null)
+					{
+						_escapeCharacterList.Add(new TextEditorTextSpan(
+				            stringWalker.PositionIndex,
+				            stringWalker.PositionIndex + 2,
+				            (byte)GenericDecorationKind.EscapeCharacter,
+				            stringWalker.ResourceUri,
+				            stringWalker.SourceText));
+					}
+	
+					_ = stringWalker.ReadCharacter();
+				}
+				else
+				{
+					_ = stringWalker.ReadCharacter();
+					break;
+				}
 			}
-			else if (stringWalker.CurrentCharacter == '\\')
+			else if (!useVerbatim && stringWalker.CurrentCharacter == '\\')
 			{
 				if (_escapeCharacterList is not null)
 				{
@@ -254,7 +311,7 @@ public class CSharpLexer : Lexer
 				// Presuming the escaped text is 2 characters, then read an extra character.
 				_ = stringWalker.ReadCharacter();
 			}
-			else if (stringWalker.CurrentCharacter == '{')
+			else if (useInterpolation && stringWalker.CurrentCharacter == '{')
 			{
 				if (stringWalker.NextCharacter == '{')
 				{
@@ -316,51 +373,6 @@ public class CSharpLexer : Lexer
 		}
 
 		_ = stringWalker.ReadCharacter();
-    }
-    
-    private void LexStringVerbatim(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList)
-    {
-    	var entryPositionIndex = stringWalker.PositionIndex;
-
-        _ = stringWalker.ReadCharacter(); // Move past the '@' (at character)
-        _ = stringWalker.ReadCharacter(); // Move past the '"' (double quote character)
-
-        while (!stringWalker.IsEof)
-        {
-			if (stringWalker.CurrentCharacter == '\"')
-			{
-				if (stringWalker.NextCharacter == '\"')
-				{
-					if (_escapeCharacterList is not null)
-					{
-						_escapeCharacterList.Add(new TextEditorTextSpan(
-				            stringWalker.PositionIndex,
-				            stringWalker.PositionIndex + 2,
-				            (byte)GenericDecorationKind.EscapeCharacter,
-				            stringWalker.ResourceUri,
-				            stringWalker.SourceText));
-					}
-	
-					_ = stringWalker.ReadCharacter();
-				}
-				else
-				{
-					_ = stringWalker.ReadCharacter();
-					break;
-				}
-			}
-
-            _ = stringWalker.ReadCharacter();
-        }
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.StringLiteral,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        _syntaxTokenList.Add(new StringLiteralToken(textSpan));
     }
     
     private void LexStringRaw(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList)
