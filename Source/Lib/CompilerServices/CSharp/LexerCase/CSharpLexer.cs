@@ -257,8 +257,12 @@ public class CSharpLexer : Lexer
 			            stringWalker.SourceText);
 			        _syntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
 				
+					// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
+					// Thus, if this while loop were to consume, it would skip the
+					// closing double quotes if the expression were the last thing in the string.
 					LexInterpolatedExpression(stringWalker, syntaxTokenList);
 					entryPositionIndex = stringWalker.PositionIndex;
+					continue;
 				}
 			}
 
