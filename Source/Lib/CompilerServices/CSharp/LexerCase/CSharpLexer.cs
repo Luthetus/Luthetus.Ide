@@ -182,7 +182,10 @@ public class CSharpLexer : Lexer
                     	LexerUtils.LexDollarSignToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '@':
-                    LexerUtils.LexAtToken(_stringWalker, _syntaxTokenList);
+                	if (_stringWalker.NextCharacter == '"')
+                		LexStringVerbatim(_stringWalker, _syntaxTokenList);
+                	else
+                    	LexerUtils.LexAtToken(_stringWalker, _syntaxTokenList);
                     break;
                 case ':':
                     LexerUtils.LexColonToken(_stringWalker, _syntaxTokenList);
@@ -303,5 +306,50 @@ public class CSharpLexer : Lexer
 		}
 
 		_ = stringWalker.ReadCharacter();
+    }
+    
+    private void LexStringVerbatim(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList)
+    {
+    	var entryPositionIndex = stringWalker.PositionIndex;
+
+        _ = stringWalker.ReadCharacter(); // Move past the '@' (at character)
+        _ = stringWalker.ReadCharacter(); // Move past the '"' (double quote character)
+
+        while (!stringWalker.IsEof)
+        {
+			if (stringWalker.CurrentCharacter == '\"')
+			{
+				if (stringWalker.NextCharacter == '\"')
+				{
+					if (_escapeCharacterList is not null)
+					{
+						_escapeCharacterList.Add(new TextEditorTextSpan(
+				            stringWalker.PositionIndex,
+				            stringWalker.PositionIndex + 2,
+				            (byte)GenericDecorationKind.EscapeCharacter,
+				            stringWalker.ResourceUri,
+				            stringWalker.SourceText));
+					}
+	
+					_ = stringWalker.ReadCharacter();
+				}
+				else
+				{
+					_ = stringWalker.ReadCharacter();
+					break;
+				}
+			}
+
+            _ = stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.StringLiteral,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        _syntaxTokenList.Add(new StringLiteralToken(textSpan));
     }
 }
