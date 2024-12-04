@@ -392,26 +392,72 @@ public class CSharpLexer : Lexer
 			}
 			else if (useInterpolation && stringWalker.CurrentCharacter == '{')
 			{
-				if (stringWalker.NextCharacter == '{')
+				// With raw, one is escaping by way of typing less.
+				// With normal interpolation, one is escaping by way of typing more.
+				//
+				// Thus, these are two separate cases written as an if-else.
+				if (useRaw)
 				{
-					_ = stringWalker.ReadCharacter();
+					var interpolationTemporaryPositionIndex = stringWalker.PositionIndex;
+					var matchBrace = 0;
+						
+					while (!stringWalker.IsEof)
+		    		{
+		    			if (stringWalker.CurrentCharacter != '{')
+		    				break;
+		    			
+		    			_ = stringWalker.ReadCharacter();
+		    			if (++matchBrace >= countDollarSign)
+		    			{
+		    				// Found yet another '{' match beyond what was needed.
+		    				// So, this logic will match from the inside to the outside.
+		    				if (stringWalker.CurrentCharacter == '{')
+		    				{
+		    					++interpolationTemporaryPositionIndex;
+		    				}
+		    				else
+		    				{
+		    					var innerTextSpan = new TextEditorTextSpan(
+						            entryPositionIndex,
+						            interpolationTemporaryPositionIndex,
+						            (byte)GenericDecorationKind.StringLiteral,
+						            stringWalker.ResourceUri,
+						            stringWalker.SourceText);
+						        _syntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
+							
+								// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
+								// Thus, if this while loop were to consume, it would skip the
+								// closing double quotes if the expression were the last thing in the string.
+								LexInterpolatedExpression(stringWalker, syntaxTokenList, countDollarSign);
+								entryPositionIndex = stringWalker.PositionIndex;
+								break;
+		    				}
+		    			}
+		    		}
 				}
 				else
 				{
-					var innerTextSpan = new TextEditorTextSpan(
-			            entryPositionIndex,
-			            stringWalker.PositionIndex,
-			            (byte)GenericDecorationKind.StringLiteral,
-			            stringWalker.ResourceUri,
-			            stringWalker.SourceText);
-			        _syntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
-				
-					// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
-					// Thus, if this while loop were to consume, it would skip the
-					// closing double quotes if the expression were the last thing in the string.
-					LexInterpolatedExpression(stringWalker, syntaxTokenList);
-					entryPositionIndex = stringWalker.PositionIndex;
-					continue;
+					if (stringWalker.NextCharacter == '{')
+					{
+						_ = stringWalker.ReadCharacter();
+					}
+					else
+					{
+						var innerTextSpan = new TextEditorTextSpan(
+				            entryPositionIndex,
+				            stringWalker.PositionIndex,
+				            (byte)GenericDecorationKind.StringLiteral,
+				            stringWalker.ResourceUri,
+				            stringWalker.SourceText);
+				        _syntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
+					
+						// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
+						// Thus, if this while loop were to consume, it would skip the
+						// closing double quotes if the expression were the last thing in the string.
+						LexInterpolatedExpression(stringWalker, syntaxTokenList, countDollarSign);
+						entryPositionIndex = stringWalker.PositionIndex;
+						continue;
+					}
 				}
 			}
 
@@ -430,13 +476,13 @@ public class CSharpLexer : Lexer
         _syntaxTokenList.Add(new StringLiteralToken(textSpan));
     }
     
-    private void LexInterpolatedExpression(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList)
+    private void LexInterpolatedExpression(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList, int countDollarSign)
     {
     	var entryPositionIndex = stringWalker.PositionIndex;
-
+		
         _ = stringWalker.ReadCharacter(); // Move past the '{' (open brace character)
         
-    	var unmatchedBraceCounter = 1;
+    	var unmatchedBraceCounter = countDollarSign;
 		
 		while (!stringWalker.IsEof)
 		{
