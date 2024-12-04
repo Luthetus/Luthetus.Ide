@@ -243,16 +243,23 @@ public class CSharpLexer : Lexer
 			}
 			else if (stringWalker.CurrentCharacter == '{')
 			{
-				var innerTextSpan = new TextEditorTextSpan(
-		            entryPositionIndex,
-		            stringWalker.PositionIndex,
-		            (byte)GenericDecorationKind.StringLiteral,
-		            stringWalker.ResourceUri,
-		            stringWalker.SourceText);
-		        _syntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
-			
-				LexInterpolatedExpression(stringWalker, syntaxTokenList);
-				entryPositionIndex = stringWalker.PositionIndex;
+				if (stringWalker.NextCharacter == '{')
+				{
+					_ = stringWalker.ReadCharacter();
+				}
+				else
+				{
+					var innerTextSpan = new TextEditorTextSpan(
+			            entryPositionIndex,
+			            stringWalker.PositionIndex,
+			            (byte)GenericDecorationKind.StringLiteral,
+			            stringWalker.ResourceUri,
+			            stringWalker.SourceText);
+			        _syntaxTokenList.Add(new StringLiteralToken(innerTextSpan));
+				
+					LexInterpolatedExpression(stringWalker, syntaxTokenList);
+					entryPositionIndex = stringWalker.PositionIndex;
+				}
 			}
 
             _ = stringWalker.ReadCharacter();

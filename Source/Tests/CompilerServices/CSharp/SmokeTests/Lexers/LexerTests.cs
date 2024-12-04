@@ -64,9 +64,13 @@ TODO
     [Fact]
     public void InterpolatedString()
     {
+    	// Edge cases:
+    	// 	- '{{'
+    	// 	- ending in a expression, when done lexing with close brace token,
+    	// 		ensure the end double quotes character is not skipped over by accident.
         var test = new Test(
 @"
-$""a {3 + 3} aa""
+$""a {{ a {3 + 3}"";
 ".ReplaceLineEndings("\n"));
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		throw new NotImplementedException();
