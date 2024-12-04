@@ -359,10 +359,10 @@ public class CSharpLexer : Lexer
 				{
 					if (_escapeCharacterList is not null)
 					{
-						_escapeCharacterList.Add(new TextEditorTextSpan(
+						EscapeCharacterListAdd(new TextEditorTextSpan(
 				            stringWalker.PositionIndex,
 				            stringWalker.PositionIndex + 2,
-				            (byte)GenericDecorationKind.EscapeCharacter,
+				            (byte)GenericDecorationKind.EscapeCharacterPrimary,
 				            stringWalker.ResourceUri,
 				            stringWalker.SourceText));
 					}
@@ -379,10 +379,10 @@ public class CSharpLexer : Lexer
 			{
 				if (_escapeCharacterList is not null)
 				{
-					_escapeCharacterList.Add(new TextEditorTextSpan(
+					EscapeCharacterListAdd(new TextEditorTextSpan(
 			            stringWalker.PositionIndex,
 			            stringWalker.PositionIndex + 2,
-			            (byte)GenericDecorationKind.EscapeCharacter,
+			            (byte)GenericDecorationKind.EscapeCharacterPrimary,
 			            stringWalker.ResourceUri,
 			            stringWalker.SourceText));
 				}
@@ -509,5 +509,23 @@ public class CSharpLexer : Lexer
 		}
 
 		_ = stringWalker.ReadCharacter();
+    }
+    
+    private void EscapeCharacterListAdd(TextEditorTextSpan textSpan)
+    {
+    	if (_escapeCharacterList.Count > 0)
+    	{
+    		var lastEntry = _escapeCharacterList[^1];
+    		
+    		if (lastEntry.EndingIndexExclusive == textSpan.StartingIndexInclusive)
+    		{
+    			textSpan = textSpan with
+    			{
+    				DecorationByte = (byte)GenericDecorationKind.EscapeCharacterSecondary,
+    			};
+    		}
+    	}
+    	
+    	_escapeCharacterList.Add(textSpan);
     }
 }

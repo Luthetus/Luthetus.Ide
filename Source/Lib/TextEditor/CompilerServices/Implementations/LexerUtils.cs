@@ -82,7 +82,7 @@ public static class LexerUtils
 					escapeCharacterList.Add(new TextEditorTextSpan(
 			            stringWalker.PositionIndex,
 			            stringWalker.PositionIndex + 2,
-			            (byte)GenericDecorationKind.EscapeCharacter,
+			            (byte)GenericDecorationKind.EscapeCharacterPrimary,
 			            stringWalker.ResourceUri,
 			            stringWalker.SourceText));
 				}
@@ -127,7 +127,7 @@ public static class LexerUtils
 					escapeCharacterList.Add(new TextEditorTextSpan(
 			            stringWalker.PositionIndex,
 			            stringWalker.PositionIndex + 2,
-			            (byte)GenericDecorationKind.EscapeCharacter,
+			            (byte)GenericDecorationKind.EscapeCharacterPrimary,
 			            stringWalker.ResourceUri,
 			            stringWalker.SourceText));
 				}
