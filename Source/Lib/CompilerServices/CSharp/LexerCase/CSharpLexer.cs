@@ -20,6 +20,8 @@ public class CSharpLexer : Lexer
             new LexerKeywords(CSharpKeywords.NON_CONTEXTUAL_KEYWORDS, CSharpKeywords.CONTROL_KEYWORDS, CSharpKeywords.CONTEXTUAL_KEYWORDS))
     {
     }
+    
+    private byte _decorationByteLastEscapeCharacter = (byte)GenericDecorationKind.None;
 
     public ImmutableArray<TextEditorTextSpan> EscapeCharacterList => _escapeCharacterList.ToImmutableArray();
 
@@ -517,7 +519,8 @@ public class CSharpLexer : Lexer
     	{
     		var lastEntry = _escapeCharacterList[^1];
     		
-    		if (lastEntry.EndingIndexExclusive == textSpan.StartingIndexInclusive)
+    		if (lastEntry.EndingIndexExclusive == textSpan.StartingIndexInclusive &&
+    			_decorationByteLastEscapeCharacter == (byte)GenericDecorationKind.EscapeCharacterPrimary)
     		{
     			textSpan = textSpan with
     			{
@@ -526,6 +529,7 @@ public class CSharpLexer : Lexer
     		}
     	}
     	
+    	_decorationByteLastEscapeCharacter = textSpan.DecorationByte;
     	_escapeCharacterList.Add(textSpan);
     }
 }

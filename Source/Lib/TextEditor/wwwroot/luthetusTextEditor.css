@@ -711,7 +711,7 @@
     --luth_te_variable-foreground-color: rgb(170, 150, 215);
     --luth_te_string-literal-foreground-color: rgb(190, 190, 60);
     --luth_te_string-literal-escape-character-foreground-color: rgb(86, 156, 255);
-    --luth_te_string-literal-escape-character-secondary-foreground-color: var(--luth_te_associated-key-color);
+    --luth_te_string-literal-escape-character-secondary-foreground-color: rgb(230, 110, 160);
     --luth_te_keyword-foreground-color: rgb(215, 150, 70);
     --luth_te_keyword-control-foreground-color: rgb(215, 100, 100);
     --luth_te_comment-foreground-color: rgb(142, 142, 142);
