@@ -428,9 +428,11 @@ public class CSharpLexer : Lexer
 								// 'LexInterpolatedExpression' is expected to consume one more after it is finished.
 								// Thus, if this while loop were to consume, it would skip the
 								// closing double quotes if the expression were the last thing in the string.
+								//
+								// So, a backtrack is done.
 								LexInterpolatedExpression(stringWalker, syntaxTokenList, countDollarSign);
 								entryPositionIndex = stringWalker.PositionIndex;
-								break;
+								stringWalker.BacktrackCharacter();
 		    				}
 		    			}
 		    		}
@@ -480,7 +482,14 @@ public class CSharpLexer : Lexer
     {
     	var entryPositionIndex = stringWalker.PositionIndex;
 		
-        _ = stringWalker.ReadCharacter(); // Move past the '{' (open brace character)
+		if (stringWalker.CurrentCharacter == '{')
+		{
+			// The normal interpolation will invoke this method with '{' as the current character.
+			//
+			// But, raw interpolation will invoke this method 1 index further than the final '{' that
+			// deliminates the start of the interpolated expression.
+        	_ = stringWalker.ReadCharacter();
+        }
         
     	var unmatchedBraceCounter = countDollarSign;
 		
