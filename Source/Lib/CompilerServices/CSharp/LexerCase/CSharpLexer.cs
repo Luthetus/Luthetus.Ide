@@ -103,7 +103,17 @@ public class CSharpLexer : Lexer
                     LexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
                     break;
                 case '"':
-                    LexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
+                	if (_stringWalker.PeekCharacter(1) == '"' && _stringWalker.PeekCharacter(2) == '"')
+                	{
+                		// At least 3 double quotes are required for a raw string.
+                		// The actual counting of how many quotes will be used as a deliminator
+                		// is done inside the method.
+                		LexStringRaw(_stringWalker, _syntaxTokenList);
+                	}
+                	else
+                	{
+                		LexerUtils.LexStringLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
+                	}
                     break;
                 case '/':
                     if (_stringWalker.PeekCharacter(1) == '/')
@@ -342,6 +352,53 @@ public class CSharpLexer : Lexer
 
             _ = stringWalker.ReadCharacter();
         }
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.StringLiteral,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        _syntaxTokenList.Add(new StringLiteralToken(textSpan));
+    }
+    
+    private void LexStringRaw(StringWalker stringWalker, List<ISyntaxToken> syntaxTokenList)
+    {
+    	var entryPositionIndex = stringWalker.PositionIndex;
+    	
+    	int countDoubleQuotes = 0;
+    	
+    	// Count the amount of double quotes to be used as the delimiter.
+		while (!stringWalker.IsEof)
+		{
+			if (stringWalker.CurrentCharacter != '\"')
+				break;
+
+			++countDoubleQuotes;
+			_ = stringWalker.ReadCharacter();
+		}
+
+        while (!stringWalker.IsEof)
+        {
+			if (stringWalker.CurrentCharacter == '\"')
+			{
+				var matchDoubleQuotes = countDoubleQuotes;
+				while (!stringWalker.IsEof)
+	    		{
+	    			if (stringWalker.CurrentCharacter != '\"')
+	    				break;
+	    			
+	    			_ = stringWalker.ReadCharacter();
+	    			if (--matchDoubleQuotes == 0)
+	    				goto foundEndDelimiter;
+	    		}
+			}
+
+            _ = stringWalker.ReadCharacter();
+        }
+        
+        foundEndDelimiter:
 
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,

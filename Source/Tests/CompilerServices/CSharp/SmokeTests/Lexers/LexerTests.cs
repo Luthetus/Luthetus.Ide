@@ -83,7 +83,10 @@ $""a {{ a {3 + 3}"";
     [Fact]
     public void VerbatimString()
     {
-        var test = new Test("var x = \"\n\"");
+        var test = new Test(
+@"
+var y = @""\n""""\t"";
+".ReplaceLineEndings("\n");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		throw new NotImplementedException();
     }
