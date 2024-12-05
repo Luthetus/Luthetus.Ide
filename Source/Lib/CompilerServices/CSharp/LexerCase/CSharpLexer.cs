@@ -22,8 +22,32 @@ public class CSharpLexer : Lexer
     }
     
     private byte _decorationByteLastEscapeCharacter = (byte)GenericDecorationKind.None;
+    
+    /// <summary>This is the active brace pair.</summary>
+	private int _bracePairIndex = -1;
 
     public ImmutableArray<TextEditorTextSpan> EscapeCharacterList => _escapeCharacterList.ToImmutableArray();
+    
+    /// <summary>
+    /// If the '_bracePairIndex' is -1, and the current token SyntaxKind is CloseBraceToken
+    /// then do not add modify the BracePairList.
+    ///
+    /// If the '_bracePairIndex' is -1 or it is a value tuple
+    /// (int OpenBraceTokenIndex, int CloseBraceTokenIndex) that does not equal (-1, -1)
+    /// then add a new entry to the list '.Add((TokenWalker.Index, -1))'
+    ///
+    /// If the last entry has a 'CloseBraceTokenIndex' of -1, and the current token SyntaxKind is CloseBraceToken
+    /// then set the 'CloseBraceTokenIndex' of the last entry to TokenWalker.Index.
+    ///
+    /// This list is a flat representation of the hierarchical "scope" that is formed
+    /// by the brace pairs at times encompassing eachother.
+    ///
+    /// It is sorted by each entry's 'OpenBraceTokenIndex'.
+    ///
+    /// In order to maintain the hierarchical structure while building this list,
+    /// maintain state that contains the 'ParentBracePairIndex', 'FirstChildBracePairIndex', 'LastChildBracePairIndex'.
+    /// </summary>
+    public List<BracePairMetadata> BracePairList { get; set; } = new();
 
     public override void Lex()
     {
@@ -164,10 +188,10 @@ public class CSharpLexer : Lexer
                     LexerUtils.LexCloseParenthesisToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '{':
-                    LexerUtils.LexOpenBraceToken(_stringWalker, _syntaxTokenList);
+                    LexOpenBraceToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '}':
-                    LexerUtils.LexCloseBraceToken(_stringWalker, _syntaxTokenList);
+                    LexCloseBraceToken(_stringWalker, _syntaxTokenList);
                     break;
                 case '<':
                     LexerUtils.LexOpenAngleBracketToken(_stringWalker, _syntaxTokenList);
@@ -531,5 +555,64 @@ public class CSharpLexer : Lexer
     	
     	_decorationByteLastEscapeCharacter = textSpan.DecorationByte;
     	_escapeCharacterList.Add(textSpan);
+    }
+    
+    public static void LexOpenBraceToken(StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+    {
+        var entryPositionIndex = stringWalker.PositionIndex;
+
+        stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        syntaxTokens.Add(new OpenBraceToken(textSpan));
+        
+        // Child
+        {
+	        var childBracePair = new BracePairMetadata();
+	    	childBracePair.OpenBraceTokenIndex = syntaxTokens.Count - 1;
+			childBracePair.CloseBraceTokenIndex = -1;
+			childBracePair.ParentBracePairIndex = _bracePairIndex;
+			childBracePair.FirstChildBracePairIndex = -1;
+			childBracePair.LastChildBracePairIndex = -1;
+			
+			BracePairList.Add(childBracePair);
+		}
+        
+        // Parent
+        if (_bracePairIndex != -1)
+        {
+        	var parentBracePair = BracePairList[_bracePairIndex];
+        	
+        	if (parentBracePair.FirstChildBracePairIndex == -1)
+	    		parentBracePair.FirstChildBracePairIndex = BracePairList.Count - 1;
+	    		
+	    	parentBracePair.LastChildBracePairIndex = BracePairList.Count - 1;
+	    	
+	    	BracePairList[_bracePairIndex] = parentBracePair;
+        }
+        
+        _bracePairIndex = BracePairList.Count - 1;
+    }
+
+    public static void LexCloseBraceToken(StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+    {
+        var entryPositionIndex = stringWalker.PositionIndex;
+
+        stringWalker.ReadCharacter();
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.None,
+            stringWalker.ResourceUri,
+            stringWalker.SourceText);
+
+        syntaxTokens.Add(new CloseBraceToken(textSpan));
     }
 }

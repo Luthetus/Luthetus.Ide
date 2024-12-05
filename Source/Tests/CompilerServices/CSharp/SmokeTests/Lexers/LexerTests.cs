@@ -1,7 +1,10 @@
+using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.CompilerServices.CSharp.LexerCase;
+using Luthetus.CompilerServices.CSharp.ParserCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Lexers;
 
@@ -32,12 +35,11 @@ public class LexerTests
 	/// Purpose: Expected to be a noticeable optimization to the Parser speed.
 	///
 	/// Measurements:
-	/// - Before: 63.973 seconds | 65.777 seconds | 64.548 seconds
+	/// - Before: 63.973 seconds | 65.777 seconds | 64.548 seconds | after the changes on 2024-12-04 the result was 63.049 seconds (not to say the changes made things faster, but atleast one measurement should be taken to make sure things seem to align with the previous measurements).
 	/// - After: 
 	///
 	/// Conclusion: 
 	/// 
-	/// ==================
 	/// </summary>
 	///
 	/// <remarks>
@@ -45,15 +47,41 @@ public class LexerTests
 	///
 	/// Just by tracking the startingDateTime and the (endDateTime ?? currentDateTime),
 	/// then every render of the notification, the difference between them can be displayed.
+	///
+	/// ==================
+	///
+	/// - Should this be stored as a flat list?
+	/// - Should the memory that the "list" occupies be accessible after the Parser has completed?
+	/// 	- Or should it perhaps be set to null when the Parser has ran in order to motivate the garbage collector to free the resources.
+	///
+	/// It should be stored as a flat list, be sorted by IndexInclusiveStart and each entry a value tuple
+	/// that contains the IndexInclusiveStart and the IndexExclusiveEnd.
+	///
+	/// To search for an entry, if given an IndexInclusiveStart, then binary search
+	/// for the corresponding entry.
+	///
+	/// If a match fails to be found what should be done?
+	/// - Should it default to the current logic that iterates over the tokens and looks for the closing brace?
 	/// </remarks>
 	[Fact]
     public void TrackBraceTokenPairs()
     {
+    	// In CSharpLexer.cs 'public ImmutableArray<TextEditorTextSpan> EscapeCharacterList => _escapeCharacterList.ToImmutableArray();'
+    	// this is suspect for speeding up the parser. Why not just return the _escapeCharacterList directly?
+    
         var test = new Test(
 @"
-TODO
+{}
 ".ReplaceLineEndings("\n"));
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+
+		var bracePair = test.Lexer.BracePairList.Single();
+		
+		Assert.Equal(1, bracePair.OpenBraceTokenIndex);
+		Assert.Equal(2, bracePair.CloseBraceTokenIndex);
+		Assert.Equal(-1, bracePair.ParentBracePairIndex);
+		Assert.Equal(-1, bracePair.FirstChildBracePairIndex);
+		Assert.Equal(-1, bracePair.LastChildBracePairIndex);
+		
 		throw new NotImplementedException();
     }
     
@@ -86,7 +114,7 @@ $""a {{ a {3 + 3}"";
         var test = new Test(
 @"
 var y = @""\n""""\t"";
-".ReplaceLineEndings("\n");
+".ReplaceLineEndings("\n"));
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		throw new NotImplementedException();
     }
