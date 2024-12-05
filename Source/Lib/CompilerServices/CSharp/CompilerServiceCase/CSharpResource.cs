@@ -11,7 +11,7 @@ public class CSharpResource : CompilerServiceResource
     {
     }
 
-	public ImmutableArray<TextEditorTextSpan> EscapeCharacterList { get; internal set; }
+	public List<TextEditorTextSpan> EscapeCharacterList { get; internal set; }
 
 	public override ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
     {

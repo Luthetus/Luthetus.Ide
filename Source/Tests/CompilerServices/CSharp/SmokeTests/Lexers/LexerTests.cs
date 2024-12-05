@@ -35,7 +35,10 @@ public class LexerTests
 	/// Purpose: Expected to be a noticeable optimization to the Parser speed.
 	///
 	/// Measurements:
-	/// - Before: 63.973 seconds | 65.777 seconds | 64.548 seconds | after the changes on 2024-12-04 the result was 63.049 seconds (not to say the changes made things faster, but atleast one measurement should be taken to make sure things seem to align with the previous measurements).
+	/// - Before:
+	/// 	63.973 seconds | 65.777 seconds | 64.548 seconds |
+	/// 	after the changes on 2024-12-04 the result was 63.049 seconds (not to say the changes made things faster, but atleast one measurement should be taken to make sure things seem to align with the previous measurements) |
+	///     after adding the code that tracks the BracePairMetadata the result was 61.230 seconds. Some static methods from LexerUtils were copied as members of the CSharpLexer.cs itself. But the seemingly faster speed by 2 seconds might just be coincidence
 	/// - After: 
 	///
 	/// Conclusion: 
@@ -86,9 +89,6 @@ public class LexerTests
     [Fact]
     public void TrackBraceTokenPairs_Hierarchical()
     {
-    	// In CSharpLexer.cs 'public ImmutableArray<TextEditorTextSpan> EscapeCharacterList => _escapeCharacterList.ToImmutableArray();'
-    	// this is suspect for speeding up the parser. Why not just return the _escapeCharacterList directly?
-    
         var test = new Test(
 @"
 {{}}
