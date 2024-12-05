@@ -614,5 +614,13 @@ public class CSharpLexer : Lexer
             stringWalker.SourceText);
 
         syntaxTokens.Add(new CloseBraceToken(textSpan));
+        
+        if (_bracePairIndex == -1)
+        	return;
+        
+    	var bracePair = BracePairList[_bracePairIndex];
+    	bracePair.CloseBraceTokenIndex = syntaxTokens.Count - 1;
+    	BracePairList[_bracePairIndex] = bracePair;
+    	_bracePairIndex = bracePair.ParentBracePairIndex;
     }
 }
