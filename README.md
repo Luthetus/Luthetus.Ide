@@ -2,8 +2,8 @@
 ![Example GIF](./Images/Ide/Gifs/9.5.1BetterGif.gif)
 Gif length is 1 minute 35 seconds
 
-![Example GIF](./Images/Ide/memory0_9_7_2_AfterGarbageCollection.png)
-Memory usage after parsing the entirety of Luthetus.Ide.sln with its own - from scratch - C# parser (v0.9.7.2)
+![Example GIF](./Images/Ide/memoryToday.png)
+Memory usage parsing the entirety of Luthetus.Ide.sln with its own - from scratch - C# parser (v0.9.7.4)
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/

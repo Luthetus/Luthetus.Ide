@@ -46,45 +46,39 @@ public partial class CSharpBinder : IBinder
         // _boundScopes.Add(_globalScope.ResourceUri, new List<IScope> { _globalScope });
     }
 
-    public ImmutableDictionary<string, NamespaceGroupNode> NamespaceGroupNodes => _namespaceGroupNodeMap.ToImmutableDictionary();
-    public ImmutableArray<ISymbol> Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToImmutableArray();
+    public IReadOnlyDictionary<string, NamespaceGroupNode> NamespaceGroupNodes => _namespaceGroupNodeMap;
+    public ITextEditorSymbol[] Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
-    public ImmutableDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions.ToImmutableDictionary();
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => ImmutableArray<TextEditorDiagnostic>.Empty;
+    public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
+    public TextEditorDiagnostic[] DiagnosticsList => Array.Empty<TextEditorDiagnostic>();
 
-    ImmutableArray<ITextEditorSymbol> IBinder.SymbolsList => Symbols
-        .Select(s => (ITextEditorSymbol)s)
-        .ToImmutableArray();
+    ITextEditorSymbol[] IBinder.SymbolsList => Symbols;
 
 	/// <summary><see cref="FinalizeBinderSession"/></summary>
     public IBinderSession StartBinderSession(ResourceUri resourceUri)
     {
     	foreach (var namespaceGroupNodeKvp in _namespaceGroupNodeMap)
         {
-            var keepStatements = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList
-                .Where(x => x.IdentifierToken.TextSpan.ResourceUri != resourceUri)
-                .ToImmutableArray();
-
-            _namespaceGroupNodeMap[namespaceGroupNodeKvp.Key] =
-                new NamespaceGroupNode(
-                    namespaceGroupNodeKvp.Value.NamespaceString,
-                    keepStatements);
+        	for (int i = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.Count - 1; i >= 0; i--)
+        	{
+        		var x = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList[i];
+        		
+        		if (x.IdentifierToken.TextSpan.ResourceUri == resourceUri)
+        			namespaceGroupNodeKvp.Value.NamespaceStatementNodeList.RemoveAt(i);
+        	}
         }
 
         foreach (var symbolDefinition in _symbolDefinitions)
         {
-            var keep = symbolDefinition.Value.SymbolReferences
-                .Where(x => x.Symbol.TextSpan.ResourceUri != resourceUri)
-                .ToList();
-
-            _symbolDefinitions[symbolDefinition.Key] =
-                symbolDefinition.Value with
-                {
-                    SymbolReferences = keep
-                };
+            for (int i = symbolDefinition.Value.SymbolReferences.Count - 1; i >= 0; i--)
+        	{
+        		var x = symbolDefinition.Value.SymbolReferences[i];
+        		
+        		if (x.Symbol.TextSpan.ResourceUri == resourceUri)
+        			symbolDefinition.Value.SymbolReferences.RemoveAt(i);
+        	}
         }
     	
-    	// TODO: Why '_globalScope.IndexKey'? Shouldn't this just be 0, its starting the counter fresh?
         var cSharpBinderSession = new CSharpBinderSession(
             resourceUri,
             this,
@@ -330,9 +324,8 @@ public partial class CSharpBinder : IBinder
 
         if (_namespaceGroupNodeMap.TryGetValue(namespaceString, out var inNamespaceGroupNode))
         {
-            var outNamespaceStatementNodeList = inNamespaceGroupNode.NamespaceStatementNodeList
-                .Add(namespaceStatementNode)
-                .ToImmutableArray();
+        	var outNamespaceStatementNodeList = new List<NamespaceStatementNode>(inNamespaceGroupNode.NamespaceStatementNodeList);
+            outNamespaceStatementNodeList.Add(namespaceStatementNode);
 
             var outNamespaceGroupNode = new NamespaceGroupNode(
                 inNamespaceGroupNode.NamespaceString,
@@ -344,7 +337,7 @@ public partial class CSharpBinder : IBinder
         {
             _namespaceGroupNodeMap.Add(namespaceString, new NamespaceGroupNode(
                 namespaceString,
-                new NamespaceStatementNode[] { namespaceStatementNode }.ToImmutableArray()));
+                new List<NamespaceStatementNode> { namespaceStatementNode }));
         }
     }
 
@@ -872,7 +865,7 @@ public partial class CSharpBinder : IBinder
         {
             var keepStatements = namespaceGroupNodeKvp.Value.NamespaceStatementNodeList
                 .Where(x => x.IdentifierToken.TextSpan.ResourceUri != resourceUri)
-                .ToImmutableArray();
+                .ToList();
 
             _namespaceGroupNodeMap[namespaceGroupNodeKvp.Key] =
                 new NamespaceGroupNode(

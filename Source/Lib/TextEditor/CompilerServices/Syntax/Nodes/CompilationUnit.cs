@@ -18,7 +18,7 @@ public sealed class CompilationUnit : ISyntaxNode
         IParser? parser,
         IBinder? binder)
     {
-        RootCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(ImmutableArray<ISyntax>.Empty);
+        RootCodeBlockNode = rootCodeBlockNode ?? new CodeBlockNode(Array.Empty<ISyntax>());
         Lexer = lexer ?? new Lexer(ResourceUri.Empty, null, null);
         Parser = parser ?? new Parser(Lexer);
         Binder = binder ?? new Binder();

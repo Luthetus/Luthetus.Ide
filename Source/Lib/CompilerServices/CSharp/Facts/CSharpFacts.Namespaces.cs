@@ -21,13 +21,13 @@ public partial class CSharpFacts
                 {
                     SystemNamespaceIdentifier,
                     new NamespaceGroupNode(SystemNamespaceIdentifier,
-                        new NamespaceStatementNode[] 
+                        new List<NamespaceStatementNode>
                         {
                             new NamespaceStatementNode(
                                 new(new(0, 0, 0, ResourceUri.Empty, string.Empty), SyntaxKind.UnrecognizedTokenKeyword),
                                 new(new(0, SystemNamespaceIdentifier.Length, 0, ResourceUri.Empty, SystemNamespaceIdentifier)),
-                                new CodeBlockNode(ImmutableArray<ISyntax>.Empty))
-                        }.ToImmutableArray())
+                                new CodeBlockNode(Array.Empty<ISyntax>()))
+                        })
                 }
             };
         }
@@ -37,7 +37,7 @@ public partial class CSharpFacts
             return new NamespaceStatementNode(
                 new(new(0, 0, 0, ResourceUri.Empty, string.Empty), SyntaxKind.UnrecognizedTokenKeyword),
                 new(new(0, TopLevelNamespaceIdentifier.Length, 0, ResourceUri.Empty, TopLevelNamespaceIdentifier)),
-                new CodeBlockNode(ImmutableArray<ISyntax>.Empty));
+                new CodeBlockNode(Array.Empty<ISyntax>()));
         }
     }
 }

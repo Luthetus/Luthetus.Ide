@@ -344,7 +344,7 @@ Execution Terminal"));
 				TimeSpan.FromMilliseconds(-1));
 				
 			// var progressThrottle = new Throttle(TimeSpan.FromMilliseconds(100));
-			var progressThrottle = new ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)>(TimeSpan.FromMilliseconds(200), (tuple, _) =>
+			var progressThrottle = new ThrottleOptimized<(ParseSolutionStageKind StageKind, double? Progress, string? MessageOne, string? MessageTwo)>(TimeSpan.FromMilliseconds(300), (tuple, _) =>
 			{
 				switch (tuple.StageKind)
 				{

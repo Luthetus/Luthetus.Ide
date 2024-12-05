@@ -23,7 +23,11 @@
     		fillWidthInPercentage -= cancelButtonWidthInPercentage;
     }
     
-    <div style="display: flex;">
+    <div class="luth_progress-bar-time-elapsed">
+		@($"{localProgressBarModel.GetTimeElapsed().TotalSeconds:N3}") seconds
+	</div>
+    
+    <div class="luth_progress-bar" style="display: flex;">
     	<div class="luth_progress-bar-fill"
 	         style="position: relative; height: 2em; width: @(fillWidthInPercentage)%;">
 	
@@ -65,7 +69,6 @@
 			</div>
 		}
     </div>
-	
 
 	@if (!string.IsNullOrWhiteSpace(localProgressBarModel.Message))
 	{

@@ -149,7 +149,7 @@ public class SolutionVisualizationModel
 	}
 
 	private void DrawProjects(
-		ImmutableArray<ICompilerServiceResource> cSharpProjectResourceList,
+		IReadOnlyList<ICompilerServiceResource> cSharpProjectResourceList,
 		SolutionVisualizationModel localSolutionVisualizationModel,
 		int radius,
 		int centerX,
@@ -164,7 +164,7 @@ public class SolutionVisualizationModel
 
 		localSolutionVisualizationModel.SolutionVisualizationDrawingRenderCycleList.Add(new List<ISolutionVisualizationDrawing>());
 
-		for (int i = 0; i < cSharpProjectResourceList.Length; i++)
+		for (int i = 0; i < cSharpProjectResourceList.Count; i++)
 		{
 			var cSharpProjectResource = cSharpProjectResourceList[i];
 
@@ -206,7 +206,7 @@ public class SolutionVisualizationModel
 	}
 
 	private void DrawClasses(
-		ImmutableArray<ICompilerServiceResource> cSharpResourceList,
+		IReadOnlyList<ICompilerServiceResource> cSharpResourceList,
 		SolutionVisualizationModel localSolutionVisualizationModel,
 		int radius,
 		int centerX,
