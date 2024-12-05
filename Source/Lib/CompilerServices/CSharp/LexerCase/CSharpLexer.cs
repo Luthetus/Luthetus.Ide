@@ -557,7 +557,7 @@ public class CSharpLexer : Lexer
     	_escapeCharacterList.Add(textSpan);
     }
     
-    public static void LexOpenBraceToken(StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+    public void LexOpenBraceToken(StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 
@@ -600,7 +600,7 @@ public class CSharpLexer : Lexer
         _bracePairIndex = BracePairList.Count - 1;
     }
 
-    public static void LexCloseBraceToken(StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
+    public void LexCloseBraceToken(StringWalker stringWalker, List<ISyntaxToken> syntaxTokens)
     {
         var entryPositionIndex = stringWalker.PositionIndex;
 

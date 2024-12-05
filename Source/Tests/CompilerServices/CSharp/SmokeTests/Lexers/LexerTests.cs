@@ -76,13 +76,11 @@ public class LexerTests
 
 		var bracePair = test.Lexer.BracePairList.Single();
 		
-		Assert.Equal(1, bracePair.OpenBraceTokenIndex);
-		Assert.Equal(2, bracePair.CloseBraceTokenIndex);
+		Assert.Equal(0, bracePair.OpenBraceTokenIndex);
+		Assert.Equal(1, bracePair.CloseBraceTokenIndex);
 		Assert.Equal(-1, bracePair.ParentBracePairIndex);
 		Assert.Equal(-1, bracePair.FirstChildBracePairIndex);
 		Assert.Equal(-1, bracePair.LastChildBracePairIndex);
-		
-		throw new NotImplementedException();
     }
     
     /// <summary>
