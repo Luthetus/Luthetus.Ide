@@ -64,7 +64,7 @@ public class LexerTests
 	/// - Should it default to the current logic that iterates over the tokens and looks for the closing brace?
 	/// </remarks>
 	[Fact]
-    public void TrackBraceTokenPairs()
+    public void TrackBraceTokenPairs_Simple()
     {
     	// In CSharpLexer.cs 'public ImmutableArray<TextEditorTextSpan> EscapeCharacterList => _escapeCharacterList.ToImmutableArray();'
     	// this is suspect for speeding up the parser. Why not just return the _escapeCharacterList directly?
@@ -81,6 +81,36 @@ public class LexerTests
 		Assert.Equal(-1, bracePair.ParentBracePairIndex);
 		Assert.Equal(-1, bracePair.FirstChildBracePairIndex);
 		Assert.Equal(-1, bracePair.LastChildBracePairIndex);
+    }
+    
+    [Fact]
+    public void TrackBraceTokenPairs_Hierarchical()
+    {
+    	// In CSharpLexer.cs 'public ImmutableArray<TextEditorTextSpan> EscapeCharacterList => _escapeCharacterList.ToImmutableArray();'
+    	// this is suspect for speeding up the parser. Why not just return the _escapeCharacterList directly?
+    
+        var test = new Test(
+@"
+{{}}
+".ReplaceLineEndings("\n"));
+
+		{
+			var bracePair = test.Lexer.BracePairList[0];
+			Assert.Equal(0, bracePair.OpenBraceTokenIndex);
+			Assert.Equal(3, bracePair.CloseBraceTokenIndex);
+			Assert.Equal(-1, bracePair.ParentBracePairIndex);
+			Assert.Equal(1, bracePair.FirstChildBracePairIndex);
+			Assert.Equal(1, bracePair.LastChildBracePairIndex);
+		}
+		
+		{
+			var bracePair = test.Lexer.BracePairList[1];
+			Assert.Equal(1, bracePair.OpenBraceTokenIndex);
+			Assert.Equal(2, bracePair.CloseBraceTokenIndex);
+			Assert.Equal(0, bracePair.ParentBracePairIndex);
+			Assert.Equal(-1, bracePair.FirstChildBracePairIndex);
+			Assert.Equal(-1, bracePair.LastChildBracePairIndex);
+		}
     }
     
     /// <summary>
