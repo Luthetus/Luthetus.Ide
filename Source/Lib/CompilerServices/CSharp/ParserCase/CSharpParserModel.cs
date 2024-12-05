@@ -53,6 +53,8 @@ public class CSharpParserModel : IParserModel
     public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
     
+    public int LastUsedIndexBracePair { get; set; }
+    
     IBinder IParserModel.Binder => Binder;
     IBinderSession IParserModel.BinderSession => BinderSession;
 }

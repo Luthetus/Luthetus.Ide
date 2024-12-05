@@ -2,6 +2,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.CompilerServices.CSharp.LexerCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -21,28 +22,44 @@ internal static class TokenWalkerExtensionMethods
 		var pendingCodeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 		var openTokenIndex = tokenWalker.Index - 1;
 		
-		var bracePair = model.Lexer?.GetBracePairByOpenBraceTokenIndex(openTokenIndex);
+		var indexBracePair = model.Lexer?.GetIndexBracePairByOpenBraceTokenIndex(openTokenIndex, 0);
+		
+		// Console.WriteLine(indexBracePair?.ToString() ?? "null");
+		
+		BracePairMetadata? bracePair;
+		
+		if (indexBracePair is null)
+			bracePair = null;
+		else
+			bracePair = model.Lexer.BracePairList[indexBracePair.Value];
+		
 		var closeBraceTokenIndex = bracePair?.CloseBraceTokenIndex ?? -1;
 		
-		#if DEBUG
-		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
-		#endif
-		
 		if (closeBraceTokenIndex == -1)
+		{
+			#if DEBUG
+			model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+			#endif
+		
+			Console.WriteLine("FallbackFindCloseBraceToken(tokenWalker);");
 			FallbackFindCloseBraceToken(tokenWalker);
+			
+			closeBraceTokenIndex = tokenWalker.Index;
+			_ = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
+			
+			#if DEBUG
+			model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+			#endif
+		}
 		else
-			tokenWalker.GotoIndex(closeBraceTokenIndex);
+		{
+			model.LastUsedIndexBracePair = indexBracePair.Value;
+			tokenWalker.GotoIndex(closeBraceTokenIndex + 1);
+		}
 		
-		var closeTokenIndex = tokenWalker.Index;
-		var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
-		
-		#if DEBUG
-		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-		#endif
-
 		model.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new DeferredChildScope(
 			openTokenIndex,
-			closeTokenIndex,
+			closeBraceTokenIndex,
 			pendingCodeBlockOwner));
     }
     

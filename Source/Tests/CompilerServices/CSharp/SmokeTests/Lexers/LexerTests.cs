@@ -41,8 +41,22 @@ public class LexerTests
 	///     after adding the code that tracks the BracePairMetadata the result was 61.230 seconds. Some static methods from LexerUtils were copied as members of the CSharpLexer.cs itself. But the seemingly faster speed by 2 seconds might just be coincidence
 	/// - After: 
 	/// 	63.619 seconds I need to look at this more tomorrow after I get some sleep.
+	///     61.067 seconds I didn't go to sleep yet but this one was with slightly more changes.
+	///     	all things considered though, why didn't I prove this to be an issue before changing the code?
+	/// 		It might just not be an issue, and that all the time is being spent somewhere else.
+	/// 	66.013 seconds... I haven't done anything with these changes.
+	/// 		It seems like if I ran it over and over in bulk and took the average that they'd be the same.
 	/// Conclusion: 
-	/// 
+	/// 	If there is an expected optimization then take time to
+	/// 	prove that it truly is an issue instead of wasting time going down rabbit holes.
+	/// 	
+	/// 	Maybe this is an optimization for extreme edge cases where there are
+	/// 	hundreds of thousands of nodes that would get skipped over with these changes.
+	///
+	/// 	But at the least it isn't my current issue.
+	///
+	/// 	Mainly I think this is an odd idea because it requires allocating a List
+	/// 	to track all the BracePairMetadata and then adding it to the list and other such overhead.
 	/// </summary>
 	///
 	/// <remarks>

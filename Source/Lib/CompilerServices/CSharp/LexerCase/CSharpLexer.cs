@@ -622,12 +622,19 @@ public class CSharpLexer : Lexer
     	_bracePairIndex = bracePair.ParentBracePairIndex;
     }
     
-    public BracePairMetadata? GetBracePairByOpenBraceTokenIndex(int openBraceTokenIndex)
+    /// <summary>
+    /// If parsing a file from start to finish it might be the case that
+    /// the index for the last seen BracePairMetadata can be used as
+    /// the initialIndex so that the first entries are not redundantly checked
+    /// as one goes further into a file since the BracePairMetadata are sorted by
+    /// OpenBraceToken's IndexInclusiveStart within the text.
+    /// </summary>
+    public int? GetIndexBracePairByOpenBraceTokenIndex(int openBraceTokenIndex, int initialIndex)
     {
-    	foreach (var bracePair in BracePairList)
+    	for (int i = initialIndex; i < BracePairList.Count; i++)
     	{
-    		if (bracePair.OpenBraceTokenIndex == openBraceTokenIndex)
-	    		return bracePair;
+    		if (BracePairList[i].OpenBraceTokenIndex == openBraceTokenIndex)
+	    		return i;
     	}
     	
     	return null;
