@@ -16,7 +16,7 @@ public class Parser : IParser
         BinderSession = Binder.StartBinderSession(lexer.ResourceUri);
     }
 
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; private set; } = ImmutableArray<TextEditorDiagnostic>.Empty;
+    public TextEditorDiagnostic[] DiagnosticsList { get; private set; } = Array.Empty<TextEditorDiagnostic>();
     public IBinder Binder { get; private set; }
     public IBinderSession BinderSession { get; private set; }
     public ILexer Lexer { get; }
@@ -47,13 +47,13 @@ public class Parser : IParser
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);
 		
-        DiagnosticsList = DiagnosticsList.AddRange(model.DiagnosticBag.ToImmutableArray());
+        DiagnosticsList = model.DiagnosticBag.ToArray();
 
         var topLevelStatementsCodeBlock = model.CurrentCodeBlockBuilder.Build(
             DiagnosticsList
                 .Union(Binder.DiagnosticsList)
                 .Union(Lexer.DiagnosticList)
-                .ToImmutableArray());
+                .ToArray());
 
         return new CompilationUnit(
             topLevelStatementsCodeBlock,

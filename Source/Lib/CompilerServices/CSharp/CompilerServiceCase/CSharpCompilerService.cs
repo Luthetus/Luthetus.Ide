@@ -58,12 +58,12 @@ public sealed class CSharpCompilerService : CompilerService
     	DiagnosticRendererType = diagnosticRendererType;
     }
 
-    public override ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
+    public override List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
         var boundScope = CSharpBinder.GetScope(null, textSpan);
 
         if (boundScope is null)
-            return ImmutableArray<AutocompleteEntry>.Empty;
+            return base._emptyAutocompleteEntryList;
 
         var autocompleteEntryList = new List<AutocompleteEntry>();
 
@@ -191,7 +191,7 @@ public sealed class CSharpCompilerService : CompilerService
             
         AddSnippets(autocompleteEntryList, word, textSpan);
 
-        return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToImmutableArray();
+        return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
     }
     
     private void AddSnippets(List<AutocompleteEntry> autocompleteEntryList, string word, TextEditorTextSpan textSpan)

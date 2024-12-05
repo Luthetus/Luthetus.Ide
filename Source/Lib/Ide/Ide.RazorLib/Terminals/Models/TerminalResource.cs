@@ -22,27 +22,27 @@ public class TerminalResource : CompilerServiceResource
     public readonly object UnsafeStateLock = new();
 
     public TerminalResource(
-    	ResourceUri resourceUri,
-    	TerminalCompilerService terminalCompilerService)
+	    	ResourceUri resourceUri,
+	    	TerminalCompilerService terminalCompilerService)
         : base(resourceUri, terminalCompilerService)
     {
     }
 
-    public override ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
+    public override IReadOnlyList<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
     public List<TextEditorTextSpan> ManualDecorationTextSpanList { get; } = new List<TextEditorTextSpan>();
     public List<ITextEditorSymbol> ManualSymbolList { get; } = new List<ITextEditorSymbol>();
 
-    public override ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
+    public override IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans()
     {
         var tokenTextSpanList = new List<TextEditorTextSpan>();
         tokenTextSpanList.AddRange(ManualDecorationTextSpanList);
         tokenTextSpanList.AddRange(SyntaxTokenList.Select(st => st.TextSpan));
 
-        return tokenTextSpanList.ToImmutableArray();
+        return tokenTextSpanList;
     }
 
-    public override ImmutableArray<ITextEditorSymbol> GetSymbols()
+    public override IReadOnlyList<ITextEditorSymbol> GetSymbols()
     {
-        return ManualSymbolList.ToImmutableArray();
+        return ManualSymbolList;
     }
 }

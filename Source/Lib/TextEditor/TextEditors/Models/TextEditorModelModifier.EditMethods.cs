@@ -108,7 +108,7 @@ public partial class TextEditorModelModifier : ITextEditorModel
     public void CompletePendingCalculatePresentationModel(
         Key<TextEditorPresentationModel> presentationKey,
         TextEditorPresentationModel emptyPresentationModel,
-        ImmutableArray<TextEditorTextSpan> calculatedTextSpans)
+        IReadOnlyList<TextEditorTextSpan> calculatedTextSpans)
     {
         // Any modified state needs to be 'null coallesce assigned' to the existing TextEditorModel's value. When reading state, if the state had been 'null coallesce assigned' then the field will be read. Otherwise, the existing TextEditorModel's value will be read.
         {

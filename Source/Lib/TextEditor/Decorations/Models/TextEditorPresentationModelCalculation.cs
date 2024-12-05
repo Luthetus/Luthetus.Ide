@@ -10,5 +10,5 @@ namespace Luthetus.TextEditor.RazorLib.Decorations.Models;
 public record TextEditorPresentationModelCalculation(string ContentAtRequest)
 {
     public List<TextEditorTextModification> TextModificationsSinceRequestList { get; set; } = new();
-    public ImmutableArray<TextEditorTextSpan> TextSpanList { get; set; } = ImmutableArray<TextEditorTextSpan>.Empty;
+    public IReadOnlyList<TextEditorTextSpan> TextSpanList { get; set; } = Array.Empty<TextEditorTextSpan>();
 }

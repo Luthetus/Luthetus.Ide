@@ -8,7 +8,8 @@ public enum GenericDecorationKind
     CommentSingleLine,
     CommentMultiLine,
     Error,
-	EscapeCharacter,
+	EscapeCharacterPrimary, // Two consecutive escape characters can be visually distinct by alternating this and 'EscapeCharacterSecondary'
+	EscapeCharacterSecondary, // Two consecutive escape characters can be visually distinct by alternating this and 'EscapeCharacterPrimary'
     StringLiteral,
     Variable,
     Function,

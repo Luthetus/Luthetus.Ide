@@ -12,6 +12,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
 public class CompilerService : ICompilerService
 {
+	protected readonly List<AutocompleteEntry> _emptyAutocompleteEntryList = new();
     protected readonly Dictionary<ResourceUri, ICompilerServiceResource> _resourceMap = new();
     protected readonly object _resourceMapLock = new();
     protected readonly ITextEditorService _textEditorService;
@@ -42,8 +43,7 @@ public class CompilerService : ICompilerService
     public virtual Type? SymbolRendererType { get; protected set; }
     public virtual Type? DiagnosticRendererType { get; protected set; }
 
-    public virtual ImmutableArray<ICompilerServiceResource> CompilerServiceResources =>
-        _resourceMap.Values.ToImmutableArray();
+    public virtual IReadOnlyList<ICompilerServiceResource> CompilerServiceResources => _resourceMap.Values.ToArray();
 
     public virtual void RegisterResource(ResourceUri resourceUri, bool shouldTriggerResourceWasModified)
     {
@@ -60,7 +60,7 @@ public class CompilerService : ICompilerService
         }
 
 		if (shouldTriggerResourceWasModified)
-	        ResourceWasModified(resourceUri, ImmutableArray<TextEditorTextSpan>.Empty);
+	        ResourceWasModified(resourceUri, Array.Empty<TextEditorTextSpan>());
 	        
         ResourceRegistered?.Invoke();
     }
@@ -81,40 +81,40 @@ public class CompilerService : ICompilerService
         }
     }
 
-    public virtual ImmutableArray<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri)
+    public virtual IReadOnlyList<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri)
     {
         lock (_resourceMapLock)
         {
             if (!_resourceMap.ContainsKey(resourceUri))
-                return ImmutableArray<TextEditorTextSpan>.Empty;
+                return Array.Empty<TextEditorTextSpan>();
 
             return _resourceMap[resourceUri].GetTokenTextSpans();
         }
     }
 
-    public virtual ImmutableArray<ITextEditorSymbol> GetSymbolsFor(ResourceUri resourceUri)
+    public virtual IReadOnlyList<ITextEditorSymbol> GetSymbolsFor(ResourceUri resourceUri)
     {
         lock (_resourceMapLock)
         {
             if (!_resourceMap.ContainsKey(resourceUri))
-                return ImmutableArray<ITextEditorSymbol>.Empty;
+                return Array.Empty<ITextEditorSymbol>();
 
             return _resourceMap[resourceUri].GetSymbols();
         }
     }
 
-    public virtual ImmutableArray<TextEditorDiagnostic> GetDiagnosticsFor(ResourceUri resourceUri)
+    public virtual IReadOnlyList<TextEditorDiagnostic> GetDiagnosticsFor(ResourceUri resourceUri)
     {
         lock (_resourceMapLock)
         {
             if (!_resourceMap.ContainsKey(resourceUri))
-                return ImmutableArray<TextEditorDiagnostic>.Empty;
+                return Array.Empty<TextEditorDiagnostic>();
 
             return _resourceMap[resourceUri].GetDiagnostics();
         }
     }
 
-    public virtual void ResourceWasModified(ResourceUri resourceUri, ImmutableArray<TextEditorTextSpan> editTextSpansList)
+    public virtual void ResourceWasModified(ResourceUri resourceUri, IReadOnlyList<TextEditorTextSpan> editTextSpansList)
     {
         _textEditorService.PostUnique(
             nameof(CompilerService),
@@ -133,9 +133,9 @@ public class CompilerService : ICompilerService
     {
     }
 
-    public virtual ImmutableArray<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
+    public virtual List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
-        return ImmutableArray<AutocompleteEntry>.Empty;
+        return _emptyAutocompleteEntryList;
     }
     
     public virtual Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier)
@@ -216,7 +216,7 @@ public class CompilerService : ICompilerService
 
 			var diagnosticTextSpans = GetDiagnosticsFor(modelModifier.ResourceUri)
 				.Select(x => x.TextSpan)
-				.ToImmutableArray();
+				.ToArray();
 
 			modelModifier.CompletePendingCalculatePresentationModel(
 				CompilerServiceDiagnosticPresentationFacts.PresentationKey,

@@ -145,7 +145,7 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
                     var autocompleteEntryList = autocompleteWordsList
                         .Select(aw => new AutocompleteEntry(aw, AutocompleteEntryKind.Word, null))
-                        .ToArray();
+                        .ToList();
 
                     // (2023-08-09) Looking into using an ICompilerService for autocompletion.
                     {
@@ -165,9 +165,8 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
                         if (compilerServiceAutocompleteEntryList.Any())
                         {
-                            autocompleteEntryList = compilerServiceAutocompleteEntryList
-                                .AddRange(autocompleteEntryList)
-                                .ToArray();
+                            compilerServiceAutocompleteEntryList.AddRange(autocompleteEntryList);
+							autocompleteEntryList = compilerServiceAutocompleteEntryList;
                         }
                     }
 

@@ -56,11 +56,11 @@ public class CodeBlockBuilder
 
     public CodeBlockNode Build()
     {
-        return new CodeBlockNode(ChildList.ToImmutableArray());
+        return new CodeBlockNode(ChildList.ToArray());
     }
 
-    public CodeBlockNode Build(ImmutableArray<TextEditorDiagnostic> diagnostics)
+    public CodeBlockNode Build(TextEditorDiagnostic[] diagnostics)
     {
-        return new CodeBlockNode(ChildList.ToImmutableArray(), diagnostics);
+        return new CodeBlockNode(ChildList.ToArray(), diagnostics);
     }
 }

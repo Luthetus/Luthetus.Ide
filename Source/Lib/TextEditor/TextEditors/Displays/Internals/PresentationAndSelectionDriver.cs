@@ -31,7 +31,7 @@ public class PresentationAndSelectionDriver
 	}
     
     public List<TextEditorPresentationModel> GetTextEditorPresentationModels(
-    	ImmutableList<Key<TextEditorPresentationModel>> textEditorPresentationKeys)
+    	IReadOnlyList<Key<TextEditorPresentationModel>> textEditorPresentationKeys)
     {
     	var renderBatchLocal = _renderBatch;
     	if (renderBatchLocal is null)
@@ -158,13 +158,13 @@ public class PresentationAndSelectionDriver
         return presentationModel.DecorationMapper.Map(decorationByte);
     }
 
-    public ImmutableArray<TextEditorTextSpan> PresentationVirtualizeAndShiftTextSpans(
+    public IReadOnlyList<TextEditorTextSpan> PresentationVirtualizeAndShiftTextSpans(
         TextEditorTextModification[] textModifications,
-        ImmutableArray<TextEditorTextSpan> inTextSpanList)
+        IReadOnlyList<TextEditorTextSpan> inTextSpanList)
     {
     	var renderBatchLocal = _renderBatch;
     	if (renderBatchLocal is null)
-    		return ImmutableArray<TextEditorTextSpan>.Empty;
+    		return Array.Empty<TextEditorTextSpan>();
     	
         try
         {
@@ -190,7 +190,7 @@ public class PresentationAndSelectionDriver
             else
             {
                 // No 'VirtualizationResult', so don't render any text spans.
-                return ImmutableArray<TextEditorTextSpan>.Empty;
+                return Array.Empty<TextEditorTextSpan>();
             }
 
             var outTextSpansList = new List<TextEditorTextSpan>();
@@ -229,11 +229,11 @@ public class PresentationAndSelectionDriver
                 }
             }
 
-            return outTextSpansList.ToImmutableArray();
+            return outTextSpansList;
         }
         catch (LuthetusTextEditorException)
         {
-            return ImmutableArray<TextEditorTextSpan>.Empty;
+            return Array.Empty<TextEditorTextSpan>();
         }
     }
 

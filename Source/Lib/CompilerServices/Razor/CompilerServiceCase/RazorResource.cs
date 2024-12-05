@@ -24,12 +24,12 @@ public class RazorResource : CompilerServiceResource
     public RazorSyntaxTree? RazorSyntaxTree { get; internal set; }
     public List<ITextEditorSymbol> HtmlSymbols { get; } = new();
 
-    public override ImmutableArray<ITextEditorSymbol> GetSymbols()
+    public override IReadOnlyList<ITextEditorSymbol> GetSymbols()
     {
         var localRazorSyntaxTree = RazorSyntaxTree;
 
         if (localRazorSyntaxTree?.SemanticResultRazor is null)
-            return ImmutableArray<ITextEditorSymbol>.Empty;
+            return Array.Empty<ITextEditorSymbol>();
 
         var symbols = localRazorSyntaxTree
             .SemanticResultRazor
@@ -40,7 +40,7 @@ public class RazorResource : CompilerServiceResource
         var originalText = _textEditorService.ModelApi.GetAllText(ResourceUri);
 
         if (originalText is null)
-            return ImmutableArray<ITextEditorSymbol>.Empty;
+            return Array.Empty<ITextEditorSymbol>();
 
         List<ITextEditorSymbol> mappedSymbols = new();
 
@@ -146,6 +146,6 @@ public class RazorResource : CompilerServiceResource
             }
         }
 
-        return mappedSymbols.ToImmutableArray();
+        return mappedSymbols;
     }
 }
