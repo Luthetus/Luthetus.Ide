@@ -59,6 +59,7 @@ public static class RuntimeAssembliesLoaderFactory
             var diagnosticBag = new DiagnosticBag();
 
             var model = new CSharpParserModel(
+            	lexer: null,
                 cSharpBinder,
                 (CSharpBinderSession)cSharpBinder.StartBinderSession(new ResourceUri("aaa")),
                 new TokenWalker(ImmutableArray<ISyntaxToken>.Empty, new()),

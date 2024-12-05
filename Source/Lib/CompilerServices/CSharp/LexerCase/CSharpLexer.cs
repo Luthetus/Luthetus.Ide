@@ -621,4 +621,15 @@ public class CSharpLexer : Lexer
     	BracePairList[_bracePairIndex] = bracePair;
     	_bracePairIndex = bracePair.ParentBracePairIndex;
     }
+    
+    public BracePairMetadata? GetBracePairByOpenBraceTokenIndex(int openBraceTokenIndex)
+    {
+    	foreach (var bracePair in BracePairList)
+    	{
+    		if (bracePair.OpenBraceTokenIndex == openBraceTokenIndex)
+	    		return bracePair;
+    	}
+    	
+    	return null;
+    }
 }

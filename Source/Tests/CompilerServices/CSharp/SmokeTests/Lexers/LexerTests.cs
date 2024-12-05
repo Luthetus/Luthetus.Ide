@@ -40,7 +40,7 @@ public class LexerTests
 	/// 	after the changes on 2024-12-04 the result was 63.049 seconds (not to say the changes made things faster, but atleast one measurement should be taken to make sure things seem to align with the previous measurements) |
 	///     after adding the code that tracks the BracePairMetadata the result was 61.230 seconds. Some static methods from LexerUtils were copied as members of the CSharpLexer.cs itself. But the seemingly faster speed by 2 seconds might just be coincidence
 	/// - After: 
-	///
+	/// 	63.619 seconds I need to look at this more tomorrow after I get some sleep.
 	/// Conclusion: 
 	/// 
 	/// </summary>

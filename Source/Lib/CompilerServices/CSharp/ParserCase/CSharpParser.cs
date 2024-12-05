@@ -49,6 +49,7 @@ public class CSharpParser : IParser
         var diagnosticBag = new DiagnosticBag();
 
         var model = new CSharpParserModel(
+        	Lexer,
             Binder,
             BinderSession,
             new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),

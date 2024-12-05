@@ -19,16 +19,38 @@ internal static class TokenWalkerExtensionMethods
     {
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
 		var pendingCodeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
-
 		var openTokenIndex = tokenWalker.Index - 1;
-
-		var openBraceCounter = 1;
+		
+		var bracePair = model.Lexer?.GetBracePairByOpenBraceTokenIndex(openTokenIndex);
+		var closeBraceTokenIndex = bracePair?.CloseBraceTokenIndex ?? -1;
 		
 		#if DEBUG
 		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
-		while (true)
+		if (closeBraceTokenIndex == -1)
+			FallbackFindCloseBraceToken(tokenWalker);
+		else
+			tokenWalker.GotoIndex(closeBraceTokenIndex);
+		
+		var closeTokenIndex = tokenWalker.Index;
+		var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
+		
+		#if DEBUG
+		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		#endif
+
+		model.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new DeferredChildScope(
+			openTokenIndex,
+			closeTokenIndex,
+			pendingCodeBlockOwner));
+    }
+    
+    private static void FallbackFindCloseBraceToken(TokenWalker tokenWalker)
+    {
+    	var openBraceCounter = 1;
+    	
+    	while (true)
 		{
 			if (tokenWalker.IsEof)
 				break;
@@ -45,17 +67,5 @@ internal static class TokenWalkerExtensionMethods
 
 			_ = tokenWalker.Consume();
 		}
-
-		var closeTokenIndex = tokenWalker.Index;
-		var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
-		
-		#if DEBUG
-		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
-		#endif
-
-		model.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new DeferredChildScope(
-			openTokenIndex,
-			closeTokenIndex,
-			pendingCodeBlockOwner));
     }
 }

@@ -6,6 +6,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 
@@ -14,6 +15,7 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 public class CSharpParserModel : IParserModel
 {
     public CSharpParserModel(
+    	CSharpLexer? lexer,
         CSharpBinder binder,
         CSharpBinderSession binderSession,
         TokenWalker tokenWalker,
@@ -22,6 +24,7 @@ public class CSharpParserModel : IParserModel
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder)
     {
+    	Lexer = lexer;
         Binder = binder;
         BinderSession = binderSession;
         TokenWalker = tokenWalker;
@@ -36,6 +39,7 @@ public class CSharpParserModel : IParserModel
         ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     }
 
+    public CSharpLexer? Lexer { get; }
     public CSharpBinder Binder { get; }
     public CSharpBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }

@@ -165,6 +165,22 @@ public class TokenWalker
 	{
 		ConsumeCounter = 0;
 	}
+	
+	/// <summary>
+	/// Use of this method is highly discoraged.
+	///
+	/// It permits an optimization when parsing deferred child scopes,
+	/// therefore it exists.
+	///
+	/// But to use it in any other scenario is likely NOT a good idea.
+	/// </summary>
+	public void GotoIndex(int tokenIndex)
+	{
+		if (tokenIndex < 0 || tokenIndex >= _tokenList.Length)
+			throw new LuthetusTextEditorException($"{nameof(GotoIndex)} has a bad {nameof(tokenIndex)} provided.");
+		
+		_index = tokenIndex;
+	}
 
     private BadToken GetBadToken() => new BadToken(new(0, 0, 0, ResourceUri.Empty, string.Empty));
 }
