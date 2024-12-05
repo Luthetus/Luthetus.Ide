@@ -20,17 +20,17 @@ public sealed class TerminalCompilerService : CompilerService
         };
     }
 
-    public override ImmutableArray<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri)
+    public override IReadOnlyList<TextEditorTextSpan> GetTokenTextSpansFor(ResourceUri resourceUri)
     {
         var model = _textEditorService.ModelApi.GetOrDefault(resourceUri);
 
         if (model is null)
-            return ImmutableArray<TextEditorTextSpan>.Empty;
+            return Array.Empty<TextEditorTextSpan>();
 
         lock (_resourceMapLock)
         {
             if (!_resourceMap.ContainsKey(resourceUri))
-                return ImmutableArray<TextEditorTextSpan>.Empty;
+                return Array.Empty<TextEditorTextSpan>();
 
             return _resourceMap[resourceUri].GetTokenTextSpans();
         }

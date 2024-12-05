@@ -9,8 +9,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 public interface IBinder
 {
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; }
-    public ImmutableArray<ITextEditorSymbol> SymbolsList { get; }
+    public TextEditorDiagnostic[] DiagnosticsList { get; }
+    public ITextEditorSymbol[] SymbolsList { get; }
 	
 	/// <summary>
 	/// Returns the text span at which the definition exists in the source code.

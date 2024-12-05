@@ -14,10 +14,9 @@ public class Binder : IBinder
 	private readonly Dictionary<ResourceUri, IBinderSession> _binderSessionMap = new();
 	private readonly object _binderSessionMapLock = new();
 
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; } = ImmutableArray<TextEditorDiagnostic>.Empty;
-    public ImmutableArray<ITextEditorSymbol> SymbolsList { get; } = ImmutableArray<ITextEditorSymbol>.Empty;
-    public ImmutableDictionary<ResourceUri, List<IScope>> ScopeList { get; } = ImmutableDictionary<ResourceUri, List<IScope>>.Empty;
-    
+    public TextEditorDiagnostic[] DiagnosticsList { get; } = Array.Empty<TextEditorDiagnostic>();
+    public ITextEditorSymbol[] SymbolsList { get; } = Array.Empty<ITextEditorSymbol>();
+    public IReadOnlyDictionary<ResourceUri, List<IScope>> ScopeList { get; } = new Dictionary<ResourceUri, List<IScope>>();
 
     public TextEditorTextSpan? GetDefinitionTextSpan(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {

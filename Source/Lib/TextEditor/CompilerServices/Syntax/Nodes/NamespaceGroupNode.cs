@@ -6,7 +6,7 @@ public sealed class NamespaceGroupNode : ISyntaxNode
 {
     public NamespaceGroupNode(
         string namespaceString,
-        ImmutableArray<NamespaceStatementNode> namespaceStatementNodeList)
+        List<NamespaceStatementNode> namespaceStatementNodeList)
     {
         NamespaceString = namespaceString;
         NamespaceStatementNodeList = namespaceStatementNodeList;
@@ -16,7 +16,7 @@ public sealed class NamespaceGroupNode : ISyntaxNode
 	private bool _childListIsDirty = true;
 
     public string NamespaceString { get; }
-    public ImmutableArray<NamespaceStatementNode> NamespaceStatementNodeList { get; } = ImmutableArray<NamespaceStatementNode>.Empty;
+    public List<NamespaceStatementNode> NamespaceStatementNodeList { get; }
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.NamespaceGroupNode;

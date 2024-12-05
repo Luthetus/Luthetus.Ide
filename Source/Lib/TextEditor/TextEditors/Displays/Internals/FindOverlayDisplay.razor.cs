@@ -212,11 +212,11 @@ public partial class FindOverlayDisplay : ComponentBase
 
         if (_activeIndexMatchedTextSpan is null)
         {
-            _activeIndexMatchedTextSpan = completedCalculation.TextSpanList.Length - 1;
+            _activeIndexMatchedTextSpan = completedCalculation.TextSpanList.Count - 1;
         }
         else
         {
-			if (completedCalculation.TextSpanList.Length == 0)
+			if (completedCalculation.TextSpanList.Count == 0)
 			{
 				_activeIndexMatchedTextSpan = null;
 			}
@@ -224,7 +224,7 @@ public partial class FindOverlayDisplay : ComponentBase
 			{
 				_activeIndexMatchedTextSpan--;
 	            if (_activeIndexMatchedTextSpan <= -1)
-					_activeIndexMatchedTextSpan = completedCalculation.TextSpanList.Length - 1;
+					_activeIndexMatchedTextSpan = completedCalculation.TextSpanList.Count - 1;
 			}
         }
 
@@ -254,14 +254,14 @@ public partial class FindOverlayDisplay : ComponentBase
         }
         else
         {
-			if (completedCalculation.TextSpanList.Length == 0)
+			if (completedCalculation.TextSpanList.Count == 0)
 			{
 				_activeIndexMatchedTextSpan = null;
 			}
 			else
 			{
             	_activeIndexMatchedTextSpan++;
-				if (_activeIndexMatchedTextSpan >= completedCalculation.TextSpanList.Length)
+				if (_activeIndexMatchedTextSpan >= completedCalculation.TextSpanList.Count)
 					_activeIndexMatchedTextSpan = 0;
 			}
         }
@@ -299,34 +299,46 @@ public partial class FindOverlayDisplay : ComponentBase
 
                 if (presentationModel?.CompletedCalculation is not null)
                 {
+                	var outTextSpanList = new List<TextEditorTextSpan>(presentationModel.CompletedCalculation.TextSpanList);
+                
                 	var decorationByteChangedTargetTextSpanLocal = _decorationByteChangedTargetTextSpan;
                     if (decorationByteChangedTargetTextSpanLocal is not null)
                     {
-                        var needsColorResetSinceNoLongerActive = presentationModel.CompletedCalculation.TextSpanList.FirstOrDefault(x =>
-                            x.StartingIndexInclusive == decorationByteChangedTargetTextSpanLocal.Value.StartingIndexInclusive &&
-                            x.EndingIndexExclusive == decorationByteChangedTargetTextSpanLocal.Value.EndingIndexExclusive &&
-                            x.ResourceUri == decorationByteChangedTargetTextSpanLocal.Value.ResourceUri &&
-                            x.GetText() == decorationByteChangedTargetTextSpanLocal.Value.GetText());
-
-                        if (needsColorResetSinceNoLongerActive != default)
+                    	TextEditorTextSpan needsColorResetSinceNoLongerActive = default;
+                    	int indexNeedsColorResetSinceNoLongerActive = -1;
+                    	
+                    	for (int i = 0; i < presentationModel.CompletedCalculation.TextSpanList.Count; i++)
+                    	{
+                    		var x = presentationModel.CompletedCalculation.TextSpanList[i];
+                    		
+                    		if (x.StartingIndexInclusive == decorationByteChangedTargetTextSpanLocal.Value.StartingIndexInclusive &&
+	                            x.EndingIndexExclusive == decorationByteChangedTargetTextSpanLocal.Value.EndingIndexExclusive &&
+	                            x.ResourceUri == decorationByteChangedTargetTextSpanLocal.Value.ResourceUri &&
+	                            x.GetText() == decorationByteChangedTargetTextSpanLocal.Value.GetText())
+                    		{
+                    			needsColorResetSinceNoLongerActive = x;
+                    			indexNeedsColorResetSinceNoLongerActive = i;
+                    		}
+                    	}
+                    
+                        if (needsColorResetSinceNoLongerActive != default && indexNeedsColorResetSinceNoLongerActive != -1)
                         {
-                            presentationModel.CompletedCalculation.TextSpanList = presentationModel.CompletedCalculation.TextSpanList.Replace(
-                            	needsColorResetSinceNoLongerActive,
-                            	needsColorResetSinceNoLongerActive with
-	                            {
-	                                DecorationByte = decorationByteChangedTargetTextSpanLocal.Value.DecorationByte
-	                            });
+                        	outTextSpanList[indexNeedsColorResetSinceNoLongerActive] = needsColorResetSinceNoLongerActive with
+                            {
+                                DecorationByte = decorationByteChangedTargetTextSpanLocal.Value.DecorationByte
+                            };
                         }
                     }
 
                     var targetTextSpan = presentationModel.CompletedCalculation.TextSpanList[localActiveIndexMatchedTextSpan.Value];
                     _decorationByteChangedTargetTextSpan = targetTextSpan;
 
-                    presentationModel.CompletedCalculation.TextSpanList =
-                        presentationModel.CompletedCalculation.TextSpanList.Replace(targetTextSpan, targetTextSpan with
-                        {
-                            DecorationByte = (byte)FindOverlayDecorationKind.Insertion,
-                        });
+                    outTextSpanList[localActiveIndexMatchedTextSpan.Value] = targetTextSpan with
+                    {
+                        DecorationByte = (byte)FindOverlayDecorationKind.Insertion,
+                    };
+                        
+                    presentationModel.CompletedCalculation.TextSpanList = outTextSpanList;
                 }
 
 				{

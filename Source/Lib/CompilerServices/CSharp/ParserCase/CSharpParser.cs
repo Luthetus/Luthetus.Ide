@@ -23,7 +23,7 @@ public class CSharpParser : IParser
         BinderSession = (CSharpBinderSession)Binder.StartBinderSession(lexer.ResourceUri);
     }
 
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; private set; } = ImmutableArray<TextEditorDiagnostic>.Empty;
+    public TextEditorDiagnostic[] DiagnosticsList { get; private set; } = Array.Empty<TextEditorDiagnostic>();
     public CSharpBinder Binder { get; private set; }
     public CSharpBinderSession BinderSession { get; private set; }
     public CSharpLexer Lexer { get; }
@@ -253,13 +253,13 @@ public class CSharpParser : IParser
             Binder.CloseScope(model.TokenWalker.Current.TextSpan, model);
         }
 
-        DiagnosticsList = DiagnosticsList.AddRange(model.DiagnosticBag.ToImmutableArray());
+        DiagnosticsList = model.DiagnosticBag.ToArray();
 
         var topLevelStatementsCodeBlock = model.CurrentCodeBlockBuilder.Build(
             DiagnosticsList
                 .Union(Binder.DiagnosticsList)
                 .Union(Lexer.DiagnosticList)
-                .ToImmutableArray());
+                .ToArray());
 
 		Binder.FinalizeBinderSession(BinderSession);
         return new CompilationUnit(

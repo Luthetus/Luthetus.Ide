@@ -1360,7 +1360,7 @@ public class TextEditorCommandDefaultFunctions
         var symbols = modelModifier.CompilerService.GetSymbolsFor(modelModifier.ResourceUri);
         var diagnostics = modelModifier.CompilerService.GetDiagnosticsFor(modelModifier.ResourceUri);
 
-        if (diagnostics.Length != 0)
+        if (diagnostics.Count != 0)
         {
             foreach (var diagnostic in diagnostics)
             {
@@ -1391,7 +1391,7 @@ public class TextEditorCommandDefaultFunctions
             }
         }
 
-        if (!foundMatch && symbols.Length != 0)
+        if (!foundMatch && symbols.Count != 0)
         {
             foreach (var symbol in symbols)
             {
