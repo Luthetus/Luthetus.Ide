@@ -32,7 +32,7 @@ public class DotNetSolutionParser : IParser
         _tokenWalker = new TokenWalker(lexer.SyntaxTokenList, _diagnosticBag);
     }
 
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticsList => _diagnosticBag.ToImmutableArray();
+    public TextEditorDiagnostic[] DiagnosticsList => _diagnosticBag.ToArray();
     public DotNetSolutionLexer Lexer { get; }
 
     public DotNetSolutionHeader DotNetSolutionHeader => _dotNetSolutionHeader;

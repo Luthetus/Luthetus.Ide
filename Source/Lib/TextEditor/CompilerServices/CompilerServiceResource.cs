@@ -19,34 +19,34 @@ public class CompilerServiceResource : ICompilerServiceResource
     public virtual ResourceUri ResourceUri { get; }
     public virtual ICompilerService CompilerService { get; }
     public virtual CompilationUnit? CompilationUnit { get; set; }
-    public virtual ImmutableArray<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
+    public virtual IReadOnlyList<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
 
-    public virtual ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
+    public virtual IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans()
     {
-        return SyntaxTokenList.Select(st => st.TextSpan).ToImmutableArray();
+        return SyntaxTokenList.Select(st => st.TextSpan).ToArray();
     }
 
-    public virtual ImmutableArray<ITextEditorSymbol> GetSymbols()
+    public virtual IReadOnlyList<ITextEditorSymbol> GetSymbols()
     {
         var localCompilationUnit = CompilationUnit;
 
         if (localCompilationUnit is null)
-            return ImmutableArray<ITextEditorSymbol>.Empty;
+            return Array.Empty<ITextEditorSymbol>();
 
         return localCompilationUnit.Binder.SymbolsList
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
-            .ToImmutableArray();
+            .ToArray();
     }
 
-    public virtual ImmutableArray<TextEditorDiagnostic> GetDiagnostics()
+    public virtual IReadOnlyList<TextEditorDiagnostic> GetDiagnostics()
     {
         var localCompilationUnit = CompilationUnit;
 
         if (localCompilationUnit is null)
-            return ImmutableArray<TextEditorDiagnostic>.Empty;
+            return Array.Empty<TextEditorDiagnostic>();
 
         return localCompilationUnit.DiagnosticsList
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
-            .ToImmutableArray();
+            .ToArray();
     }
 }

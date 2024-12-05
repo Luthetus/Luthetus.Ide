@@ -11,15 +11,15 @@ public class CSharpResource : CompilerServiceResource
     {
     }
 
-	public List<TextEditorTextSpan> EscapeCharacterList { get; internal set; }
+	public IReadOnlyList<TextEditorTextSpan> EscapeCharacterList { get; internal set; }
 
-	public override ImmutableArray<TextEditorTextSpan> GetTokenTextSpans()
+	public override IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans()
     {
 		var tokenTextSpanList = new List<TextEditorTextSpan>();
 
         tokenTextSpanList.AddRange(SyntaxTokenList.Select(st => st.TextSpan));
 		tokenTextSpanList.AddRange(EscapeCharacterList);
 
-		return tokenTextSpanList.ToImmutableArray();
+		return tokenTextSpanList;
     }
 }

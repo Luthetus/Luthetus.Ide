@@ -165,9 +165,8 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
 
                         if (compilerServiceAutocompleteEntryList.Any())
                         {
-                            autocompleteEntryList = compilerServiceAutocompleteEntryList
-                                .AddRange(autocompleteEntryList)
-                                .ToArray();
+                            compilerServiceAutocompleteEntryList
+                                .AddRange(autocompleteEntryList);
                         }
                     }
 
