@@ -11,8 +11,6 @@ namespace Luthetus.CompilerServices.CSharp.LexerCase;
 
 public class CSharpLexer : Lexer
 {
-	private readonly List<TextEditorTextSpan> _escapeCharacterList = new();
-
     public CSharpLexer(ResourceUri resourceUri, string sourceText)
         : base(
             resourceUri,
@@ -23,7 +21,7 @@ public class CSharpLexer : Lexer
     
     private byte _decorationByteLastEscapeCharacter = (byte)GenericDecorationKind.None;
 
-    public ImmutableArray<TextEditorTextSpan> EscapeCharacterList => _escapeCharacterList.ToImmutableArray();
+    public List<TextEditorTextSpan> EscapeCharacterList { get; } = new();
 
     public override void Lex()
     {
@@ -102,7 +100,7 @@ public class CSharpLexer : Lexer
                     LexerUtils.LexNumericLiteralToken(_stringWalker, _syntaxTokenList);
                     break;
 				case '\'':
-                    LexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList, _escapeCharacterList);
+                    LexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList, EscapeCharacterList);
                     break;
                 case '"':
                 	LexString(
@@ -359,7 +357,7 @@ public class CSharpLexer : Lexer
 				}
 				else if (useVerbatim && stringWalker.NextCharacter == '\"')
 				{
-					if (_escapeCharacterList is not null)
+					if (EscapeCharacterList is not null)
 					{
 						EscapeCharacterListAdd(new TextEditorTextSpan(
 				            stringWalker.PositionIndex,
@@ -379,7 +377,7 @@ public class CSharpLexer : Lexer
 			}
 			else if (!useVerbatim && stringWalker.CurrentCharacter == '\\')
 			{
-				if (_escapeCharacterList is not null)
+				if (EscapeCharacterList is not null)
 				{
 					EscapeCharacterListAdd(new TextEditorTextSpan(
 			            stringWalker.PositionIndex,
@@ -515,9 +513,9 @@ public class CSharpLexer : Lexer
     
     private void EscapeCharacterListAdd(TextEditorTextSpan textSpan)
     {
-    	if (_escapeCharacterList.Count > 0)
+    	if (EscapeCharacterList.Count > 0)
     	{
-    		var lastEntry = _escapeCharacterList[^1];
+    		var lastEntry = EscapeCharacterList[^1];
     		
     		if (lastEntry.EndingIndexExclusive == textSpan.StartingIndexInclusive &&
     			_decorationByteLastEscapeCharacter == (byte)GenericDecorationKind.EscapeCharacterPrimary)
@@ -530,6 +528,6 @@ public class CSharpLexer : Lexer
     	}
     	
     	_decorationByteLastEscapeCharacter = textSpan.DecorationByte;
-    	_escapeCharacterList.Add(textSpan);
+    	EscapeCharacterList.Add(textSpan);
     }
 }
