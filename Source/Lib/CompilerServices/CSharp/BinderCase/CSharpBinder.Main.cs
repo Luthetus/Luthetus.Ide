@@ -1540,8 +1540,11 @@ public partial class CSharpBinder : IBinder
         	if (child is not ISyntaxNode node)
     			continue;
     			
-    		if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+    		if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+    			node.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+    		{
     			fallbackDefinitionNode = node;
+    		}
         
         	var nodePositionIndices = GetNodePositionIndices(node);
         	if (nodePositionIndices == (-1, -1))
@@ -1558,9 +1561,10 @@ public partial class CSharpBinder : IBinder
         {
         	if (fallbackDefinitionNode is not null)
         	{
-        		if (fallbackDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+        		if (fallbackDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+        			fallbackDefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
         		{
-        			var openBraceToken = ((FunctionDefinitionNode)fallbackDefinitionNode).OpenBraceToken;
+        			var openBraceToken = ((ICodeBlockOwner)fallbackDefinitionNode).OpenBraceToken;
         			if (openBraceToken.ConstructorWasInvoked && compilerServiceResource is not null)
         			{
         				var fallbackScope = GetScopeByPositionIndex(model, resourceUri, openBraceToken.TextSpan.StartingIndexInclusive);
@@ -1591,6 +1595,8 @@ public partial class CSharpBinder : IBinder
     /// </summary>
     public ISyntaxNode? GetFallbackNode(IParserModel? model, int positionIndex, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, IScope scope)
     {
+    	Console.WriteLine("GetFallbackNode");
+    
         if (compilerServiceResource.CompilationUnit is null)
         	return null;
         
