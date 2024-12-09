@@ -127,12 +127,13 @@ public struct SyntaxViewModel
 		
 		if (resourceUriValue is null || indexInclusiveStart == -1)
 			return Task.CompletedTask;
-	
+		
 		return textEditorService.OpenInEditorAsync(
-			resourceUriValue,
-			true,
-			indexInclusiveStart,
-			new Category("main"),
-			Key<TextEditorViewModel>.NewKey());
+				resourceUriValue,
+				true,
+				indexInclusiveStart,
+				new Category("main"),
+				Key<TextEditorViewModel>.NewKey())
+			.ContinueWith(_ => textEditorService.ViewModelApi.SetCursorShouldBlink(false));
 	}
 }

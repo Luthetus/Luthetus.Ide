@@ -32,11 +32,11 @@ public interface IBinder
     /// <see cref="CompilationUnit.RootCodeBlockNode"/> will be treated
     /// the same as if it were the <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/>.
     ///
-    /// If the provided compilationUnit is null, then the fallback step will not occur.
+    /// If the provided compilerServiceResource?.CompilationUnit is null, then the fallback step will not occur.
     /// The fallback step is expected to occur due to the global scope being implemented with a null
     /// <see cref="IScope"/>.<see cref="IScope.CodeBlockOwner"/> at the time of this comment.
     /// </summary>
-    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, CompilationUnit? compilationUnit);
+    public ISyntaxNode? GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource);
     
     /// <summary><see cref="FinalizeBinderSession"/></summary>
     public IBinderSession StartBinderSession(ResourceUri resourceUri);
