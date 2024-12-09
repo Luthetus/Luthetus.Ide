@@ -907,7 +907,7 @@ public class TextEditorCommandDefaultFunctions
 
 		var syntaxNode = primaryCursorPositionIndex is null || compilerService.Binder is null || compilerServiceResource?.CompilationUnit is null
 			? null
-			: compilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, compilerServiceResource.ResourceUri, compilerServiceResource?.CompilationUnit);
+			: compilerService.Binder.GetSyntaxNode(primaryCursorPositionIndex.Value, compilerServiceResource.ResourceUri, compilerServiceResource);
 			
 		var menuOptionList = new List<MenuOptionRecord>();
 			
