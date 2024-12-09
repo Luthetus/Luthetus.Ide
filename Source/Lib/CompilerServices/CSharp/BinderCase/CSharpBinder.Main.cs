@@ -47,10 +47,28 @@ public partial class CSharpBinder : IBinder
     }
 
     public IReadOnlyDictionary<string, NamespaceGroupNode> NamespaceGroupNodes => _namespaceGroupNodeMap;
-    public ITextEditorSymbol[] Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
     public TextEditorDiagnostic[] DiagnosticsList => Array.Empty<TextEditorDiagnostic>();
+    
+    /// <summary>
+    /// This will return an empty array if the collection is modified during enumeration
+    /// (specifically this is catching 'InvalidOperationException').
+    /// </summary>
+    public ITextEditorSymbol[] Symbols
+    {
+    	get
+    	{
+    		try
+    		{
+    			return _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToArray();
+    		}
+    		catch (InvalidOperationException e)
+    		{
+    			return Array.Empty<ITextEditorSymbol>();
+    		}
+    	}
+    }
 
     ITextEditorSymbol[] IBinder.SymbolsList => Symbols;
 
