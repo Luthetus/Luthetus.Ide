@@ -1561,13 +1561,24 @@ public partial class CSharpBinder : IBinder
         {
         	if (fallbackDefinitionNode is not null)
         	{
+        		Console.WriteLine("if (fallbackDefinitionNode is not null)");
         		if (fallbackDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
         			fallbackDefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
         		{
-        			var openBraceToken = ((ICodeBlockOwner)fallbackDefinitionNode).OpenBraceToken;
-        			if (openBraceToken.ConstructorWasInvoked && compilerServiceResource is not null)
+        			var fallbackCodeBlockOwner = ((ICodeBlockOwner)fallbackDefinitionNode);
+        			TextEditorTextSpan? fallbackTextSpan = null;
+        			
+        			if (fallbackCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
+        				fallbackTextSpan = fallbackCodeBlockOwner.OpenBraceToken.TextSpan;
+        			else if (fallbackCodeBlockOwner.StatementDelimiterToken.ConstructorWasInvoked)
         			{
-        				var fallbackScope = GetScopeByPositionIndex(model, resourceUri, openBraceToken.TextSpan.StartingIndexInclusive);
+        				Console.WriteLine("else if (fallbackCodeBlockOwner.StatementDelimiterToken.ConstructorWasInvoked)");
+        				fallbackTextSpan = fallbackCodeBlockOwner.StatementDelimiterToken.TextSpan;
+        			}
+        				
+        			if (fallbackTextSpan is not null && compilerServiceResource is not null)
+        			{
+        				var fallbackScope = GetScopeByPositionIndex(model, resourceUri, fallbackTextSpan.Value.StartingIndexInclusive);
         				if (scope is not null)
         					return GetFallbackNode(model, positionIndex, resourceUri, compilerServiceResource, fallbackScope);
         			}
@@ -1595,8 +1606,6 @@ public partial class CSharpBinder : IBinder
     /// </summary>
     public ISyntaxNode? GetFallbackNode(IParserModel? model, int positionIndex, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, IScope scope)
     {
-    	Console.WriteLine("GetFallbackNode");
-    
         if (compilerServiceResource.CompilationUnit is null)
         	return null;
         
