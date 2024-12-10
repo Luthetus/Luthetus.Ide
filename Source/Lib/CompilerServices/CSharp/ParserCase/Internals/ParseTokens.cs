@@ -82,7 +82,7 @@ public static class ParseTokens
     public static void MoveToHandleFunctionDefinition(VariableDeclarationNode variableDeclarationNode, IParserModel model)
     {
     	ParseFunctions.HandleFunctionDefinition(
-			variableDeclarationNode.IdentifierToken,
+			variableDeclarationNode.NameToken,
 	        variableDeclarationNode.TypeClauseNode,
 	        consumedGenericArgumentsListingNode: null,
 	        (CSharpParserModel)model);
@@ -131,13 +131,13 @@ public static class ParseTokens
 			model.StatementBuilder.ChildList.Add(typeClauseNode);
 		}
 		else if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
-				 UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.TypeIdentifierToken.SyntaxKind) &&
+				 UtilityApi.IsConvertibleToIdentifierToken(typeClauseNode.NameToken.SyntaxKind) &&
 				 model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken &&
-			     typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == typeClauseNode.TypeIdentifierToken.TextSpan.GetText())
+			     typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText() == typeClauseNode.NameToken.TextSpan.GetText())
 		{
 			// ConstructorDefinitionNode
 			
-			var identifierToken = UtilityApi.ConvertToIdentifierToken(typeClauseNode.TypeIdentifierToken, model);
+			var identifierToken = UtilityApi.ConvertToIdentifierToken(typeClauseNode.NameToken, model);
 			
 			ParseFunctions.HandleConstructorDefinition(
 				typeDefinitionNode,
@@ -420,7 +420,7 @@ public static class ParseTokens
                 model);
 
             model.Binder.AddNamespaceToCurrentScope(
-                namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
+                namespaceStatementNode.NameToken.TextSpan.GetText(),
                 model);
 
             model.CurrentCodeBlockBuilder = new(model.CurrentCodeBlockBuilder, nextCodeBlockOwner);

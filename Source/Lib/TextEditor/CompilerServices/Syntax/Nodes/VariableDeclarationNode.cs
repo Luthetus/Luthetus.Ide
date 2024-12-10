@@ -9,12 +9,12 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 {
     public VariableDeclarationNode(
         TypeClauseNode typeClauseNode,
-        IdentifierToken identifierToken,
+        INameToken nameToken,
         VariableKind variableKind,
         bool isInitialized)
     {
         TypeClauseNode = typeClauseNode;
-        IdentifierToken = identifierToken;
+        NameToken = nameToken;
         VariableKind = variableKind;
         IsInitialized = isInitialized;
     }
@@ -23,7 +23,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode TypeClauseNode { get; }
-    public IdentifierToken IdentifierToken { get; }
+    public INameToken NameToken { get; }
     /// <summary>
     /// TODO: Remove the 'set;' on this property
     /// </summary>
@@ -59,7 +59,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
     	_childList = new ISyntax[]
         {
             TypeClauseNode,
-            IdentifierToken,
+            NameToken,
         };
         
     	_childListIsDirty = false;

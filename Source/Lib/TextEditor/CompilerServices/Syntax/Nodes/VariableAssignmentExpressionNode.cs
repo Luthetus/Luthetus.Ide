@@ -7,11 +7,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class VariableAssignmentExpressionNode : IExpressionNode
 {
     public VariableAssignmentExpressionNode(
-        IdentifierToken variableIdentifierToken,
+        INameToken nameToken,
         EqualsToken equalsToken,
         IExpressionNode expressionNode)
     {
-        VariableIdentifierToken = variableIdentifierToken;
+        NameToken = nameToken;
         EqualsToken = equalsToken;
         ExpressionNode = expressionNode;
     }
@@ -19,7 +19,7 @@ public sealed class VariableAssignmentExpressionNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public IdentifierToken VariableIdentifierToken { get; }
+    public INameToken NameToken { get; }
     public EqualsToken EqualsToken { get; }
     public IExpressionNode ExpressionNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode => ExpressionNode.ResultTypeClauseNode;
@@ -41,7 +41,7 @@ public sealed class VariableAssignmentExpressionNode : IExpressionNode
     	
     	_childList = new ISyntax[]
         {
-            VariableIdentifierToken,
+            NameToken,
             EqualsToken,
             ExpressionNode,
         };

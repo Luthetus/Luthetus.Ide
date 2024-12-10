@@ -20,13 +20,13 @@
 	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 	{
 		prefixText = "(definition)";
-		text = ((VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode).IdentifierToken.TextSpan.GetText();
+		text = ((VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode).NameToken.TextSpan.GetText();
 		variableDeclarationNode = null;
 	}
 	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 	{
 		prefixText = "(reference)";
-		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.GetText();
+		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).NameToken.TextSpan.GetText();
 		variableDeclarationNode = null;
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
@@ -66,7 +66,7 @@
 	    		-->var index = i;<!--
 	    		-->var lambdaVariableDeclarationNode = lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList[index];<!--
 	    		--><text><!--
-	    			--><span class="luth_te_type">@lambdaVariableDeclarationNode.TypeClauseNode.TypeIdentifierToken.TextSpan.GetText()</span> <span class="luth_te_variable">@variableDeclarationNode.IdentifierToken.TextSpan.GetText()</span><!--
+	    			--><span class="luth_te_type">@lambdaVariableDeclarationNode.TypeClauseNode.NameToken.TextSpan.GetText()</span> <span class="luth_te_variable">@variableDeclarationNode.NameToken.TextSpan.GetText()</span><!--
 	    			-->@if (index < lambdaSymbol.LambdaExpressionNode.VariableDeclarationNodeList.Count - 1)
 	    			{<!--
 	    				--><text>, </text><!--

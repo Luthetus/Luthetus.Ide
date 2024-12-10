@@ -73,7 +73,7 @@ public sealed class CSharpCompilerService : CompilerService
         {
             autocompleteEntryList.AddRange(
             	CSharpBinder.GetVariableDeclarationNodesByScope(model: null, textSpan.ResourceUri, targetScope.IndexKey)
-            	.Select(x => x.IdentifierToken.TextSpan.GetText())
+            	.Select(x => x.NameToken.TextSpan.GetText())
                 .ToArray()
                 .Where(x => x.Contains(word, StringComparison.InvariantCulture))
                 .Distinct()

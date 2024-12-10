@@ -6,7 +6,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 public interface IVariableDeclarationNode : IExpressionNode
 {
     public TypeClauseNode TypeClauseNode { get; }
-    public IdentifierToken IdentifierToken { get; }
+    public INameToken NameToken { get; }
     public VariableKind VariableKind { get; }
     public bool IsInitialized { get; set; }
     /// <summary>

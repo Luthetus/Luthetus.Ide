@@ -77,7 +77,7 @@ public static class ParseVariables
         }
         else
         {
-            if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.SyntaxKind ==
+            if (variableDeclarationNode.TypeClauseNode.NameToken.SyntaxKind ==
                 SyntaxKind.VarTokenContextualKeyword)
             {
                 model.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(

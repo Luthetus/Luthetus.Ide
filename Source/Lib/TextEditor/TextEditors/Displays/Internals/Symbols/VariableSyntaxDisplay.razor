@@ -24,7 +24,7 @@
 		variableDeclarationNode = (VariableDeclarationNode)syntaxViewModelLocal.DefinitionNode;
 		
 		prefixText = string.Empty;
-		text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
+		text = variableDeclarationNode.NameToken.TextSpan.GetText();
 		
 		if (variableDeclarationNode.VariableKind == VariableKind.Field)
 			textCssClass = "luth_te_field";
@@ -38,7 +38,7 @@
 	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 	{
 		prefixText = "(reference)";
-		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).VariableIdentifierToken.TextSpan.GetText();
+		text = ((VariableReferenceNode)syntaxViewModelLocal.TargetNode).NameToken.TextSpan.GetText();
 		textCssClass = "luth_te_variable";
 		variableDeclarationNode = null;
 	}

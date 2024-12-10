@@ -103,14 +103,14 @@ public struct SyntaxViewModel
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
 		{
 			var variableDeclarationNode = (VariableDeclarationNode)DefinitionNode;
-			resourceUriValue = variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+			resourceUriValue = variableDeclarationNode.NameToken.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = variableDeclarationNode.NameToken.TextSpan.StartingIndexInclusive;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 		{
 			var namespaceStatementNode = (NamespaceStatementNode)DefinitionNode;
-			resourceUriValue = namespaceStatementNode.IdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = namespaceStatementNode.IdentifierToken.TextSpan.StartingIndexInclusive;
+			resourceUriValue = namespaceStatementNode.NameToken.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = namespaceStatementNode.NameToken.TextSpan.StartingIndexInclusive;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{

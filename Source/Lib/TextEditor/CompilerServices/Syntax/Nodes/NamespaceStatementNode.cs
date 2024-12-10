@@ -10,11 +10,11 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 {
     public NamespaceStatementNode(
         KeywordToken keywordToken,
-        IdentifierToken identifierToken,
+        INameToken nameToken,
         CodeBlockNode codeBlockNode)
     {
         KeywordToken = keywordToken;
-        IdentifierToken = identifierToken;
+        NameToken = nameToken;
         CodeBlockNode = codeBlockNode;
     }
 
@@ -22,7 +22,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	private bool _childListIsDirty = true;
 
     public KeywordToken KeywordToken { get; }
-    public IdentifierToken IdentifierToken { get; }
+    public INameToken NameToken { get; }
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 
@@ -60,7 +60,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
     
     public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
     {
-        var namespaceString = IdentifierToken.TextSpan.GetText();
+        var namespaceString = NameToken.TextSpan.GetText();
         parserModel.Binder.AddNamespaceToCurrentScope(namespaceString, parserModel);
     }
     
@@ -121,7 +121,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 		var i = 0;
 
 		childList[i++] = KeywordToken;
-		childList[i++] = IdentifierToken;
+		childList[i++] = NameToken;
 		if (OpenBraceToken.ConstructorWasInvoked)
     		childList[i++] = OpenBraceToken;
     	if (CodeBlockNode is not null)

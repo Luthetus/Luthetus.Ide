@@ -10,7 +10,7 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 public class ParseFunctions
 {
     public static void HandleFunctionDefinition(
-        IdentifierToken consumedIdentifierToken,
+        INameToken nameToken,
         TypeClauseNode consumedTypeClauseNode,
         GenericParametersListingNode? consumedGenericArgumentsListingNode,
         CSharpParserModel model)
@@ -34,7 +34,7 @@ public class ParseFunctions
         var functionDefinitionNode = new FunctionDefinitionNode(
             AccessModifierKind.Public,
             consumedTypeClauseNode,
-            consumedIdentifierToken,
+            nameToken,
             consumedGenericArgumentsListingNode,
             functionArgumentsListingNode,
             null,

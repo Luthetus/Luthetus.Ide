@@ -9,11 +9,11 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class TypeClauseNode : IExpressionNode
 {
     public TypeClauseNode(
-        ISyntaxToken typeIdentifier,
+        INameToken nameToken,
         Type? valueType,
         GenericParametersListingNode? genericParametersListingNode)
     {
-        TypeIdentifierToken = typeIdentifier;
+        NameToken = nameToken;
         ValueType = valueType;
         GenericParametersListingNode = genericParametersListingNode;
     }
@@ -26,7 +26,7 @@ public sealed class TypeClauseNode : IExpressionNode
     /// Then: 'int' is the <see cref="TypeIdentifierToken"/>
     /// And: <see cref="GenericParametersListingNode"/> would be null
     /// </summary>
-    public ISyntaxToken TypeIdentifierToken { get; }
+    public INameToken NameToken { get; }
 	/// <summary>
     /// Given: 'int x = 2;'<br/>
     /// Then: 'typeof(int)' is the <see cref="ValueType"/>
@@ -82,7 +82,7 @@ public sealed class TypeClauseNode : IExpressionNode
         var childList = new ISyntax[childCount];
 		var i = 0;
 		
-		childList[i++] = TypeIdentifierToken;
+		childList[i++] = NameToken;
 		if (GenericParametersListingNode is not null)
             childList[i++] = GenericParametersListingNode;
             

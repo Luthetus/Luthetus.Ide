@@ -179,6 +179,30 @@ public static class UtilityApi
         }
     }
     
+    /// <summary>
+    /// Check 'returnValue.ConstructorWasInvoked' to know if the
+    /// provided ISyntaxToken "implements" INameToken.
+    ///
+    /// Note: The check for implementing 'INameToken' is done via if statements and
+    ///       checking the token.SyntaxKind, not an 'is' cast.
+    /// </summary>
+    public static INameToken NameTokenForTypeClauseNode(ISyntaxToken token)
+    {
+    	var success = false;
+    	
+    	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
+    		success = true;
+    	else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
+    		success = true;
+    	else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
+    		success = true;
+		
+		if (success)
+			return (INameToken)token;
+		else
+    		return default(IdentifierToken);
+    }
+    
     public static bool IsConvertibleToTypeClauseNode(SyntaxKind syntaxKind)
     {
     	return syntaxKind == SyntaxKind.TypeClauseNode ||
