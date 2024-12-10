@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
@@ -44,7 +45,11 @@ public class BinderTests
 		WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var binder = test.CompilationUnit.Binder;
-		var node = binder.GetSyntaxNode(13, test.ResourceUri, test.CompilationUnit);
+		
+		var cSharpResource = new CSharpResource(test.ResourceUri, null);
+		cSharpResource.CompilationUnit = test.CompilationUnit;
+		
+		var node = binder.GetSyntaxNode(13, test.ResourceUri, cSharpResource);
 		
 		Assert.NotNull(node);
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, node.SyntaxKind);
@@ -59,7 +64,11 @@ public class BinderTests
 		WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var binder = test.CompilationUnit.Binder;
-		var node = binder.GetSyntaxNode(12, test.ResourceUri, test.CompilationUnit);
+		
+		var cSharpResource = new CSharpResource(test.ResourceUri, null);
+		cSharpResource.CompilationUnit = test.CompilationUnit;
+		
+		var node = binder.GetSyntaxNode(12, test.ResourceUri, cSharpResource);
 		
 		Assert.NotNull(node);
 		Assert.Equal(SyntaxKind.FunctionDefinitionNode, node.SyntaxKind);
@@ -83,7 +92,11 @@ public class BackgroundTask : IBackgroundTask
 		WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var binder = test.CompilationUnit.Binder;
-		var node = binder.GetSyntaxNode(119, test.ResourceUri, test.CompilationUnit);
+		
+		var cSharpResource = new CSharpResource(test.ResourceUri, null);
+		cSharpResource.CompilationUnit = test.CompilationUnit;
+		
+		var node = binder.GetSyntaxNode(119, test.ResourceUri, cSharpResource);
 		
 		Assert.NotNull(node);
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, node.SyntaxKind);

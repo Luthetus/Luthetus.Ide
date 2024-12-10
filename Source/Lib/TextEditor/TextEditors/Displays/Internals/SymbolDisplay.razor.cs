@@ -92,7 +92,7 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
     	return compilerService.Binder.GetSyntaxNode(
     		symbolLocal.TextSpan.StartingIndexInclusive,
     		compilerServiceResource.ResourceUri,
-    		compilerServiceResource.CompilationUnit);
+    		compilerServiceResource);
     }
     
     /// <summary>

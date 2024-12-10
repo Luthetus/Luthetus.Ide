@@ -749,7 +749,7 @@ public class ParseDefaultKeywords
 
     public static void HandleInterfaceTokenKeyword(CSharpParserModel model)
     {
-        model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
+    	HandleStorageModifierTokenKeyword(model);
     }
 
 	/// <summary>
