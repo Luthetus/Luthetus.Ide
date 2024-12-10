@@ -10,6 +10,7 @@
 	string? prefixText;
 	string? prefixTextCssClass;
 	string? text;
+	string? syntaxHighlightingClassCssString;
 	GenericArgumentsListingNode? genericArgumentsListingNode;
 	GenericParametersListingNode? genericParametersListingNode;
 	bool? hasQuestionMark;
@@ -19,6 +20,7 @@
 		prefixText = "(null)";
 		prefixTextCssClass = null;
 		text = null;
+		syntaxHighlightingClassCssString = null;
 		genericArgumentsListingNode = null;
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
@@ -35,6 +37,7 @@
 		prefixText = prefixBuilder.ToString();
 		prefixTextCssClass = "luth_te_keyword";
 		text = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
+		syntaxHighlightingClassCssString = "luth_te_type";
 		genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
@@ -46,6 +49,12 @@
 		prefixText = "(reference)";
 		prefixTextCssClass = null;
 		text = typeClauseNode.TypeIdentifierToken.TextSpan.GetText();
+		
+		if (typeClauseNode.IsKeywordType)
+			syntaxHighlightingClassCssString = "luth_te_keyword";
+		else
+			syntaxHighlightingClassCssString = "luth_te_type";
+		
 		genericArgumentsListingNode = null;
 		genericParametersListingNode = typeClauseNode.GenericParametersListingNode;
 		hasQuestionMark = typeClauseNode.HasQuestionMark;
@@ -55,6 +64,7 @@
 		prefixText = "(symbol)";
 		prefixTextCssClass = null;
 		text = ((TypeSymbol)syntaxViewModelLocal.TargetSymbol).TextSpan.GetText();
+		syntaxHighlightingClassCssString = "luth_te_type";
 		genericArgumentsListingNode = null;
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
@@ -64,6 +74,7 @@
 		prefixText = "(unrecognizable-state)";
 		prefixTextCssClass = null;
 		text = null;
+		syntaxHighlightingClassCssString = null;
 		genericArgumentsListingNode = null;
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
@@ -85,7 +96,7 @@
 			? string.Empty
 			: "luth_te_syntax-onclick";
 	
-		<span class="@classCssString luth_te_type"
+		<span class="@classCssString @syntaxHighlightingClassCssString"
 			  @onclick="() => syntaxViewModelLocal.HandleOnClick(TextEditorService, SyntaxKind.TypeDefinitionNode)">
 			@text
 		</span>
