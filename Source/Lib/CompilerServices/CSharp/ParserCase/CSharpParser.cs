@@ -18,6 +18,8 @@ public class CSharpParser : IParser
 {
     public CSharpParser(CSharpLexer lexer)
     {
+    	++LuthetusDebugSomething.Parser_ConstructorInvocationCount;
+    	
         Lexer = lexer;
         Binder = new CSharpBinder();
         BinderSession = (CSharpBinderSession)Binder.StartBinderSession(lexer.ResourceUri);
