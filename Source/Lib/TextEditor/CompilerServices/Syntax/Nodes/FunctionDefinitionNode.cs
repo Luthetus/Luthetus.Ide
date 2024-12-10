@@ -14,7 +14,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     public FunctionDefinitionNode(
         AccessModifierKind accessModifierKind,
         TypeClauseNode returnTypeClauseNode,
-        IdentifierToken functionIdentifierToken,
+        INameToken nameToken,
         GenericParametersListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
         CodeBlockNode? codeBlockNode,
@@ -22,7 +22,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     {
         AccessModifierKind = accessModifierKind;
         ReturnTypeClauseNode = returnTypeClauseNode;
-        FunctionIdentifierToken = functionIdentifierToken;
+        NameToken = nameToken;
         GenericArgumentsListingNode = genericArgumentsListingNode;
         FunctionArgumentsListingNode = functionArgumentsListingNode;
         CodeBlockNode = codeBlockNode;
@@ -34,7 +34,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 
     public AccessModifierKind AccessModifierKind { get; }
     public TypeClauseNode ReturnTypeClauseNode { get; }
-    public IdentifierToken FunctionIdentifierToken { get; }
+    public INameToken NameToken { get; }
     public GenericParametersListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public ConstraintNode? ConstraintNode { get; private set; }
@@ -144,7 +144,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 		var i = 0;
 
 		childList[i++] = ReturnTypeClauseNode;
-		childList[i++] = FunctionIdentifierToken;
+		childList[i++] = NameToken;
 		if (GenericArgumentsListingNode is not null)
             childList[i++] = GenericArgumentsListingNode;
         childList[i++] = FunctionArgumentsListingNode;

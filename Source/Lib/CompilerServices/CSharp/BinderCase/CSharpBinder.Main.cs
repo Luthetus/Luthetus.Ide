@@ -237,9 +237,9 @@ public partial class CSharpBinder : IBinder
         FunctionDefinitionNode functionDefinitionNode,
         CSharpParserModel model)
     {
-        var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
+        var functionIdentifierText = functionDefinitionNode.NameToken.TextSpan.GetText();
 
-        var functionSymbol = new FunctionSymbol(functionDefinitionNode.FunctionIdentifierToken.TextSpan with
+        var functionSymbol = new FunctionSymbol(functionDefinitionNode.NameToken.TextSpan with
         {
             DecorationByte = (byte)GenericDecorationKind.Function
         });
@@ -254,7 +254,7 @@ public partial class CSharpBinder : IBinder
                 functionDefinitionNode))
         {
             model.BinderSession.DiagnosticBag.ReportAlreadyDefinedFunction(
-                functionDefinitionNode.FunctionIdentifierToken.TextSpan,
+                functionDefinitionNode.NameToken.TextSpan,
                 functionIdentifierText);
         }
     }
@@ -1426,7 +1426,7 @@ public partial class CSharpBinder : IBinder
         	case SyntaxKind.VariableDeclarationNode:
         		return ((VariableDeclarationNode)definitionNode).IdentifierToken.TextSpan;
         	case SyntaxKind.FunctionDefinitionNode:
-        		return ((FunctionDefinitionNode)definitionNode).FunctionIdentifierToken.TextSpan;
+        		return ((FunctionDefinitionNode)definitionNode).NameToken.TextSpan;
         	case SyntaxKind.TypeDefinitionNode:
 	        	return ((TypeDefinitionNode)definitionNode).TypeIdentifierToken.TextSpan;
 	        default:
@@ -1727,8 +1727,8 @@ public partial class CSharpBinder : IBinder
     		{
     			var functionDefinitionNode = (FunctionDefinitionNode)syntaxNode;
     			
-    			if (functionDefinitionNode.FunctionIdentifierToken.ConstructorWasInvoked)
-    				return (functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive, functionDefinitionNode.FunctionIdentifierToken.TextSpan.EndingIndexExclusive);
+    			if (functionDefinitionNode.NameToken.ConstructorWasInvoked)
+    				return (functionDefinitionNode.NameToken.TextSpan.StartingIndexInclusive, functionDefinitionNode.NameToken.TextSpan.EndingIndexExclusive);
     			
     			goto default;
     		}

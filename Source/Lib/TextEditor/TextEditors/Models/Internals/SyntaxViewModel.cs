@@ -115,14 +115,14 @@ public struct SyntaxViewModel
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
 		{
 			var functionDefinitionNode = (FunctionDefinitionNode)DefinitionNode;
-			resourceUriValue = functionDefinitionNode.FunctionIdentifierToken.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = functionDefinitionNode.FunctionIdentifierToken.TextSpan.StartingIndexInclusive;
+			resourceUriValue = functionDefinitionNode.NameToken.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = functionDefinitionNode.NameToken.TextSpan.StartingIndexInclusive;
 		}
 		else if (DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
 			var constructorDefinitionNode = (ConstructorDefinitionNode)DefinitionNode;
-			resourceUriValue = constructorDefinitionNode.FunctionIdentifier.TextSpan.ResourceUri.Value;
-			indexInclusiveStart = constructorDefinitionNode.FunctionIdentifier.TextSpan.StartingIndexInclusive;
+			resourceUriValue = constructorDefinitionNode.NameToken.TextSpan.ResourceUri.Value;
+			indexInclusiveStart = constructorDefinitionNode.NameToken.TextSpan.StartingIndexInclusive;
 		}
 		
 		if (resourceUriValue is null || indexInclusiveStart == -1)

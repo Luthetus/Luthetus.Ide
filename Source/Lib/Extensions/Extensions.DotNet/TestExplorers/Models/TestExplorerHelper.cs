@@ -77,13 +77,13 @@ public static class TestExplorerHelper
 			if (functionDefinitionNodeList.Length != 0)
 			{
 				var methodMatchList = functionDefinitionNodeList
-					.Where(x => x.FunctionIdentifierToken.TextSpan.GetText() == methodName)
+					.Where(x => x.NameToken.TextSpan.GetText() == methodName)
 					.ToList();
 
 				if (methodMatchList.Count != 0)
 				{
 					var functionDefinitionNode = methodMatchList.First();
-					definitionTextSpan = functionDefinitionNode.FunctionIdentifierToken.TextSpan;
+					definitionTextSpan = functionDefinitionNode.NameToken.TextSpan;
 
 					NotificationHelper.DispatchInformative(
 						nameof(TestExplorerTreeViewMouseEventHandler),

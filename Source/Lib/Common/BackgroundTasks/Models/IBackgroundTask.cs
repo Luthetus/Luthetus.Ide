@@ -24,7 +24,7 @@ public interface IBackgroundTask
     /// (leave the old event as it was within the queue)
     /// </summary>
 	public IBackgroundTask? BatchOrDefault(IBackgroundTask oldEvent);
-	
+
 	/// <summary>
     /// This method is the actual work item that gets awaited in order to handle the event.
     /// </summary>

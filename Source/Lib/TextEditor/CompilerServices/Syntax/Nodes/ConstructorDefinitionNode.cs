@@ -10,14 +10,14 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 {
     public ConstructorDefinitionNode(
         TypeClauseNode returnTypeClauseNode,
-        IdentifierToken functionIdentifier,
+        INameToken nameToken,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
         CodeBlockNode? codeBlockNode,
         ConstraintNode? constraintNode)
     {
         ReturnTypeClauseNode = returnTypeClauseNode;
-        FunctionIdentifier = functionIdentifier;
+        NameToken = nameToken;
         GenericArgumentsListingNode = genericArgumentsListingNode;
         FunctionArgumentsListingNode = functionArgumentsListingNode;
         CodeBlockNode = codeBlockNode;
@@ -28,7 +28,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode ReturnTypeClauseNode { get; }
-    public IdentifierToken FunctionIdentifier { get; }
+    public INameToken NameToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
@@ -140,7 +140,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 		var i = 0;
 
 		childList[i++] = ReturnTypeClauseNode;
-		childList[i++] = FunctionIdentifier;
+		childList[i++] = NameToken;
 		if (GenericArgumentsListingNode is not null)
 			childList[i++] = GenericArgumentsListingNode;
         childList[i++] = FunctionArgumentsListingNode;

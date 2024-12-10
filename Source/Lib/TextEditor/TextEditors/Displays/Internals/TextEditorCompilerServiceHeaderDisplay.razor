@@ -33,14 +33,14 @@
 							var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwnerLocal;
 							<text>
 								@IconSymbolMethodFragment.Render(iconDriver)
-								@(functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText())(...)
+								@(functionDefinitionNode.NameToken.TextSpan.GetText())(...)
 							</text>
 							break;
 						case SyntaxKind.ConstructorDefinitionNode:
 							var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwnerLocal;
 							<text>
 								@IconBlankFragment.Render(iconDriver)
-								@(constructorDefinitionNode.FunctionIdentifier.TextSpan.GetText())(...)
+								@(constructorDefinitionNode.NameToken.TextSpan.GetText())(...)
 							</text>
 							break;
 						case SyntaxKind.TypeDefinitionNode:

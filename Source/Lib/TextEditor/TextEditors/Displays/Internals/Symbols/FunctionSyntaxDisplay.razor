@@ -35,7 +35,7 @@
 			var functionDefinitionNode = (FunctionDefinitionNode)syntaxViewModelLocal.DefinitionNode;
 			returnTypeClauseNode = functionDefinitionNode.ReturnTypeClauseNode;
 			returnTypeClauseNodeText = null;
-			methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
+			methodName = functionDefinitionNode.NameToken.TextSpan.GetText();
 			genericParametersListingNode = functionDefinitionNode.GenericArgumentsListingNode;
 		}
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
