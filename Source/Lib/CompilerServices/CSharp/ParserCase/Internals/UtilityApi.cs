@@ -186,21 +186,16 @@ public static class UtilityApi
     /// Note: The check for implementing 'INameToken' is done via if statements and
     ///       checking the token.SyntaxKind, not an 'is' cast.
     /// </summary>
-    public static INameToken NameTokenForTypeClauseNode(ISyntaxToken token)
+    public static NameClauseToken NameTokenForTypeClauseNode(ISyntaxToken token)
     {
-    	var success = false;
-    	
     	if (token.SyntaxKind == SyntaxKind.IdentifierToken)
-    		success = true;
+    		return new NameClauseToken((IdentifierToken)token); 
     	else if (IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
-    		success = true;
+    		return new NameClauseToken((KeywordToken)token);
     	else if (IsContextualKeywordSyntaxKind(token.SyntaxKind))
-    		success = true;
-		
-		if (success)
-			return (INameToken)token;
+    		return new NameClauseToken((KeywordContextualToken)token);
 		else
-    		return default(IdentifierToken);
+    		return default(NameClauseToken);
     }
     
     public static bool IsConvertibleToTypeClauseNode(SyntaxKind syntaxKind)
@@ -220,21 +215,21 @@ public static class UtilityApi
     	else if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
     		return new TypeClauseNode(
-	    		(IdentifierToken)syntax,
+	    		new NameClauseToken((IdentifierToken)syntax),
 		        null,
 		        null);
     	}
 	    else if (IsTypeIdentifierKeywordSyntaxKind(syntax.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(KeywordToken)syntax,
+	    		new NameClauseToken((KeywordToken)syntax),
 		        null,
 		        null);
 	    }
 	    else if (IsContextualKeywordSyntaxKind(syntax.SyntaxKind))
 	    {
 	    	return new TypeClauseNode(
-	    		(KeywordContextualToken)syntax,
+	    		new NameClauseToken((KeywordContextualToken)syntax),
 		        null,
 		        null);
 	    }

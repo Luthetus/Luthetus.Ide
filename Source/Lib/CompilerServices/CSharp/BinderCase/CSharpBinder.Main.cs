@@ -442,14 +442,14 @@ public partial class CSharpBinder : IBinder
             && variableDeclarationNode is not null)
         {
             variableReferenceNode = new VariableReferenceNode(
-                variableIdentifierToken,
+                new NameClauseToken(variableIdentifierToken),
                 variableDeclarationNode);
         }
         else
         {
             variableDeclarationNode = new VariableDeclarationNode(
                 CSharpFacts.Types.Var.ToTypeClause(),
-                variableIdentifierToken,
+                new NameClauseToken(variableIdentifierToken),
                 VariableKind.Local,
                 false)
             {
@@ -457,7 +457,7 @@ public partial class CSharpBinder : IBinder
             };
 
             variableReferenceNode = new VariableReferenceNode(
-                variableIdentifierToken,
+                new NameClauseToken(variableIdentifierToken),
                 variableDeclarationNode);
 
             model.BinderSession.DiagnosticBag.ReportUndefinedVariable(
@@ -839,7 +839,7 @@ public partial class CSharpBinder : IBinder
     }
 
     public void CreateVariableSymbol(
-        INameToken nameToken,
+        NameClauseToken nameToken,
         VariableKind variableKind,
         CSharpParserModel model)
     {

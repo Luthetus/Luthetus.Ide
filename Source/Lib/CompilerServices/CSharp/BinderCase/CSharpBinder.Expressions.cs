@@ -142,9 +142,8 @@ public partial class CSharpBinder
 		        new List<FunctionParameterEntryNode>(),
 		        closeParenthesisToken: default);
 		
-			// TODO: ContextualKeywords as the function identifier?
 			var functionInvocationNode = new FunctionInvocationNode(
-				(IdentifierToken)ambiguousIdentifierExpressionNode.NameToken,
+				ambiguousIdentifierExpressionNode.NameToken,
 		        functionDefinitionNode: null,
 		        ambiguousIdentifierExpressionNode.GenericParametersListingNode,
 		        functionParametersListingNode,
@@ -194,7 +193,7 @@ public partial class CSharpBinder
 			if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.NameToken.SyntaxKind))
 			{
 				var variableAssignmentNode = new VariableAssignmentExpressionNode(
-					UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.NameToken, model),
+					new NameClauseToken(UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.NameToken, model)),
 			        (EqualsToken)token,
 			        EmptyExpressionNode.Empty);
 			 
@@ -304,7 +303,7 @@ public partial class CSharpBinder
 			
 			var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
 		        (TypeClauseNode)decidedExpression,
-		        identifierToken,
+		        new NameClauseToken(identifierToken),
 		        VariableKind.Local,
 		        model);
 		        
@@ -500,12 +499,12 @@ public partial class CSharpBinder
 			case SyntaxKind.IdentifierToken:
 				if (constructorInvocationExpressionNode.ResultTypeClauseNode is null)
 				{
-					INameToken nameToken = default(IdentifierToken);
+					var nameToken = default(NameClauseToken);
 					
 					if (token.SyntaxKind == SyntaxKind.IdentifierToken)
-						nameToken = (IdentifierToken)token;
+						nameToken = new NameClauseToken((IdentifierToken)token);
 					else if (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
-						nameToken = (KeywordToken)token;
+						nameToken = new NameClauseToken((KeywordToken)token);
 				
 					if (nameToken.ConstructorWasInvoked)
 					{
@@ -690,7 +689,7 @@ public partial class CSharpBinder
 					var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionSecondary;
 					if (ambiguousIdentifierExpressionNode.NameToken.SyntaxKind == SyntaxKind.IdentifierToken)
 					{
-						objectInitializationParameterEntryNode.NameToken = (IdentifierToken)ambiguousIdentifierExpressionNode.NameToken;
+						objectInitializationParameterEntryNode.NameToken = new NameClauseToken(ambiguousIdentifierExpressionNode.NameToken, SyntaxKind.IdentifierToken);
 					}
 					else
 					{
@@ -700,7 +699,7 @@ public partial class CSharpBinder
 				else if (expressionSecondary.SyntaxKind == SyntaxKind.TypeClauseNode)
 				{
 					var typeClauseNode = (TypeClauseNode)expressionSecondary;
-					objectInitializationParameterEntryNode.NameToken = (IdentifierToken)typeClauseNode.NameToken;
+					objectInitializationParameterEntryNode.NameToken = new NameClauseToken(typeClauseNode.NameToken, SyntaxKind.IdentifierToken);
 				}
 				else
 				{
@@ -854,7 +853,7 @@ public partial class CSharpBinder
 				return explicitCastNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
 			case SyntaxKind.IdentifierToken:
 				var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
-					(IdentifierToken)token,
+					new NameClauseToken((IdentifierToken)token),
 			        genericParametersListingNode: null,
 			        CSharpFacts.Types.Void.ToTypeClause());
 			    return ambiguousExpressionNode;
@@ -1283,7 +1282,7 @@ public partial class CSharpBinder
 				        closeParenthesisToken: default);
 				
 					var functionInvocationNode = new FunctionInvocationNode(
-						UtilityApi.ConvertToIdentifierToken(typeClauseNode.NameToken, model),
+						new NameClauseToken(typeClauseNode.NameToken, SyntaxKind.IdentifierToken),
 				        functionDefinitionNode: null,
 				        typeClauseNode.GenericParametersListingNode,
 				        functionParametersListingNode,
@@ -1332,7 +1331,7 @@ public partial class CSharpBinder
 						// to bind the VariableDeclarationNode, and add it to the current code block builder.
 						variableDeclarationNode = new VariableDeclarationNode(
 					        typeClauseNode,
-					        identifierToken,
+					        new NameClauseToken(identifierToken),
 					        VariableKind.Local,
 					        false);
 					}
@@ -1340,7 +1339,7 @@ public partial class CSharpBinder
 					{
 						variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
 					        typeClauseNode,
-					        identifierToken,
+					        new NameClauseToken(identifierToken),
 					        VariableKind.Local,
 					        model);
 					}
@@ -1444,7 +1443,7 @@ public partial class CSharpBinder
 	    		
 	    		var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
 			        typeClauseNode,
-			        identifierToken,
+			        new NameClauseToken(identifierToken),
 			        VariableKind.Local,
 			        model);
 			        
@@ -1485,7 +1484,7 @@ public partial class CSharpBinder
     					else if (firstSyntax.SyntaxKind == SyntaxKind.IdentifierToken)
     					{
     						var identifierToken = (IdentifierToken)firstSyntax;
-    						typeClauseNode = new TypeClauseNode(identifierToken, valueType: null, genericParametersListingNode: null);
+    						typeClauseNode = new TypeClauseNode(new NameClauseToken(identifierToken), valueType: null, genericParametersListingNode: null);
 					
 							BindTypeClauseNode(
 						        typeClauseNode,
@@ -1529,7 +1528,7 @@ public partial class CSharpBinder
 	    			
 	    			var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
 				        typeClauseNode,
-				        (IdentifierToken)variableIdentifier,
+				        new NameClauseToken((IdentifierToken)variableIdentifier),
 				        VariableKind.Local,
 				        model);
 				        
@@ -1546,7 +1545,7 @@ public partial class CSharpBinder
     	
     		var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
 		        TypeFacts.Empty.ToTypeClause(),
-		        (IdentifierToken)token,
+		        new NameClauseToken(token, SyntaxKind.IdentifierToken),
 		        VariableKind.Local,
 		        model);
 		        

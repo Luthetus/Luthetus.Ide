@@ -104,7 +104,7 @@ public static class ParseTypes
     		var syntaxToken = (IdentifierToken)model.TokenWalker.Match(SyntaxKind.IdentifierToken);
     		
     		return new TypeClauseNode(
-	            syntaxToken,
+	            new NameClauseToken(syntaxToken),
 	            null,
 	            null);
     	}

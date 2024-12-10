@@ -19,7 +19,7 @@ public static class ParseVariables
 	/// <summary>Function invocation which uses the 'out' keyword.</summary>
     public static IVariableDeclarationNode? HandleVariableDeclarationExpression(
         TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
+        NameClauseToken nameToken,
         VariableKind variableKind,
         IParserModel model)
     {
@@ -27,7 +27,7 @@ public static class ParseVariables
 
 		variableDeclarationNode = new VariableDeclarationNode(
 	        consumedTypeClauseNode,
-	        consumedIdentifierToken,
+	        nameToken,
 	        variableKind,
 	        false);
 
@@ -41,13 +41,13 @@ public static class ParseVariables
     /// </summary>
     public static void HandleVariableDeclarationStatement(
         TypeClauseNode consumedTypeClauseNode,
-        IdentifierToken consumedIdentifierToken,
+        NameClauseToken nameToken,
         VariableKind variableKind,
         IParserModel model)
     {
     	var variableDeclarationNode = HandleVariableDeclarationExpression(
 			consumedTypeClauseNode,
-	        consumedIdentifierToken,
+	        nameToken,
 	        variableKind,
 	        model);
 	        
@@ -70,7 +70,7 @@ public static class ParseVariables
             {
                 // Variable initialization occurs here.
                 HandleVariableAssignment(
-                    consumedIdentifierToken,
+                    nameToken,
                     (EqualsToken)model.TokenWalker.Consume(),
                     (CSharpParserModel)model);
             }
@@ -81,7 +81,7 @@ public static class ParseVariables
                 SyntaxKind.VarTokenContextualKeyword)
             {
                 model.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
-                    consumedIdentifierToken.TextSpan);
+                    nameToken.TextSpan);
             }
         }
 
@@ -115,7 +115,7 @@ public static class ParseVariables
     }
 
     public static void HandleVariableAssignment(
-        IdentifierToken consumedIdentifierToken,
+        NameClauseToken nameToken,
         EqualsToken consumedEqualsToken,
         CSharpParserModel model)
     {

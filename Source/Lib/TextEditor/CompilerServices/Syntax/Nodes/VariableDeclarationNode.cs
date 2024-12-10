@@ -9,7 +9,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 {
     public VariableDeclarationNode(
         TypeClauseNode typeClauseNode,
-        INameToken nameToken,
+        NameClauseToken nameToken,
         VariableKind variableKind,
         bool isInitialized)
     {
@@ -23,7 +23,7 @@ public sealed class VariableDeclarationNode : IVariableDeclarationNode
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode TypeClauseNode { get; }
-    public INameToken NameToken { get; }
+    public NameClauseToken NameToken { get; }
     /// <summary>
     /// TODO: Remove the 'set;' on this property
     /// </summary>

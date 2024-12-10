@@ -15,7 +15,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
 {
     public ObjectInitializationParameterEntryNode(
-        INameToken nameToken,
+        NameClauseToken nameToken,
         EqualsToken equalsToken,
         IExpressionNode expressionNode)
     {
@@ -27,7 +27,7 @@ public sealed class ObjectInitializationParameterEntryNode : ISyntaxNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public INameToken NameToken { get; set; }
+    public NameClauseToken NameToken { get; set; }
     public EqualsToken EqualsToken { get; set; }
     public IExpressionNode ExpressionNode { get; set; }
     public bool IsCollectionInitialization => !NameToken.ConstructorWasInvoked;

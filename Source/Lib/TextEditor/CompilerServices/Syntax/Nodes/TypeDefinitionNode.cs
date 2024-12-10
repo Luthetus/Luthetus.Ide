@@ -97,7 +97,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     public TypeClauseNode ToTypeClause()
     {
     	return _toTypeClauseNodeResult ??= new TypeClauseNode(
-            TypeIdentifierToken,
+            new NameClauseToken(TypeIdentifierToken),
             ValueType,
             null);
     }

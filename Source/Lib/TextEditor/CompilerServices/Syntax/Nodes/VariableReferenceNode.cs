@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class VariableReferenceNode : IExpressionNode
 {
     public VariableReferenceNode(
-        INameToken nameToken,
+        NameClauseToken nameToken,
         IVariableDeclarationNode variableDeclarationNode)
     {
         NameToken = nameToken;
@@ -17,7 +17,7 @@ public sealed class VariableReferenceNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public INameToken NameToken { get; }
+    public NameClauseToken NameToken { get; }
     /// <summary>
     /// The <see cref="VariableDeclarationNode"/> is null when the variable is undeclared
     /// </summary>

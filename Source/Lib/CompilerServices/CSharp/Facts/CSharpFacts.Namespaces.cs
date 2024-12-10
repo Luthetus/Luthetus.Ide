@@ -26,7 +26,7 @@ public partial class CSharpFacts
                         {
                             new NamespaceStatementNode(
                                 new(new(0, 0, 0, ResourceUri.Empty, string.Empty), SyntaxKind.UnrecognizedTokenKeyword),
-                                new IdentifierToken(new(0, SystemNamespaceIdentifier.Length, 0, ResourceUri.Empty, SystemNamespaceIdentifier)),
+                                new NameClauseToken(new IdentifierToken(new(0, SystemNamespaceIdentifier.Length, 0, ResourceUri.Empty, SystemNamespaceIdentifier))),
                                 new CodeBlockNode(Array.Empty<ISyntax>()))
                         })
                 }
@@ -37,7 +37,7 @@ public partial class CSharpFacts
         {
             return new NamespaceStatementNode(
                 new(new(0, 0, 0, ResourceUri.Empty, string.Empty), SyntaxKind.UnrecognizedTokenKeyword),
-                new IdentifierToken(new(0, TopLevelNamespaceIdentifier.Length, 0, ResourceUri.Empty, TopLevelNamespaceIdentifier)),
+                new NameClauseToken(new IdentifierToken(new(0, TopLevelNamespaceIdentifier.Length, 0, ResourceUri.Empty, TopLevelNamespaceIdentifier))),
                 new CodeBlockNode(Array.Empty<ISyntax>()));
         }
     }

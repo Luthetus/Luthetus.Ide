@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class FunctionInvocationNode : IExpressionNode
 {
     public FunctionInvocationNode(
-        INameToken nameToken,
+        NameClauseToken nameToken,
         FunctionDefinitionNode? functionDefinitionNode,
         GenericParametersListingNode? genericParametersListingNode,
         FunctionParametersListingNode functionParametersListingNode,
@@ -23,7 +23,7 @@ public sealed class FunctionInvocationNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public INameToken NameToken { get; }
+    public NameClauseToken NameToken { get; }
     public FunctionDefinitionNode? FunctionDefinitionNode { get; }
     public GenericParametersListingNode? GenericParametersListingNode { get; }
     public FunctionParametersListingNode FunctionParametersListingNode { get; }

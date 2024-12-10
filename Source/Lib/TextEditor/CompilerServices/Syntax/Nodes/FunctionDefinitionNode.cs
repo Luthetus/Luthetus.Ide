@@ -14,7 +14,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     public FunctionDefinitionNode(
         AccessModifierKind accessModifierKind,
         TypeClauseNode returnTypeClauseNode,
-        INameToken nameToken,
+        NameClauseToken nameToken,
         GenericParametersListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
         CodeBlockNode? codeBlockNode,
@@ -34,7 +34,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
 
     public AccessModifierKind AccessModifierKind { get; }
     public TypeClauseNode ReturnTypeClauseNode { get; }
-    public INameToken NameToken { get; }
+    public NameClauseToken NameToken { get; }
     public GenericParametersListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public ConstraintNode? ConstraintNode { get; private set; }

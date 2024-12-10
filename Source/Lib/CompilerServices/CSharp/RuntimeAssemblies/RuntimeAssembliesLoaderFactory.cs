@@ -128,7 +128,10 @@ public static class RuntimeAssembliesLoaderFactory
                             {
                                 // Return Type
                                 var returnTypeTextSpan = TextEditorTextSpan.FabricateTextSpan(method.ReturnType.Name);
-                                var returnTypeClauseNode = new TypeClauseNode(new IdentifierToken(returnTypeTextSpan), null, null);
+                                var returnTypeClauseNode = new TypeClauseNode(
+                                	new NameClauseToken(new IdentifierToken(returnTypeTextSpan)),
+                                	null,
+                                	null);
 
                                 // Identifier
                                 var functionIdentifierTextSpan = TextEditorTextSpan.FabricateTextSpan(method.Name);
@@ -156,7 +159,7 @@ public static class RuntimeAssembliesLoaderFactory
 
                                         var variableDeclarationStatementNode = new VariableDeclarationNode(
                                             typeClauseNode,
-                                            argumentIdentifierToken,
+                                            new NameClauseToken(argumentIdentifierToken),
                                             VariableKind.Local,
                                             false);
 
@@ -222,7 +225,7 @@ public static class RuntimeAssembliesLoaderFactory
                                 var functionDefinitionNode = new FunctionDefinitionNode(
                                     AccessModifierKind.Public,
                                     returnTypeClauseNode,
-                                    functionIdentifierToken,
+                                    new NameClauseToken(functionIdentifierToken),
                                     genericArgumentsListingNode: null,
                                     functionArgumentsListingNode,
                                     null,
@@ -302,7 +305,7 @@ public static class RuntimeAssembliesLoaderFactory
             }
 
             return new TypeClauseNode(
-                typeIdentifierToken,
+                new NameClauseToken(typeIdentifierToken),
                 null,
                 genericParametersListingNode);
         }

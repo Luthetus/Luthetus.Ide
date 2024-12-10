@@ -10,7 +10,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 {
     public NamespaceStatementNode(
         KeywordToken keywordToken,
-        INameToken nameToken,
+        NameClauseToken nameToken,
         CodeBlockNode codeBlockNode)
     {
         KeywordToken = keywordToken;
@@ -22,7 +22,7 @@ public sealed class NamespaceStatementNode : ICodeBlockOwner
 	private bool _childListIsDirty = true;
 
     public KeywordToken KeywordToken { get; }
-    public INameToken NameToken { get; }
+    public NameClauseToken NameToken { get; }
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 

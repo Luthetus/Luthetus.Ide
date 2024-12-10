@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -9,7 +10,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class TypeClauseNode : IExpressionNode
 {
     public TypeClauseNode(
-        INameToken nameToken,
+        NameClauseToken nameToken,
         Type? valueType,
         GenericParametersListingNode? genericParametersListingNode)
     {
@@ -26,7 +27,7 @@ public sealed class TypeClauseNode : IExpressionNode
     /// Then: 'int' is the <see cref="TypeIdentifierToken"/>
     /// And: <see cref="GenericParametersListingNode"/> would be null
     /// </summary>
-    public INameToken NameToken { get; }
+    public NameClauseToken NameToken { get; }
 	/// <summary>
     /// Given: 'int x = 2;'<br/>
     /// Then: 'typeof(int)' is the <see cref="ValueType"/>

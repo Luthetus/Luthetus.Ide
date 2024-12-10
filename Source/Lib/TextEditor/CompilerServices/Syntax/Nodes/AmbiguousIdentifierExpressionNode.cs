@@ -7,7 +7,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 {
     public AmbiguousIdentifierExpressionNode(
-        INameToken nameToken,
+        NameClauseToken nameToken,
         GenericParametersListingNode? genericParametersListingNode,
         TypeClauseNode resultTypeClauseNode)
     {
@@ -19,7 +19,7 @@ public sealed class AmbiguousIdentifierExpressionNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public INameToken NameToken { get; }
+    public NameClauseToken NameToken { get; }
     public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
     public TypeClauseNode ResultTypeClauseNode { get; }
     public bool FollowsMemberAccessToken { get; init; }

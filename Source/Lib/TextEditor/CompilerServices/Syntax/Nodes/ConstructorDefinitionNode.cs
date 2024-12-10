@@ -10,7 +10,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 {
     public ConstructorDefinitionNode(
         TypeClauseNode returnTypeClauseNode,
-        INameToken nameToken,
+        NameClauseToken nameToken,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode functionArgumentsListingNode,
         CodeBlockNode? codeBlockNode,
@@ -28,7 +28,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
 	private bool _childListIsDirty = true;
 
     public TypeClauseNode ReturnTypeClauseNode { get; }
-    public INameToken NameToken { get; }
+    public NameClauseToken NameToken { get; }
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }

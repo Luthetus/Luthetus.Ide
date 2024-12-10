@@ -351,7 +351,7 @@ public class ParseDefaultKeywords
     	
     	var variableDeclarationStatementNode = new VariableDeclarationNode(
             typeClauseNode,
-            variableIdentifierToken,
+            new NameClauseToken(variableIdentifierToken),
             VariableKind.Local,
             false);
     	
@@ -741,7 +741,7 @@ public class ParseDefaultKeywords
 
         var usingStatementNode = new UsingStatementNode(
             usingKeywordToken,
-            namespaceIdentifier);
+            new NameClauseToken(namespaceIdentifier));
 
         model.Binder.BindUsingStatementNode(usingStatementNode, model);
         model.StatementBuilder.ChildList.Add(usingStatementNode);
@@ -895,7 +895,7 @@ public class ParseDefaultKeywords
 
         var namespaceStatementNode = new NamespaceStatementNode(
             namespaceKeywordToken,
-            namespaceIdentifier,
+            new NameClauseToken(namespaceIdentifier),
             null);
 
         model.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, model);
