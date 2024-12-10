@@ -7,13 +7,13 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class FunctionInvocationNode : IExpressionNode
 {
     public FunctionInvocationNode(
-        IdentifierToken functionInvocationIdentifierToken,
+        INameToken nameToken,
         FunctionDefinitionNode? functionDefinitionNode,
         GenericParametersListingNode? genericParametersListingNode,
         FunctionParametersListingNode functionParametersListingNode,
         TypeClauseNode resultTypeClauseNode)
     {
-        FunctionInvocationIdentifierToken = functionInvocationIdentifierToken;
+        NameToken = nameToken;
         FunctionDefinitionNode = functionDefinitionNode;
         GenericParametersListingNode = genericParametersListingNode;
         FunctionParametersListingNode = functionParametersListingNode;
@@ -23,7 +23,7 @@ public sealed class FunctionInvocationNode : IExpressionNode
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public IdentifierToken FunctionInvocationIdentifierToken { get; }
+    public INameToken NameToken { get; }
     public FunctionDefinitionNode? FunctionDefinitionNode { get; }
     public GenericParametersListingNode? GenericParametersListingNode { get; }
     public FunctionParametersListingNode FunctionParametersListingNode { get; }
@@ -46,7 +46,7 @@ public sealed class FunctionInvocationNode : IExpressionNode
         var childList = new ISyntax[childCount];
 		var i = 0;
 
-		childList[i++] = FunctionInvocationIdentifierToken;
+		childList[i++] = NameToken;
 		if (FunctionDefinitionNode is not null)
             childList[i++] = FunctionDefinitionNode;
         if (GenericParametersListingNode is not null)

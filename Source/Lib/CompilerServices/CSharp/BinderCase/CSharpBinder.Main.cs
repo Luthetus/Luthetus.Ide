@@ -525,10 +525,9 @@ public partial class CSharpBinder : IBinder
         FunctionInvocationNode functionInvocationNode,
         CSharpParserModel model)
     {
-        var functionInvocationIdentifierText = functionInvocationNode
-            .FunctionInvocationIdentifierToken.TextSpan.GetText();
+        var functionInvocationIdentifierText = functionInvocationNode.NameToken.TextSpan.GetText();
 
-        var functionSymbol = new FunctionSymbol(functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan with
+        var functionSymbol = new FunctionSymbol(functionInvocationNode.NameToken.TextSpan with
         {
             DecorationByte = (byte)GenericDecorationKind.Function
         });
@@ -548,7 +547,7 @@ public partial class CSharpBinder : IBinder
         else
         {
             model.BinderSession.DiagnosticBag.ReportUndefinedFunction(
-                functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
+                functionInvocationNode.NameToken.TextSpan,
                 functionInvocationIdentifierText);
         }
     }

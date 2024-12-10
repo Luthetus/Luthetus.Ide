@@ -65,7 +65,7 @@
 			var functionInvocationNode = (FunctionInvocationNode)syntaxViewModelLocal.TargetNode;
 			returnTypeClauseNode = functionInvocationNode.ResultTypeClauseNode;
 			returnTypeClauseNodeText = null;
-			methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText();
+			methodName = functionInvocationNode.NameToken.TextSpan.GetText();
 			genericParametersListingNode = functionInvocationNode.GenericParametersListingNode;
 		}
 		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
