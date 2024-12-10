@@ -500,13 +500,9 @@ public partial class CSharpBinder
 			case SyntaxKind.IdentifierToken:
 				if (constructorInvocationExpressionNode.ResultTypeClauseNode is null)
 				{
-					if (token.SyntaxKind == SyntaxKind.IdentifierToken ||
-					    UtilityApi.IsTypeIdentifierKeywordSyntaxKind(token.SyntaxKind))
+					if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
 					{
-						var typeClauseNode = new TypeClauseNode(
-							token,
-        					valueType: null,
-        					genericParametersListingNode: null);
+						var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(token, model);
 						
 						BindTypeClauseNode(
 					        typeClauseNode,
@@ -887,10 +883,7 @@ public partial class CSharpBinder
 		{
 			var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
 			
-			var typeClauseNode = new TypeClauseNode(
-				expressionSecondaryTyped.Token,
-		        valueType: null,
-		        genericParametersListingNode: null);
+			var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(expressionSecondaryTyped.Token, model);
 			
 			BindTypeClauseNode(
 		        typeClauseNode,
@@ -1426,7 +1419,8 @@ public partial class CSharpBinder
 	    		badExpressionNode.SyntaxList[1].SyntaxKind == SyntaxKind.IdentifierToken)
 	    	{
 	    		var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)badExpressionNode.SyntaxList[0];
-	    		var typeClauseNode = new TypeClauseNode(ambiguousIdentifierExpressionNode.Token, valueType: null, genericParametersListingNode: null);
+	    		
+	    		var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, model);
 					
 				BindTypeClauseNode(
 			        typeClauseNode,
@@ -1468,7 +1462,7 @@ public partial class CSharpBinder
     					if (firstSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
     					{
     						var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)firstSyntax;
-    						typeClauseNode = new TypeClauseNode(ambiguousIdentifierExpressionNode.Token, valueType: null, genericParametersListingNode: null);
+    						typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, model);
 					
 							BindTypeClauseNode(
 						        typeClauseNode,

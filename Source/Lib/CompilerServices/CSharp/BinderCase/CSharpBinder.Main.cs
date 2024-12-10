@@ -569,7 +569,7 @@ public partial class CSharpBinder : IBinder
         TypeClauseNode typeClauseNode,
         CSharpParserModel model)
     {
-        if (typeClauseNode.TypeIdentifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
+        if (!typeClauseNode.IsKeywordType)
         {
             var typeSymbol = new TypeSymbol(typeClauseNode.TypeIdentifierToken.TextSpan with
             {
