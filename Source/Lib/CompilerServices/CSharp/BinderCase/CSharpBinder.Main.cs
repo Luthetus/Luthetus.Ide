@@ -47,10 +47,28 @@ public partial class CSharpBinder : IBinder
     }
 
     public IReadOnlyDictionary<string, NamespaceGroupNode> NamespaceGroupNodes => _namespaceGroupNodeMap;
-    public ITextEditorSymbol[] Symbols => _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToArray();
     public Dictionary<string, SymbolDefinition> SymbolDefinitions => _symbolDefinitions;
     public IReadOnlyDictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> AllTypeDefinitions => _allTypeDefinitions;
     public TextEditorDiagnostic[] DiagnosticsList => Array.Empty<TextEditorDiagnostic>();
+    
+    /// <summary>
+    /// This will return an empty array if the collection is modified during enumeration
+    /// (specifically this is catching 'InvalidOperationException').
+    /// </summary>
+    public ITextEditorSymbol[] Symbols
+    {
+    	get
+    	{
+    		try
+    		{
+    			return _symbolDefinitions.Values.SelectMany(x => x.SymbolReferences).Select(x => x.Symbol).ToArray();
+    		}
+    		catch (InvalidOperationException e)
+    		{
+    			return Array.Empty<ITextEditorSymbol>();
+    		}
+    	}
+    }
 
     ITextEditorSymbol[] IBinder.SymbolsList => Symbols;
 
@@ -551,7 +569,7 @@ public partial class CSharpBinder : IBinder
         TypeClauseNode typeClauseNode,
         CSharpParserModel model)
     {
-        if (typeClauseNode.TypeIdentifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
+        if (!typeClauseNode.IsKeywordType)
         {
             var typeSymbol = new TypeSymbol(typeClauseNode.TypeIdentifierToken.TextSpan with
             {
@@ -1507,10 +1525,10 @@ public partial class CSharpBinder : IBinder
         return null;
     }
 
-	ISyntaxNode? IBinder.GetSyntaxNode(int positionIndex, ResourceUri resourceUri, CompilationUnit? compilationUnit) =>
-    	GetSyntaxNode(model: null, positionIndex, resourceUri, compilationUnit);
+	ISyntaxNode? IBinder.GetSyntaxNode(int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource) =>
+    	GetSyntaxNode(model: null, positionIndex, resourceUri, compilerServiceResource);
 
-    public ISyntaxNode? GetSyntaxNode(IParserModel? model, int positionIndex, ResourceUri resourceUri, CompilationUnit? compilationUnit)
+    public ISyntaxNode? GetSyntaxNode(IParserModel? model, int positionIndex, ResourceUri resourceUri, ICompilerServiceResource? compilerServiceResource)
     {
         var scope = GetScopeByPositionIndex(model, resourceUri, positionIndex);
         if (scope is null)
@@ -1521,13 +1539,9 @@ public partial class CSharpBinder : IBinder
         var codeBlockOwner = scope.CodeBlockOwner;
         
         if (codeBlockOwner is not null)
-        {
         	parentNode = (ISyntaxNode)codeBlockOwner.CodeBlockNode;
-        }
-        else if (compilationUnit is not null)
-        {
-        	parentNode = compilationUnit.RootCodeBlockNode;
-        }
+        else if (compilerServiceResource.CompilationUnit is not null)
+        	parentNode = compilerServiceResource.CompilationUnit.RootCodeBlockNode;
         else
         	return null;
         
@@ -1535,13 +1549,20 @@ public partial class CSharpBinder : IBinder
         	return null;
         
         var childList = parentNode.GetChildList();
-        
         var possibleNodeList = new List<ISyntaxNode>();
+        
+        ISyntaxNode? fallbackDefinitionNode = null;
         
         foreach (var child in childList)
         {
         	if (child is not ISyntaxNode node)
     			continue;
+    			
+    		if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+    			node.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+    		{
+    			fallbackDefinitionNode = node;
+    		}
         
         	var nodePositionIndices = GetNodePositionIndices(node);
         	if (nodePositionIndices == (-1, -1))
@@ -1555,8 +1576,32 @@ public partial class CSharpBinder : IBinder
         }
         
         if (possibleNodeList.Count <= 0)
+        {
+        	if (fallbackDefinitionNode is not null)
+        	{
+        		if (fallbackDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+        			fallbackDefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+        		{
+        			var fallbackCodeBlockOwner = ((ICodeBlockOwner)fallbackDefinitionNode);
+        			TextEditorTextSpan? fallbackTextSpan = null;
+        			
+        			if (fallbackCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
+        				fallbackTextSpan = fallbackCodeBlockOwner.OpenBraceToken.TextSpan;
+        			else if (fallbackCodeBlockOwner.StatementDelimiterToken.ConstructorWasInvoked)
+        				fallbackTextSpan = fallbackCodeBlockOwner.StatementDelimiterToken.TextSpan;
+        				
+        			if (fallbackTextSpan is not null && compilerServiceResource is not null)
+        			{
+        				var fallbackScope = GetScopeByPositionIndex(model, resourceUri, fallbackTextSpan.Value.StartingIndexInclusive);
+        				if (scope is not null)
+        					return GetFallbackNode(model, positionIndex, resourceUri, compilerServiceResource, fallbackScope);
+        			}
+        		}
+        	}
+        	
         	return null;
-        
+        }
+        	
         return possibleNodeList.MinBy(node =>
         {
         	// TODO: Wasteful re-invocation of this method, can probably do this in one invocation.
@@ -1566,6 +1611,62 @@ public partial class CSharpBinder : IBinder
         	
         	return positionIndex - nodePositionIndices.StartInclusiveIndex;
         });
+    }
+    
+    /// <summary>
+    /// TODO: In 'GetDefinitionNode(...)' The positionIndex to determine IScope is the same that is used to determine the 'name' of the ISyntaxNode...
+    /// 	  ...This should likely be changed, because function argument goto definition won't work if done from the argument listing, rather than the code block of the function.
+    /// 	  This method will act as a temporary work around.
+    /// </summary>
+    public ISyntaxNode? GetFallbackNode(IParserModel? model, int positionIndex, ResourceUri resourceUri, ICompilerServiceResource compilerServiceResource, IScope scope)
+    {
+        if (compilerServiceResource.CompilationUnit is null)
+        	return null;
+        
+        // Try to find a symbol at that cursor position.
+		var symbols = compilerServiceResource.GetSymbols();
+		var foundSymbol = (ITextEditorSymbol?)null;
+		
+        foreach (var symbol in symbols)
+        {
+            if (positionIndex >= symbol.TextSpan.StartingIndexInclusive &&
+                positionIndex < symbol.TextSpan.EndingIndexExclusive)
+            {
+                foundSymbol = symbol;
+                break;
+            }
+        }
+		
+		if (foundSymbol is null)
+			return null;
+			
+		var currentSyntaxKind = foundSymbol.SyntaxKind;
+        
+        switch (currentSyntaxKind)
+        {
+        	case SyntaxKind.VariableAssignmentExpressionNode:
+        	case SyntaxKind.VariableDeclarationNode:
+        	case SyntaxKind.VariableReferenceNode:
+        	case SyntaxKind.VariableSymbol:
+        	case SyntaxKind.PropertySymbol:
+        	case SyntaxKind.FieldSymbol:
+        	{
+        		if (TryGetVariableDeclarationHierarchically(
+        				model,
+        				foundSymbol.TextSpan.ResourceUri,
+        				scope.IndexKey,
+		                foundSymbol.TextSpan.GetText(),
+		                out var variableDeclarationStatementNode)
+		            && variableDeclarationStatementNode is not null)
+		        {
+		            return variableDeclarationStatementNode;
+		        }
+		        
+		        return null;
+        	}
+        }
+
+        return null;
     }
     
     /// <summary>
@@ -1638,6 +1739,10 @@ public partial class CSharpBinder : IBinder
     		}
     		default:
     		{
+    			#if DEBUG
+    			Console.WriteLine($"method: '{nameof(GetNodePositionIndices)}' The {nameof(SyntaxKind)}: '{nameof(syntaxNode.SyntaxKind)}' defaulted in switch statement.");
+    			#endif
+    			
     			return (-1, -1);
     		}
     	}
