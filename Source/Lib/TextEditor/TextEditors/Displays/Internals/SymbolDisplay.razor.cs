@@ -89,13 +89,10 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
     	if (compilerServiceResource is null)
     		return null;
 
-    	var targetNode = compilerService.Binder.GetSyntaxNode(
+    	return compilerService.Binder.GetSyntaxNode(
     		symbolLocal.TextSpan.StartingIndexInclusive,
     		compilerServiceResource.ResourceUri,
     		compilerServiceResource);
-    		
-    	Console.WriteLine(targetNode?.SyntaxKind.ToString() ?? "null");
-    	return targetNode;
     }
     
     /// <summary>

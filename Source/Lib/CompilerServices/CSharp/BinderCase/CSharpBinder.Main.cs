@@ -1579,7 +1579,6 @@ public partial class CSharpBinder : IBinder
         {
         	if (fallbackDefinitionNode is not null)
         	{
-        		Console.WriteLine("if (fallbackDefinitionNode is not null)");
         		if (fallbackDefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
         			fallbackDefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
         		{
@@ -1589,10 +1588,7 @@ public partial class CSharpBinder : IBinder
         			if (fallbackCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
         				fallbackTextSpan = fallbackCodeBlockOwner.OpenBraceToken.TextSpan;
         			else if (fallbackCodeBlockOwner.StatementDelimiterToken.ConstructorWasInvoked)
-        			{
-        				Console.WriteLine("else if (fallbackCodeBlockOwner.StatementDelimiterToken.ConstructorWasInvoked)");
         				fallbackTextSpan = fallbackCodeBlockOwner.StatementDelimiterToken.TextSpan;
-        			}
         				
         			if (fallbackTextSpan is not null && compilerServiceResource is not null)
         			{
