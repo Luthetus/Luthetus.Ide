@@ -56,11 +56,24 @@ public class StatementTests
     }
     
     [Fact]
-    public void TypeDefinitionNode_Test()
+    public void TypeDefinitionNode_Class_Test()
     {
     	var test = new Test(@"public class Aaa { }");
 		
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void TypeDefinitionNode_Interface_Test()
+    {
+    	var test = new Test(@"public interface Aaa { }");
+		
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
 		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, typeDefinitionNode.SyntaxKind);
     }

@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
@@ -9,11 +10,33 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 public sealed class TypeClauseNode : IExpressionNode
 {
     public TypeClauseNode(
-        ISyntaxToken typeIdentifier,
+        IdentifierToken typeIdentifier,
         Type? valueType,
         GenericParametersListingNode? genericParametersListingNode)
     {
         TypeIdentifierToken = typeIdentifier;
+        ValueType = valueType;
+        GenericParametersListingNode = genericParametersListingNode;
+    }
+    
+    public TypeClauseNode(
+        KeywordToken keywordToken,
+        Type? valueType,
+        GenericParametersListingNode? genericParametersListingNode)
+    {
+    	IsKeywordType = true;
+        TypeIdentifierToken = new IdentifierToken(keywordToken.TextSpan);
+        ValueType = valueType;
+        GenericParametersListingNode = genericParametersListingNode;
+    }
+    
+    public TypeClauseNode(
+        KeywordContextualToken keywordContextualToken,
+        Type? valueType,
+        GenericParametersListingNode? genericParametersListingNode)
+    {
+    	IsKeywordType = true;
+        TypeIdentifierToken = new IdentifierToken(keywordContextualToken.TextSpan);
         ValueType = valueType;
         GenericParametersListingNode = genericParametersListingNode;
     }
@@ -26,7 +49,7 @@ public sealed class TypeClauseNode : IExpressionNode
     /// Then: 'int' is the <see cref="TypeIdentifierToken"/>
     /// And: <see cref="GenericParametersListingNode"/> would be null
     /// </summary>
-    public ISyntaxToken TypeIdentifierToken { get; }
+    public IdentifierToken TypeIdentifierToken { get; }
 	/// <summary>
     /// Given: 'int x = 2;'<br/>
     /// Then: 'typeof(int)' is the <see cref="ValueType"/>
@@ -42,6 +65,9 @@ public sealed class TypeClauseNode : IExpressionNode
     /// And: '&lt;int&gt;' is the <see cref="GenericParametersListingNode"/>
     /// </summary>
     public GenericParametersListingNode? GenericParametersListingNode { get; private set; }
+    
+    public bool IsKeywordType { get; } = false;
+    
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
     
     public bool HasQuestionMark { get; set; }
