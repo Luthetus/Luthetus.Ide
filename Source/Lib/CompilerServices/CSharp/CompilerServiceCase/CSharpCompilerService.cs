@@ -79,7 +79,7 @@ public sealed class CSharpCompilerService : CompilerService
 		// make use of the Lexer to do whatever syntax highlighting is possible.
 		try
 		{
-			IParser parser = new CSharpParser((CSharpLexer)lexer);
+			IParser parser = new CSharpParser(lexer);
 			compilationUnit = parser.Parse(Binder, resourceUri);
 		}
 		finally
@@ -91,8 +91,7 @@ public sealed class CSharpCompilerService : CompilerService
 					var resource = _resourceMap[resourceUri];
 					
 					var cSharpResource = (CSharpResource)resource;
-			        var cSharpLexer = (CSharpLexer)lexer;
-			        cSharpResource.EscapeCharacterList = cSharpLexer.EscapeCharacterList;
+			        cSharpResource.EscapeCharacterList = lexer.EscapeCharacterList;
 
 					resource.SyntaxTokenList = lexer.SyntaxTokenList;
 

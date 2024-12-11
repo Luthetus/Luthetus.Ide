@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer.Decoration;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
@@ -81,22 +82,35 @@ namespace Luthetus.CompilerServices.CSharp.LexerCase;
 /// Furthermore, if one overrides 'ParseAsync(...)' they don't even
 /// have to implement ILexer at all. They have complete freedom over the 'ParseAsync(...)' method.
 /// </summary>
-public class CSharpLexer : Lexer
+public struct CSharpLexer : ILexer
 {
+	private readonly StringWalker _stringWalker;
+    private readonly List<ISyntaxToken> _syntaxTokenList = new();
+    private readonly DiagnosticBag _diagnosticBag = new();
+
     public CSharpLexer(ResourceUri resourceUri, string sourceText)
-        : base(
-            resourceUri,
-            sourceText,
-            new LexerKeywords(CSharpKeywords.NON_CONTEXTUAL_KEYWORDS, CSharpKeywords.CONTROL_KEYWORDS, CSharpKeywords.CONTEXTUAL_KEYWORDS))
     {
     	++LuthetusDebugSomething.Lexer_ConstructorInvocationCount;
+    	
+    	ResourceUri = resourceUri;
+        SourceText = sourceText;
+    	LexerKeywords = new LexerKeywords(CSharpKeywords.NON_CONTEXTUAL_KEYWORDS, CSharpKeywords.CONTROL_KEYWORDS, CSharpKeywords.CONTEXTUAL_KEYWORDS);
+    	
+    	_stringWalker = new(resourceUri, sourceText);
     }
     
     private byte _decorationByteLastEscapeCharacter = (byte)GenericDecorationKind.None;
 
     public List<TextEditorTextSpan> EscapeCharacterList { get; } = new();
+    
+    public ResourceUri ResourceUri { get; }
+    public string SourceText { get; }
+    public LexerKeywords LexerKeywords { get; }
+    
+    public List<ISyntaxToken> SyntaxTokenList => _syntaxTokenList;
+    public List<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToList();
 
-    public override void Lex()
+    public void Lex()
     {
         while (!_stringWalker.IsEof)
         {
