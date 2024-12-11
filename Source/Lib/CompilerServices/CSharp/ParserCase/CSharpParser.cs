@@ -18,9 +18,9 @@ public class CSharpParser : IParser
 {
     public CSharpParser(CSharpLexer lexer)
     {
+    	++LuthetusDebugSomething.Parser_ConstructorInvocationCount;
+    
         Lexer = lexer;
-        Binder = new CSharpBinder();
-        BinderSession = (CSharpBinderSession)Binder.StartBinderSession(lexer.ResourceUri);
     }
 
     public TextEditorDiagnostic[] DiagnosticsList { get; private set; } = Array.Empty<TextEditorDiagnostic>();
@@ -32,18 +32,13 @@ public class CSharpParser : IParser
     IBinderSession IParser.BinderSession => BinderSession;
     ILexer IParser.Lexer => Lexer;
 
-    /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
     public CompilationUnit Parse(
-        IBinder previousBinder,
+    	IBinder binder,
         ResourceUri resourceUri)
     {
-        Binder = (CSharpBinder)previousBinder;
+    	Binder = (CSharpBinder)binder;
         BinderSession = (CSharpBinderSession)Binder.StartBinderSession(resourceUri);
-        return Parse();
-    }
-
-    public CompilationUnit Parse()
-    {
+    
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
         var diagnosticBag = new DiagnosticBag();

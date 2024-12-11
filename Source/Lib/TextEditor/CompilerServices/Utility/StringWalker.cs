@@ -14,6 +14,8 @@ public class StringWalker
     /// <summary>Pass in the <see cref="ResourceUri"/> of a file, and its text. One can pass in <see cref="string.Empty"/> for the <see cref="ResourceUri"/> if they are only working with the text itself.</summary>
     public StringWalker(ResourceUri resourceUri, string sourceText)
     {
+    	++LuthetusDebugSomething.StringWalker_ConstructorInvocationCount;
+    
         ResourceUri = resourceUri;
         SourceText = sourceText;
     }

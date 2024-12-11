@@ -17,6 +17,7 @@ public class CSharpLexer : Lexer
             sourceText,
             new LexerKeywords(CSharpKeywords.NON_CONTEXTUAL_KEYWORDS, CSharpKeywords.CONTROL_KEYWORDS, CSharpKeywords.CONTEXTUAL_KEYWORDS))
     {
+    	++LuthetusDebugSomething.Lexer_ConstructorInvocationCount;
     }
     
     private byte _decorationByteLastEscapeCharacter = (byte)GenericDecorationKind.None;

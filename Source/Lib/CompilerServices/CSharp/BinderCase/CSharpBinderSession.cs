@@ -21,6 +21,8 @@ public class CSharpBinderSession : IBinderSession
         int globalScopeIndexKey,
         NamespaceStatementNode topLevelNamespaceStatementNode)
     {
+    	++LuthetusDebugSomething.BinderSession_ConstructorInvocationCount;
+    
     	ResourceUri = resourceUri;
         Binder = binder;
         CurrentScopeIndexKey = globalScopeIndexKey;
