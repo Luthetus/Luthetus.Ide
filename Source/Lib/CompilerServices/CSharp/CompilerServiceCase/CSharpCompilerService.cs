@@ -1,8 +1,12 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -28,16 +32,6 @@ public sealed class CSharpCompilerService : CompilerService
         _compilerServiceOptions = new()
         {
             RegisterResourceFunc = resourceUri => new CSharpResource(resourceUri, this),
-            GetLexerFunc = (resource, sourceText) => new CSharpLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new CSharpParser((CSharpLexer)lexer),
-            GetBinderFunc = (resource, parser) => Binder,
-			OnAfterLexAction = (resource, lexer) =>
-            {
-                var cSharpResource = (CSharpResource)resource;
-                var cSharpLexer = (CSharpLexer)lexer;
-
-                cSharpResource.EscapeCharacterList = cSharpLexer.EscapeCharacterList;
-            },
         };
 
         RuntimeAssembliesLoaderFactory.LoadDotNet6(CSharpBinder);
@@ -57,6 +51,97 @@ public sealed class CSharpCompilerService : CompilerService
     {
     	DiagnosticRendererType = diagnosticRendererType;
     }
+    
+    public override Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier)
+	{
+		_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
+			editContext,
+	        modelModifier,
+	        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+			CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+
+		var presentationModel = modelModifier.PresentationModelList.First(
+			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
+
+		if (presentationModel.PendingCalculation is null)
+			throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
+            
+        var resourceUri = modelModifier.ResourceUri;
+
+        ILexer lexer;
+		lock (_resourceMapLock)
+		{
+			if (!_resourceMap.ContainsKey(resourceUri))
+				return Task.CompletedTask;
+
+			var resource = _resourceMap[resourceUri];
+			lexer = new CSharpLexer(resource.ResourceUri, presentationModel.PendingCalculation.ContentAtRequest);
+		}
+
+		lexer.Lex();
+		lock (_resourceMapLock)
+		{
+			if (!_resourceMap.ContainsKey(resourceUri))
+                return Task.CompletedTask;
+
+            var resource = _resourceMap[resourceUri];
+            
+            var cSharpResource = (CSharpResource)resource;
+            var cSharpLexer = (CSharpLexer)lexer;
+
+            cSharpResource.EscapeCharacterList = cSharpLexer.EscapeCharacterList;
+		}
+
+		CompilationUnit? compilationUnit = null;
+		// Even if the parser throws an exception, be sure to
+		// make use of the Lexer to do whatever syntax highlighting is possible.
+		try
+		{
+			IParser parser;
+			lock (_resourceMapLock)
+			{
+				if (!_resourceMap.ContainsKey(resourceUri))
+					return Task.CompletedTask;
+
+				var resource = _resourceMap[resourceUri];
+				parser = new CSharpParser((CSharpLexer)lexer);
+			}
+
+			compilationUnit = parser.Parse(Binder, resourceUri);
+		}
+		finally
+		{
+			lock (_resourceMapLock)
+			{
+				if (_resourceMap.ContainsKey(resourceUri))
+				{
+					var resource = _resourceMap[resourceUri];
+
+					resource.SyntaxTokenList = lexer.SyntaxTokenList;
+
+					if (compilationUnit is not null)
+						resource.CompilationUnit = compilationUnit;
+				}
+			}
+
+			var diagnosticTextSpans = GetDiagnosticsFor(modelModifier.ResourceUri)
+				.Select(x => x.TextSpan)
+				.ToArray();
+
+			modelModifier.CompletePendingCalculatePresentationModel(
+				CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+				CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
+				diagnosticTextSpans);
+
+			editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+				editContext,
+				modelModifier);
+
+			OnResourceParsed();
+        }
+
+        return Task.CompletedTask;
+	}
 
     public override List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
