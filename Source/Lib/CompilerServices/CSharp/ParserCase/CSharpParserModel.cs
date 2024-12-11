@@ -22,7 +22,9 @@ public class CSharpParserModel : IParserModel
         CodeBlockBuilder globalCodeBlockBuilder,
         CodeBlockBuilder currentCodeBlockBuilder)
     {
+    	#if DEBUG
     	++LuthetusDebugSomething.ParserModel_ConstructorInvocationCount;
+    	#endif
     
         Binder = binder;
         BinderSession = binderSession;

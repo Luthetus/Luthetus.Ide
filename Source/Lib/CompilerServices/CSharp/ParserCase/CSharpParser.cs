@@ -18,7 +18,9 @@ public struct CSharpParser : IParser
 {
     public CSharpParser(CSharpLexer lexer)
     {
+    	#if DEBUG
     	++LuthetusDebugSomething.Parser_ConstructorInvocationCount;
+    	#endif
     
         Lexer = lexer;
     }

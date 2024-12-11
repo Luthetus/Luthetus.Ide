@@ -15,7 +15,9 @@ public class TokenWalker
 
     public TokenWalker(List<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
     {
+    	#if DEBUG
     	++LuthetusDebugSomething.TokenWalker_ConstructorInvocationCount;
+    	#endif
     
     	if (tokenList.Count > 0 &&
     		tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)

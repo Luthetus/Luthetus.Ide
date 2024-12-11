@@ -14,6 +14,10 @@ public partial class IdeSettingsDisplay : ComponentBase
 	
 	private void WriteLuthetusDebugSomethingToConsole()
 	{
+		#if DEBUG
 		Console.WriteLine(LuthetusDebugSomething.CreateText());
+		#else
+		Console.WriteLine($"Must run in debug mode to see {nameof(WriteLuthetusDebugSomethingToConsole)}");
+		#endif
 	}
 }

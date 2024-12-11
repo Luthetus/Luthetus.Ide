@@ -28,7 +28,9 @@ public sealed class CSharpCompilerService : CompilerService
     public CSharpCompilerService(ITextEditorService textEditorService)
         : base(textEditorService)
     {
+    	#if DEBUG
     	++LuthetusDebugSomething.CompilerService_ConstructorInvocationCount;
+    	#endif
     
         Binder = CSharpBinder;
 

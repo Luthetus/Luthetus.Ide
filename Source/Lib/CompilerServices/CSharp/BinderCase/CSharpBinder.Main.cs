@@ -40,7 +40,9 @@ public partial class CSharpBinder : IBinder
     
     public CSharpBinder()
     {
+    	#if DEBUG
     	++LuthetusDebugSomething.Binder_ConstructorInvocationCount;
+    	#endif
 
     	var globalBinderSession = StartBinderSession(ResourceUri.Empty);
     	globalBinderSession.ScopeList.Add(_globalScope);

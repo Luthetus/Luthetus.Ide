@@ -90,7 +90,9 @@ public struct CSharpLexer : ILexer
 
     public CSharpLexer(ResourceUri resourceUri, string sourceText)
     {
+    	#if DEBUG
     	++LuthetusDebugSomething.Lexer_ConstructorInvocationCount;
+    	#endif
     	
     	ResourceUri = resourceUri;
         SourceText = sourceText;
