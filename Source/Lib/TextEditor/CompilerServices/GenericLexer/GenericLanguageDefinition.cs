@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.GenericLexer;
 
@@ -14,7 +14,7 @@ public class GenericLanguageDefinition
         ImmutableArray<string> commentSingleLineEndingsList,
         string commentMultiLineStart,
         string commentMultiLineEnd,
-        ImmutableArray<string> keywordsList,
+        string[] keywordsList,
         GenericPreprocessorDefinition preprocessorDefinition)
     {
         StringStart = stringStart;
@@ -39,6 +39,6 @@ public class GenericLanguageDefinition
     public ImmutableArray<string> CommentSingleLineEndingsList { get; }
     public string CommentMultiLineStart { get; }
     public string CommentMultiLineEnd { get; }
-    public ImmutableArray<string> KeywordsList { get; }
+    public string[] KeywordsList { get; }
     public GenericPreprocessorDefinition PreprocessorDefinition { get; }
 }

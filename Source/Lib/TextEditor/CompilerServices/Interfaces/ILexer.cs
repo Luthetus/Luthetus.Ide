@@ -6,8 +6,8 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
 public interface ILexer
 {
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticList { get; }
-    public ImmutableArray<ISyntaxToken> SyntaxTokenList { get; }
+    public List<TextEditorDiagnostic> DiagnosticList { get; }
+    public List<ISyntaxToken> SyntaxTokenList { get; }
     public ResourceUri ResourceUri { get; }
     public string SourceText { get; }
     public LexerKeywords LexerKeywords { get; }

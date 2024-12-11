@@ -19,7 +19,7 @@ public class PythonLexer : Lexer
         : base(
             resourceUri,
             sourceText,
-            new LexerKeywords(PythonLanguageFacts.Keywords.ALL_LIST, PythonLanguageFacts.Keywords.CONTROL_KEYWORDS, ImmutableArray<string>.Empty))
+            new LexerKeywords(PythonLanguageFacts.Keywords.ALL_LIST, PythonLanguageFacts.Keywords.CONTROL_KEYWORDS, Array.Empty<string>()))
     {
         _pythonSyntaxTree = new GenericSyntaxTree(PythonLanguageDefinition);
     }

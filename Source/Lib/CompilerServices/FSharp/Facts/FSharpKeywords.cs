@@ -71,7 +71,7 @@ public class FSharpKeywords
     public const string YIELD_KEYWORD = "yield";
     public const string CONST_KEYWORD = "const";
 
-    public static readonly ImmutableArray<string> ALL = new[]
+    public static readonly string[] ALL = new[]
     {
         ABSTRACT_KEYWORD,
         AND_KEYWORD,
@@ -139,5 +139,5 @@ public class FSharpKeywords
         WITH_KEYWORD,
         YIELD_KEYWORD,
         CONST_KEYWORD,
-    }.ToImmutableArray();
+    };
 }

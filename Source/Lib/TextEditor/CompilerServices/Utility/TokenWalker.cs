@@ -8,21 +8,20 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 public class TokenWalker
 {
-    private readonly ImmutableArray<ISyntaxToken> _tokenList;
     private readonly DiagnosticBag _diagnosticBag;
 
     private int _index;
 	private (int openTokenIndex, int closeTokenIndex, int tokenIndexToRestore)? _deferredParsingTuple;
 
-    public TokenWalker(ImmutableArray<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
+    public TokenWalker(List<ISyntaxToken> tokenList, DiagnosticBag diagnosticBag)
     {
-    	if (tokenList.Length > 0 &&
-    		tokenList[tokenList.Length - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
+    	if (tokenList.Count > 0 &&
+    		tokenList[tokenList.Count - 1].SyntaxKind != SyntaxKind.EndOfFileToken)
     	{
     		throw new LuthetusTextEditorException($"The last token must be 'SyntaxKind.EndOfFileToken'.");
     	}
     
-        _tokenList = tokenList;
+        TokenList = tokenList;
         _diagnosticBag = diagnosticBag;
     }
 
@@ -33,7 +32,7 @@ public class TokenWalker
 	public List<SyntaxKind> ProtectedTokenSyntaxKindList { get; set; }
 	#endif
 	
-    public ImmutableArray<ISyntaxToken> TokenList => _tokenList;
+    public List<ISyntaxToken> TokenList { get; }
     public ISyntaxToken Current => Peek(0);
     public ISyntaxToken Next => Peek(1);
     public ISyntaxToken Previous => Peek(-1);
@@ -41,8 +40,8 @@ public class TokenWalker
     public int Index => _index;
 
     /// <summary>If there are any tokens, then assume the final token is the end of file token. Otherwise, fabricate an end of file token.</summary>
-    private ISyntaxToken EOF => _tokenList.Length > 0
-        ? _tokenList[_tokenList.Length - 1]
+    private ISyntaxToken EOF => TokenList.Count > 0
+        ? TokenList[TokenList.Count - 1]
         : new EndOfFileToken(new(0, 0, 0, ResourceUri.Empty, string.Empty));
 
     /// <summary>The input to this method can be positive OR negative.<br/><br/>Returns <see cref="BadToken"/> when an index out of bounds error would've occurred.</summary>
@@ -52,22 +51,22 @@ public class TokenWalker
 
         if (index < 0)
             return GetBadToken();
-        else if (index >= _tokenList.Length)
+        else if (index >= TokenList.Count)
             return EOF; // Return the end of file token (the last token)
 
-        return _tokenList[index];
+        return TokenList[index];
     }
 
     public ISyntaxToken Consume()
     {
-        if (_index >= _tokenList.Length)
+        if (_index >= TokenList.Count)
             return EOF; // Return the end of file token (the last token)
             
 		if (_deferredParsingTuple is not null)
 		{
 			if (_index == _deferredParsingTuple.Value.closeTokenIndex)
 			{
-				var closeChildScopeToken = _tokenList[_index];
+				var closeChildScopeToken = TokenList[_index];
 				_index = _deferredParsingTuple.Value.tokenIndexToRestore;
 				ConsumeCounter++;
 				_deferredParsingTuple = null;
@@ -75,7 +74,7 @@ public class TokenWalker
 			}
 		}
 
-        var consumedToken = _tokenList[_index++];
+        var consumedToken = TokenList[_index++];
         ConsumeCounter++;
         
         #if DEBUG
