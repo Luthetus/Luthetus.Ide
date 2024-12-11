@@ -79,7 +79,7 @@ public sealed class CSharpCompilerService : CompilerService
 		// make use of the Lexer to do whatever syntax highlighting is possible.
 		try
 		{
-			IParser parser = new CSharpParser(lexer);
+			var parser = new CSharpParser(lexer);
 			compilationUnit = parser.Parse(Binder, resourceUri);
 		}
 		finally

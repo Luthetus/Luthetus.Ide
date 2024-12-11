@@ -14,7 +14,7 @@ using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
-public class CSharpParser : IParser
+public struct CSharpParser : IParser
 {
     public CSharpParser(CSharpLexer lexer)
     {
