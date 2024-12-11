@@ -54,6 +54,11 @@ public sealed class CSharpCompilerService : CompilerService
     
     public override Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier)
 	{
+		var resourceUri = modelModifier.ResourceUri;
+	
+		if (!_resourceMap.ContainsKey(resourceUri))
+			return Task.CompletedTask;
+	
 		_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
 			editContext,
 	        modelModifier,
@@ -62,51 +67,16 @@ public sealed class CSharpCompilerService : CompilerService
 
 		var presentationModel = modelModifier.PresentationModelList.First(
 			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-
-		if (presentationModel.PendingCalculation is null)
-			throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
-            
-        var resourceUri = modelModifier.ResourceUri;
-
-        ILexer lexer;
-		lock (_resourceMapLock)
-		{
-			if (!_resourceMap.ContainsKey(resourceUri))
-				return Task.CompletedTask;
-
-			var resource = _resourceMap[resourceUri];
-			lexer = new CSharpLexer(resource.ResourceUri, presentationModel.PendingCalculation.ContentAtRequest);
-		}
-
+        
+        var lexer = new CSharpLexer(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
 		lexer.Lex();
-		lock (_resourceMapLock)
-		{
-			if (!_resourceMap.ContainsKey(resourceUri))
-                return Task.CompletedTask;
-
-            var resource = _resourceMap[resourceUri];
-            
-            var cSharpResource = (CSharpResource)resource;
-            var cSharpLexer = (CSharpLexer)lexer;
-
-            cSharpResource.EscapeCharacterList = cSharpLexer.EscapeCharacterList;
-		}
 
 		CompilationUnit? compilationUnit = null;
 		// Even if the parser throws an exception, be sure to
 		// make use of the Lexer to do whatever syntax highlighting is possible.
 		try
 		{
-			IParser parser;
-			lock (_resourceMapLock)
-			{
-				if (!_resourceMap.ContainsKey(resourceUri))
-					return Task.CompletedTask;
-
-				var resource = _resourceMap[resourceUri];
-				parser = new CSharpParser((CSharpLexer)lexer);
-			}
-
+			IParser parser = new CSharpParser((CSharpLexer)lexer);
 			compilationUnit = parser.Parse(Binder, resourceUri);
 		}
 		finally
@@ -116,6 +86,10 @@ public sealed class CSharpCompilerService : CompilerService
 				if (_resourceMap.ContainsKey(resourceUri))
 				{
 					var resource = _resourceMap[resourceUri];
+					
+					var cSharpResource = (CSharpResource)resource;
+			        var cSharpLexer = (CSharpLexer)lexer;
+			        cSharpResource.EscapeCharacterList = cSharpLexer.EscapeCharacterList;
 
 					resource.SyntaxTokenList = lexer.SyntaxTokenList;
 
