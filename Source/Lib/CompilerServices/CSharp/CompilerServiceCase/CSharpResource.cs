@@ -56,8 +56,10 @@ public sealed class CSharpResource : ICompilerServiceResource
         if (localCompilationUnit is null)
             return Array.Empty<TextEditorDiagnostic>();
 
-        return localCompilationUnit.DiagnosticsList
+		// TODO: (2024-12-12)
+        /*return localCompilationUnit.DiagnosticsList
             .Where(s => s.TextSpan.ResourceUri == ResourceUri)
-            .ToArray();
+            .ToArray();*/
+        return Array.Empty<TextEditorDiagnostic>();
     }
 }

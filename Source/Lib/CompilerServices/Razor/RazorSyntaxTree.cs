@@ -109,7 +109,8 @@ public class RazorSyntaxTree
 
         lexer.Lex();
 
-        var parser = new CSharpParser(lexer);
+		// TODO: (2024-12-12)
+        /*var parser = new CSharpParser(lexer);
 
         var compilationUnit = parser.Parse(new CSharpBinder(), lexer.ResourceUri);
         
@@ -118,7 +119,7 @@ public class RazorSyntaxTree
             _codebehindClassInsertions,
             _codebehindRenderFunctionInsertions,
             renderFunctionAdhocTextInsertion,
-            classContents);
+            classContents);*/
     }
 
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>

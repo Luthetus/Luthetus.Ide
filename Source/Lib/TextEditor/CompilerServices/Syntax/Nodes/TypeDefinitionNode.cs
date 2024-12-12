@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
@@ -108,62 +109,46 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     }
     
     // (2024-11-08)
-	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, IParserModel parserModel)
+	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		if (StatementDelimiterToken.ConstructorWasInvoked)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
 	
 		OpenBraceToken = openBraceToken;
     	
     	_childListIsDirty = true;
     	return this;
 	}
-	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, IParserModel parserModel)
+	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		if (StatementDelimiterToken.ConstructorWasInvoked)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
 	
 		CloseBraceToken = closeBraceToken;
     	
     	_childListIsDirty = true;
     	return this;
 	}
-	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, IParserModel parserModel)
+	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		if (OpenBraceToken.ConstructorWasInvoked || CloseBraceToken.ConstructorWasInvoked)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(parserModel);
+			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
 	
 		StatementDelimiterToken = statementDelimiterToken;
     	
     	_childListIsDirty = true;
     	return this;
 	}
-	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, IParserModel parserModel)
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		if (CodeBlockNode is not null)
-			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(parserModel);
+			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticBag, tokenWalker);
 	
 		CodeBlockNode = codeBlockNode;
     	
     	_childListIsDirty = true;
     	return this;
 	}
-    
-    public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel)
-    {
-    	if (PrimaryConstructorFunctionArgumentsListingNode is not null)
-    	{
-    		foreach (var argument in PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
-	    	{
-	    		parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);
-	    	
-	    		/*if (argument.IsOptional)
-	    			parserModel.Binder.BindFunctionOptionalArgument(argument, parserModel);
-	    		else
-	    			parserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, parserModel);*/
-	    	}
-    	}
-    }
     
     public ICodeBlockOwner SetPrimaryConstructorFunctionArgumentsListingNode(FunctionArgumentsListingNode functionArgumentsListingNode)
     {

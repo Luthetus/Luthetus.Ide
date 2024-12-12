@@ -28,7 +28,7 @@ public struct CSharpParser
 
     public void Parse(CSharpCompilationUnit compilationUnit)
     {
-        var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
+        var globalCodeBlockBuilder = new CSharpCodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
         var diagnosticBag = new DiagnosticBag();
 

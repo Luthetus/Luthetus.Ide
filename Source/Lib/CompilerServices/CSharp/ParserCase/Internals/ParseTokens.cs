@@ -241,7 +241,7 @@ public static class ParseTokens
         	compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = arbitraryCodeBlockNode;
 		}
 		
-		compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, compilationUnit);
+		compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, compilationUnit.ParserModel.DiagnosticBag, compilationUnit.ParserModel.TokenWalker);
 
 		var parentScopeDirection = compilationUnit.ParserModel.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
 		if (parentScopeDirection == ScopeDirectionKind.Both)
@@ -260,7 +260,7 @@ public static class ParseTokens
 
         compilationUnit.ParserModel.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, compilationUnit);
 		compilationUnit.ParserModel.CurrentCodeBlockBuilder = new(parent: compilationUnit.ParserModel.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
-		nextCodeBlockOwner.OnBoundScopeCreatedAndSetAsCurrent(compilationUnit);
+		compilationUnit.ParserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit);
     }
 
 	/// <summary>
@@ -276,7 +276,7 @@ public static class ParseTokens
 		}
 
 		if (compilationUnit.ParserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
-			compilationUnit.ParserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, compilationUnit);
+			compilationUnit.ParserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, compilationUnit.ParserModel.DiagnosticBag, compilationUnit.ParserModel.TokenWalker);
 		
         compilationUnit.ParserModel.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit);
     }
@@ -412,7 +412,7 @@ public static class ParseTokens
             var namespaceStatementNode = (NamespaceStatementNode)compilationUnit.ParserModel.SyntaxStack.Pop();
             nextCodeBlockOwner = namespaceStatementNode;
             
-            namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken, compilationUnit);
+            namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken, compilationUnit.ParserModel.DiagnosticBag, compilationUnit.ParserModel.TokenWalker);
 
             compilationUnit.ParserModel.Binder.OpenScope(
             	nextCodeBlockOwner,
@@ -433,7 +433,7 @@ public static class ParseTokens
         
         	compilationUnit.ParserModel.Binder.OpenScope(pendingChild, CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, compilationUnit);
 			compilationUnit.ParserModel.CurrentCodeBlockBuilder = new(compilationUnit.ParserModel.CurrentCodeBlockBuilder, pendingChild);
-			pendingChild.OnBoundScopeCreatedAndSetAsCurrent(compilationUnit);
+			compilationUnit.ParserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(pendingChild, compilationUnit);
 			
 	        compilationUnit.ParserModel.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit);
 	

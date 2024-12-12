@@ -54,29 +54,29 @@ public static class RuntimeAssembliesLoaderFactory
     {
         public void CreateCache(CSharpBinder cSharpBinder)
         {
-            var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
-            var currentCodeBlockBuilder = globalCodeBlockBuilder;
-            var diagnosticBag = new DiagnosticBag();
+            //var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
+            //var currentCodeBlockBuilder = globalCodeBlockBuilder;
+            //var diagnosticBag = new DiagnosticBag();
 
-            var model = new CSharpParserModel(
-                cSharpBinder,
-                (CSharpBinderSession)cSharpBinder.StartBinderSession(new ResourceUri("aaa")),
-                new TokenWalker(new List<ISyntaxToken>(), new()),
-                new Stack<ISyntax>(),
-                diagnosticBag,
-                globalCodeBlockBuilder,
-                currentCodeBlockBuilder);
+            //var model = new CSharpParserModel(
+            //    cSharpBinder,
+            //    (CSharpBinderSession)cSharpBinder.StartBinderSession(new ResourceUri("aaa")),
+            //    new TokenWalker(new List<ISyntaxToken>(), new()),
+            //    new Stack<ISyntax>(),
+            //    diagnosticBag,
+            //    globalCodeBlockBuilder,
+            //    currentCodeBlockBuilder);
 
-            // TODO: Do not use 'System.IO.Directory' because this doesn't work...
-            // ... when running the website
-            //
-            // Get the array of runtime assemblies.
-            string[] runtimeAssemblyPaths = Directory.GetFiles(
-                RuntimeEnvironment.GetRuntimeDirectory(),
-                "*.dll");
+            //// TODO: Do not use 'System.IO.Directory' because this doesn't work...
+            //// ... when running the website
+            ////
+            //// Get the array of runtime assemblies.
+            //string[] runtimeAssemblyPaths = Directory.GetFiles(
+            //    RuntimeEnvironment.GetRuntimeDirectory(),
+            //    "*.dll");
 
-            // Create the list of assembly paths consisting of runtime assemblies.
-            var listOfRuntimeAssemblyPaths = new List<string>(runtimeAssemblyPaths);
+            //// Create the list of assembly paths consisting of runtime assemblies.
+            /*var listOfRuntimeAssemblyPaths = new List<string>(runtimeAssemblyPaths);
 
             // Create PathAssemblyResolver that can resolve assemblies using the created list.
             var resolver = new PathAssemblyResolver(listOfRuntimeAssemblyPaths);
@@ -259,7 +259,7 @@ public static class RuntimeAssembliesLoaderFactory
                         }
                     }
                 }
-            }
+            }*/
         }
 
         private TypeClauseNode GetTypeClauseNode(

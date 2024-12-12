@@ -54,7 +54,7 @@ internal static class TokenWalkerExtensionMethods
 		compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 
-		compilationUnit.ParserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new DeferredChildScope(
+		compilationUnit.ParserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new CSharpDeferredChildScope(
 			openTokenIndex,
 			closeTokenIndex,
 			pendingCodeBlockOwner));

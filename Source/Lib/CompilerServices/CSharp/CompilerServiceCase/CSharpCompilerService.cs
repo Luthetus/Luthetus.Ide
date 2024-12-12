@@ -32,8 +32,6 @@ public sealed class CSharpCompilerService : CompilerService
     	++LuthetusDebugSomething.CompilerService_ConstructorInvocationCount;
     	#endif
     
-        Binder = CSharpBinder;
-
         _compilerServiceOptions = new()
         {
             RegisterResourceFunc = resourceUri => new CSharpResource(resourceUri, this),
@@ -44,6 +42,12 @@ public sealed class CSharpCompilerService : CompilerService
 
 	public override Type? SymbolRendererType { get; protected set; }
     public override Type? DiagnosticRendererType { get; protected set; }
+    
+    public override IBinder Binder
+    {
+    	get => throw new NotImplementedException("Use {nameof(CSharpBinder)}");
+    	protected set => throw new NotImplementedException("Use {nameof(CSharpBinder)}");
+    }
 
     public event Action? CursorMovedInSyntaxTree;
     
@@ -81,7 +85,7 @@ public sealed class CSharpCompilerService : CompilerService
 		// make use of the Lexer to do whatever syntax highlighting is possible.
 		try
 		{
-			cSharpCompilationUnit.BinderSession = (CSharpBinderSession)Binder.StartBinderSession(resourceUri);
+			cSharpCompilationUnit.BinderSession = (CSharpBinderSession)CSharpBinder.StartBinderSession(resourceUri);
 			var parser = new CSharpParser();
 			parser.Parse(cSharpCompilationUnit);
 		}
@@ -134,7 +138,7 @@ public sealed class CSharpCompilerService : CompilerService
         while (targetScope is not null)
         {
             autocompleteEntryList.AddRange(
-            	CSharpBinder.GetVariableDeclarationNodesByScope(model: null, textSpan.ResourceUri, targetScope.IndexKey)
+            	CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
             	.Select(x => x.IdentifierToken.TextSpan.GetText())
                 .ToArray()
                 .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -149,7 +153,7 @@ public sealed class CSharpCompilerService : CompilerService
                 }));
 
             autocompleteEntryList.AddRange(
-                CSharpBinder.GetFunctionDefinitionNodesByScope(model: null, textSpan.ResourceUri, targetScope.IndexKey)
+                CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
             	.Select(x => x.FunctionIdentifierToken.TextSpan.GetText())
                 .ToArray()
                 .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -166,7 +170,7 @@ public sealed class CSharpCompilerService : CompilerService
 			if (targetScope.ParentIndexKey is null)
 				targetScope = null;
 			else
-            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(model: null, textSpan.ResourceUri, targetScope.ParentIndexKey.Value);
+            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, textSpan.ResourceUri, targetScope.ParentIndexKey.Value);
         }
         
         var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;

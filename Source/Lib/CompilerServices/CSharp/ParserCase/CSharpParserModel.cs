@@ -11,7 +11,7 @@ using Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
-public class CSharpParserModel : IParserModel
+public class CSharpParserModel
 {
     public CSharpParserModel(
         CSharpBinder binder,
@@ -19,8 +19,8 @@ public class CSharpParserModel : IParserModel
         TokenWalker tokenWalker,
         Stack<ISyntax> syntaxStack,
         DiagnosticBag diagnosticBag,
-        CodeBlockBuilder globalCodeBlockBuilder,
-        CodeBlockBuilder currentCodeBlockBuilder)
+        CSharpCodeBlockBuilder globalCodeBlockBuilder,
+        CSharpCodeBlockBuilder currentCodeBlockBuilder)
     {
     	#if DEBUG
     	++LuthetusDebugSomething.ParserModel_ConstructorInvocationCount;
@@ -44,15 +44,12 @@ public class CSharpParserModel : IParserModel
     public CSharpBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
-    public StatementBuilder StatementBuilder { get; set; } = new();
+    public CSharpStatementBuilder StatementBuilder { get; set; } = new();
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; } = new();
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
-    public CodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
-    public CodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
-    
-    IBinder IParserModel.Binder => Binder;
-    IBinderSession IParserModel.BinderSession => BinderSession;
+    public CSharpCodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
+    public CSharpCodeBlockBuilder CurrentCodeBlockBuilder { get; set; }
 }
