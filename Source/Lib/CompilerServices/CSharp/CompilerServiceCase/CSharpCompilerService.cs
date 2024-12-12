@@ -72,17 +72,18 @@ public sealed class CSharpCompilerService : CompilerService
 
 		var presentationModel = modelModifier.PresentationModelList.First(
 			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-        
-        var lexer = new CSharpLexer(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
-		lexer.Lex();
+			
+		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, CSharpBinder);
+		cSharpCompilationUnit.Lexer = new CSharpLexer(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
+		cSharpCompilationUnit.Lexer.Lex();
 
-		CompilationUnit? compilationUnit = null;
 		// Even if the parser throws an exception, be sure to
 		// make use of the Lexer to do whatever syntax highlighting is possible.
 		try
 		{
-			var parser = new CSharpParser(lexer);
-			compilationUnit = (CompilationUnit)parser.Parse(Binder, resourceUri);
+			cSharpCompilationUnit.BinderSession = (CSharpBinderSession)Binder.StartBinderSession(resourceUri);
+			var parser = new CSharpParser();
+			parser.Parse(cSharpCompilationUnit);
 		}
 		finally
 		{
