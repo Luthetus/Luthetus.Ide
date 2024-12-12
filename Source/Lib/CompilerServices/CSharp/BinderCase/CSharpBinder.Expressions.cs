@@ -43,7 +43,7 @@ public partial class CSharpBinder
 					ForceDecisionAmbiguousIdentifier(
 						EmptyExpressionNode.Empty,
 						ambiguousIdentifierExpressionNode,
-						model);
+						compilationUnit);
 				}
 			}
 			
@@ -53,37 +53,37 @@ public partial class CSharpBinder
 		switch (expressionPrimary.SyntaxKind)
 		{
 			case SyntaxKind.EmptyExpressionNode:
-				return EmptyMergeToken((EmptyExpressionNode)expressionPrimary, token, model);
+				return EmptyMergeToken((EmptyExpressionNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.LiteralExpressionNode:
-				return LiteralMergeToken((LiteralExpressionNode)expressionPrimary, token, model);
+				return LiteralMergeToken((LiteralExpressionNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.BinaryExpressionNode:
-				return BinaryMergeToken((BinaryExpressionNode)expressionPrimary, token, model);
+				return BinaryMergeToken((BinaryExpressionNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.ParenthesizedExpressionNode:
-				return ParenthesizedMergeToken((ParenthesizedExpressionNode)expressionPrimary, token, model);
+				return ParenthesizedMergeToken((ParenthesizedExpressionNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.CommaSeparatedExpressionNode:
-				return CommaSeparatedMergeToken((CommaSeparatedExpressionNode)expressionPrimary, token, model);
+				return CommaSeparatedMergeToken((CommaSeparatedExpressionNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.FunctionInvocationNode:
-				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, token, model);
+				return FunctionInvocationMergeToken((FunctionInvocationNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.LambdaExpressionNode:
-				return LambdaMergeToken((LambdaExpressionNode)expressionPrimary, token, model);
+				return LambdaMergeToken((LambdaExpressionNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.ConstructorInvocationExpressionNode:
-				return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, token, model);
+				return ConstructorInvocationMergeToken((ConstructorInvocationExpressionNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.ExplicitCastNode:
-				return ExplicitCastMergeToken((ExplicitCastNode)expressionPrimary, token, model);
+				return ExplicitCastMergeToken((ExplicitCastNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
-				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, token, model);
+				return AmbiguousIdentifierMergeToken((AmbiguousIdentifierExpressionNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.TypeClauseNode:
-				return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, token, model);
+				return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.VariableAssignmentExpressionNode:
-				return VariableAssignmentMergeToken((VariableAssignmentExpressionNode)expressionPrimary, token, model);
+				return VariableAssignmentMergeToken((VariableAssignmentExpressionNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.GenericParametersListingNode:
-				return GenericParametersListingMergeToken((GenericParametersListingNode)expressionPrimary, token, model);
+				return GenericParametersListingMergeToken((GenericParametersListingNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.FunctionParametersListingNode:
-				return FunctionParametersListingMergeToken((FunctionParametersListingNode)expressionPrimary, token, model);
+				return FunctionParametersListingMergeToken((FunctionParametersListingNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.FunctionArgumentsListingNode:
-				return FunctionArgumentsListingMergeToken((FunctionArgumentsListingNode)expressionPrimary, token, model);
+				return FunctionArgumentsListingMergeToken((FunctionArgumentsListingNode)expressionPrimary, token, compilationUnit);
 			case SyntaxKind.BadExpressionNode:
-				return BadMergeToken((BadExpressionNode)expressionPrimary, token, model);
+				return BadMergeToken((BadExpressionNode)expressionPrimary, token, compilationUnit);
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), expressionPrimary, token);
 		};
@@ -103,29 +103,29 @@ public partial class CSharpBinder
 		switch (expressionPrimary.SyntaxKind)
 		{
 			case SyntaxKind.ParenthesizedExpressionNode:
-				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, model);
+				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.CommaSeparatedExpressionNode:
-				return CommaSeparatedMergeExpression((CommaSeparatedExpressionNode)expressionPrimary, expressionSecondary, model);
+				return CommaSeparatedMergeExpression((CommaSeparatedExpressionNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.FunctionInvocationNode:
-				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, model);
+				return FunctionInvocationMergeExpression((FunctionInvocationNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.LambdaExpressionNode:
-				return LambdaMergeExpression((LambdaExpressionNode)expressionPrimary, expressionSecondary, model);
+				return LambdaMergeExpression((LambdaExpressionNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.ConstructorInvocationExpressionNode:
-				return ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)expressionPrimary, expressionSecondary, model);
+				return ConstructorInvocationMergeExpression((ConstructorInvocationExpressionNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.AmbiguousIdentifierExpressionNode:
-				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, model);
+				return AmbiguousIdentifierMergeExpression((AmbiguousIdentifierExpressionNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.TypeClauseNode:
-				return TypeClauseMergeExpression((TypeClauseNode)expressionPrimary, expressionSecondary, model);
+				return TypeClauseMergeExpression((TypeClauseNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.VariableAssignmentExpressionNode:
-				return VariableAssignmentMergeExpression((VariableAssignmentExpressionNode)expressionPrimary, expressionSecondary, model);
+				return VariableAssignmentMergeExpression((VariableAssignmentExpressionNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.GenericParametersListingNode:
-				return GenericParametersListingMergeExpression((GenericParametersListingNode)expressionPrimary, expressionSecondary, model);
+				return GenericParametersListingMergeExpression((GenericParametersListingNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.FunctionParametersListingNode:
-				return FunctionParametersListingMergeExpression((FunctionParametersListingNode)expressionPrimary, expressionSecondary, model);
+				return FunctionParametersListingMergeExpression((FunctionParametersListingNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.FunctionArgumentsListingNode:
-				return FunctionArgumentsListingMergeExpression((FunctionArgumentsListingNode)expressionPrimary, expressionSecondary, model);
+				return FunctionArgumentsListingMergeExpression((FunctionArgumentsListingNode)expressionPrimary, expressionSecondary, compilationUnit);
 			case SyntaxKind.BadExpressionNode:
-				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, model);
+				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, compilationUnit);
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), expressionPrimary, expressionSecondary);
 		};
@@ -152,7 +152,7 @@ public partial class CSharpBinder
 		        
 		    BindFunctionInvocationNode(
 		        functionInvocationNode,
-		        (CSharpParserModel)model);
+		        (CSharpParserModel)compilationUnit);
 
 			compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
 			compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode.FunctionParametersListingNode));
@@ -186,7 +186,7 @@ public partial class CSharpBinder
 			if (compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 			{
 				var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-				SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, ambiguousIdentifierExpressionNode, model);
+				SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, ambiguousIdentifierExpressionNode, compilationUnit);
 				return lambdaExpressionNode;
 			}
 			
@@ -194,7 +194,7 @@ public partial class CSharpBinder
 			if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 			{
 				var variableAssignmentNode = new VariableAssignmentExpressionNode(
-					UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, model),
+					UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, compilationUnit),
 			        (EqualsToken)token,
 			        EmptyExpressionNode.Empty);
 			 
@@ -214,7 +214,7 @@ public partial class CSharpBinder
 			ForceDecisionAmbiguousIdentifier(
 				EmptyExpressionNode.Empty,
 				ambiguousIdentifierExpressionNode,
-				model);
+				compilationUnit);
 				
 			_ = compilationUnit.ParserModel.TokenWalker.Consume(); // Consume the IsTokenKeyword
 			
@@ -227,7 +227,7 @@ public partial class CSharpBinder
 			}
 			else if (UtilityApi.IsConvertibleToIdentifierToken(compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind))
 			{
-				ParseTokens.ParseIdentifierToken((CSharpParserModel)model); // Parse the type pattern matching / variable declaration
+				ParseTokens.ParseIdentifierToken((CSharpParserModel)compilationUnit); // Parse the type pattern matching / variable declaration
 			}
 			
 			// Guaranteed to consume 1 further than the secondary loop so have to backtrack 1 time as well.
@@ -240,7 +240,7 @@ public partial class CSharpBinder
 			ForceDecisionAmbiguousIdentifier(
 				EmptyExpressionNode.Empty,
 				ambiguousIdentifierExpressionNode,
-				model);
+				compilationUnit);
 				
 			if (compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
@@ -290,7 +290,7 @@ public partial class CSharpBinder
 			var decidedExpression = ForceDecisionAmbiguousIdentifier(
 				EmptyExpressionNode.Empty,
 				ambiguousIdentifierExpressionNode,
-				model);
+				compilationUnit);
 			
 			if (decidedExpression.SyntaxKind != SyntaxKind.TypeClauseNode)
 			{
@@ -306,7 +306,7 @@ public partial class CSharpBinder
 		        (TypeClauseNode)decidedExpression,
 		        identifierToken,
 		        VariableKind.Local,
-		        model);
+		        compilationUnit);
 		        
 		    return variableDeclarationNode;
 		}
@@ -344,11 +344,11 @@ public partial class CSharpBinder
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 			        out var existingVariableDeclarationNode))
 			{
-				var identifierToken = UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, model);
+				var identifierToken = UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, compilationUnit);
 				
 				var variableReferenceNode = ConstructAndBindVariableReferenceNode(
 					identifierToken,
-					(CSharpParserModel)model);
+					(CSharpParserModel)compilationUnit);
     			
     			return variableReferenceNode;
 			}
@@ -364,8 +364,8 @@ public partial class CSharpBinder
 	                ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 	                out var typeDefinitionNode))
 	        {
-	            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, model);
-				BindTypeClauseNode(typeClauseNode, (CSharpParserModel)model);
+	            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, compilationUnit);
+				BindTypeClauseNode(typeClauseNode, (CSharpParserModel)compilationUnit);
 			    return typeClauseNode;
 	        }
 		}
@@ -374,19 +374,19 @@ public partial class CSharpBinder
 		if (!forceVariableReferenceNode ||
 			UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
-            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, model);
-			BindTypeClauseNode(typeClauseNode, (CSharpParserModel)model);
+            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, compilationUnit);
+			BindTypeClauseNode(typeClauseNode, (CSharpParserModel)compilationUnit);
 		    return typeClauseNode;
 		}
 		
 		// Bind an undefined-variable
 		if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
-			var identifierToken = UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, model);
+			var identifierToken = UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, compilationUnit);
 			
 			var variableReferenceNode = ConstructAndBindVariableReferenceNode(
 				identifierToken,
-				(CSharpParserModel)model);
+				(CSharpParserModel)compilationUnit);
 			
 			return variableReferenceNode;
 		}
@@ -502,11 +502,11 @@ public partial class CSharpBinder
 				{
 					if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
 					{
-						var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(token, model);
+						var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(token, compilationUnit);
 						
 						BindTypeClauseNode(
 					        typeClauseNode,
-					        (CSharpParserModel)model);
+					        (CSharpParserModel)compilationUnit);
 						
 						return constructorInvocationExpressionNode.SetTypeClauseNode(typeClauseNode);
 					}
@@ -615,7 +615,7 @@ public partial class CSharpBinder
 			expressionSecondary = ForceDecisionAmbiguousIdentifier(
 				constructorInvocationExpressionNode,
 				(AmbiguousIdentifierExpressionNode)expressionSecondary,
-				model);
+				compilationUnit);
 		}
 	
 		if (expressionSecondary.SyntaxKind == SyntaxKind.EmptyExpressionNode)
@@ -709,7 +709,7 @@ public partial class CSharpBinder
 					expressionSecondary = ForceDecisionAmbiguousIdentifier(
 						constructorInvocationExpressionNode,
 						(AmbiguousIdentifierExpressionNode)expressionSecondary,
-						model);
+						compilationUnit);
 				}
 			
 				objectInitializationParameterEntryNode.ExpressionNode = expressionSecondary;
@@ -761,7 +761,7 @@ public partial class CSharpBinder
 				return ForceDecisionAmbiguousIdentifier(
 					emptyExpressionNode,
 					ambiguousExpressionNode,
-					model);
+					compilationUnit);
 		    }
 		    
 		    return ambiguousExpressionNode;
@@ -802,17 +802,17 @@ public partial class CSharpBinder
 			case SyntaxKind.AsyncTokenContextualKeyword:
 				return new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			case SyntaxKind.DollarSignToken:
-				BindStringInterpolationExpression((DollarSignToken)token, (CSharpParserModel)model);
+				BindStringInterpolationExpression((DollarSignToken)token, (CSharpParserModel)compilationUnit);
 				return emptyExpressionNode;
 			case SyntaxKind.AtToken:
-				BindStringVerbatimExpression((AtToken)token, (CSharpParserModel)model);
+				BindStringVerbatimExpression((AtToken)token, (CSharpParserModel)compilationUnit);
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
 				
 				if (UtilityApi.IsConvertibleToIdentifierToken(compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind))
 				{
 					// Parse the variable reference / variable declaration
-					ParseTokens.ParseIdentifierToken((CSharpParserModel)model);
+					ParseTokens.ParseIdentifierToken((CSharpParserModel)compilationUnit);
 				}
 				
 				return emptyExpressionNode;
@@ -883,11 +883,11 @@ public partial class CSharpBinder
 		{
 			var expressionSecondaryTyped = (AmbiguousIdentifierExpressionNode)expressionSecondary;
 			
-			var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(expressionSecondaryTyped.Token, model);
+			var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(expressionSecondaryTyped.Token, compilationUnit);
 			
 			BindTypeClauseNode(
 		        typeClauseNode,
-		        (CSharpParserModel)model);
+		        (CSharpParserModel)compilationUnit);
 			
 			genericParametersListingNode.GenericParameterEntryNodeList.Add(
 				new GenericParameterEntryNode(typeClauseNode));
@@ -915,7 +915,7 @@ public partial class CSharpBinder
 				
 				BindTypeClauseNode(
 			        typeClauseNode,
-			        (CSharpParserModel)model);
+			        (CSharpParserModel)compilationUnit);
 			    
 				genericParametersListingNode.GenericParameterEntryNodeList.Add(
 					new GenericParameterEntryNode(typeClauseNode));
@@ -951,7 +951,7 @@ public partial class CSharpBinder
 			expressionSecondary = ForceDecisionAmbiguousIdentifier(
 				functionParametersListingNode,
 				(AmbiguousIdentifierExpressionNode)expressionSecondary,
-				model);
+				compilationUnit);
 		}
 			
 		var functionParameterEntryNode = new FunctionParameterEntryNode(
@@ -989,7 +989,7 @@ public partial class CSharpBinder
 			expressionSecondary = ForceDecisionAmbiguousIdentifier(
 				functionArgumentsListingNode,
 				(AmbiguousIdentifierExpressionNode)expressionSecondary,
-				model);
+				compilationUnit);
 		}
 			
 	    var functionArgumentEntryNode = new FunctionArgumentEntryNode(
@@ -1028,7 +1028,7 @@ public partial class CSharpBinder
 			    token.TextSpan.SourceText);
 		
 			((CSharpBinder)compilationUnit.ParserModel.Binder).AddSymbolDefinition(
-				new LambdaSymbol(textSpan, lambdaExpressionNode), (CSharpParserModel)model);
+				new LambdaSymbol(textSpan, lambdaExpressionNode), (CSharpParserModel)compilationUnit);
 		
 			if (compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
 			{
@@ -1159,7 +1159,7 @@ public partial class CSharpBinder
 				{
 					var typeClauseNode = (TypeClauseNode)parenthesizedExpressionNode.InnerExpression;
 					var explicitCastNode = new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
-					return ExplicitCastMergeToken(explicitCastNode, token, model);
+					return ExplicitCastMergeToken(explicitCastNode, token, compilationUnit);
 				}
 				
 				return parenthesizedExpressionNode.SetCloseParenthesisToken((CloseParenthesisToken)token);
@@ -1167,7 +1167,7 @@ public partial class CSharpBinder
 				if (compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 				{
 					var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-					SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, parenthesizedExpressionNode.InnerExpression, model);
+					SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, parenthesizedExpressionNode.InnerExpression, compilationUnit);
 					return lambdaExpressionNode;
 				}
 				
@@ -1184,11 +1184,11 @@ public partial class CSharpBinder
 			compilationUnit.ParserModel.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
 			var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-			return SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, expressionSecondary, model);
+			return SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, expressionSecondary, compilationUnit);
 		}
 	
 		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-			expressionSecondary = ForceDecisionAmbiguousIdentifier(parenthesizedExpressionNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, model);
+			expressionSecondary = ForceDecisionAmbiguousIdentifier(parenthesizedExpressionNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, compilationUnit);
 	
 		if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
 		{
@@ -1215,7 +1215,7 @@ public partial class CSharpBinder
 				
 				BindTypeClauseNode(
 			        typeClauseNode,
-			        (CSharpParserModel)model);
+			        (CSharpParserModel)compilationUnit);
 			        
 				return new ExplicitCastNode(parenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
 			 }
@@ -1268,7 +1268,7 @@ public partial class CSharpBinder
 				        closeParenthesisToken: default);
 				
 					var functionInvocationNode = new FunctionInvocationNode(
-						UtilityApi.ConvertToIdentifierToken(typeClauseNode.TypeIdentifierToken, model),
+						UtilityApi.ConvertToIdentifierToken(typeClauseNode.TypeIdentifierToken, compilationUnit),
 				        functionDefinitionNode: null,
 				        typeClauseNode.GenericParametersListingNode,
 				        functionParametersListingNode,
@@ -1276,7 +1276,7 @@ public partial class CSharpBinder
 				        
 				    BindFunctionInvocationNode(
 				        functionInvocationNode,
-				        (CSharpParserModel)model);
+				        (CSharpParserModel)compilationUnit);
 		
 					compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
 					compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode.FunctionParametersListingNode));
@@ -1290,7 +1290,7 @@ public partial class CSharpBinder
 			default:
 				if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind))
 				{
-					var identifierToken = UtilityApi.ConvertToIdentifierToken(token, model);
+					var identifierToken = UtilityApi.ConvertToIdentifierToken(token, compilationUnit);
 					var isRootExpression = true;
 					
 					foreach (var tuple in compilationUnit.ParserModel.ExpressionList)
@@ -1327,7 +1327,7 @@ public partial class CSharpBinder
 					        typeClauseNode,
 					        identifierToken,
 					        VariableKind.Local,
-					        model);
+					        compilationUnit);
 					}
 				        
 				    return variableDeclarationNode;
@@ -1393,7 +1393,7 @@ public partial class CSharpBinder
 	{
 		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
-			expressionSecondary = ForceDecisionAmbiguousIdentifier(functionInvocationNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, model);
+			expressionSecondary = ForceDecisionAmbiguousIdentifier(functionInvocationNode, (AmbiguousIdentifierExpressionNode)expressionSecondary, compilationUnit);
 		}
 	
 		switch (expressionSecondary.SyntaxKind)
@@ -1420,11 +1420,11 @@ public partial class CSharpBinder
 	    	{
 	    		var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)badExpressionNode.SyntaxList[0];
 	    		
-	    		var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, model);
+	    		var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, compilationUnit);
 					
 				BindTypeClauseNode(
 			        typeClauseNode,
-			        (CSharpParserModel)model);
+			        (CSharpParserModel)compilationUnit);
 	    		
 	    		var identifierToken = (IdentifierToken)badExpressionNode.SyntaxList[1];
 	    		
@@ -1432,7 +1432,7 @@ public partial class CSharpBinder
 			        typeClauseNode,
 			        identifierToken,
 			        VariableKind.Local,
-			        model);
+			        compilationUnit);
 			        
 	    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
 	    	}
@@ -1462,11 +1462,11 @@ public partial class CSharpBinder
     					if (firstSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
     					{
     						var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)firstSyntax;
-    						typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, model);
+    						typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, compilationUnit);
 					
 							BindTypeClauseNode(
 						        typeClauseNode,
-						        (CSharpParserModel)model);
+						        (CSharpParserModel)compilationUnit);
     					}
     					else if (firstSyntax.SyntaxKind == SyntaxKind.IdentifierToken)
     					{
@@ -1475,7 +1475,7 @@ public partial class CSharpBinder
 					
 							BindTypeClauseNode(
 						        typeClauseNode,
-						        (CSharpParserModel)model);
+						        (CSharpParserModel)compilationUnit);
     					}
     					
     					var secondSyntax = badExpressionNode.SyntaxList[++i];
@@ -1517,7 +1517,7 @@ public partial class CSharpBinder
 				        typeClauseNode,
 				        (IdentifierToken)variableIdentifier,
 				        VariableKind.Local,
-				        model);
+				        compilationUnit);
 				        
 		    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
 	    		}
@@ -1534,7 +1534,7 @@ public partial class CSharpBinder
 		        TypeFacts.Empty.ToTypeClause(),
 		        (IdentifierToken)token,
 		        VariableKind.Local,
-		        model);
+		        compilationUnit);
 		        
     		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
     	}

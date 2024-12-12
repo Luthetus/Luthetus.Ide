@@ -40,7 +40,7 @@ public static class ParseTypes
         while (true)
         {
             // TypeClause
-            var typeClauseNode = MatchTypeClause(model);
+            var typeClauseNode = MatchTypeClause(compilationUnit);
 
             if (typeClauseNode.IsFabricated)
                 break;
@@ -127,13 +127,13 @@ public static class ParseTypes
             null,
             null);
 
-        compilationUnit.ParserModel.Binder.BindTypeClauseNode(typeClauseNode, model);
+        compilationUnit.ParserModel.Binder.BindTypeClauseNode(typeClauseNode, compilationUnit);
 
         if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
         	var genericParametersListingNode = (GenericParametersListingNode)ParseOthers.Force_ParseExpression(
         		SyntaxKind.GenericParametersListingNode,
-        		model);
+        		compilationUnit);
         		
             typeClauseNode.SetGenericParametersListingNode(genericParametersListingNode);
         }

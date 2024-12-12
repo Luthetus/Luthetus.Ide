@@ -31,7 +31,7 @@ public static class ParseVariables
 	        variableKind,
 	        false);
 
-        compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
+        compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
         return variableDeclarationNode;
     }
@@ -49,7 +49,7 @@ public static class ParseVariables
 			consumedTypeClauseNode,
 	        consumedIdentifierToken,
 	        variableKind,
-	        model);
+	        compilationUnit);
 	        
 	    if (variableDeclarationNode is null)
 	    	return;
@@ -64,7 +64,7 @@ public static class ParseVariables
                     variableDeclarationNode,
                     (EqualsToken)compilationUnit.ParserModel.TokenWalker.Consume(),
                     (CloseAngleBracketToken)compilationUnit.ParserModel.TokenWalker.Consume(),
-                    (CSharpParserModel)model);
+                    (CSharpParserModel)compilationUnit);
             }
             else
             {
@@ -72,7 +72,7 @@ public static class ParseVariables
                 HandleVariableAssignment(
                     consumedIdentifierToken,
                     (EqualsToken)compilationUnit.ParserModel.TokenWalker.Consume(),
-                    (CSharpParserModel)model);
+                    (CSharpParserModel)compilationUnit);
             }
         }
         else
@@ -91,7 +91,7 @@ public static class ParseVariables
             HandlePropertyDeclaration(
                 variableDeclarationNode,
                 (OpenBraceToken)compilationUnit.ParserModel.TokenWalker.Consume(),
-                (CSharpParserModel)model);
+                (CSharpParserModel)compilationUnit);
         }
         else
         {

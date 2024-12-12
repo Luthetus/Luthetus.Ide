@@ -9,7 +9,7 @@ internal static class TokenWalkerExtensionMethods
 {
     public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpCompilationUnit compilationUnit)
     {
-        return ParseTypes.MatchTypeClause(model);
+        return ParseTypes.MatchTypeClause(compilationUnit);
     }
 
 	public static void DeferParsingOfChildScope(
