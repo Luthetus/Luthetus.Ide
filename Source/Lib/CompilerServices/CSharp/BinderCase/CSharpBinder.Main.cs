@@ -120,7 +120,7 @@ public partial class CSharpBinder : IBinder
 
     public LiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     	TypeClauseNode typeClauseNode;
     
@@ -150,7 +150,7 @@ public partial class CSharpBinder : IBinder
         IExpressionNode leftExpressionNode,
         ISyntaxToken operatorToken,
         IExpressionNode rightExpressionNode,
-        CSharpParserModel parserModel)
+        CSharpCompilationUnit compilationUnit)
     {
         var problematicTextSpan = (TextEditorTextSpan?)null;
 
@@ -219,7 +219,7 @@ public partial class CSharpBinder : IBinder
     /// <summary>TODO: Construct a BoundStringInterpolationExpressionNode and identify the expressions within the string literal. For now I am just making the dollar sign the same color as a string literal.</summary>
     public void BindStringInterpolationExpression(
         DollarSignToken dollarSignToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         AddSymbolReference(new StringInterpolationSymbol(dollarSignToken.TextSpan with
         {
@@ -229,7 +229,7 @@ public partial class CSharpBinder : IBinder
     
     public void BindStringVerbatimExpression(
         AtToken atToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         AddSymbolReference(new StringVerbatimSymbol(atToken.TextSpan with
         {
@@ -239,7 +239,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindFunctionDefinitionNode(
         FunctionDefinitionNode functionDefinitionNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var functionIdentifierText = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
 
@@ -268,7 +268,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindFunctionOptionalArgument(
         FunctionArgumentEntryNode functionArgumentEntryNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var argumentTypeClauseNode = functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode;
         
@@ -332,14 +332,14 @@ public partial class CSharpBinder : IBinder
 
     public void SetCurrentNamespaceStatementNode(
         NamespaceStatementNode namespaceStatementNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         model.BinderSession.CurrentNamespaceStatementNode = namespaceStatementNode;
     }
 
     public void BindNamespaceStatementNode(
         NamespaceStatementNode namespaceStatementNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
         AddSymbolReference(new NamespaceSymbol(namespaceStatementNode.IdentifierToken.TextSpan), model);
@@ -370,7 +370,7 @@ public partial class CSharpBinder : IBinder
 
     public InheritanceStatementNode BindInheritanceStatementNode(
         TypeClauseNode typeClauseNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         AddSymbolReference(new TypeSymbol(typeClauseNode.TypeIdentifierToken.TextSpan with
         {
@@ -389,7 +389,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindVariableDeclarationNode(
         IVariableDeclarationNode variableDeclarationNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         CreateVariableSymbol(variableDeclarationNode.IdentifierToken, variableDeclarationNode.VariableKind, model);
         var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
@@ -432,7 +432,7 @@ public partial class CSharpBinder : IBinder
 
     public VariableReferenceNode ConstructAndBindVariableReferenceNode(
         IdentifierToken variableIdentifierToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var text = variableIdentifierToken.TextSpan.GetText();
         VariableReferenceNode? variableReferenceNode;
@@ -475,7 +475,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindVariableAssignmentExpressionNode(
         VariableAssignmentExpressionNode variableAssignmentExpressionNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var text = variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan.GetText();
         VariableKind variableKind = VariableKind.Local;
@@ -515,7 +515,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindConstructorDefinitionIdentifierToken(
         IdentifierToken identifierToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var constructorSymbol = new ConstructorSymbol(identifierToken.TextSpan with
         {
@@ -527,7 +527,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindFunctionInvocationNode(
         FunctionInvocationNode functionInvocationNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var functionInvocationIdentifierText = functionInvocationNode
             .FunctionInvocationIdentifierToken.TextSpan.GetText();
@@ -559,7 +559,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindNamespaceReference(
         IdentifierToken namespaceIdentifierToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var namespaceSymbol = new NamespaceSymbol(namespaceIdentifierToken.TextSpan with
         {
@@ -571,7 +571,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindTypeClauseNode(
         TypeClauseNode typeClauseNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         if (!typeClauseNode.IsKeywordType)
         {
@@ -594,7 +594,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindTypeIdentifier(
         IdentifierToken identifierToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         if (identifierToken.SyntaxKind == SyntaxKind.IdentifierToken)
         {
@@ -609,7 +609,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindUsingStatementNode(
         UsingStatementNode usingStatementNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         AddSymbolReference(new NamespaceSymbol(usingStatementNode.NamespaceIdentifier.TextSpan), model);
 
@@ -622,7 +622,7 @@ public partial class CSharpBinder : IBinder
         OpenSquareBracketToken openSquareBracketToken,
         List<ISyntaxToken> innerTokens,
         CloseSquareBracketToken closeSquareBracketToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         AddSymbolReference(new TypeSymbol(openSquareBracketToken.TextSpan with
         {
@@ -640,7 +640,7 @@ public partial class CSharpBinder : IBinder
     	ICodeBlockOwner codeBlockOwner,
         TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textSpan,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var scope = new Scope(
         	codeBlockOwner,
@@ -658,7 +658,7 @@ public partial class CSharpBinder : IBinder
 
     public void AddNamespaceToCurrentScope(
         string namespaceString,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         if (_namespaceGroupNodeMap.TryGetValue(namespaceString, out var namespaceGroupNode) &&
             namespaceGroupNode is not null)
@@ -679,7 +679,7 @@ public partial class CSharpBinder : IBinder
 
     public void CloseScope(
         TextEditorTextSpan textSpan,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     	// Check if it is the global scope, if so return early.
     	{
@@ -734,7 +734,7 @@ public partial class CSharpBinder : IBinder
 
     public void BindTypeDefinitionNode(
         TypeDefinitionNode typeDefinitionNode,
-        CSharpParserModel model,
+        CSharpCompilationUnit compilationUnit,
         bool shouldOverwrite = false)
     {
         var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
@@ -783,7 +783,7 @@ public partial class CSharpBinder : IBinder
     /// <summary>This method will handle the <see cref="SymbolDefinition"/>, but also invoke <see cref="AddSymbolReference"/> because each definition is being treated as a reference itself.</summary>
     private void AddSymbolDefinition(
         ISymbol symbol,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
@@ -812,7 +812,7 @@ public partial class CSharpBinder : IBinder
         AddSymbolReference(symbol, model);
     }
 
-    private void AddSymbolReference(ISymbol symbol, CSharpParserModel model)
+    private void AddSymbolReference(ISymbol symbol, CSharpCompilationUnit compilationUnit)
     {
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
@@ -846,7 +846,7 @@ public partial class CSharpBinder : IBinder
     public void CreateVariableSymbol(
         IdentifierToken identifierToken,
         VariableKind variableKind,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         switch (variableKind)
         {
