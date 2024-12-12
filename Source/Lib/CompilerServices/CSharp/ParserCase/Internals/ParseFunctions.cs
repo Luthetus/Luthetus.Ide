@@ -15,7 +15,7 @@ public class ParseFunctions
         GenericParametersListingNode? consumedGenericArgumentsListingNode,
         CSharpCompilationUnit compilationUnit)
     {
-    	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+    	if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     	{
     		var successGenericParametersListingNode = ParseOthers.TryParseExpression(
     			SyntaxKind.GenericParametersListingNode,
@@ -26,7 +26,7 @@ public class ParseFunctions
     			consumedGenericArgumentsListingNode = (GenericParametersListingNode)genericParametersListingNode;
     	}
     
-        if (model.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
+        if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
         var functionArgumentsListingNode = HandleFunctionArguments(model);
@@ -40,22 +40,22 @@ public class ParseFunctions
             null,
             null);
 
-        model.Binder.BindFunctionDefinitionNode(functionDefinitionNode, model);
-        model.SyntaxStack.Push(functionDefinitionNode);
-        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = functionDefinitionNode;
+        compilationUnit.ParserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, model);
+        compilationUnit.ParserModel.SyntaxStack.Push(functionDefinitionNode);
+        compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = functionDefinitionNode;
 
-        if (model.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
+        if (compilationUnit.ParserModel.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
             typeDefinitionNode.IsInterface)
         {
             // TODO: Would method constraints break this code? "public T Aaa<T>() where T : OtherClass"
-            var statementDelimiterToken = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+            var statementDelimiterToken = compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
 
 			foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 	    	{
 	    		if (argument.IsOptional)
-	    			model.Binder.BindFunctionOptionalArgument(argument, model);
+	    			compilationUnit.ParserModel.Binder.BindFunctionOptionalArgument(argument, model);
 	    		else
-	    			model.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
+	    			compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
 	    	}
         }
     }
@@ -80,37 +80,37 @@ public class ParseFunctions
             null,
             null);
 
-        model.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, model);
-        model.SyntaxStack.Push(constructorDefinitionNode);
-        model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = constructorDefinitionNode;
+        compilationUnit.ParserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, model);
+        compilationUnit.ParserModel.SyntaxStack.Push(constructorDefinitionNode);
+        compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = constructorDefinitionNode;
 
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
+        if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
-        	_ = model.TokenWalker.Consume();
+        	_ = compilationUnit.ParserModel.TokenWalker.Consume();
             // Constructor invokes some other constructor as well
         	// 'this(...)' or 'base(...)'
         	
         	KeywordToken keywordToken;
         	
-        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
-        		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
-        	else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
-        		keywordToken = (KeywordToken)model.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
+        	if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
+        		keywordToken = (KeywordToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.ThisTokenKeyword);
+        	else if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.BaseTokenKeyword)
+        		keywordToken = (KeywordToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
         	else
         		keywordToken = default;
         	
-        	while (!model.TokenWalker.IsEof)
+        	while (!compilationUnit.ParserModel.TokenWalker.IsEof)
             {
             	// TODO: This won't work because an OpenBraceToken can appear inside the "other constructor invocation"...
             	// 	  ...If one were to skip over this syntax for the time being, it should be done by counting the
             	//       matched OpenParenthesisToken and CloseParenthesisToken until it evens out.
-                if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-                    model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+                if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+                    compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
                 {
                     break;
                 }
 
-                _ = model.TokenWalker.Consume();
+                _ = compilationUnit.ParserModel.TokenWalker.Consume();
             }
         }
     }
@@ -118,18 +118,18 @@ public class ParseFunctions
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
     public static FunctionArgumentsListingNode HandleFunctionArguments(CSharpCompilationUnit compilationUnit)
     {
-    	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Consume();
+    	var openParenthesisToken = (OpenParenthesisToken)compilationUnit.ParserModel.TokenWalker.Consume();
     	var functionArgumentEntryNodeList = new List<FunctionArgumentEntryNode>();
     	var openParenthesisCount = 1;
     	var corruptState = false;
     	
-    	while (!model.TokenWalker.IsEof)
+    	while (!compilationUnit.ParserModel.TokenWalker.IsEof)
         {
-        	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+        	if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
         	{
         		openParenthesisCount++;
         	}
-        	else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+        	else if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
         	{
         		openParenthesisCount--;
         		
@@ -138,18 +138,18 @@ public class ParseFunctions
         			break;
         		}
         	}
-            else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+            else if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
             {
                 break;
             }
-            else if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
-            		 model.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            else if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
+            		 compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
             {
             	break;
             }
             else if (!corruptState)
             {
-            	var tokenIndexOriginal = model.TokenWalker.Index;
+            	var tokenIndexOriginal = compilationUnit.ParserModel.TokenWalker.Index;
 				var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var typeClauseNode);
 		    	var successName = false;
 		    	
@@ -158,12 +158,12 @@ public class ParseFunctions
 		    		// 'TypeClauseNode' or 'VariableDeclarationNode'
 		    		var successNameableToken = false;
 		    		
-		    		if (UtilityApi.IsConvertibleToIdentifierToken(model.TokenWalker.Current.SyntaxKind))
+		    		if (UtilityApi.IsConvertibleToIdentifierToken(compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind))
 		    		{
-		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(model.TokenWalker.Consume(), model);
+		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(compilationUnit.ParserModel.TokenWalker.Consume(), model);
 		    			successNameableToken = true;
 		    			
-		    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+		    			if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
 		    			{
 		    				// Optional
 		    			}
@@ -185,10 +185,10 @@ public class ParseFunctions
 		    			
 		    			functionArgumentEntryNodeList.Add(functionArgumentEntryNode);
 		    			
-		    			if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
-		    				_ = model.TokenWalker.Consume();
+		    			if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CommaToken)
+		    				_ = compilationUnit.ParserModel.TokenWalker.Consume();
 		    				
-		    			if (tokenIndexOriginal < model.TokenWalker.Index)
+		    			if (tokenIndexOriginal < compilationUnit.ParserModel.TokenWalker.Index)
 		    				continue; // Already consumed so avoid the one at the end of the while loop
 		    		}
 		    		
@@ -201,13 +201,13 @@ public class ParseFunctions
 		    	}
             }
 
-            _ = model.TokenWalker.Consume();
+            _ = compilationUnit.ParserModel.TokenWalker.Consume();
         }
         
         var closeParenthesisToken = default(CloseParenthesisToken);
         
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-        	closeParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Consume();
+        if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+        	closeParenthesisToken = (CloseParenthesisToken)compilationUnit.ParserModel.TokenWalker.Consume();
         
         return new FunctionArgumentsListingNode(
         	openParenthesisToken,
