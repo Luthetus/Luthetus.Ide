@@ -11,9 +11,9 @@ public class ParseContextualKeywords
     public static void HandleVarTokenContextualKeyword(CSharpCompilationUnit compilationUnit)
     {
     	if (compilationUnit.ParserModel.StatementBuilder.ChildList.Count == 0)
-    		ParseTokens.ParseIdentifierToken(model);
+    		ParseTokens.ParseIdentifierToken(compilationUnit);
     	else
-    		ParseOthers.StartStatement_Expression(model);
+    		ParseOthers.StartStatement_Expression(compilationUnit);
     }
 
     public static void HandlePartialTokenContextualKeyword(CSharpCompilationUnit compilationUnit)
@@ -168,7 +168,7 @@ public class ParseContextualKeywords
 
     public static void HandleRecordTokenContextualKeyword(CSharpCompilationUnit compilationUnit)
     {
-        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(model);
+        ParseDefaultKeywords.HandleStorageModifierTokenKeyword(compilationUnit);
     }
 
     public static void HandleRemoveTokenContextualKeyword(CSharpCompilationUnit compilationUnit)

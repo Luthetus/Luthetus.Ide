@@ -29,7 +29,7 @@ public class ParseFunctions
         if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken)
             return;
 
-        var functionArgumentsListingNode = HandleFunctionArguments(model);
+        var functionArgumentsListingNode = HandleFunctionArguments(compilationUnit);
 
         var functionDefinitionNode = new FunctionDefinitionNode(
             AccessModifierKind.Public,
@@ -40,7 +40,7 @@ public class ParseFunctions
             null,
             null);
 
-        compilationUnit.ParserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, model);
+        compilationUnit.ParserModel.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit);
         compilationUnit.ParserModel.SyntaxStack.Push(functionDefinitionNode);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = functionDefinitionNode;
 
@@ -53,9 +53,9 @@ public class ParseFunctions
 			foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 	    	{
 	    		if (argument.IsOptional)
-	    			compilationUnit.ParserModel.Binder.BindFunctionOptionalArgument(argument, model);
+	    			compilationUnit.ParserModel.Binder.BindFunctionOptionalArgument(argument, compilationUnit);
 	    		else
-	    			compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, model);
+	    			compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 	    	}
         }
     }
@@ -65,7 +65,7 @@ public class ParseFunctions
         IdentifierToken consumedIdentifierToken,
         CSharpCompilationUnit compilationUnit)
     {
-    	var functionArgumentsListingNode = HandleFunctionArguments(model);
+    	var functionArgumentsListingNode = HandleFunctionArguments(compilationUnit);
 
         var typeClauseNode = new TypeClauseNode(
             typeDefinitionNodeCodeBlockOwner.TypeIdentifierToken,
@@ -80,7 +80,7 @@ public class ParseFunctions
             null,
             null);
 
-        compilationUnit.ParserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, model);
+        compilationUnit.ParserModel.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit);
         compilationUnit.ParserModel.SyntaxStack.Push(constructorDefinitionNode);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = constructorDefinitionNode;
 
@@ -160,7 +160,7 @@ public class ParseFunctions
 		    		
 		    		if (UtilityApi.IsConvertibleToIdentifierToken(compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind))
 		    		{
-		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(compilationUnit.ParserModel.TokenWalker.Consume(), model);
+		    			var identifierToken = UtilityApi.ConvertToIdentifierToken(compilationUnit.ParserModel.TokenWalker.Consume(), compilationUnit);
 		    			successNameableToken = true;
 		    			
 		    			if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)

@@ -55,7 +55,7 @@ public static class ParseOthers
 
     public static void StartStatement_Expression(CSharpCompilationUnit compilationUnit)
     {
-    	var expressionNode = ParseOthers.ParseExpression(model);
+    	var expressionNode = ParseOthers.ParseExpression(compilationUnit);
     	compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
     }
     
@@ -87,7 +87,7 @@ public static class ParseOthers
     	
     	try
     	{
-    		expressionNode = ParseExpression(model);
+    		expressionNode = ParseExpression(compilationUnit);
     		
     		#if DEBUG
     		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
@@ -162,7 +162,7 @@ public static class ParseOthers
 	    					break;
 	    				}
 	    				
-	    				expressionPrimary = BubbleUpParseExpression(i, expressionPrimary, model);
+	    				expressionPrimary = BubbleUpParseExpression(i, expressionPrimary, compilationUnit);
 	    				break;
 	    			}
 	    		}
@@ -170,11 +170,11 @@ public static class ParseOthers
 			
 			if (forceExit) // delimiterExpressionTuple.ExpressionNode is null
 			{
-				expressionPrimary = BubbleUpParseExpression(0, expressionPrimary, model);
+				expressionPrimary = BubbleUpParseExpression(0, expressionPrimary, compilationUnit);
 				break;
 			}
 			
-    		expressionPrimary = compilationUnit.ParserModel.Binder.AnyMergeToken(expressionPrimary, tokenCurrent, model);
+    		expressionPrimary = compilationUnit.ParserModel.Binder.AnyMergeToken(expressionPrimary, tokenCurrent, compilationUnit);
     		
     		#if DEBUG
     		Console.WriteLine($"\t=> {expressionPrimary.SyntaxKind}");
@@ -189,7 +189,7 @@ public static class ParseOthers
     		
     		if (compilationUnit.ParserModel.NoLongerRelevantExpressionNode is not null) // try finally is not needed to guarantee setting 'compilationUnit.ParserModel.NoLongerRelevantExpressionNode = null;' because this is an object reference comparison 'Object.ReferenceEquals'. Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
 			{
-				compilationUnit.ParserModel.Binder.ClearFromExpressionList(compilationUnit.ParserModel.NoLongerRelevantExpressionNode, model);
+				compilationUnit.ParserModel.Binder.ClearFromExpressionList(compilationUnit.ParserModel.NoLongerRelevantExpressionNode, compilationUnit);
 				compilationUnit.ParserModel.NoLongerRelevantExpressionNode = null;
 			}
     		
@@ -259,7 +259,7 @@ public static class ParseOthers
     		expressionPrimary = compilationUnit.ParserModel.Binder.ForceDecisionAmbiguousIdentifier(
 				EmptyExpressionNode.Empty,
 				(AmbiguousIdentifierExpressionNode)expressionPrimary,
-				model);
+				compilationUnit);
     	}
     	
     	#if DEBUG
@@ -270,7 +270,7 @@ public static class ParseOthers
     }
 
 	/// <summary>
-	/// 'BubbleUpParseExpression(i, expressionPrimary, model);'
+	/// 'BubbleUpParseExpression(i, expressionPrimary, compilationUnit);'
 	/// 
     /// This is to have SyntaxKind.StatementDelimiterToken break out of the expression.
 	/// The parser is adding as the 0th item that
@@ -320,12 +320,12 @@ public static class ParseOthers
 			expressionPrimary = compilationUnit.ParserModel.Binder.AnyMergeExpression(
 				delimiterExpressionTuple.ExpressionNode,
 				expressionPrimary, // expressionSecondary
-				model);
+				compilationUnit);
 		}
 		
 		if (compilationUnit.ParserModel.NoLongerRelevantExpressionNode is not null) // try finally is not needed to guarantee setting 'compilationUnit.ParserModel.NoLongerRelevantExpressionNode = null;' because this is an object reference comparison 'Object.ReferenceEquals'. Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
 		{
-			compilationUnit.ParserModel.Binder.ClearFromExpressionList(compilationUnit.ParserModel.NoLongerRelevantExpressionNode, model);
+			compilationUnit.ParserModel.Binder.ClearFromExpressionList(compilationUnit.ParserModel.NoLongerRelevantExpressionNode, compilationUnit);
 			compilationUnit.ParserModel.NoLongerRelevantExpressionNode = null;
 		}
 		

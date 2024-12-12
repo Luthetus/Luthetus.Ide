@@ -22,7 +22,7 @@ public class ParseDefaultKeywords
 
     public static void HandleBoolTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleBreakTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -32,13 +32,13 @@ public class ParseDefaultKeywords
 
     public static void HandleByteTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleCaseTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
     	compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.ColonToken, null));
-		var expressionNode = ParseOthers.ParseExpression(model);
+		var expressionNode = ParseOthers.ParseExpression(compilationUnit);
 	    var colonToken = (ColonToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.ColonToken);
     }
 
@@ -48,7 +48,7 @@ public class ParseDefaultKeywords
     	
     	var openParenthesisToken = (OpenParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
-    	var typeClause = compilationUnit.ParserModel.TokenWalker.MatchTypeClauseNode(model);
+    	var typeClause = compilationUnit.ParserModel.TokenWalker.MatchTypeClauseNode(compilationUnit);
     	
     	if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseParenthesisToken)
     		_ = (IdentifierToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
@@ -88,7 +88,7 @@ public class ParseDefaultKeywords
 
     public static void HandleCharTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleCheckedTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -108,7 +108,7 @@ public class ParseDefaultKeywords
 
     public static void HandleDecimalTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleDefaultTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -122,7 +122,7 @@ public class ParseDefaultKeywords
 
     public static void HandleDelegateTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleDoTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -146,7 +146,7 @@ public class ParseDefaultKeywords
 
     public static void HandleDoubleTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleElseTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -156,16 +156,16 @@ public class ParseDefaultKeywords
 
     public static void HandleEnumTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleStorageModifierTokenKeyword(model);
+        HandleStorageModifierTokenKeyword(compilationUnit);
 
         // Why was this method invocation here? (2024-01-23)
         //
-        // HandleTypeIdentifierKeyword(model);
+        // HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleEventTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-    	model.StatementBuilder.ChildList.Add((KeywordToken)model.TokenWalker.Consume());
+    	compilationUnit.ParserModel.StatementBuilder.ChildList.Add((KeywordToken)compilationUnit.ParserModel.TokenWalker.Consume());
     }
 
     public static void HandleExplicitTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -180,7 +180,7 @@ public class ParseDefaultKeywords
 
     public static void HandleFalseTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-    	var expressionNode = ParseOthers.ParseExpression(model);
+    	var expressionNode = ParseOthers.ParseExpression(compilationUnit);
     	compilationUnit.ParserModel.StatementBuilder.ChildList.Add(expressionNode);
     }
 
@@ -232,7 +232,7 @@ public class ParseDefaultKeywords
 
     public static void HandleFloatTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleForTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -257,7 +257,7 @@ public class ParseDefaultKeywords
         	{
         		// Initialization Case Three
 	    		//     int i = 0;
-	        	var typeClauseNode = compilationUnit.ParserModel.TokenWalker.MatchTypeClauseNode(model);
+	        	var typeClauseNode = compilationUnit.ParserModel.TokenWalker.MatchTypeClauseNode(compilationUnit);
 	        	var isCaseThree = !typeClauseNode.IsFabricated;
 	        	
 	        	if (isCaseThree)
@@ -279,7 +279,7 @@ public class ParseDefaultKeywords
         		var equalsToken = (EqualsToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.EqualsToken);
         		
         		compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        		initializationExpressionNode = ParseOthers.ParseExpression(model);
+        		initializationExpressionNode = ParseOthers.ParseExpression(compilationUnit);
 			    
 			    initializationStatementDelimiterToken = (StatementDelimiterToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         	}
@@ -296,7 +296,7 @@ public class ParseDefaultKeywords
         	//     i < 10;
         
         	compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        	conditionExpressionNode = ParseOthers.ParseExpression(model);
+        	conditionExpressionNode = ParseOthers.ParseExpression(compilationUnit);
 		    
 		    conditionStatementDelimiterToken = (StatementDelimiterToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
@@ -309,7 +309,7 @@ public class ParseDefaultKeywords
         if (closeParenthesisToken.IsFabricated)
         {
         	compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        	updationExpressionNode = ParseOthers.ParseExpression(model);
+        	updationExpressionNode = ParseOthers.ParseExpression(compilationUnit);
 		    
 		    closeParenthesisToken = (CloseParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		    
@@ -346,7 +346,7 @@ public class ParseDefaultKeywords
     	
     	var openParenthesisToken = (OpenParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
-    	var typeClauseNode = compilationUnit.ParserModel.TokenWalker.MatchTypeClauseNode(model);
+    	var typeClauseNode = compilationUnit.ParserModel.TokenWalker.MatchTypeClauseNode(compilationUnit);
     	var variableIdentifierToken = (IdentifierToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
     	
     	var variableDeclarationStatementNode = new VariableDeclarationNode(
@@ -358,7 +358,7 @@ public class ParseDefaultKeywords
     	var inKeywordToken = (KeywordToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.InTokenKeyword);
     	
     	compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-    	var expressionNode = ParseOthers.ParseExpression(model);
+    	var expressionNode = ParseOthers.ParseExpression(compilationUnit);
 		var closeParenthesisToken = (CloseParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
 		var foreachStatementNode = new ForeachStatementNode(
@@ -391,7 +391,7 @@ public class ParseDefaultKeywords
 
     public static void HandleIntTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleIsTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -406,7 +406,7 @@ public class ParseDefaultKeywords
     	var openParenthesisToken = (OpenParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-    	var expressionNode = ParseOthers.ParseExpression(model);
+    	var expressionNode = ParseOthers.ParseExpression(compilationUnit);
 		
 		var closeParenthesisToken = (CloseParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
@@ -423,17 +423,17 @@ public class ParseDefaultKeywords
 
     public static void HandleLongTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleNullTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleObjectTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleOperatorTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -469,12 +469,12 @@ public class ParseDefaultKeywords
 
     public static void HandleSbyteTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleShortTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleSizeofTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -489,12 +489,12 @@ public class ParseDefaultKeywords
 
     public static void HandleStringTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleStructTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleStorageModifierTokenKeyword(model);
+        HandleStorageModifierTokenKeyword(compilationUnit);
     }
 
     public static void HandleSwitchTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -504,7 +504,7 @@ public class ParseDefaultKeywords
     	var openParenthesisToken = (OpenParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-    	var expressionNode = ParseOthers.ParseExpression(model);
+    	var expressionNode = ParseOthers.ParseExpression(compilationUnit);
 		
 		var closeParenthesisToken = (CloseParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
@@ -531,7 +531,7 @@ public class ParseDefaultKeywords
 
     public static void HandleTrueTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-    	var expressionNode = ParseOthers.ParseExpression(model);
+    	var expressionNode = ParseOthers.ParseExpression(compilationUnit);
     	compilationUnit.ParserModel.StatementBuilder.ChildList.Add(expressionNode);
     }
 
@@ -566,12 +566,12 @@ public class ParseDefaultKeywords
 
     public static void HandleUintTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleUlongTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleUncheckedTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -586,12 +586,12 @@ public class ParseDefaultKeywords
 
     public static void HandleUshortTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleVoidTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleTypeIdentifierKeyword(model);
+        HandleTypeIdentifierKeyword(compilationUnit);
     }
 
     public static void HandleVolatileTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -606,7 +606,7 @@ public class ParseDefaultKeywords
     	var openParenthesisToken = (OpenParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
     	compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        var expressionNode = ParseOthers.ParseExpression(model);
+        var expressionNode = ParseOthers.ParseExpression(compilationUnit);
 		
 		var closeParenthesisToken = (CloseParenthesisToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 		
@@ -648,7 +648,7 @@ public class ParseDefaultKeywords
 
     public static void HandleTypeIdentifierKeyword(CSharpCompilationUnit compilationUnit)
     {
-    	ParseTokens.ParseIdentifierToken(model);
+    	ParseTokens.ParseIdentifierToken(compilationUnit);
     }
 
     public static void HandleNewTokenKeyword(CSharpCompilationUnit compilationUnit)
@@ -656,7 +656,7 @@ public class ParseDefaultKeywords
     	if (compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
     		UtilityApi.IsConvertibleToIdentifierToken(compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind))
     	{
-    		var expressionNode = ParseOthers.ParseExpression(model);
+    		var expressionNode = ParseOthers.ParseExpression(compilationUnit);
     		compilationUnit.ParserModel.StatementBuilder.ChildList.Add(expressionNode);
     	}
     	else
@@ -718,7 +718,7 @@ public class ParseDefaultKeywords
             return;
 
 		compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-		var expression = ParseOthers.ParseExpression(model);
+		var expression = ParseOthers.ParseExpression(compilationUnit);
 
         var boundIfStatementNode = compilationUnit.ParserModel.Binder.BindIfStatementNode(ifTokenKeyword, expression);
         compilationUnit.ParserModel.SyntaxStack.Push(boundIfStatementNode);
@@ -729,7 +729,7 @@ public class ParseDefaultKeywords
     {
     	var usingKeywordToken = (KeywordToken)compilationUnit.ParserModel.TokenWalker.Consume();
     	
-    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(model);
+    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(compilationUnit);
 
         if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
         {
@@ -743,13 +743,13 @@ public class ParseDefaultKeywords
             usingKeywordToken,
             namespaceIdentifier);
 
-        compilationUnit.ParserModel.Binder.BindUsingStatementNode(usingStatementNode, model);
+        compilationUnit.ParserModel.Binder.BindUsingStatementNode(usingStatementNode, compilationUnit);
         compilationUnit.ParserModel.StatementBuilder.ChildList.Add(usingStatementNode);
     }
 
     public static void HandleInterfaceTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-    	HandleStorageModifierTokenKeyword(model);
+    	HandleStorageModifierTokenKeyword(compilationUnit);
     }
 
 	/// <summary>
@@ -854,7 +854,7 @@ public class ParseDefaultKeywords
 		// Then: <T>
         GenericArgumentsListingNode? genericArgumentsListingNode = null;
         if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
-            genericArgumentsListingNode = ParseTypes.HandleGenericArguments(model);
+            genericArgumentsListingNode = ParseTypes.HandleGenericArguments(compilationUnit);
 
         var typeDefinitionNode = new TypeDefinitionNode(
             accessModifierKind,
@@ -868,22 +868,22 @@ public class ParseDefaultKeywords
             openBraceToken: default,
             codeBlockNode: null);
 
-        compilationUnit.ParserModel.Binder.BindTypeDefinitionNode(typeDefinitionNode, model);
-        compilationUnit.ParserModel.Binder.BindTypeIdentifier(identifierToken, model);
+        compilationUnit.ParserModel.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit);
+        compilationUnit.ParserModel.Binder.BindTypeIdentifier(identifierToken, compilationUnit);
         compilationUnit.ParserModel.SyntaxStack.Push(typeDefinitionNode);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
     }
 
     public static void HandleClassTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
-        HandleStorageModifierTokenKeyword(model);
+        HandleStorageModifierTokenKeyword(compilationUnit);
     }
 
     public static void HandleNamespaceTokenKeyword(CSharpCompilationUnit compilationUnit)
     {
     	var namespaceKeywordToken = (KeywordToken)compilationUnit.ParserModel.TokenWalker.Consume();
     	
-    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(model);
+    	var handleNamespaceIdentifierResult = ParseOthers.HandleNamespaceIdentifier(compilationUnit);
 
         if (handleNamespaceIdentifierResult.SyntaxKind == SyntaxKind.EmptyNode)
         {
@@ -898,7 +898,7 @@ public class ParseDefaultKeywords
             namespaceIdentifier,
             null);
 
-        compilationUnit.ParserModel.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, model);
+        compilationUnit.ParserModel.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, compilationUnit);
         
         compilationUnit.ParserModel.SyntaxStack.Push(namespaceStatementNode);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = namespaceStatementNode;
