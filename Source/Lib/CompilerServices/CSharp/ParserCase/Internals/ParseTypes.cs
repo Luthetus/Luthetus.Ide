@@ -95,7 +95,7 @@ public static class ParseTypes
 
     public static TypeClauseNode MatchTypeClause(CSharpCompilationUnit compilationUnit)
     {
-    	if (ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var expressionNode))
+    	if (ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, out var expressionNode))
     	{
     		return (TypeClauseNode)expressionNode;
     	}
@@ -113,7 +113,7 @@ public static class ParseTypes
 		
 		if (UtilityApi.IsKeywordSyntaxKind(compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind) &&
                 (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind) ||
-                UtilityApi.IsVarContextualKeyword(model, compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind)))
+                UtilityApi.IsVarContextualKeyword(compilationUnit, compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind)))
 		{
             syntaxToken = compilationUnit.ParserModel.TokenWalker.Consume();
         }

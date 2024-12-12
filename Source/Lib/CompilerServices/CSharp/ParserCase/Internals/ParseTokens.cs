@@ -44,7 +44,7 @@ public static class ParseTokens
     		compilationUnit.ParserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionInvocationNode);
     	}
     	
-		var successParse = ParseOthers.TryParseExpression(null, model, out var expressionNode);
+		var successParse = ParseOthers.TryParseExpression(null, compilationUnit, out var expressionNode);
 		
 		if (!successParse)
 		{
@@ -112,7 +112,7 @@ public static class ParseTokens
 		
 		if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
 		{
-			ParsePropertyDefinition((CSharpParserModel)model, variableDeclarationNode);
+			ParsePropertyDefinition((CSharpParserModel)compilationUnit, variableDeclarationNode);
 		}
 		else if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
 				 compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)

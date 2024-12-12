@@ -253,14 +253,14 @@ public struct CSharpParser
 // TODO: Are the comments below still of value? If they are not of value anymore then delete them.
 
 //{
-	// In regards to whether to '_ = model.TokenWalker.Consume();'
+	// In regards to whether to '_ = compilationUnit.ParserModel.TokenWalker.Consume();'
 	// at the start of the while loop, or at the end:
 	//
 	// The end is better because:
 	// 
 	// - Anytime one wants to check the previous token,
-	// with the 'Consume()' at the end of the loop then one can use 'model.TokenWalker.Previous'.
-	// But, if 'Consume()' is at the start of the loop then one has to use 'model.TokenWalker.Peek(-2)' and that feels very janky.
+	// with the 'Consume()' at the end of the loop then one can use 'compilationUnit.ParserModel.TokenWalker.Previous'.
+	// But, if 'Consume()' is at the start of the loop then one has to use 'compilationUnit.ParserModel.TokenWalker.Peek(-2)' and that feels very janky.
 	// 
 	// - As well, helps ensure a "handle-syntax" does not 'Consume()' someone elses syntax.
 	// If an individual "syntax" cannot make sense of the current token,

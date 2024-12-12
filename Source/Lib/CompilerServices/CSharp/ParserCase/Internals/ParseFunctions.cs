@@ -19,7 +19,7 @@ public class ParseFunctions
     	{
     		var successGenericParametersListingNode = ParseOthers.TryParseExpression(
     			SyntaxKind.GenericParametersListingNode,
-    			model,
+    			compilationUnit,
     			out var genericParametersListingNode);
     			
     		if (successGenericParametersListingNode)
@@ -150,7 +150,7 @@ public class ParseFunctions
             else if (!corruptState)
             {
             	var tokenIndexOriginal = compilationUnit.ParserModel.TokenWalker.Index;
-				var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var typeClauseNode);
+				var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, out var typeClauseNode);
 		    	var successName = false;
 		    	
 		    	if (successTypeClauseNode)
