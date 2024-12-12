@@ -15,7 +15,7 @@ public static class ParseOthers
 	/// <summary>
 	/// TODO: Delete this method, to parse a namespace identifier one should be able to just invoke 'ParseExpression(...)'
 	/// </summary>
-	public static ISyntax HandleNamespaceIdentifier(CSharpParserModel model)
+	public static ISyntax HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit)
     {
         var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
 
@@ -53,7 +53,7 @@ public static class ParseOthers
         return new IdentifierToken(identifierTextSpan);
     }
 
-    public static void StartStatement_Expression(CSharpParserModel model)
+    public static void StartStatement_Expression(CSharpCompilationUnit compilationUnit)
     {
     	var expressionNode = ParseOthers.ParseExpression(model);
     	model.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
@@ -78,7 +78,7 @@ public static class ParseOthers
 	/// if the root primary expression is not equal to the model.ForceParseExpressionSyntaxKind
 	/// then stop.
     /// </summary>
-    public static bool TryParseExpression(SyntaxKind? syntaxKind, CSharpParserModel model, out IExpressionNode expressionNode)
+    public static bool TryParseExpression(SyntaxKind? syntaxKind, CSharpCompilationUnit compilationUnit, out IExpressionNode expressionNode)
     {
     	var originalTokenIndex = model.TokenWalker.Index;
     	
@@ -127,7 +127,7 @@ public static class ParseOthers
 	/// In the case where the first token of the expression had already been 'Consume()'-ed then 'model.TokenWalker.Backtrack();'
 	/// might be of use in order to move the model.TokenWalker backwards prior to invoking this method.
 	/// </summary>
-	public static IExpressionNode ParseExpression(CSharpParserModel model)
+	public static IExpressionNode ParseExpression(CSharpCompilationUnit compilationUnit)
     {
     	#if DEBUG
     	Console.WriteLine("\nParseExpression(...)");
@@ -288,7 +288,7 @@ public static class ParseOthers
 	///
 	/// LambdaExpressionNode for example, needs to override 'SyntaxKind.StatementDelimiterToken'.
 	/// </summary>
-    private static IExpressionNode BubbleUpParseExpression(int indexTriggered, IExpressionNode expressionPrimary, CSharpParserModel model)
+    private static IExpressionNode BubbleUpParseExpression(int indexTriggered, IExpressionNode expressionPrimary, CSharpCompilationUnit compilationUnit)
     {
     	var triggeredDelimiterTuple = model.ExpressionList[indexTriggered];
     	IExpressionNode? previousDelimiterExpressionNode = null;

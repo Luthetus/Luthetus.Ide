@@ -7,7 +7,7 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 internal static class TokenWalkerExtensionMethods
 {
-    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpParserModel model)
+    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpCompilationUnit compilationUnit)
     {
         return ParseTypes.MatchTypeClause(model);
     }
@@ -15,7 +15,7 @@ internal static class TokenWalkerExtensionMethods
 	public static void DeferParsingOfChildScope(
 		this TokenWalker tokenWalker,
 		OpenBraceToken consumedOpenBraceToken,
-		CSharpParserModel model)
+		CSharpCompilationUnit compilationUnit)
     {
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
 		var pendingCodeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;

@@ -12,7 +12,7 @@ public static class ParseVariables
 {
     public static void HandleVariableReference(
         IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
@@ -21,7 +21,7 @@ public static class ParseVariables
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
         VariableKind variableKind,
-        IParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     	IVariableDeclarationNode variableDeclarationNode;
 
@@ -43,7 +43,7 @@ public static class ParseVariables
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
         VariableKind variableKind,
-        IParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     	var variableDeclarationNode = HandleVariableDeclarationExpression(
 			consumedTypeClauseNode,
@@ -102,7 +102,7 @@ public static class ParseVariables
     public static void HandlePropertyDeclaration(
         IVariableDeclarationNode consumedVariableDeclarationNode,
         OpenBraceToken consumedOpenBraceToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
@@ -110,14 +110,14 @@ public static class ParseVariables
         IVariableDeclarationNode consumedVariableDeclarationNode,
         EqualsToken consumedEqualsToken,
         CloseAngleBracketToken consumedCloseAngleBracketToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
     public static void HandleVariableAssignment(
         IdentifierToken consumedIdentifierToken,
         EqualsToken consumedEqualsToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 }

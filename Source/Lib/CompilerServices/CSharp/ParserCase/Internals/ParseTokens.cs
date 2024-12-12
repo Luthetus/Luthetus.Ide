@@ -14,12 +14,12 @@ public static class ParseTokens
 {
     public static void ParsePreprocessorDirectiveToken(
         PreprocessorDirectiveToken consumedPreprocessorDirectiveToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
         var consumedToken = model.TokenWalker.Consume();
     }
 
-    public static void ParseIdentifierToken(CSharpParserModel model)
+    public static void ParseIdentifierToken(CSharpCompilationUnit compilationUnit)
     {
     	var originalTokenIndex = model.TokenWalker.Index;
     	
@@ -79,7 +79,7 @@ public static class ParseTokens
 		}
     }
     
-    public static void MoveToHandleFunctionDefinition(VariableDeclarationNode variableDeclarationNode, IParserModel model)
+    public static void MoveToHandleFunctionDefinition(VariableDeclarationNode variableDeclarationNode, CSharpCompilationUnit compilationUnit)
     {
     	ParseFunctions.HandleFunctionDefinition(
 			variableDeclarationNode.IdentifierToken,
@@ -88,7 +88,7 @@ public static class ParseTokens
 	        (CSharpParserModel)model);
     }
     
-    public static void MoveToHandleVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, IParserModel model)
+    public static void MoveToHandleVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, CSharpCompilationUnit compilationUnit)
     {
     	var variableKind = VariableKind.Local;
     			
@@ -121,7 +121,7 @@ public static class ParseTokens
 		}
     }
     
-    public static void MoveToHandleTypeClauseNode(int originalTokenIndex, TypeClauseNode typeClauseNode, IParserModel model)
+    public static void MoveToHandleTypeClauseNode(int originalTokenIndex, TypeClauseNode typeClauseNode, CSharpCompilationUnit compilationUnit)
     {
     	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken ||
 			model.TokenWalker.Current.SyntaxKind == SyntaxKind.EndOfFileToken ||
@@ -152,7 +152,7 @@ public static class ParseTokens
 		return;
     }
     
-    public static void ParsePropertyDefinition(CSharpParserModel model, IVariableDeclarationNode variableDeclarationNode)
+    public static void ParsePropertyDefinition(CSharpCompilationUnit compilationUnit, IVariableDeclarationNode variableDeclarationNode)
     {
 		#if DEBUG
 		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
@@ -196,7 +196,7 @@ public static class ParseTokens
 		#endif
     }
     
-    public static void ParsePropertyDefinition_ExpressionBound(CSharpParserModel model)
+    public static void ParsePropertyDefinition_ExpressionBound(CSharpCompilationUnit compilationUnit)
     {
 		var equalsToken = (EqualsToken)model.TokenWalker.Consume();
 		var closeAngleBracketToken = (CloseAngleBracketToken)model.TokenWalker.Consume();
@@ -205,7 +205,7 @@ public static class ParseTokens
 		var statementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
     }
 
-    public static void ParseColonToken(CSharpParserModel model)
+    public static void ParseColonToken(CSharpCompilationUnit compilationUnit)
     {
     	var colonToken = (ColonToken)model.TokenWalker.Consume();
     
@@ -231,7 +231,7 @@ public static class ParseTokens
 	/// OpenBraceToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpParserModel model)
+    public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit)
     {    
 		if (model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
 		{
@@ -266,7 +266,7 @@ public static class ParseTokens
 	/// CloseBraceToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, CSharpParserModel model)
+    public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, CSharpCompilationUnit compilationUnit)
     {
 		if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 		{
@@ -280,30 +280,30 @@ public static class ParseTokens
         model.Binder.CloseScope(closeBraceToken.TextSpan, model);
     }
 
-    public static void ParseOpenParenthesisToken(CSharpParserModel model)
+    public static void ParseOpenParenthesisToken(CSharpCompilationUnit compilationUnit)
     {
     }
 
     public static void ParseCloseParenthesisToken(
         CloseParenthesisToken consumedCloseParenthesisToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     	var closesParenthesisToken = (CloseParenthesisToken)model.TokenWalker.Consume();
     }
 
     public static void ParseOpenAngleBracketToken(
         OpenAngleBracketToken consumedOpenAngleBracketToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
     public static void ParseCloseAngleBracketToken(
         CloseAngleBracketToken consumedCloseAngleBracketToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
-    public static void ParseOpenSquareBracketToken(CSharpParserModel model)
+    public static void ParseOpenSquareBracketToken(CSharpCompilationUnit compilationUnit)
     {
     	var openSquareBracketToken = (OpenSquareBracketToken)model.TokenWalker.Consume();
     
@@ -360,11 +360,11 @@ public static class ParseTokens
 
     public static void ParseCloseSquareBracketToken(
         CloseSquareBracketToken consumedCloseSquareBracketToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
-    public static void ParseEqualsToken(CSharpParserModel model)
+    public static void ParseEqualsToken(CSharpCompilationUnit compilationUnit)
     {
     	if (model.StatementBuilder.ChildList.Count == 0)
     	{
@@ -392,7 +392,7 @@ public static class ParseTokens
 
     public static void ParseMemberAccessToken(
         MemberAccessToken consumedMemberAccessToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
@@ -400,7 +400,7 @@ public static class ParseTokens
 	/// StatementDelimiterToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, CSharpParserModel model)
+    public static void ParseStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, CSharpCompilationUnit compilationUnit)
     {
     	if (model.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
@@ -443,7 +443,7 @@ public static class ParseTokens
         }
     }
 
-    public static void ParseKeywordToken(CSharpParserModel model)
+    public static void ParseKeywordToken(CSharpCompilationUnit compilationUnit)
     {
         // 'return', 'if', 'get', etc...
         switch (model.TokenWalker.Current.SyntaxKind)
@@ -688,7 +688,7 @@ public static class ParseTokens
         }
     }
 
-    public static void ParseKeywordContextualToken(CSharpParserModel model)
+    public static void ParseKeywordContextualToken(CSharpCompilationUnit compilationUnit)
     {
         switch (model.TokenWalker.Current.SyntaxKind)
         {

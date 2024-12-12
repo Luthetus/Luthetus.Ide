@@ -13,7 +13,7 @@ public class ParseFunctions
         IdentifierToken consumedIdentifierToken,
         TypeClauseNode consumedTypeClauseNode,
         GenericParametersListingNode? consumedGenericArgumentsListingNode,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     	if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     	{
@@ -63,7 +63,7 @@ public class ParseFunctions
     public static void HandleConstructorDefinition(
     	TypeDefinitionNode typeDefinitionNodeCodeBlockOwner,
         IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     	var functionArgumentsListingNode = HandleFunctionArguments(model);
 
@@ -116,7 +116,7 @@ public class ParseFunctions
     }
 
     /// <summary>Use this method for function definition, whereas <see cref="HandleFunctionParameters"/> should be used for function invocation.</summary>
-    public static FunctionArgumentsListingNode HandleFunctionArguments(CSharpParserModel model)
+    public static FunctionArgumentsListingNode HandleFunctionArguments(CSharpCompilationUnit compilationUnit)
     {
     	var openParenthesisToken = (OpenParenthesisToken)model.TokenWalker.Consume();
     	var functionArgumentEntryNodeList = new List<FunctionArgumentEntryNode>();

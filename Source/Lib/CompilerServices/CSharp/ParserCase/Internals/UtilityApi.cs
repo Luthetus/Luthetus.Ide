@@ -64,7 +64,7 @@ public static class UtilityApi
     /// <see cref="SyntaxKind.VarTokenContextualKeyword"/> AND check if
     /// any 'var' identified definitions are in scope.
     /// </summary>
-    public static bool IsVarContextualKeyword(CSharpParserModel parserModel, SyntaxKind syntaxKind)
+    public static bool IsVarContextualKeyword(CSharpCompilationUnit compilationUnit, SyntaxKind syntaxKind)
     {
         if (syntaxKind != SyntaxKind.VarTokenContextualKeyword)
             return false;
@@ -187,7 +187,7 @@ public static class UtilityApi
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
-    public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax, IParserModel model)
+    public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax, CSharpCompilationUnit compilationUnit)
     {
     	if (syntax.SyntaxKind == SyntaxKind.TypeClauseNode)
     	{
@@ -234,7 +234,7 @@ public static class UtilityApi
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
-    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax, IParserModel model)
+    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax, CSharpCompilationUnit compilationUnit)
     {
     	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{

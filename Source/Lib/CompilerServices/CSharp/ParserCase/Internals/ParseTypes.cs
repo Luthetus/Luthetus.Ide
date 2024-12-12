@@ -10,20 +10,20 @@ public static class ParseTypes
 {
     public static void HandleStaticClassIdentifier(
         IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
     public static void HandleUndefinedTypeOrNamespaceReference(
         IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
     /// <summary>
     /// This method is used for generic type definition such as, 'class List&lt;T&gt; { ... }'
     /// </summary>
-    public static GenericArgumentsListingNode HandleGenericArguments(CSharpParserModel model)
+    public static GenericArgumentsListingNode HandleGenericArguments(CSharpCompilationUnit compilationUnit)
     {
     	var openAngleBracketToken = (OpenAngleBracketToken)model.TokenWalker.Consume();
     
@@ -72,7 +72,7 @@ public static class ParseTypes
 
     public static void HandleAttribute(
         OpenSquareBracketToken consumedOpenSquareBracketToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
@@ -88,12 +88,12 @@ public static class ParseTypes
 	/// Furthermore, because there is a need to disambiguate, more checks are performed in this method
 	/// than in <see cref="MatchTypeClause"/>.
 	/// </summary>
-	public static bool IsPossibleTypeClause(ISyntaxToken syntaxToken, CSharpParserModel model)
+	public static bool IsPossibleTypeClause(ISyntaxToken syntaxToken, CSharpCompilationUnit compilationUnit)
 	{
 		return false;
 	}
 
-    public static TypeClauseNode MatchTypeClause(CSharpParserModel model)
+    public static TypeClauseNode MatchTypeClause(CSharpCompilationUnit compilationUnit)
     {
     	if (ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, model, out var expressionNode))
     	{
@@ -183,7 +183,7 @@ public static class ParseTypes
     public static void HandlePrimaryConstructorDefinition(
         TypeDefinitionNode typeDefinitionNode,
         OpenParenthesisToken consumedOpenParenthesisToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 }
