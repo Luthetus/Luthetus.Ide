@@ -31,8 +31,8 @@ public static class ParseVariables
 	        variableKind,
 	        false);
 
-        model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+        compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
+        compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
         return variableDeclarationNode;
     }
     
@@ -56,14 +56,14 @@ public static class ParseVariables
 	    	
 	    // if (variableKind == VariableKind.Local || variableKind == VariableKind.Closure)
 
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+        if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         {
-            if (model.TokenWalker.Peek(1).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            if (compilationUnit.ParserModel.TokenWalker.Peek(1).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
             {
                 HandlePropertyExpression(
                     variableDeclarationNode,
-                    (EqualsToken)model.TokenWalker.Consume(),
-                    (CloseAngleBracketToken)model.TokenWalker.Consume(),
+                    (EqualsToken)compilationUnit.ParserModel.TokenWalker.Consume(),
+                    (CloseAngleBracketToken)compilationUnit.ParserModel.TokenWalker.Consume(),
                     (CSharpParserModel)model);
             }
             else
@@ -71,7 +71,7 @@ public static class ParseVariables
                 // Variable initialization occurs here.
                 HandleVariableAssignment(
                     consumedIdentifierToken,
-                    (EqualsToken)model.TokenWalker.Consume(),
+                    (EqualsToken)compilationUnit.ParserModel.TokenWalker.Consume(),
                     (CSharpParserModel)model);
             }
         }
@@ -80,22 +80,22 @@ public static class ParseVariables
             if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.SyntaxKind ==
                 SyntaxKind.VarTokenContextualKeyword)
             {
-                model.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
+                compilationUnit.ParserModel.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
                     consumedIdentifierToken.TextSpan);
             }
         }
 
         if (variableKind == VariableKind.Property &&
-            model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+            compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
             HandlePropertyDeclaration(
                 variableDeclarationNode,
-                (OpenBraceToken)model.TokenWalker.Consume(),
+                (OpenBraceToken)compilationUnit.ParserModel.TokenWalker.Consume(),
                 (CSharpParserModel)model);
         }
         else
         {
-            _ = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+            _ = compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
     }
 

@@ -18,14 +18,14 @@ internal static class TokenWalkerExtensionMethods
 		CSharpCompilationUnit compilationUnit)
     {
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
-		var pendingCodeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
+		var pendingCodeBlockOwner = compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 
 		var openTokenIndex = tokenWalker.Index - 1;
 
 		var openBraceCounter = 1;
 		
 		#if DEBUG
-		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
 		while (true)
@@ -50,10 +50,10 @@ internal static class TokenWalkerExtensionMethods
 		var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
 		
 		#if DEBUG
-		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 
-		model.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new DeferredChildScope(
+		compilationUnit.ParserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new DeferredChildScope(
 			openTokenIndex,
 			closeTokenIndex,
 			pendingCodeBlockOwner));
