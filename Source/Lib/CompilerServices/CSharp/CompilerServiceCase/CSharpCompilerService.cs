@@ -31,6 +31,8 @@ public sealed class CSharpCompilerService : CompilerService
     	#if DEBUG
     	++LuthetusDebugSomething.CompilerService_ConstructorInvocationCount;
     	#endif
+    	
+    	Binder = CSharpBinder;
     
         _compilerServiceOptions = new()
         {
@@ -43,12 +45,6 @@ public sealed class CSharpCompilerService : CompilerService
 	public override Type? SymbolRendererType { get; protected set; }
     public override Type? DiagnosticRendererType { get; protected set; }
     
-    public override IBinder Binder
-    {
-    	get => throw new NotImplementedException("Use {nameof(CSharpBinder)}");
-    	protected set => throw new NotImplementedException("Use {nameof(CSharpBinder)}");
-    }
-
     public event Action? CursorMovedInSyntaxTree;
     
     public void SetSymbolRendererType(Type? symbolRendererType)

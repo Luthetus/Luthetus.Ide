@@ -8,7 +8,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 namespace Luthetus.CompilerServices.CSharp.BinderCase;
 
-public class CSharpBinderSession
+public class CSharpBinderSession : IBinderSession
 {
 	/// <summary>
 	/// Should 0 be the global scope?
@@ -44,6 +44,8 @@ public class CSharpBinderSession
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
+    
+    IBinder IBinderSession.Binder => Binder;
 
     public int GetNextIndexKey()
     {
