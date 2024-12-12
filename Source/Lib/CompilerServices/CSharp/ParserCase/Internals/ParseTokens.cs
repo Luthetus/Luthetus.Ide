@@ -86,7 +86,7 @@ public static class ParseTokens
 			variableDeclarationNode.IdentifierToken,
 	        variableDeclarationNode.TypeClauseNode,
 	        consumedGenericArgumentsListingNode: null,
-	        (CSharpParserModel)compilationUnit);
+	        compilationUnit);
     }
     
     public static void MoveToHandleVariableDeclarationNode(IVariableDeclarationNode variableDeclarationNode, CSharpCompilationUnit compilationUnit)
@@ -113,12 +113,12 @@ public static class ParseTokens
 		
 		if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
 		{
-			ParsePropertyDefinition((CSharpParserModel)compilationUnit, variableDeclarationNode);
+			ParsePropertyDefinition(compilationUnit, variableDeclarationNode);
 		}
 		else if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
 				 compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
-			ParsePropertyDefinition_ExpressionBound((CSharpParserModel)compilationUnit);
+			ParsePropertyDefinition_ExpressionBound(compilationUnit);
 		}
     }
     
@@ -143,7 +143,7 @@ public static class ParseTokens
 			ParseFunctions.HandleConstructorDefinition(
 				typeDefinitionNode,
 		        identifierToken,
-		        (CSharpParserModel)compilationUnit);
+		        compilationUnit);
 		}
 		else
 		{

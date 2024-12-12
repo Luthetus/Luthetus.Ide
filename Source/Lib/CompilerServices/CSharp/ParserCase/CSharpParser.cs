@@ -33,9 +33,9 @@ public struct CSharpParser
         var diagnosticBag = new DiagnosticBag();
 
         compilationUnit.ParserModel = new CSharpParserModel(
-            cSharpCompilationUnit.Binder,
-            cSharpCompilationUnit.BinderSession,
-            new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),
+            compilationUnit.Binder,
+            compilationUnit.BinderSession,
+            new TokenWalker(compilationUnit.Lexer.SyntaxTokenList, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
@@ -234,20 +234,20 @@ public struct CSharpParser
         if (compilationUnit.ParserModel.CurrentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
-            Binder.CloseScope(compilationUnit.ParserModel.TokenWalker.Current.TextSpan, compilationUnit);
+            compilationUnit.Binder.CloseScope(compilationUnit.ParserModel.TokenWalker.Current.TextSpan, compilationUnit);
         }
 
         DiagnosticsList = compilationUnit.ParserModel.DiagnosticBag.ToArray();
 
         var topLevelStatementsCodeBlock = compilationUnit.ParserModel.CurrentCodeBlockBuilder.Build(
             DiagnosticsList
-                .Union(Binder.DiagnosticsList)
-                .Union(Lexer.DiagnosticList)
+                .Union(compilationUnit.Binder.DiagnosticsList)
+                .Union(compilationUnit.Lexer.DiagnosticList)
                 .ToArray());
 
-		cSharpCompilationUnit.CSharpBinder.FinalizeBinderSession(cSharpCompilationUnit.BinderSession);
+		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
 		
-		cSharpCompilationUnit.RootCodeBlockNode = topLevelStatementsCodeBlock;
+		compilationUnit.RootCodeBlockNode = topLevelStatementsCodeBlock;
     }
 }
 

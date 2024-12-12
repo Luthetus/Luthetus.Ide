@@ -81,7 +81,7 @@ public static class ParseOthers
     /// </summary>
     public static bool TryParseExpression(SyntaxKind? syntaxKind, CSharpCompilationUnit compilationUnit, out IExpressionNode expressionNode)
     {
-    	var originalTokenIndex = compilationUnit.ParserModelTokenWalker.Index;
+    	var originalTokenIndex = compilationUnit.ParserModel.TokenWalker.Index;
     	
     	if (syntaxKind is not null)
     		compilationUnit.ParserModel.TryParseExpressionSyntaxKindList.Add(syntaxKind.Value);

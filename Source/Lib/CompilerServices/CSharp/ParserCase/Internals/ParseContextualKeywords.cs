@@ -221,7 +221,7 @@ public class ParseContextualKeywords
     	
     	while (!compilationUnit.ParserModel.TokenWalker.IsEof)
     	{
-    		if (compilationUnit.ParserModel.ParserModeldel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
+    		if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
     			compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
     		{
     			break;

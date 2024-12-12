@@ -93,11 +93,11 @@ public sealed class CSharpCompilerService : CompilerService
 				{
 					var resource = (CSharpResource)_resourceMap[resourceUri];
 					
-			        resource.EscapeCharacterList = lexer.EscapeCharacterList;
-					resource.SyntaxTokenList = lexer.SyntaxTokenList;
+			        resource.EscapeCharacterList = cSharpCompilationUnit.Lexer.EscapeCharacterList;
+					resource.SyntaxTokenList = cSharpCompilationUnit.Lexer.SyntaxTokenList;
 
-					if (compilationUnit is not null)
-						resource.CompilationUnit = compilationUnit;
+					if (cSharpCompilationUnit is not null)
+						resource.CompilationUnit = cSharpCompilationUnit;
 				}
 			}
 

@@ -65,7 +65,7 @@ public static class ParseVariables
                     variableDeclarationNode,
                     (EqualsToken)compilationUnit.ParserModel.TokenWalker.Consume(),
                     (CloseAngleBracketToken)compilationUnit.ParserModel.TokenWalker.Consume(),
-                    (CSharpParserModel)compilationUnit);
+                    compilationUnit);
             }
             else
             {
@@ -73,7 +73,7 @@ public static class ParseVariables
                 HandleVariableAssignment(
                     consumedIdentifierToken,
                     (EqualsToken)compilationUnit.ParserModel.TokenWalker.Consume(),
-                    (CSharpParserModel)compilationUnit);
+                    compilationUnit);
             }
         }
         else
@@ -92,7 +92,7 @@ public static class ParseVariables
             HandlePropertyDeclaration(
                 variableDeclarationNode,
                 (OpenBraceToken)compilationUnit.ParserModel.TokenWalker.Consume(),
-                (CSharpParserModel)compilationUnit);
+                compilationUnit);
         }
         else
         {
