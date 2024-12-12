@@ -311,7 +311,7 @@ public class DotNetSolutionParser : IParser
         }
     }
 
-    CompilationUnit IParser.Parse(IBinder previousBinder, ResourceUri resourceUri)
+    ICompilationUnit IParser.Parse(IBinder previousBinder, ResourceUri resourceUri)
     {
         Parse();
 

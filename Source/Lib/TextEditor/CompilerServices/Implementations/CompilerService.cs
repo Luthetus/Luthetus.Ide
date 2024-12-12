@@ -10,6 +10,11 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 
+/// <summary>
+/// If inheriting this type:
+/// 	- The ICompilerServiceResource must be of type (or inherit) CompilerServiceResource.
+/// 	- The ICompilationUnit must be of type (or inherit) CompilationUnit.
+/// </summary>
 public class CompilerService : ICompilerService
 {
 	protected readonly List<AutocompleteEntry> _emptyAutocompleteEntryList = new();
@@ -195,7 +200,7 @@ public class CompilerService : ICompilerService
 				parser = _compilerServiceOptions.GetParserFunc.Invoke(resource, lexer);
 			}
 
-			compilationUnit = parser.Parse(Binder, resourceUri);
+			compilationUnit = (CompilationUnit)parser.Parse(Binder, resourceUri);
 		}
 		finally
 		{
@@ -203,7 +208,7 @@ public class CompilerService : ICompilerService
 			{
 				if (_resourceMap.ContainsKey(resourceUri))
 				{
-					var resource = _resourceMap[resourceUri];
+					var resource = (CompilerServiceResource)_resourceMap[resourceUri];
 
 					resource.SyntaxTokenList = lexer.SyntaxTokenList;
 

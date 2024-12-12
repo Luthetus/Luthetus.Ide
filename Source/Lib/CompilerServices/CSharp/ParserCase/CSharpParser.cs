@@ -34,7 +34,7 @@ public struct CSharpParser : IParser
     IBinderSession IParser.BinderSession => BinderSession;
     ILexer IParser.Lexer => Lexer;
 
-    public CompilationUnit Parse(
+    public ICompilationUnit Parse(
     	IBinder binder,
         ResourceUri resourceUri)
     {

@@ -82,7 +82,7 @@ public sealed class CSharpCompilerService : CompilerService
 		try
 		{
 			var parser = new CSharpParser(lexer);
-			compilationUnit = parser.Parse(Binder, resourceUri);
+			compilationUnit = (CompilationUnit)parser.Parse(Binder, resourceUri);
 		}
 		finally
 		{
@@ -90,11 +90,9 @@ public sealed class CSharpCompilerService : CompilerService
 			{
 				if (_resourceMap.ContainsKey(resourceUri))
 				{
-					var resource = _resourceMap[resourceUri];
+					var resource = (CSharpResource)_resourceMap[resourceUri];
 					
-					var cSharpResource = (CSharpResource)resource;
-			        cSharpResource.EscapeCharacterList = lexer.EscapeCharacterList;
-
+			        resource.EscapeCharacterList = lexer.EscapeCharacterList;
 					resource.SyntaxTokenList = lexer.SyntaxTokenList;
 
 					if (compilationUnit is not null)

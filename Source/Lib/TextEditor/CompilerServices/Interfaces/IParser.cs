@@ -11,5 +11,5 @@ public interface IParser
     public IBinderSession BinderSession { get; }
     public ILexer Lexer { get; }
 
-    public CompilationUnit Parse(IBinder binder, ResourceUri resourceUri);
+    public ICompilationUnit Parse(IBinder binder, ResourceUri resourceUri);
 }
