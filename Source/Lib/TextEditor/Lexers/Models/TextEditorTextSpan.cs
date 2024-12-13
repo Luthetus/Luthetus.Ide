@@ -80,7 +80,7 @@ public record struct TextEditorTextSpan(
     /// </summary>
     public TextEditorTextSpan(
             int StartingIndexInclusive,
-            StringWalkerStruct stringWalker,
+            ref StringWalkerStruct stringWalker,
             byte decorationByte)
         : this(
               StartingIndexInclusive,

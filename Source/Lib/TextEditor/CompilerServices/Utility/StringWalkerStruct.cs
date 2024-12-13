@@ -226,7 +226,7 @@ public struct StringWalkerStruct
             _ = ReadCharacter();
         }
 
-        var numericLiteralTextSpan = new TextEditorTextSpan(startingPosition, this, 0);
+        var numericLiteralTextSpan = new TextEditorTextSpan(startingPosition, ref this, 0);
         return new NumericLiteralToken(numericLiteralTextSpan);
     }
 
