@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.CompilerServices.CSharp;
 
@@ -128,7 +129,7 @@ public class CSharpKeywords
     public const string WITH_KEYWORD = "with";
     public const string YIELD_KEYWORD = "yield";
 
-    public static readonly ImmutableArray<string> NON_CONTEXTUAL_KEYWORDS = new[]
+    public static readonly string[] NON_CONTEXTUAL_KEYWORDS = new[]
     {
         ABSTRACT_KEYWORD,
         AS_KEYWORD,
@@ -207,9 +208,9 @@ public class CSharpKeywords
         VOID_KEYWORD,
         VOLATILE_KEYWORD,
         WHILE_KEYWORD,
-    }.ToImmutableArray();
+    };
 
-    public static readonly ImmutableArray<string> CONTROL_KEYWORDS = new[]
+    public static readonly string[] CONTROL_KEYWORDS = new[]
     {
         BREAK_KEYWORD,
         CASE_KEYWORD,
@@ -225,9 +226,9 @@ public class CSharpKeywords
         THROW_KEYWORD,
         WHILE_KEYWORD,
         YIELD_KEYWORD
-    }.ToImmutableArray();
+    };
 
-    public static readonly ImmutableArray<string> CONTEXTUAL_KEYWORDS = new[]
+    public static readonly string[] CONTEXTUAL_KEYWORDS = new[]
     {
         ADD_KEYWORD,
         AND_KEYWORD,
@@ -272,9 +273,16 @@ public class CSharpKeywords
         WHERE_KEYWORD,
         WITH_KEYWORD,
         YIELD_KEYWORD,
-    }.ToImmutableArray();
+    };
     
-    public static readonly ImmutableArray<string> ALL_KEYWORDS = NON_CONTEXTUAL_KEYWORDS
+    public static readonly string[] ALL_KEYWORDS = NON_CONTEXTUAL_KEYWORDS
         .Union(CONTEXTUAL_KEYWORDS)
-        .ToImmutableArray();
+        .ToArray();
+        
+    public static readonly HashSet<string> ALL_KEYWORDS_HASH_SET = new(ALL_KEYWORDS);
+        
+    public static readonly LexerKeywords LexerKeywords = new LexerKeywords(
+    	NON_CONTEXTUAL_KEYWORDS,
+    	CONTROL_KEYWORDS, 
+    	CONTEXTUAL_KEYWORDS);
 }

@@ -39,7 +39,7 @@ public partial class CLanguageFacts
         public const string VOLATILE_KEYWORD = "volatile";
         public const string WHILE_KEYWORD = "while";
 
-        public static readonly ImmutableArray<string> ALL_LIST = new[]
+        public static readonly string[] ALL_LIST = new[]
         {
             AUTO_KEYWORD,
             BREAK_KEYWORD,
@@ -73,9 +73,9 @@ public partial class CLanguageFacts
             VOID_KEYWORD,
             VOLATILE_KEYWORD,
             WHILE_KEYWORD,
-        }.ToImmutableArray();
+        };
 
-        public static readonly ImmutableArray<string> CONTROL_KEYWORDS = new[]
+        public static readonly string[] CONTROL_KEYWORDS = new[]
         {
             BREAK_KEYWORD,
             CASE_KEYWORD,
@@ -88,6 +88,6 @@ public partial class CLanguageFacts
             RETURN_KEYWORD,
             SWITCH_KEYWORD,
             WHILE_KEYWORD,
-        }.ToImmutableArray();
+        };
     }
 }

@@ -1,3 +1,4 @@
+using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
@@ -16,38 +17,28 @@ public interface ICodeBlockOwner : ISyntaxNode
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
 	
-	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, IParserModel parserModel);
-	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, IParserModel parserModel);
-	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, IParserModel parserModel);
-	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, IParserModel parserModel);
+	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
+	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
+	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
+	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
 	
-	/// <summary>
-	/// Once the code block owner's scope has been constructed,
-	/// this method gives them an opportunity to pull any variables
-	/// into scope that ought to be there.
-	/// As well, the current code block builder will have been updated.
-	///
-	/// (i.e.: a function definition's arguments)
-	/// </summary>
-	public void OnBoundScopeCreatedAndSetAsCurrent(IParserModel parserModel);
-	
-	public static void ThrowMultipleScopeDelimiterException(IParserModel parserModel)
+	public static void ThrowMultipleScopeDelimiterException(DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
     	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
     	//
-    	parserModel.DiagnosticBag.ReportTodoException(
-    		parserModel.TokenWalker.Current.TextSpan,
+    	diagnosticBag.ReportTodoException(
+    		tokenWalker.Current.TextSpan,
     		"Scope must be set by either OpenBraceToken and CloseBraceToken; or by StatementDelimiterToken, but not both.");
 	}
 		
-	public static void ThrowAlreadyAssignedCodeBlockNodeException(IParserModel parserModel)
+	public static void ThrowAlreadyAssignedCodeBlockNodeException(DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
     	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
     	//
-    	parserModel.DiagnosticBag.ReportTodoException(
-    		parserModel.TokenWalker.Current.TextSpan,
+    	diagnosticBag.ReportTodoException(
+    		tokenWalker.Current.TextSpan,
     		$"The {nameof(CodeBlockNode)} was already assigned.");
 	}
 }

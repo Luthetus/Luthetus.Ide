@@ -42,7 +42,7 @@ public class TextEditorTypeScriptLexer : Lexer
         : base(
             resourceUri,
             sourceText,
-            new LexerKeywords(TypeScriptKeywords.ALL, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
+            new LexerKeywords(TypeScriptKeywords.ALL, Array.Empty<string>(), Array.Empty<string>()))
     {
         _typeScriptSyntaxTree = new GenericSyntaxTree(TypeScriptLanguageDefinition);
     }

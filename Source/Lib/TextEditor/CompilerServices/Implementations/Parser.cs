@@ -22,7 +22,7 @@ public class Parser : IParser
     public ILexer Lexer { get; }
 
     /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
-    public CompilationUnit Parse(
+    public ICompilationUnit Parse(
         IBinder previousBinder,
         ResourceUri resourceUri)
     {
@@ -32,7 +32,7 @@ public class Parser : IParser
         return Parse();
     }
 
-    public virtual CompilationUnit Parse()
+    public virtual ICompilationUnit Parse()
     {
         var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;

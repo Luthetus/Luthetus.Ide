@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -64,7 +65,7 @@ public static class UtilityApi
     /// <see cref="SyntaxKind.VarTokenContextualKeyword"/> AND check if
     /// any 'var' identified definitions are in scope.
     /// </summary>
-    public static bool IsVarContextualKeyword(CSharpParserModel parserModel, SyntaxKind syntaxKind)
+    public static bool IsVarContextualKeyword(CSharpCompilationUnit compilationUnit, SyntaxKind syntaxKind)
     {
         if (syntaxKind != SyntaxKind.VarTokenContextualKeyword)
             return false;
@@ -187,7 +188,7 @@ public static class UtilityApi
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
-    public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax, IParserModel model)
+    public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax, CSharpCompilationUnit compilationUnit)
     {
     	if (syntax.SyntaxKind == SyntaxKind.TypeClauseNode)
     	{
@@ -216,11 +217,11 @@ public static class UtilityApi
 	    }
 	    else
 	    {
-	    	// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+	    	// 'compilationUnit.ParserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
 	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
 	    	//
-	    	model.DiagnosticBag.ReportTodoException(
-	    		model.TokenWalker.Current.TextSpan,
+	    	compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(
+	    		compilationUnit.ParserModel.TokenWalker.Current.TextSpan,
 	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");
 	    	
 	    	// TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
@@ -234,7 +235,7 @@ public static class UtilityApi
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
-    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax, IParserModel model)
+    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax, CSharpCompilationUnit compilationUnit)
     {
     	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
@@ -247,11 +248,11 @@ public static class UtilityApi
 	    }
 	    else
 	    {
-	    	// 'model.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+	    	// 'compilationUnit.ParserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
 	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
 	    	//
-	    	model.DiagnosticBag.ReportTodoException(
-	    		model.TokenWalker.Current.TextSpan,
+	    	compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(
+	    		compilationUnit.ParserModel.TokenWalker.Current.TextSpan,
 	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");
 	    		
 	    	// TODO: Returning default when it can't be converted might be a fine idea? It isn't as bad as returning null.

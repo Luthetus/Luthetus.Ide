@@ -11,64 +11,48 @@ using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
-public class CSharpParser : IParser
+public struct CSharpParser
 {
-    public CSharpParser(CSharpLexer lexer)
+    public CSharpParser()
     {
-        Lexer = lexer;
-        Binder = new CSharpBinder();
-        BinderSession = (CSharpBinderSession)Binder.StartBinderSession(lexer.ResourceUri);
+    	#if DEBUG
+    	++LuthetusDebugSomething.Parser_ConstructorInvocationCount;
+    	#endif
     }
 
     public TextEditorDiagnostic[] DiagnosticsList { get; private set; } = Array.Empty<TextEditorDiagnostic>();
-    public CSharpBinder Binder { get; private set; }
-    public CSharpBinderSession BinderSession { get; private set; }
-    public CSharpLexer Lexer { get; }
 
-    IBinder IParser.Binder => Binder;
-    IBinderSession IParser.BinderSession => BinderSession;
-    ILexer IParser.Lexer => Lexer;
-
-    /// <summary>This method is used when parsing many files as a single compilation. The first binder instance would be passed to the following parsers. The resourceUri is passed in so if a file is parsed for a second time, the previous symbols can be deleted so they do not duplicate.</summary>
-    public CompilationUnit Parse(
-        IBinder previousBinder,
-        ResourceUri resourceUri)
+    public void Parse(CSharpCompilationUnit compilationUnit)
     {
-        Binder = (CSharpBinder)previousBinder;
-        BinderSession = (CSharpBinderSession)Binder.StartBinderSession(resourceUri);
-        return Parse();
-    }
-
-    public CompilationUnit Parse()
-    {
-        var globalCodeBlockBuilder = new CodeBlockBuilder(null, null);
+        var globalCodeBlockBuilder = new CSharpCodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
         var diagnosticBag = new DiagnosticBag();
 
-        var model = new CSharpParserModel(
-            Binder,
-            BinderSession,
-            new TokenWalker(Lexer.SyntaxTokenList, diagnosticBag),
+        compilationUnit.ParserModel = new CSharpParserModel(
+            compilationUnit.Binder,
+            compilationUnit.BinderSession,
+            new TokenWalker(compilationUnit.Lexer.SyntaxTokenList, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
             currentCodeBlockBuilder);
             
 		#if DEBUG
-		model.TokenWalker.ProtectedTokenSyntaxKindList = new() { SyntaxKind.StatementDelimiterToken, SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken, };
+		compilationUnit.ParserModel.TokenWalker.ProtectedTokenSyntaxKindList = new() { SyntaxKind.StatementDelimiterToken, SyntaxKind.OpenBraceToken, SyntaxKind.CloseBraceToken, };
 		#endif
         
         while (true)
         {
-        	// The last statement in this while loop is conditionally: '_ = model.TokenWalker.Consume();'.
+        	// The last statement in this while loop is conditionally: '_ = compilationUnit.ParserModel.TokenWalker.Consume();'.
         	// Knowing this to be the case is extremely important.
-            var token = model.TokenWalker.Current;
+            var token = compilationUnit.ParserModel.TokenWalker.Current;
             
 			#if DEBUG
-			Console.WriteLine(token.SyntaxKind + "___" + token.TextSpan.GetText() + "___" + model.TokenWalker.Index);
+			Console.WriteLine(token.SyntaxKind + "___" + token.TextSpan.GetText() + "___" + compilationUnit.ParserModel.TokenWalker.Index);
 			#endif
 
             switch (token.SyntaxKind)
@@ -82,150 +66,150 @@ public class CSharpParser : IParser
                 case SyntaxKind.StarToken:
                 case SyntaxKind.DollarSignToken:
                 case SyntaxKind.AtToken:
-                	if (model.StatementBuilder.ChildList.Count == 0)
+                	if (compilationUnit.ParserModel.StatementBuilder.ChildList.Count == 0)
                 	{
-                		ParseOthers.StartStatement_Expression(model);
+                		ParseOthers.StartStatement_Expression(compilationUnit);
                 	}
                 	else
                 	{
-                		var expressionNode = ParseOthers.ParseExpression(model);
-                		model.StatementBuilder.ChildList.Add(expressionNode);
+                		var expressionNode = ParseOthers.ParseExpression(compilationUnit);
+                		compilationUnit.ParserModel.StatementBuilder.ChildList.Add(expressionNode);
                 	}
                 	break;
                 case SyntaxKind.PreprocessorDirectiveToken:
-                    ParseTokens.ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)token, model);
+                    ParseTokens.ParsePreprocessorDirectiveToken((PreprocessorDirectiveToken)token, compilationUnit);
                     break;
                 case SyntaxKind.IdentifierToken:
-                	ParseTokens.ParseIdentifierToken(model);
+                	ParseTokens.ParseIdentifierToken(compilationUnit);
                     break;
                 case SyntaxKind.OpenBraceToken:
-                	model.StatementBuilder.FinishStatement(model);
+                	compilationUnit.ParserModel.StatementBuilder.FinishStatement(compilationUnit);
 					
 					#if DEBUG
-					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+					compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 					#endif
 					
-					var openBraceToken = (OpenBraceToken)model.TokenWalker.Consume();
+					var openBraceToken = (OpenBraceToken)compilationUnit.ParserModel.TokenWalker.Consume();
 					
 					#if DEBUG
-					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+					compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 					#endif
 					
-                    ParseTokens.ParseOpenBraceToken(openBraceToken, model);
+                    ParseTokens.ParseOpenBraceToken(openBraceToken, compilationUnit);
                     break;
                 case SyntaxKind.CloseBraceToken:
-                	model.StatementBuilder.FinishStatement(model);
+                	compilationUnit.ParserModel.StatementBuilder.FinishStatement(compilationUnit);
 					
 					#if DEBUG
-					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+					compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 					#endif
 					
-					var closeBraceToken = (CloseBraceToken)model.TokenWalker.Consume();
+					var closeBraceToken = (CloseBraceToken)compilationUnit.ParserModel.TokenWalker.Consume();
 					
 					#if DEBUG
-					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+					compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 					#endif
 					
-                    ParseTokens.ParseCloseBraceToken(closeBraceToken, model);
+                    ParseTokens.ParseCloseBraceToken(closeBraceToken, compilationUnit);
                     break;
                 case SyntaxKind.OpenParenthesisToken:
-                	if (model.StatementBuilder.ChildList.Count == 0)
-                		ParseOthers.StartStatement_Expression(model);
+                	if (compilationUnit.ParserModel.StatementBuilder.ChildList.Count == 0)
+                		ParseOthers.StartStatement_Expression(compilationUnit);
                 	else
-                		ParseTokens.ParseOpenParenthesisToken(model);
+                		ParseTokens.ParseOpenParenthesisToken(compilationUnit);
                     break;
                 case SyntaxKind.CloseParenthesisToken:
-                    ParseTokens.ParseCloseParenthesisToken((CloseParenthesisToken)token, model);
+                    ParseTokens.ParseCloseParenthesisToken((CloseParenthesisToken)token, compilationUnit);
                     break;
                 case SyntaxKind.OpenAngleBracketToken:
-                	if (model.StatementBuilder.ChildList.Count == 0)
-                		ParseOthers.StartStatement_Expression(model);
+                	if (compilationUnit.ParserModel.StatementBuilder.ChildList.Count == 0)
+                		ParseOthers.StartStatement_Expression(compilationUnit);
                 	else
-                    	ParseTokens.ParseOpenAngleBracketToken((OpenAngleBracketToken)token, model);
+                    	ParseTokens.ParseOpenAngleBracketToken((OpenAngleBracketToken)token, compilationUnit);
                     break;
                 case SyntaxKind.CloseAngleBracketToken:
-                    ParseTokens.ParseCloseAngleBracketToken((CloseAngleBracketToken)token, model);
+                    ParseTokens.ParseCloseAngleBracketToken((CloseAngleBracketToken)token, compilationUnit);
                     break;
                 case SyntaxKind.OpenSquareBracketToken:
-                    ParseTokens.ParseOpenSquareBracketToken(model);
+                    ParseTokens.ParseOpenSquareBracketToken(compilationUnit);
                     break;
                 case SyntaxKind.CloseSquareBracketToken:
-                    ParseTokens.ParseCloseSquareBracketToken((CloseSquareBracketToken)token, model);
+                    ParseTokens.ParseCloseSquareBracketToken((CloseSquareBracketToken)token, compilationUnit);
                     break;
                 case SyntaxKind.ColonToken:
-                    ParseTokens.ParseColonToken(model);
+                    ParseTokens.ParseColonToken(compilationUnit);
                     break;
                 case SyntaxKind.MemberAccessToken:
-                    ParseTokens.ParseMemberAccessToken((MemberAccessToken)token, model);
+                    ParseTokens.ParseMemberAccessToken((MemberAccessToken)token, compilationUnit);
                     break;
                 case SyntaxKind.EqualsToken:
-                    ParseTokens.ParseEqualsToken(model);
+                    ParseTokens.ParseEqualsToken(compilationUnit);
                     break;
                 case SyntaxKind.StatementDelimiterToken:
-                	model.StatementBuilder.FinishStatement(model);
+                	compilationUnit.ParserModel.StatementBuilder.FinishStatement(compilationUnit);
 					
 					#if DEBUG
-					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+					compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 					#endif
 					
-					var statementDelimiterToken = (StatementDelimiterToken)model.TokenWalker.Consume();
+					var statementDelimiterToken = (StatementDelimiterToken)compilationUnit.ParserModel.TokenWalker.Consume();
 					
 					#if DEBUG
-					model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+					compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 					#endif
 					
-                    ParseTokens.ParseStatementDelimiterToken(statementDelimiterToken, model);
+                    ParseTokens.ParseStatementDelimiterToken(statementDelimiterToken, compilationUnit);
                     break;
                 case SyntaxKind.EndOfFileToken:
-                    if (model.SyntaxStack.TryPeek(out var syntax) &&
+                    if (compilationUnit.ParserModel.SyntaxStack.TryPeek(out var syntax) &&
                         syntax is EndOfFileToken)
                     {
-                        _ = model.SyntaxStack.Pop();
+                        _ = compilationUnit.ParserModel.SyntaxStack.Pop();
                     }
 
-                    if (model.SyntaxStack.TryPop(out var notUsedSyntax))
+                    if (compilationUnit.ParserModel.SyntaxStack.TryPop(out var notUsedSyntax))
                     {
                     	if (notUsedSyntax is null)
                     	{
                     	}
                         else if (notUsedSyntax is IExpressionNode)
                         {
-                            model.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
+                            compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
                         }
                         else if (notUsedSyntax.SyntaxKind == SyntaxKind.AmbiguousIdentifierNode)
                         {
                             var ambiguousIdentifierNode = (AmbiguousIdentifierNode)notUsedSyntax;
-                            model.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
-                            model.DiagnosticBag.ReportUndefinedTypeOrNamespace(
+                            compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(notUsedSyntax);
+                            compilationUnit.ParserModel.DiagnosticBag.ReportUndefinedTypeOrNamespace(
                                 ambiguousIdentifierNode.IdentifierToken.TextSpan,
                                 ambiguousIdentifierNode.IdentifierToken.TextSpan.GetText());
                         }
                     }
-                    else if (model.StatementBuilder.ChildList.Any())
+                    else if (compilationUnit.ParserModel.StatementBuilder.ChildList.Any())
                     {
-                    	foreach (var item in model.StatementBuilder.ChildList)
+                    	foreach (var item in compilationUnit.ParserModel.StatementBuilder.ChildList)
                     	{
-                    		model.CurrentCodeBlockBuilder.ChildList.Add(item);
+                    		compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(item);
                     	}
                     }
                     break;
                 default:
                     if (UtilityApi.IsContextualKeywordSyntaxKind(token.SyntaxKind))
-                        ParseTokens.ParseKeywordContextualToken(model);
+                        ParseTokens.ParseKeywordContextualToken(compilationUnit);
                     else if (UtilityApi.IsKeywordSyntaxKind(token.SyntaxKind))
-                        ParseTokens.ParseKeywordToken(model);
+                        ParseTokens.ParseKeywordToken(compilationUnit);
                     break;
             }
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
-				if (model.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
-					deferredChildScope.PrepareMainParserLoop(model.TokenWalker.Index, model);
+				if (compilationUnit.ParserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+					deferredChildScope.PrepareMainParserLoop(compilationUnit.ParserModel.TokenWalker.Index, compilationUnit);
 				else
 					break;
 			}
 			
-			if (model.TokenWalker.ConsumeCounter == 0)
+			if (compilationUnit.ParserModel.TokenWalker.ConsumeCounter == 0)
 			{
 				// This means either:
 				// 	- None of the methods for syntax could make sense of the token, so they didn't consume it.
@@ -235,52 +219,49 @@ public class CSharpParser : IParser
 				// To avoid an infinite loop, this will ensure at least 1 token is consumed each iteration of the while loop.
 				// 
 				// (and that the token index increased by at least 1 from the previous loop; this is implicitly what is implied).
-				_ = model.TokenWalker.Consume();
+				_ = compilationUnit.ParserModel.TokenWalker.Consume();
 			}
-			else if (model.TokenWalker.ConsumeCounter < 0)
+			else if (compilationUnit.ParserModel.TokenWalker.ConsumeCounter < 0)
 			{
-				// This means that a syntax invoked 'model.TokenWalker.Backtrack()'.
-				// Without invoking an equal amount of 'model.TokenWalker.Consume()' to avoid an infinite loop.
-				throw new LuthetusTextEditorException($"model.TokenWalker.ConsumeCounter:{model.TokenWalker.ConsumeCounter} < 0");
+				// This means that a syntax invoked 'compilationUnit.ParserModel.TokenWalker.Backtrack()'.
+				// Without invoking an equal amount of 'compilationUnit.ParserModel.TokenWalker.Consume()' to avoid an infinite loop.
+				throw new LuthetusTextEditorException($"compilationUnit.ParserModel.TokenWalker.ConsumeCounter:{compilationUnit.ParserModel.TokenWalker.ConsumeCounter} < 0");
 			}
 			
-			model.TokenWalker.ConsumeCounterReset();
+			compilationUnit.ParserModel.TokenWalker.ConsumeCounterReset();
         }
 
-        if (model.CurrentCodeBlockBuilder.Parent is not null)
+        if (compilationUnit.ParserModel.CurrentCodeBlockBuilder.Parent is not null)
         {
             // The current token here would be the EOF token.
-            Binder.CloseScope(model.TokenWalker.Current.TextSpan, model);
+            compilationUnit.Binder.CloseScope(compilationUnit.ParserModel.TokenWalker.Current.TextSpan, compilationUnit);
         }
 
-        DiagnosticsList = model.DiagnosticBag.ToArray();
+        DiagnosticsList = compilationUnit.ParserModel.DiagnosticBag.ToArray();
 
-        var topLevelStatementsCodeBlock = model.CurrentCodeBlockBuilder.Build(
+        var topLevelStatementsCodeBlock = compilationUnit.ParserModel.CurrentCodeBlockBuilder.Build(
             DiagnosticsList
-                .Union(Binder.DiagnosticsList)
-                .Union(Lexer.DiagnosticList)
+                .Union(compilationUnit.Binder.DiagnosticsList)
+                .Union(compilationUnit.Lexer.DiagnosticList)
                 .ToArray());
 
-		Binder.FinalizeBinderSession(BinderSession);
-        return new CompilationUnit(
-            topLevelStatementsCodeBlock,
-            Lexer,
-            this,
-            Binder);
+		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
+		
+		compilationUnit.RootCodeBlockNode = topLevelStatementsCodeBlock;
     }
 }
 
 // TODO: Are the comments below still of value? If they are not of value anymore then delete them.
 
 //{
-	// In regards to whether to '_ = model.TokenWalker.Consume();'
+	// In regards to whether to '_ = compilationUnit.ParserModel.TokenWalker.Consume();'
 	// at the start of the while loop, or at the end:
 	//
 	// The end is better because:
 	// 
 	// - Anytime one wants to check the previous token,
-	// with the 'Consume()' at the end of the loop then one can use 'model.TokenWalker.Previous'.
-	// But, if 'Consume()' is at the start of the loop then one has to use 'model.TokenWalker.Peek(-2)' and that feels very janky.
+	// with the 'Consume()' at the end of the loop then one can use 'compilationUnit.ParserModel.TokenWalker.Previous'.
+	// But, if 'Consume()' is at the start of the loop then one has to use 'compilationUnit.ParserModel.TokenWalker.Peek(-2)' and that feels very janky.
 	// 
 	// - As well, helps ensure a "handle-syntax" does not 'Consume()' someone elses syntax.
 	// If an individual "syntax" cannot make sense of the current token,

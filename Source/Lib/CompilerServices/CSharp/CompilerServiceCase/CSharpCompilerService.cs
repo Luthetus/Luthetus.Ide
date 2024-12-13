@@ -1,8 +1,13 @@
 using System.Collections.Immutable;
 using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.TextEditors.Models;
@@ -23,21 +28,15 @@ public sealed class CSharpCompilerService : CompilerService
     public CSharpCompilerService(ITextEditorService textEditorService)
         : base(textEditorService)
     {
-        Binder = CSharpBinder;
-
+    	#if DEBUG
+    	++LuthetusDebugSomething.CompilerService_ConstructorInvocationCount;
+    	#endif
+    	
+    	Binder = CSharpBinder;
+    
         _compilerServiceOptions = new()
         {
             RegisterResourceFunc = resourceUri => new CSharpResource(resourceUri, this),
-            GetLexerFunc = (resource, sourceText) => new CSharpLexer(resource.ResourceUri, sourceText),
-            GetParserFunc = (resource, lexer) => new CSharpParser((CSharpLexer)lexer),
-            GetBinderFunc = (resource, parser) => Binder,
-			OnAfterLexAction = (resource, lexer) =>
-            {
-                var cSharpResource = (CSharpResource)resource;
-                var cSharpLexer = (CSharpLexer)lexer;
-
-                cSharpResource.EscapeCharacterList = cSharpLexer.EscapeCharacterList;
-            },
         };
 
         RuntimeAssembliesLoaderFactory.LoadDotNet6(CSharpBinder);
@@ -45,7 +44,7 @@ public sealed class CSharpCompilerService : CompilerService
 
 	public override Type? SymbolRendererType { get; protected set; }
     public override Type? DiagnosticRendererType { get; protected set; }
-
+    
     public event Action? CursorMovedInSyntaxTree;
     
     public void SetSymbolRendererType(Type? symbolRendererType)
@@ -57,6 +56,72 @@ public sealed class CSharpCompilerService : CompilerService
     {
     	DiagnosticRendererType = diagnosticRendererType;
     }
+    
+    public override Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
+	{
+		var resourceUri = modelModifier.ResourceUri;
+	
+		if (!_resourceMap.ContainsKey(resourceUri))
+			return Task.CompletedTask;
+	
+		_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
+			editContext,
+	        modelModifier,
+	        CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+			CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel);
+
+		var presentationModel = modelModifier.PresentationModelList.First(
+			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
+		
+		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, CSharpBinder);
+		cSharpCompilationUnit.Lexer = new CSharpLexer(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
+		cSharpCompilationUnit.Lexer.Lex();
+
+		// Even if the parser throws an exception, be sure to
+		// make use of the Lexer to do whatever syntax highlighting is possible.
+		try
+		{
+			cSharpCompilationUnit.BinderSession = (CSharpBinderSession)CSharpBinder.StartBinderSession(resourceUri);
+			var parser = new CSharpParser();
+			parser.Parse(cSharpCompilationUnit);
+		}
+		finally
+		{
+			lock (_resourceMapLock)
+			{
+				if (_resourceMap.ContainsKey(resourceUri))
+				{
+					var resource = (CSharpResource)_resourceMap[resourceUri];
+					
+			        resource.EscapeCharacterList = cSharpCompilationUnit.Lexer.EscapeCharacterList;
+					resource.SyntaxTokenList = cSharpCompilationUnit.Lexer.SyntaxTokenList;
+
+					if (cSharpCompilationUnit is not null)
+						resource.CompilationUnit = cSharpCompilationUnit;
+				}
+			}
+			
+			var diagnosticTextSpans = GetDiagnosticsFor(modelModifier.ResourceUri)
+				.Select(x => x.TextSpan)
+				.ToArray();
+
+			modelModifier.CompletePendingCalculatePresentationModel(
+				CompilerServiceDiagnosticPresentationFacts.PresentationKey,
+				CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
+				diagnosticTextSpans);
+			
+			if (shouldApplySyntaxHighlighting)
+			{
+				editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+					editContext,
+					modelModifier);
+			}
+
+			OnResourceParsed();
+        }
+		
+        return Task.CompletedTask;
+	}
 
     public override List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
@@ -72,7 +137,7 @@ public sealed class CSharpCompilerService : CompilerService
         while (targetScope is not null)
         {
             autocompleteEntryList.AddRange(
-            	CSharpBinder.GetVariableDeclarationNodesByScope(model: null, textSpan.ResourceUri, targetScope.IndexKey)
+            	CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
             	.Select(x => x.IdentifierToken.TextSpan.GetText())
                 .ToArray()
                 .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -87,7 +152,7 @@ public sealed class CSharpCompilerService : CompilerService
                 }));
 
             autocompleteEntryList.AddRange(
-                CSharpBinder.GetFunctionDefinitionNodesByScope(model: null, textSpan.ResourceUri, targetScope.IndexKey)
+                CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
             	.Select(x => x.FunctionIdentifierToken.TextSpan.GetText())
                 .ToArray()
                 .Where(x => x.Contains(word, StringComparison.InvariantCulture))
@@ -104,7 +169,7 @@ public sealed class CSharpCompilerService : CompilerService
 			if (targetScope.ParentIndexKey is null)
 				targetScope = null;
 			else
-            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(model: null, textSpan.ResourceUri, targetScope.ParentIndexKey.Value);
+            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, textSpan.ResourceUri, targetScope.ParentIndexKey.Value);
         }
         
         var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;

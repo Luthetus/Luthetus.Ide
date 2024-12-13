@@ -21,6 +21,10 @@ public class CSharpBinderSession : IBinderSession
         int globalScopeIndexKey,
         NamespaceStatementNode topLevelNamespaceStatementNode)
     {
+    	#if DEBUG
+    	++LuthetusDebugSomething.BinderSession_ConstructorInvocationCount;
+    	#endif
+    
     	ResourceUri = resourceUri;
         Binder = binder;
         CurrentScopeIndexKey = globalScopeIndexKey;
@@ -40,10 +44,9 @@ public class CSharpBinderSession : IBinderSession
     public Dictionary<ScopeKeyAndIdentifierText, FunctionDefinitionNode> ScopeFunctionDefinitionMap { get; } = new();
     public Dictionary<ScopeKeyAndIdentifierText, IVariableDeclarationNode> ScopeVariableDeclarationMap { get; } = new();
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
-
-    IBinder IBinderSession.Binder => Binder;
-    int IBinderSession.CurrentScopeIndexKey { get => CurrentScopeIndexKey; set => CurrentScopeIndexKey = value; }
     
+    IBinder IBinderSession.Binder => Binder;
+
     public int GetNextIndexKey()
     {
     	return ++_indexKey;

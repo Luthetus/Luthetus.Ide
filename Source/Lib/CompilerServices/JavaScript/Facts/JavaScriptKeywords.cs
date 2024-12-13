@@ -51,7 +51,7 @@ public static class JavaScriptKeywords
     public const string WITH_KEYWORD = "with";
     public const string YIELD_KEYWORD = "yield";
 
-    public static readonly ImmutableArray<string> ALL = new[]
+    public static readonly string[] ALL = new[]
     {
         AWAIT_KEYWORD,
         BREAK_KEYWORD,
@@ -99,5 +99,5 @@ public static class JavaScriptKeywords
         WHILE_KEYWORD,
         WITH_KEYWORD,
         YIELD_KEYWORD,
-    }.ToImmutableArray();
+    };
 }

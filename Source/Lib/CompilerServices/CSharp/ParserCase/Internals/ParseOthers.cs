@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 using Luthetus.CompilerServices.CSharp.Facts;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -15,15 +16,15 @@ public static class ParseOthers
 	/// <summary>
 	/// TODO: Delete this method, to parse a namespace identifier one should be able to just invoke 'ParseExpression(...)'
 	/// </summary>
-	public static ISyntax HandleNamespaceIdentifier(CSharpParserModel model)
+	public static ISyntax HandleNamespaceIdentifier(CSharpCompilationUnit compilationUnit)
     {
         var combineNamespaceIdentifierIntoOne = new List<ISyntaxToken>();
 
-        while (!model.TokenWalker.IsEof)
+        while (!compilationUnit.ParserModel.TokenWalker.IsEof)
         {
             if (combineNamespaceIdentifierIntoOne.Count % 2 == 0)
             {
-                var matchedToken = model.TokenWalker.Match(SyntaxKind.IdentifierToken);
+                var matchedToken = compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
                 combineNamespaceIdentifierIntoOne.Add(matchedToken);
 
                 if (matchedToken.IsFabricated)
@@ -31,8 +32,8 @@ public static class ParseOthers
             }
             else
             {
-                if (SyntaxKind.MemberAccessToken == model.TokenWalker.Current.SyntaxKind)
-                    combineNamespaceIdentifierIntoOne.Add(model.TokenWalker.Consume());
+                if (SyntaxKind.MemberAccessToken == compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind)
+                    combineNamespaceIdentifierIntoOne.Add(compilationUnit.ParserModel.TokenWalker.Consume());
                 else
                     break;
             }
@@ -53,20 +54,20 @@ public static class ParseOthers
         return new IdentifierToken(identifierTextSpan);
     }
 
-    public static void StartStatement_Expression(CSharpParserModel model)
+    public static void StartStatement_Expression(CSharpCompilationUnit compilationUnit)
     {
-    	var expressionNode = ParseOthers.ParseExpression(model);
-    	model.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
+    	var expressionNode = ParseOthers.ParseExpression(compilationUnit);
+    	compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(expressionNode);
     }
     
     /// <summary>
     /// ParseExpression while expressionPrimary.SyntaxKind == syntaxKind
     /// 
     /// if (expressionPrimary.SyntaxKind != syntaxKind)
-    /// 	model.TokenWalker.Backtrack() to either the previous loops tokenIndex where
+    /// 	compilationUnit.ParserModel.TokenWalker.Backtrack() to either the previous loops tokenIndex where
     /// 		the syntax kinds did match.
     /// 
-    /// 	Or, if they never matched then model.TokenWalker.Backtrack()
+    /// 	Or, if they never matched then compilationUnit.ParserModel.TokenWalker.Backtrack()
     /// 		to the tokenIndex that was had when this function was invoked.
     ///
     /// Return true if a match was found, return false if NO match was found.
@@ -75,30 +76,30 @@ public static class ParseOthers
 	/// As a result, some statements need to read a TypeClauseNode by invoking 'ParseExpression(...)'.
 	///
 	/// In order to "short circut" or "force exit" from the expression code back to the statement code,
-	/// if the root primary expression is not equal to the model.ForceParseExpressionSyntaxKind
+	/// if the root primary expression is not equal to the compilationUnit.ParserModel.ForceParseExpressionSyntaxKind
 	/// then stop.
     /// </summary>
-    public static bool TryParseExpression(SyntaxKind? syntaxKind, CSharpParserModel model, out IExpressionNode expressionNode)
+    public static bool TryParseExpression(SyntaxKind? syntaxKind, CSharpCompilationUnit compilationUnit, out IExpressionNode expressionNode)
     {
-    	var originalTokenIndex = model.TokenWalker.Index;
+    	var originalTokenIndex = compilationUnit.ParserModel.TokenWalker.Index;
     	
     	if (syntaxKind is not null)
-    		model.TryParseExpressionSyntaxKindList.Add(syntaxKind.Value);
+    		compilationUnit.ParserModel.TryParseExpressionSyntaxKindList.Add(syntaxKind.Value);
     	
     	try
     	{
-    		expressionNode = ParseExpression(model);
+    		expressionNode = ParseExpression(compilationUnit);
     		
     		#if DEBUG
     		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
     		#endif
     		
-    		return model.TryParseExpressionSyntaxKindList.Contains(expressionNode.SyntaxKind);
+    		return compilationUnit.ParserModel.TryParseExpressionSyntaxKindList.Contains(expressionNode.SyntaxKind);
     	}
     	finally
     	{
-    		model.TryParseExpressionSyntaxKindList.Clear();
-    		model.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
+    		compilationUnit.ParserModel.TryParseExpressionSyntaxKindList.Clear();
+    		compilationUnit.ParserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     	}
     }
     
@@ -122,37 +123,37 @@ public static class ParseOthers
     }
     
 	/// <summary>
-	/// Invoke this method when 'model.TokenWalker.Current' is the first token of the expression to be parsed.
+	/// Invoke this method when 'compilationUnit.ParserModel.TokenWalker.Current' is the first token of the expression to be parsed.
 	///
-	/// In the case where the first token of the expression had already been 'Consume()'-ed then 'model.TokenWalker.Backtrack();'
-	/// might be of use in order to move the model.TokenWalker backwards prior to invoking this method.
+	/// In the case where the first token of the expression had already been 'Consume()'-ed then 'compilationUnit.ParserModel.TokenWalker.Backtrack();'
+	/// might be of use in order to move the compilationUnit.ParserModel.TokenWalker backwards prior to invoking this method.
 	/// </summary>
-	public static IExpressionNode ParseExpression(CSharpParserModel model)
+	public static IExpressionNode ParseExpression(CSharpCompilationUnit compilationUnit)
     {
     	#if DEBUG
     	Console.WriteLine("\nParseExpression(...)");
     	#endif
     
-    	var expressionPrimary = model.ForceParseExpressionInitialPrimaryExpression;
-    	var indexToken = model.TokenWalker.Index;
+    	var expressionPrimary = compilationUnit.ParserModel.ForceParseExpressionInitialPrimaryExpression;
+    	var indexToken = compilationUnit.ParserModel.TokenWalker.Index;
     	var forceExit = false;
     	
-    	var indexTokenRoot = model.TokenWalker.Index;
+    	var indexTokenRoot = compilationUnit.ParserModel.TokenWalker.Index;
     	var expressionPrimaryPreviousRoot = expressionPrimary;
     	
-    	while (!model.TokenWalker.IsEof)
+    	while (!compilationUnit.ParserModel.TokenWalker.IsEof)
         {
         	#if DEBUG
-        	WriteExpressionList(model.ExpressionList);
+        	WriteExpressionList(compilationUnit.ParserModel.ExpressionList);
         	#endif
         
-        	var tokenCurrent = model.TokenWalker.Current;
+        	var tokenCurrent = compilationUnit.ParserModel.TokenWalker.Current;
     		
     		if (SyntaxIsEndDelimiter(tokenCurrent.SyntaxKind)) // Check if the tokenCurrent is a token that is used as a end-delimiter before iterating the list?
     		{
-    			for (int i = model.ExpressionList.Count - 1; i > -1; i--)
+    			for (int i = compilationUnit.ParserModel.ExpressionList.Count - 1; i > -1; i--)
 	    		{
-	    			var delimiterExpressionTuple = model.ExpressionList[i];
+	    			var delimiterExpressionTuple = compilationUnit.ParserModel.ExpressionList[i];
 	    			
 	    			if (delimiterExpressionTuple.DelimiterSyntaxKind == tokenCurrent.SyntaxKind)
 	    			{
@@ -162,7 +163,7 @@ public static class ParseOthers
 	    					break;
 	    				}
 	    				
-	    				expressionPrimary = BubbleUpParseExpression(i, expressionPrimary, model);
+	    				expressionPrimary = BubbleUpParseExpression(i, expressionPrimary, compilationUnit);
 	    				break;
 	    			}
 	    		}
@@ -170,35 +171,35 @@ public static class ParseOthers
 			
 			if (forceExit) // delimiterExpressionTuple.ExpressionNode is null
 			{
-				expressionPrimary = BubbleUpParseExpression(0, expressionPrimary, model);
+				expressionPrimary = BubbleUpParseExpression(0, expressionPrimary, compilationUnit);
 				break;
 			}
 			
-    		expressionPrimary = model.Binder.AnyMergeToken(expressionPrimary, tokenCurrent, model);
+    		expressionPrimary = compilationUnit.ParserModel.Binder.AnyMergeToken(expressionPrimary, tokenCurrent, compilationUnit);
     		
     		#if DEBUG
     		Console.WriteLine($"\t=> {expressionPrimary.SyntaxKind}");
     		#endif
     		
-    		if (model.TokenWalker.Index == indexToken)
-    			_ = model.TokenWalker.Consume();
-    		if (model.TokenWalker.Index < indexToken)
+    		if (compilationUnit.ParserModel.TokenWalker.Index == indexToken)
+    			_ = compilationUnit.ParserModel.TokenWalker.Consume();
+    		if (compilationUnit.ParserModel.TokenWalker.Index < indexToken)
     			throw new LuthetusTextEditorException($"Infinite loop in {nameof(ParseExpression)}");
     		
-    		indexToken = model.TokenWalker.Index;
+    		indexToken = compilationUnit.ParserModel.TokenWalker.Index;
     		
-    		if (model.NoLongerRelevantExpressionNode is not null) // try finally is not needed to guarantee setting 'model.NoLongerRelevantExpressionNode = null;' because this is an object reference comparison 'Object.ReferenceEquals'. Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
+    		if (compilationUnit.ParserModel.NoLongerRelevantExpressionNode is not null) // try finally is not needed to guarantee setting 'compilationUnit.ParserModel.NoLongerRelevantExpressionNode = null;' because this is an object reference comparison 'Object.ReferenceEquals'. Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
 			{
-				model.Binder.ClearFromExpressionList(model.NoLongerRelevantExpressionNode, model);
-				model.NoLongerRelevantExpressionNode = null;
+				compilationUnit.ParserModel.Binder.ClearFromExpressionList(compilationUnit.ParserModel.NoLongerRelevantExpressionNode, compilationUnit);
+				compilationUnit.ParserModel.NoLongerRelevantExpressionNode = null;
 			}
     		
-    		if (model.TryParseExpressionSyntaxKindList.Count != 0)
+    		if (compilationUnit.ParserModel.TryParseExpressionSyntaxKindList.Count != 0)
     		{
     			var isExpressionRoot = true;
     			var rootSyntaxKind = SyntaxKind.EmptyExpressionNode;
     			
-    			foreach (var tuple in model.ExpressionList)
+    			foreach (var tuple in compilationUnit.ParserModel.ExpressionList)
     			{
     				if (tuple.ExpressionNode is null)
     					continue;
@@ -212,26 +213,26 @@ public static class ParseOthers
     			
     			if (isExpressionRoot)
     			{
-    				success = model.TryParseExpressionSyntaxKindList.Contains(expressionPrimary.SyntaxKind);
+    				success = compilationUnit.ParserModel.TryParseExpressionSyntaxKindList.Contains(expressionPrimary.SyntaxKind);
     				
     				if (success)
     				{
     					expressionPrimaryPreviousRoot = expressionPrimary;
-    					indexTokenRoot = model.TokenWalker.Index;
+    					indexTokenRoot = compilationUnit.ParserModel.TokenWalker.Index;
     				}
     			}
     			else
     			{
-    				success = model.TryParseExpressionSyntaxKindList.Contains(rootSyntaxKind);
+    				success = compilationUnit.ParserModel.TryParseExpressionSyntaxKindList.Contains(rootSyntaxKind);
     			}
     			
     			if (!success)
     			{
-    				var distance = model.TokenWalker.Index - indexTokenRoot;
+    				var distance = compilationUnit.ParserModel.TokenWalker.Index - indexTokenRoot;
 		    		
 	    			for (int i = 0; i < distance; i++)
 	    			{
-	    				_ = model.TokenWalker.Backtrack();
+	    				_ = compilationUnit.ParserModel.TokenWalker.Backtrack();
 	    			}
 	    			
 	    			expressionPrimary = expressionPrimaryPreviousRoot;
@@ -239,27 +240,27 @@ public static class ParseOthers
 		    		forceExit = true;
 		    		
 		    		#if DEBUG
-		    		WriteExpressionList(model.ExpressionList);
+		    		WriteExpressionList(compilationUnit.ParserModel.ExpressionList);
 		    		Console.WriteLine("----TryParseExpressionSyntaxKindList");
 		    		#endif
     			}
     		}
     		
-    		if (forceExit) // model.ForceParseExpressionSyntaxKind
+    		if (forceExit) // compilationUnit.ParserModel.ForceParseExpressionSyntaxKind
 				break;
         }
     	
     	// It is vital that this 'clear' and 'add' are done in a way that permits an invoker of the 'ParseExpression' method to 'add' a similar 'forceExit' delimiter
-    	// 	Example: 'model.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));'
-    	model.ExpressionList.Clear();
-    	model.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
+    	// 	Example: 'compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));'
+    	compilationUnit.ParserModel.ExpressionList.Clear();
+    	compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
     	
     	if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
     	{
-    		expressionPrimary = model.Binder.ForceDecisionAmbiguousIdentifier(
+    		expressionPrimary = compilationUnit.ParserModel.Binder.ForceDecisionAmbiguousIdentifier(
 				EmptyExpressionNode.Empty,
 				(AmbiguousIdentifierExpressionNode)expressionPrimary,
-				model);
+				compilationUnit);
     	}
     	
     	#if DEBUG
@@ -270,7 +271,7 @@ public static class ParseOthers
     }
 
 	/// <summary>
-	/// 'BubbleUpParseExpression(i, expressionPrimary, model);'
+	/// 'BubbleUpParseExpression(i, expressionPrimary, compilationUnit);'
 	/// 
     /// This is to have SyntaxKind.StatementDelimiterToken break out of the expression.
 	/// The parser is adding as the 0th item that
@@ -288,12 +289,12 @@ public static class ParseOthers
 	///
 	/// LambdaExpressionNode for example, needs to override 'SyntaxKind.StatementDelimiterToken'.
 	/// </summary>
-    private static IExpressionNode BubbleUpParseExpression(int indexTriggered, IExpressionNode expressionPrimary, CSharpParserModel model)
+    private static IExpressionNode BubbleUpParseExpression(int indexTriggered, IExpressionNode expressionPrimary, CSharpCompilationUnit compilationUnit)
     {
-    	var triggeredDelimiterTuple = model.ExpressionList[indexTriggered];
+    	var triggeredDelimiterTuple = compilationUnit.ParserModel.ExpressionList[indexTriggered];
     	IExpressionNode? previousDelimiterExpressionNode = null;
     	
-    	var initialExpressionListCount = model.ExpressionList.Count;
+    	var initialExpressionListCount = compilationUnit.ParserModel.ExpressionList.Count;
     	
     	#if DEBUG
     	var nullNodeSyntaxKindText = "null";
@@ -302,8 +303,8 @@ public static class ParseOthers
 		
 		for (int i = initialExpressionListCount - 1; i > indexTriggered - 1; i--)
 		{
-			var delimiterExpressionTuple = model.ExpressionList[i];
-			model.ExpressionList.RemoveAt(i);
+			var delimiterExpressionTuple = compilationUnit.ParserModel.ExpressionList[i];
+			compilationUnit.ParserModel.ExpressionList.RemoveAt(i);
 			
 			if (delimiterExpressionTuple.ExpressionNode is null)
 				break; // This implies to forcibly return back to the statement while loop.
@@ -317,16 +318,16 @@ public static class ParseOthers
 			
 			previousDelimiterExpressionNode = delimiterExpressionTuple.ExpressionNode;
 			
-			expressionPrimary = model.Binder.AnyMergeExpression(
+			expressionPrimary = compilationUnit.ParserModel.Binder.AnyMergeExpression(
 				delimiterExpressionTuple.ExpressionNode,
 				expressionPrimary, // expressionSecondary
-				model);
+				compilationUnit);
 		}
 		
-		if (model.NoLongerRelevantExpressionNode is not null) // try finally is not needed to guarantee setting 'model.NoLongerRelevantExpressionNode = null;' because this is an object reference comparison 'Object.ReferenceEquals'. Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
+		if (compilationUnit.ParserModel.NoLongerRelevantExpressionNode is not null) // try finally is not needed to guarantee setting 'compilationUnit.ParserModel.NoLongerRelevantExpressionNode = null;' because this is an object reference comparison 'Object.ReferenceEquals'. Versus something more general that would break future parses if not properly cleared, like a SyntaxKind.
 		{
-			model.Binder.ClearFromExpressionList(model.NoLongerRelevantExpressionNode, model);
-			model.NoLongerRelevantExpressionNode = null;
+			compilationUnit.ParserModel.Binder.ClearFromExpressionList(compilationUnit.ParserModel.NoLongerRelevantExpressionNode, compilationUnit);
+			compilationUnit.ParserModel.NoLongerRelevantExpressionNode = null;
 		}
 		
 		return expressionPrimary;

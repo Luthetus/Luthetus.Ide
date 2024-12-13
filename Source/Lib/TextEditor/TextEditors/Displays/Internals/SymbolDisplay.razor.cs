@@ -79,20 +79,28 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 	/// </summary>
     private ISyntaxNode? GetTargetNode(ITextEditorSymbol symbolLocal)
     {
-    	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
-    	if (textEditorModel is null)
+    	try
+    	{
+	    	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
+	    	if (textEditorModel is null)
+	    		return null;
+	    	
+	    	var compilerService = textEditorModel.CompilerService;
+	    	
+	    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+	    	if (compilerServiceResource is null)
+	    		return null;
+	
+	    	return compilerService.Binder.GetSyntaxNode(
+	    		symbolLocal.TextSpan.StartingIndexInclusive,
+	    		compilerServiceResource.ResourceUri,
+	    		compilerServiceResource);
+    	}
+    	catch (Exception e)
+    	{
+    		Console.WriteLine(e);
     		return null;
-    	
-    	var compilerService = textEditorModel.CompilerService;
-    	
-    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
-    	if (compilerServiceResource is null)
-    		return null;
-
-    	return compilerService.Binder.GetSyntaxNode(
-    		symbolLocal.TextSpan.StartingIndexInclusive,
-    		compilerServiceResource.ResourceUri,
-    		compilerServiceResource);
+    	}
     }
     
     /// <summary>
@@ -102,23 +110,31 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 	/// </summary>
     private ISyntaxNode? GetDefinitionNode(ITextEditorSymbol symbolLocal, ISyntaxNode targetNode)
     {
-    	if (targetNode is not null)
+    	try
     	{
-    		switch (targetNode.SyntaxKind)
+	    	if (targetNode is not null)
 	    	{
-	    		case SyntaxKind.ConstructorDefinitionNode:
-	    		case SyntaxKind.FunctionDefinitionNode:
-	    		case SyntaxKind.NamespaceStatementNode:
-	    		case SyntaxKind.TypeDefinitionNode:
-	    		case SyntaxKind.VariableDeclarationNode:
-					return targetNode;
+	    		switch (targetNode.SyntaxKind)
+		    	{
+		    		case SyntaxKind.ConstructorDefinitionNode:
+		    		case SyntaxKind.FunctionDefinitionNode:
+		    		case SyntaxKind.NamespaceStatementNode:
+		    		case SyntaxKind.TypeDefinitionNode:
+		    		case SyntaxKind.VariableDeclarationNode:
+						return targetNode;
+		    	}
 	    	}
+	    
+	    	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
+	    	var compilerService = textEditorModel.CompilerService;
+	    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+	
+	    	return compilerService.Binder.GetDefinitionNode(symbolLocal.TextSpan, compilerServiceResource);
     	}
-    
-    	var textEditorModel = TextEditorService.ModelApi.GetOrDefault(symbolLocal.TextSpan.ResourceUri);
-    	var compilerService = textEditorModel.CompilerService;
-    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
-
-    	return compilerService.Binder.GetDefinitionNode(symbolLocal.TextSpan, compilerServiceResource);
+    	catch (Exception e)
+    	{
+    		Console.WriteLine(e);
+    		return null;
+    	}
     }
 }

@@ -5,6 +5,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.CompilerServices.CSharp.Facts;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
@@ -12,7 +13,7 @@ public static class ParseVariables
 {
     public static void HandleVariableReference(
         IdentifierToken consumedIdentifierToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
@@ -21,7 +22,7 @@ public static class ParseVariables
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
         VariableKind variableKind,
-        IParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     	IVariableDeclarationNode variableDeclarationNode;
 
@@ -31,8 +32,8 @@ public static class ParseVariables
 	        variableKind,
 	        false);
 
-        model.Binder.BindVariableDeclarationNode(variableDeclarationNode, model);
-        model.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
+        compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+        compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
         return variableDeclarationNode;
     }
     
@@ -43,36 +44,36 @@ public static class ParseVariables
         TypeClauseNode consumedTypeClauseNode,
         IdentifierToken consumedIdentifierToken,
         VariableKind variableKind,
-        IParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     	var variableDeclarationNode = HandleVariableDeclarationExpression(
 			consumedTypeClauseNode,
 	        consumedIdentifierToken,
 	        variableKind,
-	        model);
+	        compilationUnit);
 	        
 	    if (variableDeclarationNode is null)
 	    	return;
 	    	
 	    // if (variableKind == VariableKind.Local || variableKind == VariableKind.Closure)
 
-        if (model.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
+        if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         {
-            if (model.TokenWalker.Peek(1).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            if (compilationUnit.ParserModel.TokenWalker.Peek(1).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
             {
                 HandlePropertyExpression(
                     variableDeclarationNode,
-                    (EqualsToken)model.TokenWalker.Consume(),
-                    (CloseAngleBracketToken)model.TokenWalker.Consume(),
-                    (CSharpParserModel)model);
+                    (EqualsToken)compilationUnit.ParserModel.TokenWalker.Consume(),
+                    (CloseAngleBracketToken)compilationUnit.ParserModel.TokenWalker.Consume(),
+                    compilationUnit);
             }
             else
             {
                 // Variable initialization occurs here.
                 HandleVariableAssignment(
                     consumedIdentifierToken,
-                    (EqualsToken)model.TokenWalker.Consume(),
-                    (CSharpParserModel)model);
+                    (EqualsToken)compilationUnit.ParserModel.TokenWalker.Consume(),
+                    compilationUnit);
             }
         }
         else
@@ -80,29 +81,29 @@ public static class ParseVariables
             if (variableDeclarationNode.TypeClauseNode.TypeIdentifierToken.SyntaxKind ==
                 SyntaxKind.VarTokenContextualKeyword)
             {
-                model.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
+                compilationUnit.ParserModel.DiagnosticBag.ReportImplicitlyTypedVariablesMustBeInitialized(
                     consumedIdentifierToken.TextSpan);
             }
         }
 
         if (variableKind == VariableKind.Property &&
-            model.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+            compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
         {
             HandlePropertyDeclaration(
                 variableDeclarationNode,
-                (OpenBraceToken)model.TokenWalker.Consume(),
-                (CSharpParserModel)model);
+                (OpenBraceToken)compilationUnit.ParserModel.TokenWalker.Consume(),
+                compilationUnit);
         }
         else
         {
-            _ = model.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+            _ = compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
         }
     }
 
     public static void HandlePropertyDeclaration(
         IVariableDeclarationNode consumedVariableDeclarationNode,
         OpenBraceToken consumedOpenBraceToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
@@ -110,14 +111,14 @@ public static class ParseVariables
         IVariableDeclarationNode consumedVariableDeclarationNode,
         EqualsToken consumedEqualsToken,
         CloseAngleBracketToken consumedCloseAngleBracketToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 
     public static void HandleVariableAssignment(
         IdentifierToken consumedIdentifierToken,
         EqualsToken consumedEqualsToken,
-        CSharpParserModel model)
+        CSharpCompilationUnit compilationUnit)
     {
     }
 }

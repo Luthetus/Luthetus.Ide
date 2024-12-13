@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.Razor.CompilerServiceCase;
 using Luthetus.CompilerServices.Razor.Facts;
 using Luthetus.CompilerServices.Xml.Html;
@@ -108,16 +109,17 @@ public class RazorSyntaxTree
 
         lexer.Lex();
 
-        var parser = new CSharpParser(lexer);
+		// TODO: (2024-12-12)
+        /*var parser = new CSharpParser(lexer);
 
-        var compilationUnit = parser.Parse();
+        var compilationUnit = parser.Parse(new CSharpBinder(), lexer.ResourceUri);
         
         SemanticResultRazor = new SemanticResultRazor(
             compilationUnit,
             _codebehindClassInsertions,
             _codebehindRenderFunctionInsertions,
             renderFunctionAdhocTextInsertion,
-            classContents);
+            classContents);*/
     }
 
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>
