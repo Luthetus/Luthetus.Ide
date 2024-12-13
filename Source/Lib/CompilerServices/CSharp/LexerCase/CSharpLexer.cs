@@ -24,7 +24,7 @@ public struct CSharpLexer
     	
     	ResourceUri = resourceUri;
         SourceText = sourceText;
-    	LexerKeywords = new LexerKeywords(CSharpKeywords.NON_CONTEXTUAL_KEYWORDS, CSharpKeywords.CONTROL_KEYWORDS, CSharpKeywords.CONTEXTUAL_KEYWORDS);
+    	LexerKeywords = CSharpKeywords.LexerKeywords;
     	
     	_stringWalker = new(resourceUri, sourceText);
     }

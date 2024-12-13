@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
 
 namespace Luthetus.CompilerServices.CSharp;
 
@@ -277,4 +278,9 @@ public class CSharpKeywords
     public static readonly ImmutableArray<string> ALL_KEYWORDS = NON_CONTEXTUAL_KEYWORDS
         .Union(CONTEXTUAL_KEYWORDS)
         .ToImmutableArray();
+        
+    public static readonly LexerKeywords LexerKeywords = new LexerKeywords(
+    	NON_CONTEXTUAL_KEYWORDS,
+    	CONTROL_KEYWORDS, 
+    	CONTEXTUAL_KEYWORDS);
 }
