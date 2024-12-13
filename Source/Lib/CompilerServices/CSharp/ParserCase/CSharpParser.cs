@@ -17,6 +17,24 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public struct CSharpParser
 {
+	public static TimeSpan LongestParseTimeSpan = TimeSpan.Zero;
+    public static TimeSpan TotalParseTimeSpan = TimeSpan.Zero;
+    
+    /// <summary>
+    /// There are 1,820 CSharpResource's in the CSharpCompilerService.
+    /// I don't want to bombard my console with noise by
+    /// writing the TotalParseTimeSpan everytime.
+    ///
+    /// So I'll hackily write it out only 20 times by counting
+    /// the amount of Parse invocations.
+    ///
+    /// Preferably this would be once for the final resource,
+    /// but this does not matter, I'm just checking something quickly
+    /// then deleting this code.
+    /// </summary>
+    public static int Hacky_Count_Before_Start_ConsoleWrite = 1800;
+    public static int Hacky_Count = 0;
+
     public CSharpParser()
     {
     	#if DEBUG
@@ -28,6 +46,9 @@ public struct CSharpParser
 
     public void Parse(CSharpCompilationUnit compilationUnit)
     {
+    	++Hacky_Count;
+    	var startTime = DateTime.UtcNow;
+    
         var globalCodeBlockBuilder = new CSharpCodeBlockBuilder(null, null);
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
         var diagnosticBag = new DiagnosticBag();
@@ -248,6 +269,20 @@ public struct CSharpParser
 		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
 		
 		compilationUnit.RootCodeBlockNode = topLevelStatementsCodeBlock;
+		
+		/*var totalTimeSpan = DateTime.UtcNow - startTime;
+        
+        TotalParseTimeSpan += totalTimeSpan;
+        if (Hacky_Count > Hacky_Count_Before_Start_ConsoleWrite)
+        {
+        	Console.WriteLine($"TotalParseTimeSpan: {TotalParseTimeSpan.TotalSeconds:N3}");
+        }
+        
+        if (totalTimeSpan > LongestParseTimeSpan)
+        {
+        	LongestParseTimeSpan = totalTimeSpan;
+        	Console.WriteLine($"LongestParseTimeSpan: {LongestParseTimeSpan.TotalSeconds:N3}");
+        }*/
     }
 }
 

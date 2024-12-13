@@ -20,6 +20,24 @@ namespace Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 public sealed class CSharpCompilerService : CompilerService
 {
+	public static TimeSpan LongestParseTimeSpan = TimeSpan.Zero;
+    public static TimeSpan TotalParseTimeSpan = TimeSpan.Zero;
+    
+    /// <summary>
+    /// There are 1,820 CSharpResource's in the CSharpCompilerService.
+    /// I don't want to bombard my console with noise by
+    /// writing the TotalParseTimeSpan everytime.
+    ///
+    /// So I'll hackily write it out only 20 times by counting
+    /// the amount of Parse invocations.
+    ///
+    /// Preferably this would be once for the final resource,
+    /// but this does not matter, I'm just checking something quickly
+    /// then deleting this code.
+    /// </summary>
+    public static int Hacky_Count_Before_Start_ConsoleWrite = 1800;
+    public static int Hacky_Count = 0;
+
     /// <summary>
     /// TODO: The CSharpBinder should be private, but for now I'm making it public to be usable in the CompilerServiceExplorer Blazor component.
     /// </summary>
@@ -59,6 +77,9 @@ public sealed class CSharpCompilerService : CompilerService
     
     public override Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier)
 	{
+		++Hacky_Count;
+    	var startTime = DateTime.UtcNow;
+	
 		var resourceUri = modelModifier.ResourceUri;
 	
 		if (!_resourceMap.ContainsKey(resourceUri))
@@ -72,7 +93,7 @@ public sealed class CSharpCompilerService : CompilerService
 
 		var presentationModel = modelModifier.PresentationModelList.First(
 			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
-			
+		
 		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, CSharpBinder);
 		cSharpCompilationUnit.Lexer = new CSharpLexer(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
 		cSharpCompilationUnit.Lexer.Lex();
@@ -100,7 +121,7 @@ public sealed class CSharpCompilerService : CompilerService
 						resource.CompilationUnit = cSharpCompilationUnit;
 				}
 			}
-
+			
 			var diagnosticTextSpans = GetDiagnosticsFor(modelModifier.ResourceUri)
 				.Select(x => x.TextSpan)
 				.ToArray();
@@ -109,14 +130,32 @@ public sealed class CSharpCompilerService : CompilerService
 				CompilerServiceDiagnosticPresentationFacts.PresentationKey,
 				CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
-
-			editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+			
+			/*editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
 				editContext,
-				modelModifier);
+				modelModifier);*/
+
+			// startTime = DateTime.UtcNow;
 
 			OnResourceParsed();
+			
+			/*{
+				var totalTimeSpan = DateTime.UtcNow - startTime;
+		        
+		        TotalParseTimeSpan += totalTimeSpan;
+		        if (Hacky_Count > Hacky_Count_Before_Start_ConsoleWrite)
+		        {
+		        	Console.WriteLine($"aaaTotalCompilerServiceTimeSpan: {TotalParseTimeSpan.TotalSeconds:N3}");
+		        }
+		        
+		        if (totalTimeSpan > LongestParseTimeSpan)
+		        {
+		        	LongestParseTimeSpan = totalTimeSpan;
+		        	Console.WriteLine($"aaaLongestCompilerServiceTimeSpan: {LongestParseTimeSpan.TotalSeconds:N3}");
+		        }
+	        }*/
         }
-
+		
         return Task.CompletedTask;
 	}
 

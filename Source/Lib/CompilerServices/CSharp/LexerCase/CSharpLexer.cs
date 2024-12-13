@@ -57,7 +57,6 @@ public struct CSharpLexer
     public void Lex()
     {
     	++Hacky_Count;
-    	
     	var startTime = DateTime.UtcNow;
     
     	var stringWalker = new StringWalkerStruct(ResourceUri, SourceText);
