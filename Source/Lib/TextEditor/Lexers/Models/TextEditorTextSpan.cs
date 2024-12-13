@@ -74,6 +74,25 @@ public record struct TextEditorTextSpan(
     }
     
     /// <summary>
+    /// This constructor is used for text spans where their
+    /// <see cref="EndingIndexExclusive"/> is the current position
+    /// of a <see cref="StringWalker"/>.
+    /// </summary>
+    public TextEditorTextSpan(
+            int StartingIndexInclusive,
+            StringWalkerStruct stringWalker,
+            byte decorationByte)
+        : this(
+              StartingIndexInclusive,
+              stringWalker.PositionIndex,
+              decorationByte,
+              stringWalker.ResourceUri,
+              stringWalker.SourceText)
+    {
+
+    }
+    
+    /// <summary>
     /// This constructor is being used to
     /// experiment with not holding a reference
     /// to the <see cref="SourceText"/> (2024-07-27)
