@@ -275,9 +275,11 @@ public class CSharpKeywords
         YIELD_KEYWORD,
     };
     
-    public static readonly ImmutableArray<string> ALL_KEYWORDS = NON_CONTEXTUAL_KEYWORDS
+    public static readonly string[] ALL_KEYWORDS = NON_CONTEXTUAL_KEYWORDS
         .Union(CONTEXTUAL_KEYWORDS)
-        .ToImmutableArray();
+        .ToArray();
+        
+    public static readonly HashSet<string> ALL_KEYWORDS_HASH_SET = new(ALL_KEYWORDS);
         
     public static readonly LexerKeywords LexerKeywords = new LexerKeywords(
     	NON_CONTEXTUAL_KEYWORDS,

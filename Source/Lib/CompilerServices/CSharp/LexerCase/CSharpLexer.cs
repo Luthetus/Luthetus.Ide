@@ -102,7 +102,7 @@ public struct CSharpLexer
                 case 'Z':
                 /* Underscore */
                 case '_':
-                    LexerUtils.LexIdentifierOrKeywordOrKeywordContextual(_stringWalker, _syntaxTokenList, LexerKeywords);
+                    LexIdentifierOrKeywordOrKeywordContextual();
                     break;
                 case '0':
                 case '1':
@@ -611,5 +611,52 @@ public struct CSharpLexer
     	
     	_decorationByteLastEscapeCharacter = textSpan.DecorationByte;
     	EscapeCharacterList.Add(textSpan);
+    }
+    
+    public void LexIdentifierOrKeywordOrKeywordContextual()
+    {
+        var entryPositionIndex = _stringWalker.PositionIndex;
+
+        while (!_stringWalker.IsEof)
+        {
+            if (!char.IsLetterOrDigit(_stringWalker.CurrentCharacter) &&
+                _stringWalker.CurrentCharacter != '_')
+            {
+                break;
+            }
+
+            _ = _stringWalker.ReadCharacter();
+        }
+
+        var textSpan = new TextEditorTextSpan(
+            entryPositionIndex,
+            _stringWalker.PositionIndex,
+            (byte)GenericDecorationKind.Keyword,
+            _stringWalker.ResourceUri,
+            _stringWalker.SourceText);
+
+        var textValue = textSpan.GetText();
+
+        if (CSharpKeywords.ALL_KEYWORDS_HASH_SET.Contains(textValue))
+        {
+            if (CSharpKeywords.LexerKeywords.ControlKeywords.Contains(textValue))
+            {
+                textSpan = textSpan with
+	            {
+	                DecorationByte = (byte)GenericDecorationKind.KeywordControl,
+	            };
+            }
+
+            if (CSharpKeywords.LexerKeywords.ContextualKeywords.Contains(textValue))
+            {
+                _syntaxTokenList.Add(new KeywordContextualToken(textSpan, LexerUtils.GetSyntaxKindForContextualKeyword(textSpan)));
+                return;
+            }
+
+            _syntaxTokenList.Add(new KeywordToken(textSpan, LexerUtils.GetSyntaxKindForKeyword(textSpan)));
+            return;
+        }
+
+        _syntaxTokenList.Add(new IdentifierToken(textSpan));
     }
 }
