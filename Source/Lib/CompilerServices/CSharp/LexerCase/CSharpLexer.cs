@@ -631,7 +631,7 @@ public struct CSharpLexer
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
             _stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.Keyword,
+            (byte)GenericDecorationKind.None,
             _stringWalker.ResourceUri,
             _stringWalker.SourceText);
 
@@ -639,13 +639,15 @@ public struct CSharpLexer
 
         if (CSharpKeywords.ALL_KEYWORDS_HASH_SET.Contains(textValue))
         {
+        	var decorationByte = (byte)GenericDecorationKind.Keyword;
+        
             if (CSharpKeywords.LexerKeywords.ControlKeywords.Contains(textValue))
+            	decorationByte = (byte)GenericDecorationKind.KeywordControl;
+            
+            textSpan = textSpan with
             {
-                textSpan = textSpan with
-	            {
-	                DecorationByte = (byte)GenericDecorationKind.KeywordControl,
-	            };
-            }
+                DecorationByte = decorationByte,
+            };
 
             if (CSharpKeywords.LexerKeywords.ContextualKeywords.Contains(textValue))
             {
