@@ -2,30 +2,31 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 internal static class TokenWalkerExtensionMethods
 {
-    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpParserModel model)
+    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpCompilationUnit compilationUnit)
     {
-        return ParseTypes.MatchTypeClause(model);
+        return ParseTypes.MatchTypeClause(compilationUnit);
     }
 
 	public static void DeferParsingOfChildScope(
 		this TokenWalker tokenWalker,
 		OpenBraceToken consumedOpenBraceToken,
-		CSharpParserModel model)
+		CSharpCompilationUnit compilationUnit)
     {
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
-		var pendingCodeBlockOwner = model.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
+		var pendingCodeBlockOwner = compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 
 		var openTokenIndex = tokenWalker.Index - 1;
 
 		var openBraceCounter = 1;
 		
 		#if DEBUG
-		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
 		while (true)
@@ -50,10 +51,10 @@ internal static class TokenWalkerExtensionMethods
 		var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
 		
 		#if DEBUG
-		model.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 
-		model.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new DeferredChildScope(
+		compilationUnit.ParserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new CSharpDeferredChildScope(
 			openTokenIndex,
 			closeTokenIndex,
 			pendingCodeBlockOwner));

@@ -237,7 +237,6 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
             }
         }, CancellationToken.None);
 

@@ -91,7 +91,7 @@ public static class TypeScriptKeywords
     public const string AWAIT_KEYWORD = "await";
     public const string OF_KEYWORD = "of";
 
-    public static readonly ImmutableArray<string> ALL = new[]
+    public static readonly string[] ALL = new[]
     {
         ABSTRACT_KEYWORD,
         ANY_KEYWORD,
@@ -171,5 +171,5 @@ public static class TypeScriptKeywords
         ASYNC_KEYWORD,
         AWAIT_KEYWORD,
         OF_KEYWORD,
-    }.ToImmutableArray();
+    };
 }

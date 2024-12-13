@@ -21,6 +21,13 @@ public class CompilerServiceResource : ICompilerServiceResource
     public virtual CompilationUnit? CompilationUnit { get; set; }
     public virtual IReadOnlyList<ISyntaxToken> SyntaxTokenList { get; set; } = ImmutableArray<ISyntaxToken>.Empty;
 
+	ICompilationUnit? ICompilerServiceResource.CompilationUnit => CompilationUnit;
+
+    public virtual IReadOnlyList<ISyntaxToken> GetTokens()
+    {
+        return SyntaxTokenList;
+    }
+    
     public virtual IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans()
     {
         return SyntaxTokenList.Select(st => st.TextSpan).ToArray();

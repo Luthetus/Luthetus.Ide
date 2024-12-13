@@ -3,6 +3,7 @@ using Luthetus.Common.RazorLib.Keys.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models;
 using Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.BackgroundTasks.Models;
 
 namespace Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
@@ -29,6 +30,21 @@ public class DisplayTracker : IDisposable
         _resourceUri = resourceUri;
         _viewModelKey = viewModelKey;
     }
+    
+    /// <summary>
+    /// The initial solution wide parse will no longer apply syntax highlighting.
+    ///
+    /// As a result, the first time a view model is rendered, it needs to
+    /// trigger the syntax highlighting to be applied.
+    ///
+    /// Preferably this would work with a 'SyntaxHighlightingIsDirty'
+    /// sort of pattern.
+    ///
+    /// I couldn't get 'SyntaxHighlightingIsDirty' working and am tired.
+    /// This is too big of an optimization to miss out on
+    /// so I'll do the easier answer and leave this note.
+    /// </summary>
+    private bool _hasBeenDisplayedAtLeastOnceBefore;
 
     /// <summary>
     /// <see cref="Links"/> refers to a Blazor TextEditorViewModelDisplay having had its OnParametersSet invoked
@@ -100,6 +116,29 @@ public class DisplayTracker : IDisposable
 			
 			// Tell the view model what the (already known) font-size measurements and text-editor measurements are.
 			PostScrollAndRemeasure();
+			
+			if (!_hasBeenDisplayedAtLeastOnceBefore)
+			{
+				_hasBeenDisplayedAtLeastOnceBefore = true;
+				
+				var uniqueTextEditorWork = new UniqueTextEditorWork(
+		            nameof(_hasBeenDisplayedAtLeastOnceBefore),
+		            editContext =>
+		            {
+						var modelModifier = editContext.GetModelModifier(_resourceUri);
+		
+						if (modelModifier is null)
+							return Task.CompletedTask;
+		
+						editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+							editContext,
+							modelModifier);
+						
+						return Task.CompletedTask;
+		            });
+				
+				_textEditorService.Post(uniqueTextEditorWork);
+			}
 		}
     }
 

@@ -28,8 +28,8 @@ public class Lexer : ILexer
     public string SourceText { get; }
     public LexerKeywords LexerKeywords { get; }
 
-    public ImmutableArray<ISyntaxToken> SyntaxTokenList => _syntaxTokenList.ToImmutableArray();
-    public ImmutableArray<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToImmutableArray();
+    public List<ISyntaxToken> SyntaxTokenList => _syntaxTokenList;
+    public List<TextEditorDiagnostic> DiagnosticList => _diagnosticBag.ToList();
 
     public virtual void Lex()
     {
