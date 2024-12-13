@@ -14,24 +14,7 @@ public struct CSharpLexer
 {
     private readonly List<ISyntaxToken> _syntaxTokenList = new();
     private readonly DiagnosticBag _diagnosticBag = new();
-    public static TimeSpan LongestLexTimeSpan = TimeSpan.Zero;
-    public static TimeSpan TotalLexTimeSpan = TimeSpan.Zero;
     
-    /// <summary>
-    /// There are 1,820 CSharpResource's in the CSharpCompilerService.
-    /// I don't want to bombard my console with noise by
-    /// writing the TotalLexTimeSpan everytime.
-    ///
-    /// So I'll hackily write it out only 20 times by counting
-    /// the amount of Lex invocations.
-    ///
-    /// Preferably this would be once for the final resource,
-    /// but this does not matter, I'm just checking something quickly
-    /// then deleting this code.
-    /// </summary>
-    public static int Hacky_Count_Before_Start_ConsoleWrite = 1800;
-    public static int Hacky_Count = 0;
-
     public CSharpLexer(ResourceUri resourceUri, string sourceText)
     {
     	#if DEBUG
@@ -56,9 +39,6 @@ public struct CSharpLexer
 
     public void Lex()
     {
-    	++Hacky_Count;
-    	var startTime = DateTime.UtcNow;
-    
     	var stringWalker = new StringWalkerStruct(ResourceUri, SourceText);
     	
         while (!stringWalker.IsEof)
@@ -390,20 +370,6 @@ public struct CSharpLexer
             stringWalker.SourceText);
 
         _syntaxTokenList.Add(new EndOfFileToken(endOfFileTextSpan));
-        
-        /*var totalTimeSpan = DateTime.UtcNow - startTime;
-        
-        TotalLexTimeSpan += totalTimeSpan;
-        if (Hacky_Count > Hacky_Count_Before_Start_ConsoleWrite)
-        {
-        	Console.WriteLine($"TotalLexTimeSpan: {TotalLexTimeSpan.TotalSeconds:N3}");
-        }
-        
-        if (totalTimeSpan > LongestLexTimeSpan)
-        {
-        	LongestLexTimeSpan = totalTimeSpan;
-        	Console.WriteLine($"LongestLexTimeSpan: {LongestLexTimeSpan.TotalSeconds:N3}");
-        }*/
     }
     
     /// <summary>
