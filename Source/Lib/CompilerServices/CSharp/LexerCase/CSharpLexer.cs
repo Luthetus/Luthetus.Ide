@@ -10,79 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.CompilerServices.CSharp.LexerCase;
 
-/// <summary>
-/// Idea...
-/// =======
-/// 
-/// Preface of the idea:
-/// ====================
-/// The CSharpLexer is constructed within a function invocation,
-/// and is never exposed beyond the scope of that function invocation.
-///
-/// So, perhaps instead of getting the new CSharpLexer() invocations
-/// to be 1 time instead of 1,814 times.
-///
-/// It might be fine to make it a struct.
-///
-/// Issue with the idea:
-/// ====================
-/// I don't want to force every implementation of ILexer to be a struct.
-/// But, at the same time if I reference an ILexer implementation
-/// not by its concrete-struct type, but by the interface,
-/// then that struct will be boxed anyway.
-///
-/// How to continue with the idea:
-/// ==============================
-/// The ICompilerService has the method:
-/// ````public Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier);
-///
-/// Furthermore there is a 'default' implementation of ICompilerService that is available for use by anyone.
-/// It is named 'CompilerService'.
-///
-/// It implements 'ParseAsync(...)' but adds the 'virtual' keyword so that any inheriting type can override it.
-/// 
-/// Currently, the CSharpCompilerService inherits 'CompilerService' (not the interface).
-///
-/// In order to permit any language to "easily" create an implementation of 'ICompilerService'
-/// they can inherit 'CompilerService' and then override only what they want to be different
-/// from the default setup.
-///
-/// The result of this however is fairly "general" Func<...> that need to be defined
-/// in order to tell the 'CompilerService' how to construct an instance of the language's
-/// ILexer, IParser, IBinder...
-///
-/// So, if one wants to streamline the implementation of 'ICompilerService'
-/// by inheriting 'CompilerService' instead,
-/// then would they be able to avoid the ILexer, IParser, IBinder
-/// requirements of the 'CompilerService' base class?
-/// (Do this in order to avoid boxing of the struct implementation of ILexer or etc...)
-///
-/// The 'CompilerService' only invokes the funcs that provide an instance of ILexer and etc...
-/// from within 'ParseAsync(...)'.
-/// So, one can completely forgo the interface Type and do everything themselves
-/// by overriding 'ParseAsync(...)' in particular.
-/// ("everything" refers to the parsing itself, a lot of defaults are still
-/// being provided by the 'CompilerService' base class).
-/// 
-/// Side note 1:
-/// ============
-/// What benefits are there to having the parser ask the lexer for the next token
-/// during the lexing process, versus lexing the text entirely and
-/// storing the tokens in a list to then later be given to the parser?
-///
-/// Side note 2:
-/// ============
-/// The CSharpLexer is inheriting 'Lexer' at the moment.
-/// But, this was only done in order provide defaults for someone
-/// who wants to create an ILexer implementation.
-///
-/// The best case scenario is to implement the interface ILexer on CSharpLexer
-/// directly.
-///
-/// Furthermore, if one overrides 'ParseAsync(...)' they don't even
-/// have to implement ILexer at all. They have complete freedom over the 'ParseAsync(...)' method.
-/// </summary>
-public struct CSharpLexer : ILexer
+public struct CSharpLexer
 {
 	private readonly StringWalker _stringWalker;
     private readonly List<ISyntaxToken> _syntaxTokenList = new();
@@ -192,98 +120,173 @@ public struct CSharpLexer : ILexer
                     LexerUtils.LexCharLiteralToken(_stringWalker, _syntaxTokenList, EscapeCharacterList);
                     break;
                 case '"':
-                	LexString(
-				    	_stringWalker,
-				    	_syntaxTokenList,
-				    	countDollarSign: 0,
-				    	useVerbatim: false);
+                	LexString(_stringWalker, _syntaxTokenList, countDollarSign: 0, useVerbatim: false);
                     break;
                 case '/':
                     if (_stringWalker.PeekCharacter(1) == '/')
+                    {
                         LexerUtils.LexCommentSingleLineToken(_stringWalker, _syntaxTokenList);
+                    }
                     else if (_stringWalker.PeekCharacter(1) == '*')
+                    {
                         LexerUtils.LexCommentMultiLineToken(_stringWalker, _syntaxTokenList);
+                    }
                     else
-                        LexerUtils.LexDivisionToken(_stringWalker, _syntaxTokenList);
-
+                    {
+                        var entryPositionIndex = _stringWalker.PositionIndex;
+				        _stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+				        _syntaxTokenList.Add(new DivisionToken(textSpan));
+                    }
                     break;
                 case '+':
                     if (_stringWalker.PeekCharacter(1) == '+')
+                    {
                         LexerUtils.LexPlusPlusToken(_stringWalker, _syntaxTokenList);
+                    }
                     else
-                        LexerUtils.LexPlusToken(_stringWalker, _syntaxTokenList);
-
+                    {
+                        var entryPositionIndex = _stringWalker.PositionIndex;
+				        _stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+				        _syntaxTokenList.Add(new PlusToken(textSpan));
+                    }
                     break;
                 case '-':
                     if (_stringWalker.PeekCharacter(1) == '-')
+                    {
                         LexerUtils.LexMinusMinusToken(_stringWalker, _syntaxTokenList);
+                    }
                     else
-                        LexerUtils.LexMinusToken(_stringWalker, _syntaxTokenList);
-
+                    {
+                        var entryPositionIndex = _stringWalker.PositionIndex;
+				        _stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+				        _syntaxTokenList.Add(new MinusToken(textSpan));
+                    }
                     break;
                 case '=':
                     if (_stringWalker.PeekCharacter(1) == '=')
+                    {
                         LexerUtils.LexEqualsEqualsToken(_stringWalker, _syntaxTokenList);
+                    }
                     else
-                        LexerUtils.LexEqualsToken(_stringWalker, _syntaxTokenList);
-
+                    {
+                        var entryPositionIndex = _stringWalker.PositionIndex;
+				        _stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+				        _syntaxTokenList.Add(new EqualsToken(textSpan));
+                    }
                     break;
                 case '?':
                     if (_stringWalker.PeekCharacter(1) == '?')
+                    {
                         LexerUtils.LexQuestionMarkQuestionMarkToken(_stringWalker, _syntaxTokenList);
+                    }
                     else
-                        LexerUtils.LexQuestionMarkToken(_stringWalker, _syntaxTokenList);
-
+                    {
+                        var entryPositionIndex = _stringWalker.PositionIndex;
+				        _stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+				        _syntaxTokenList.Add(new QuestionMarkToken(textSpan));
+                    }
                     break;
                 case '*':
-                    LexerUtils.LexStarToken(_stringWalker, _syntaxTokenList);
+                {
+                	var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new StarToken(textSpan));
                     break;
+                }
                 case '!':
-                    LexerUtils.LexBangToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new BangToken(textSpan));
                     break;
+                }
                 case ';':
-                    LexerUtils.LexStatementDelimiterToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new StatementDelimiterToken(textSpan));
                     break;
+                }
                 case '(':
-                    LexerUtils.LexOpenParenthesisToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new OpenParenthesisToken(textSpan));
                     break;
+                }
                 case ')':
-                    LexerUtils.LexCloseParenthesisToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new CloseParenthesisToken(textSpan));
                     break;
+                }
                 case '{':
-                    LexerUtils.LexOpenBraceToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new OpenBraceToken(textSpan));
                     break;
+                }
                 case '}':
-                    LexerUtils.LexCloseBraceToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new CloseBraceToken(textSpan));
                     break;
+                }
                 case '<':
-                    LexerUtils.LexOpenAngleBracketToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new OpenAngleBracketToken(textSpan));
                     break;
+                }
                 case '>':
-                    LexerUtils.LexCloseAngleBracketToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new CloseAngleBracketToken(textSpan));
                     break;
+                }
                 case '[':
-                    LexerUtils.LexOpenSquareBracketToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new OpenSquareBracketToken(textSpan));
                     break;
+                }
                 case ']':
-                    LexerUtils.LexCloseSquareBracketToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new CloseSquareBracketToken(textSpan));
                     break;
+                }
                 case '$':
                 	if (_stringWalker.NextCharacter == '"')
                 	{
-                		LexString(
-					    	_stringWalker,
-					    	_syntaxTokenList,
-					    	countDollarSign: 1,
-					    	useVerbatim: false);
+                		LexString(_stringWalker, _syntaxTokenList, countDollarSign: 1, useVerbatim: false);
 					}
 					else if (_stringWalker.PeekCharacter(1) == '@' && _stringWalker.PeekCharacter(2) == '"')
 					{
-						LexString(
-					    	_stringWalker,
-					    	_syntaxTokenList,
-					    	countDollarSign: 1,
-					    	useVerbatim: true);
+						LexString(_stringWalker, _syntaxTokenList, countDollarSign: 1, useVerbatim: true);
                 	}
                 	else if (_stringWalker.NextCharacter == '$')
                 	{
@@ -303,12 +306,7 @@ public struct CSharpLexer : ILexer
                 		
                 		// Only the last '$' (dollar sign character) will be syntax highlighted
                 		// if this code is NOT included.
-                		var textSpan = new TextEditorTextSpan(
-				            entryPositionIndex,
-				            _stringWalker.PositionIndex,
-				            (byte)GenericDecorationKind.StringLiteral,
-				            _stringWalker.ResourceUri,
-				            _stringWalker.SourceText);
+                		var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.StringLiteral, _stringWalker.ResourceUri, _stringWalker.SourceText);
 				        _syntaxTokenList.Add(new StringLiteralToken(textSpan));
                 		
                 		// From the LexString(...) method:
@@ -317,13 +315,7 @@ public struct CSharpLexer : ILexer
                 		_ = _stringWalker.BacktrackCharacter();
                 		
                 		if (_stringWalker.NextCharacter == '"')
-	                	{
-	                		LexString(
-						    	_stringWalker,
-						    	_syntaxTokenList,
-						    	countDollarSign: countDollarSign,
-						    	useVerbatim: false);
-						}
+	                		LexString(_stringWalker, _syntaxTokenList, countDollarSign: countDollarSign, useVerbatim: false);
                 	}
                 	else
                 	{
@@ -332,35 +324,36 @@ public struct CSharpLexer : ILexer
                     break;
                 case '@':
                 	if (_stringWalker.NextCharacter == '"')
-                	{
-                		LexString(
-					    	_stringWalker,
-					    	_syntaxTokenList,
-					    	countDollarSign: 0,
-					    	useVerbatim: true);
-					}
+                		LexString(_stringWalker, _syntaxTokenList, countDollarSign: 0, useVerbatim: true);
 					else if (_stringWalker.PeekCharacter(1) == '$' && _stringWalker.PeekCharacter(2) == '"')
-					{
-						LexString(
-					    	_stringWalker,
-					    	_syntaxTokenList,
-					    	countDollarSign: 1,
-					    	useVerbatim: true);
-					}
+						LexString(_stringWalker, _syntaxTokenList, countDollarSign: 1, useVerbatim: true);
                 	else
-                	{
                     	LexerUtils.LexAtToken(_stringWalker, _syntaxTokenList);
-                    }
                     break;
                 case ':':
-                    LexerUtils.LexColonToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new ColonToken(textSpan));
                     break;
+                }
                 case '.':
-                    LexerUtils.LexMemberAccessToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new MemberAccessToken(textSpan));
                     break;
+                }
                 case ',':
-                    LexerUtils.LexCommaToken(_stringWalker, _syntaxTokenList);
+                {
+                    var entryPositionIndex = _stringWalker.PositionIndex;
+			        _stringWalker.ReadCharacter();
+			        var textSpan = new TextEditorTextSpan(entryPositionIndex, _stringWalker.PositionIndex, (byte)GenericDecorationKind.None, _stringWalker.ResourceUri, _stringWalker.SourceText);
+			        _syntaxTokenList.Add(new CommaToken(textSpan));
                     break;
+                }
                 case '#':
                     LexerUtils.LexPreprocessorDirectiveToken(_stringWalker, _syntaxTokenList);
                     break;
