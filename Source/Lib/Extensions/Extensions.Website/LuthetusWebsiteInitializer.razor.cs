@@ -38,6 +38,8 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
     [Inject]
     private ICompilerServiceRegistry CompilerServiceRegistry { get; set; } = null!;
     [Inject]
+    private ITextEditorHeaderRegistry TextEditorHeaderRegistry { get; set; } = null!;
+    [Inject]
     private IBackgroundTaskService BackgroundTaskService { get; set; } = null!;
     [Inject]
     private IdeBackgroundTaskApi IdeBackgroundTaskApi { get; set; } = null!;
@@ -136,6 +138,11 @@ public partial class LuthetusWebsiteInitializer : ComponentBase
         var solutionAbsolutePath = EnvironmentProvider.AbsolutePathFactory(
             InitialSolutionFacts.SLN_ABSOLUTE_FILE_PATH,
             false);
+        
+        // This line is also in LuthetusExtensionsDotNetInitializer,
+        // but its duplicated here because the website
+        // won't open the first file correctly without this.
+        TextEditorHeaderRegistry.UpsertHeader("cs", typeof(Luthetus.TextEditor.RazorLib.TextEditors.Displays.Internals.TextEditorCompilerServiceHeaderDisplay));
 
         DotNetBackgroundTaskApi.DotNetSolution.SetDotNetSolution(solutionAbsolutePath);
 

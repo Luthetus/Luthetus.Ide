@@ -9,9 +9,9 @@ public interface ICompilerServiceResource
 {
     public ResourceUri ResourceUri { get; }
     public ICompilerService CompilerService { get; }
-    public CompilationUnit? CompilationUnit { get; set; }
-    public IReadOnlyList<ISyntaxToken> SyntaxTokenList { get; set; }
+    public ICompilationUnit? CompilationUnit { get; }
 
+	public IReadOnlyList<ISyntaxToken> GetTokens();
     public IReadOnlyList<TextEditorTextSpan> GetTokenTextSpans();
     public IReadOnlyList<ITextEditorSymbol> GetSymbols();
     public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics();

@@ -42,7 +42,7 @@ public partial class PythonLanguageFacts
     	public const string WITH_KEYWORD = "with";
     	public const string YIELD_KEYWORD = "yield";
 
-        public static readonly ImmutableArray<string> ALL_LIST = new[]
+        public static readonly string[] ALL_LIST = new[]
         {
             FALSE_KEYWORD,
 	    	NONE_KEYWORD,
@@ -79,11 +79,11 @@ public partial class PythonLanguageFacts
 	    	WHILE_KEYWORD,
 	    	WITH_KEYWORD,
 	    	YIELD_KEYWORD,
-        }.ToImmutableArray();
+        };
 
-        public static readonly ImmutableArray<string> CONTROL_KEYWORDS = new[]
+        public static readonly string[] CONTROL_KEYWORDS = new[]
         {
         	IF_KEYWORD
-        }.ToImmutableArray();
+        };
     }
 }

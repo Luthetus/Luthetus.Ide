@@ -43,7 +43,7 @@ public class TextEditorFSharpLexer : Lexer
         : base(
             resourceUri,
             sourceText,
-            new LexerKeywords(FSharpKeywords.ALL, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
+            new LexerKeywords(FSharpKeywords.ALL, Array.Empty<string>(), Array.Empty<string>()))
     {
         _fSharpSyntaxTree = new GenericSyntaxTree(FSharpLanguageDefinition);
     }

@@ -19,7 +19,7 @@ public class CLexer : Lexer
         : base(
             resourceUri,
             sourceText,
-            new LexerKeywords(CLanguageFacts.Keywords.ALL_LIST, CLanguageFacts.Keywords.CONTROL_KEYWORDS, ImmutableArray<string>.Empty))
+            new LexerKeywords(CLanguageFacts.Keywords.ALL_LIST, CLanguageFacts.Keywords.CONTROL_KEYWORDS, Array.Empty<string>()))
     {
         _cSyntaxTree = new GenericSyntaxTree(CLanguageDefinition);
     }

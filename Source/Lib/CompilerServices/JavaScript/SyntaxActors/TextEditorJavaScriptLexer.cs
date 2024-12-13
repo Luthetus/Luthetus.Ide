@@ -42,7 +42,7 @@ public class TextEditorJavaScriptLexer : Lexer
         : base(
             resourceUri,
             sourceText,
-            new LexerKeywords(JavaScriptKeywords.ALL, ImmutableArray<string>.Empty, ImmutableArray<string>.Empty))
+            new LexerKeywords(JavaScriptKeywords.ALL, Array.Empty<string>(), Array.Empty<string>()))
     {
         _javaScriptSyntaxTree = new GenericSyntaxTree(JavaScriptLanguageDefinition);
     }

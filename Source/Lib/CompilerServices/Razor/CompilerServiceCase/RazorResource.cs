@@ -1,9 +1,10 @@
 using System.Collections.Immutable;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
-using Luthetus.TextEditor.RazorLib.Lexers.Models;
-using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
-using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 using Luthetus.CompilerServices.Xml.Html.Decoration;
 
 namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
@@ -31,9 +32,7 @@ public class RazorResource : CompilerServiceResource
         if (localRazorSyntaxTree?.SemanticResultRazor is null)
             return Array.Empty<ITextEditorSymbol>();
 
-        var symbols = localRazorSyntaxTree
-            .SemanticResultRazor
-            .CompilationUnit
+        var symbols = ((CompilationUnit)localRazorSyntaxTree.SemanticResultRazor.CompilationUnit)
             .Binder
             .SymbolsList;
 
