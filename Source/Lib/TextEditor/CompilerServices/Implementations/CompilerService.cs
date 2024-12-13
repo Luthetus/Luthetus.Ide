@@ -130,7 +130,7 @@ public class CompilerService : ICompilerService
 				if (modelModifier is null)
 					return Task.CompletedTask;
 
-				return ParseAsync(editContext, modelModifier);
+				return ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: true);
             });
     }
 
@@ -143,7 +143,7 @@ public class CompilerService : ICompilerService
         return _emptyAutocompleteEntryList;
     }
     
-    public virtual Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier)
+    public virtual Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
 	{
 		_textEditorService.ModelApi.StartPendingCalculatePresentationModel(
 			editContext,

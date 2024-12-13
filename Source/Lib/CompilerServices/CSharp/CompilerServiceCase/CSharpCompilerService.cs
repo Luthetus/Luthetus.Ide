@@ -57,7 +57,7 @@ public sealed class CSharpCompilerService : CompilerService
     	DiagnosticRendererType = diagnosticRendererType;
     }
     
-    public override Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier)
+    public override Task ParseAsync(ITextEditorEditContext editContext, TextEditorModelModifier modelModifier, bool shouldApplySyntaxHighlighting)
 	{
 		var resourceUri = modelModifier.ResourceUri;
 	
@@ -110,9 +110,12 @@ public sealed class CSharpCompilerService : CompilerService
 				CompilerServiceDiagnosticPresentationFacts.EmptyPresentationModel,
 				diagnosticTextSpans);
 			
-			/*editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-				editContext,
-				modelModifier);*/
+			if (shouldApplySyntaxHighlighting)
+			{
+				editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+					editContext,
+					modelModifier);
+			}
 
 			OnResourceParsed();
         }

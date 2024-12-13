@@ -153,7 +153,7 @@ public class EditorIdeApi
 					if (modelModifier is null)
 						return Task.CompletedTask;
 	
-					return compilerService.ParseAsync(editContext, modelModifier);
+					return compilerService.ParseAsync(editContext, modelModifier, shouldApplySyntaxHighlighting: false);
 	            });
 			
 			if (registerModelArgs.ShouldBlockUntilBackgroundTaskIsCompleted)
