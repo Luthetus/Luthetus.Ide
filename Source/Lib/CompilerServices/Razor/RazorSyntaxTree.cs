@@ -109,17 +109,23 @@ public class RazorSyntaxTree
 
         lexer.Lex();
 
-		// TODO: (2024-12-12)
-        /*var parser = new CSharpParser(lexer);
-
-        var compilationUnit = parser.Parse(new CSharpBinder(), lexer.ResourceUri);
+        var compilationUnit = new CSharpCompilationUnit(
+        	_codebehindResourceUri,
+			new CSharpBinder());
+			
+		compilationUnit.Lexer = lexer;
+		
+		compilationUnit.BinderSession = (CSharpBinderSession)compilationUnit.Binder.StartBinderSession(_codebehindResourceUri);
+		
+		var parser = new CSharpParser();
+        parser.Parse(compilationUnit);
         
         SemanticResultRazor = new SemanticResultRazor(
             compilationUnit,
             _codebehindClassInsertions,
             _codebehindRenderFunctionInsertions,
             renderFunctionAdhocTextInsertion,
-            classContents);*/
+            classContents);
     }
 
     /// <summary>currentCharacterIn:<br/> -<see cref="InjectedLanguageDefinition.TransitionSubstring"/><br/></summary>

@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.Razor.CompilerServiceCase;
 
@@ -27,7 +28,7 @@ public record SemanticResultRazor
     /// diagnostics, on hover tooltips, etc...
     /// </summary>
     public SemanticResultRazor(
-        ICompilationUnit compilationUnit,
+        CSharpCompilationUnit compilationUnit,
         List<AdhocTextInsertion> codebehindClassInsertions,
         List<AdhocTextInsertion> codebehindRenderFunctionInsertions,
         AdhocTextInsertion adhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass,
@@ -40,7 +41,7 @@ public record SemanticResultRazor
         ClassContents = classContents;
     }
 
-    public ICompilationUnit CompilationUnit { get; }
+    public CSharpCompilationUnit CompilationUnit { get; }
     public List<AdhocTextInsertion> CodebehindClassInsertions { get; }
     public List<AdhocTextInsertion> CodebehindRenderFunctionInsertions { get; }
     public AdhocTextInsertion AdhocTextInsertionOfTheRenderFunctionItselfIntoTheCodebehindClass { get; }
