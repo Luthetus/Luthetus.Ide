@@ -103,17 +103,11 @@ public class RazorSyntaxTree
 
         var classContents = _codebehindClassBuilder.ToString();
 
-        var lexer = new CSharpLexer(
-            _codebehindResourceUri,
-            classContents);
-
-        lexer.Lex();
-
         var compilationUnit = new CSharpCompilationUnit(
         	_codebehindResourceUri,
 			new CSharpBinder());
 			
-		compilationUnit.Lexer = lexer;
+		compilationUnit.LexerOutput = CSharpLexer.Lex(_codebehindResourceUri, classContents);
 		
 		compilationUnit.BinderSession = (CSharpBinderSession)compilationUnit.Binder.StartBinderSession(_codebehindResourceUri);
 		
@@ -1377,11 +1371,9 @@ public class RazorSyntaxTree
     {
         var injectedLanguageFragmentSyntaxes = new List<IHtmlSyntaxNode>();
 
-        var lexer = new CSharpLexer(ResourceUri.Empty, cSharpText);
+        var lexerOutput = CSharpLexer.Lex(ResourceUri.Empty, cSharpText);
 
-        lexer.Lex();
-
-        foreach (var lexedTokenTextSpan in lexer.SyntaxTokenList.Select(x => x.TextSpan))
+        foreach (var lexedTokenTextSpan in lexerOutput.SyntaxTokenList.Select(x => x.TextSpan))
         {
             var startingIndexInclusive = lexedTokenTextSpan.StartingIndexInclusive +
                                          offsetPositionIndex -

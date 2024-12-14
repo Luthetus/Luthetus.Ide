@@ -21,7 +21,7 @@ public sealed class CSharpCompilationUnit : ICompilationUnit
 	}
 
 	public ResourceUri ResourceUri { get; set; }
-    public CSharpLexer Lexer { get; set; }
+    public CSharpLexerOutput LexerOutput { get; set; }
     public CSharpParser Parser { get; set; }
     public CSharpParserModel ParserModel { get; set; }
     public CSharpBinder Binder { get; set; }

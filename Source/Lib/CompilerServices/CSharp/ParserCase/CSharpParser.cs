@@ -33,7 +33,7 @@ public struct CSharpParser
         var diagnosticBag = new DiagnosticBag();
 
         compilationUnit.ParserModel = new CSharpParserModel(
-            new TokenWalker(compilationUnit.Lexer.SyntaxTokenList, diagnosticBag),
+            new TokenWalker(compilationUnit.LexerOutput.SyntaxTokenList, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,
             globalCodeBlockBuilder,
@@ -240,7 +240,7 @@ public struct CSharpParser
         var topLevelStatementsCodeBlock = compilationUnit.ParserModel.CurrentCodeBlockBuilder.Build(
             DiagnosticsList
                 .Union(compilationUnit.Binder.DiagnosticsList)
-                .Union(compilationUnit.Lexer.DiagnosticList)
+                .Union(compilationUnit.LexerOutput.DiagnosticBag.ToList())
                 .ToArray());
 
 		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
