@@ -32,7 +32,7 @@ public static class ParseVariables
 	        variableKind,
 	        false);
 
-        compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+        compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
         return variableDeclarationNode;
     }

@@ -33,8 +33,6 @@ public struct CSharpParser
         var diagnosticBag = new DiagnosticBag();
 
         compilationUnit.ParserModel = new CSharpParserModel(
-            compilationUnit.Binder,
-            compilationUnit.BinderSession,
             new TokenWalker(compilationUnit.Lexer.SyntaxTokenList, diagnosticBag),
             new Stack<ISyntax>(),
             diagnosticBag,

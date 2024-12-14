@@ -340,8 +340,8 @@ public partial class CSharpBinder
 		{
 			if (TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
-			    	compilationUnit.ParserModel.BinderSession.ResourceUri,
-			    	compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+			    	compilationUnit.BinderSession.ResourceUri,
+			    	compilationUnit.BinderSession.CurrentScopeIndexKey,
 			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 			        out var existingVariableDeclarationNode))
 			{
@@ -360,8 +360,8 @@ public partial class CSharpBinder
 		{
 			if (TryGetTypeDefinitionHierarchically(
 	        		compilationUnit,
-	        		compilationUnit.ParserModel.BinderSession.ResourceUri,
-	                compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+	        		compilationUnit.BinderSession.ResourceUri,
+	                compilationUnit.BinderSession.CurrentScopeIndexKey,
 	                ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
 	                out var typeDefinitionNode))
 	        {
@@ -1028,7 +1028,7 @@ public partial class CSharpBinder
 			    token.TextSpan.ResourceUri,
 			    token.TextSpan.SourceText);
 		
-			((CSharpBinder)compilationUnit.ParserModel.Binder).AddSymbolDefinition(
+			((CSharpBinder)compilationUnit.Binder).AddSymbolDefinition(
 				new LambdaSymbol(textSpan, lambdaExpressionNode), compilationUnit);
 		
 			if (compilationUnit.ParserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)

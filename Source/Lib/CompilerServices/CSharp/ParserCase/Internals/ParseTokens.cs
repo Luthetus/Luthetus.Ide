@@ -107,7 +107,7 @@ public static class ParseTokens
 		
 		((VariableDeclarationNode)variableDeclarationNode).VariableKind = variableKind;
 		
-		compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(variableDeclarationNode);
 		compilationUnit.ParserModel.StatementBuilder.ChildList.Add(variableDeclarationNode);
 		
@@ -215,7 +215,7 @@ public static class ParseTokens
             var typeDefinitionNode = (TypeDefinitionNode)compilationUnit.ParserModel.SyntaxStack.Pop();
             var inheritedTypeClauseNode = compilationUnit.ParserModel.TokenWalker.MatchTypeClauseNode(compilationUnit);
 
-            compilationUnit.ParserModel.Binder.BindTypeClauseNode(inheritedTypeClauseNode, compilationUnit);
+            compilationUnit.Binder.BindTypeClauseNode(inheritedTypeClauseNode, compilationUnit);
 
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 
@@ -258,9 +258,9 @@ public static class ParseTokens
 		var nextCodeBlockOwner = compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 		var nextReturnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
 
-        compilationUnit.ParserModel.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, compilationUnit);
+        compilationUnit.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, compilationUnit);
 		compilationUnit.ParserModel.CurrentCodeBlockBuilder = new(parent: compilationUnit.ParserModel.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
-		compilationUnit.ParserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit);
+		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit);
     }
 
 	/// <summary>
@@ -278,7 +278,7 @@ public static class ParseTokens
 		if (compilationUnit.ParserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
 			compilationUnit.ParserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, compilationUnit.ParserModel.DiagnosticBag, compilationUnit.ParserModel.TokenWalker);
 		
-        compilationUnit.ParserModel.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit);
+        compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit);
     }
 
     public static void ParseOpenParenthesisToken(CSharpCompilationUnit compilationUnit)
@@ -414,13 +414,13 @@ public static class ParseTokens
             
             namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken, compilationUnit.ParserModel.DiagnosticBag, compilationUnit.ParserModel.TokenWalker);
 
-            compilationUnit.ParserModel.Binder.OpenScope(
+            compilationUnit.Binder.OpenScope(
             	nextCodeBlockOwner,
                 scopeReturnTypeClauseNode,
                 statementDelimiterToken.TextSpan,
                 compilationUnit);
 
-            compilationUnit.ParserModel.Binder.AddNamespaceToCurrentScope(
+            compilationUnit.Binder.AddNamespaceToCurrentScope(
                 namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
                 compilationUnit);
 
@@ -431,11 +431,11 @@ public static class ParseTokens
         {
         	var pendingChild = compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
         
-        	compilationUnit.ParserModel.Binder.OpenScope(pendingChild, CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, compilationUnit);
+        	compilationUnit.Binder.OpenScope(pendingChild, CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, compilationUnit);
 			compilationUnit.ParserModel.CurrentCodeBlockBuilder = new(compilationUnit.ParserModel.CurrentCodeBlockBuilder, pendingChild);
-			compilationUnit.ParserModel.Binder.OnBoundScopeCreatedAndSetAsCurrent(pendingChild, compilationUnit);
+			compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(pendingChild, compilationUnit);
 			
-	        compilationUnit.ParserModel.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit);
+	        compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit);
 	
 	        if (compilationUnit.ParserModel.CurrentCodeBlockBuilder.Parent is not null)
 	            compilationUnit.ParserModel.CurrentCodeBlockBuilder = compilationUnit.ParserModel.CurrentCodeBlockBuilder.Parent;

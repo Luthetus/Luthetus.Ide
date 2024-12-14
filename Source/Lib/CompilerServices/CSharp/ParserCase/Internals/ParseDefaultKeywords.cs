@@ -721,7 +721,7 @@ public class ParseDefaultKeywords
 		compilationUnit.ParserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
 		var expression = ParseOthers.ParseExpression(compilationUnit);
 
-        var boundIfStatementNode = compilationUnit.ParserModel.Binder.BindIfStatementNode(ifTokenKeyword, expression);
+        var boundIfStatementNode = compilationUnit.Binder.BindIfStatementNode(ifTokenKeyword, expression);
         compilationUnit.ParserModel.SyntaxStack.Push(boundIfStatementNode);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = boundIfStatementNode;
     }
@@ -744,7 +744,7 @@ public class ParseDefaultKeywords
             usingKeywordToken,
             namespaceIdentifier);
 
-        compilationUnit.ParserModel.Binder.BindUsingStatementNode(usingStatementNode, compilationUnit);
+        compilationUnit.Binder.BindUsingStatementNode(usingStatementNode, compilationUnit);
         compilationUnit.ParserModel.StatementBuilder.ChildList.Add(usingStatementNode);
     }
 
@@ -869,8 +869,8 @@ public class ParseDefaultKeywords
             openBraceToken: default,
             codeBlockNode: null);
 
-        compilationUnit.ParserModel.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit);
-        compilationUnit.ParserModel.Binder.BindTypeIdentifier(identifierToken, compilationUnit);
+        compilationUnit.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit);
+        compilationUnit.Binder.BindTypeIdentifier(identifierToken, compilationUnit);
         compilationUnit.ParserModel.SyntaxStack.Push(typeDefinitionNode);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
     }
@@ -899,7 +899,7 @@ public class ParseDefaultKeywords
             namespaceIdentifier,
             null);
 
-        compilationUnit.ParserModel.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, compilationUnit);
+        compilationUnit.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, compilationUnit);
         
         compilationUnit.ParserModel.SyntaxStack.Push(namespaceStatementNode);
         compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = namespaceStatementNode;
