@@ -828,6 +828,7 @@ public partial class CSharpBinder
 				return emptyExpressionNode;
 			case SyntaxKind.InTokenKeyword:
 			case SyntaxKind.RefTokenKeyword:
+			case SyntaxKind.ParamsTokenKeyword:
 				return emptyExpressionNode;
 			case SyntaxKind.OpenAngleBracketToken:
 				var genericParametersListingNode = new GenericParametersListingNode(

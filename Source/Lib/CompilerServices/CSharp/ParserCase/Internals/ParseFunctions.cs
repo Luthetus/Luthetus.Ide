@@ -153,6 +153,14 @@ public class ParseFunctions
             }
             else if (!corruptState)
             {
+            	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OutTokenKeyword ||
+            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.InTokenKeyword ||
+            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.RefTokenKeyword ||
+            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ParamsTokenKeyword)
+            	{
+            		_ = parserModel.TokenWalker.Consume();
+            	}
+            
             	var tokenIndexOriginal = parserModel.TokenWalker.Index;
 				var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, ref parserModel, out var typeClauseNode);
 		    	var successName = false;
