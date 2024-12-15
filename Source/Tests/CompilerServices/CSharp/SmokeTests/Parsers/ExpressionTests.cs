@@ -11,6 +11,7 @@ using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 using Luthetus.CompilerServices.CSharp.Facts;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
@@ -22,17 +23,15 @@ public partial class ExpressionTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
-			Lexer = new CSharpLexer(ResourceUri, SourceText);
-	        Lexer.Lex();
-	        Parser = new CSharpParser(Lexer);
-	        CompilationUnit = Parser.Parse();
+			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+	        CSharpParser.Parse(CompilationUnit);
 		}
 		
 		public string SourceText { get; set; }
 		public ResourceUri ResourceUri { get; set; }
-		public CSharpLexer Lexer { get; set; }
-		public CSharpParser Parser { get; set; }
-		public CompilationUnit CompilationUnit { get; set; }
+		public CSharpLexerOutput LexerOutput { get; set; }
+		public IBinder Binder => CompilationUnit.Binder;
+		public CSharpCompilationUnit CompilationUnit { get; set; }
 	}
 
     [Fact]
@@ -624,7 +623,7 @@ public partial class ExpressionTests
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
         var test = new Test("new Dictionary<int, Person>(0, \"Test\")");
         
-        foreach (var token in test.Lexer.SyntaxTokenList)
+        foreach (var token in test.LexerOutput.SyntaxTokenList)
     	{
     		Console.WriteLine(token.SyntaxKind);
     	}
@@ -655,7 +654,7 @@ public partial class ExpressionTests
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
         var test = new Test("0");
         
-        foreach (var token in test.Lexer.SyntaxTokenList)
+        foreach (var token in test.LexerOutput.SyntaxTokenList)
     	{
     		Console.WriteLine(token.SyntaxKind);
     	}
@@ -1652,7 +1651,7 @@ public partial class ExpressionTests
 		
 		var whileStatementNode = (WhileStatementNode)topCodeBlock.GetChildList().Single();
 		
-		((IBinder)test.Parser.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
+		((IBinder)test.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
 		Assert.Equal(2, binderSession.ScopeList.Count);
     
     	throw new NotImplementedException("See ExpressionAsStatementTests");
@@ -1677,7 +1676,7 @@ void Aaa()
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		((IBinder)test.Parser.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
+		((IBinder)test.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
 		foreach (var child in topCodeBlock.GetChildList())

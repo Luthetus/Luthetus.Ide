@@ -23,17 +23,15 @@ public class BinderTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
-			Lexer = new CSharpLexer(ResourceUri, SourceText);
-	        Lexer.Lex();
-	        Parser = new CSharpParser(Lexer);
-	        CompilationUnit = Parser.Parse();
+			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+	        CSharpParser.Parse(CompilationUnit);
 		}
 		
 		public string SourceText { get; set; }
 		public ResourceUri ResourceUri { get; set; }
-		public CSharpLexer Lexer { get; set; }
-		public CSharpParser Parser { get; set; }
-		public CompilationUnit CompilationUnit { get; set; }
+		public CSharpLexerOutput LexerOutput { get; set; }
+		public IBinder Binder => CompilationUnit.Binder;
+		public CSharpCompilationUnit CompilationUnit { get; set; }
 	}
 	
 	[Fact]
@@ -49,7 +47,7 @@ public class BinderTests
 		var cSharpResource = new CSharpResource(test.ResourceUri, null);
 		cSharpResource.CompilationUnit = test.CompilationUnit;
 		
-		var node = binder.GetSyntaxNode(13, test.ResourceUri, cSharpResource);
+		var node = binder.GetSyntaxNode(test.CompilationUnit, 13, test.ResourceUri, cSharpResource);
 		
 		Assert.NotNull(node);
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, node.SyntaxKind);
@@ -68,7 +66,7 @@ public class BinderTests
 		var cSharpResource = new CSharpResource(test.ResourceUri, null);
 		cSharpResource.CompilationUnit = test.CompilationUnit;
 		
-		var node = binder.GetSyntaxNode(12, test.ResourceUri, cSharpResource);
+		var node = binder.GetSyntaxNode(test.CompilationUnit, 12, test.ResourceUri, cSharpResource);
 		
 		Assert.NotNull(node);
 		Assert.Equal(SyntaxKind.FunctionDefinitionNode, node.SyntaxKind);
@@ -96,7 +94,7 @@ public class BackgroundTask : IBackgroundTask
 		var cSharpResource = new CSharpResource(test.ResourceUri, null);
 		cSharpResource.CompilationUnit = test.CompilationUnit;
 		
-		var node = binder.GetSyntaxNode(119, test.ResourceUri, cSharpResource);
+		var node = binder.GetSyntaxNode(test.CompilationUnit, 119, test.ResourceUri, cSharpResource);
 		
 		Assert.NotNull(node);
 		Assert.Equal(SyntaxKind.TypeDefinitionNode, node.SyntaxKind);
