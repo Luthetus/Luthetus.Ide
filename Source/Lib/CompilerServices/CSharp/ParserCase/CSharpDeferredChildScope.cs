@@ -23,19 +23,19 @@ public class CSharpDeferredChildScope
 	
 	public int TokenIndexToRestore { get; private set; }
 	
-	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit)
+	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		TokenIndexToRestore = tokenIndexToRestore;
-		compilationUnit.ParserModel.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = true;
+		parserModel.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = true;
 		
-		compilationUnit.ParserModel.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null;
+		parserModel.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null;
 		
-		compilationUnit.ParserModel.TokenWalker.DeferredParsing(
+		parserModel.TokenWalker.DeferredParsing(
 			OpenTokenIndex,
 			CloseTokenIndex,
 			TokenIndexToRestore);
 		
-		compilationUnit.ParserModel.SyntaxStack.Push(PendingCodeBlockOwner);
-		compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = PendingCodeBlockOwner;
+		parserModel.SyntaxStack.Push(PendingCodeBlockOwner);
+		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = PendingCodeBlockOwner;
 	}
 }

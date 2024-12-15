@@ -11,11 +11,13 @@ using Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
-public class CSharpParserModel
+/// <summary>
+/// The computational state for the CSharpParser is contained within this type.
+/// The output of the CSharpParser is the <see cref="CSharpCompilationUnit"/>.<see cref="CSharpCompilationUnit.RootCodeBlockNode"/>
+/// </summary>
+public struct CSharpParserModel
 {
     public CSharpParserModel(
-        CSharpBinder binder,
-        CSharpBinderSession binderSession,
         TokenWalker tokenWalker,
         Stack<ISyntax> syntaxStack,
         DiagnosticBag diagnosticBag,
@@ -26,8 +28,6 @@ public class CSharpParserModel
     	++LuthetusDebugSomething.ParserModel_ConstructorInvocationCount;
     	#endif
     
-        Binder = binder;
-        BinderSession = binderSession;
         TokenWalker = tokenWalker;
         SyntaxStack = syntaxStack;
         DiagnosticBag = diagnosticBag;
@@ -40,8 +40,6 @@ public class CSharpParserModel
         ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     }
 
-    public CSharpBinder Binder { get; }
-    public CSharpBinderSession BinderSession { get; }
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
     public CSharpStatementBuilder StatementBuilder { get; set; } = new();
