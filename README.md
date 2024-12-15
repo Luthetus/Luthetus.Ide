@@ -1,6 +1,6 @@
 # Luthetus.Ide (In Development)
 ![Example GIF](./Images/Ide/Gifs/9.5.1BetterGif.gif)
-Gif length is 1 minute 35 seconds
+The above Gif length is 1 minute 35 seconds
 
 ![Example GIF](./Images/Ide/Gifs/parseSolutionWideUpdated.gif)
 
