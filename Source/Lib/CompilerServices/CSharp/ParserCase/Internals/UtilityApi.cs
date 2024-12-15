@@ -188,7 +188,7 @@ public static class UtilityApi
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
-    public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax, CSharpCompilationUnit compilationUnit)
+    public static TypeClauseNode ConvertToTypeClauseNode(ISyntax syntax, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (syntax.SyntaxKind == SyntaxKind.TypeClauseNode)
     	{
@@ -217,11 +217,11 @@ public static class UtilityApi
 	    }
 	    else
 	    {
-	    	// 'compilationUnit.ParserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
 	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
 	    	//
-	    	compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(
-	    		compilationUnit.ParserModel.TokenWalker.Current.TextSpan,
+	    	parserModel.DiagnosticBag.ReportTodoException(
+	    		parserModel.TokenWalker.Current.TextSpan,
 	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(TypeClauseNode)}. Invoke {nameof(IsConvertibleToTypeClauseNode)} and check the result, before invoking {nameof(ConvertToTypeClauseNode)}.");
 	    	
 	    	// TODO: Returning null when it can't be converted is a bad idea (the method return isn't documented as nullable).
@@ -235,7 +235,7 @@ public static class UtilityApi
     		   IsContextualKeywordSyntaxKind(syntaxKind);
     }
     
-    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax, CSharpCompilationUnit compilationUnit)
+    public static IdentifierToken ConvertToIdentifierToken(ISyntax syntax, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (syntax.SyntaxKind == SyntaxKind.IdentifierToken)
     	{
@@ -248,11 +248,11 @@ public static class UtilityApi
 	    }
 	    else
 	    {
-	    	// 'compilationUnit.ParserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
+	    	// 'parserModel.TokenWalker.Current.TextSpan' isn't necessarily the syntax passed to this method.
 	    	// TODO: But getting a TextSpan from a general type such as 'ISyntax' is a pain.
 	    	//
-	    	compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(
-	    		compilationUnit.ParserModel.TokenWalker.Current.TextSpan,
+	    	parserModel.DiagnosticBag.ReportTodoException(
+	    		parserModel.TokenWalker.Current.TextSpan,
 	    		$"The {nameof(SyntaxKind)}: {syntax.SyntaxKind}, is not convertible to a {nameof(IdentifierToken)}. Invoke {nameof(IsConvertibleToIdentifierToken)} and check the result, before invoking {nameof(ConvertToIdentifierToken)}.");
 	    		
 	    	// TODO: Returning default when it can't be converted might be a fine idea? It isn't as bad as returning null.

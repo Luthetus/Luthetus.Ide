@@ -8,25 +8,26 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 
 internal static class TokenWalkerExtensionMethods
 {
-    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpCompilationUnit compilationUnit)
+    public static TypeClauseNode MatchTypeClauseNode(this TokenWalker tokenWalker, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-        return ParseTypes.MatchTypeClause(compilationUnit);
+        return ParseTypes.MatchTypeClause(compilationUnit, ref parserModel);
     }
 
 	public static void DeferParsingOfChildScope(
 		this TokenWalker tokenWalker,
 		OpenBraceToken consumedOpenBraceToken,
-		CSharpCompilationUnit compilationUnit)
+		CSharpCompilationUnit compilationUnit,
+		ref CSharpParserModel parserModel)
     {
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
-		var pendingCodeBlockOwner = compilationUnit.ParserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
+		var pendingCodeBlockOwner = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 
 		var openTokenIndex = tokenWalker.Index - 1;
 
 		var openBraceCounter = 1;
 		
 		#if DEBUG
-		compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
 		while (true)
@@ -51,10 +52,10 @@ internal static class TokenWalkerExtensionMethods
 		var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
 		
 		#if DEBUG
-		compilationUnit.ParserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
 
-		compilationUnit.ParserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new CSharpDeferredChildScope(
+		parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new CSharpDeferredChildScope(
 			openTokenIndex,
 			closeTokenIndex,
 			pendingCodeBlockOwner));

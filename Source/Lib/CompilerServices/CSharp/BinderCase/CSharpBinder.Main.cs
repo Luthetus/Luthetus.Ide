@@ -127,7 +127,8 @@ public partial class CSharpBinder : IBinder
 
     public LiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
     	TypeClauseNode typeClauseNode;
     
@@ -144,7 +145,7 @@ public partial class CSharpBinder : IBinder
             	break;
             default:
             	typeClauseNode = CSharpFacts.Types.Void.ToTypeClause();
-            	compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(literalExpressionNode.LiteralSyntaxToken.TextSpan, $"{nameof(BindLiteralExpressionNode)}(...) failed to map SyntaxKind: '{literalExpressionNode.LiteralSyntaxToken.SyntaxKind}'");
+            	parserModel.DiagnosticBag.ReportTodoException(literalExpressionNode.LiteralSyntaxToken.TextSpan, $"{nameof(BindLiteralExpressionNode)}(...) failed to map SyntaxKind: '{literalExpressionNode.LiteralSyntaxToken.SyntaxKind}'");
             	break;
     	}
 
@@ -157,7 +158,8 @@ public partial class CSharpBinder : IBinder
         IExpressionNode leftExpressionNode,
         ISyntaxToken operatorToken,
         IExpressionNode rightExpressionNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
         var problematicTextSpan = (TextEditorTextSpan?)null;
 
@@ -213,7 +215,7 @@ public partial class CSharpBinder : IBinder
                 $" for types: {leftExpressionNode.ConstructTextSpanRecursively().GetText()}" +
                 $" and {rightExpressionNode.ConstructTextSpanRecursively().GetText()}";
 
-            compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(problematicTextSpan.Value, errorMessage);
+            parserModel.DiagnosticBag.ReportTodoException(problematicTextSpan.Value, errorMessage);
         }
 
         return new BinaryOperatorNode(
@@ -259,12 +261,12 @@ public partial class CSharpBinder : IBinder
 
         if (!TryAddFunctionDefinitionNodeByScope(
         		compilationUnit,
-        		compilationUnit.ParserModel.BinderSession.ResourceUri,
-        		compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+        		compilationUnit.BinderSession.ResourceUri,
+        		compilationUnit.BinderSession.CurrentScopeIndexKey,
         		functionIdentifierText,
                 functionDefinitionNode))
         {
-            compilationUnit.ParserModel.BinderSession.DiagnosticBag.ReportAlreadyDefinedFunction(
+            compilationUnit.BinderSession.DiagnosticBag.ReportAlreadyDefinedFunction(
                 functionDefinitionNode.FunctionIdentifierToken.TextSpan,
                 functionIdentifierText);
         }
@@ -286,8 +288,8 @@ public partial class CSharpBinder : IBinder
 		// TODO: Wouldn't this have a '!' at the start? And '... && typeDefinitionNode is not null' (2024-10-25)
         if (TryGetTypeDefinitionHierarchically(
         		model,
-        		compilationUnit.ParserModel.BinderSession.ResourceUri,
-                compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+        		compilationUnit.BinderSession.ResourceUri,
+                compilationUnit.BinderSession.CurrentScopeIndexKey,
                 argumentTypeClauseNode.TypeIdentifierToken.TextSpan.GetText(),
                 out var typeDefinitionNode)
             || typeDefinitionNode is null)
@@ -309,7 +311,7 @@ public partial class CSharpBinder : IBinder
                 EndingIndexExclusive = functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.EndingIndexExclusive
             };
 
-            compilationUnit.ParserModel.BinderSession.DiagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(
+            compilationUnit.BinderSession.DiagnosticBag.ReportBadFunctionOptionalArgumentDueToMismatchInType(
                 optionalArgumentTextSpan,
                 functionArgumentEntryNode.VariableDeclarationNode.IdentifierToken.TextSpan.GetText(),
                 functionArgumentEntryNode.VariableDeclarationNode.TypeClauseNode.ValueType?.Name ?? "null",
@@ -344,7 +346,7 @@ public partial class CSharpBinder : IBinder
         NamespaceStatementNode namespaceStatementNode,
         CSharpCompilationUnit compilationUnit)
     {
-        compilationUnit.ParserModel.BinderSession.CurrentNamespaceStatementNode = namespaceStatementNode;
+        compilationUnit.BinderSession.CurrentNamespaceStatementNode = namespaceStatementNode;
     }
 
     public void BindNamespaceStatementNode(
@@ -380,14 +382,15 @@ public partial class CSharpBinder : IBinder
 
     public InheritanceStatementNode BindInheritanceStatementNode(
         TypeClauseNode typeClauseNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
         AddSymbolReference(new TypeSymbol(typeClauseNode.TypeIdentifierToken.TextSpan with
         {
             DecorationByte = (byte)GenericDecorationKind.Type
         }), compilationUnit);
 
-        compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(
+        parserModel.DiagnosticBag.ReportTodoException(
             typeClauseNode.TypeIdentifierToken.TextSpan,
             $"Implement {nameof(BindInheritanceStatementNode)}");
 
@@ -406,8 +409,8 @@ public partial class CSharpBinder : IBinder
         
         if (TryGetVariableDeclarationNodeByScope(
         		compilationUnit,
-        		compilationUnit.ParserModel.BinderSession.ResourceUri,
-        		compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+        		compilationUnit.BinderSession.ResourceUri,
+        		compilationUnit.BinderSession.CurrentScopeIndexKey,
         		text,
         		out var existingVariableDeclarationNode))
         {
@@ -419,13 +422,13 @@ public partial class CSharpBinder : IBinder
                 // (if there is an error where something is defined twice for example)
                 SetVariableDeclarationNodeByScope(
         			compilationUnit,
-                	compilationUnit.ParserModel.BinderSession.ResourceUri,
-        			compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+                	compilationUnit.BinderSession.ResourceUri,
+        			compilationUnit.BinderSession.CurrentScopeIndexKey,
                 	text,
                 	variableDeclarationNode);
             }
 
-            compilationUnit.ParserModel.BinderSession.DiagnosticBag.ReportAlreadyDefinedVariable(
+            compilationUnit.BinderSession.DiagnosticBag.ReportAlreadyDefinedVariable(
                 variableDeclarationNode.IdentifierToken.TextSpan,
                 text);
         }
@@ -433,8 +436,8 @@ public partial class CSharpBinder : IBinder
         {
         	_ = TryAddVariableDeclarationNodeByScope(
         		compilationUnit,
-        		compilationUnit.ParserModel.BinderSession.ResourceUri,
-    			compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+        		compilationUnit.BinderSession.ResourceUri,
+    			compilationUnit.BinderSession.CurrentScopeIndexKey,
             	text,
             	variableDeclarationNode);
         }
@@ -449,8 +452,8 @@ public partial class CSharpBinder : IBinder
 
         if (TryGetVariableDeclarationHierarchically(
         		compilationUnit,
-                compilationUnit.ParserModel.BinderSession.ResourceUri,
-                compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+                compilationUnit.BinderSession.ResourceUri,
+                compilationUnit.BinderSession.CurrentScopeIndexKey,
                 text,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -474,7 +477,7 @@ public partial class CSharpBinder : IBinder
                 variableIdentifierToken,
                 variableDeclarationNode);
 
-            compilationUnit.ParserModel.BinderSession.DiagnosticBag.ReportUndefinedVariable(
+            compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
                 variableIdentifierToken.TextSpan,
                 text);
         }
@@ -492,8 +495,8 @@ public partial class CSharpBinder : IBinder
 
         if (TryGetVariableDeclarationHierarchically(
         		compilationUnit,
-                compilationUnit.ParserModel.BinderSession.ResourceUri,
-                compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+                compilationUnit.BinderSession.ResourceUri,
+                compilationUnit.BinderSession.CurrentScopeIndexKey,
                 text,
                 out var variableDeclarationNode)
             && variableDeclarationNode is not null)
@@ -508,13 +511,13 @@ public partial class CSharpBinder : IBinder
         {
             if (UtilityApi.IsContextualKeywordSyntaxKind(text))
             {
-                compilationUnit.ParserModel.BinderSession.DiagnosticBag.TheNameDoesNotExistInTheCurrentContext(
+                compilationUnit.BinderSession.DiagnosticBag.TheNameDoesNotExistInTheCurrentContext(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
                     text);
             }
             else
             {
-                compilationUnit.ParserModel.BinderSession.DiagnosticBag.ReportUndefinedVariable(
+                compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedVariable(
                     variableAssignmentExpressionNode.VariableIdentifierToken.TextSpan,
                     text);
             }
@@ -551,8 +554,8 @@ public partial class CSharpBinder : IBinder
 
         if (TryGetFunctionHierarchically(
         		compilationUnit,
-                compilationUnit.ParserModel.BinderSession.ResourceUri,
-                compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+                compilationUnit.BinderSession.ResourceUri,
+                compilationUnit.BinderSession.CurrentScopeIndexKey,
                 functionInvocationIdentifierText,
                 out var functionDefinitionNode) &&
             functionDefinitionNode is not null)
@@ -561,7 +564,7 @@ public partial class CSharpBinder : IBinder
         }
         else
         {
-            compilationUnit.ParserModel.BinderSession.DiagnosticBag.ReportUndefinedFunction(
+            compilationUnit.BinderSession.DiagnosticBag.ReportUndefinedFunction(
                 functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan,
                 functionInvocationIdentifierText);
         }
@@ -623,7 +626,7 @@ public partial class CSharpBinder : IBinder
     {
         AddSymbolReference(new NamespaceSymbol(usingStatementNode.NamespaceIdentifier.TextSpan), compilationUnit);
 
-        compilationUnit.ParserModel.BinderSession.CurrentUsingStatementNodeList.Add(usingStatementNode);
+        compilationUnit.BinderSession.CurrentUsingStatementNodeList.Add(usingStatementNode);
         AddNamespaceToCurrentScope(usingStatementNode.NamespaceIdentifier.TextSpan.GetText(), compilationUnit);
     }
 
@@ -654,13 +657,13 @@ public partial class CSharpBinder : IBinder
     {
         var scope = new Scope(
         	codeBlockOwner,
-        	indexKey: compilationUnit.ParserModel.BinderSession.GetNextIndexKey(),
-		    parentIndexKey: compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+        	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
+		    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
 		    textSpan.StartingIndexInclusive,
 		    endingIndexExclusive: null);
 
-        compilationUnit.ParserModel.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
-        compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
+        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
     }
 
 	public void AddNamespaceToCurrentScope(string namespaceString, IParserModel parserModel) =>
@@ -682,8 +685,8 @@ public partial class CSharpBinder : IBinder
             {
             	_ = TryAddTypeDefinitionNodeByScope(
         				compilationUnit,
-	            		compilationUnit.ParserModel.BinderSession.ResourceUri,
-	            		compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+	            		compilationUnit.BinderSession.ResourceUri,
+	            		compilationUnit.BinderSession.CurrentScopeIndexKey,
 	            		typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText(),
 	            		typeDefinitionNode);
             }
@@ -692,47 +695,48 @@ public partial class CSharpBinder : IBinder
 
     public void CloseScope(
         TextEditorTextSpan textSpan,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
     	// Check if it is the global scope, if so return early.
     	{
-	    	if (compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey == 0)
+	    	if (compilationUnit.BinderSession.CurrentScopeIndexKey == 0)
 	    		return;
     	}
     	
-    	var inBuilder = compilationUnit.ParserModel.CurrentCodeBlockBuilder;
+    	var inBuilder = parserModel.CurrentCodeBlockBuilder;
     	var inOwner = inBuilder.CodeBlockOwner;
     	
-    	var outBuilder = compilationUnit.ParserModel.CurrentCodeBlockBuilder.Parent;
+    	var outBuilder = parserModel.CurrentCodeBlockBuilder.Parent;
     	var outOwner = outBuilder?.CodeBlockOwner;
     	
     	// Update Scope
     	{
-	    	var scope = compilationUnit.ParserModel.BinderSession.ScopeList[compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey];
+	    	var scope = compilationUnit.BinderSession.ScopeList[compilationUnit.BinderSession.CurrentScopeIndexKey];
 	    	scope.EndingIndexExclusive = textSpan.EndingIndexExclusive;
-	    	compilationUnit.ParserModel.BinderSession.ScopeList[compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey] = scope;
+	    	compilationUnit.BinderSession.ScopeList[compilationUnit.BinderSession.CurrentScopeIndexKey] = scope;
 	    	
 	    	// Restore Parent Scope
 			if (scope.ParentIndexKey is not null)
 			{
-				compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
+				compilationUnit.BinderSession.CurrentScopeIndexKey = scope.ParentIndexKey.Value;
 			}
     	}
     	
     	// Update CodeBlockOwner
     	if (inOwner is not null)
     	{
-	        inOwner.SetCodeBlockNode(inBuilder.Build(), compilationUnit.ParserModel.DiagnosticBag, compilationUnit.ParserModel.TokenWalker);
+	        inOwner.SetCodeBlockNode(inBuilder.Build(), parserModel.DiagnosticBag, parserModel.TokenWalker);
 			
 			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
-				compilationUnit.ParserModel.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit);
+				compilationUnit.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit);
 			else if (inOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
-				compilationUnit.ParserModel.Binder.BindTypeDefinitionNode((TypeDefinitionNode)inOwner, compilationUnit, true);
+				compilationUnit.Binder.BindTypeDefinitionNode((TypeDefinitionNode)inOwner, compilationUnit, true);
 			
 			// Restore Parent CodeBlockBuilder
 			if (outBuilder is not null)
 			{
-				compilationUnit.ParserModel.CurrentCodeBlockBuilder = outBuilder;
+				parserModel.CurrentCodeBlockBuilder = outBuilder;
 				outBuilder.InnerPendingCodeBlockOwner = null;
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
@@ -751,15 +755,15 @@ public partial class CSharpBinder : IBinder
         bool shouldOverwrite = false)
     {
         var typeIdentifierText = typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
-        var currentNamespaceStatementText = compilationUnit.ParserModel.BinderSession.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
+        var currentNamespaceStatementText = compilationUnit.BinderSession.CurrentNamespaceStatementNode.IdentifierToken.TextSpan.GetText();
         var namespaceAndTypeIdentifiers = new NamespaceAndTypeIdentifiers(currentNamespaceStatementText, typeIdentifierText);
 
         typeDefinitionNode.EncompassingNamespaceIdentifierString = currentNamespaceStatementText;
         
         if (TryGetTypeDefinitionNodeByScope(
         		compilationUnit,
-        		compilationUnit.ParserModel.BinderSession.ResourceUri,
-        		compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+        		compilationUnit.BinderSession.ResourceUri,
+        		compilationUnit.BinderSession.CurrentScopeIndexKey,
         		typeIdentifierText,
         		out var existingTypeDefinitionNode))
         {
@@ -767,8 +771,8 @@ public partial class CSharpBinder : IBinder
         	{
         		SetTypeDefinitionNodeByScope(
         			compilationUnit,
-        			compilationUnit.ParserModel.BinderSession.ResourceUri,
-	        		compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+        			compilationUnit.BinderSession.ResourceUri,
+	        		compilationUnit.BinderSession.CurrentScopeIndexKey,
 	        		typeIdentifierText,
 	        		typeDefinitionNode);
         	}
@@ -777,8 +781,8 @@ public partial class CSharpBinder : IBinder
         {
         	_ = TryAddTypeDefinitionNodeByScope(
         		compilationUnit,
-    			compilationUnit.ParserModel.BinderSession.ResourceUri,
-        		compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+    			compilationUnit.BinderSession.ResourceUri,
+        		compilationUnit.BinderSession.CurrentScopeIndexKey,
         		typeIdentifierText,
         		typeDefinitionNode);
         }
@@ -800,10 +804,10 @@ public partial class CSharpBinder : IBinder
     {
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
-            compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey);
+            compilationUnit.BinderSession.CurrentScopeIndexKey);
 
         var symbolDefinition = new SymbolDefinition(
-            compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+            compilationUnit.BinderSession.CurrentScopeIndexKey,
             symbol);
 
         if (!_symbolDefinitions.TryAdd(
@@ -829,14 +833,14 @@ public partial class CSharpBinder : IBinder
     {
         var symbolDefinitionId = ISymbol.GetSymbolDefinitionId(
             symbol.TextSpan.GetText(),
-            compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey);
+            compilationUnit.BinderSession.CurrentScopeIndexKey);
 
         if (!_symbolDefinitions.TryGetValue(
                 symbolDefinitionId,
                 out var symbolDefinition))
         {
             symbolDefinition = new SymbolDefinition(
-                compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey,
+                compilationUnit.BinderSession.CurrentScopeIndexKey,
                 symbol)
             {
                 IsFabricated = true
@@ -853,7 +857,7 @@ public partial class CSharpBinder : IBinder
 
         symbolDefinition.SymbolReferences.Add(new SymbolReference(
             symbol,
-            compilationUnit.ParserModel.BinderSession.CurrentScopeIndexKey));
+            compilationUnit.BinderSession.CurrentScopeIndexKey));
     }
 
     public void CreateVariableSymbol(
@@ -1104,9 +1108,9 @@ public partial class CSharpBinder : IBinder
     public bool TryGetBinderSession(CSharpCompilationUnit? compilationUnit, ResourceUri resourceUri, out IBinderSession binderSession)
     {
     	if (compilationUnit is not null &&
-    		resourceUri == compilationUnit.ParserModel.BinderSession.ResourceUri)
+    		resourceUri == compilationUnit.BinderSession.ResourceUri)
     	{
-    		binderSession = compilationUnit.ParserModel.BinderSession;
+    		binderSession = compilationUnit.BinderSession;
     		return true;
     	}
     	
@@ -1733,7 +1737,7 @@ public partial class CSharpBinder : IBinder
 	    	{
 	    		foreach (var argument in typeDefinitionNode.PrimaryConstructorFunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 		    	{
-		    		compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+		    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 		    	}
 	    	}
     	}
@@ -1741,27 +1745,27 @@ public partial class CSharpBinder : IBinder
     	{
     		var namespaceStatementNode = (NamespaceStatementNode)codeBlockOwner;
     		var namespaceString = namespaceStatementNode.IdentifierToken.TextSpan.GetText();
-        	compilationUnit.ParserModel.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit);
+        	compilationUnit.Binder.AddNamespaceToCurrentScope(namespaceString, compilationUnit);
     	}
     	else if (codeBlockOwner.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
     	{
     		var functionDefinitionNode = (FunctionDefinitionNode)codeBlockOwner;
     		foreach (var argument in functionDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 	    	{
-	    		compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+	    		compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 	    	}
     	}
     	else if (codeBlockOwner.SyntaxKind == SyntaxKind.ForeachStatementNode)
     	{
     		var foreachStatementNode = (ForeachStatementNode)codeBlockOwner;
-    		compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(foreachStatementNode.VariableDeclarationNode, compilationUnit);
+    		compilationUnit.Binder.BindVariableDeclarationNode(foreachStatementNode.VariableDeclarationNode, compilationUnit);
     	}
     	else if (codeBlockOwner.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
     	{
     		var constructorDefinitionNode = (ConstructorDefinitionNode)codeBlockOwner;
     		foreach (var argument in constructorDefinitionNode.FunctionArgumentsListingNode.FunctionArgumentEntryNodeList)
 			{
-				compilationUnit.ParserModel.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
+				compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 			}
     	}
     }

@@ -40,13 +40,13 @@ public class CSharpStatementBuilder
 	/// are parsed by the main loop,
 	///
 	/// Then check that the last item in the StatementBuilder.ChildList
-	/// has been added to the compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.
+	/// has been added to the parserModel.CurrentCodeBlockBuilder.ChildList.
 	///
 	/// If it was not yet added, then add it.
 	///
 	/// Lastly, clear the StatementBuilder.ChildList.
 	/// </summary>
-	public void FinishStatement(CSharpCompilationUnit compilationUnit)
+	public void FinishStatement(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		if (ChildList.Count == 0)
 			return;
@@ -55,13 +55,13 @@ public class CSharpStatementBuilder
 		
 		ISyntax codeBlockBuilderSyntax;
 		
-		if (compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Count == 0)
+		if (parserModel.CurrentCodeBlockBuilder.ChildList.Count == 0)
 			codeBlockBuilderSyntax = EmptyExpressionNode.Empty;
 		else
-			codeBlockBuilderSyntax = compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList[^1];
+			codeBlockBuilderSyntax = parserModel.CurrentCodeBlockBuilder.ChildList[^1];
 			
 		if (!Object.ReferenceEquals(statementSyntax, codeBlockBuilderSyntax))
-			compilationUnit.ParserModel.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
+			parserModel.CurrentCodeBlockBuilder.ChildList.Add(statementSyntax);
 		
 		ChildList.Clear();
 	}

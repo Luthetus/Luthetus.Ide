@@ -74,16 +74,15 @@ public sealed class CSharpCompilerService : CompilerService
 			x => x.TextEditorPresentationKey == CompilerServiceDiagnosticPresentationFacts.PresentationKey);
 		
 		var cSharpCompilationUnit = new CSharpCompilationUnit(resourceUri, CSharpBinder);
-		cSharpCompilationUnit.Lexer = new CSharpLexer(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
-		cSharpCompilationUnit.Lexer.Lex();
+		
+		cSharpCompilationUnit.LexerOutput = CSharpLexer.Lex(resourceUri, presentationModel.PendingCalculation.ContentAtRequest);
 
 		// Even if the parser throws an exception, be sure to
 		// make use of the Lexer to do whatever syntax highlighting is possible.
 		try
 		{
 			cSharpCompilationUnit.BinderSession = (CSharpBinderSession)CSharpBinder.StartBinderSession(resourceUri);
-			var parser = new CSharpParser();
-			parser.Parse(cSharpCompilationUnit);
+			CSharpParser.Parse(cSharpCompilationUnit);
 		}
 		finally
 		{
@@ -93,8 +92,8 @@ public sealed class CSharpCompilerService : CompilerService
 				{
 					var resource = (CSharpResource)_resourceMap[resourceUri];
 					
-			        resource.EscapeCharacterList = cSharpCompilationUnit.Lexer.EscapeCharacterList;
-					resource.SyntaxTokenList = cSharpCompilationUnit.Lexer.SyntaxTokenList;
+			        resource.EscapeCharacterList = cSharpCompilationUnit.LexerOutput.EscapeCharacterList;
+					resource.SyntaxTokenList = cSharpCompilationUnit.LexerOutput.SyntaxTokenList;
 
 					if (cSharpCompilationUnit is not null)
 						resource.CompilationUnit = cSharpCompilationUnit;
