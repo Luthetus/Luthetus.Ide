@@ -127,7 +127,8 @@ public partial class CSharpBinder : IBinder
 
     public LiteralExpressionNode BindLiteralExpressionNode(
         LiteralExpressionNode literalExpressionNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
     	TypeClauseNode typeClauseNode;
     
@@ -144,7 +145,7 @@ public partial class CSharpBinder : IBinder
             	break;
             default:
             	typeClauseNode = CSharpFacts.Types.Void.ToTypeClause();
-            	compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(literalExpressionNode.LiteralSyntaxToken.TextSpan, $"{nameof(BindLiteralExpressionNode)}(...) failed to map SyntaxKind: '{literalExpressionNode.LiteralSyntaxToken.SyntaxKind}'");
+            	parserModel.DiagnosticBag.ReportTodoException(literalExpressionNode.LiteralSyntaxToken.TextSpan, $"{nameof(BindLiteralExpressionNode)}(...) failed to map SyntaxKind: '{literalExpressionNode.LiteralSyntaxToken.SyntaxKind}'");
             	break;
     	}
 
@@ -157,7 +158,8 @@ public partial class CSharpBinder : IBinder
         IExpressionNode leftExpressionNode,
         ISyntaxToken operatorToken,
         IExpressionNode rightExpressionNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
         var problematicTextSpan = (TextEditorTextSpan?)null;
 
@@ -213,7 +215,7 @@ public partial class CSharpBinder : IBinder
                 $" for types: {leftExpressionNode.ConstructTextSpanRecursively().GetText()}" +
                 $" and {rightExpressionNode.ConstructTextSpanRecursively().GetText()}";
 
-            compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(problematicTextSpan.Value, errorMessage);
+            parserModel.DiagnosticBag.ReportTodoException(problematicTextSpan.Value, errorMessage);
         }
 
         return new BinaryOperatorNode(
@@ -380,14 +382,15 @@ public partial class CSharpBinder : IBinder
 
     public InheritanceStatementNode BindInheritanceStatementNode(
         TypeClauseNode typeClauseNode,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
         AddSymbolReference(new TypeSymbol(typeClauseNode.TypeIdentifierToken.TextSpan with
         {
             DecorationByte = (byte)GenericDecorationKind.Type
         }), compilationUnit);
 
-        compilationUnit.ParserModel.DiagnosticBag.ReportTodoException(
+        parserModel.DiagnosticBag.ReportTodoException(
             typeClauseNode.TypeIdentifierToken.TextSpan,
             $"Implement {nameof(BindInheritanceStatementNode)}");
 
@@ -692,7 +695,8 @@ public partial class CSharpBinder : IBinder
 
     public void CloseScope(
         TextEditorTextSpan textSpan,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
     	// Check if it is the global scope, if so return early.
     	{
@@ -700,10 +704,10 @@ public partial class CSharpBinder : IBinder
 	    		return;
     	}
     	
-    	var inBuilder = compilationUnit.ParserModel.CurrentCodeBlockBuilder;
+    	var inBuilder = parserModel.CurrentCodeBlockBuilder;
     	var inOwner = inBuilder.CodeBlockOwner;
     	
-    	var outBuilder = compilationUnit.ParserModel.CurrentCodeBlockBuilder.Parent;
+    	var outBuilder = parserModel.CurrentCodeBlockBuilder.Parent;
     	var outOwner = outBuilder?.CodeBlockOwner;
     	
     	// Update Scope
@@ -722,7 +726,7 @@ public partial class CSharpBinder : IBinder
     	// Update CodeBlockOwner
     	if (inOwner is not null)
     	{
-	        inOwner.SetCodeBlockNode(inBuilder.Build(), compilationUnit.ParserModel.DiagnosticBag, compilationUnit.ParserModel.TokenWalker);
+	        inOwner.SetCodeBlockNode(inBuilder.Build(), parserModel.DiagnosticBag, parserModel.TokenWalker);
 			
 			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
 				compilationUnit.Binder.BindNamespaceStatementNode((NamespaceStatementNode)inOwner, compilationUnit);
@@ -732,7 +736,7 @@ public partial class CSharpBinder : IBinder
 			// Restore Parent CodeBlockBuilder
 			if (outBuilder is not null)
 			{
-				compilationUnit.ParserModel.CurrentCodeBlockBuilder = outBuilder;
+				parserModel.CurrentCodeBlockBuilder = outBuilder;
 				outBuilder.InnerPendingCodeBlockOwner = null;
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&

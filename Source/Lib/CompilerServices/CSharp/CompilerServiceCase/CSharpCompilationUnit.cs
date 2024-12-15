@@ -22,10 +22,12 @@ public sealed class CSharpCompilationUnit : ICompilationUnit
 
 	public ResourceUri ResourceUri { get; set; }
     public CSharpLexerOutput LexerOutput { get; set; }
-    public CSharpParser Parser { get; set; }
-    public CSharpParserModel ParserModel { get; set; }
     public CSharpBinder Binder { get; set; }
     public CSharpBinderSession BinderSession { get; set; }
     public CodeBlockNode RootCodeBlockNode { get; set; }
+    
+    /// <summary>
+    /// This seems to no longer get set (noticed this on 2024-12-14).
+    /// </summary>
     public ImmutableArray<TextEditorDiagnostic> DiagnosticsList { get; init; }
 }

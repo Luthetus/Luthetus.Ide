@@ -82,8 +82,7 @@ public sealed class CSharpCompilerService : CompilerService
 		try
 		{
 			cSharpCompilationUnit.BinderSession = (CSharpBinderSession)CSharpBinder.StartBinderSession(resourceUri);
-			var parser = new CSharpParser();
-			parser.Parse(cSharpCompilationUnit);
+			CSharpParser.Parse(cSharpCompilationUnit);
 		}
 		finally
 		{

@@ -11,29 +11,31 @@ public static class ParseTypes
 {
     public static void HandleStaticClassIdentifier(
         IdentifierToken consumedIdentifierToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
     }
 
     public static void HandleUndefinedTypeOrNamespaceReference(
         IdentifierToken consumedIdentifierToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
     }
 
     /// <summary>
     /// This method is used for generic type definition such as, 'class List&lt;T&gt; { ... }'
     /// </summary>
-    public static GenericArgumentsListingNode HandleGenericArguments(CSharpCompilationUnit compilationUnit)
+    public static GenericArgumentsListingNode HandleGenericArguments(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	var openAngleBracketToken = (OpenAngleBracketToken)compilationUnit.ParserModel.TokenWalker.Consume();
+    	var openAngleBracketToken = (OpenAngleBracketToken)parserModel.TokenWalker.Consume();
     
-    	if (SyntaxKind.CloseAngleBracketToken == compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind)
+    	if (SyntaxKind.CloseAngleBracketToken == parserModel.TokenWalker.Current.SyntaxKind)
         {
             return new GenericArgumentsListingNode(
                 openAngleBracketToken,
                 ImmutableArray<GenericArgumentEntryNode>.Empty,
-                (CloseAngleBracketToken)compilationUnit.ParserModel.TokenWalker.Consume());
+                (CloseAngleBracketToken)parserModel.TokenWalker.Consume());
         }
 
         var mutableGenericArgumentsListing = new List<GenericArgumentEntryNode>();
@@ -41,7 +43,7 @@ public static class ParseTypes
         while (true)
         {
             // TypeClause
-            var typeClauseNode = MatchTypeClause(compilationUnit);
+            var typeClauseNode = MatchTypeClause(compilationUnit, ref parserModel);
 
             if (typeClauseNode.IsFabricated)
                 break;
@@ -49,9 +51,9 @@ public static class ParseTypes
             var genericArgumentEntryNode = new GenericArgumentEntryNode(typeClauseNode);
             mutableGenericArgumentsListing.Add(genericArgumentEntryNode);
 
-            if (SyntaxKind.CommaToken == compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind)
+            if (SyntaxKind.CommaToken == parserModel.TokenWalker.Current.SyntaxKind)
             {
-                var commaToken = (CommaToken)compilationUnit.ParserModel.TokenWalker.Consume();
+                var commaToken = (CommaToken)parserModel.TokenWalker.Consume();
 
                 // TODO: Track comma tokens?
                 //
@@ -63,7 +65,7 @@ public static class ParseTypes
             }
         }
 
-        var closeAngleBracketToken = (CloseAngleBracketToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
+        var closeAngleBracketToken = (CloseAngleBracketToken)parserModel.TokenWalker.Match(SyntaxKind.CloseAngleBracketToken);
 
         return new GenericArgumentsListingNode(
             openAngleBracketToken,
@@ -73,7 +75,8 @@ public static class ParseTypes
 
     public static void HandleAttribute(
         OpenSquareBracketToken consumedOpenSquareBracketToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
     }
 
@@ -89,20 +92,20 @@ public static class ParseTypes
 	/// Furthermore, because there is a need to disambiguate, more checks are performed in this method
 	/// than in <see cref="MatchTypeClause"/>.
 	/// </summary>
-	public static bool IsPossibleTypeClause(ISyntaxToken syntaxToken, CSharpCompilationUnit compilationUnit)
+	public static bool IsPossibleTypeClause(ISyntaxToken syntaxToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		return false;
 	}
 
-    public static TypeClauseNode MatchTypeClause(CSharpCompilationUnit compilationUnit)
+    public static TypeClauseNode MatchTypeClause(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, out var expressionNode))
+    	if (ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, ref parserModel, out var expressionNode))
     	{
     		return (TypeClauseNode)expressionNode;
     	}
     	else
     	{
-    		var syntaxToken = (IdentifierToken)compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
+    		var syntaxToken = (IdentifierToken)parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
     		
     		return new TypeClauseNode(
 	            syntaxToken,
@@ -112,15 +115,15 @@ public static class ParseTypes
     	
         /*ISyntaxToken syntaxToken;
 		
-		if (UtilityApi.IsKeywordSyntaxKind(compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind) &&
-                (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind) ||
-                UtilityApi.IsVarContextualKeyword(compilationUnit, compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind)))
+		if (UtilityApi.IsKeywordSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind) &&
+                (UtilityApi.IsTypeIdentifierKeywordSyntaxKind(parserModel.TokenWalker.Current.SyntaxKind) ||
+                UtilityApi.IsVarContextualKeyword(compilationUnit, parserModel.TokenWalker.Current.SyntaxKind)))
 		{
-            syntaxToken = compilationUnit.ParserModel.TokenWalker.Consume();
+            syntaxToken = parserModel.TokenWalker.Consume();
         }
         else
         {
-            syntaxToken = compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
+            syntaxToken = parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
         }
 
         var typeClauseNode = new TypeClauseNode(
@@ -128,9 +131,9 @@ public static class ParseTypes
             null,
             null);
 
-        compilationUnit.ParserModel.Binder.BindTypeClauseNode(typeClauseNode, compilationUnit);
+        parserModel.Binder.BindTypeClauseNode(typeClauseNode, compilationUnit);
 
-        if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
         {
         	var genericParametersListingNode = (GenericParametersListingNode)ParseOthers.Force_ParseExpression(
         		SyntaxKind.GenericParametersListingNode,
@@ -139,16 +142,16 @@ public static class ParseTypes
             typeClauseNode.SetGenericParametersListingNode(genericParametersListingNode);
         }
         
-        if (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.QuestionMarkToken)
+        if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.QuestionMarkToken)
         {
         	typeClauseNode.HasQuestionMark = true;
-        	_ = compilationUnit.ParserModel.TokenWalker.Consume();
+        	_ = parserModel.TokenWalker.Consume();
 		}
         
-        while (compilationUnit.ParserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
+        while (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenSquareBracketToken)
         {
-            var openSquareBracketToken = compilationUnit.ParserModel.TokenWalker.Consume();
-            var closeSquareBracketToken = compilationUnit.ParserModel.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
+            var openSquareBracketToken = parserModel.TokenWalker.Consume();
+            var closeSquareBracketToken = parserModel.TokenWalker.Match(SyntaxKind.CloseSquareBracketToken);
 
             var arraySyntaxTokenTextSpan = syntaxToken.TextSpan with
             {
@@ -184,7 +187,8 @@ public static class ParseTypes
     public static void HandlePrimaryConstructorDefinition(
         TypeDefinitionNode typeDefinitionNode,
         OpenParenthesisToken consumedOpenParenthesisToken,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
     }
 }

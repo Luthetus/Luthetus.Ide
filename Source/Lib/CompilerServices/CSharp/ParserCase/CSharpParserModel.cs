@@ -11,7 +11,11 @@ using Luthetus.CompilerServices.CSharp.BinderCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
-public class CSharpParserModel
+/// <summary>
+/// The computational state for the CSharpParser is contained within this type.
+/// The output of the CSharpParser is the <see cref="CSharpCompilationUnit"/>.<see cref="CSharpCompilationUnit.RootCodeBlockNode"/>
+/// </summary>
+public struct CSharpParserModel
 {
     public CSharpParserModel(
         TokenWalker tokenWalker,

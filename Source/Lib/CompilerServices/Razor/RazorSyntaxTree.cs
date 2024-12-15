@@ -111,8 +111,7 @@ public class RazorSyntaxTree
 		
 		compilationUnit.BinderSession = (CSharpBinderSession)compilationUnit.Binder.StartBinderSession(_codebehindResourceUri);
 		
-		var parser = new CSharpParser();
-        parser.Parse(compilationUnit);
+		CSharpParser.Parse(compilationUnit);
         
         SemanticResultRazor = new SemanticResultRazor(
             compilationUnit,
