@@ -2,8 +2,11 @@
 ![Example GIF](./Images/Ide/Gifs/9.5.1BetterGif.gif)
 Gif length is 1 minute 35 seconds
 
-![Example GIF](./Images/Ide/memoryToday.png)
-Only 362 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.4)
+![Example GIF](./Images/Ide/Gifs/parseSolutionWideUpdated.gif)
+
+Only 287.1 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.7)
+
+The gif is sped up by cutting the frames in half.
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
