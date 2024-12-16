@@ -1,10 +1,12 @@
 using System.Text;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Lexers;
 
@@ -16,17 +18,15 @@ public class LexerTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
-			Lexer = new CSharpLexer(ResourceUri, SourceText);
-	        Lexer.Lex();
-	        Parser = new CSharpParser(Lexer);
-	        CompilationUnit = Parser.Parse();
+			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+	        CSharpParser.Parse(CompilationUnit);
 		}
 		
 		public string SourceText { get; set; }
 		public ResourceUri ResourceUri { get; set; }
-		public CSharpLexer Lexer { get; set; }
-		public CSharpParser Parser { get; set; }
-		public CompilationUnit CompilationUnit { get; set; }
+		public CSharpLexerOutput LexerOutput { get; set; }
+		public IBinder Binder => CompilationUnit.Binder;
+		public CSharpCompilationUnit CompilationUnit { get; set; }
 	}
 	
 	/// <summary>
@@ -141,12 +141,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "!";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var bangToken = (BangToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var bangToken = (BangToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.BangToken, bangToken.SyntaxKind);
     }
@@ -156,12 +155,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = ">";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var closeAngleBracketToken = (CloseAngleBracketToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var closeAngleBracketToken = (CloseAngleBracketToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.CloseAngleBracketToken, closeAngleBracketToken.SyntaxKind);
     }
@@ -177,12 +175,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "}";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var closeBraceToken = (CloseBraceToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var closeBraceToken = (CloseBraceToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.CloseBraceToken, closeBraceToken.SyntaxKind);
     }
@@ -192,12 +189,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = ")";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var closeParenthesisToken = (CloseParenthesisToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var closeParenthesisToken = (CloseParenthesisToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.CloseParenthesisToken, closeParenthesisToken.SyntaxKind);
     }
@@ -207,12 +203,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "]";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var closeSquareBracketToken = (CloseSquareBracketToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var closeSquareBracketToken = (CloseSquareBracketToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.CloseSquareBracketToken, closeSquareBracketToken.SyntaxKind);
     }
@@ -222,12 +217,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = ":";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var colonToken = (ColonToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var colonToken = (ColonToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.ColonToken, colonToken.SyntaxKind);
     }
@@ -237,12 +231,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = ",";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var commaToken = (CommaToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var commaToken = (CommaToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.CommaToken, commaToken.SyntaxKind);
     }
@@ -264,12 +257,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "$";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var dollarSignToken = (DollarSignToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var dollarSignToken = (DollarSignToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.DollarSignToken, dollarSignToken.SyntaxKind);
     }
@@ -285,12 +277,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "==";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var equalsEqualsToken = (EqualsEqualsToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var equalsEqualsToken = (EqualsEqualsToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.EqualsEqualsToken, equalsEqualsToken.SyntaxKind);
     }
@@ -300,12 +291,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "=";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var equalsToken = (EqualsToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var equalsToken = (EqualsToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.EqualsToken, equalsToken.SyntaxKind);
     }
@@ -366,12 +356,11 @@ TODO
     public void LEX_IdentifierToken(string sourceText)
     {
         var resourceUri = new ResourceUri("UnitTests");
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var identifierToken = (IdentifierToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var identifierToken = (IdentifierToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.IdentifierToken, identifierToken.SyntaxKind);
     }
@@ -399,12 +388,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = ".";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var memberAccessToken = (MemberAccessToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var memberAccessToken = (MemberAccessToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.MemberAccessToken, memberAccessToken.SyntaxKind);
     }
@@ -414,12 +402,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "--";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var minusMinusToken = (MinusMinusToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var minusMinusToken = (MinusMinusToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.MinusMinusToken, minusMinusToken.SyntaxKind);
     }
@@ -429,12 +416,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "-";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var minusToken = (MinusToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var minusToken = (MinusToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.MinusToken, minusToken.SyntaxKind);
     }
@@ -444,12 +430,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "2";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var numericLiteralToken = (NumericLiteralToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var numericLiteralToken = (NumericLiteralToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.NumericLiteralToken, numericLiteralToken.SyntaxKind);
     }
@@ -459,12 +444,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "<";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var openAngleBracketToken = (OpenAngleBracketToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var openAngleBracketToken = (OpenAngleBracketToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.OpenAngleBracketToken, openAngleBracketToken.SyntaxKind);
     }
@@ -480,12 +464,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "{";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var openBraceToken = (OpenBraceToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var openBraceToken = (OpenBraceToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.OpenBraceToken, openBraceToken.SyntaxKind);
     }
@@ -495,12 +478,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "(";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var openParenthesisToken = (OpenParenthesisToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var openParenthesisToken = (OpenParenthesisToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.OpenParenthesisToken, openParenthesisToken.SyntaxKind);
     }
@@ -510,12 +492,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "[";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var openSquareBracketToken = (OpenSquareBracketToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var openSquareBracketToken = (OpenSquareBracketToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.OpenSquareBracketToken, openSquareBracketToken.SyntaxKind);
     }
@@ -525,12 +506,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "++";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var plusPlusToken = (PlusPlusToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var plusPlusToken = (PlusPlusToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.PlusPlusToken, plusPlusToken.SyntaxKind);
     }
@@ -540,12 +520,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "+";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var plusToken = (PlusToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var plusToken = (PlusToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.PlusToken, plusToken.SyntaxKind);
     }
@@ -561,12 +540,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "??";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var questionMarkQuestionMarkToken = (QuestionMarkQuestionMarkToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var questionMarkQuestionMarkToken = (QuestionMarkQuestionMarkToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.QuestionMarkQuestionMarkToken, questionMarkQuestionMarkToken.SyntaxKind);
     }
@@ -576,12 +554,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "?";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var questionMarkToken = (QuestionMarkToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var questionMarkToken = (QuestionMarkToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.QuestionMarkToken, questionMarkToken.SyntaxKind);
     }
@@ -591,12 +568,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "*";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var starToken = (StarToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var starToken = (StarToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.StarToken, starToken.SyntaxKind);
     }
@@ -606,12 +582,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = ";";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var statementDelimiterToken = (StatementDelimiterToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var statementDelimiterToken = (StatementDelimiterToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.StatementDelimiterToken, statementDelimiterToken.SyntaxKind);
     }
@@ -621,12 +596,11 @@ TODO
     {
         var resourceUri = new ResourceUri("UnitTests");
         var sourceText = "\"Hello World!\"";
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
-        Assert.Equal(2, lexer.SyntaxTokenList.Length);
-        var stringLiteralToken = (StringLiteralToken)lexer.SyntaxTokenList[0];
-        var endOfFileToken = (EndOfFileToken)lexer.SyntaxTokenList[1];
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var stringLiteralToken = (StringLiteralToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.StringLiteralToken, stringLiteralToken.SyntaxKind);
     }
@@ -642,8 +616,7 @@ TODO
     {
         var sourceText = @"public const string Tag = ""`'\"";luth_clipboard"";".ReplaceLineEndings("\n");
         var resourceUri = new ResourceUri("UnitTests");
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         throw new NotImplementedException();
     }
@@ -656,11 +629,10 @@ TODO
 }".ReplaceLineEndings("\n");
 
         var resourceUri = new ResourceUri("UnitTests");
-        var lexer = new CSharpLexer(resourceUri, sourceText);
-        lexer.Lex();
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
 
         // Tokens: 'public' 'class' 'MyClass' '{' '}' 'EndOfFileToken'
-        Assert.Equal(6, lexer.SyntaxTokenList.Length);
+        Assert.Equal(6, lexerOutput.SyntaxTokenList.Count);
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
