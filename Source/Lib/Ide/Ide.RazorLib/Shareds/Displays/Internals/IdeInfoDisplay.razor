@@ -172,9 +172,26 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.7.8 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.8 </em> (2024-12-16)</div>
                 <ul>
-					<li>WIP_DESCRIPTION</li>
+                	<li>
+                		Show function arguments in the tooltip.
+                	</li>
+                	<li>
+						Fix: single statement bodies 'if (true) aaa;'. This was breaking the scope logic.
+					</li>
+                	<li>
+						Fix: function invocation as a statement.
+					</li>
+					<li>
+						Invoke 'ResourceWasModified(...)' first open of file. This permits consistent go-to definition resolution cross file.
+					</li>
+					<li>
+						Out, in, ref, params in function arguments listing (maybe in future change to check for any keyword?).
+					</li>
+					<li>
+						GetNodePositionIndices(...) for ConstructorDefinitionNode so the tooltip works.
+					</li>
                 </ul>
             </div>
             <div>
