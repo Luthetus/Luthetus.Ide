@@ -129,11 +129,27 @@ public class DisplayTracker : IDisposable
 		
 						if (modelModifier is null)
 							return Task.CompletedTask;
-		
+						
+						// If this 'ApplySyntaxHighlighting(...)' isn't redundantly invoked prior to
+						// the upcoming 'ResourceWasModified(...)' invocation,
+						// then there is an obnoxious "flicker" upon opening a file for the first time.
+						//
+						// This is because it initially opens with 'plain text' syntax highlighting
+						// for all the text.
+						//
+						// Then very soon after it gets the correct syntax highlighting applied.
+						// The issue is specifically how quickly it gets the correct syntax highlighting.
+						//
+						// It is the same issue as putting a 'loading...' icon or text
+						// for an asynchronous event, but that event finishes in sub 200ms so the user
+						// sees a "flicker" of the 'loading...' text and it just is disorienting to see.
 						editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
 							editContext,
 							modelModifier);
 						
+						if (modelModifier.CompilerService is not null)	
+							modelModifier.CompilerService.ResourceWasModified(_resourceUri, Array.Empty<TextEditorTextSpan>());
+
 						return Task.CompletedTask;
 		            });
 				
