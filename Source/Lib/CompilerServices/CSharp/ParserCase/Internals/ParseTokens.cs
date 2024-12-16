@@ -30,8 +30,8 @@ public static class ParseTokens
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableReferenceNode);
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.ConstructorInvocationExpressionNode);
     	
-    	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+    	if ((parserModel.CurrentCodeBlockBuilder.CodeBlockOwner?.SyntaxKind ?? SyntaxKind.EmptyNode) !=
+    			SyntaxKind.TypeDefinitionNode)
     	{
     		// There is a syntax conflict between a ConstructorDefinitionNode and a FunctionInvocationNode.
     		//
@@ -57,7 +57,7 @@ public static class ParseTokens
 		
 		switch (expressionNode.SyntaxKind)
 		{
-			case SyntaxKind.TypeClauseNode:
+			case SyntaxKind.TypeClauseNode:				
 				MoveToHandleTypeClauseNode(originalTokenIndex, (TypeClauseNode)expressionNode, compilationUnit, ref parserModel);
 				return;
 			case SyntaxKind.VariableDeclarationNode:
@@ -413,12 +413,10 @@ public static class ParseTokens
     {
     	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
-        	var closureCurrentCompilationUnitBuilder = parserModel.CurrentCodeBlockBuilder;
-            ICodeBlockOwner? nextCodeBlockOwner = null;
+        	var namespaceStatementNode = (NamespaceStatementNode)parserModel.SyntaxStack.Pop();
+        	
+            ICodeBlockOwner? nextCodeBlockOwner = namespaceStatementNode;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
-
-            var namespaceStatementNode = (NamespaceStatementNode)parserModel.SyntaxStack.Pop();
-            nextCodeBlockOwner = namespaceStatementNode;
             
             namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
@@ -440,15 +438,12 @@ public static class ParseTokens
         	var pendingChild = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
         
         	compilationUnit.Binder.OpenScope(pendingChild, CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, compilationUnit);
-			parserModel.CurrentCodeBlockBuilder = new(parserModel.CurrentCodeBlockBuilder, pendingChild);
+        	
+			parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: pendingChild);
+			pendingChild.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 			compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(pendingChild, compilationUnit);
 			
 	        compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
-	
-	        if (parserModel.CurrentCodeBlockBuilder.Parent is not null)
-	            parserModel.CurrentCodeBlockBuilder = parserModel.CurrentCodeBlockBuilder.Parent;
-	            
-	        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
         }
     }
 

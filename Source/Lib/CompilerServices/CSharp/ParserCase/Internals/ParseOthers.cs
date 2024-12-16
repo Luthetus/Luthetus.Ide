@@ -78,6 +78,42 @@ public static class ParseOthers
 	/// In order to "short circut" or "force exit" from the expression code back to the statement code,
 	/// if the root primary expression is not equal to the parserModel.ForceParseExpressionSyntaxKind
 	/// then stop.
+	///
+	/// ------------------------------
+	/// Retrospective comment (2024-12-16):
+	/// It appears that the 'SyntaxKind? syntaxKind'
+	/// argument is nullable in order to permit
+	/// usage of 'parserModel.ForceParseExpressionInitialPrimaryExpression'
+	/// without specifying a specific syntax kind?
+	///
+	/// The use case:
+	/// FunctionInvocationNode as a statement
+	/// will currently erroneously parse as a TypeClauseNode.
+	///
+	/// But, once the statement code receives the 'TypeClauseNode' result
+	/// from 'TryParseExpression', the next ISyntaxToken
+	/// is OpenParenthesisToken.
+	///
+	/// Therefore, it is obvious at this point that we really wanted
+	/// to parse a function invocation node.
+	///
+	/// But, if there is any code that comes after the function invocation,
+	/// and prior to the statement delimiter.
+	///
+	/// Then a FunctionInvocationNode would not sufficiently represent the statement-expression.
+	/// 
+	/// i.e.: MyMethod() + 2;
+	///
+	/// So, I cannot 'TryParseExpression' for a SyntaxKind.FunctionInvocationNode for this reason.
+	///
+	/// But, I need to initialize the 'ParseExpression' method with the 'TypeClauseNode'
+	/// (the 'TypeClauseNode' is in reality the function identifier / generic arguments to the function if there are any).
+	///
+	/// Then, the 'ParseExpression(...)' code can see that there is a 'TypeClauseNode' merging with an OpenParenthesisToken,
+	/// and that the only meaning this can have is function invocation.
+	///
+	/// At that point, go on to move the 'TypeClauseNode' to be a function identifier, and the
+	/// generic arguments for the function invocation, and go on from there.
     /// </summary>
     public static bool TryParseExpression(SyntaxKind? syntaxKind, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, out IExpressionNode expressionNode)
     {
@@ -94,7 +130,10 @@ public static class ParseOthers
     		Console.WriteLine($"try => {expressionNode.SyntaxKind}\n");
     		#endif
     		
-    		return parserModel.TryParseExpressionSyntaxKindList.Contains(expressionNode.SyntaxKind);
+    		if (parserModel.TryParseExpressionSyntaxKindList.Count == 0)
+    			return true;
+    		else
+    			return parserModel.TryParseExpressionSyntaxKindList.Contains(expressionNode.SyntaxKind);
     	}
     	finally
     	{

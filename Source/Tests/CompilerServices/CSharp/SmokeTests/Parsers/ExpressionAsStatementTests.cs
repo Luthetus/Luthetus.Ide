@@ -10,6 +10,8 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
+using Luthetus.CompilerServices.CSharp.BinderCase;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
@@ -38,17 +40,17 @@ public partial class ExpressionAsStatementTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
-			Lexer = new CSharpLexer(ResourceUri, SourceText);
-	        Lexer.Lex();
-	        Parser = new CSharpParser(Lexer);
-	        CompilationUnit = Parser.Parse();
+			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
+			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
+	        CSharpParser.Parse(CompilationUnit);
 		}
 		
 		public string SourceText { get; set; }
 		public ResourceUri ResourceUri { get; set; }
-		public CSharpLexer Lexer { get; set; }
-		public CSharpParser Parser { get; set; }
-		public CompilationUnit CompilationUnit { get; set; }
+		public CSharpLexerOutput LexerOutput { get; set; }
+		public IBinder Binder => CompilationUnit.Binder;
+		public CSharpCompilationUnit CompilationUnit { get; set; }
 	}
 
     [Fact]
@@ -580,7 +582,7 @@ public partial class ExpressionAsStatementTests
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
         var test = new Test("new Dictionary<int, Person>(0, \"Test\")");
         
-        foreach (var token in test.Lexer.SyntaxTokenList)
+        foreach (var token in test.LexerOutput.SyntaxTokenList)
     	{
     		Console.WriteLine(token.SyntaxKind);
     	}
@@ -609,7 +611,7 @@ public partial class ExpressionAsStatementTests
     	// The constructor parameters are nonsensical and just exist for the sake of this test case.
         var test = new Test("0");
         
-        foreach (var token in test.Lexer.SyntaxTokenList)
+        foreach (var token in test.LexerOutput.SyntaxTokenList)
     	{
     		Console.WriteLine(token.SyntaxKind);
     	}
@@ -1545,7 +1547,7 @@ public partial class ExpressionAsStatementTests
 		
 		var whileStatementNode = (WhileStatementNode)topCodeBlock.GetChildList().Single();
 		
-		((IBinder)test.Parser.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
+		((IBinder)test.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
 		Assert.Equal(2, binderSession.ScopeList.Count);
     }
     
@@ -1568,7 +1570,7 @@ void Aaa()
 ");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		((IBinder)test.Parser.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
+		((IBinder)test.Binder).TryGetBinderSession(test.ResourceUri, out var binderSession);
 		Assert.Equal(3, binderSession.ScopeList.Count);
 		
 		foreach (var child in topCodeBlock.GetChildList())
@@ -1966,6 +1968,17 @@ Func(decimalPercentProgress);
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void Array()
+    {
+    	var test = new Test(@"return someList[0];");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
+		
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")

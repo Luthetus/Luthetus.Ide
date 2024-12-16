@@ -14,6 +14,7 @@
 	
 	string? methodName;
 	GenericParametersListingNode? genericParametersListingNode;
+	FunctionArgumentsListingNode? functionArgumentsListingNode;
 	bool isConstructorInvocation = false;
 	
 	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
@@ -23,6 +24,7 @@
 		returnTypeClauseNodeText = null;
 		methodName = null;
 		genericParametersListingNode = null;
+		functionArgumentsListingNode = null;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null &&
 			 (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
@@ -37,6 +39,7 @@
 			returnTypeClauseNodeText = null;
 			methodName = functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
 			genericParametersListingNode = functionDefinitionNode.GenericArgumentsListingNode;
+			functionArgumentsListingNode = functionDefinitionNode.FunctionArgumentsListingNode;
 		}
 		else if (syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 		{
@@ -45,6 +48,7 @@
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			genericParametersListingNode = null;
+			functionArgumentsListingNode = constructorDefinitionNode.FunctionArgumentsListingNode;
 		}
 		else
 		{
@@ -52,6 +56,7 @@
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
 			genericParametersListingNode = null;
+			functionArgumentsListingNode = null;
 		}
 	}
 	else if (syntaxViewModelLocal.TargetNode is not null &&
@@ -67,6 +72,7 @@
 			returnTypeClauseNodeText = null;
 			methodName = functionInvocationNode.FunctionInvocationIdentifierToken.TextSpan.GetText();
 			genericParametersListingNode = functionInvocationNode.GenericParametersListingNode;
+			functionArgumentsListingNode = null;
 		}
 		else if (syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.ConstructorInvocationExpressionNode)
 		{
@@ -75,6 +81,7 @@
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			genericParametersListingNode = null;
+			functionArgumentsListingNode = null;
 		}
 		else
 		{
@@ -82,6 +89,7 @@
 			returnTypeClauseNodeText = null;
 			methodName = "unknown syntax";
 			genericParametersListingNode = null;
+			functionArgumentsListingNode = null;
 		}
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null &&
@@ -96,6 +104,7 @@
 			returnTypeClauseNodeText = null;
 			methodName = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
 			genericParametersListingNode = null;
+			functionArgumentsListingNode = null;
 		}
 		else if (syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.ConstructorSymbol)
 		{
@@ -103,6 +112,7 @@
 			returnTypeClauseNodeText = syntaxViewModelLocal.TargetSymbol.TextSpan.GetText();
 			methodName = null;
 			genericParametersListingNode = null;
+			functionArgumentsListingNode = null;
 		}
 		else
 		{
@@ -110,6 +120,7 @@
 			returnTypeClauseNodeText = null;
 			methodName = null;
 			genericParametersListingNode = null;
+			functionArgumentsListingNode = null;
 		}
 	}
 	else
@@ -119,6 +130,7 @@
 		returnTypeClauseNodeText = null;
 		methodName = null;
 		genericParametersListingNode = null;
+		functionArgumentsListingNode = null;
 	}
 }
 
@@ -171,5 +183,30 @@
 		<GenericSyntaxDisplay SyntaxViewModel="syntaxViewModel" />
 	}
 	
-	()
+	@if (functionArgumentsListingNode is null)
+	{
+		<text>()</text>
+	}
+	else
+	{
+		<text>(</text>
+		@for (int badIndex = 0; badIndex < functionArgumentsListingNode.FunctionArgumentEntryNodeList.Count; badIndex++)
+		{
+			var index = badIndex;
+			var argumentEntryNode = functionArgumentsListingNode.FunctionArgumentEntryNodeList[index];
+			
+			var syntaxViewModel = new SyntaxViewModel(
+				targetSymbol: null,
+				targetNode: argumentEntryNode.VariableDeclarationNode,
+				definitionNode: argumentEntryNode.VariableDeclarationNode,
+				depth: syntaxViewModelLocal.Depth + 1);
+			<VariableSyntaxDisplay SyntaxViewModel="syntaxViewModel"/>
+			
+			if (badIndex < functionArgumentsListingNode.FunctionArgumentEntryNodeList.Count - 1)
+			{
+				<text>, </text>
+			}
+		}
+		<text>)</text>
+	}
 </span>

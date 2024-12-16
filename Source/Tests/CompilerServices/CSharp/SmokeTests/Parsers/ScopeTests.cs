@@ -11,6 +11,7 @@ using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
 using Luthetus.CompilerServices.CSharp.Facts;
+using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
@@ -41,18 +42,14 @@ public class ScopeTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
-			Lexer = new CSharpLexer(ResourceUri, SourceText);
-	        Lexer.Lex();
-	        Parser = new CSharpParser(Lexer);
-	        CompilationUnit = Parser.Parse();
+			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+	        CSharpParser.Parse(CompilationUnit);
 		}
 		
 		public string SourceText { get; set; }
 		public ResourceUri ResourceUri { get; set; }
-		public CSharpLexer Lexer { get; set; }
-		public CSharpParser Parser { get; set; }
 		public IBinder Binder => CompilationUnit.Binder;
-		public CompilationUnit CompilationUnit { get; set; }
+		public CSharpCompilationUnit CompilationUnit { get; set; }
 	}
 	
 	[Fact]
