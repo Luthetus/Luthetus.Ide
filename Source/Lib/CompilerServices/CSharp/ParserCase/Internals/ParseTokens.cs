@@ -57,8 +57,15 @@ public static class ParseTokens
 		
 		switch (expressionNode.SyntaxKind)
 		{
-			case SyntaxKind.TypeClauseNode:
-				MoveToHandleTypeClauseNode(originalTokenIndex, (TypeClauseNode)expressionNode, compilationUnit, ref parserModel);
+			case SyntaxKind.TypeClauseNode:				
+				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+    				parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+    			{
+    				MoveToHandleFunctionInvocation((TypeClauseNode)expressionNode, compilationUnit, ref parserModel);
+				    return;
+    			}
+    			
+    			MoveToHandleTypeClauseNode(originalTokenIndex, (TypeClauseNode)expressionNode, compilationUnit, ref parserModel);
 				return;
 			case SyntaxKind.VariableDeclarationNode:
 				if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
@@ -121,6 +128,23 @@ public static class ParseTokens
 				 parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
 		{
 			ParsePropertyDefinition_ExpressionBound(compilationUnit, ref parserModel);
+		}
+    }
+    
+    public static void MoveToHandleFunctionInvocation(TypeClauseNode typeClauseNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
+    	parserModel.ForceParseExpressionInitialPrimaryExpression = typeClauseNode;
+    	
+    	var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
+    	
+    	if (!successParse)
+		{
+			expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+			parserModel.StatementBuilder.ChildList.Add(expressionNode);
+		}
+		else
+		{
+			parserModel.StatementBuilder.ChildList.Add(expressionNode);
 		}
     }
     

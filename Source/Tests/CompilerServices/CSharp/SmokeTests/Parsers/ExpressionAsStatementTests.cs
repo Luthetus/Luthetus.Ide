@@ -10,8 +10,9 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
-using Luthetus.CompilerServices.CSharp.Facts;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
+using Luthetus.CompilerServices.CSharp.Facts;
 
 namespace Luthetus.CompilerServices.CSharp.Tests.SmokeTests.Parsers;
 
@@ -39,7 +40,9 @@ public partial class ExpressionAsStatementTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
+			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
 			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
 	        CSharpParser.Parse(CompilationUnit);
 		}
 		
@@ -1965,6 +1968,17 @@ Func(decimalPercentProgress);
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var variableAssignmentExpressionNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableAssignmentExpressionNode, variableAssignmentExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void Array()
+    {
+    	var test = new Test(@"return someList[0];");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
+		
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
