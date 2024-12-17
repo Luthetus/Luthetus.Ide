@@ -84,6 +84,8 @@ public partial class CSharpBinder
 				return FunctionParametersListingMergeToken((FunctionParametersListingNode)expressionPrimary, token, compilationUnit, ref parserModel);
 			case SyntaxKind.FunctionArgumentsListingNode:
 				return FunctionArgumentsListingMergeToken((FunctionArgumentsListingNode)expressionPrimary, token, compilationUnit, ref parserModel);
+			case SyntaxKind.ReturnStatementNode:
+				return ReturnStatementMergeToken((ReturnStatementNode)expressionPrimary, token, compilationUnit, ref parserModel);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeToken((BadExpressionNode)expressionPrimary, token, compilationUnit, ref parserModel);
 			default:
@@ -126,6 +128,8 @@ public partial class CSharpBinder
 				return FunctionParametersListingMergeExpression((FunctionParametersListingNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.FunctionArgumentsListingNode:
 				return FunctionArgumentsListingMergeExpression((FunctionArgumentsListingNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
+			case SyntaxKind.ReturnStatementNode:
+				return ReturnStatementMergeExpression((ReturnStatementNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.BadExpressionNode:
 				return BadMergeExpression((BadExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			default:
@@ -818,7 +822,6 @@ public partial class CSharpBinder
 				BindStringVerbatimExpression((AtToken)token, compilationUnit);
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
-				
 				if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
 				{
 					// Parse the variable reference / variable declaration
@@ -829,6 +832,7 @@ public partial class CSharpBinder
 			case SyntaxKind.InTokenKeyword:
 			case SyntaxKind.RefTokenKeyword:
 			case SyntaxKind.ParamsTokenKeyword:
+			case SyntaxKind.ThisTokenKeyword:
 				return emptyExpressionNode;
 			case SyntaxKind.OpenAngleBracketToken:
 				var genericParametersListingNode = new GenericParametersListingNode(
@@ -836,8 +840,12 @@ public partial class CSharpBinder
 			        new List<GenericParameterEntryNode>(),
 				    closeAngleBracketToken: default);
 				
-				parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, genericParametersListingNode));    
+				parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, genericParametersListingNode));
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, genericParametersListingNode));
+				return EmptyExpressionNode.Empty;
+			case SyntaxKind.ReturnTokenKeyword:
+				var returnStatementNode = new ReturnStatementNode((KeywordToken)token, EmptyExpressionNode.Empty);
+				parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, returnStatementNode));
 				return EmptyExpressionNode.Empty;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
@@ -1017,6 +1025,22 @@ public partial class CSharpBinder
 		functionArgumentsListingNode.FunctionArgumentEntryNodeList.Add(functionArgumentEntryNode);
 		
 		return functionArgumentsListingNode;
+	}
+	
+	public IExpressionNode ReturnStatementMergeToken(
+		ReturnStatementNode returnStatementNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		switch (token.SyntaxKind)
+		{
+			default:
+				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), returnStatementNode, token);
+		}
+	}
+	
+	public IExpressionNode ReturnStatementMergeExpression(
+		ReturnStatementNode returnStatementNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), returnStatementNode, expressionSecondary);
 	}
 	
 	public IExpressionNode LambdaMergeToken(

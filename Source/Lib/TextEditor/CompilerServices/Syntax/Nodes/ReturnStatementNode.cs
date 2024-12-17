@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed class ReturnStatementNode : ISyntaxNode
+public sealed class ReturnStatementNode : IExpressionNode
 {
     public ReturnStatementNode(KeywordToken keywordToken, IExpressionNode expressionNode)
     {
@@ -17,6 +17,7 @@ public sealed class ReturnStatementNode : ISyntaxNode
 
     public KeywordToken KeywordToken { get; }
     public IExpressionNode ExpressionNode { get; }
+    public TypeClauseNode ResultTypeClauseNode => ExpressionNode.ResultTypeClauseNode;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.ReturnStatementNode;

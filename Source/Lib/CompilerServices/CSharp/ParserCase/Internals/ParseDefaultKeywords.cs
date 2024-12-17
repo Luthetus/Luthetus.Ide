@@ -871,7 +871,9 @@ public class ParseDefaultKeywords
 
         compilationUnit.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit);
         compilationUnit.Binder.BindTypeIdentifier(identifierToken, compilationUnit);
+        
         parserModel.SyntaxStack.Push(typeDefinitionNode);
+        parserModel.StatementBuilder.ChildList.Add(typeDefinitionNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
     }
 
@@ -908,5 +910,6 @@ public class ParseDefaultKeywords
     public static void HandleReturnTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
+		// var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
     }
 }
