@@ -1,4 +1,4 @@
-﻿namespace Luthetus.Common.RazorLib.Keys.Models;
+namespace Luthetus.Common.RazorLib.Keys.Models;
 
 public record struct Key<T>(Guid Guid)
 {
