@@ -156,7 +156,8 @@ public class ParseFunctions
             	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OutTokenKeyword ||
             		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.InTokenKeyword ||
             		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.RefTokenKeyword ||
-            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ParamsTokenKeyword)
+            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ParamsTokenKeyword ||
+            		parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ThisTokenKeyword)
             	{
             		_ = parserModel.TokenWalker.Consume();
             	}

@@ -286,6 +286,12 @@ public static class ParseTokens
 
     public static void ParseOpenParenthesisToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+    	{
+    		var typeDefinitionNode = (TypeDefinitionNode)parserModel.SyntaxStack.Pop();
+    		var functionArgumentsListingNode = ParseFunctions.HandleFunctionArguments(compilationUnit, ref parserModel);
+    		typeDefinitionNode.SetPrimaryConstructorFunctionArgumentsListingNode(functionArgumentsListingNode);
+    	}
     }
 
     public static void ParseCloseParenthesisToken(
