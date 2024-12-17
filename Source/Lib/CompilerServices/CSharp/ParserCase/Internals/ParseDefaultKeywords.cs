@@ -871,7 +871,9 @@ public class ParseDefaultKeywords
 
         compilationUnit.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit);
         compilationUnit.Binder.BindTypeIdentifier(identifierToken, compilationUnit);
+        
         parserModel.SyntaxStack.Push(typeDefinitionNode);
+        parserModel.StatementBuilder.ChildList.Add(typeDefinitionNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
     }
 
