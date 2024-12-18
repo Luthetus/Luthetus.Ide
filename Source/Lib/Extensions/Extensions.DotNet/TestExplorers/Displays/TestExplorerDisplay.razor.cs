@@ -53,6 +53,7 @@ public partial class TestExplorerDisplay : FluxorComponent
 
 		base.OnInitialized();
 	}
+	
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
@@ -135,5 +136,10 @@ public partial class TestExplorerDisplay : FluxorComponent
 				
 				return Task.CompletedTask;
 			});
+	}
+	
+	private void DispatchShouldInitializeEffect()
+	{
+		Dispatcher.Dispatch(new TestExplorerState.ShouldInitializeEffect());
 	}
 }

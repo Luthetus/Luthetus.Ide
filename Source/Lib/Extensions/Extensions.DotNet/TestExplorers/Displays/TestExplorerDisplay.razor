@@ -49,6 +49,20 @@
 				<div class="luth_ide_test-explorer-top"
 				     style="height: 1.8em;"
 				     title="Sln: @(renderBatchValidated.TestExplorerState.SolutionFilePath ?? "null");">
+				     
+				    @{
+		            	var iconDriver = new IconDriver(
+							AppOptionsStateWrap.Value.Options.IconSizeInPixels,
+							AppOptionsStateWrap.Value.Options.IconSizeInPixels);
+		            }
+		            
+					<button class="luth_button"
+							style="display: inline;"
+							title="Discover tests for all projects"
+							@onclick="DispatchShouldInitializeEffect">
+						@IconRefreshFragment.Render(iconDriver)
+					</button>
+					
 					Total: @(renderBatchValidated.TestExplorerState.TotalTestCount);
 					<span class="luth_tree-view-warning">NotRan: @(renderBatchValidated.TestExplorerState.NotRanTestHashSet.Count);</span>
 					<em class="luth_em">Passed: @(renderBatchValidated.TestExplorerState.PassedTestHashSet.Count);</em>

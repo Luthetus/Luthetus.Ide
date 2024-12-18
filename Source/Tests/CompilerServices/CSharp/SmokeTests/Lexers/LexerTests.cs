@@ -137,6 +137,62 @@ TODO
     }
 
     [Fact]
+    public void LEX_PipeToken()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "|";
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
+
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var pipeToken = (PipeToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
+
+        Assert.Equal(SyntaxKind.PipeToken, pipeToken.SyntaxKind);
+    }
+
+    [Fact]
+    public void LEX_PipePipeToken()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "||";
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
+
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var pipePipeToken = (PipePipeToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
+
+        Assert.Equal(SyntaxKind.PipePipeToken, pipePipeToken.SyntaxKind);
+    }
+    
+    [Fact]
+    public void LEX_AmpersandToken()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "&";
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
+
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var ampersandToken = (AmpersandToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
+
+        Assert.Equal(SyntaxKind.AmpersandToken, ampersandToken.SyntaxKind);
+    }
+
+    [Fact]
+    public void LEX_AmpersandAmpersandToken()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "&&";
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
+
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var ampersandAmpersandToken = (AmpersandAmpersandToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
+
+        Assert.Equal(SyntaxKind.AmpersandAmpersandToken, ampersandAmpersandToken.SyntaxKind);
+    }
+
+    [Fact]
     public void LEX_BangToken()
     {
         var resourceUri = new ResourceUri("UnitTests");

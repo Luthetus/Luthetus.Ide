@@ -167,6 +167,40 @@ public static class CSharpLexer
 				        lexerOutput.SyntaxTokenList.Add(new QuestionMarkToken(textSpan));
                     }
                     break;
+                case '|':
+                    if (stringWalker.PeekCharacter(1) == '|')
+                    {
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new PipePipeToken(textSpan));
+                    }
+                    else
+                    {
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new PipeToken(textSpan));
+                    }
+                    break;
+                case '&':
+                    if (stringWalker.PeekCharacter(1) == '&')
+                    {
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new AmpersandAmpersandToken(textSpan));
+                    }
+                    else
+                    {
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new AmpersandToken(textSpan));
+                    }
+                    break;
                 case '*':
                 {
                 	var entryPositionIndex = stringWalker.PositionIndex;
@@ -907,6 +941,7 @@ public static class CSharpLexer
 
         // Declare outside the while loop to avoid overhead of redeclaring each loop? not sure
         var isNewLineCharacter = false;
+        var firstWhitespaceCharacterPositionIndex = -1;
 
         while (!stringWalker.IsEof)
         {
@@ -916,6 +951,11 @@ public static class CSharpLexer
                 case '\n':
                     isNewLineCharacter = true;
                     break;
+                case '\t':
+                case ' ':
+                	if (firstWhitespaceCharacterPositionIndex == -1)
+                		firstWhitespaceCharacterPositionIndex = stringWalker.PositionIndex;
+                	break;
                 default:
                     break;
             }
@@ -925,11 +965,14 @@ public static class CSharpLexer
 
             _ = stringWalker.ReadCharacter();
         }
+        
+        if (firstWhitespaceCharacterPositionIndex == -1)
+        	firstWhitespaceCharacterPositionIndex = stringWalker.PositionIndex;
 
         var textSpan = new TextEditorTextSpan(
             entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
+            firstWhitespaceCharacterPositionIndex,
+            (byte)GenericDecorationKind.PreprocessorDirective,
             stringWalker.ResourceUri,
             stringWalker.SourceText);
 
