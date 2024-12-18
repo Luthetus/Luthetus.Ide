@@ -167,6 +167,40 @@ public static class CSharpLexer
 				        lexerOutput.SyntaxTokenList.Add(new QuestionMarkToken(textSpan));
                     }
                     break;
+                case '|':
+                    if (stringWalker.PeekCharacter(1) == '|')
+                    {
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new PipePipeToken(textSpan));
+                    }
+                    else
+                    {
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new PipeToken(textSpan));
+                    }
+                    break;
+                case '&':
+                    if (stringWalker.PeekCharacter(1) == '&')
+                    {
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new AmpersandAmpersandToken(textSpan));
+                    }
+                    else
+                    {
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new AmpersandToken(textSpan));
+                    }
+                    break;
                 case '*':
                 {
                 	var entryPositionIndex = stringWalker.PositionIndex;
