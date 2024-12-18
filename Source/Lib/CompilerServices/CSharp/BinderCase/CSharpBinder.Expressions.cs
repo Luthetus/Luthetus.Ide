@@ -847,6 +847,14 @@ public partial class CSharpBinder
 				var returnStatementNode = new ReturnStatementNode((KeywordToken)token, EmptyExpressionNode.Empty);
 				parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, returnStatementNode));
 				return EmptyExpressionNode.Empty;
+			case SyntaxKind.BangToken:
+			case SyntaxKind.PipeToken:
+			case SyntaxKind.PipePipeToken:
+			case SyntaxKind.AmpersandToken:
+			case SyntaxKind.AmpersandAmpersandToken:
+			case SyntaxKind.PlusPlusToken:
+			case SyntaxKind.MinusMinusToken:
+				return emptyExpressionNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);
 		}
@@ -1321,9 +1329,11 @@ public partial class CSharpBinder
 				}
 				
 				goto default;
-			case SyntaxKind.WithTokenContextualKeyword:
-				Console.WriteLine("case SyntaxKind.WithTokenContextualKeyword)");
-				goto default;
+			case SyntaxKind.OpenSquareBracketToken:
+				typeClauseNode.ArrayRank++;
+				return typeClauseNode;
+			case SyntaxKind.CloseSquareBracketToken:
+				return typeClauseNode;
 			default:
 				if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind))
 				{
