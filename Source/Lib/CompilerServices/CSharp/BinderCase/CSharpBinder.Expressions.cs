@@ -848,6 +848,12 @@ public partial class CSharpBinder
 				parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, returnStatementNode));
 				return EmptyExpressionNode.Empty;
 			case SyntaxKind.BangToken:
+			case SyntaxKind.PipeToken:
+			case SyntaxKind.PipePipeToken:
+			case SyntaxKind.AmpersandToken:
+			case SyntaxKind.AmpersandAmpersandToken:
+			case SyntaxKind.PlusPlusToken:
+			case SyntaxKind.MinusMinusToken:
 				return emptyExpressionNode;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), emptyExpressionNode, token);

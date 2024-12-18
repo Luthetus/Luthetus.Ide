@@ -20,7 +20,7 @@ public class GenericDecorationMapper : IDecorationMapper
             GenericDecorationKind.CommentSingleLine => "luth_te_comment",
             GenericDecorationKind.CommentMultiLine => "luth_te_comment",
             GenericDecorationKind.Function => "luth_te_method",
-            GenericDecorationKind.PreprocessorDirective => "luth_te_keyword",
+            GenericDecorationKind.PreprocessorDirective => "luth_te_preprocessor-directive",
             GenericDecorationKind.DeliminationExtended => "luth_te_string-literal",
             GenericDecorationKind.Type => "luth_te_type",
             _ => string.Empty,
