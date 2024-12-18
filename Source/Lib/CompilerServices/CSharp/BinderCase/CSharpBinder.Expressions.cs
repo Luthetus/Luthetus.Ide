@@ -1321,9 +1321,11 @@ public partial class CSharpBinder
 				}
 				
 				goto default;
-			case SyntaxKind.WithTokenContextualKeyword:
-				Console.WriteLine("case SyntaxKind.WithTokenContextualKeyword)");
-				goto default;
+			case SyntaxKind.OpenSquareBracketToken:
+				typeClauseNode.ArrayRank++;
+				return typeClauseNode;
+			case SyntaxKind.CloseSquareBracketToken:
+				return typeClauseNode;
 			default:
 				if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind))
 				{

@@ -1971,9 +1971,54 @@ Func(decimalPercentProgress);
     }
     
     [Fact]
-    public void Array()
+    public void Array_Definition_RankOne()
     {
-    	var test = new Test(@"return someList[0];");
+    	var test = new Test(@"int[] someList;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+		Assert.Equal(1, variableDeclarationNode.TypeClauseNode.ArrayRank);
+    }
+    
+    [Fact]
+    public void Array_Definition_RankTwo()
+    {
+    	var test = new Test(@"int[][] someList;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+		Assert.Equal(2, variableDeclarationNode.TypeClauseNode.ArrayRank);
+    }
+    
+    [Fact]
+    public void Array_Definition_Nullable()
+    {
+    	var test = new Test(@"int[]? someList;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+		Assert.Equal(1, variableDeclarationNode.TypeClauseNode.ArrayRank);
+		Assert.True(variableDeclarationNode.TypeClauseNode.HasQuestionMark);
+    }
+    
+    [Fact]
+    public void Array_Assignment()
+    {
+    	var test = new Test(@"someList = new int[1];");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
+		
+    }
+    
+    [Fact]
+    public void Array_Access()
+    {
+    	var test = new Test(@"someList[0];");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
