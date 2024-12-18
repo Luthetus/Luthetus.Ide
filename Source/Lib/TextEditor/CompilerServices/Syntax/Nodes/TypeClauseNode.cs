@@ -71,6 +71,7 @@ public sealed class TypeClauseNode : IExpressionNode
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
     
     public bool HasQuestionMark { get; set; }
+    public int ArrayRank { get; set; }
 
     /// <summary>
     /// TODO: Change this attribute node property.
