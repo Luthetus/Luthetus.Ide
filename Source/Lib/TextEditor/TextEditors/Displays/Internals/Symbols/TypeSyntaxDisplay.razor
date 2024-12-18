@@ -14,6 +14,7 @@
 	GenericArgumentsListingNode? genericArgumentsListingNode;
 	GenericParametersListingNode? genericParametersListingNode;
 	bool? hasQuestionMark;
+	int arrayRank;
 	
 	if (syntaxViewModelLocal.DefinitionNode is null && syntaxViewModelLocal.TargetNode is null && syntaxViewModelLocal.TargetSymbol is null)
 	{
@@ -24,6 +25,7 @@
 		genericArgumentsListingNode = null;
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
+		arrayRank = 0;
 	}
 	else if (syntaxViewModelLocal.DefinitionNode is not null && syntaxViewModelLocal.DefinitionNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 	{
@@ -41,6 +43,7 @@
 		genericArgumentsListingNode = typeDefinitionNode.GenericArgumentsListingNode;
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
+		arrayRank = 0;
 	}
 	else if (syntaxViewModelLocal.TargetNode is not null && syntaxViewModelLocal.TargetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
 	{
@@ -58,6 +61,7 @@
 		genericArgumentsListingNode = null;
 		genericParametersListingNode = typeClauseNode.GenericParametersListingNode;
 		hasQuestionMark = typeClauseNode.HasQuestionMark;
+		arrayRank = typeClauseNode.ArrayRank;
 	}
 	else if (syntaxViewModelLocal.TargetSymbol is not null && syntaxViewModelLocal.TargetSymbol.SyntaxKind == SyntaxKind.TypeSymbol)
 	{
@@ -68,6 +72,7 @@
 		genericArgumentsListingNode = null;
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
+		arrayRank = 0;
 	}
 	else
 	{
@@ -78,6 +83,7 @@
 		genericArgumentsListingNode = null;
 		genericParametersListingNode = null;
 		hasQuestionMark = null;
+		arrayRank = 0;
 	}
 }
 
@@ -124,5 +130,13 @@
 	@if (hasQuestionMark is not null && hasQuestionMark.Value)
 	{
 		<text>?</text>
+	}
+	
+	@if (arrayRank > 0)
+	{
+		for (int badIndex = 0; badIndex < arrayRank; badIndex++)
+		{
+			<text>[]</text>
+		}
 	}
 </span>
