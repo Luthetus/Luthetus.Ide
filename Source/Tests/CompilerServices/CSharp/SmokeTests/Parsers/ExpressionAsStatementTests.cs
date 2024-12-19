@@ -77,6 +77,50 @@ public partial class ExpressionAsStatementTests
 	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
     }
     
+    /// <summary>
+    /// When encountering a binary operator,
+    /// change control from the expressionPrimary to the binary operator making the decisions.
+    ///
+    /// "Push" the binary expression node onto the ExpressionList with an EndOfFileToken delimiter.
+    ///
+    /// Then return an EmptyExpressionNode.
+    ///
+    /// Whatever the EmptyExpressionNode becomes will then eventually bubble back up to
+    /// be used as the right operand.
+    ///
+    /// This is being said in reference to how things currently are erroneously done.
+    /// In which a BinaryExpressionNode explicitly is looking for certain SyntaxKind.
+    ///
+    /// Checking the SyntaxKind is fine for binding whether there is a syntax error due
+    /// to an operator not being defined for various operands.
+    ///
+    /// But in terms of the parsing of an expression, it needs to just start a fresh EmptyExpressionNode
+    /// and grab the right operand that way.
+    /// </summary>
+    [Fact]
+    public void Numeric_Add_BinaryExpressionNode_Number_FunctionInvocation()
+    {
+		var test = new Test(@"1 + SomeMethod()");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
+		var textTypeClause = "int";
+		
+		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
+		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		
+	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
+	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
+	    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
+	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+    }
+    
     [Fact]
     public void Numeric_Add_BinaryExpressionNode_More()
     {

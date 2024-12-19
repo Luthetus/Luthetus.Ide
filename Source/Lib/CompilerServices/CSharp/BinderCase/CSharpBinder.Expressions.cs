@@ -52,6 +52,9 @@ public partial class CSharpBinder
 			return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
 		}
 		
+		if (UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
+			return HandleBinaryOperator(expressionPrimary, token, compilationUnit, ref parserModel);
+		
 		switch (expressionPrimary.SyntaxKind)
 		{
 			case SyntaxKind.EmptyExpressionNode:
@@ -135,6 +138,27 @@ public partial class CSharpBinder
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), expressionPrimary, expressionSecondary);
 		};
+	}
+	
+	public IExpressionNode HandleBinaryOperator(
+		IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (expressionPrimary.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+		{
+			var precedencePrimary = UtilityApi.GetOperatorPrecedence(expressionPrimary.SyntaxKind);
+			var precedenceSecondary = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
+			
+			if (precedenceSecondary > precedencePrimary)
+			{
+				// TODO: Rotate the nodes?
+			}
+		}
+		
+		var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+		var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+		var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+		parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+		return EmptyExpressionNode.Empty;
 	}
 
 	public IExpressionNode AmbiguousIdentifierMergeToken(
@@ -1179,19 +1203,7 @@ public partial class CSharpBinder
 	public IExpressionNode LiteralMergeToken(
 		LiteralExpressionNode literalExpressionNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		switch (token.SyntaxKind)
-		{
-			case SyntaxKind.PlusToken:
-			case SyntaxKind.MinusToken:
-			case SyntaxKind.StarToken:
-		    case SyntaxKind.DivisionToken:
-		    case SyntaxKind.EqualsEqualsToken:
-				var typeClauseNode = literalExpressionNode.ResultTypeClauseNode;
-				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-				return new BinaryExpressionNode(literalExpressionNode, binaryOperatorNode);
-			default:
-				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, token);
-		}
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, token);
 	}
 	
 	public IExpressionNode ParenthesizedMergeToken(
