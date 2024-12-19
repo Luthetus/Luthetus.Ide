@@ -180,7 +180,7 @@ public static class ParseOthers
     	var indexTokenRoot = parserModel.TokenWalker.Index;
     	var expressionPrimaryPreviousRoot = expressionPrimary;
     	
-    	while (!parserModel.TokenWalker.IsEof)
+    	while (true)
         {
         	#if DEBUG
         	WriteExpressionList(parserModel.ExpressionList);
@@ -208,7 +208,19 @@ public static class ParseOthers
 	    		}
     		}
 			
-			if (forceExit) // delimiterExpressionTuple.ExpressionNode is null
+			// The while loop used to be 'while (!parserModel.TokenWalker.IsEof)'
+			// This caused an issue where 'BubbleUpParseExpression(...)' would not run
+			// if the end of file was reached.
+			//
+			// Given how this parser is written, adding 'SyntaxKind.EndOfFile' to 'parserModel.ExpressionList'
+			// would follow the pattern of how 'SyntaxKind.StatementDelimiterToken' is written.
+			//
+			// But, the 'while (true)' loop makes me extremely uncomfortable.
+			//
+			// So I added '|| parserModel.TokenWalker.IsEof' here.
+			//
+			// If upon further inspection on way or the other is deemed safe then this redundancy can be removed.
+			if (forceExit || parserModel.TokenWalker.IsEof) // delimiterExpressionTuple.ExpressionNode is null
 			{
 				expressionPrimary = BubbleUpParseExpression(0, expressionPrimary, compilationUnit, ref parserModel);
 				break;
@@ -292,6 +304,7 @@ public static class ParseOthers
     	// It is vital that this 'clear' and 'add' are done in a way that permits an invoker of the 'ParseExpression' method to 'add' a similar 'forceExit' delimiter
     	// 	Example: 'parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));'
     	parserModel.ExpressionList.Clear();
+    	parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, null));
     	parserModel.ExpressionList.Add((SyntaxKind.StatementDelimiterToken, null));
     	
     	if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)

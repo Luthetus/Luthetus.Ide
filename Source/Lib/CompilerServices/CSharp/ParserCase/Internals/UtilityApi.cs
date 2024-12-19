@@ -81,6 +81,11 @@ public static class UtilityApi
             case SyntaxKind.MinusToken:
             case SyntaxKind.StarToken:
             case SyntaxKind.DivisionToken:
+            case SyntaxKind.EqualsToken:
+            case SyntaxKind.EqualsEqualsToken:
+            case SyntaxKind.AmpersandAmpersandToken:
+            case SyntaxKind.PipePipeToken:
+            case SyntaxKind.QuestionMarkQuestionMarkToken:
                 return true;
             default:
                 return false;
