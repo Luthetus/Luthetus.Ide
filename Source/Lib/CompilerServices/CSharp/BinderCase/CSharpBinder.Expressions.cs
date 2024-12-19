@@ -109,6 +109,8 @@ public partial class CSharpBinder
 	
 		switch (expressionPrimary.SyntaxKind)
 		{
+			case SyntaxKind.BinaryExpressionNode:
+				return BinaryMergeExpression((BinaryExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.CommaSeparatedExpressionNode:
@@ -494,6 +496,18 @@ public partial class CSharpBinder
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), binaryExpressionNode, token);
 		}
+	}
+	
+	public IExpressionNode BinaryMergeExpression(
+		BinaryExpressionNode binaryExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+		{
+			binaryExpressionNode.SetRightExpressionNode(expressionSecondary);
+			return binaryExpressionNode;
+		}
+	
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), binaryExpressionNode, expressionSecondary);
 	}
 	
 	public IExpressionNode CommaSeparatedMergeToken(

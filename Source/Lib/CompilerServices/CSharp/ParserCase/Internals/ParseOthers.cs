@@ -208,14 +208,14 @@ public static class ParseOthers
 	    		}
     		}
 			
-			// The while loop used to be while (!parserModel.TokenWalker.IsEof)
+			// The while loop used to be 'while (!parserModel.TokenWalker.IsEof)'
 			// This caused an issue where 'BubbleUpParseExpression(...)' would not run
 			// if the end of file was reached.
 			//
 			// Given how this parser is written, adding 'SyntaxKind.EndOfFile' to 'parserModel.ExpressionList'
 			// would follow the pattern of how 'SyntaxKind.StatementDelimiterToken' is written.
 			//
-			// But, the while (true) loop makes me extremely uncomfortable.
+			// But, the 'while (true)' loop makes me extremely uncomfortable.
 			//
 			// So I added '|| parserModel.TokenWalker.IsEof' here.
 			//
