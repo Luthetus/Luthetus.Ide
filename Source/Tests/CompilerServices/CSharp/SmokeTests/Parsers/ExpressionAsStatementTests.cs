@@ -241,7 +241,7 @@ public partial class ExpressionAsStatementTests
 		
 		// Left Expression
 	    {
-		    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+		    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
 		    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 		    Assert.Equal("1", rightLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
 	    }
@@ -257,7 +257,7 @@ public partial class ExpressionAsStatementTests
 	    
 	    // Right Expression
 		{
-			var rightBinaryExpressionNode = (BinaryExpressionNode)binaryExpressionNode.LeftExpressionNode;
+			var rightBinaryExpressionNode = (BinaryExpressionNode)binaryExpressionNode.RightExpressionNode;
 			Assert.Equal(textTypeClause, rightBinaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 			
 			// Temporarily swap variables for sanity #change

@@ -191,7 +191,7 @@ public partial class CSharpBinder
 					
 					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
 					
-					parentBinaryExpressionNode.SetRightExpressionNode(binaryExpressionNode);
+					//parentBinaryExpressionNode.SetRightExpressionNode(binaryExpressionNode);
 					
 					return EmptyExpressionNode.Empty;
 				}
