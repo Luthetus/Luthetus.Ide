@@ -126,8 +126,9 @@ public partial class ExpressionAsStatementTests
     {
     	var test = new Test(@"1 + 1 + 1");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-			
+		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
+		WriteChildrenIndentedRecursive(topCodeBlock);
 		var textTypeClause = "int";
 		
 		// Left Expression

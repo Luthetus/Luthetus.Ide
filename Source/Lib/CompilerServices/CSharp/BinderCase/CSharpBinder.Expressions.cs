@@ -145,22 +145,83 @@ public partial class CSharpBinder
 	public IExpressionNode HandleBinaryOperator(
 		IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		if (expressionPrimary.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+		Console.WriteLine("aaa HandleBinaryOperator");
+		
+		var parentExpressionNode = GetParentNode(expressionPrimary, compilationUnit, ref parserModel);
+		
+		if (parentExpressionNode.SyntaxKind == SyntaxKind.BinaryExpressionNode)
 		{
-			var precedencePrimary = UtilityApi.GetOperatorPrecedence(expressionPrimary.SyntaxKind);
-			var precedenceSecondary = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
+			Console.WriteLine("aaa if (parentExpressionNode.SyntaxKind == SyntaxKind.BinaryExpressionNode)");
 			
-			if (precedenceSecondary > precedencePrimary)
+			var parentBinaryExpressionNode = (BinaryExpressionNode)parentExpressionNode;
+			var precedenceParent = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
+			
+			var precedenceChild = UtilityApi.GetOperatorPrecedence(parentBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+			
+			if (parentBinaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
 			{
-				// TODO: Rotate the nodes?
+				if (precedenceParent >= precedenceChild)
+				{
+					// Child's left expression becomes the parent.
+					
+					parentBinaryExpressionNode.SetRightExpressionNode(expressionPrimary);
+					
+					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+					var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+					var binaryExpressionNode = new BinaryExpressionNode(parentBinaryExpressionNode, binaryOperatorNode);
+					
+					ClearFromExpressionList(parentBinaryExpressionNode, compilationUnit, ref parserModel);
+					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+					
+					return EmptyExpressionNode.Empty;
+				}
+				else
+				{
+					// Parent's right expression becomes the child.
+					
+					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+					var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+					var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+					
+					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+					
+					parentBinaryExpressionNode.SetRightExpressionNode(binaryExpressionNode);
+					
+					return EmptyExpressionNode.Empty;
+				}
+			}
+			else
+			{
+				// Weird situation?
+				// This sounds like it just wouldn't compile.
+				//
+				// Something like:
+				//     1 + 2 3 + 4
+				//
+				// NOTE: There is no operator between the '2' and the '3'.
+				//       It is just two binary expressions side by side.
+				//
+				// I think you'd want to pretend that the parent binary expression didn't exist
+				// for the sake of parser recovery.
+				
+				var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+				var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+				
+				ClearFromExpressionList(parentBinaryExpressionNode, compilationUnit, ref parserModel);
+				parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+				return EmptyExpressionNode.Empty;
 			}
 		}
 		
-		var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
-		var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-		var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
-		parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
-		return EmptyExpressionNode.Empty;
+		// Scope to avoid variable name collision.
+		{
+			var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+			var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+			return EmptyExpressionNode.Empty;
+		}
 	}
 
 	public IExpressionNode AmbiguousIdentifierMergeToken(
@@ -1642,5 +1703,38 @@ public partial class CSharpBinder
 			if (Object.ReferenceEquals(expressionNode, delimiterExpressionTuple.ExpressionNode))
 				parserModel.ExpressionList.RemoveAt(i);
 		}
+	}
+	
+	/// <summary>
+	/// 'bool foundChild' usage:
+	/// If the child is NOT in the ExpressionList then this is true,
+	///
+	/// But, if the child is in the ExpressionList, and is not the final entry in the ExpressionList,
+	/// then this needs to be set to 'false', otherwise a descendent node of 'childExpressionNode'
+	/// will be thought to be the parent node due to the list being traversed end to front order.
+	/// </summary>
+	public IExpressionNode GetParentNode(
+		IExpressionNode childExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool foundChild = true)
+	{
+		for (int i = parserModel.ExpressionList.Count - 1; i > -1; i--)
+		{
+			var delimiterExpressionTuple = parserModel.ExpressionList[i];
+			
+			if (foundChild)
+			{
+				if (delimiterExpressionTuple.ExpressionNode is null)
+					break;
+					
+				if (!Object.ReferenceEquals(childExpressionNode, delimiterExpressionTuple.ExpressionNode))
+					return delimiterExpressionTuple.ExpressionNode;
+			}
+			else
+			{
+				if (Object.ReferenceEquals(childExpressionNode, delimiterExpressionTuple.ExpressionNode))
+					foundChild = true;
+			}
+		}
+		
+		return EmptyExpressionNode.Empty;
 	}
 }
