@@ -1756,7 +1756,7 @@ public partial class CSharpBinder
 	{
 		if (parserModel.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.ColonToken)
 		{
-			_ = parserModel.TokenWalker.Consume(); // Consume the identifier
+			_ = parserModel.TokenWalker.Consume(); // Consume the identifierx
 			_ = parserModel.TokenWalker.Consume(); // Consume the ColonToken
 		}
 	
