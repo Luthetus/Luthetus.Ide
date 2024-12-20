@@ -1066,10 +1066,8 @@ public partial class CSharpBinder
 	public IExpressionNode FunctionParametersListingMergeExpression(
 		FunctionParametersListingNode functionParametersListingNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		Console.WriteLine("aaa FunctionParametersListingMergeExpression");
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
 		{
-			Console.WriteLine($"aaa CURRENT optional? bbb {expressionSecondary.SyntaxKind}");
 			return functionParametersListingNode;
 		}
 		
