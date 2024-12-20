@@ -168,7 +168,6 @@ public class ParseFunctions
 		    	
 		    	if (successTypeClauseNode)
 		    	{
-		    		// 'TypeClauseNode' or 'VariableDeclarationNode'
 		    		var successNameableToken = false;
 		    		
 		    		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
@@ -178,7 +177,11 @@ public class ParseFunctions
 		    			
 		    			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
 		    			{
-		    				// Optional
+		    				_ = parserModel.TokenWalker.Consume();
+		    				
+		    				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+		    				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, null));
+		    				var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 		    			}
 					        
 					    var variableDeclarationNode = new VariableDeclarationNode(
