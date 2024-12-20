@@ -52,6 +52,9 @@ public partial class CSharpBinder
 			return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
 		}
 		
+		if (UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
+			return HandleBinaryOperator(expressionPrimary, token, compilationUnit, ref parserModel);
+		
 		switch (expressionPrimary.SyntaxKind)
 		{
 			case SyntaxKind.EmptyExpressionNode:
@@ -106,6 +109,8 @@ public partial class CSharpBinder
 	
 		switch (expressionPrimary.SyntaxKind)
 		{
+			case SyntaxKind.BinaryExpressionNode:
+				return BinaryMergeExpression((BinaryExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.ParenthesizedExpressionNode:
 				return ParenthesizedMergeExpression((ParenthesizedExpressionNode)expressionPrimary, expressionSecondary, compilationUnit, ref parserModel);
 			case SyntaxKind.CommaSeparatedExpressionNode:
@@ -136,6 +141,84 @@ public partial class CSharpBinder
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), expressionPrimary, expressionSecondary);
 		};
 	}
+	
+	public IExpressionNode HandleBinaryOperator(
+		IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		var parentExpressionNode = GetParentNode(expressionPrimary, compilationUnit, ref parserModel);
+		
+		if (parentExpressionNode.SyntaxKind == SyntaxKind.BinaryExpressionNode)
+		{			
+			var parentBinaryExpressionNode = (BinaryExpressionNode)parentExpressionNode;
+			var precedenceParent = UtilityApi.GetOperatorPrecedence(parentBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+			
+			var precedenceChild = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
+			
+			if (parentBinaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+			{				
+				if (precedenceParent >= precedenceChild)
+				{
+					// Child's left expression becomes the parent.
+					
+					parentBinaryExpressionNode.SetRightExpressionNode(expressionPrimary);
+					
+					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+					var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+					var binaryExpressionNode = new BinaryExpressionNode(parentBinaryExpressionNode, binaryOperatorNode);
+					
+					ClearFromExpressionList(parentBinaryExpressionNode, compilationUnit, ref parserModel);
+					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+					
+					return EmptyExpressionNode.Empty;
+				}
+				else
+				{
+					// Parent's right expression becomes the child.
+					
+					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+					var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+					var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+					
+					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+					
+					//parentBinaryExpressionNode.SetRightExpressionNode(binaryExpressionNode);
+					
+					return EmptyExpressionNode.Empty;
+				}
+			}
+			else
+			{
+				// Weird situation?
+				// This sounds like it just wouldn't compile.
+				//
+				// Something like:
+				//     1 + 2 3 + 4
+				//
+				// NOTE: There is no operator between the '2' and the '3'.
+				//       It is just two binary expressions side by side.
+				//
+				// I think you'd want to pretend that the parent binary expression didn't exist
+				// for the sake of parser recovery.
+				
+				var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+				var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+				
+				ClearFromExpressionList(parentBinaryExpressionNode, compilationUnit, ref parserModel);
+				parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+				return EmptyExpressionNode.Empty;
+			}
+		}
+		
+		// Scope to avoid variable name collision.
+		{		
+			var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
+			var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
+			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
+			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, binaryExpressionNode));
+			return EmptyExpressionNode.Empty;
+		}
+	}
 
 	public IExpressionNode AmbiguousIdentifierMergeToken(
 		AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -159,10 +242,8 @@ public partial class CSharpBinder
 		    BindFunctionInvocationNode(
 		        functionInvocationNode,
 		        compilationUnit);
-
-			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
-			parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode.FunctionParametersListingNode));
-			return EmptyExpressionNode.Empty;
+			
+			return ParseFunctionParametersListingNode(functionInvocationNode, functionInvocationNode.FunctionParametersListingNode, compilationUnit, ref parserModel);
 		}
 		else if (token.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
 		{
@@ -472,6 +553,18 @@ public partial class CSharpBinder
 		}
 	}
 	
+	public IExpressionNode BinaryMergeExpression(
+		BinaryExpressionNode binaryExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (binaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
+		{
+			binaryExpressionNode.SetRightExpressionNode(expressionSecondary);
+			return binaryExpressionNode;
+		}
+	
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), binaryExpressionNode, expressionSecondary);
+	}
+	
 	public IExpressionNode CommaSeparatedMergeToken(
 		CommaSeparatedExpressionNode commaSeparatedExpressionNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
@@ -533,9 +626,8 @@ public partial class CSharpBinder
 			    constructorInvocationExpressionNode.SetFunctionParametersListingNode(functionParametersListingNode);
 				
 				constructorInvocationExpressionNode.ConstructorInvocationStageKind = ConstructorInvocationStageKind.FunctionParameters;
-				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, constructorInvocationExpressionNode));
-				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, constructorInvocationExpressionNode.FunctionParametersListingNode));
-				return EmptyExpressionNode.Empty;
+				
+				return ParseFunctionParametersListingNode(constructorInvocationExpressionNode, constructorInvocationExpressionNode.FunctionParametersListingNode, compilationUnit, ref parserModel);
 			case SyntaxKind.CloseParenthesisToken:
 				if (constructorInvocationExpressionNode.FunctionParametersListingNode is not null)
 				{
@@ -961,6 +1053,10 @@ public partial class CSharpBinder
 		{
 			case SyntaxKind.CommaToken:
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionParametersListingNode));
+				parserModel.ExpressionList.Add((SyntaxKind.ColonToken, functionParametersListingNode));
+				return ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel);
+			case SyntaxKind.ColonToken:
+				parserModel.ExpressionList.Add((SyntaxKind.ColonToken, functionParametersListingNode));
 				return EmptyExpressionNode.Empty;
 			default:
 				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), functionParametersListingNode, token);
@@ -970,6 +1066,13 @@ public partial class CSharpBinder
 	public IExpressionNode FunctionParametersListingMergeExpression(
 		FunctionParametersListingNode functionParametersListingNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		Console.WriteLine("aaa FunctionParametersListingMergeExpression");
+		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
+		{
+			Console.WriteLine($"aaa CURRENT optional? bbb {expressionSecondary.SyntaxKind}");
+			return functionParametersListingNode;
+		}
+		
 		if (expressionSecondary.SyntaxKind == SyntaxKind.EmptyExpressionNode)
 			return functionParametersListingNode;
 			
@@ -1179,19 +1282,7 @@ public partial class CSharpBinder
 	public IExpressionNode LiteralMergeToken(
 		LiteralExpressionNode literalExpressionNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		switch (token.SyntaxKind)
-		{
-			case SyntaxKind.PlusToken:
-			case SyntaxKind.MinusToken:
-			case SyntaxKind.StarToken:
-		    case SyntaxKind.DivisionToken:
-		    case SyntaxKind.EqualsEqualsToken:
-				var typeClauseNode = literalExpressionNode.ResultTypeClauseNode;
-				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
-				return new BinaryExpressionNode(literalExpressionNode, binaryOperatorNode);
-			default:
-				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, token);
-		}
+		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), literalExpressionNode, token);
 	}
 	
 	public IExpressionNode ParenthesizedMergeToken(
@@ -1323,9 +1414,7 @@ public partial class CSharpBinder
 				        functionInvocationNode,
 				        compilationUnit);
 		
-					parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
-					parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionInvocationNode.FunctionParametersListingNode));
-					return EmptyExpressionNode.Empty;
+					return ParseFunctionParametersListingNode(functionInvocationNode, functionInvocationNode.FunctionParametersListingNode, compilationUnit, ref parserModel);
 				}
 				
 				goto default;
@@ -1616,5 +1705,71 @@ public partial class CSharpBinder
 			if (Object.ReferenceEquals(expressionNode, delimiterExpressionTuple.ExpressionNode))
 				parserModel.ExpressionList.RemoveAt(i);
 		}
+	}
+	
+	/// <summary>
+	/// 'bool foundChild' usage:
+	/// If the child is NOT in the ExpressionList then this is true,
+	///
+	/// But, if the child is in the ExpressionList, and is not the final entry in the ExpressionList,
+	/// then this needs to be set to 'false', otherwise a descendent node of 'childExpressionNode'
+	/// will be thought to be the parent node due to the list being traversed end to front order.
+	/// </summary>
+	public IExpressionNode GetParentNode(
+		IExpressionNode childExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel, bool foundChild = true)
+	{
+		for (int i = parserModel.ExpressionList.Count - 1; i > -1; i--)
+		{
+			var delimiterExpressionTuple = parserModel.ExpressionList[i];
+			
+			if (foundChild)
+			{
+				if (delimiterExpressionTuple.ExpressionNode is null)
+					break;
+					
+				if (!Object.ReferenceEquals(childExpressionNode, delimiterExpressionTuple.ExpressionNode))
+					return delimiterExpressionTuple.ExpressionNode;
+			}
+			else
+			{
+				if (Object.ReferenceEquals(childExpressionNode, delimiterExpressionTuple.ExpressionNode))
+					foundChild = true;
+			}
+		}
+		
+		return EmptyExpressionNode.Empty;
+	}
+	
+	/// <summary>
+	/// The argument 'IExpressionNode functionInvocationNode' is not of type 'FunctionInvocationNode'
+	/// in order to permit this method to be invoked for 'ConstructorInvocationExpressionNode' as well.
+	/// </summary>
+	public IExpressionNode ParseFunctionParametersListingNode(IExpressionNode functionInvocationNode, FunctionParametersListingNode functionParametersListingNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, functionInvocationNode));
+		parserModel.ExpressionList.Add((SyntaxKind.CommaToken, functionParametersListingNode));
+		parserModel.ExpressionList.Add((SyntaxKind.ColonToken, functionParametersListingNode));
+		return ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(compilationUnit, ref parserModel);
+	}
+	
+	public IExpressionNode ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Peek(1).SyntaxKind) &&
+			parserModel.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.ColonToken)
+		{
+			// Consume the open parenthesis
+			_ = parserModel.TokenWalker.Consume();
+			
+			// Consume the identifierToken
+			compilationUnit.Binder.CreateVariableSymbol(
+		        UtilityApi.ConvertToIdentifierToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel),
+		        VariableKind.Local,
+		        compilationUnit);
+			
+			// Consume the ColonToken
+			_ = parserModel.TokenWalker.Consume();
+		}
+	
+		return EmptyExpressionNode.Empty;
 	}
 }
