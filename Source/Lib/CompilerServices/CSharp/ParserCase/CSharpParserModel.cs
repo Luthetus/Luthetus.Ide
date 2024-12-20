@@ -43,7 +43,18 @@ public struct CSharpParserModel
     public TokenWalker TokenWalker { get; }
     public Stack<ISyntax> SyntaxStack { get; set; }
     public CSharpStatementBuilder StatementBuilder { get; set; } = new();
+    
+    /// <summary>
+    /// The C# IParserModel implementation will only "short circuit" if the 'SyntaxKind DelimiterSyntaxKind'
+    /// is registered as a delimiter.
+    ///
+    /// This is done in order to speed up the while loop, as the list of short circuits doesn't have to be
+    /// iterated unless the current token is a possible delimiter.
+    ///
+    /// Luthetus.CompilerServices.CSharp.ParserCase.Internals.ParseOthers.SyntaxIsEndDelimiter(SyntaxKind syntaxKind) {...}
+    /// </summary>
     public List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList { get; set; }
+    
     public IExpressionNode? NoLongerRelevantExpressionNode { get; set; }
     public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; } = new();
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
