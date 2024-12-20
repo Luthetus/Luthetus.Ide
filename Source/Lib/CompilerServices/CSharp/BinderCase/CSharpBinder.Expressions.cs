@@ -1754,10 +1754,20 @@ public partial class CSharpBinder
 	
 	public IExpressionNode ParseNamedParameterSyntaxAndReturnEmptyExpressionNode(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		if (parserModel.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.ColonToken)
+		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Peek(1).SyntaxKind) &&
+			parserModel.TokenWalker.Peek(2).SyntaxKind == SyntaxKind.ColonToken)
 		{
-			_ = parserModel.TokenWalker.Consume(); // Consume the identifier
-			_ = parserModel.TokenWalker.Consume(); // Consume the ColonToken
+			// Consume the open parenthesis
+			_ = parserModel.TokenWalker.Consume();
+			
+			// Consume the identifierToken
+			compilationUnit.Binder.CreateVariableSymbol(
+		        UtilityApi.ConvertToIdentifierToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel),
+		        VariableKind.Local,
+		        compilationUnit);
+			
+			// Consume the ColonToken
+			_ = parserModel.TokenWalker.Consume();
 		}
 	
 		return EmptyExpressionNode.Empty;
