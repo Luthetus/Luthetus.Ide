@@ -77,13 +77,58 @@ public partial class ExpressionAsStatementTests
 	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
     }
     
+    /// <summary>
+    /// When encountering a binary operator,
+    /// change control from the expressionPrimary to the binary operator making the decisions.
+    ///
+    /// "Push" the binary expression node onto the ExpressionList with an EndOfFileToken delimiter.
+    ///
+    /// Then return an EmptyExpressionNode.
+    ///
+    /// Whatever the EmptyExpressionNode becomes will then eventually bubble back up to
+    /// be used as the right operand.
+    ///
+    /// This is being said in reference to how things currently are erroneously done.
+    /// In which a BinaryExpressionNode explicitly is looking for certain SyntaxKind.
+    ///
+    /// Checking the SyntaxKind is fine for binding whether there is a syntax error due
+    /// to an operator not being defined for various operands.
+    ///
+    /// But in terms of the parsing of an expression, it needs to just start a fresh EmptyExpressionNode
+    /// and grab the right operand that way.
+    /// </summary>
+    [Fact]
+    public void Numeric_Add_BinaryExpressionNode_Number_FunctionInvocation()
+    {
+		var test = new Test(@"1 + SomeMethod()");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
+		var textTypeClause = "int";
+		
+		var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
+		Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		
+	    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+	    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    //public ISyntaxToken binaryOperatorNode.OperatorToken { get; }
+	    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
+	    var rightFunctionInvocationNode = (FunctionInvocationNode)binaryExpressionNode.RightExpressionNode;
+	    // Assert.Equal(textTypeClause, rightFunctionInvocationNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    
+	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+    }
+    
     [Fact]
     public void Numeric_Add_BinaryExpressionNode_More()
     {
     	var test = new Test(@"1 + 1 + 1");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-			
+		
 		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
+		WriteChildrenIndentedRecursive(topCodeBlock);
 		var textTypeClause = "int";
 		
 		// Left Expression
@@ -182,6 +227,195 @@ public partial class ExpressionAsStatementTests
 	    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
 	    
 	    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+    }
+    
+    [Fact]
+    public void Numeric_Star_BinaryExpressionNode_Precedence_Parent_LessThan_Child()
+    {
+    	var test = new Test(@"1 + 2 * 3");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		var textTypeClause = "int";
+		
+		// Left Expression
+	    {
+		    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
+		    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		    Assert.Equal("1", rightLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+	    }
+		
+		// Operator
+		{
+		    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+		    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		    Assert.Equal("+", binaryOperatorNode.OperatorToken.TextSpan.GetText());
+		    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		}
+	    
+	    // Right Expression
+		{
+			var rightBinaryExpressionNode = (BinaryExpressionNode)binaryExpressionNode.RightExpressionNode;
+			Assert.Equal(textTypeClause, rightBinaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			
+			// Temporarily swap variables for sanity #change
+			var rememberBinaryExpressionNode = binaryExpressionNode;
+			binaryExpressionNode = rightBinaryExpressionNode;
+			// Inner Binary Expression
+			{
+				var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
+				Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+				Assert.Equal("2", leftLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+				
+				var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+			    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			    Assert.Equal("*", binaryOperatorNode.OperatorToken.TextSpan.GetText());
+			    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+				Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			    
+			    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+			    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			    Assert.Equal("3", rightLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+			    
+			    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		    }
+		    
+		    // Temporarily swap variables for sanity #restore
+		    binaryExpressionNode = rememberBinaryExpressionNode;
+		}
+	    
+	    // Result
+	    {
+	    	Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    }
+    }
+    
+    [Fact]
+    public void Numeric_Star_BinaryExpressionNode_Precedence_Parent_GreaterThan_Child()
+    {
+    	var test = new Test(@"1 * 2 + 3");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		var textTypeClause = "int";
+		
+		// Left Expression
+		{
+			var leftBinaryExpressionNode = (BinaryExpressionNode)binaryExpressionNode.LeftExpressionNode;
+			Assert.Equal(textTypeClause, leftBinaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			
+			// Temporarily swap variables for sanity #change
+			var rememberBinaryExpressionNode = binaryExpressionNode;
+			binaryExpressionNode = leftBinaryExpressionNode;
+			// Inner Binary Expression
+			{
+				var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
+				Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+				Assert.Equal("1", leftLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+				
+				var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+			    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			    Assert.Equal("*", binaryOperatorNode.OperatorToken.TextSpan.GetText());
+			    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+				Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			    
+			    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+			    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			    Assert.Equal("2", rightLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+			    
+			    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		    }
+		    
+		    // Temporarily swap variables for sanity #restore
+		    binaryExpressionNode = rememberBinaryExpressionNode;
+		}
+		
+		// Operator
+		{
+		    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+		    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		    Assert.Equal("+", binaryOperatorNode.OperatorToken.TextSpan.GetText());
+		    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		}
+	    
+	    // Right Expression
+	    {
+		    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+		    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		    Assert.Equal("3", rightLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+	    }
+	    
+	    // Result
+	    {
+	    	Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    }
+    }
+    
+    [Fact]
+    public void Numeric_Star_BinaryExpressionNode_Precedence_Parent_EqualTo_Child()
+    {
+    	var test = new Test(@"1 * 2 * 3");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList().Single();
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		var textTypeClause = "int";
+		
+		// Left Expression
+		{
+			var leftBinaryExpressionNode = (BinaryExpressionNode)binaryExpressionNode.LeftExpressionNode;
+			Assert.Equal(textTypeClause, leftBinaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			
+			// Temporarily swap variables for sanity #change
+			var rememberBinaryExpressionNode = binaryExpressionNode;
+			binaryExpressionNode = leftBinaryExpressionNode;
+			// Inner Binary Expression
+			{
+				var leftLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.LeftExpressionNode;
+				Assert.Equal(textTypeClause, leftLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+				Assert.Equal("1", leftLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+				
+				var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+			    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			    Assert.Equal("*", binaryOperatorNode.OperatorToken.TextSpan.GetText());
+			    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+				Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			    
+			    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+			    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			    Assert.Equal("2", rightLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+			    
+			    Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		    }
+		    
+		    // Temporarily swap variables for sanity #restore
+		    binaryExpressionNode = rememberBinaryExpressionNode;
+		}
+		
+		// Operator
+		{
+		    var binaryOperatorNode = binaryExpressionNode.BinaryOperatorNode;
+		    Assert.Equal(textTypeClause, binaryOperatorNode.LeftOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		    Assert.Equal("*", binaryOperatorNode.OperatorToken.TextSpan.GetText());
+		    Assert.Equal(textTypeClause, binaryOperatorNode.RightOperandTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+			Assert.Equal(textTypeClause, binaryOperatorNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		}
+	    
+	    // Right Expression
+	    {
+		    var rightLiteralExpressionNode = (LiteralExpressionNode)binaryExpressionNode.RightExpressionNode;
+		    Assert.Equal(textTypeClause, rightLiteralExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+		    Assert.Equal("3", rightLiteralExpressionNode.LiteralSyntaxToken.TextSpan.GetText());
+	    }
+	    
+	    // Result
+	    {
+	    	Assert.Equal(textTypeClause, binaryExpressionNode.ResultTypeClauseNode.TypeIdentifierToken.TextSpan.GetText());
+	    }
     }
     
     [Fact]
