@@ -154,15 +154,19 @@ public partial class CSharpBinder
 			Console.WriteLine("aaa if (parentExpressionNode.SyntaxKind == SyntaxKind.BinaryExpressionNode)");
 			
 			var parentBinaryExpressionNode = (BinaryExpressionNode)parentExpressionNode;
-			var precedenceParent = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
+			var precedenceParent = UtilityApi.GetOperatorPrecedence(parentBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
 			
-			var precedenceChild = UtilityApi.GetOperatorPrecedence(parentBinaryExpressionNode.BinaryOperatorNode.OperatorToken.SyntaxKind);
+			var precedenceChild = UtilityApi.GetOperatorPrecedence(token.SyntaxKind);
 			
 			if (parentBinaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)
 			{
+				Console.WriteLine("aaa if (parentBinaryExpressionNode.RightExpressionNode.SyntaxKind == SyntaxKind.EmptyExpressionNode)");
+			
 				if (precedenceParent >= precedenceChild)
 				{
 					// Child's left expression becomes the parent.
+					
+					Console.WriteLine("aaa if (precedenceParent >= precedenceChild)");
 					
 					parentBinaryExpressionNode.SetRightExpressionNode(expressionPrimary);
 					
@@ -178,6 +182,8 @@ public partial class CSharpBinder
 				else
 				{
 					// Parent's right expression becomes the child.
+					
+					Console.WriteLine("aaa else...precedenceParent < precedenceChild");
 					
 					var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
 					var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
@@ -204,6 +210,8 @@ public partial class CSharpBinder
 				// I think you'd want to pretend that the parent binary expression didn't exist
 				// for the sake of parser recovery.
 				
+				Console.WriteLine("aaa else...parentBinaryExpressionNode.RightExpressionNode.SyntaxKind != SyntaxKind.EmptyExpressionNode");
+				
 				var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
 				var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
 				var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
@@ -216,6 +224,8 @@ public partial class CSharpBinder
 		
 		// Scope to avoid variable name collision.
 		{
+			Console.WriteLine("aaa default?");
+		
 			var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
 			var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
 			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
