@@ -81,6 +81,9 @@ public static class UtilityApi
             case SyntaxKind.MinusToken:
             case SyntaxKind.StarToken:
             case SyntaxKind.DivisionToken:
+            case SyntaxKind.CloseAngleBracketEqualsToken:
+            case SyntaxKind.OpenAngleBracketEqualsToken:
+            case SyntaxKind.BangEqualsToken:
             case SyntaxKind.EqualsToken:
             case SyntaxKind.EqualsEqualsToken:
             case SyntaxKind.AmpersandAmpersandToken:
