@@ -2246,6 +2246,7 @@ Func(decimalPercentProgress);
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2256,6 +2257,7 @@ Func(decimalPercentProgress);
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2265,8 +2267,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2276,8 +2278,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2287,8 +2289,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2298,8 +2300,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2309,8 +2311,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2320,8 +2322,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2331,8 +2333,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2342,8 +2344,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2353,8 +2355,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     /// <summary>
@@ -2374,8 +2376,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2385,8 +2387,8 @@ Func(decimalPercentProgress);
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
-		
 		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
