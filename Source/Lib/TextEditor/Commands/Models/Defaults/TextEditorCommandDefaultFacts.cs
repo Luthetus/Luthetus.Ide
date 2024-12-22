@@ -711,29 +711,27 @@ public static class TextEditorCommandDefaultFacts
             var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
 
             var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
-
             if (viewModelModifier is null)
                 return;
 
 			// If the user has an active text selection,
 			// then populate the find overlay with their selection.
-			{
-				var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
-	            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-	            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
-	
-	            if (modelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-	                return;
-	
-	            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+			
+			var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
 
-				if (selectedText is not null)
-				{
-					viewModelModifier.ViewModel = viewModelModifier.ViewModel with
-                    {
-                        FindOverlayValue = selectedText,
-                    };
-				}
+            if (modelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+			if (selectedText is not null)
+			{
+				viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+                {
+                    FindOverlayValue = selectedText,
+                    FindOverlayValueExternallyChangedMarker = !viewModelModifier.ViewModel.FindOverlayValueExternallyChangedMarker,
+                };
 			}
 
             if (viewModelModifier.ViewModel.ShowFindOverlay)
@@ -749,8 +747,6 @@ public static class TextEditorCommandDefaultFacts
                     ShowFindOverlay = true,
                 };
             }
-            
-            return;
         });
         
     public static readonly TextEditorCommand PopulateSearchFindAll = new(

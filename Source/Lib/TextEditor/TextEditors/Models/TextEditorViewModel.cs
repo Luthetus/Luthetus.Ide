@@ -166,6 +166,24 @@ public sealed record TextEditorViewModel : IDisposable
     /// This property is what the find overlay input element binds to.
     /// </summary>
     public string FindOverlayValue { get; set; } = string.Empty;
+    /// <summary>
+    /// If the user presses the keybind to show the FindOverlayDisplay while focused on the Text Editor,
+    /// check if the user has a text selection.
+    ///
+    /// If they do have a text selection, then populate the FindOverlayDisplay with their selection.
+    ///
+    /// The issue arises however, how does one know whether FindOverlayValue changed due to
+    /// the input element itself being typed into, versus some 'background action'.
+    ///
+    /// Because the UI already will update properly if the input element itself is interacted with.
+    ///
+    /// We only need to solve the case where it was a 'background action'.
+    ///
+    /// So, if this bool toggles to a different value than what the UI last saw,
+    /// then the UI is to set the input element's value equal to the 'FindOverlayValue'
+    /// because a 'background action' modified the value.
+    /// </summary>
+    public bool FindOverlayValueExternallyChangedMarker { get; init; }
 	/// <inheritdoc cref="ViewModelUnsafeState"/>
     public ViewModelUnsafeState UnsafeState { get; }
     /// <summary>
