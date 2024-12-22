@@ -96,8 +96,7 @@ public static class ParseTokens
     	var variableKind = VariableKind.Local;
     			
 		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-			(parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
-				 parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
+			parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
 		{
 			variableKind = VariableKind.Property;
 		}
@@ -117,8 +116,7 @@ public static class ParseTokens
 		{
 			ParsePropertyDefinition(compilationUnit, variableDeclarationNode, ref parserModel);
 		}
-		else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
-				 parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+		else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
 		{
 			ParsePropertyDefinition_ExpressionBound(compilationUnit, ref parserModel);
 		}

@@ -118,7 +118,11 @@ public static class CSharpLexer
                 case '+':
                     if (stringWalker.PeekCharacter(1) == '+')
                     {
-                        LexPlusPlusToken(ref lexerOutput, ref stringWalker);
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new PlusPlusToken(textSpan));
                     }
                     else
                     {
@@ -131,7 +135,11 @@ public static class CSharpLexer
                 case '-':
                     if (stringWalker.PeekCharacter(1) == '-')
                     {
-                        LexMinusMinusToken(ref lexerOutput, ref stringWalker);
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new MinusMinusToken(textSpan));
                     }
                     else
                     {
@@ -144,8 +152,20 @@ public static class CSharpLexer
                 case '=':
                     if (stringWalker.PeekCharacter(1) == '=')
                     {
-                        LexEqualsEqualsToken(ref lexerOutput, ref stringWalker);
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new EqualsEqualsToken(textSpan));
                     }
+                    else if (stringWalker.PeekCharacter(1) == '>')
+                	{
+                		var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new EqualsCloseAngleBracketToken(textSpan));
+                	}
                     else
                     {
                         var entryPositionIndex = stringWalker.PositionIndex;
@@ -157,7 +177,11 @@ public static class CSharpLexer
                 case '?':
                     if (stringWalker.PeekCharacter(1) == '?')
                     {
-                        LexQuestionMarkQuestionMarkToken(ref lexerOutput, ref stringWalker);
+                        var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new QuestionMarkQuestionMarkToken(textSpan));
                     }
                     else
                     {
@@ -362,16 +386,30 @@ public static class CSharpLexer
                 	}
                 	else
                 	{
-                    	LexDollarSignToken(ref lexerOutput, ref stringWalker);
+                    	var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new DollarSignToken(textSpan));
+	                    break;
                     }
                     break;
                 case '@':
                 	if (stringWalker.NextCharacter == '"')
+                	{
                 		LexString(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, countDollarSign: 0, useVerbatim: true);
+					}
 					else if (stringWalker.PeekCharacter(1) == '$' && stringWalker.PeekCharacter(2) == '"')
+					{
 						LexString(ref lexerOutput, ref stringWalker, ref decorationByteLastEscapeCharacter, countDollarSign: 1, useVerbatim: true);
+      			  }
                 	else
-                    	LexAtToken(ref lexerOutput, ref stringWalker);
+                	{
+                    	var entryPositionIndex = stringWalker.PositionIndex;
+				        stringWalker.ReadCharacter();
+				        var textSpan = new TextEditorTextSpan(entryPositionIndex, stringWalker.PositionIndex, (byte)GenericDecorationKind.None, stringWalker.ResourceUri, stringWalker.SourceText);
+				        lexerOutput.SyntaxTokenList.Add(new AtToken(textSpan));
+	                    break;
+                    }
                     break;
                 case ':':
                 {
@@ -858,114 +896,6 @@ public static class CSharpLexer
             stringWalker.SourceText);
 
         lexerOutput.SyntaxTokenList.Add(new CommentMultiLineToken(textSpan));
-    }
-    
-    public static void LexPlusPlusToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        // First '+'
-        stringWalker.ReadCharacter();
-        // Second '+'
-        stringWalker.ReadCharacter();
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        lexerOutput.SyntaxTokenList.Add(new PlusPlusToken(textSpan));
-    }
-    
-    public static void LexMinusMinusToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        // First '-'
-        stringWalker.ReadCharacter();
-        // Second '-'
-        stringWalker.ReadCharacter();
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        lexerOutput.SyntaxTokenList.Add(new MinusMinusToken(textSpan));
-    }
-    
-    public static void LexEqualsEqualsToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        // First '='
-        stringWalker.ReadCharacter();
-        // Second '='
-        stringWalker.ReadCharacter();
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        lexerOutput.SyntaxTokenList.Add(new EqualsEqualsToken(textSpan));
-    }
-    
-    public static void LexQuestionMarkQuestionMarkToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        // First '?'
-        stringWalker.ReadCharacter();
-        // Second '?'
-        stringWalker.ReadCharacter();
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        lexerOutput.SyntaxTokenList.Add(new QuestionMarkQuestionMarkToken(textSpan));
-    }
-    
-    public static void LexDollarSignToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        stringWalker.ReadCharacter();
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        lexerOutput.SyntaxTokenList.Add(new DollarSignToken(textSpan));
-    }
-    
-    public static void LexAtToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)
-    {
-        var entryPositionIndex = stringWalker.PositionIndex;
-
-        stringWalker.ReadCharacter();
-
-        var textSpan = new TextEditorTextSpan(
-            entryPositionIndex,
-            stringWalker.PositionIndex,
-            (byte)GenericDecorationKind.None,
-            stringWalker.ResourceUri,
-            stringWalker.SourceText);
-
-        lexerOutput.SyntaxTokenList.Add(new AtToken(textSpan));
     }
     
     public static void LexPreprocessorDirectiveToken(ref CSharpLexerOutput lexerOutput, ref StringWalkerStruct stringWalker)

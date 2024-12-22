@@ -26,6 +26,7 @@ public enum SyntaxKind
     DivisionToken,
     EqualsToken,
     EqualsEqualsToken,
+    EqualsCloseAngleBracketToken,
     QuestionMarkToken,
     QuestionMarkQuestionMarkToken,
     PipeToken,

@@ -383,6 +383,20 @@ TODO
 
         Assert.Equal(SyntaxKind.EqualsEqualsToken, equalsEqualsToken.SyntaxKind);
     }
+    
+    [Fact]
+    public void LEX_EqualsCloseAngleBracketToken()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "=>";
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
+
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var equalsCloseAngleBracketToken = (EqualsCloseAngleBracketToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
+
+        Assert.Equal(SyntaxKind.EqualsCloseAngleBracketToken, equalsCloseAngleBracketToken.SyntaxKind);
+    }
 
     [Fact]
     public void LEX_EqualsToken()
