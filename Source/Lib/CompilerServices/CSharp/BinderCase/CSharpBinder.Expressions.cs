@@ -444,7 +444,10 @@ public partial class CSharpBinder
 		bool forceVariableReferenceNode = false)
 	{
 		if (ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
-			return ambiguousIdentifierExpressionNode;
+		{
+			if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
+				return ambiguousIdentifierExpressionNode;
+		}
 	
 		if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
