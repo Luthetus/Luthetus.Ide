@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Edits.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
+using Luthetus.TextEditor.RazorLib.FindAlls.States;
 
 namespace Luthetus.TextEditor.RazorLib.Commands.Models.Defaults;
 
@@ -750,6 +751,34 @@ public static class TextEditorCommandDefaultFacts
             }
             
             return;
+        });
+        
+    public static readonly TextEditorCommand PopulateSearchFindAll = new(
+        "PopulateSearchFindAll", "defaults_populate-search-find-all", false, true, TextEditKind.None, null,
+        async interfaceCommandArgs =>
+        {
+            var commandArgs = (TextEditorCommandArgs)interfaceCommandArgs;
+
+            var viewModelModifier = commandArgs.EditContext.GetViewModelModifier(commandArgs.ViewModelKey);
+
+            if (viewModelModifier is null)
+                return;
+
+			// If the user has an active text selection,
+			// then populate the find overlay with their selection.
+			
+			var modelModifier = commandArgs.EditContext.GetModelModifier(commandArgs.ModelResourceUri);
+            var cursorModifierBag = commandArgs.EditContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+            var primaryCursorModifier = commandArgs.EditContext.GetPrimaryCursorModifier(cursorModifierBag);
+
+            if (modelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+                return;
+
+            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+			if (selectedText is null)
+				return;
+			
+			commandArgs.ComponentData.Dispatcher.Dispatch(new TextEditorFindAllState.SetSearchQueryAction(selectedText));
         });
         
     /// <summary>

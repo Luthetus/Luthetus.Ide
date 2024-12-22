@@ -201,6 +201,15 @@ public class TextEditorKeymapDefault : Keymap, ITextEditorKeymap
         
         TryRegister(new KeymapArgs()
         {
+            Key = "F",
+            Code = "KeyF",
+            CtrlKey = true,
+            ShiftKey = true,
+            LayerKey = TextEditorKeymapDefaultFacts.DefaultLayer.Key
+        }, TextEditorCommandDefaultFacts.PopulateSearchFindAll);
+        
+        TryRegister(new KeymapArgs()
+        {
             Key = "r",
             Code = "KeyR",
             CtrlKey = true,
