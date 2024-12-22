@@ -200,8 +200,7 @@ public static class ParseTokens
     
     public static void ParsePropertyDefinition_ExpressionBound(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-		var equalsToken = (EqualsToken)parserModel.TokenWalker.Consume();
-		var closeAngleBracketToken = (CloseAngleBracketToken)parserModel.TokenWalker.Consume();
+		var equalsCloseAngleBracketToken = (EqualsCloseAngleBracketToken)parserModel.TokenWalker.Consume();
 		
 		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 		var statementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
