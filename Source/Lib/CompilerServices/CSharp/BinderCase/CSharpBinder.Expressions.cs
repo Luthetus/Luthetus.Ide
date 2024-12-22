@@ -162,13 +162,12 @@ public partial class CSharpBinder
 				(AmbiguousIdentifierExpressionNode)expressionPrimary,
 				compilationUnit,
 				ref parserModel);
-			
-			if (token.SyntaxKind == SyntaxKind.OpenAngleBracketToken &&
-				expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-			{
-				return ParseTypeClauseNodeGenericParametersListingNode(
-					(TypeClauseNode)expressionPrimary, (OpenAngleBracketToken)token, compilationUnit, ref parserModel);
-			}
+		}
+		
+		if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode &&
+			(token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
+		{
+			return TypeClauseMergeToken((TypeClauseNode)expressionPrimary, token, compilationUnit, ref parserModel);
 		}
 	
 		var parentExpressionNode = GetParentNode(expressionPrimary, compilationUnit, ref parserModel);
