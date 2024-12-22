@@ -2368,7 +2368,7 @@ Func(decimalPercentProgress);
     /// If it is a Type then the only outcome is 'GenericParametersListingNode'.
     /// </summary>
     [Fact]
-    public void Identifier_CloseAngleBracketEqualsToken()
+    public void Identifier_OpenAngleBracketToken()
     {
     	var test = new Test(@"if (aaa <) ;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
@@ -2379,7 +2379,7 @@ Func(decimalPercentProgress);
     }
     
     [Fact]
-    public void Identifier_CloseAngleBracketEqualsToken()
+    public void Identifier_OpenAngleBracketEqualsToken()
     {
     	var test = new Test(@"if (aaa <=) ;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
