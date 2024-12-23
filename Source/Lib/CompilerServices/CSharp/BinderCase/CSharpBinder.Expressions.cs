@@ -969,12 +969,6 @@ public partial class CSharpBinder
 				BindStringVerbatimExpression((AtToken)token, compilationUnit);
 				return emptyExpressionNode;
 			case SyntaxKind.OutTokenKeyword:
-				if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
-				{
-					// Parse the variable reference / variable declaration
-					ParseTokens.ParseIdentifierToken(compilationUnit, ref parserModel);
-				}
-				
 				return emptyExpressionNode;
 			case SyntaxKind.InTokenKeyword:
 			case SyntaxKind.RefTokenKeyword:
