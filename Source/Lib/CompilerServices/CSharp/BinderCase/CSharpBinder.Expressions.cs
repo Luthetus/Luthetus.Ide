@@ -508,6 +508,22 @@ public partial class CSharpBinder
 	        }
 		}
 		
+		if (ambiguousIdentifierExpressionNode.Token.SyntaxKind == SyntaxKind.IdentifierToken &&
+			ambiguousIdentifierExpressionNode.Token.TextSpan.Length == 1 &&
+    		ambiguousIdentifierExpressionNode.Token.TextSpan.GetText() == "_")
+    	{
+    		if (!compilationUnit.Binder.TryGetVariableDeclarationHierarchically(
+			    	compilationUnit,
+			    	compilationUnit.BinderSession.ResourceUri,
+			    	compilationUnit.BinderSession.CurrentScopeIndexKey,
+			        ambiguousIdentifierExpressionNode.Token.TextSpan.GetText(),
+			        out _))
+			{
+				compilationUnit.Binder.BindDiscard((IdentifierToken)ambiguousIdentifierExpressionNode.Token, compilationUnit);
+	    		return ambiguousIdentifierExpressionNode;
+			}
+    	}
+		
 		// Bind an undefined-TypeClauseNode
 		if (!forceVariableReferenceNode ||
 			UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))

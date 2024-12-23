@@ -66,6 +66,19 @@
 		            </text>
 		            break;
 		        }
+		        case "DiscardSymbol":
+		        {
+		        	<text>
+		                <span class="luth_te_keyword">
+		                    discard
+		                </span>
+		
+		                <span class="@(string.Empty /* Discards do not have their own css class as of (2023-07-20) */)">
+		                    @symbolLocal.TextSpan.GetText()
+		                </span>
+		            </text>
+		            break;
+		        }
 		        case "SourceFileSymbol":
 		        {
 		            <text>
