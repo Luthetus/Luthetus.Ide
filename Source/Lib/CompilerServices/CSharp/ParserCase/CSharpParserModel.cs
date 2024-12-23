@@ -59,6 +59,7 @@ public struct CSharpParserModel
     public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; } = new();
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     public bool ForceParseTypeClauseNode { get; set; }
+    public bool ForceParseGenericParameters { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CSharpCodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CSharpCodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

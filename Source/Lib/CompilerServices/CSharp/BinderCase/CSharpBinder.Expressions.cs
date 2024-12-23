@@ -52,7 +52,7 @@ public partial class CSharpBinder
 			return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
 		}
 		
-		if (UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
+		if (!parserModel.ForceParseGenericParameters && UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
 			return HandleBinaryOperator(expressionPrimary, token, compilationUnit, ref parserModel);
 		
 		switch (expressionPrimary.SyntaxKind)
@@ -999,6 +999,7 @@ public partial class CSharpBinder
 				
 				parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, genericParametersListingNode));
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, genericParametersListingNode));
+				
 				return EmptyExpressionNode.Empty;
 			case SyntaxKind.ReturnTokenKeyword:
 				var returnStatementNode = new ReturnStatementNode((KeywordToken)token, EmptyExpressionNode.Empty);

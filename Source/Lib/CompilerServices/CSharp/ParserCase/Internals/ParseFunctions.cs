@@ -19,6 +19,7 @@ public class ParseFunctions
     {
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     	{
+    		parserModel.ForceParseGenericParameters = true;
     		var successGenericParametersListingNode = ParseOthers.TryParseExpression(
     			SyntaxKind.GenericParametersListingNode,
     			compilationUnit,

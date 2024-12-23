@@ -73,7 +73,7 @@ public static class ParseTokens
 		
 		switch (expressionNode.SyntaxKind)
 		{
-			case SyntaxKind.TypeClauseNode:				
+			case SyntaxKind.TypeClauseNode:
 				MoveToHandleTypeClauseNode(originalTokenIndex, (TypeClauseNode)expressionNode, compilationUnit, ref parserModel);
 				return;
 			case SyntaxKind.VariableDeclarationNode:

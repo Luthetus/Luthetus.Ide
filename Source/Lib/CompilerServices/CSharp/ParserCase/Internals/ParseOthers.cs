@@ -140,6 +140,7 @@ public static class ParseOthers
     		parserModel.TryParseExpressionSyntaxKindList.Clear();
     		parserModel.ForceParseExpressionInitialPrimaryExpression = EmptyExpressionNode.Empty;
     		parserModel.ForceParseTypeClauseNode = false;
+    		parserModel.ForceParseGenericParameters = false;
     	}
     }
     
