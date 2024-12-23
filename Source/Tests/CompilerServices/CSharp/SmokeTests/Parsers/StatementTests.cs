@@ -109,6 +109,24 @@ public class StatementTests
     }
     
     [Fact]
+    public void FunctionDefinitionNode_Generic_Test()
+    {
+    	var test = new Test(@"public Task WriteAppDataAsync<AppData>(AppData appData)
+		where AppData : IAppData
+	{
+		return Task.CompletedTask;
+	}");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var publicKeywordToken = (KeywordToken)topCodeBlock.GetChildList()[0];
+		Assert.Equal(SyntaxKind.PublicTokenKeyword, publicKeywordToken.SyntaxKind);
+		
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList()[1];
+		Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void ConstructorDefinitionNode_Test()
     {
     	var test = new Test(@"public class Aaa { public Aaa() { } }");
