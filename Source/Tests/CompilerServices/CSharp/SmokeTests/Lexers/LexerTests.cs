@@ -205,6 +205,48 @@ TODO
 
         Assert.Equal(SyntaxKind.BangToken, bangToken.SyntaxKind);
     }
+    
+    [Fact]
+    public void LEX_BangEqualsToken()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "!=";
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
+
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var bangEqualsToken = (BangEqualsToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
+
+        Assert.Equal(SyntaxKind.BangEqualsToken, bangEqualsToken.SyntaxKind);
+    }
+    
+    [Fact]
+    public void LEX_CloseAngleBracketEqualsToken()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = ">=";
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
+
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var closeAngleBracketEqualsToken = (CloseAngleBracketEqualsToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
+
+        Assert.Equal(SyntaxKind.CloseAngleBracketEqualsToken, closeAngleBracketEqualsToken.SyntaxKind);
+    }
+    
+    [Fact]
+    public void LEX_OpenAngleBracketEqualsToken()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "<=";
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
+
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var openAngleBracketEqualsToken = (OpenAngleBracketEqualsToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
+
+        Assert.Equal(SyntaxKind.OpenAngleBracketEqualsToken, openAngleBracketEqualsToken.SyntaxKind);
+    }
 
     [Fact]
     public void LEX_CloseAngleBracketToken()
@@ -340,6 +382,20 @@ TODO
         var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
 
         Assert.Equal(SyntaxKind.EqualsEqualsToken, equalsEqualsToken.SyntaxKind);
+    }
+    
+    [Fact]
+    public void LEX_EqualsCloseAngleBracketToken()
+    {
+        var resourceUri = new ResourceUri("UnitTests");
+        var sourceText = "=>";
+        var lexerOutput = CSharpLexer.Lex(resourceUri, sourceText);
+
+        Assert.Equal(2, lexerOutput.SyntaxTokenList.Count);
+        var equalsCloseAngleBracketToken = (EqualsCloseAngleBracketToken)lexerOutput.SyntaxTokenList[0];
+        var endOfFileToken = (EndOfFileToken)lexerOutput.SyntaxTokenList[1];
+
+        Assert.Equal(SyntaxKind.EqualsCloseAngleBracketToken, equalsCloseAngleBracketToken.SyntaxKind);
     }
 
     [Fact]

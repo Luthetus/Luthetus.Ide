@@ -22,7 +22,9 @@ using Luthetus.Common.RazorLib.JsRuntimes.Models;
 using Luthetus.Common.RazorLib.Installations.Displays;
 using Luthetus.TextEditor.RazorLib;
 using Luthetus.TextEditor.RazorLib.Installations.Displays;
+using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.Ide.RazorLib.CodeSearches.Displays;
+using Luthetus.Ide.RazorLib.CodeSearches.States;
 using Luthetus.Ide.RazorLib.Editors.Models;
 
 namespace Luthetus.Ide.RazorLib.Commands;
@@ -371,6 +373,45 @@ public class CommandFactory : ICommandFactory
 						null);
 
                     _dispatcher.Dispatch(new DialogState.RegisterAction(CodeSearchDialog));
+                    
+                    _textEditorService.PostUnique(nameof(CodeSearchDisplay), editContext =>
+                    {
+                    	var group = _textEditorService.GroupApi.GetOrDefault(EditorIdeApi.EditorTextEditorGroupKey);
+	                    if (group is null)
+	                        return Task.CompletedTask;
+	
+	                    var activeViewModel = _textEditorService.ViewModelApi.GetOrDefault(group.ActiveViewModelKey);
+	                    if (activeViewModel is null)
+	                        return Task.CompletedTask;
+                    
+			            var viewModelModifier = editContext.GetViewModelModifier(activeViewModel.ViewModelKey);
+			            if (viewModelModifier is null)
+			                return Task.CompletedTask;
+			
+						// If the user has an active text selection,
+						// then populate the code search with their selection.
+						
+						var modelModifier = editContext.GetModelModifier(viewModelModifier.ViewModel.ResourceUri);
+			            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+			            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+			
+			            if (modelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+			                return Task.CompletedTask;
+			
+			            var selectedText = TextEditorSelectionHelper.GetSelectedText(primaryCursorModifier, modelModifier);
+						if (selectedText is null)
+							return Task.CompletedTask;
+						
+						_dispatcher.Dispatch(new CodeSearchState.WithAction(inState => inState with
+						{
+							Query = selectedText,
+						}));
+			
+						_dispatcher.Dispatch(new CodeSearchState.SearchEffect());
+						
+						return  Task.CompletedTask;
+                    });
+                    
                     return Task.CompletedTask;
 				});
 

@@ -63,24 +63,21 @@ public static class ParseVariables
 
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
         {
-            if (parserModel.TokenWalker.Peek(1).SyntaxKind == SyntaxKind.CloseAngleBracketToken)
-            {
-                HandlePropertyExpression(
-                    variableDeclarationNode,
-                    (EqualsToken)parserModel.TokenWalker.Consume(),
-                    (CloseAngleBracketToken)parserModel.TokenWalker.Consume(),
-                    compilationUnit,
-                    ref parserModel);
-            }
-            else
-            {
-                // Variable initialization occurs here.
-                HandleVariableAssignment(
-                    consumedIdentifierToken,
-                    (EqualsToken)parserModel.TokenWalker.Consume(),
-                    compilationUnit,
-                    ref parserModel);
-            }
+            // Variable initialization occurs here.
+            HandleVariableAssignment(
+                consumedIdentifierToken,
+                (EqualsToken)parserModel.TokenWalker.Consume(),
+                compilationUnit,
+                ref parserModel);
+        }
+        else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+        {
+        	HandlePropertyExpression(
+	            variableDeclarationNode,
+	            (EqualsToken)parserModel.TokenWalker.Consume(),
+	            (CloseAngleBracketToken)parserModel.TokenWalker.Consume(),
+	            compilationUnit,
+	            ref parserModel);
         }
         else
         {

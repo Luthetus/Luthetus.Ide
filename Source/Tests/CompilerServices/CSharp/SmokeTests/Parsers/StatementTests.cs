@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.Facts;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -23,12 +24,15 @@ public class StatementTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
+			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
 			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
 	        CSharpParser.Parse(CompilationUnit);
 		}
 		
 		public string SourceText { get; set; }
 		public ResourceUri ResourceUri { get; set; }
+		public CSharpLexerOutput LexerOutput { get; set; }
 		public IBinder Binder => CompilationUnit.Binder;
 		public CSharpCompilationUnit CompilationUnit { get; set; }
 	}
@@ -305,6 +309,20 @@ finally
     	var test = new Test(@"var aaa = 2;");
 
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclarationNodeAndAssignment_Var_Test_DetermineImplicitType()
+    {
+    	var test = new Test(@"var aaa = 2;");
+		
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock);
 		
 		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
 		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
