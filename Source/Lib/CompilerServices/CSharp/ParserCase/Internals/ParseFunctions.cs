@@ -146,8 +146,7 @@ public class ParseFunctions
             {
                 break;
             }
-            else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken &&
-            		 parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.CloseAngleBracketToken)
+            else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
             {
             	break;
             }

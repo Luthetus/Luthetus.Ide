@@ -2246,7 +2246,7 @@ Func(decimalPercentProgress);
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
-		
+		throw new NotImplementedException();
     }
     
     [Fact]
@@ -2257,7 +2257,138 @@ Func(decimalPercentProgress);
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
-		
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_CloseAngleBracketToken()
+    {
+    	var test = new Test(@"if (aaa >) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_CloseAngleBracketEqualsToken()
+    {
+    	var test = new Test(@"if (aaa >=) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_Pipe()
+    {
+    	var test = new Test(@"if (aaa |) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_PipePipe()
+    {
+    	var test = new Test(@"if (aaa ||) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_Ampersand()
+    {
+    	var test = new Test(@"if (aaa &) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_AmpersandAmpersand()
+    {
+    	var test = new Test(@"if (aaa &&) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_Equals()
+    {
+    	var test = new Test(@"if (aaa =) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_EqualsEquals()
+    {
+    	var test = new Test(@"if (aaa ==) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_BangEquals()
+    {
+    	var test = new Test(@"if (aaa !=) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    /// <summary>
+    /// This isn't ambiguous between 'GenericParametersListingNode' and a 'less than' operator.
+    ///
+    /// Reason being, you would use the Binder to determine that the identifier prior to the '>'
+    /// is a variable.
+    ///
+    /// Thus, if it is a variable then the only outcome is 'less than'.
+    ///
+    /// If it is a Type then the only outcome is 'GenericParametersListingNode'.
+    /// </summary>
+    [Fact]
+    public void Identifier_OpenAngleBracketToken()
+    {
+    	var test = new Test(@"if (aaa <) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void Identifier_OpenAngleBracketEqualsToken()
+    {
+    	var test = new Test(@"if (aaa <=) ;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var ifStatementNode = (IfStatementNode)topCodeBlock.GetChildList().Single();
+		var expressionNode = ifStatementNode.ExpressionNode;
+		throw new NotImplementedException();
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")

@@ -32,6 +32,7 @@ public partial class FindOverlayDisplay : ComponentBase
     public TextEditorRenderBatchValidated? RenderBatch { get; set; }
 
     private bool _lastSeenShowFindOverlayValue = false;
+    private bool _lastFindOverlayValueExternallyChangedMarker = false;
     private string _inputValue = string.Empty;
     private int? _activeIndexMatchedTextSpan = null;
 
@@ -109,6 +110,8 @@ public partial class FindOverlayDisplay : ComponentBase
     	if (renderBatchLocal is null)
     		return;
     		
+    	var becameShown = false;
+    		
         if (_lastSeenShowFindOverlayValue != renderBatchLocal.ViewModel.ShowFindOverlay)
         {
             _lastSeenShowFindOverlayValue = renderBatchLocal.ViewModel.ShowFindOverlay;
@@ -116,28 +119,23 @@ public partial class FindOverlayDisplay : ComponentBase
             // If it changes from 'false' to 'true', focus the input element
             if (_lastSeenShowFindOverlayValue)
             {
+            	becameShown = true;
+            	
                 await JsRuntime.GetLuthetusCommonApi()
                     .FocusHtmlElementById(renderBatchLocal.ViewModel.FindOverlayId)
                     .ConfigureAwait(false);
             }
         }
+        
+        if (becameShown ||
+        	_lastFindOverlayValueExternallyChangedMarker != renderBatchLocal.ViewModel.FindOverlayValueExternallyChangedMarker)
+        {
+        	_lastFindOverlayValueExternallyChangedMarker = renderBatchLocal.ViewModel.FindOverlayValueExternallyChangedMarker;
+        	InputValue = renderBatchLocal.ViewModel.FindOverlayValue;
+        }
 
         await base.OnAfterRenderAsync(firstRender);
     }
-
-	private void HandleOnFocus()
-	{
-    	var renderBatchLocal = RenderBatch;
-    	if (renderBatchLocal is null)
-    		return;
-    	
-		// In the case where the find over value was changed, by an outside event,
-		// just refresh the InputValue to be sure its up to date.
-		//
-		// Example: user has a selection when using the keybind to open the find overlay,
-		// 		 then the find overlay would be populated with their text selection.
-		InputValue = renderBatchLocal.ViewModel.FindOverlayValue;
-	}
 
     private async Task HandleOnKeyDownAsync(KeyboardEventArgs keyboardEventArgs)
     {

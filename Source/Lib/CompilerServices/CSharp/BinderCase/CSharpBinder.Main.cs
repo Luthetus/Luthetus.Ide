@@ -245,6 +245,16 @@ public partial class CSharpBinder : IBinder
             DecorationByte = (byte)GenericDecorationKind.StringLiteral,
         }), compilationUnit);
     }
+    
+    public void BindDiscard(
+        IdentifierToken identifierToken,
+        CSharpCompilationUnit compilationUnit)
+    {
+        AddSymbolReference(new DiscardSymbol(identifierToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.None,
+        }), compilationUnit);
+    }
 
     public void BindFunctionDefinitionNode(
         FunctionDefinitionNode functionDefinitionNode,
@@ -1776,6 +1786,14 @@ public partial class CSharpBinder : IBinder
 			{
 				compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 			}
+    	}
+    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.LambdaExpressionNode)
+    	{
+    		var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
+    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
+	    	{
+	    		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+	    	}
     	}
     }
 }

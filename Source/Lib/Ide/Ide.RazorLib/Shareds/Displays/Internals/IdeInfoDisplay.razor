@@ -172,6 +172,63 @@
         Recent Changes:
 		<div>
 			<div>
+                <div>v <em class="luth_em">0.9.7.12 </em> (2024-12-22)</div>
+                <ul>
+                	<li>
+                		Show scope of lambda expression
+                	</li>
+                	<li>
+                		Stop syntax highlighting member accesses as types erroneously.
+                		(this turns off any syntax highlighting other than function invocation
+                		but this turns out to be a massive quality of life improvement
+                		while the types are being fully parsed).
+                	</li>
+                	<li>
+                		DiscardSymbol (if '_' is a variable within scope it will be treated as
+                		a variable otherwise it will be treated as 'discard').
+                	</li>
+                	<li>
+                		Fix: is / is not pattern matching 'oldEvent is not RedundantTextEditorWork oldRedundantTextEditorWork' syntax.
+                	</li>
+                	<li>
+                		Fix: 'out' syntax
+                	</li>
+                	<li>
+                        FindOverlayDisplay fix bug if already open select then keybind wasn't populating
+                    </li>
+                    <li>
+                        Populate code search with text editor selection if there is one and keybind done from text editor focus
+                    </li>
+                    <li>
+                        Populate FindAll search if opened while focused on the text editor and have a text selection
+                    </li>
+                    <li>
+                        Identifiers as binary expression operands
+                    </li>
+                    <li>
+                		Bind lambda expression variables within its scope (expression body, statement does not work).
+                	</li>
+                    <li>
+                		SkipLambdaExpressionStatements(...) progress.
+                		In short, I have a statement-loop, and inside of that is the expression-loop.
+                		
+                		So, for Lambdas with statement-bodies, I need to go from the
+                			statement-loop -> expression-loop -> statement-loop
+                		
+                		All while not losing the state of any already existing loops. So it
+                		seems a bit complicated. (the parser is written via primitive recursion with
+                		a while loop, and I'd prefer to keep it that way.
+                		This might have to be an exception though I'm not sure).
+                		
+                		I want to focus on having the features that work... work
+                		rather than having the lambda statements clobber features
+                		that come after it (in a text file).
+                		
+                		Lambda statements will be supported in the future though.
+                	</li>
+                </ul>
+            </div>
+            <div>
                 <div>v <em class="luth_em">0.9.7.11 </em> (2024-12-20)</div>
                 <ul>
                 	<li>
