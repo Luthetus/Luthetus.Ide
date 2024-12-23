@@ -87,7 +87,11 @@ public static class ParseTokens
     			MoveToHandleVariableDeclarationNode((VariableDeclarationNode)expressionNode, compilationUnit, ref parserModel);
 				return;
 	        case SyntaxKind.VariableReferenceNode:
-	        	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken &&
+	        
+	        	var isQuestionMarkMemberAccessToken = parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.QuestionMarkToken &&
+	        		parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.MemberAccessToken;
+	        
+	        	if ((parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken || isQuestionMarkMemberAccessToken) &&
 	        		originalTokenIndex == parserModel.TokenWalker.Index - 1)
 				{
 					_ = parserModel.TokenWalker.Backtrack();
