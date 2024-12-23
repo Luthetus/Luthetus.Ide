@@ -1318,7 +1318,9 @@ public partial class CSharpBinder
 		switch (expressionSecondary.SyntaxKind)
 		{
 			default:
-				CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
+				if (!lambdaExpressionNode.CloseBraceToken.ConstructorWasInvoked)
+					CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
+				
 				return lambdaExpressionNode;
 		}
 	}
