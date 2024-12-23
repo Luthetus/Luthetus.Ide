@@ -452,6 +452,25 @@ public partial class CSharpBinder : IBinder
             	variableDeclarationNode);
         }
     }
+    
+    public bool RemoveVariableDeclarationNodeFromActiveBinderSession(
+    	int scopeIndexKey, VariableDeclarationNode variableDeclarationNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
+    	var text = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
+    	
+    	if (TryGetVariableDeclarationNodeByScope(
+        		compilationUnit,
+        		compilationUnit.BinderSession.ResourceUri,
+        		scopeIndexKey,
+        		text,
+        		out var existingVariableDeclarationNode))
+        {
+            var scopeKeyAndIdentifierText = new ScopeKeyAndIdentifierText(scopeIndexKey, text);
+	    	return compilationUnit.BinderSession.ScopeVariableDeclarationMap.Remove(scopeKeyAndIdentifierText);
+        }
+        
+        return false;
+    }
 
     public VariableReferenceNode ConstructAndBindVariableReferenceNode(
         IdentifierToken variableIdentifierToken,
@@ -1746,7 +1765,7 @@ public partial class CSharpBinder : IBinder
     	}
     }
     
-    public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit)
+    public void OnBoundScopeCreatedAndSetAsCurrent(ICodeBlockOwner codeBlockOwner, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	if (codeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
     	{
@@ -1794,6 +1813,13 @@ public partial class CSharpBinder : IBinder
 	    	{
 	    		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
 	    	}
+    	}
+    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.TryStatementCatchNode)
+    	{
+    		var tryStatementCatchNode = (TryStatementCatchNode)codeBlockOwner;
+    		
+    		if (tryStatementCatchNode.VariableDeclarationNode is not null)
+	    		compilationUnit.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, compilationUnit);
     	}
     }
 }

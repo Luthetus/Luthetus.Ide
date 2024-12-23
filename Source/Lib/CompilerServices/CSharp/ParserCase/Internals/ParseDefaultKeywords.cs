@@ -38,6 +38,8 @@ public class ParseDefaultKeywords
 
     public static void HandleCaseTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	var caseKeyword = (KeywordToken)parserModel.TokenWalker.Consume();
+    	
     	parserModel.ExpressionList.Add((SyntaxKind.ColonToken, null));
 		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
 	    var colonToken = (ColonToken)parserModel.TokenWalker.Match(SyntaxKind.ColonToken);
@@ -46,13 +48,10 @@ public class ParseDefaultKeywords
     public static void HandleCatchTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var catchKeywordToken = (KeywordToken)parserModel.TokenWalker.Consume();
-    	
     	var openParenthesisToken = (OpenParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
     	
-    	var typeClause = parserModel.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserModel);
-    	
-    	if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseParenthesisToken)
-    		_ = (IdentifierToken)parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
+    	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
     	
     	var closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
     
@@ -80,6 +79,13 @@ public class ParseDefaultKeywords
 		        openParenthesisToken,
 		        closeParenthesisToken,
 		        codeBlockNode: null);
+		    
+		    if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+		    {
+		    	var variableDeclarationNode = (VariableDeclarationNode)expressionNode;
+    			compilationUnit.Binder.RemoveVariableDeclarationNodeFromActiveBinderSession(compilationUnit.BinderSession.CurrentScopeIndexKey, variableDeclarationNode, compilationUnit, ref parserModel);
+		    	catchNode.SetVariableDeclarationNode(variableDeclarationNode);
+		    }
         
         	tryStatementNode.SetTryStatementCatchNode(catchNode);
         	parserModel.SyntaxStack.Push(catchNode);

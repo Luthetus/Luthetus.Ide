@@ -52,7 +52,7 @@ public partial class CSharpBinder
 			return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
 		}
 		
-		if (UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
+		if (!parserModel.ForceParseGenericParameters && UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
 			return HandleBinaryOperator(expressionPrimary, token, compilationUnit, ref parserModel);
 		
 		switch (expressionPrimary.SyntaxKind)
@@ -473,7 +473,8 @@ public partial class CSharpBinder
 				return ambiguousIdentifierExpressionNode;
 		}
 	
-		if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+		if (!parserModel.ForceParseTypeClauseNode &&
+			UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
 			if (TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
@@ -492,8 +493,7 @@ public partial class CSharpBinder
 			}
 		}
 		
-		if (!forceVariableReferenceNode &&
-			UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+		if (!forceVariableReferenceNode && UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
 			if (TryGetTypeDefinitionHierarchically(
 	        		compilationUnit,
@@ -999,6 +999,7 @@ public partial class CSharpBinder
 				
 				parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, genericParametersListingNode));
 				parserModel.ExpressionList.Add((SyntaxKind.CommaToken, genericParametersListingNode));
+				
 				return EmptyExpressionNode.Empty;
 			case SyntaxKind.ReturnTokenKeyword:
 				var returnStatementNode = new ReturnStatementNode((KeywordToken)token, EmptyExpressionNode.Empty);
@@ -1858,7 +1859,7 @@ public partial class CSharpBinder
 
         compilationUnit.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, compilationUnit);
 		parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
-		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit);
+		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit, ref parserModel);
 	}
 	
 	public void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
