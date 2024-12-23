@@ -38,6 +38,7 @@ public class ParseDefaultKeywords
 
     public static void HandleCaseTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	var caseKeyword = (KeywordToken)parserModel.TokenWalker.Consume();
     	// TODO: Was the case keyword ever consumed?
     	parserModel.ExpressionList.Add((SyntaxKind.ColonToken, null));
 		var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
