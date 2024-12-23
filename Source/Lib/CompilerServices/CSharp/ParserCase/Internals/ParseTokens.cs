@@ -23,6 +23,22 @@ public static class ParseTokens
 
     public static void ParseIdentifierToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	if (parserModel.TokenWalker.Current.TextSpan.Length == 1 &&
+    		parserModel.TokenWalker.Current.TextSpan.GetText() == "_")
+    	{
+    		if (!compilationUnit.Binder.TryGetVariableDeclarationHierarchically(
+			    	compilationUnit,
+			    	compilationUnit.BinderSession.ResourceUri,
+			    	compilationUnit.BinderSession.CurrentScopeIndexKey,
+			        parserModel.TokenWalker.Current.TextSpan.GetText(),
+			        out _))
+			{
+				compilationUnit.Binder.BindDiscard((IdentifierToken)parserModel.TokenWalker.Current, compilationUnit);
+	    		_ = parserModel.TokenWalker.Consume();
+	    		return;
+			}
+    	}
+    	
     	var originalTokenIndex = parserModel.TokenWalker.Index;
     	
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
@@ -71,6 +87,17 @@ public static class ParseTokens
     			MoveToHandleVariableDeclarationNode((VariableDeclarationNode)expressionNode, compilationUnit, ref parserModel);
 				return;
 	        case SyntaxKind.VariableReferenceNode:
+	        	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.MemberAccessToken &&
+	        		originalTokenIndex == parserModel.TokenWalker.Index - 1)
+				{
+					_ = parserModel.TokenWalker.Backtrack();
+					expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+					parserModel.StatementBuilder.ChildList.Add(expressionNode);
+					return;
+				}
+				
+				parserModel.StatementBuilder.ChildList.Add(expressionNode);
+				return;
 	        case SyntaxKind.FunctionInvocationNode:
 			case SyntaxKind.ConstructorInvocationExpressionNode:
 				parserModel.StatementBuilder.ChildList.Add(expressionNode);

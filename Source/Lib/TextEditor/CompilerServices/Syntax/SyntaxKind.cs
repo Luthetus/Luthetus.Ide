@@ -254,6 +254,7 @@ public enum SyntaxKind
     // Symbols
     TypeSymbol,
     ConstructorSymbol,
+    DiscardSymbol,
     FunctionSymbol,
     LambdaSymbol,
     VariableSymbol,

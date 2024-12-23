@@ -245,6 +245,16 @@ public partial class CSharpBinder : IBinder
             DecorationByte = (byte)GenericDecorationKind.StringLiteral,
         }), compilationUnit);
     }
+    
+    public void BindDiscard(
+        IdentifierToken identifierToken,
+        CSharpCompilationUnit compilationUnit)
+    {
+        AddSymbolReference(new DiscardSymbol(identifierToken.TextSpan with
+        {
+            DecorationByte = (byte)GenericDecorationKind.None,
+        }), compilationUnit);
+    }
 
     public void BindFunctionDefinitionNode(
         FunctionDefinitionNode functionDefinitionNode,
