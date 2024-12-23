@@ -473,7 +473,8 @@ public partial class CSharpBinder
 				return ambiguousIdentifierExpressionNode;
 		}
 	
-		if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+		if (!parserModel.ForceParseTypeClauseNode &&
+			UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
 			if (TryGetVariableDeclarationHierarchically(
 			    	compilationUnit,
@@ -492,8 +493,7 @@ public partial class CSharpBinder
 			}
 		}
 		
-		if (!forceVariableReferenceNode &&
-			UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+		if (!forceVariableReferenceNode && UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
 			if (TryGetTypeDefinitionHierarchically(
 	        		compilationUnit,

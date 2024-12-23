@@ -162,6 +162,7 @@ public class ParseFunctions
             	}
             
             	var tokenIndexOriginal = parserModel.TokenWalker.Index;
+            	parserModel.ForceParseTypeClauseNode = true;
 				var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, ref parserModel, out var typeClauseNode);
 		    	var successName = false;
 		    	
