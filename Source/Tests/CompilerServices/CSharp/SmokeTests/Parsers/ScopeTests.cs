@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.Facts;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -42,12 +43,15 @@ public class ScopeTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
+			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
 			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
 	        CSharpParser.Parse(CompilationUnit);
 		}
 		
 		public string SourceText { get; set; }
 		public ResourceUri ResourceUri { get; set; }
+		public CSharpLexerOutput LexerOutput { get; set; }
 		public IBinder Binder => CompilationUnit.Binder;
 		public CSharpCompilationUnit CompilationUnit { get; set; }
 	}

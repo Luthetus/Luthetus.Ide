@@ -10,6 +10,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.CompilerServices.CSharp.LexerCase;
 using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.ParserCase.Internals;
+using Luthetus.CompilerServices.CSharp.BinderCase;
 using Luthetus.CompilerServices.CSharp.Facts;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
@@ -23,7 +24,9 @@ public partial class ExpressionTests
 		{
 			SourceText = sourceText;
 			ResourceUri = new ResourceUri("./unitTesting.txt");
+			CompilationUnit = new CSharpCompilationUnit(ResourceUri, new CSharpBinder());
 			CompilationUnit.LexerOutput = CSharpLexer.Lex(ResourceUri, SourceText);
+			CompilationUnit.BinderSession = (CSharpBinderSession)CompilationUnit.Binder.StartBinderSession(ResourceUri);
 	        CSharpParser.Parse(CompilationUnit);
 		}
 		
@@ -1173,14 +1176,14 @@ public partial class ExpressionTests
     [Fact]
     public void LambdaFunction_Expression_NoParameter()
     {
-    	var test = new Test("() => \"Abc\";");
+    	var test = new Test("(() => \"Abc\");");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
+		
 		Assert.True(lambdaExpressionNode.CodeBlockNodeIsExpression);
 		Assert.Empty(lambdaExpressionNode.VariableDeclarationNodeList);
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
     [Fact]
@@ -1345,8 +1348,8 @@ public partial class ExpressionTests
 		Assert.Equal(TypeFacts.Empty.ToTypeClause(), parameter.TypeClauseNode);
         Assert.Equal("x", parameter.IdentifierToken.TextSpan.GetText());
         Assert.Equal(VariableKind.Local, parameter.VariableKind);
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
+        
+        
     }
     
     [Fact]
@@ -1377,47 +1380,39 @@ public partial class ExpressionTests
 	        Assert.Equal("index", parameter.IdentifierToken.TextSpan.GetText());
 	        Assert.Equal(VariableKind.Local, parameter.VariableKind);
         }
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
     [Fact]
     public void LambdaFunction_CodeBlock_NoParameter_Async()
     {
-    	var test = new Test("async () => { WriteLine(\"Abc\"); return \"Cba\"; };");
+    	var test = new Test("(async () => { WriteLine(\"Abc\"); return \"Cba\"; });");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
 		
 		throw new NotImplementedException();
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
     [Fact]
     public void LambdaFunction_CodeBlock_SingleParameter_Async()
     {
-    	var test = new Test("async x => { return \"Abc\"; };");
+    	var test = new Test("(async x => { return \"Abc\"; });");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
 		
 		throw new NotImplementedException();
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
     [Fact]
     public void LambdaFunction_CodeBlock_ManyParameter()
     {
-    	var test = new Test("(x, index) => { return \"Abc\"; };");
+    	var test = new Test("((x, index) => { return \"Abc\"; });");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
 		
 		throw new NotImplementedException();
-    
-    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
     [Fact]
