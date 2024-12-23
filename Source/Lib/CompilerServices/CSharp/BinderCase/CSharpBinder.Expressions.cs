@@ -337,6 +337,7 @@ public partial class CSharpBinder
 			{
 				parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, lambdaExpressionNode));
 				OpenLambdaExpressionScope(lambdaExpressionNode, (OpenBraceToken)parserModel.TokenWalker.Next, compilationUnit, ref parserModel);
+				SkipLambdaExpressionStatements(lambdaExpressionNode, compilationUnit, ref parserModel);
 			}
 			else
 			{
@@ -1863,5 +1864,55 @@ public partial class CSharpBinder
 			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 		
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
+	}
+	
+	/// <summary>
+	/// TODO: Parse the lambda expression's statements...
+	///       ...This sounds quite complicated because we went
+	///       from the statement-loop to the expression-loop
+	///       and now have to run the statement-loop again
+	///       but not lose the state of any active loops.
+	///       For now skip tokens until the close brace token is matched in order to
+	///       preserve the other features of the text editor.
+	///       (rather than lambda expression statements clobbering the entire syntax highlighting of the file).
+	/// </summary>
+	public void SkipLambdaExpressionStatements(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		#if DEBUG
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
+		#endif
+		
+		parserModel.TokenWalker.Consume(); // Skip the EqualsCloseAngleBracketToken
+		
+		var openBraceToken = (OpenBraceToken)parserModel.TokenWalker.Consume();
+    	
+    	var openBraceCounter = 1;
+		
+		while (true)
+		{
+			if (parserModel.TokenWalker.IsEof)
+				break;
+
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			{
+				++openBraceCounter;
+			}
+			else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+			{
+				if (--openBraceCounter <= 0)
+					break;
+			}
+
+			_ = parserModel.TokenWalker.Consume();
+		}
+
+		CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
+	
+		var closeTokenIndex = parserModel.TokenWalker.Index;
+		var closeBraceToken = (CloseBraceToken)parserModel.TokenWalker.Match(SyntaxKind.CloseBraceToken);
+		
+		#if DEBUG
+		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
+		#endif
 	}
 }
