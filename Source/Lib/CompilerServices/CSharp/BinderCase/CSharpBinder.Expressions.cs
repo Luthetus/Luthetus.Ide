@@ -318,7 +318,27 @@ public partial class CSharpBinder
 		{
 			var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 			SetLambdaExpressionNodeVariableDeclarationNodeList(lambdaExpressionNode, ambiguousIdentifierExpressionNode, compilationUnit, ref parserModel);
-			return lambdaExpressionNode;
+			
+			// If the lambda expression's code block is a single expression then there is no end delimiter.
+			// Instead, it is the parent expression's delimiter that causes the lambda expression's code block to short circuit.
+			// At this moment, the lambda expression is given whatever expression was able to be parsed and can take it as its "code block".
+			// And then restore the parent expression as the expressionPrimary.
+			//
+			// -----------------------------------------------------------------------------------------------------------------------------
+			//
+			// If the lambda expression's code block is deliminated by braces
+			// then the end delimiter is the CloseBraceToken.
+			// But, we can only add a "short circuit" for 'CloseBraceToken and lambdaExpressionNode'
+			// if we have seen the 'OpenBraceToken'.
+			
+			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, lambdaExpressionNode));
+			
+			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
+				parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, lambdaExpressionNode));
+			
+			OpenLambdaExpressionScope(lambdaExpressionNode, (EqualsCloseAngleBracketToken)token, compilationUnit, ref parserModel);
+			
+			return EmptyExpressionNode.Empty;
 		}
 		else if (token.SyntaxKind == SyntaxKind.IsTokenKeyword)
 		{
@@ -1292,6 +1312,7 @@ public partial class CSharpBinder
 		switch (expressionSecondary.SyntaxKind)
 		{
 			default:
+				CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
 				return lambdaExpressionNode;
 		}
 	}
@@ -1814,5 +1835,30 @@ public partial class CSharpBinder
 	    parserModel.ExpressionList.Add((SyntaxKind.CloseAngleBracketToken, typeClauseNode));
 		parserModel.ExpressionList.Add((SyntaxKind.CommaToken, typeClauseNode.GenericParametersListingNode));
 		return EmptyExpressionNode.Empty;
+	}
+	
+	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, EqualsCloseAngleBracketToken equalsCloseAngleBracketToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		var openBraceToken = new OpenBraceToken(equalsCloseAngleBracketToken.TextSpan);
+	
+		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lambdaExpressionNode;
+		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+
+		var nextCodeBlockOwner = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
+		var nextReturnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
+
+        compilationUnit.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, compilationUnit);
+		parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
+		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit);
+	}
+	
+	public void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		var closeBraceToken = new CloseBraceToken(parserModel.TokenWalker.Current.TextSpan);
+	
+		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
+			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		
+        compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
 	}
 }
