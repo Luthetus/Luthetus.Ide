@@ -1777,5 +1777,13 @@ public partial class CSharpBinder : IBinder
 				compilationUnit.Binder.BindVariableDeclarationNode(argument.VariableDeclarationNode, compilationUnit);
 			}
     	}
+    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.LambdaExpressionNode)
+    	{
+    		var lambdaExpressionNode = (LambdaExpressionNode)codeBlockOwner;
+    		foreach (var variableDeclarationNode in lambdaExpressionNode.VariableDeclarationNodeList)
+	    	{
+	    		compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
+	    	}
+    	}
     }
 }

@@ -334,9 +334,14 @@ public partial class CSharpBinder
 			parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, lambdaExpressionNode));
 			
 			if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
+			{
 				parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, lambdaExpressionNode));
-			
-			OpenLambdaExpressionScope(lambdaExpressionNode, (EqualsCloseAngleBracketToken)token, compilationUnit, ref parserModel);
+				OpenLambdaExpressionScope(lambdaExpressionNode, (OpenBraceToken)parserModel.TokenWalker.Next, compilationUnit, ref parserModel);
+			}
+			else
+			{
+				OpenLambdaExpressionScope(lambdaExpressionNode, new OpenBraceToken(token.TextSpan), compilationUnit, ref parserModel);
+			}
 			
 			return EmptyExpressionNode.Empty;
 		}
@@ -1837,10 +1842,8 @@ public partial class CSharpBinder
 		return EmptyExpressionNode.Empty;
 	}
 	
-	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, EqualsCloseAngleBracketToken equalsCloseAngleBracketToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		var openBraceToken = new OpenBraceToken(equalsCloseAngleBracketToken.TextSpan);
-	
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lambdaExpressionNode;
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
