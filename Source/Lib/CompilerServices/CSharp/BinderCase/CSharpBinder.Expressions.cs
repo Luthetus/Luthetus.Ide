@@ -1858,7 +1858,7 @@ public partial class CSharpBinder
 
         compilationUnit.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, compilationUnit);
 		parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
-		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit);
+		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit, ref parserModel);
 	}
 	
 	public void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
