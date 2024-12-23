@@ -363,15 +363,8 @@ public partial class CSharpBinder
 			{
 				_ = parserModel.TokenWalker.Consume(); // Consume the NullTokenKeyword
 			}
-			else if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Current.SyntaxKind))
-			{
-				ParseTokens.ParseIdentifierToken(compilationUnit, ref parserModel); // Parse the type pattern matching / variable declaration
-			}
 			
-			// Guaranteed to consume 1 further than the secondary loop so have to backtrack 1 time as well.
-			_ = parserModel.TokenWalker.Backtrack();
-			
-			return ambiguousIdentifierExpressionNode;
+			return EmptyExpressionNode.Empty;
 		}
 		else if (token.SyntaxKind == SyntaxKind.WithTokenContextualKeyword)
 		{
