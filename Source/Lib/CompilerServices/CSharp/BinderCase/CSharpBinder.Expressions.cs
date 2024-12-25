@@ -1958,7 +1958,25 @@ public partial class CSharpBinder
 			{
 				var variableDeclarationNode = (VariableDeclarationNode)node;
 				
-				if (variableDeclarationNode.IdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
+				
+				if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked ||
+					variableDeclarationNode.IdentifierToken.TextSpan.SourceText is null)
+				{
+					continue;
+				}
+				
+				if (!memberIdentifierToken.ConstructorWasInvoked ||
+					memberIdentifierToken.TextSpan.SourceText is null)
+				{
+					continue;
+				} 
+				
+				
+				var aaa = variableDeclarationNode.IdentifierToken.TextSpan.GetText();
+				
+				var bbb = memberIdentifierToken.TextSpan.GetText();
+				
+				if (aaa == bbb)
 				{
 					foundDefinitionNode = variableDeclarationNode;
 					break;
