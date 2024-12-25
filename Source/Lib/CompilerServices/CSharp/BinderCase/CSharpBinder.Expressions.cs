@@ -1915,7 +1915,12 @@ public partial class CSharpBinder
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
 
 		_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
-		var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel);
+		
+		var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(
+			parserModel.TokenWalker.Consume(),
+			compilationUnit,
+			ref parserModel);
+			
 		if (!memberIdentifierToken.ConstructorWasInvoked || memberIdentifierToken.TextSpan.SourceText is null)
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
 		
@@ -1938,8 +1943,6 @@ public partial class CSharpBinder
 		if (typeClauseNode is null)
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
 		
-		Console.WriteLine("aaa halfway -1");
-		
 		var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
 		if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
@@ -1947,8 +1950,6 @@ public partial class CSharpBinder
 		var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
 		var memberList = typeDefinitionNode.GetMemberList();
 		ISyntaxNode? foundDefinitionNode = null;
-		
-		Console.WriteLine("aaa halfway");
 		
 		foreach (var node in memberList)
 		{
