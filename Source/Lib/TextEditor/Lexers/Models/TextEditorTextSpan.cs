@@ -3,6 +3,16 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 namespace Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 /// <summary>
+/// If a 'TextEditorTextSpan' is widely shared,
+/// that instance might be best served to use 'SetNullSourceText()' on.
+/// - It will calculate a new string and cache it which is the substring of this
+/// 	text span from the source text.
+/// - Then, it will set the reference to the original source text to be 'null' so that the
+/// 	memory assocaited with the original source text does not have a reference to it lingering around.
+/// It is a question of whether one wants the cost of allocating a new string (the cached substring),
+/// or if one would prefer not calculate the substring because it is uncertain whether doing so will be necessary.
+/// 
+///
 /// TODO: I have a suspicion that this type takes an absurd amount of memory...
 ///       ... the initial way of implementing this type was to store the text
 ///       at the time of constructing the text span.
@@ -135,6 +145,31 @@ public record struct TextEditorTextSpan(
     public string ClearTextCache()
     {
         return _text = null;
+    }
+    
+    /// <summary>
+    /// The method 'GetText()' will be invoked and cached prior to
+    /// setting the 'SourceText' to null.
+    ///
+    /// This allows one to still get the text from the text span,
+    /// but without holding a reference to the original text.
+    /// </summary>
+    public TextEditorTextSpan SetNullSourceText()
+    {
+    	_text = GetText();
+    	SourceText = null;
+    	return this;
+    }
+    
+    /// <summary>
+    /// Argument 'text': The pre-calculated text to return when one invokes 'GetText()'
+    /// instead of returning a null reference exception.
+    /// </summary>
+    public TextEditorTextSpan SetNullSourceText(string? text = null)
+    {
+    	_text = text;
+    	SourceText = null;
+    	return this;
     }
 
 #if DEBUG

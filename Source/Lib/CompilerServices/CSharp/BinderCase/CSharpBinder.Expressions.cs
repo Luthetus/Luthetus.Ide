@@ -1981,7 +1981,7 @@ public partial class CSharpBinder
 	        
 	        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
 	        	symbolId,
-	        	variableDeclarationNode.IdentifierToken.TextSpan);
+	        	variableDeclarationNode.IdentifierToken.TextSpan.SetNullSourceText());
 	        
 	    	return variableReferenceNode;
 		}
