@@ -930,17 +930,23 @@ public partial class CSharpBinder : IBinder
             compilationUnit.BinderSession.CurrentScopeIndexKey));
     }
 
-    public void CreateVariableSymbol(
+	/// <summary>
+	/// Returns the 'symbolId: compilationUnit.BinderSession.GetNextSymbolId();'
+	/// that was used to construct the ITextEditorSymbol.
+	/// </summary>
+    public int CreateVariableSymbol(
         IdentifierToken identifierToken,
         VariableKind variableKind,
         CSharpCompilationUnit compilationUnit)
     {
+    	var symbolId = compilationUnit.BinderSession.GetNextSymbolId();
+    	
         switch (variableKind)
         {
             case VariableKind.Field:
                 AddSymbolDefinition(
                 	new FieldSymbol(
-	                	compilationUnit.BinderSession.GetNextSymbolId(),
+	                	symbolId,
 	                	identifierToken.TextSpan with
 		                {
 		                    DecorationByte = (byte)GenericDecorationKind.Field
@@ -950,7 +956,7 @@ public partial class CSharpBinder : IBinder
             case VariableKind.Property:
                 AddSymbolDefinition(
                 	new PropertySymbol(
-                		compilationUnit.BinderSession.GetNextSymbolId(),
+                		symbolId,
                 		identifierToken.TextSpan with
 		                {
 		                    DecorationByte = (byte)GenericDecorationKind.Property
@@ -964,7 +970,7 @@ public partial class CSharpBinder : IBinder
             default:
                 AddSymbolDefinition(
                 	new VariableSymbol(
-                		compilationUnit.BinderSession.GetNextSymbolId(),
+                		symbolId,
                 		identifierToken.TextSpan with
 		                {
 		                    DecorationByte = (byte)GenericDecorationKind.Variable
@@ -972,6 +978,8 @@ public partial class CSharpBinder : IBinder
 		            compilationUnit);
                 break;
         }
+        
+        return symbolId;
     }
 
 	/// <summary>
@@ -1514,21 +1522,23 @@ public partial class CSharpBinder : IBinder
 		return foundSymbol;
     }
     
-    ISyntaxNode? IBinder.GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    ISyntaxNode? IBinder.GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, ITextEditorSymbol? symbol = null)
     {
-    	var symbol = GetSymbol(compilationUnit: null, textSpan, compilerServiceResource.GetSymbols());
+    	symbol ??= GetSymbol(compilationUnit: null, textSpan, compilerServiceResource.GetSymbols());
     	if (symbol is null)
     		return null;
     		
-    	return GetDefinitionNode(compilationUnit: null, textSpan, symbol.SyntaxKind);
+    	return GetDefinitionNode(compilationUnit: null, textSpan, symbol.SyntaxKind, symbol: symbol);
     }
     
     /// <summary>
     /// If the 'syntaxKind' is unknown then a possible way of determining it is to invoke <see cref="GetSymbol"/>
     /// and use the symbol's syntaxKind.
     /// </summary>
-    public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind)
+    public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind, ITextEditorSymbol? symbol = null)
     {
+    	Console.WriteLine("aaa aaaaaaa");
+    
     	var scope = GetScope(compilationUnit, textSpan);
         
         switch (syntaxKind)
@@ -1549,6 +1559,32 @@ public partial class CSharpBinder : IBinder
 		            && variableDeclarationStatementNode is not null)
 		        {
 		            return variableDeclarationStatementNode;
+		        }
+		        
+		        Console.WriteLine("aaa check symbol is not null");
+		        // Console.WriteLine($"aaa target: {((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.Count}");
+			    // Console.WriteLine($"aaa other: {compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.Count}");
+		        if (symbol is not null)
+		        {
+		        	Console.WriteLine("aaa yes symbol is not null");
+			        if (TryGetBinderSession(compilationUnit, textSpan.ResourceUri, out var targetBinderSession))
+			        {
+			        	Console.WriteLine($"aaa target: {((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.Count}");
+			        	// Console.WriteLine($"aaa other: {compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.Count}");
+			        
+			        	Console.WriteLine("zzzzaaa adasdasdasasdasdyes symbol is not null");
+			        	
+			        	if (((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.SymbolId, out var definitionTextSpan))
+			        	{
+			        		Console.WriteLine("aaa found em");
+			        	
+			        		/*var definitionSymbol = GetSymbol(compilationUnit, definitionTextSpan, compilerServiceResource.GetSymbols());
+					    	if (symbol is null)
+					    		return null;*/
+    		
+			        		return GetDefinitionNode(compilationUnit, definitionTextSpan, SyntaxKind.VariableDeclarationNode);
+			        	}
+			        }
 		        }
 		        
 		        return null;
@@ -1817,7 +1853,7 @@ public partial class CSharpBinder : IBinder
     		default:
     		{
     			#if DEBUG
-    			Console.WriteLine($"method: '{nameof(GetNodePositionIndices)}' The {nameof(SyntaxKind)}: '{nameof(syntaxNode.SyntaxKind)}' defaulted in switch statement.");
+    			Console.WriteLine($"method: '{nameof(GetNodePositionIndices)}' The {nameof(SyntaxKind)}: '{syntaxNode}' defaulted in switch statement.");
     			#endif
     			
     			return (-1, -1);

@@ -1977,7 +1977,11 @@ public partial class CSharpBinder
 			var variableReferenceNode = new VariableReferenceNode(
 	            memberIdentifierToken,
 	            variableDeclarationNode);
-	        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+	        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+	        
+	        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
+	        	symbolId,
+	        	variableDeclarationNode.IdentifierToken.TextSpan);
 	        
 	        Console.WriteLine("aaa variableReferenceNode success");
 	    	return variableReferenceNode;
