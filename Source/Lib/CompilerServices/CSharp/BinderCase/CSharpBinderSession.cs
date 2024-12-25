@@ -48,6 +48,15 @@ public class CSharpBinderSession : IBinderSession
     public Dictionary<int, TypeClauseNode> ScopeReturnTypeClauseNodeMap { get; } = new();
     
     /// <summary>
+    /// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    /// Using the text span is a bad idea,
+    /// it will reference the source text and make it so the memory is not cleared when
+    /// a new TextEditorModel is instantiated due to an edit to the file.
+    ///
+    /// Store only the required information (most importantly don't store the source text)
+    /// (the source text is on the TextEditorTextSpan so it is stored as a result.).
+	/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	///
     /// If a symbol references a defintion that exists within a different ResourceUri,
     /// and is not "indexed" information, then this disambiguates the definition.
     ///
