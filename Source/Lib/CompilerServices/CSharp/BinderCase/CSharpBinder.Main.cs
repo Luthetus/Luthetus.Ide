@@ -1424,7 +1424,8 @@ public partial class CSharpBinder : IBinder
     	
     public TextEditorTextSpan? GetDefinitionTextSpan(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
     {
-        var definitionNode = GetDefinitionNode(compilationUnit, textSpan, compilerServiceResource);
+    	var symbol = GetSymbol(compilationUnit, textSpan, compilerServiceResource.GetSymbols());
+        var definitionNode = GetDefinitionNode(compilationUnit, textSpan, symbol.SyntaxKind);
         
         if (definitionNode is null)
         	return null;
@@ -1442,21 +1443,12 @@ public partial class CSharpBinder : IBinder
         }
     }
     
-    ISyntaxNode? IBinder.GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource) =>
-    	GetDefinitionNode(compilationUnit: null, textSpan, compilerServiceResource);
-    
-    public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    public ITextEditorSymbol GetSymbol(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, IReadOnlyList<ITextEditorSymbol> symbolList)
     {
-    	var boundScope = GetScope(compilationUnit, textSpan);
-        
-        if (compilerServiceResource.CompilationUnit is null)
-        	return null;
-        
-        // Try to find a symbol at that cursor position.
-		var symbols = compilerServiceResource.GetSymbols();
+    	// Try to find a symbol at that cursor position.
 		var foundSymbol = (ITextEditorSymbol?)null;
 		
-        foreach (var symbol in symbols)
+        foreach (var symbol in symbolList)
         {
             if (textSpan.StartingIndexInclusive >= symbol.TextSpan.StartingIndexInclusive &&
                 textSpan.StartingIndexInclusive < symbol.TextSpan.EndingIndexExclusive)
@@ -1466,12 +1458,27 @@ public partial class CSharpBinder : IBinder
             }
         }
 		
-		if (foundSymbol is null)
-			return null;
-			
-		var currentSyntaxKind = foundSymbol.SyntaxKind;
+		return foundSymbol;
+    }
+    
+    ISyntaxNode? IBinder.GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    {
+    	var symbol = GetSymbol(compilationUnit: null, textSpan, compilerServiceResource.GetSymbols());
+    	if (symbol is null)
+    		return null;
+    		
+    	return GetDefinitionNode(compilationUnit: null, textSpan, symbol.SyntaxKind);
+    }
+    
+    /// <summary>
+    /// If the 'syntaxKind' is unknown then a possible way of determining it is to invoke <see cref="GetSymbol"/>
+    /// and use the symbol's syntaxKind.
+    /// </summary>
+    public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind)
+    {
+    	var scope = GetScope(compilationUnit, textSpan);
         
-        switch (currentSyntaxKind)
+        switch (syntaxKind)
         {
         	case SyntaxKind.VariableAssignmentExpressionNode:
         	case SyntaxKind.VariableDeclarationNode:
@@ -1483,7 +1490,7 @@ public partial class CSharpBinder : IBinder
         		if (TryGetVariableDeclarationHierarchically(
         				compilationUnit,
         				textSpan.ResourceUri,
-        				boundScope.IndexKey,
+        				scope.IndexKey,
 		                textSpan.GetText(),
 		                out var variableDeclarationStatementNode)
 		            && variableDeclarationStatementNode is not null)
@@ -1500,7 +1507,7 @@ public partial class CSharpBinder : IBinder
 	        	if (TryGetFunctionHierarchically(
 	        				 compilationUnit,
 	        				 textSpan.ResourceUri,
-        					 boundScope.IndexKey,
+        					 scope.IndexKey,
 		                     textSpan.GetText(),
 		                     out var functionDefinitionNode)
 		                 && functionDefinitionNode is not null)
@@ -1518,7 +1525,7 @@ public partial class CSharpBinder : IBinder
 	        	if (TryGetTypeDefinitionHierarchically(
 	        				 compilationUnit,
 	        			     textSpan.ResourceUri,
-        					 boundScope.IndexKey,
+        					 scope.IndexKey,
 		                     textSpan.GetText(),
 		                     out var typeDefinitionNode)
 		                 && typeDefinitionNode is not null)

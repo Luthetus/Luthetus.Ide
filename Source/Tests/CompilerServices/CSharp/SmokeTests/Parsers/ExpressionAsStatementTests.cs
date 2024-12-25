@@ -2391,6 +2391,21 @@ Func(decimalPercentProgress);
 		throw new NotImplementedException();
     }
     
+    [Fact]
+    public void Identifier_MemberAccess_Identifier()
+    {
+    	var test = new Test(
+@"
+Person person = new();
+person.FirstName;
+");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		var binaryExpressionNode = (BinaryExpressionNode)topCodeBlock.GetChildList()[1];
+		// var expressionNode = binaryExpressionNode.ExpressionNode;
+		throw new NotImplementedException();
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");

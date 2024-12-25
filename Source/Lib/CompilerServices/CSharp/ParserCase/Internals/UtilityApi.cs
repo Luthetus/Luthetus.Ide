@@ -81,6 +81,7 @@ public static class UtilityApi
             case SyntaxKind.MinusToken:
             case SyntaxKind.StarToken:
             case SyntaxKind.DivisionToken:
+            case SyntaxKind.MemberAccessToken:
             case SyntaxKind.CloseAngleBracketToken:
             case SyntaxKind.CloseAngleBracketEqualsToken:
             case SyntaxKind.OpenAngleBracketToken:

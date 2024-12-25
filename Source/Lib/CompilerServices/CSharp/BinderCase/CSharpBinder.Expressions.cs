@@ -33,7 +33,7 @@ public partial class CSharpBinder
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}");
 		#endif
 	
-		if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
+		/*if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
 		{
 			if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 			{
@@ -50,7 +50,7 @@ public partial class CSharpBinder
 			}
 			
 			return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
-		}
+		}*/
 		
 		if (!parserModel.ForceParseGenericParameters && UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
 			return HandleBinaryOperator(expressionPrimary, token, compilationUnit, ref parserModel);
@@ -164,6 +164,9 @@ public partial class CSharpBinder
 				ref parserModel);
 		}
 		
+		if (token.SyntaxKind == SyntaxKind.MemberAccessToken)
+			return ParseMemberAccessToken(expressionPrimary, token, compilationUnit, ref parserModel);
+		
 		if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode &&
 			(token.SyntaxKind == SyntaxKind.OpenAngleBracketToken || token.SyntaxKind == SyntaxKind.CloseAngleBracketToken))
 		{
@@ -242,7 +245,7 @@ public partial class CSharpBinder
 		}
 		
 		// Scope to avoid variable name collision.
-		{		
+		{
 			var typeClauseNode = expressionPrimary.ResultTypeClauseNode;
 			var binaryOperatorNode = new BinaryOperatorNode(typeClauseNode, token, typeClauseNode, typeClauseNode);
 			var binaryExpressionNode = new BinaryExpressionNode(expressionPrimary, binaryOperatorNode);
@@ -1920,5 +1923,63 @@ public partial class CSharpBinder
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 		#endif
+	}
+	
+	public IExpressionNode ParseMemberAccessToken(IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		TypeClauseNode? typeClauseNode = null;
+	
+		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+			typeClauseNode = ((VariableReferenceNode)expressionPrimary).VariableDeclarationNode?.TypeClauseNode;
+		else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
+			typeClauseNode = (TypeClauseNode)expressionPrimary;
+		
+		if (typeClauseNode is null)
+			return expressionPrimary;
+		
+		var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+		if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+			return expressionPrimary;
+			
+		var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
+		
+		var memberList = typeDefinitionNode.GetMemberList();
+		
+		if (!UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
+			return expressionPrimary;
+
+		var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel);
+		
+		ISyntaxNode? foundDefinitionNode = null;
+		
+		foreach (var node in memberList)
+		{
+			if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+			{
+				var variableDeclarationNode = (VariableDeclarationNode)node;
+				
+				if (variableDeclarationNode.IdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
+				{
+					foundDefinitionNode = variableDeclarationNode;
+					break;
+				}
+			}
+		}
+		
+		if (foundDefinitionNode is null)
+			 return expressionPrimary;
+			 
+		if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+		{
+			var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
+			
+			var variableReferenceNode = new VariableReferenceNode(
+	            memberIdentifierToken,
+	            variableDeclarationNode);
+	        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+	    	return variableReferenceNode;
+		}
+	
+		return expressionPrimary;
 	}
 }
