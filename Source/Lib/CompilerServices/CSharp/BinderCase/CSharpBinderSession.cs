@@ -70,6 +70,20 @@ public class CSharpBinderSession : IBinderSession
     ///
     /// But, if a different ICompilerService implementation wanted to map
     /// from a symbol to arbitrary information, they'd be able to do so.
+    ///
+    /// SIDE NOTE:
+    /// Track references by having the binder contain a Dictionary<FullyQualifiedName, List<ResourceUri>>
+    /// such that the 'List<ResourceUri>' is a list that contains all the files which contain at least 1 or more
+    /// references to the 'FullyQualifiedName'.
+    ///
+    /// In order to know the count of references to the 'FullyQualifiedName',
+    /// visit each 'ResourceUri' and at this point decide how to go from here.
+    ///
+    /// Maybe one could check the 'CSharpBinderSession' for each resource uri and
+    /// it has a Dictionary<FullyQualifiedName, List<TextEditorTextSpan>>
+    ///
+    /// Where each 'List<TextEditorTextSpan>' is a list containing all the text spans
+    // that reference the 'FullyQualifiedName' within that file.
     /// </summary>
     public Dictionary<int, TextEditorTextSpan> SymbolIdToExternalTextSpanMap { get; } = new();
     
