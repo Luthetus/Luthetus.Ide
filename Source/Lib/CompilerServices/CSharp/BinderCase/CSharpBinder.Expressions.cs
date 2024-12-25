@@ -1914,6 +1914,7 @@ public partial class CSharpBinder
 		if (!UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
 
+		_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
 		var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(parserModel.TokenWalker.Consume(), compilationUnit, ref parserModel);
 		if (!memberIdentifierToken.ConstructorWasInvoked || memberIdentifierToken.TextSpan.SourceText is null)
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
@@ -1937,6 +1938,8 @@ public partial class CSharpBinder
 		if (typeClauseNode is null)
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
 		
+		Console.WriteLine("aaa halfway -1");
+		
 		var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
 		if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
@@ -1944,6 +1947,8 @@ public partial class CSharpBinder
 		var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
 		var memberList = typeDefinitionNode.GetMemberList();
 		ISyntaxNode? foundDefinitionNode = null;
+		
+		Console.WriteLine("aaa halfway");
 		
 		foreach (var node in memberList)
 		{
@@ -1972,6 +1977,8 @@ public partial class CSharpBinder
 	            memberIdentifierToken,
 	            variableDeclarationNode);
 	        CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+	        
+	        Console.WriteLine("aaa variableReferenceNode success");
 	    	return variableReferenceNode;
 		}
 	
@@ -2002,9 +2009,12 @@ public partial class CSharpBinder
 	public IExpressionNode ParseMemberAccessToken_Fallback(int rememberOriginalTokenIndex, IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		// If the new code consumed, undo that.
-		if (parserModel.TokenWalker.Index == 1 + rememberOriginalTokenIndex)
+		if (parserModel.TokenWalker.Index == 2 + rememberOriginalTokenIndex)
+		{
 			_ = parserModel.TokenWalker.Backtrack();
-	
+			_ = parserModel.TokenWalker.Backtrack();
+		}
+		
 		if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
 			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
