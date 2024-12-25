@@ -1983,7 +1983,6 @@ public partial class CSharpBinder
 	        	symbolId,
 	        	variableDeclarationNode.IdentifierToken.TextSpan);
 	        
-	        Console.WriteLine("aaa variableReferenceNode success");
 	    	return variableReferenceNode;
 		}
 	

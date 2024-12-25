@@ -1537,8 +1537,6 @@ public partial class CSharpBinder : IBinder
     /// </summary>
     public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind, ITextEditorSymbol? symbol = null)
     {
-    	Console.WriteLine("aaa aaaaaaa");
-    
     	var scope = GetScope(compilationUnit, textSpan);
         
         switch (syntaxKind)
@@ -1561,27 +1559,12 @@ public partial class CSharpBinder : IBinder
 		            return variableDeclarationStatementNode;
 		        }
 		        
-		        Console.WriteLine("aaa check symbol is not null");
-		        // Console.WriteLine($"aaa target: {((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.Count}");
-			    // Console.WriteLine($"aaa other: {compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.Count}");
 		        if (symbol is not null)
 		        {
-		        	Console.WriteLine("aaa yes symbol is not null");
 			        if (TryGetBinderSession(compilationUnit, textSpan.ResourceUri, out var targetBinderSession))
 			        {
-			        	Console.WriteLine($"aaa target: {((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.Count}");
-			        	// Console.WriteLine($"aaa other: {compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.Count}");
-			        
-			        	Console.WriteLine("zzzzaaa adasdasdasasdasdyes symbol is not null");
-			        	
 			        	if (((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.SymbolId, out var definitionTextSpan))
 			        	{
-			        		Console.WriteLine("aaa found em");
-			        	
-			        		/*var definitionSymbol = GetSymbol(compilationUnit, definitionTextSpan, compilerServiceResource.GetSymbols());
-					    	if (symbol is null)
-					    		return null;*/
-    		
 			        		return GetDefinitionNode(compilationUnit, definitionTextSpan, SyntaxKind.VariableDeclarationNode);
 			        	}
 			        }
