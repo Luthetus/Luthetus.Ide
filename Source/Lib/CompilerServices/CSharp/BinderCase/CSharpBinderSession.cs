@@ -14,6 +14,8 @@ public class CSharpBinderSession : IBinderSession
 	/// Should 0 be the global scope?
 	/// </summary>
 	private int _indexKey = 0;
+	
+	private int _symbolId = 0;
 
     public CSharpBinderSession(
         ResourceUri resourceUri,
@@ -83,7 +85,7 @@ public class CSharpBinderSession : IBinderSession
     /// it has a Dictionary<FullyQualifiedName, List<TextEditorTextSpan>>
     ///
     /// Where each 'List<TextEditorTextSpan>' is a list containing all the text spans
-    // that reference the 'FullyQualifiedName' within that file.
+    /// that reference the 'FullyQualifiedName' within that file.
     /// </summary>
     public Dictionary<int, TextEditorTextSpan> SymbolIdToExternalTextSpanMap { get; } = new();
     
@@ -92,5 +94,10 @@ public class CSharpBinderSession : IBinderSession
     public int GetNextIndexKey()
     {
     	return ++_indexKey;
+    }
+    
+    public int GetNextSymbolId()
+    {
+    	return ++_symbolId;
     }
 }

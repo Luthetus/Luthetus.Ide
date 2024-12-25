@@ -25,10 +25,12 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 public record struct OnClickSymbol : ISymbol
 {
 	public OnClickSymbol(
+		int symbolId,
 		TextEditorTextSpan textSpan,
 		string displayText,
 		Func<Task> onClickFunc)
     {
+    	SymbolId = symbolId;
         TextSpan = textSpan;
         OnClickFunc = onClickFunc;
         DisplayText = displayText;
@@ -36,6 +38,7 @@ public record struct OnClickSymbol : ISymbol
 
     public Func<Task> OnClickFunc { get; init; }
     
+    public int SymbolId { get; }
     public TextEditorTextSpan TextSpan { get; init; }
     public string DisplayText { get; init; }
     public string SymbolKindString => SyntaxKind.ToString();
