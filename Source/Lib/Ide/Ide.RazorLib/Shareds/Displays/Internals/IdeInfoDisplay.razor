@@ -179,10 +179,23 @@
                 		When accessing a property on an instance of a type
                 		one can goto definition the property definition by hovering for the tooltip
                 		then clicking on the text in the tooltip.
-                		(this is an implementation of the simple case
-                		 where the type is explicit on the left hand side
-                		 of an assignment expression.)
-                		(TODO: 'var person = new Person();' and etc...)
+                		<ul>
+                			<li>
+                				(this is an implementation of the simple case
+		                		 where the type is explicit on the left hand side
+		                		 of an assignment expression.)
+                			</li>
+                			<li>
+                				(TODO: 'var person = new Person();' and etc...)
+                			</li>
+                			<li>
+                				(Not working in global scope / Program.cs?)
+                			</li>
+                			<li>
+                				(If the type of the leading identifier isn't known
+                		 		then the member access identifier won't be known either.)
+                			</li>
+                		</ul>
 <pre>
 Person person = new();
 person.FirstName;

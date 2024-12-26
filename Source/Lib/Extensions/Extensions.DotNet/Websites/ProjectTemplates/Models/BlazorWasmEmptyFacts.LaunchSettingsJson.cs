@@ -12,16 +12,6 @@ public static partial class BlazorWasmEmptyFacts
     }}
   }},
   ""profiles"": {{
-    ""http"": {{
-      ""commandName"": ""Project"",
-      ""dotnetRunMessages"": true,
-      ""launchBrowser"": true,
-      ""inspectUri"": ""{{wsProtocol}}://{{url.hostname}}:{{url.port}}/_framework/debug/ws-proxy?browser={{browserInspectUri}}"",
-      ""applicationUrl"": ""http://localhost:5158"",
-      ""environmentVariables"": {{
-        ""ASPNETCORE_ENVIRONMENT"": ""Development""
-      }}
-    }},
     ""https"": {{
       ""commandName"": ""Project"",
       ""dotnetRunMessages"": true,
@@ -32,14 +22,6 @@ public static partial class BlazorWasmEmptyFacts
         ""ASPNETCORE_ENVIRONMENT"": ""Development""
       }}
     }},
-    ""IIS Express"": {{
-      ""commandName"": ""IISExpress"",
-      ""launchBrowser"": true,
-      ""inspectUri"": ""{{wsProtocol}}://{{url.hostname}}:{{url.port}}/_framework/debug/ws-proxy?browser={{browserInspectUri}}"",
-      ""environmentVariables"": {{
-        ""ASPNETCORE_ENVIRONMENT"": ""Development""
-      }}
-    }}
   }}
 }}
 ";
