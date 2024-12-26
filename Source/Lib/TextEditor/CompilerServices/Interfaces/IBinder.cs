@@ -19,8 +19,11 @@ public interface IBinder
     
     /// <summary>
     /// Returns the <see cref="ISyntaxNode"/> that represents the definition in the <see cref="CompilationUnit"/>.
+    ///
+    /// The option argument 'symbol' can be provided if available. It might provide additional information to the method's implementation
+    /// that is necessary to find certain nodes (ones that are in a separate file are most common to need a symbol to find).
     /// </summary>
-    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource);
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, ITextEditorSymbol? symbol = null);
     
     /// <summary>
     /// Looks up the <see cref="IScope"/> that encompasses the provided positionIndex.

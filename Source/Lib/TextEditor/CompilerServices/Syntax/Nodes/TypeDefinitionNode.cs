@@ -37,7 +37,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     }
 
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private ISyntaxNode[] _memberList = Array.Empty<ISyntaxNode>();
 	private bool _childListIsDirty = true;
+	private bool _memberListIsDirty = true;
 
 	private TypeClauseNode? _toTypeClauseNodeResult;
 
@@ -94,6 +96,22 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
             .Select(fd => (FunctionDefinitionNode)fd)
             .ToImmutableArray();
     }
+    
+    public ISyntaxNode[] GetMemberList()
+    {
+    	if (CodeBlockNode is null)
+            return Array.Empty<ISyntaxNode>();
+            
+        if (!_memberListIsDirty)
+        	return _memberList;
+
+        return _memberList = CodeBlockNode.GetChildList()
+            .Where(child => child.SyntaxKind == SyntaxKind.FunctionDefinitionNode ||
+            				child.SyntaxKind == SyntaxKind.VariableDeclarationNode ||
+            				child.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+            .Select(x => (ISyntaxNode)x)
+            .ToArray();
+    }
 
     public TypeClauseNode ToTypeClause()
     {
@@ -117,6 +135,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		OpenBraceToken = openBraceToken;
     	
     	_childListIsDirty = true;
+    	_memberListIsDirty = true;
     	return this;
 	}
 	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
@@ -127,6 +146,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		CloseBraceToken = closeBraceToken;
     	
     	_childListIsDirty = true;
+    	_memberListIsDirty = true;
     	return this;
 	}
 	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
@@ -137,6 +157,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		StatementDelimiterToken = statementDelimiterToken;
     	
     	_childListIsDirty = true;
+    	_memberListIsDirty = true;
     	return this;
 	}
 	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
@@ -147,6 +168,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		CodeBlockNode = codeBlockNode;
     	
     	_childListIsDirty = true;
+    	_memberListIsDirty = true;
     	return this;
 	}
     
@@ -155,6 +177,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	PrimaryConstructorFunctionArgumentsListingNode = functionArgumentsListingNode;
     	
     	_childListIsDirty = true;
+    	_memberListIsDirty = true;
     	return this;
     }
     
@@ -163,6 +186,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	InheritedTypeClauseNode = typeClauseNode;
     	
     	_childListIsDirty = true;
+    	_memberListIsDirty = true;
     	return this;
     }
     

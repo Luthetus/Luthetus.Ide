@@ -250,7 +250,8 @@ public class RazorSyntaxTree
                 var razorResource = (RazorResource)compilerServiceResource;
 
                 razorResource.HtmlSymbols.Add(new InjectedLanguageComponentSymbol(
-                    textSpan));
+            		symbolId: 0,
+                	textSpan));
             }
         }
     }

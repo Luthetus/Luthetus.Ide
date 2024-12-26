@@ -129,7 +129,7 @@ public partial class SymbolDisplay : ComponentBase, ITextEditorSymbolRenderer
 	    	var compilerService = textEditorModel.CompilerService;
 	    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
 	
-	    	return compilerService.Binder.GetDefinitionNode(symbolLocal.TextSpan, compilerServiceResource);
+	    	return compilerService.Binder.GetDefinitionNode(symbolLocal.TextSpan, compilerServiceResource, symbolLocal);
     	}
     	catch (Exception e)
     	{
