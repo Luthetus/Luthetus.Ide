@@ -96,7 +96,7 @@ public class CSharpBinderSession : IBinderSession
     /// Where each 'List<TextEditorTextSpan>' is a list containing all the text spans
     /// that reference the 'FullyQualifiedName' within that file.
     /// </summary>
-    public Dictionary<int, TextEditorTextSpan> SymbolIdToExternalTextSpanMap { get; } = new();
+    public Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)> SymbolIdToExternalTextSpanMap { get; } = new();
     
     IBinder IBinderSession.Binder => Binder;
 

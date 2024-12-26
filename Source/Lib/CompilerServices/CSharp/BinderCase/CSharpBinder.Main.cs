@@ -1534,8 +1534,10 @@ public partial class CSharpBinder : IBinder
     /// <summary>
     /// If the 'syntaxKind' is unknown then a possible way of determining it is to invoke <see cref="GetSymbol"/>
     /// and use the symbol's syntaxKind.
+    ///
+    /// Argument 'getTextResult': avoid cached string from 'textSpan.GetText()' if it is calculatable on the fly another way.
     /// </summary>
-    public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind, ITextEditorSymbol? symbol = null)
+    public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind, ITextEditorSymbol? symbol = null, string? getTextResult = null)
     {
     	var scope = GetScope(compilationUnit, textSpan);
         
@@ -1552,7 +1554,7 @@ public partial class CSharpBinder : IBinder
         				compilationUnit,
         				textSpan.ResourceUri,
         				scope.IndexKey,
-		                textSpan.GetText(),
+		                getTextResult ?? textSpan.GetText(),
 		                out var variableDeclarationStatementNode)
 		            && variableDeclarationStatementNode is not null)
 		        {
@@ -1563,9 +1565,19 @@ public partial class CSharpBinder : IBinder
 		        {
 			        if (TryGetBinderSession(compilationUnit, textSpan.ResourceUri, out var targetBinderSession))
 			        {
-			        	if (((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.SymbolId, out var definitionTextSpan))
+			        	if (((CSharpBinderSession)targetBinderSession).SymbolIdToExternalTextSpanMap.TryGetValue(symbol.SymbolId, out var definitionTuple))
 			        	{
-			        		return GetDefinitionNode(compilationUnit, definitionTextSpan, SyntaxKind.VariableDeclarationNode);
+			        		return GetDefinitionNode(
+			        			compilationUnit,
+			        			new TextEditorTextSpan(
+						            definitionTuple.StartInclusiveIndex,
+								    definitionTuple.StartInclusiveIndex + 1,
+								    default,
+								    definitionTuple.ResourceUri,
+								    string.Empty,
+								    string.Empty),
+			        			SyntaxKind.VariableDeclarationNode,
+			        			getTextResult: textSpan.GetText());
 			        	}
 			        }
 		        }
@@ -1580,7 +1592,7 @@ public partial class CSharpBinder : IBinder
 	        				 compilationUnit,
 	        				 textSpan.ResourceUri,
         					 scope.IndexKey,
-		                     textSpan.GetText(),
+		                     getTextResult ?? textSpan.GetText(),
 		                     out var functionDefinitionNode)
 		                 && functionDefinitionNode is not null)
 		        {
@@ -1598,7 +1610,7 @@ public partial class CSharpBinder : IBinder
 	        				 compilationUnit,
 	        			     textSpan.ResourceUri,
         					 scope.IndexKey,
-		                     textSpan.GetText(),
+		                     getTextResult ?? textSpan.GetText(),
 		                     out var typeDefinitionNode)
 		                 && typeDefinitionNode is not null)
 		        {
