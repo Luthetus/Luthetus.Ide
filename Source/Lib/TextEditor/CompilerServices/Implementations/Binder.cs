@@ -23,7 +23,7 @@ public class Binder : IBinder
     	return null;
     }
     
-    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource)
+    public ISyntaxNode? GetDefinitionNode(TextEditorTextSpan textSpan, ICompilerServiceResource compilerServiceResource, ITextEditorSymbol? symbol = null)
     {
     	return null;
     }

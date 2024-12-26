@@ -64,7 +64,7 @@ public class RazorResource : CompilerServiceResource
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType
                     };
 
-                    mappedSymbol = new TypeSymbol(mappedTextSpan.Value);
+                    mappedSymbol = new TypeSymbol(symbolId: 0, mappedTextSpan.Value);
                     break;
                 case "ConstructorSymbol":
                     mappedTextSpan = mappedTextSpan.Value with
@@ -72,7 +72,7 @@ public class RazorResource : CompilerServiceResource
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageType
                     };
 
-                    mappedSymbol = new ConstructorSymbol(mappedTextSpan.Value);
+                    mappedSymbol = new ConstructorSymbol(symbolId: 0, mappedTextSpan.Value);
                     break;
                 case "FunctionSymbol":
                     mappedTextSpan = mappedTextSpan.Value with
@@ -80,7 +80,7 @@ public class RazorResource : CompilerServiceResource
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageMethod
                     };
 
-                    mappedSymbol = new FunctionSymbol(mappedTextSpan.Value);
+                    mappedSymbol = new FunctionSymbol(symbolId: 0, mappedTextSpan.Value);
                     break;
                 case "VariableSymbol":
                     mappedTextSpan = mappedTextSpan.Value with
@@ -88,7 +88,7 @@ public class RazorResource : CompilerServiceResource
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageVariable
                     };
 
-                    mappedSymbol = new VariableSymbol(mappedTextSpan.Value);
+                    mappedSymbol = new VariableSymbol(symbolId: 0, mappedTextSpan.Value);
                     break;
                 case "PropertySymbol":
                     mappedTextSpan = mappedTextSpan.Value with
@@ -96,7 +96,7 @@ public class RazorResource : CompilerServiceResource
                         DecorationByte = (byte)HtmlDecorationKind.None
                     };
 
-                    mappedSymbol = new PropertySymbol(mappedTextSpan.Value);
+                    mappedSymbol = new PropertySymbol(symbolId: 0, mappedTextSpan.Value);
                     break;
                 case "StringInterpolationSymbol":
                     mappedTextSpan = mappedTextSpan.Value with
@@ -104,7 +104,7 @@ public class RazorResource : CompilerServiceResource
                         DecorationByte = (byte)HtmlDecorationKind.InjectedLanguageStringLiteral
                     };
 
-                    mappedSymbol = new StringInterpolationSymbol(mappedTextSpan.Value);
+                    mappedSymbol = new StringInterpolationSymbol(symbolId: 0, mappedTextSpan.Value);
                     break;
                 case "NamespaceSymbol":
                     mappedTextSpan = mappedTextSpan.Value with
@@ -112,7 +112,7 @@ public class RazorResource : CompilerServiceResource
                         DecorationByte = (byte)HtmlDecorationKind.None
                     };
 
-                    mappedSymbol = new NamespaceSymbol(mappedTextSpan.Value);
+                    mappedSymbol = new NamespaceSymbol(symbolId: 0, mappedTextSpan.Value);
                     break;
                 default:
                     mappedTextSpan = mappedTextSpan.Value with
