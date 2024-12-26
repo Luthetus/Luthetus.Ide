@@ -4,11 +4,13 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Symbols;
 
 public record struct FunctionSymbol : ISymbol
 {
-    public FunctionSymbol(TextEditorTextSpan textSpan)
+    public FunctionSymbol(int symbolId, TextEditorTextSpan textSpan)
     {
+    	SymbolId = symbolId;
         TextSpan = textSpan;
     }
 
+    public int SymbolId { get; }
     public TextEditorTextSpan TextSpan { get; }
     public string SymbolKindString => SyntaxKind.ToString();
 
