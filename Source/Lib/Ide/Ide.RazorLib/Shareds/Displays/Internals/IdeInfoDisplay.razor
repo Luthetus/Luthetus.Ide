@@ -172,10 +172,22 @@
         Recent Changes:
 		<div>
 			<div>
-                <div>v <em class="luth_em">0.9.7.14 </em> (WIP_DATE)</div>
+                <div>v <em class="luth_em">0.9.7.14 </em> (2024-12-25)</div>
                 <ul>
                 	<li>
-                		WIP_DESCRIPTION
+                		Member access expression tooltips.
+                		When accessing a property on an instance of a type
+                		one can goto definition the property definition by hovering for the tooltip
+                		then clicking on the text in the tooltip.
+                		(this is an implementation of the simple case
+                		 where the type is explicit on the left hand side
+                		 of an assignment expression.)
+                		(TODO: 'var person = new Person();' and etc...)
+<pre>
+Person person = new();
+person.FirstName;
+//     ^ put the cursor here
+</pre>
                 	</li>
                 </ul>
             </div>
