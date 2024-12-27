@@ -151,12 +151,12 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                     {
                         var positionIndex = renderBatch.Model.GetPositionIndex(primaryCursor);
 
+						// The cursor is 1 character ahead.
                         var textSpan = new TextEditorTextSpan(
+                            positionIndex - 1,
                             positionIndex,
-                            positionIndex + 1,
                             0,
                             renderBatch.Model.ResourceUri,
-                            // TODO: renderBatch.Model.GetAllText() probably isn't needed here. Maybe a useful optimization is to remove it somehow?
                             renderBatch.Model.GetAllText());
 
                         var compilerServiceAutocompleteEntryList = renderBatch.Model.CompilerService.GetAutocompleteEntries(

@@ -7,6 +7,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Implementations;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Facts;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.Cursors.Models;
 using Luthetus.TextEditor.RazorLib.Lexers.Models;
@@ -132,126 +133,219 @@ public sealed class CSharpCompilerService : CompilerService
         var autocompleteEntryList = new List<AutocompleteEntry>();
 
         var targetScope = boundScope;
-
-        while (targetScope is not null)
-        {
-            autocompleteEntryList.AddRange(
-            	CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
-            	.Select(x => x.IdentifierToken.TextSpan.GetText())
-                .ToArray()
-                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
-                .Distinct()
-                .Take(5)
-                .Select(x =>
-                {
-                    return new AutocompleteEntry(
-                        x,
-                        AutocompleteEntryKind.Variable,
-                        null);
-                }));
-
-            autocompleteEntryList.AddRange(
-                CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
-            	.Select(x => x.FunctionIdentifierToken.TextSpan.GetText())
-                .ToArray()
-                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
-                .Distinct()
-                .Take(5)
-                .Select(x =>
-                {
-                    return new AutocompleteEntry(
-                        x,
-                        AutocompleteEntryKind.Function,
-                        null);
-                }));
-
-			if (targetScope.ParentIndexKey is null)
-				targetScope = null;
-			else
-            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, textSpan.ResourceUri, targetScope.ParentIndexKey.Value);
-        }
         
-        var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;
-
-        autocompleteEntryList.AddRange(
-            allTypeDefinitions
-            .Where(x => x.Key.TypeIdentifier.Contains(word, StringComparison.InvariantCulture))
-            .Distinct()
-            .Take(5)
-            .Select(x =>
-            {
-                return new AutocompleteEntry(
-                    x.Key.TypeIdentifier,
-                    AutocompleteEntryKind.Type,
-                    () =>
-                    {
-                    	// TODO: The namespace code is buggy at the moment.
-                    	//       It is annoying how this keeps adding the wrong namespace.
-                    	//       Just have it do nothing for now. (2024-08-24)
-                    	// ===============================================================
-                        /*if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() == x.Key.NamespaceIdentifier ||
-                            boundScope.CurrentUsingStatementNodeList.Any(usn => usn.NamespaceIdentifier.TextSpan.GetText() == x.Key.NamespaceIdentifier))
-                        {
-                            return Task.CompletedTask;
-                        }
-
-                        _textEditorService.PostUnique(
-                            "Add using statement",
-                            editContext =>
-                            {
-                                var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
-
-                                if (modelModifier is null)
-                                    return Task.CompletedTask;
-
-                                var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
-
-                                var cursor = new TextEditorCursor(0, 0, true);
-                                var cursorModifierBag = new CursorModifierBagTextEditor(
-                                    Key<TextEditorViewModel>.Empty,
-                                    new List<TextEditorCursorModifier> { new(cursor) });
-
-                                var textToInsert = $"using {x.Key.NamespaceIdentifier};\n";
-
-                                modelModifier.Insert(
-                                    textToInsert,
-                                    cursorModifierBag,
-                                    cancellationToken: CancellationToken.None);
-
-                                foreach (var unsafeViewModel in viewModelList)
-                                {
-                                    var viewModelModifier = editContext.GetViewModelModifier(unsafeViewModel.ViewModelKey);
-                                    var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-
-                                    if (viewModelModifier is null || viewModelCursorModifierBag is null)
-                                        continue;
-
-                                    foreach (var cursorModifier in viewModelCursorModifierBag.List)
-                                    {
-                                        for (int i = 0; i < textToInsert.Length; i++)
-                                        {
-                                            _textEditorService.ViewModelApi.MoveCursor(
-                                            	new KeyboardEventArgs
-                                                {
-                                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
-                                                },
-										        editContext,
-										        modelModifier,
-										        viewModelModifier,
-										        viewModelCursorModifierBag);
-                                        }
-                                    }
-
-                                    editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
-                                        editContext,
-                                        modelModifier);
-                                }
-
-                                return Task.CompletedTask;
-                            });*/
-						return Task.CompletedTask;
-                    });
-            }));
+        if (textSpan.GetText() == ".")
+        {
+        	Console.WriteLine("aaa 1");
+        	
+        	var textEditorModel = _textEditorService.ModelApi.GetOrDefault(textSpan.ResourceUri);
+	    	if (textEditorModel is null)
+	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
+	    	
+	    	Console.WriteLine("aaa 2");
+	    	
+	    	var compilerService = textEditorModel.CompilerService;
+	    	
+	    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
+	    	if (compilerServiceResource is null)
+	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
+	
+			Console.WriteLine("aaa 3");
+	
+	    	var targetNode = CSharpBinder.GetSyntaxNode(
+	    		(CSharpCompilationUnit)compilerServiceResource.CompilationUnit,
+	    		textSpan.StartingIndexInclusive - 1,
+	    		textSpan.ResourceUri,
+	    		compilerServiceResource);
+	    		
+	    	if (targetNode is null)
+	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
+        
+        	Console.WriteLine("aaa 4");
+        
+        	TypeClauseNode? typeClauseNode = null;
+	
+			if (targetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				typeClauseNode = ((VariableReferenceNode)targetNode).VariableDeclarationNode?.TypeClauseNode;
+			else if (targetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+				typeClauseNode = (TypeClauseNode)targetNode;
+			else if (targetNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+				typeClauseNode = ((ConstructorDefinitionNode)targetNode).ReturnTypeClauseNode;
+			
+			if (typeClauseNode is null)
+				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
+				
+			Console.WriteLine("aaa 5");
+			
+			var maybeTypeDefinitionNode = CSharpBinder.GetDefinitionNode((CSharpCompilationUnit)compilerServiceResource.CompilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
+			
+			Console.WriteLine("aaa 6");
+			
+			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
+			var memberList = typeDefinitionNode.GetMemberList();
+			
+			Console.WriteLine($"aaa memberList.Length: {memberList.Length}");
+			
+			autocompleteEntryList.AddRange(
+	        	memberList
+	        	.Select(node => 
+	        	{
+	        		if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+	        		{
+	        			var variableDeclarationNode = (VariableDeclarationNode)node;
+	        			return variableDeclarationNode.IdentifierToken.TextSpan.GetText();
+	        		}
+	        		else if (node.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+	        		{
+	        			var typeDefinitionNode = (TypeDefinitionNode)node;
+	        			return typeDefinitionNode.TypeIdentifierToken.TextSpan.GetText();
+	        		}
+	        		else if (node.SyntaxKind == SyntaxKind.FunctionDefinitionNode)
+	        		{
+	        			var functionDefinitionNode = (FunctionDefinitionNode)node;
+	        			return functionDefinitionNode.FunctionIdentifierToken.TextSpan.GetText();
+	        		}
+	        		else
+	        		{
+	        			return string.Empty;
+	        		}
+	        	})
+	            .ToArray()
+	            //.Where(x => x.Contains(word, StringComparison.InvariantCulture))
+	            .Distinct()
+	            .Take(5)
+	            .Select(x =>
+	            {
+	                return new AutocompleteEntry(
+	                    x,
+	                    AutocompleteEntryKind.Variable,
+	                    null);
+	            }));
+        }
+		else
+		{
+        	while (targetScope is not null)
+	        {
+	            autocompleteEntryList.AddRange(
+	            	CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
+	            	.Select(x => x.IdentifierToken.TextSpan.GetText())
+	                .ToArray()
+	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
+	                .Distinct()
+	                .Take(5)
+	                .Select(x =>
+	                {
+	                    return new AutocompleteEntry(
+	                        x,
+	                        AutocompleteEntryKind.Variable,
+	                        null);
+	                }));
+	
+	            autocompleteEntryList.AddRange(
+	                CSharpBinder.GetFunctionDefinitionNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)
+	            	.Select(x => x.FunctionIdentifierToken.TextSpan.GetText())
+	                .ToArray()
+	                .Where(x => x.Contains(word, StringComparison.InvariantCulture))
+	                .Distinct()
+	                .Take(5)
+	                .Select(x =>
+	                {
+	                    return new AutocompleteEntry(
+	                        x,
+	                        AutocompleteEntryKind.Function,
+	                        null);
+	                }));
+	
+				if (targetScope.ParentIndexKey is null)
+					targetScope = null;
+				else
+	            	targetScope = CSharpBinder.GetScopeByScopeIndexKey(compilationUnit: null, textSpan.ResourceUri, targetScope.ParentIndexKey.Value);
+	        }
+        
+	        var allTypeDefinitions = CSharpBinder.AllTypeDefinitions;
+	
+	        autocompleteEntryList.AddRange(
+	            allTypeDefinitions
+	            .Where(x => x.Key.TypeIdentifier.Contains(word, StringComparison.InvariantCulture))
+	            .Distinct()
+	            .Take(5)
+	            .Select(x =>
+	            {
+	                return new AutocompleteEntry(
+	                    x.Key.TypeIdentifier,
+	                    AutocompleteEntryKind.Type,
+	                    () =>
+	                    {
+	                    	// TODO: The namespace code is buggy at the moment.
+	                    	//       It is annoying how this keeps adding the wrong namespace.
+	                    	//       Just have it do nothing for now. (2024-08-24)
+	                    	// ===============================================================
+	                        /*if (boundScope.EncompassingNamespaceStatementNode.IdentifierToken.TextSpan.GetText() == x.Key.NamespaceIdentifier ||
+	                            boundScope.CurrentUsingStatementNodeList.Any(usn => usn.NamespaceIdentifier.TextSpan.GetText() == x.Key.NamespaceIdentifier))
+	                        {
+	                            return Task.CompletedTask;
+	                        }
+	
+	                        _textEditorService.PostUnique(
+	                            "Add using statement",
+	                            editContext =>
+	                            {
+	                                var modelModifier = editContext.GetModelModifier(textSpan.ResourceUri);
+	
+	                                if (modelModifier is null)
+	                                    return Task.CompletedTask;
+	
+	                                var viewModelList = _textEditorService.ModelApi.GetViewModelsOrEmpty(textSpan.ResourceUri);
+	
+	                                var cursor = new TextEditorCursor(0, 0, true);
+	                                var cursorModifierBag = new CursorModifierBagTextEditor(
+	                                    Key<TextEditorViewModel>.Empty,
+	                                    new List<TextEditorCursorModifier> { new(cursor) });
+	
+	                                var textToInsert = $"using {x.Key.NamespaceIdentifier};\n";
+	
+	                                modelModifier.Insert(
+	                                    textToInsert,
+	                                    cursorModifierBag,
+	                                    cancellationToken: CancellationToken.None);
+	
+	                                foreach (var unsafeViewModel in viewModelList)
+	                                {
+	                                    var viewModelModifier = editContext.GetViewModelModifier(unsafeViewModel.ViewModelKey);
+	                                    var viewModelCursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+	
+	                                    if (viewModelModifier is null || viewModelCursorModifierBag is null)
+	                                        continue;
+	
+	                                    foreach (var cursorModifier in viewModelCursorModifierBag.List)
+	                                    {
+	                                        for (int i = 0; i < textToInsert.Length; i++)
+	                                        {
+	                                            _textEditorService.ViewModelApi.MoveCursor(
+	                                            	new KeyboardEventArgs
+	                                                {
+	                                                    Key = KeyboardKeyFacts.MovementKeys.ARROW_RIGHT,
+	                                                },
+											        editContext,
+											        modelModifier,
+											        viewModelModifier,
+											        viewModelCursorModifierBag);
+	                                        }
+	                                    }
+	
+	                                    editContext.TextEditorService.ModelApi.ApplySyntaxHighlighting(
+	                                        editContext,
+	                                        modelModifier);
+	                                }
+	
+	                                return Task.CompletedTask;
+	                            });*/
+							return Task.CompletedTask;
+	                    });
+	            }));
+	    }
             
         AddSnippets(autocompleteEntryList, word, textSpan);
 
