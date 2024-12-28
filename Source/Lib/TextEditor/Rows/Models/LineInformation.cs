@@ -1,4 +1,4 @@
-﻿namespace Luthetus.TextEditor.RazorLib.Rows.Models;
+namespace Luthetus.TextEditor.RazorLib.Rows.Models;
 
 /// <param name="LowerLineEnd">
 /// The smaller positionIndex.
@@ -6,7 +6,7 @@
 /// <param name="UpperLineEnd">
 /// The larger positionIndex.
 /// </param>
-public record LineInformation(
+public record struct LineInformation(
     int Index,
     int StartPositionIndexInclusive,
     int EndPositionIndexExclusive,
