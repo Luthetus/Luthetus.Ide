@@ -1845,6 +1845,15 @@ public partial class CSharpBinder : IBinder
     			
     			goto default;
     		}
+    		case SyntaxKind.VariableReferenceNode:
+    		{
+    			var variableReferenceNode = (VariableReferenceNode)syntaxNode;
+    			
+    			if (variableReferenceNode.VariableIdentifierToken.ConstructorWasInvoked)
+    				return (variableReferenceNode.VariableIdentifierToken.TextSpan.StartingIndexInclusive, variableReferenceNode.VariableIdentifierToken.TextSpan.EndingIndexExclusive);
+    			
+    			goto default;
+    		}
     		default:
     		{
     			#if DEBUG

@@ -136,21 +136,15 @@ public sealed class CSharpCompilerService : CompilerService
         
         if (textSpan.GetText() == ".")
         {
-        	Console.WriteLine("aaa 1");
-        	
         	var textEditorModel = _textEditorService.ModelApi.GetOrDefault(textSpan.ResourceUri);
 	    	if (textEditorModel is null)
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
-	    	
-	    	Console.WriteLine("aaa 2");
 	    	
 	    	var compilerService = textEditorModel.CompilerService;
 	    	
 	    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
 	    	if (compilerServiceResource is null)
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
-	
-			Console.WriteLine("aaa 3");
 	
 	    	var targetNode = CSharpBinder.GetSyntaxNode(
 	    		(CSharpCompilationUnit)compilerServiceResource.CompilationUnit,
@@ -160,8 +154,6 @@ public sealed class CSharpCompilerService : CompilerService
 	    		
 	    	if (targetNode is null)
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
-        
-        	Console.WriteLine("aaa 4");
         
         	TypeClauseNode? typeClauseNode = null;
 	
@@ -174,19 +166,13 @@ public sealed class CSharpCompilerService : CompilerService
 			
 			if (typeClauseNode is null)
 				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
-				
-			Console.WriteLine("aaa 5");
 			
 			var maybeTypeDefinitionNode = CSharpBinder.GetDefinitionNode((CSharpCompilationUnit)compilerServiceResource.CompilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
 			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
 				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
 			
-			Console.WriteLine("aaa 6");
-			
 			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
 			var memberList = typeDefinitionNode.GetMemberList();
-			
-			Console.WriteLine($"aaa memberList.Length: {memberList.Length}");
 			
 			autocompleteEntryList.AddRange(
 	        	memberList
