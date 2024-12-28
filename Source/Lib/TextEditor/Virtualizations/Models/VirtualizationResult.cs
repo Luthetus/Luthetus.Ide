@@ -18,8 +18,8 @@ public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
         BottomVirtualizationBoundary = bottomVirtualizationBoundary;
     }
 
-    public static VirtualizationResult<RichCharacter[]> GetEmptyRichCharacters() => new(
-        Array.Empty<VirtualizationEntry<RichCharacter[]>>(),
+    public static VirtualizationResult<byte> GetEmptyRichCharacters() => new(
+        Array.Empty<VirtualizationEntry<byte>>(),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
