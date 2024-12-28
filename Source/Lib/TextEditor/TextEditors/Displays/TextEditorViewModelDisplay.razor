@@ -103,93 +103,185 @@
 			    }
 			}
 		        
-		        @* RowSection.razor Open *@
-				<div class="luth_te_row-section"
-		     		id="@_bodyDriver._renderBatch.ViewModel.BodyElementId">
+@* RowSection.razor Open *@
+<div class="luth_te_row-section"
+	id="@_bodyDriver._renderBatch.ViewModel.BodyElementId">
 		    
-		    		@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
-		    		@_bodyDriver._root._bodyVirtualizationDriver.GetRenderFragment(_bodyDriver._renderBatch)
+	@* VirtualizationDisplay must be rendered first as it will modify the scrollHeight / scrollWidth of the scrollable parent *@
+	@_bodyDriver._root._bodyVirtualizationDriver.GetRenderFragment(_bodyDriver._renderBatch)
 				                           
-				    @_bodyDriver._root._presentationAndSelectionDriver.GetRenderFragment(_bodyDriver._renderBatch)
-				
-				    @foreach (var virtualizedRow in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList)
+	@_bodyDriver._root._presentationAndSelectionDriver.GetRenderFragment(_bodyDriver._renderBatch)
+				    
+	@if (_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
+	{
+		var lineInformationLower = _bodyDriver._renderBatch.Model.GetLineInformation(_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.First().Index);
+		var lineInformationUpper = _bodyDriver._renderBatch.Model.GetLineInformation(_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index);
+					    
+		var positionIndex = lineInformationLower.StartPositionIndexInclusive;
+		var lineIndex = lineInformationLower.Index;
+		var lineEnd = _bodyDriver._renderBatch.Model.LineEndList[lineIndex];
+					    
+		var spanBuilder = new StringBuilder();
+		var currentDecorationByte = (byte)0;
+					    
+		while (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
+		{
+							
+
+							if (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
+							{
+								currentDecorationByte = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex].DecorationByte;
+							}
+
+			var virtualizedRow = _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList[
+				lineIndex - lineInformationLower.Index];
+					    	
+			<div class="luth_te_row"
+					style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, lineIndex, virtualizedRow.LeftInPixels)">
+
+				@while (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
+				{
+									var richCharacter = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex];
+					
+					if (currentDecorationByte == richCharacter.DecorationByte)
 				    {
-				        <div class="luth_te_row"
-				             style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizedRow.Index, virtualizedRow.LeftInPixels)">
-				            @if (virtualizedRow.Item.Any())
-				            {
-				                var spanBuilder = new StringBuilder();
-				                var currentDecorationByte = virtualizedRow.Item.First().DecorationByte;
+				        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+				    }
+				    else
+				    {
+				        <span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
+				            @((MarkupString)spanBuilder.ToString())
+				        </span>
 				
-				                foreach (var richCharacter in virtualizedRow.Item)
-				                {
-				                    if (currentDecorationByte == richCharacter.DecorationByte)
-				                    {
-				                        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
-				                    }
-				                    else
-				                    {
-				                        <span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
-				                            @((MarkupString)spanBuilder.ToString())
-				                        </span>
+				        spanBuilder.Clear();
 				
-				                        spanBuilder.Clear();
-				
-				                        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
-				
-				                        currentDecorationByte = richCharacter.DecorationByte;
-				                    }
-				                }
-				
-				                /* Final grouping of contiguous characters */
-				                <span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
-				                    @((MarkupString)spanBuilder.ToString())
-				                </span>
-				            }
-				
-				            @if (_bodyDriver.GlobalShowNewlines && virtualizedRow.Index < _bodyDriver._renderBatch.Model.LineCount)
-				            {
-				                var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
-				                    _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
-				
-				                var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(virtualizedRow.Index, true);
-				
-				                if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
-				                {
-				                    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[virtualizedRow.Index];
-				
-				                    <span class="luth_te_newline">
-				                        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
-				                    </span>
-				                }
-				            }
-				        </div>
+				        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+
+										currentDecorationByte = richCharacter.DecorationByte;
 				    }
 					
-					@{
-						_cursorDriver.GetRenderFragment(renderBatchValidated);
 					
-						var leftRelativeToParentInPixelsCssStyle = string.Empty;
-					    var textEditorKeymap = (ITextEditorKeymap)_cursorDriver._renderBatch.Options!.Keymap!;
-					    
-					    if (!_cursorDriver._renderBatch.Options!.UseMonospaceOptimizations)
+					                
+					@if (_bodyDriver.GlobalShowNewlines && lineIndex < _bodyDriver._renderBatch.Model.LineCount)
+					{
+						var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
+						    _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+						
+						var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(lineIndex, true);
+						
+						if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
 						{
-						    var leftRelativeToParentInPixelsCssValue = _cursorDriver._leftRelativeToParentInPixels.ToCssValue();
-						    leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
+						    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[lineIndex];
+						
+						    <span class="luth_te_newline">
+						        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
+						    </span>
 						}
-					}
+									}
+
+									positionIndex++;
+
+									if (positionIndex >= lineEnd.StartPositionIndexInclusive)
+									{
+										/* Final grouping of contiguous characters */
+										<span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
+											@((MarkupString)spanBuilder.ToString())
+
+											@{
+												spanBuilder.Clear();
+											}
+										</span>
+
+										positionIndex = lineEnd.EndPositionIndexExclusive;
+										lineIndex++;
+
+										if (lineIndex < _bodyDriver._renderBatch.Model.LineEndList.Count)
+											lineEnd = _bodyDriver._renderBatch.Model.LineEndList[lineIndex];
+										break;
+									}
+				}
+			</div>
+		}
+	}
+				
+	@*@foreach (var virtualizedRow in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList)
+	{
+		<div class="luth_te_row"
+				style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizedRow.Index, virtualizedRow.LeftInPixels)">
+			@if (virtualizedRow.Item.Any())
+			{
+				var spanBuilder = new StringBuilder();
+				var currentDecorationByte = virtualizedRow.Item.First().DecorationByte;
+				
+				foreach (var richCharacter in virtualizedRow.Item)
+				{
+				    if (currentDecorationByte == richCharacter.DecorationByte)
+				    {
+				        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+				    }
+				    else
+				    {
+				        <span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
+				            @((MarkupString)spanBuilder.ToString())
+				        </span>
+				
+				        spanBuilder.Clear();
+				
+				        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+				
+				        currentDecorationByte = richCharacter.DecorationByte;
+				    }
+				}
+				
+				/* Final grouping of contiguous characters */
+				<span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
+				    @((MarkupString)spanBuilder.ToString())
+				</span>
+			}
+				
+			@if (_bodyDriver.GlobalShowNewlines && virtualizedRow.Index < _bodyDriver._renderBatch.Model.LineCount)
+			{
+				var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
+				    _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+				
+				var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(virtualizedRow.Index, true);
+				
+				if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
+				{
+				    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[virtualizedRow.Index];
+				
+				    <span class="luth_te_newline">
+				        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
+				    </span>
+				}
+			}
+		</div>
+	}*@
 					
-					<textarea id="@_cursorDriver.GetCursorDisplayId(_cursorDriver._renderBatch)"
-					          tabindex="@_cursorDriver.GetTabIndex(_cursorDriver._renderBatch)"
-					          class="luth_te_text-editor-cursor @_cursorDriver.BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
-					          style="@_cursorDriver.GetCursorStyleCss() @leftRelativeToParentInPixelsCssStyle">
-					</textarea>
+	@{
+		_cursorDriver.GetRenderFragment(renderBatchValidated);
 					
-					<div class="luth_te_text-editor-caret-row"
-					     style="@_cursorDriver.GetCaretRowStyleCss()">
-					</div>
-				</div>
-			    @* RowSection.razor Close *@
+		var leftRelativeToParentInPixelsCssStyle = string.Empty;
+		var textEditorKeymap = (ITextEditorKeymap)_cursorDriver._renderBatch.Options!.Keymap!;
+					    
+		if (!_cursorDriver._renderBatch.Options!.UseMonospaceOptimizations)
+		{
+			var leftRelativeToParentInPixelsCssValue = _cursorDriver._leftRelativeToParentInPixels.ToCssValue();
+			leftRelativeToParentInPixelsCssStyle = $"left: {leftRelativeToParentInPixelsCssValue}px !important;";
+		}
+	}
+					
+	<textarea id="@_cursorDriver.GetCursorDisplayId(_cursorDriver._renderBatch)"
+				tabindex="@_cursorDriver.GetTabIndex(_cursorDriver._renderBatch)"
+				class="luth_te_text-editor-cursor @_cursorDriver.BlinkAnimationCssClass @(textEditorKeymap.GetCursorCssClassString())"
+				style="@_cursorDriver.GetCursorStyleCss() @leftRelativeToParentInPixelsCssStyle">
+	</textarea>
+					
+	<div class="luth_te_text-editor-caret-row"
+			style="@_cursorDriver.GetCaretRowStyleCss()">
+	</div>
+</div>
+@* RowSection.razor Close *@
 			
 			    <ScrollbarSection RenderBatch="_bodyDriver._renderBatch"/>
 			    <TooltipDisplay RenderBatch="_bodyDriver._renderBatch"/>
