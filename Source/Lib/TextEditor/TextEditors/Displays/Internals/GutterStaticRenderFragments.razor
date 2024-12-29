@@ -34,7 +34,17 @@
 	        // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
 	        //
 	        // Editor scrolltop - 0th element's top == topOffscreenOverhang (2024-03-02)
-	        var topOffscreenOverhang = driver._renderBatch.ViewModel.VirtualizationResult.EntryList.FirstOrDefault()?.TopInPixels ?? -1;
+	        
+	        double topOffscreenOverhang;
+	        
+	        if (driver._renderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
+	        {
+	        	topOffscreenOverhang = driver._renderBatch.ViewModel.VirtualizationResult.EntryList[0].TopInPixels ?? -1;
+	        }
+	        else
+	        {
+	        	 topOffscreenOverhang = -1;
+	        }
 	
 	        if (topOffscreenOverhang != -1)
 	        {
@@ -52,8 +62,18 @@
 	            
 	            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
 	
-	            var imaginaryNextIndex = (driver._renderBatch.ViewModel.VirtualizationResult.EntryList.LastOrDefault()?.LineIndex ?? -1) + 
-	                1;
+				int lastIndex;
+				
+				if (driver._renderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
+				{
+					lastIndex = driver._renderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+				}
+				else
+				{
+					lastIndex = -1;
+				}
+	
+	            var imaginaryNextIndex = lastIndex + 1;
 	            
 	            <div class="luth_te_gutter"
 	                 style="@(driver.GetGutterStyleCss(imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">
