@@ -126,12 +126,10 @@
 					    
 		while (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
 		{
-							
-
-							if (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
-							{
-								currentDecorationByte = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex].DecorationByte;
-							}
+			if (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
+			{
+				currentDecorationByte = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex].DecorationByte;
+			}
 
 			var virtualizedRow = _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList[
 				lineIndex - lineInformationLower.Index];
@@ -141,7 +139,7 @@
 
 				@while (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
 				{
-									var richCharacter = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex];
+					var richCharacter = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex];
 					
 					if (currentDecorationByte == richCharacter.DecorationByte)
 				    {
@@ -157,11 +155,9 @@
 				
 				        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
 
-										currentDecorationByte = richCharacter.DecorationByte;
+						currentDecorationByte = richCharacter.DecorationByte;
 				    }
 					
-					
-					                
 					@if (_bodyDriver.GlobalShowNewlines && lineIndex < _bodyDriver._renderBatch.Model.LineCount)
 					{
 						var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
@@ -177,86 +173,32 @@
 						        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
 						    </span>
 						}
-									}
+					}
 
-									positionIndex++;
+					positionIndex++;
 
-									if (positionIndex >= lineEnd.StartPositionIndexInclusive)
-									{
-										/* Final grouping of contiguous characters */
-										<span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
-											@((MarkupString)spanBuilder.ToString())
+					if (positionIndex >= lineEnd.StartPositionIndexInclusive)
+					{
+						/* Final grouping of contiguous characters */
+						<span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
+							@((MarkupString)spanBuilder.ToString())
 
-											@{
-												spanBuilder.Clear();
-											}
-										</span>
+							@{
+								spanBuilder.Clear();
+							}
+						</span>
 
-										positionIndex = lineEnd.EndPositionIndexExclusive;
-										lineIndex++;
+						positionIndex = lineEnd.EndPositionIndexExclusive;
+						lineIndex++;
 
-										if (lineIndex < _bodyDriver._renderBatch.Model.LineEndList.Count)
-											lineEnd = _bodyDriver._renderBatch.Model.LineEndList[lineIndex];
-										break;
-									}
+						if (lineIndex < _bodyDriver._renderBatch.Model.LineEndList.Count)
+							lineEnd = _bodyDriver._renderBatch.Model.LineEndList[lineIndex];
+						break;
+					}
 				}
 			</div>
 		}
 	}
-				
-	@*@foreach (var virtualizedRow in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList)
-	{
-		<div class="luth_te_row"
-				style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizedRow.Index, virtualizedRow.LeftInPixels)">
-			@if (virtualizedRow.Item.Any())
-			{
-				var spanBuilder = new StringBuilder();
-				var currentDecorationByte = virtualizedRow.Item.First().DecorationByte;
-				
-				foreach (var richCharacter in virtualizedRow.Item)
-				{
-				    if (currentDecorationByte == richCharacter.DecorationByte)
-				    {
-				        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
-				    }
-				    else
-				    {
-				        <span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
-				            @((MarkupString)spanBuilder.ToString())
-				        </span>
-				
-				        spanBuilder.Clear();
-				
-				        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
-				
-				        currentDecorationByte = richCharacter.DecorationByte;
-				    }
-				}
-				
-				/* Final grouping of contiguous characters */
-				<span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
-				    @((MarkupString)spanBuilder.ToString())
-				</span>
-			}
-				
-			@if (_bodyDriver.GlobalShowNewlines && virtualizedRow.Index < _bodyDriver._renderBatch.Model.LineCount)
-			{
-				var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
-				    _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
-				
-				var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(virtualizedRow.Index, true);
-				
-				if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
-				{
-				    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[virtualizedRow.Index];
-				
-				    <span class="luth_te_newline">
-				        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
-				    </span>
-				}
-			}
-		</div>
-	}*@
 					
 	@{
 		_cursorDriver.GetRenderFragment(renderBatchValidated);
