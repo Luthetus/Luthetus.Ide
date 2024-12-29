@@ -811,23 +811,17 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				var minLineWidthToTriggerVirtualizationExclusive = LINE_WIDTH_TO_TEXT_EDITOR_WIDTH_TO_TRIGGER_HORIZONTAL_VIRTUALIZATION *
 					viewModelModifier.ViewModel.TextEditorDimensions.Width;
 					
-				var lineInformationUpper = modelModifier.GetLineInformation(endingLineIndexExclusive - 1);
-				
 				for (int lineOffset = 0; lineOffset < lineCountToReturn; lineOffset++)
 				{
-					// Idea: Horizontally virtualize on a line by line basis,
-					// if that line in particular would load in too much text?
-					
-					var lineIndex = lineOffset + verticalStartingIndex;
-					
+					var lineIndex = verticalStartingIndex + lineOffset;
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
 								    
-					var positionIndex = lineInformation.StartPositionIndexInclusive;
+					var lineStartPositionIndexInclusive = lineInformation.StartPositionIndexInclusive;
 					var lineEnd = modelModifier.LineEndList[lineIndex];
 					
 					var countTabKeysInLine = 0;
 					
-					for (int countTabIndex = positionIndex; countTabIndex < lineInformation.UpperLineEnd.StartPositionIndexInclusive; countTabIndex++)
+					for (int countTabIndex = lineStartPositionIndexInclusive; countTabIndex < lineInformation.UpperLineEnd.StartPositionIndexInclusive; countTabIndex++)
 					{
 						if (modelModifier.RichCharacterList[countTabIndex].Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
 							countTabKeysInLine++;
@@ -873,13 +867,13 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
 						var countTabKeysInVirtualizedLine = 0;
 
-						var horizontalPositionIndexInclusiveStart = positionIndex + localHorizontalStartingIndex;
+						var positionIndexInclusiveStart = lineStartPositionIndexInclusive + localHorizontalStartingIndex;
 						
-						var horizontalPositionIndexExclusiveEnd = horizontalPositionIndexInclusiveStart + localHorizontalTake;
-						if (horizontalPositionIndexExclusiveEnd > lineInformation.UpperLineEnd.StartPositionIndexInclusive)
-							horizontalPositionIndexExclusiveEnd = lineInformation.UpperLineEnd.StartPositionIndexInclusive;
+						var positionIndexExclusiveEnd = positionIndexInclusiveStart + localHorizontalTake;
+						if (positionIndexExclusiveEnd > lineInformation.UpperLineEnd.StartPositionIndexInclusive)
+							positionIndexExclusiveEnd = lineInformation.UpperLineEnd.StartPositionIndexInclusive;
 						
-						for (int countTabIndex = horizontalPositionIndexInclusiveStart; countTabIndex < horizontalPositionIndexExclusiveEnd; countTabIndex++)
+						for (int countTabIndex = positionIndexInclusiveStart; countTabIndex < positionIndexExclusiveEnd; countTabIndex++)
 						{
 							if (modelModifier.RichCharacterList[countTabIndex].Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
 								countTabKeysInVirtualizedLine++;
@@ -920,8 +914,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 	
 						virtualizedLineList[lineOffset] = new VirtualizationEntry(
 							lineIndex,
-							HorizontalPositionIndexInclusiveStart: horizontalPositionIndexInclusiveStart,
-							HorizontalPositionIndexExclusiveEnd: horizontalPositionIndexExclusiveEnd,
+							PositionIndexInclusiveStart: positionIndexInclusiveStart,
+							PositionIndexExclusiveEnd: positionIndexExclusiveEnd,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
@@ -931,8 +925,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					{
 						virtualizedLineList[lineOffset] = new VirtualizationEntry(
 							lineIndex,
-							HorizontalPositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
-							HorizontalPositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+							PositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
+							PositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							0,

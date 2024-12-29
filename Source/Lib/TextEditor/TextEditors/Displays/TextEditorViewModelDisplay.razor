@@ -109,95 +109,75 @@
 	@_bodyDriver._root._bodyVirtualizationDriver.GetRenderFragment(_bodyDriver._renderBatch)
 				                           
 	@_bodyDriver._root._presentationAndSelectionDriver.GetRenderFragment(_bodyDriver._renderBatch)
-				    
+	
 	@if (_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
 	{
-		var lineInformationLower = _bodyDriver._renderBatch.Model.GetLineInformation(_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex);
-		var lineInformationUpper = _bodyDriver._renderBatch.Model.GetLineInformation(_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex);
-					    
-		var positionIndex = lineInformationLower.StartPositionIndexInclusive;
-		var lineIndex = lineInformationLower.Index;
-		var lineEnd = _bodyDriver._renderBatch.Model.LineEndList[lineIndex];
-					    
 		var spanBuilder = new StringBuilder();
 		var currentDecorationByte = (byte)0;
-					    
-		while (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
+	
+		foreach (var virtualizationEntry in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList)
 		{
-			if (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
+			if (virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart > 0)
 			{
-				currentDecorationByte = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex].DecorationByte;
-			}
-
-			var virtualizedRow = _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList[
-				lineIndex - lineInformationLower.Index];
-					    	
-			<div class="luth_te_row"
-					style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, lineIndex, virtualizedRow.LeftInPixels)">
-
-				@while (positionIndex < lineInformationUpper.UpperLineEnd.StartPositionIndexInclusive)
-				{
-					var richCharacter = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex];
-					
-					if (currentDecorationByte == richCharacter.DecorationByte)
-				    {
-				        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
-				    }
-				    else
-				    {
-				        <span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
-				            @((MarkupString)spanBuilder.ToString())
-				        </span>
+				currentDecorationByte = _bodyDriver._renderBatch.Model.RichCharacterList[virtualizationEntry.PositionIndexInclusiveStart].DecorationByte;
 				
-				        spanBuilder.Clear();
-				
-				        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+				<div class="luth_te_row"
+					style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizationEntry.LineIndex, virtualizationEntry.LeftInPixels)">
 
-						currentDecorationByte = richCharacter.DecorationByte;
-				    }
-					
-					@if (_bodyDriver.GlobalShowNewlines && lineIndex < _bodyDriver._renderBatch.Model.LineCount)
+					@for (int positionIndexBad = virtualizationEntry.PositionIndexInclusiveStart; positionIndexBad < virtualizationEntry.PositionIndexExclusiveEnd; positionIndexBad++)
 					{
-						var amountOfLeftInCharacterWidthUnits = virtualizedRow.LeftInPixels /
-						    _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+						var positionIndex = positionIndexBad;
+						var richCharacter = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex];
 						
-						var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(lineIndex, true);
+						if (currentDecorationByte == richCharacter.DecorationByte)
+					    {
+					        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+					    }
+					    else
+					    {
+					        <span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
+					            @((MarkupString)spanBuilder.ToString())
+					        </span>
+					
+					        spanBuilder.Clear();
+					
+					        _bodyDriver.RowSection_AppendTextEscaped(_bodyDriver._renderBatch, spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+	
+							currentDecorationByte = richCharacter.DecorationByte;
+					    }
 						
-						if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
+						@if (_bodyDriver.GlobalShowNewlines && virtualizationEntry.LineIndex < _bodyDriver._renderBatch.Model.LineCount)
 						{
-						    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[lineIndex];
-						
-						    <span class="luth_te_newline">
-						        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
-						    </span>
+							var amountOfLeftInCharacterWidthUnits = virtualizationEntry.LeftInPixels /
+							    _bodyDriver._renderBatch.ViewModel.CharAndLineMeasurements.CharacterWidth;
+							
+							var lengthOfRow = _bodyDriver._renderBatch.Model.GetLineLength(virtualizationEntry.LineIndex, true);
+							
+							if (amountOfLeftInCharacterWidthUnits <= lengthOfRow)
+							{
+							    var rowEndingTuple = _bodyDriver._renderBatch.Model.LineEndList[virtualizationEntry.LineIndex];
+							
+							    <span class="luth_te_newline">
+							        @rowEndingTuple.LineEndKind.AsCharactersHtmlEscaped()
+							    </span>
+							}
+						}
+	
+						if (positionIndex == virtualizationEntry.PositionIndexExclusiveEnd - 1)
+						{
+							/* Final grouping of contiguous characters */
+							<span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
+								@((MarkupString)spanBuilder.ToString())
+	
+								@{ spanBuilder.Clear(); }
+							</span>
 						}
 					}
-
-					positionIndex++;
-
-					if (positionIndex >= lineEnd.StartPositionIndexInclusive)
-					{
-						/* Final grouping of contiguous characters */
-						<span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">
-							@((MarkupString)spanBuilder.ToString())
-
-							@{
-								spanBuilder.Clear();
-							}
-						</span>
-
-						positionIndex = lineEnd.EndPositionIndexExclusive;
-						lineIndex++;
-
-						if (lineIndex < _bodyDriver._renderBatch.Model.LineEndList.Count)
-							lineEnd = _bodyDriver._renderBatch.Model.LineEndList[lineIndex];
-						break;
-					}
-				}
-			</div>
+				</div>
+			}
 		}
 	}
-					
+				    
 	@{
 		_cursorDriver.GetRenderFragment(renderBatchValidated);
 					
