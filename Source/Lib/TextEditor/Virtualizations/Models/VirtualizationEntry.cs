@@ -6,8 +6,10 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 /// </summary>
 public record struct VirtualizationEntry(
     int LineIndex,
-    int PositionIndexInclusiveStart,
-    int PositionIndexExclusiveEnd,
+    int TruePositionIndexInclusiveStart,
+    int TruePositionIndexExclusiveEnd,
+    int VirtualPositionIndexInclusiveStart,
+    int VirtualPositionIndexExclusiveEnd,
     double? WidthInPixels,
     double? HeightInPixels,
     double? LeftInPixels,

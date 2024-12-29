@@ -802,6 +802,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 	            return;
 			
 			var virtualizedLineList = new VirtualizationEntry[lineCountToReturn];
+			var flatList = new List<RichCharacter>();
 			{
 				// 1 of the character width is already accounted for
 				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
@@ -818,6 +819,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 								    
 					var lineStartPositionIndexInclusive = lineInformation.StartPositionIndexInclusive;
 					var lineEnd = modelModifier.LineEndList[lineIndex];
+					
+					var virtualStartPositionIndexInclusive = flatList.Count;
 					
 					var countTabKeysInLine = 0;
 					
@@ -912,10 +915,17 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 	
 						var topInPixels = lineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
 	
+						for (int trueIndex = positionIndexInclusiveStart; trueIndex < positionIndexExclusiveEnd; trueIndex++)
+						{
+							flatList.Add(modelModifier.RichCharacterList[trueIndex]);
+						}
+	
 						virtualizedLineList[lineOffset] = new VirtualizationEntry(
 							lineIndex,
-							PositionIndexInclusiveStart: positionIndexInclusiveStart,
-							PositionIndexExclusiveEnd: positionIndexExclusiveEnd,
+							TruePositionIndexInclusiveStart: positionIndexInclusiveStart,
+							TruePositionIndexExclusiveEnd: positionIndexExclusiveEnd,
+							VirtualPositionIndexInclusiveStart: virtualStartPositionIndexInclusive,
+							VirtualPositionIndexExclusiveEnd: flatList.Count,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
@@ -923,10 +933,17 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					}
 					else
 					{
+						for (int trueIndex = lineInformation.StartPositionIndexInclusive; trueIndex < lineInformation.UpperLineEnd.StartPositionIndexInclusive; trueIndex++)
+						{
+							flatList.Add(modelModifier.RichCharacterList[trueIndex]);
+						}
+					
 						virtualizedLineList[lineOffset] = new VirtualizationEntry(
 							lineIndex,
-							PositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
-							PositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+							TruePositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
+							TruePositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+							VirtualPositionIndexInclusiveStart: virtualStartPositionIndexInclusive,
+							VirtualPositionIndexExclusiveEnd: flatList.Count,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							0,
@@ -1017,6 +1034,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
 			virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
+				flatList,
 				leftBoundary,
 				rightBoundary,
 				topBoundary,

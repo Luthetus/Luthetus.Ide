@@ -117,17 +117,17 @@
 	
 		foreach (var virtualizationEntry in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList)
 		{
-			if (virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart > 0)
+			if (virtualizationEntry.VirtualPositionIndexExclusiveEnd - virtualizationEntry.VirtualPositionIndexInclusiveStart > 0)
 			{
-				currentDecorationByte = _bodyDriver._renderBatch.Model.RichCharacterList[virtualizationEntry.PositionIndexInclusiveStart].DecorationByte;
+				currentDecorationByte = _bodyDriver._renderBatch.ViewModel.VirtualizationResult.FlatList[virtualizationEntry.VirtualPositionIndexInclusiveStart].DecorationByte;
 				
 				<div class="luth_te_row"
 					style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizationEntry.LineIndex, virtualizationEntry.LeftInPixels)">
 
-					@for (int positionIndexBad = virtualizationEntry.PositionIndexInclusiveStart; positionIndexBad < virtualizationEntry.PositionIndexExclusiveEnd; positionIndexBad++)
+					@for (int virtualPositionIndexBad = virtualizationEntry.VirtualPositionIndexInclusiveStart; virtualPositionIndexBad < virtualizationEntry.VirtualPositionIndexExclusiveEnd; virtualPositionIndexBad++)
 					{
-						var positionIndex = positionIndexBad;
-						var richCharacter = _bodyDriver._renderBatch.Model.RichCharacterList[positionIndex];
+						var virtualPositionIndex = virtualPositionIndexBad;
+						var richCharacter = _bodyDriver._renderBatch.ViewModel.VirtualizationResult.FlatList[virtualPositionIndex];
 						
 						if (currentDecorationByte == richCharacter.DecorationByte)
 					    {
@@ -163,7 +163,7 @@
 							}
 						}
 	
-						if (positionIndex == virtualizationEntry.PositionIndexExclusiveEnd - 1)
+						if (virtualPositionIndex == virtualizationEntry.VirtualPositionIndexExclusiveEnd - 1)
 						{
 							/* Final grouping of contiguous characters */
 							<span class="@_bodyDriver.RowSection_GetCssClass(_bodyDriver._renderBatch, currentDecorationByte)">

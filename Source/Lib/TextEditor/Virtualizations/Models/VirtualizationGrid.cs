@@ -23,6 +23,7 @@ public record VirtualizationGrid
 {
 	public static VirtualizationGrid Empty { get; } = new(
         Array.Empty<VirtualizationEntry>(),
+        new(),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
@@ -30,12 +31,14 @@ public record VirtualizationGrid
 
     public VirtualizationGrid(
         VirtualizationEntry[] entries,
+        List<RichCharacter> flatList,
         VirtualizationBoundary leftVirtualizationBoundary,
         VirtualizationBoundary rightVirtualizationBoundary,
         VirtualizationBoundary topVirtualizationBoundary,
         VirtualizationBoundary bottomVirtualizationBoundary)
     {
         EntryList = entries;
+        FlatList = flatList;
         LeftVirtualizationBoundary = leftVirtualizationBoundary;
         RightVirtualizationBoundary = rightVirtualizationBoundary;
         TopVirtualizationBoundary = topVirtualizationBoundary;
@@ -43,6 +46,17 @@ public record VirtualizationGrid
     }
 
     public VirtualizationEntry[] EntryList { get; init; }
+    
+    /// <summary>
+    /// Take all the text that is to be rendered and put it in a single List.
+    ///
+    /// (this being opposed to having a List<List<RichCharacter>>)
+    ///
+    /// Each 'VirtualizationEntry' in 'EntryList' contains the indices
+    /// from this flattened list that represent that line.
+    /// </summary>
+    public List<RichCharacter> FlatList { get; set; }
+    
     public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
     public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
     public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
