@@ -2,7 +2,7 @@ using Luthetus.TextEditor.RazorLib.Characters.Models;
 
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
-public record VirtualizationResult<T> : IVirtualizationResultWithoutTypeMask
+public record VirtualizationResult<T>
 {
     public VirtualizationResult(
         VirtualizationEntry<T>[] entries,
