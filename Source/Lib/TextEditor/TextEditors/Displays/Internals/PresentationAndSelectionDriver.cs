@@ -172,8 +172,8 @@ public class PresentationAndSelectionDriver
             var virtualizedTextSpanList = new List<TextEditorTextSpan>();
             if (renderBatchLocal.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
             {
-                var lowerLineIndexInclusive = renderBatchLocal.ViewModel.VirtualizationResult.EntryList.First().Index;
-                var upperLineIndexInclusive = renderBatchLocal.ViewModel.VirtualizationResult.EntryList.Last().Index;
+                var lowerLineIndexInclusive = renderBatchLocal.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
+                var upperLineIndexInclusive = renderBatchLocal.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 
                 var lowerLine = renderBatchLocal.Model.GetLineInformation(lowerLineIndexInclusive);
                 var upperLine = renderBatchLocal.Model.GetLineInformation(upperLineIndexInclusive);

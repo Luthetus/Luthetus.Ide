@@ -112,8 +112,8 @@
 				    
 	@if (_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
 	{
-		var lineInformationLower = _bodyDriver._renderBatch.Model.GetLineInformation(_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.First().Index);
-		var lineInformationUpper = _bodyDriver._renderBatch.Model.GetLineInformation(_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index);
+		var lineInformationLower = _bodyDriver._renderBatch.Model.GetLineInformation(_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex);
+		var lineInformationUpper = _bodyDriver._renderBatch.Model.GetLineInformation(_bodyDriver._renderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex);
 					    
 		var positionIndex = lineInformationLower.StartPositionIndexInclusive;
 		var lineIndex = lineInformationLower.Index;

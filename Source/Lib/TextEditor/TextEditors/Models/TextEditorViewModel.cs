@@ -34,7 +34,7 @@ public sealed record TextEditorViewModel : IDisposable
         IDispatcher dispatcher,
         IDialogService dialogService,
         IJSRuntime jsRuntime,
-        VirtualizationResult<byte> virtualizationResult,
+        VirtualizationGrid virtualizationResult,
 		TextEditorDimensions textEditorDimensions,
 		ScrollbarDimensions scrollbarDimensions,
         CharAndLineMeasurements charAndLineMeasurements,
@@ -103,7 +103,7 @@ public sealed record TextEditorViewModel : IDisposable
     /// Given the dimensions of the rendered text editor, this provides a subset of the file's content, such that "only what is
     /// visible when rendered" is in this. There is some padding of offscreen content so that scrolling is smoother.
     /// </summary>
-    public VirtualizationResult<byte> VirtualizationResult { get; init; }
+    public VirtualizationGrid VirtualizationResult { get; init; }
 	public TextEditorDimensions TextEditorDimensions { get; init; }
 	public ScrollbarDimensions ScrollbarDimensions { get; init; }
 	/// <summary>

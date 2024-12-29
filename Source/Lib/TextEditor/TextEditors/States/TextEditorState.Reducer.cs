@@ -98,7 +98,7 @@ public partial record TextEditorState
                 registerViewModelAction.Dispatcher,
                 registerViewModelAction.DialogService,
                 registerViewModelAction.JsRuntime,
-                VirtualizationResult<byte>.GetEmptyRichCharacters(),
+                VirtualizationGrid.Empty,
 				new TextEditorDimensions(0, 0, 0, 0),
 				new ScrollbarDimensions(0, 0, 0, 0, 0),
         		new CharAndLineMeasurements(0, 0),

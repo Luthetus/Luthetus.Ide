@@ -13,8 +13,8 @@
 	    @foreach (var virtualizedRow in driver._renderBatch.ViewModel.VirtualizationResult.EntryList)
 	    {
 	        <div class="luth_te_gutter"
-	             style="@(driver.GetGutterStyleCss(virtualizedRow.Index))">
-	            @(virtualizedRow.Index + 1)
+	             style="@(driver.GetGutterStyleCss(virtualizedRow.LineIndex))">
+	            @(virtualizedRow.LineIndex + 1)
 	        </div>
 	    }
 	    
@@ -52,7 +52,7 @@
 	            
 	            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
 	
-	            var imaginaryNextIndex = (driver._renderBatch.ViewModel.VirtualizationResult.EntryList.LastOrDefault()?.Index ?? -1) + 
+	            var imaginaryNextIndex = (driver._renderBatch.ViewModel.VirtualizationResult.EntryList.LastOrDefault()?.LineIndex ?? -1) + 
 	                1;
 	            
 	            <div class="luth_te_gutter"
