@@ -801,8 +801,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 	        if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
 	            return;
 			
-			var virtualizedLineList = new VirtualizationEntry[lineCountToReturn];
-			var flatList = new List<RichCharacter>();
+			var virtualizedLineList = new VirtualizationLine[lineCountToReturn];
 			{
 				// 1 of the character width is already accounted for
 				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
@@ -819,8 +818,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 								    
 					var lineStartPositionIndexInclusive = lineInformation.StartPositionIndexInclusive;
 					var lineEnd = modelModifier.LineEndList[lineIndex];
-					
-					var virtualStartPositionIndexInclusive = flatList.Count;
 					
 					var countTabKeysInLine = 0;
 					
@@ -914,18 +911,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 						leftInPixels = Math.Max(0, leftInPixels);
 	
 						var topInPixels = lineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
-	
-						for (int trueIndex = positionIndexInclusiveStart; trueIndex < positionIndexExclusiveEnd; trueIndex++)
-						{
-							flatList.Add(modelModifier.RichCharacterList[trueIndex]);
-						}
-	
-						virtualizedLineList[lineOffset] = new VirtualizationEntry(
+
+						virtualizedLineList[lineOffset] = new VirtualizationLine(
 							lineIndex,
-							TruePositionIndexInclusiveStart: positionIndexInclusiveStart,
-							TruePositionIndexExclusiveEnd: positionIndexExclusiveEnd,
-							VirtualPositionIndexInclusiveStart: virtualStartPositionIndexInclusive,
-							VirtualPositionIndexExclusiveEnd: flatList.Count,
+							PositionIndexInclusiveStart: positionIndexInclusiveStart,
+							PositionIndexExclusiveEnd: positionIndexExclusiveEnd,
+							VirtualizationSpanList: null,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
@@ -933,17 +924,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					}
 					else
 					{
-						for (int trueIndex = lineInformation.StartPositionIndexInclusive; trueIndex < lineInformation.UpperLineEnd.StartPositionIndexInclusive; trueIndex++)
-						{
-							flatList.Add(modelModifier.RichCharacterList[trueIndex]);
-						}
-					
-						virtualizedLineList[lineOffset] = new VirtualizationEntry(
+						virtualizedLineList[lineOffset] = new VirtualizationLine(
 							lineIndex,
-							TruePositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
-							TruePositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
-							VirtualPositionIndexInclusiveStart: virtualStartPositionIndexInclusive,
-							VirtualPositionIndexExclusiveEnd: flatList.Count,
+							PositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
+							PositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+							VirtualizationSpanList: null,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							0,
@@ -1034,7 +1019,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
 			virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
-				flatList,
 				leftBoundary,
 				rightBoundary,
 				topBoundary,
@@ -1050,6 +1034,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					MarginScrollHeight = marginScrollHeight
 				},
 			};
+			
+			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModelModifier.ViewModel);
 		}
 		catch (LuthetusTextEditorException exception)
 		{

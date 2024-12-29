@@ -1,4 +1,7 @@
+using System.Text;
 using Luthetus.TextEditor.RazorLib.Characters.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models;
+using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
 
 namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 
@@ -22,43 +25,147 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 public record VirtualizationGrid
 {
 	public static VirtualizationGrid Empty { get; } = new(
-        Array.Empty<VirtualizationEntry>(),
-        new(),
+        Array.Empty<VirtualizationLine>(),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0));
 
     public VirtualizationGrid(
-        VirtualizationEntry[] entries,
-        List<RichCharacter> flatList,
+        VirtualizationLine[] entries,
         VirtualizationBoundary leftVirtualizationBoundary,
         VirtualizationBoundary rightVirtualizationBoundary,
         VirtualizationBoundary topVirtualizationBoundary,
         VirtualizationBoundary bottomVirtualizationBoundary)
     {
         EntryList = entries;
-        FlatList = flatList;
         LeftVirtualizationBoundary = leftVirtualizationBoundary;
         RightVirtualizationBoundary = rightVirtualizationBoundary;
         TopVirtualizationBoundary = topVirtualizationBoundary;
         BottomVirtualizationBoundary = bottomVirtualizationBoundary;
     }
 
-    public VirtualizationEntry[] EntryList { get; init; }
-    
-    /// <summary>
-    /// Take all the text that is to be rendered and put it in a single List.
-    ///
-    /// (this being opposed to having a List<List<RichCharacter>>)
-    ///
-    /// Each 'VirtualizationEntry' in 'EntryList' contains the indices
-    /// from this flattened list that represent that line.
-    /// </summary>
-    public List<RichCharacter> FlatList { get; set; }
+    public VirtualizationLine[] EntryList { get; init; }
     
     public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
     public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
     public VirtualizationBoundary TopVirtualizationBoundary { get; init; }
     public VirtualizationBoundary BottomVirtualizationBoundary { get; init; }
+
+    /// <summary>
+    /// The memory cost of rendering the text is currently being optimized.
+    /// One side effect of this is an increased CPU cost whenever the text is rendered.
+    ///
+    /// Because, now the data is stored in a more "compact" but "needs to be computed" way.
+    ///
+    /// The question is whether one could pre-emptively generate
+    /// the UI such that a single 'foreach' loop could render it correctly.
+    /// 
+    /// Another wording: "what can I do here (off the UI thread) prior to the .razor markup"?
+    /// Because this method is invoked fom the IBackgroundTaskService.
+    /// </summary>
+    public void CreateCache(ITextEditorService textEditorService, ITextEditorModel model, TextEditorViewModel viewModel)
+    {
+    	if (viewModel.VirtualizationResult.EntryList.Length == 0)
+			return;
+		
+		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
+	    var spaceKeyOutput = "&nbsp;";
+			    
+		if (textEditorService.OptionsStateWrap.Value.Options.ShowWhitespace)
+	    {
+	        tabKeyOutput = "--->";
+	        spaceKeyOutput = "·";
+	    }
+		
+		var spanBuilder = new StringBuilder();
+		var currentDecorationByte = (byte)0;
+	
+		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
+		{
+			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
+			
+			if (virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart <= 0)
+				continue;
+				
+			if (virtualizationEntry.VirtualizationSpanList is not null)
+				continue;
+			
+			// Avoid allocating the List by having it nullable reference?
+			// i.e.: only allocate it if there is text that needs to be rendered on that line.
+			virtualizationEntry.VirtualizationSpanList = new();
+				
+			currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionIndexInclusiveStart].DecorationByte;
+			
+			for (int positionIndex = virtualizationEntry.PositionIndexInclusiveStart; positionIndex < virtualizationEntry.PositionIndexExclusiveEnd; positionIndex++)
+			{
+				var richCharacter = model.RichCharacterList[positionIndex];
+				
+				if (currentDecorationByte == richCharacter.DecorationByte)
+			    {
+			        AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+			    }
+			    else
+			    {
+			    	virtualizationEntry.VirtualizationSpanList.Add(new VirtualizationSpan(
+			    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
+			    		text: spanBuilder.ToString()));
+			        spanBuilder.Clear();
+			        
+			        AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+					currentDecorationByte = richCharacter.DecorationByte;
+			    }
+
+				if (positionIndex == virtualizationEntry.PositionIndexExclusiveEnd - 1)
+				{
+					/* Final grouping of contiguous characters */
+					virtualizationEntry.VirtualizationSpanList.Add(new VirtualizationSpan(
+			    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
+			    		text: spanBuilder.ToString()));
+					spanBuilder.Clear();
+				}
+			}
+			
+			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+		}
+    }
+    
+    private void AppendTextEscaped(
+        StringBuilder spanBuilder,
+        RichCharacter richCharacter,
+        string tabKeyOutput,
+        string spaceKeyOutput)
+    {
+        switch (richCharacter.Value)
+        {
+            case '\t':
+                spanBuilder.Append(tabKeyOutput);
+                break;
+            case ' ':
+                spanBuilder.Append(spaceKeyOutput);
+                break;
+            case '\r':
+                break;
+            case '\n':
+                break;
+            case '<':
+                spanBuilder.Append("&lt;");
+                break;
+            case '>':
+                spanBuilder.Append("&gt;");
+                break;
+            case '"':
+                spanBuilder.Append("&quot;");
+                break;
+            case '\'':
+                spanBuilder.Append("&#39;");
+                break;
+            case '&':
+                spanBuilder.Append("&amp;");
+                break;
+            default:
+                spanBuilder.Append(richCharacter.Value);
+                break;
+        }
+    }
 }
