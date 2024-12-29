@@ -655,7 +655,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
-        if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
+        if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any())
         {
             var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
 
@@ -685,7 +685,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
-        if ((viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false))
+        if ((viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any()))
         {
             var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
             var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.LineIndex);
@@ -746,8 +746,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         try
 		{
+			var aaa_StartDateTime = DateTime.UtcNow;
+			//Console.Write($"CVR(");
+			
 			var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
-
+			
 			var verticalStartingIndex = (int)Math.Floor(
 				viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop /
 				viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
@@ -811,20 +814,38 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				var minLineWidthToTriggerVirtualizationExclusive = LINE_WIDTH_TO_TEXT_EDITOR_WIDTH_TO_TRIGGER_HORIZONTAL_VIRTUALIZATION *
 					viewModelModifier.ViewModel.TextEditorDimensions.Width;
 					
+				{
+					var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
+					//Console.Write($"{aaa_TimeElapsed.TotalMilliseconds}");
+					aaa_StartDateTime = DateTime.UtcNow;
+				}
+					
 				for (int lineOffset = 0; lineOffset < lineCountToReturn; lineOffset++)
 				{
 					var lineIndex = verticalStartingIndex + lineOffset;
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
+					{
+						var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
+						//Console.Write($", pl{aaa_TimeElapsed.TotalMilliseconds}");
+						aaa_StartDateTime = DateTime.UtcNow;
+					}
 								    
 					var lineStartPositionIndexInclusive = lineInformation.StartPositionIndexInclusive;
 					var lineEnd = modelModifier.LineEndList[lineIndex];
 					
 					var countTabKeysInLine = 0;
 					
-					for (int countTabIndex = lineStartPositionIndexInclusive; countTabIndex < lineInformation.UpperLineEnd.StartPositionIndexInclusive; countTabIndex++)
+					// TODO: This commented code is extremely slow.
+					//
+					//for (int countTabIndex = lineStartPositionIndexInclusive; countTabIndex < lineInformation.UpperLineEnd.StartPositionIndexInclusive; countTabIndex++)
+					//{
+					//	if (modelModifier.RichCharacterList[countTabIndex].Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+					//		countTabKeysInLine++;
+					//}
 					{
-						if (modelModifier.RichCharacterList[countTabIndex].Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-							countTabKeysInLine++;
+						var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
+						//Console.Write($", pt{aaa_TimeElapsed.TotalMilliseconds}");
+						aaa_StartDateTime = DateTime.UtcNow;
 					}
 
 					// TODO: Was this code using length including line ending or excluding? (2024-12-29)
@@ -833,6 +854,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					var widthInPixels = (lineLength + (extraWidthPerTabKey * countTabKeysInLine)) *
 						viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
 
+					{
+						var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
+						//Console.Write($", pp{aaa_TimeElapsed.TotalMilliseconds}");
+						aaa_StartDateTime = DateTime.UtcNow;
+					}
+					
 					if (widthInPixels > minLineWidthToTriggerVirtualizationExclusive)
 					{
 						var localHorizontalStartingIndex = horizontalStartingIndex;
@@ -921,6 +948,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
 							topInPixels);
+					
+						{
+							var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
+							//Console.Write($", i{aaa_TimeElapsed.TotalMilliseconds}");
+							aaa_StartDateTime = DateTime.UtcNow;
+						}
 					}
 					else
 					{
@@ -933,6 +966,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							0,
 							lineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
+					
+						{
+							var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
+							//Console.Write($", e{aaa_TimeElapsed.TotalMilliseconds}");
+							aaa_StartDateTime = DateTime.UtcNow;
+						}
 					}
 				}
 			}
@@ -1034,6 +1073,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					MarginScrollHeight = marginScrollHeight
 				},
 			};
+			
+			{
+				var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
+				//Console.Write($")ms, ");
+			}
 			
 			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModelModifier.ViewModel);
 		}

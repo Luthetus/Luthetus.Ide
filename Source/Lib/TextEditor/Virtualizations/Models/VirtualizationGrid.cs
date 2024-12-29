@@ -22,7 +22,7 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 /// and vertical scrollbars stay consistent, regardless of how much
 /// text is "virtually" not being rendered.
 /// </summary>
-public record VirtualizationGrid
+public record struct VirtualizationGrid
 {
 	public static VirtualizationGrid Empty { get; } = new(
         Array.Empty<VirtualizationLine>(),
@@ -65,7 +65,7 @@ public record VirtualizationGrid
     /// Because this method is invoked fom the IBackgroundTaskService.
     /// </summary>
     public void CreateCache(ITextEditorService textEditorService, ITextEditorModel model, TextEditorViewModel viewModel)
-    {
+    {    	
     	if (viewModel.VirtualizationResult.EntryList.Length == 0)
 			return;
 		
@@ -80,6 +80,15 @@ public record VirtualizationGrid
 		
 		var spanBuilder = new StringBuilder();
 		var currentDecorationByte = (byte)0;
+		
+    	var aaa_OUTER_LOOP_TimeElapsed = TimeSpan.Zero;
+    	var aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+	
+		var aaa_INNER_LOOP_TimeElapsed = TimeSpan.Zero;
+		var aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+		
+		var aaa_AAA_INNER_LOOP_TimeElapsed = TimeSpan.Zero;
+		var aaa_AAA_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
 	
 		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
 		{
@@ -97,9 +106,30 @@ public record VirtualizationGrid
 				
 			currentDecorationByte = model.RichCharacterList[virtualizationEntry.PositionIndexInclusiveStart].DecorationByte;
 			
-			for (int positionIndex = virtualizationEntry.PositionIndexInclusiveStart; positionIndex < virtualizationEntry.PositionIndexExclusiveEnd; positionIndex++)
 			{
-				var richCharacter = model.RichCharacterList[positionIndex];
+		    	aaa_OUTER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_OUTER_LOOP_START_DATE_TIME;
+		    }
+		    
+		    {
+		    	aaa_AAA_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+		    }
+		    
+		    // WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
+		    //          Presumably this is due to cache misses?
+		    foreach (var richCharacter in model.RichCharacterList
+		    		 	.Skip(virtualizationEntry.PositionIndexInclusiveStart)
+		    			 .Take(virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart))
+		    {
+		    	// var richCharacter = model.RichCharacterList[positionIndex];
+				
+				{
+			    	aaa_AAA_INNER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_AAA_INNER_LOOP_START_DATE_TIME;
+			    	aaa_AAA_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+			    }
+			    
+			    {
+			    	aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+			    }
 				
 				if (currentDecorationByte == richCharacter.DecorationByte)
 			    {
@@ -116,18 +146,92 @@ public record VirtualizationGrid
 					currentDecorationByte = richCharacter.DecorationByte;
 			    }
 
+				
+			    
+			    {
+			    	aaa_INNER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_INNER_LOOP_START_DATE_TIME;
+			    	aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+			    }
+			    
+			    {
+			    	aaa_AAA_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+			    }
+		    }
+		    
+			{
+				/* Final grouping of contiguous characters */
+				virtualizationEntry.VirtualizationSpanList.Add(new VirtualizationSpan(
+		    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
+		    		text: spanBuilder.ToString()));
+				spanBuilder.Clear();
+			}
+	    
+			/*for (int positionIndex = virtualizationEntry.PositionIndexInclusiveStart; positionIndex < virtualizationEntry.PositionIndexExclusiveEnd; positionIndex++)
+			{
+				// var richCharacter = model.RichCharacterList[positionIndex];
+				
+				{
+			    	aaa_AAA_INNER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_AAA_INNER_LOOP_START_DATE_TIME;
+			    	aaa_AAA_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+			    }
+			    
+			    {
+			    	aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+			    }
+				
+				if (currentDecorationByte == model.RichCharacterList[positionIndex].DecorationByte)
+			    {
+			        AppendTextEscaped(spanBuilder, model.RichCharacterList[positionIndex], tabKeyOutput, spaceKeyOutput);
+			    }
+			    else
+			    {
+			    	virtualizationEntry.VirtualizationSpanList.Add(new VirtualizationSpan(
+			    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
+			    		text: spanBuilder.ToString()));
+			        spanBuilder.Clear();
+			        
+			        AppendTextEscaped(spanBuilder, model.RichCharacterList[positionIndex], tabKeyOutput, spaceKeyOutput);
+					currentDecorationByte = model.RichCharacterList[positionIndex].DecorationByte;
+			    }
+
 				if (positionIndex == virtualizationEntry.PositionIndexExclusiveEnd - 1)
 				{
-					/* Final grouping of contiguous characters */
+					/* Final grouping of contiguous characters *//*
 					virtualizationEntry.VirtualizationSpanList.Add(new VirtualizationSpan(
 			    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
 			    		text: spanBuilder.ToString()));
 					spanBuilder.Clear();
 				}
-			}
+			    
+			    {
+			    	aaa_INNER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_INNER_LOOP_START_DATE_TIME;
+			    	aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+			    }
+			    
+			    {
+			    	aaa_AAA_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+			    }
+			}*/
 			
+			{
+				aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+		    }
+		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
+			
+			{
+		    	aaa_OUTER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_OUTER_LOOP_START_DATE_TIME;
+		  		aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow;  	
+		    }
 		}
+		
+		Console.Write($", o{aaa_OUTER_LOOP_TimeElapsed.TotalMilliseconds}");
+		
+		Console.Write($", a{aaa_AAA_INNER_LOOP_TimeElapsed.TotalMilliseconds}");
+		
+		Console.Write($", i{aaa_INNER_LOOP_TimeElapsed.TotalMilliseconds}");
+		
+		Console.WriteLine($")ms, ");
     }
     
     private void AppendTextEscaped(

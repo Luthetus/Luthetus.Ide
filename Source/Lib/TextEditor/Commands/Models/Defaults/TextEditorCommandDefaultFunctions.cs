@@ -224,7 +224,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
+        if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any())
         {
 			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         
@@ -243,7 +243,7 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
+        if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any())
         {
         	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         
