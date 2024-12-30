@@ -746,9 +746,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
     {
         try
 		{
-			var aaa_StartDateTime = DateTime.UtcNow;
-			Console.Write($"CVR(");
-			
 			var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
 			
 			var verticalStartingIndex = (int)Math.Floor(
@@ -1057,11 +1054,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					MarginScrollHeight = marginScrollHeight
 				},
 			};
-			
-			{
-				var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
-				Console.Write($"{aaa_TimeElapsed.TotalMilliseconds})ms, ");
-			}
 			
 			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModelModifier.ViewModel);
 		}

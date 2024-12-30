@@ -112,9 +112,11 @@
 			*@
 			@if (virtualizationLine.VirtualizationSpanIndexExclusiveEnd != 0)
 			{
+				// WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
+		    	//          Presumably this is due to cache misses?
 				foreach (var virtualizationSpan in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList
 						 	.Skip(virtualizationLine.VirtualizationSpanIndexInclusiveStart)
-							.Take(virtualizationLine.VirtualizationSpanIndexExclusiveEnd - virtualizationLine.VirtualizationSpanIndexInclusiveStart))
+							 .Take(virtualizationLine.VirtualizationSpanIndexExclusiveEnd - virtualizationLine.VirtualizationSpanIndexInclusiveStart))
 				{
 					<span class="@virtualizationSpan.CssClass">
 			            @((MarkupString)virtualizationSpan.Text)

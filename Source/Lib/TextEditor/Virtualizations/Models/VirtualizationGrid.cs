@@ -73,12 +73,9 @@ public record VirtualizationGrid
     	if (viewModel.VirtualizationResult.EntryList.Length == 0)
 			return;
 		
-		var start_TimeElapsed = TimeSpan.Zero;
-    	var start_START_DATE_TIME = DateTime.UtcNow;
-		
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	    var spaceKeyOutput = "&nbsp;";
-			    
+
 		if (textEditorService.OptionsStateWrap.Value.Options.ShowWhitespace)
 	    {
 	        tabKeyOutput = "--->";
@@ -87,15 +84,6 @@ public record VirtualizationGrid
 		
 		var spanBuilder = new StringBuilder();
 		byte? currentDecorationByte = null;
-		
-    	var aaa_OUTER_LOOP_TimeElapsed = TimeSpan.Zero;
-    	var aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow;
-	
-		var aaa_INNER_LOOP_TimeElapsed = TimeSpan.Zero;
-		var aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
-		
-		start_TimeElapsed += DateTime.UtcNow - start_START_DATE_TIME;
-		Console.Write($"CC({start_TimeElapsed.TotalMilliseconds}");
 	
 		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
 		{
@@ -105,9 +93,6 @@ public record VirtualizationGrid
 				continue;
 				
 			virtualizationEntry.VirtualizationSpanIndexInclusiveStart = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
-			
-			{ aaa_OUTER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_OUTER_LOOP_START_DATE_TIME; }
-		    { aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow; }
 		    
 		    // WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
 		    //          Presumably this is due to cache misses?
@@ -194,37 +179,19 @@ public record VirtualizationGrid
 			        
 					currentDecorationByte = richCharacter.DecorationByte;
 			    }
-
-			    {
-			    	aaa_INNER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_INNER_LOOP_START_DATE_TIME;
-			    	aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
-			    }
 		    }
 		    
-			{
-				/* Final grouping of contiguous characters */
-				viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
-		    		cssClass: model.DecorationMapper.Map(currentDecorationByte.Value),
-		    		text: spanBuilder.ToString()));
-				spanBuilder.Clear();
-				currentDecorationByte = null;
-			}
-			
-			{ aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow; }
+			/* Final grouping of contiguous characters */
+			viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
+	    		cssClass: model.DecorationMapper.Map(currentDecorationByte.Value),
+	    		text: spanBuilder.ToString()));
+			spanBuilder.Clear();
+			currentDecorationByte = null;
 			
 			virtualizationEntry.VirtualizationSpanIndexExclusiveEnd = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
-			
-			{
-		    	aaa_OUTER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_OUTER_LOOP_START_DATE_TIME;
-		  	  aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow;  	
-		    }
 		}
-		
-		Console.Write($", o{aaa_OUTER_LOOP_TimeElapsed.TotalMilliseconds}");
-		Console.Write($", i{aaa_INNER_LOOP_TimeElapsed.TotalMilliseconds}");
-		Console.WriteLine($")ms, ");
     }
     
     /// <summary>
