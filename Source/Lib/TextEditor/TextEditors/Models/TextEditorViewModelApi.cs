@@ -921,7 +921,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 							lineIndex,
 							PositionIndexInclusiveStart: positionIndexInclusiveStart,
 							PositionIndexExclusiveEnd: positionIndexExclusiveEnd,
-							VirtualizationSpanList: null,
+							VirtualizationSpanIndexInclusiveStart: 0,
+							VirtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
@@ -948,7 +949,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 							lineIndex,
 							PositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
 							PositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
-							VirtualizationSpanList: null,
+							VirtualizationSpanIndexInclusiveStart: 0,
+							VirtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							0,
@@ -1039,6 +1041,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 
 			virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
+        		new List<VirtualizationSpan>(),
 				leftBoundary,
 				rightBoundary,
 				topBoundary,

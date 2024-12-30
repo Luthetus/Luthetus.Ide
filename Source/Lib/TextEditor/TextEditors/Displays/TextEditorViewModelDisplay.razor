@@ -106,9 +106,15 @@
 		<div class="luth_te_row"
 			 style="@_bodyDriver.RowSection_GetRowStyleCss(_bodyDriver._renderBatch, virtualizationLine.LineIndex, virtualizationLine.LeftInPixels)">
 		
-			@if (virtualizationLine.VirtualizationSpanList is not null)
+			@*
+				'!= 0' because the struct's int property will default to '0',
+				and if there is no text then the property is unchanged from its default value.
+			*@
+			@if (virtualizationLine.VirtualizationSpanIndexExclusiveEnd != 0)
 			{
-				foreach (var virtualizationSpan in virtualizationLine.VirtualizationSpanList)
+				foreach (var virtualizationSpan in _bodyDriver._renderBatch.ViewModel.VirtualizationResult.VirtualizationSpanList
+						 	.Skip(virtualizationLine.VirtualizationSpanIndexInclusiveStart)
+							.Take(virtualizationLine.VirtualizationSpanIndexExclusiveEnd - virtualizationLine.VirtualizationSpanIndexInclusiveStart))
 				{
 					<span class="@virtualizationSpan.CssClass">
 			            @((MarkupString)virtualizationSpan.Text)

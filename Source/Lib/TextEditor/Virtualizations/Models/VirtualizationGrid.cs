@@ -22,10 +22,11 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 /// and vertical scrollbars stay consistent, regardless of how much
 /// text is "virtually" not being rendered.
 /// </summary>
-public record struct VirtualizationGrid
+public record VirtualizationGrid
 {
 	public static VirtualizationGrid Empty { get; } = new(
         Array.Empty<VirtualizationLine>(),
+        new List<VirtualizationSpan>(),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
         new VirtualizationBoundary(0, 0, 0, 0),
@@ -33,12 +34,14 @@ public record struct VirtualizationGrid
 
     public VirtualizationGrid(
         VirtualizationLine[] entries,
+        List<VirtualizationSpan> virtualizationSpanList,
         VirtualizationBoundary leftVirtualizationBoundary,
         VirtualizationBoundary rightVirtualizationBoundary,
         VirtualizationBoundary topVirtualizationBoundary,
         VirtualizationBoundary bottomVirtualizationBoundary)
     {
         EntryList = entries;
+        VirtualizationSpanList = virtualizationSpanList;
         LeftVirtualizationBoundary = leftVirtualizationBoundary;
         RightVirtualizationBoundary = rightVirtualizationBoundary;
         TopVirtualizationBoundary = topVirtualizationBoundary;
@@ -46,6 +49,7 @@ public record struct VirtualizationGrid
     }
 
     public VirtualizationLine[] EntryList { get; init; }
+    public List<VirtualizationSpan> VirtualizationSpanList { get; init; }
     
     public VirtualizationBoundary LeftVirtualizationBoundary { get; init; }
     public VirtualizationBoundary RightVirtualizationBoundary { get; init; }
@@ -100,12 +104,7 @@ public record struct VirtualizationGrid
 			if (virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart <= 0)
 				continue;
 				
-			if (virtualizationEntry.VirtualizationSpanList is not null)
-				continue;
-			
-			// Avoid allocating the List by having it nullable reference?
-			// i.e.: only allocate it if there is text that needs to be rendered on that line.
-			virtualizationEntry.VirtualizationSpanList = new();
+			virtualizationEntry.VirtualizationSpanIndexInclusiveStart = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 			
 			{ aaa_OUTER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_OUTER_LOOP_START_DATE_TIME; }
 		    { aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow; }
@@ -154,7 +153,7 @@ public record struct VirtualizationGrid
 			    }
 			    else
 			    {
-			    	virtualizationEntry.VirtualizationSpanList.Add(new VirtualizationSpan(
+			    	viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
 			    		cssClass: model.DecorationMapper.Map(currentDecorationByte.Value),
 			    		text: spanBuilder.ToString()));
 			        spanBuilder.Clear();
@@ -204,7 +203,7 @@ public record struct VirtualizationGrid
 		    
 			{
 				/* Final grouping of contiguous characters */
-				virtualizationEntry.VirtualizationSpanList.Add(new VirtualizationSpan(
+				viewModel.VirtualizationResult.VirtualizationSpanList.Add(new VirtualizationSpan(
 		    		cssClass: model.DecorationMapper.Map(currentDecorationByte.Value),
 		    		text: spanBuilder.ToString()));
 				spanBuilder.Clear();
@@ -212,6 +211,8 @@ public record struct VirtualizationGrid
 			}
 			
 			{ aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow; }
+			
+			virtualizationEntry.VirtualizationSpanIndexExclusiveEnd = viewModel.VirtualizationResult.VirtualizationSpanList.Count;
 		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
 			
