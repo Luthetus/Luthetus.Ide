@@ -98,6 +98,7 @@ public record VirtualizationGrid
 		var spanBuilder = new StringBuilder();
 		byte? currentDecorationByte = null;
 	
+		// TODO: Would the 'foreach is 500x faster for some reason' that is being seen in this file apply to this 'for' loop too?
 		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
 		{
 			var virtualizationEntry = viewModel.VirtualizationResult.EntryList[entryIndex];
