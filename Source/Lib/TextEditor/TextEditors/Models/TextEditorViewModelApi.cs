@@ -655,11 +655,11 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
-        if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
+        if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any())
         {
             var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
 
-            cursorModifier.LineIndex = firstEntry.Index;
+            cursorModifier.LineIndex = firstEntry.LineIndex;
             cursorModifier.ColumnIndex = 0;
         }
     }
@@ -685,12 +685,12 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCursorModifier cursorModifier)
     {
-        if ((viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false))
+        if ((viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any()))
         {
             var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
-            var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.Index);
+            var lastEntriesLineLength = modelModifier.GetLineLength(lastEntry.LineIndex);
 
-            cursorModifier.LineIndex = lastEntry.Index;
+            cursorModifier.LineIndex = lastEntry.LineIndex;
             cursorModifier.ColumnIndex = lastEntriesLineLength;
         }
     }
@@ -747,7 +747,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         try
 		{
 			var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
-
+			
 			var verticalStartingIndex = (int)Math.Floor(
 				viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop /
 				viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
@@ -789,8 +789,19 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 			//    	is in view, the virtualization result is recalculated before the user sees the "voidzone".
 			// 6. Consider adding if statement to say, if line.Length < ONE_HUNDRED_CHARS then don't horizontally
 			//    	virtualization REGARDLESS of the editor width.
-			var lineList = modelModifier.GetLineRichCharacterRange(verticalStartingIndex, verticalTake);
-			var virtualizedLineList = new VirtualizationEntry<RichCharacter[]>[lineList.Length];
+			
+			var lineCountAvailable = modelModifier.LineEndList.Count - verticalStartingIndex;
+
+	        var lineCountToReturn = verticalTake < lineCountAvailable
+	            ? verticalTake
+	            : lineCountAvailable;
+	
+	        var endingLineIndexExclusive = verticalStartingIndex + lineCountToReturn;
+	
+	        if (lineCountToReturn < 0 || verticalStartingIndex < 0 || endingLineIndexExclusive < 0)
+	            return;
+			
+			var virtualizedLineList = new VirtualizationLine[lineCountToReturn];
 			{
 				// 1 of the character width is already accounted for
 				var extraWidthPerTabKey = TextEditorModel.TAB_WIDTH - 1;
@@ -799,20 +810,25 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				
 				var minLineWidthToTriggerVirtualizationExclusive = LINE_WIDTH_TO_TEXT_EDITOR_WIDTH_TO_TRIGGER_HORIZONTAL_VIRTUALIZATION *
 					viewModelModifier.ViewModel.TextEditorDimensions.Width;
-				
-				for (int i = 0; i < lineList.Length; i++)
+					
+				for (int lineOffset = 0; lineOffset < lineCountToReturn; lineOffset++)
 				{
-					// Idea: Horizontally virtualize on a line by line basis,
-					// if that line in particular would load in too much text?
-				
-					var line = lineList[i];
-					var lineIndex = i + verticalStartingIndex;
+					var lineIndex = verticalStartingIndex + lineOffset;
+					var lineInformation = modelModifier.GetLineInformation(lineIndex);
+								    
+					var lineStartPositionIndexInclusive = lineInformation.StartPositionIndexInclusive;
+					var lineEnd = modelModifier.LineEndList[lineIndex];
 					
-					var countTabKeysInLine = line
-						.Where(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-						.Count();
+					// TODO: Should the tabs be counted twice?...
+					//       ...It was doing first time to determine if it should horizontally virtualize
+					//       Then the second time was if it actually virtualized,
+					//           what tabs were in the content that was in the virtualization result.
+					var countTabKeysInLine = 0;
+
+					// TODO: Was this code using length including line ending or excluding? (2024-12-29)
+					var lineLength = lineInformation.EndPositionIndexExclusive - lineInformation.StartPositionIndexInclusive;
 					
-					var widthInPixels = (line.Length + (extraWidthPerTabKey * countTabKeysInLine)) *
+					var widthInPixels = (lineLength + (extraWidthPerTabKey * countTabKeysInLine)) *
 						viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
 
 					if (widthInPixels > minLineWidthToTriggerVirtualizationExclusive)
@@ -822,8 +838,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 	
 						// Adjust for tab key width
 						{
-							var maxValidColumnIndex = line.Length > 0
-								? line.Length - 1
+							var maxValidColumnIndex = lineLength > 0
+								? lineLength - 1
 								: 0;
 	
 							var parameterForGetTabsCountOnSameLineBeforeCursor =
@@ -831,11 +847,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 									? maxValidColumnIndex
 									: localHorizontalStartingIndex;
 	
-							var lineInformation = modelModifier.GetLineInformation(lineIndex);
-	
 							if (parameterForGetTabsCountOnSameLineBeforeCursor > lineInformation.LastValidColumnIndex)
 								parameterForGetTabsCountOnSameLineBeforeCursor = lineInformation.LastValidColumnIndex;
-	
 	
 							var tabsOnSameLineBeforeCursor = modelModifier.GetTabCountOnSameLineBeforeCursor(
 								lineIndex,
@@ -844,22 +857,31 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 							localHorizontalStartingIndex -= extraWidthPerTabKey * tabsOnSameLineBeforeCursor;
 						}
 	
-						if (localHorizontalStartingIndex + localHorizontalTake > line.Length)
-							localHorizontalTake = line.Length - localHorizontalStartingIndex;
+						if (localHorizontalStartingIndex + localHorizontalTake > lineLength)
+							localHorizontalTake = lineLength - localHorizontalStartingIndex;
 	
 						localHorizontalStartingIndex = Math.Max(0, localHorizontalStartingIndex);
 						localHorizontalTake = Math.Max(0, localHorizontalTake);
+
+						var countTabKeysInVirtualizedLine = 0;
+
+						var positionIndexInclusiveStart = lineStartPositionIndexInclusive + localHorizontalStartingIndex;
+						
+						var positionIndexExclusiveEnd = positionIndexInclusiveStart + localHorizontalTake;
+						if (positionIndexExclusiveEnd > lineInformation.UpperLineEnd.StartPositionIndexInclusive)
+							positionIndexExclusiveEnd = lineInformation.UpperLineEnd.StartPositionIndexInclusive;
+						
+						// WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
+		    			//          Presumably this is due to cache misses?
+						foreach (var richCharacter in modelModifier.RichCharacterList
+							     	.Skip(positionIndexInclusiveStart)
+							     	.Take(positionIndexExclusiveEnd - positionIndexInclusiveStart))
+						{
+							if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+								countTabKeysInVirtualizedLine++;
+						}
 	
-						var horizontallyVirtualizedLine = line
-							.Skip(localHorizontalStartingIndex)
-							.Take(localHorizontalTake)
-							.ToArray();
-	
-						var countTabKeysInVirtualizedLine = horizontallyVirtualizedLine
-							.Where(x => x.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-							.Count();
-	
-						widthInPixels = (horizontallyVirtualizedLine.Length + (extraWidthPerTabKey * countTabKeysInVirtualizedLine)) *
+						widthInPixels = ((localHorizontalTake - localHorizontalStartingIndex) + (extraWidthPerTabKey * countTabKeysInVirtualizedLine)) *
 							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
 	
 						double leftInPixels = localHorizontalStartingIndex *
@@ -867,16 +889,14 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 	
 						// Adjust for tab key width
 						{
-							var maxValidColumnIndex = line.Length > 0
-								? line.Length - 1
+							var maxValidColumnIndex = lineLength > 0
+								? lineLength - 1
 								: 0;
 	
 							var parameterForGetTabsCountOnSameLineBeforeCursor =
 								localHorizontalStartingIndex > maxValidColumnIndex
 									? maxValidColumnIndex
 									: localHorizontalStartingIndex;
-	
-							var lineInformation = modelModifier.GetLineInformation(lineIndex);
 	
 							if (parameterForGetTabsCountOnSameLineBeforeCursor > lineInformation.LastValidColumnIndex)
 								parameterForGetTabsCountOnSameLineBeforeCursor = lineInformation.LastValidColumnIndex;
@@ -893,10 +913,13 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 						leftInPixels = Math.Max(0, leftInPixels);
 	
 						var topInPixels = lineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
-	
-						virtualizedLineList[i] = new VirtualizationEntry<RichCharacter[]>(
+
+						virtualizedLineList[lineOffset] = new VirtualizationLine(
 							lineIndex,
-							horizontallyVirtualizedLine,
+							PositionIndexInclusiveStart: positionIndexInclusiveStart,
+							PositionIndexExclusiveEnd: positionIndexExclusiveEnd,
+							VirtualizationSpanIndexInclusiveStart: 0,
+							VirtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
@@ -904,9 +927,27 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					}
 					else
 					{
-						virtualizedLineList[i] = new VirtualizationEntry<RichCharacter[]>(
+						countTabKeysInLine = 0;
+						
+						// WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
+		    			//          Presumably this is due to cache misses?
+						foreach (var richCharacter in modelModifier.RichCharacterList
+							     	.Skip(lineInformation.StartPositionIndexInclusive)
+							     	.Take(lineInformation.UpperLineEnd.StartPositionIndexInclusive - lineInformation.StartPositionIndexInclusive))
+						{
+							if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+								countTabKeysInLine++;
+						}
+						
+						widthInPixels += (extraWidthPerTabKey * countTabKeysInLine) *
+							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+					
+						virtualizedLineList[lineOffset] = new VirtualizationLine(
 							lineIndex,
-							line,
+							PositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
+							PositionIndexExclusiveEnd: lineInformation.UpperLineEnd.StartPositionIndexInclusive,
+							VirtualizationSpanIndexInclusiveStart: 0,
+							VirtualizationSpanIndexExclusiveEnd: 0,
 							widthInPixels,
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							0,
@@ -995,8 +1036,9 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				0,
 				bottomBoundaryTopInPixels);
 
-			virtualizationResult = new VirtualizationResult<RichCharacter[]>(
+			virtualizationResult = new VirtualizationGrid(
 				virtualizedLineList,
+        		new List<VirtualizationSpan>(),
 				leftBoundary,
 				rightBoundary,
 				topBoundary,
@@ -1012,6 +1054,8 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					MarginScrollHeight = marginScrollHeight
 				},
 			};
+			
+			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModelModifier.ViewModel);
 		}
 		catch (LuthetusTextEditorException exception)
 		{

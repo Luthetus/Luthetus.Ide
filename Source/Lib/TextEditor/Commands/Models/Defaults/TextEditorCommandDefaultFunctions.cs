@@ -224,14 +224,14 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
+        if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any())
         {
 			var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         
             var lastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
-            var lastEntriesRowLength = modelModifier.GetLineLength(lastEntry.Index);
+            var lastEntriesRowLength = modelModifier.GetLineLength(lastEntry.LineIndex);
 
-            primaryCursorModifier.LineIndex = lastEntry.Index;
+            primaryCursorModifier.LineIndex = lastEntry.LineIndex;
             primaryCursorModifier.ColumnIndex = lastEntriesRowLength;
         }
     }
@@ -243,13 +243,13 @@ public class TextEditorCommandDefaultFunctions
         CursorModifierBagTextEditor cursorModifierBag,
         TextEditorCommandArgs commandArgs)
     {
-        if (viewModelModifier.ViewModel.VirtualizationResult?.EntryList.Any() ?? false)
+        if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Any())
         {
         	var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
         
             var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
 
-            primaryCursorModifier.LineIndex = firstEntry.Index;
+            primaryCursorModifier.LineIndex = firstEntry.LineIndex;
             primaryCursorModifier.ColumnIndex = 0;
         }
     }

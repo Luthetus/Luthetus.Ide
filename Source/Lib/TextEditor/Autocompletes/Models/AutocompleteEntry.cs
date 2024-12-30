@@ -1,6 +1,6 @@
-﻿namespace Luthetus.TextEditor.RazorLib.Autocompletes.Models;
+namespace Luthetus.TextEditor.RazorLib.Autocompletes.Models;
 
-public class AutocompleteEntry
+public struct AutocompleteEntry
 {
     public AutocompleteEntry(
         string displayName,

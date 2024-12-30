@@ -82,6 +82,22 @@ public class CSharpBinderSession : IBinderSession
     /// But, if a different ICompilerService implementation wanted to map
     /// from a symbol to arbitrary information, they'd be able to do so.
     ///
+    /// -----------------------------------------------------------------------
+    /// Possible Future Optimization if needed:
+    ///
+    /// Making a symbol foreach of the member accesses is thought to be a large amount
+    /// of memory to hold.
+    ///
+    /// Instead of this, we can probably create a symbol for the first identifier
+    /// in a chain of member accesses.
+    ///
+    /// Then, use the cursor position to determine where-in the member access
+    /// chain they are hovering.
+    ///
+    /// And finally, calculate a symbol on demand for that section of the member access chain
+    /// instead of pre-calculating it and storing it.
+    ///
+    /// -----------------------------------------------------------------------
     /// SIDE NOTE:
     /// Track references by having the binder contain a Dictionary<FullyQualifiedName, List<ResourceUri>>
     /// such that the 'List<ResourceUri>' is a list that contains all the files which contain at least 1 or more

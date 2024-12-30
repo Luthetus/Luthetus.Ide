@@ -63,28 +63,4 @@ public class GutterDriver
 
         return width;
     }
-
-	/// <summary>Why does this method exist? (2024-08-09)</summary>
-    public IVirtualizationResultWithoutTypeMask GetVirtualizationResult()
-    {
-    	var renderBatchLocal = _renderBatch;
-    	if (renderBatchLocal is null)
-    		return VirtualizationResult<VirtualizationResult<List<RichCharacter>>>.GetEmptyRichCharacters();
-    	
-        var topBoundaryNarrow = renderBatchLocal.ViewModel.VirtualizationResult.TopVirtualizationBoundary with
-        {
-            WidthInPixels = renderBatchLocal.GutterWidthInPixels
-        };
-
-        var bottomBoundaryNarrow = renderBatchLocal.ViewModel.VirtualizationResult.BottomVirtualizationBoundary with
-        {
-            WidthInPixels = renderBatchLocal.GutterWidthInPixels
-        };
-
-        return renderBatchLocal.ViewModel.VirtualizationResult with
-        {
-            TopVirtualizationBoundary = topBoundaryNarrow,
-            BottomVirtualizationBoundary = bottomBoundaryNarrow
-        };
-    }
 }

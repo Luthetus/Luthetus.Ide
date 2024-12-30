@@ -172,6 +172,73 @@
         Recent Changes:
 		<div>
 			<div>
+                <div>v <em class="luth_em">0.9.7.15 </em> (2024-12-29)</div>
+                <ul>
+                	<li>
+                		Rewrite how text is rendered.
+                		
+                		The UI used to receieve (in essence) a List&lt;List&lt;RichCharacter&gt&gt;
+                		
+                		(
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/Characters/Models/RichCharacter.cs">
+                    		RichCharacter.cs
+                    	</a>
+                    	).
+                    	
+                    	This was acceptable at the time because it was a subset of the file's text just for the UI to render.
+                    	
+                    	The actual 'TextEditorModel'
+                    	(
+                		<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Models/ITextEditorModel.cs">
+                    		ITextEditorModel.cs
+                    	</a>
+                    	)
+                    	stores the text as a flat List&lt;RichCharacter&gt.
+                    	
+                    	But, if one scrolls up and down very quickly it is possible to generate many virtualization results.
+                    	And as a result, many objects were being instantiated.
+                    	Since every row of text required a List&lt;RichCharacter&gt;
+                    	to be allocated, and added to a List&lt;List&lt;RichCharacter&gt&gt;.
+                    	
+                    	Now, the UI's virtualization result is flat 'List&lt;RichCharacter&gt;'.
+                    	
+                    	So, rendering the text is now easier on the garbage collector.
+                    	
+                    	As well, the UI used to do a lot of calculations everytime it rendered.
+                    	These calculations are now done when generating the virtualization result
+                    	and then re-used (provided that a new virtualization result isn't needed to be calculated).
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/Virtualizations/Models/VirtualizationGrid.cs#L84">
+                    		VirtualizationGrid.CreateCache(...)
+                    	</a>
+                    	)
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/Virtualizations/Models/VirtualizationGrid.cs">
+                    		VirtualizationGrid.cs
+                    	</a>
+                    	)
+                    	
+                    	(
+                    	<a target="_blank" href="https://github.com/Luthetus/Luthetus.Ide/blob/main/Source/Lib/TextEditor/TextEditors/Models/TextEditorViewModelApi.cs#L741">
+                    		TextEditorViewModelApi.CalculateVirtualizationResult(...)
+                    	</a>
+                    	)
+                	</li>
+                	<li>
+                		Progress: autocomplete dropdown populate with class members.
+                		Period after variable reference node see type members.
+                	</li>
+                	<li>
+                		AutocompleteEntry is now a struct (was a class).
+                	</li>
+                	<li>
+                		LineInformation is now a record struct (was a record).
+                	</li>
+                </ul>
+            </div>
+			<div>
                 <div>v <em class="luth_em">0.9.7.14 </em> (2024-12-26)</div>
                 <ul>
                 	<li>
