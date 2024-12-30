@@ -64,8 +64,8 @@
 	
 	        var selectionBoundsInRowIndexUnits = driver.GetSelectionBoundsInRowIndexUnits(selectionBoundsInPositionIndexUnits);
 	
-	        var virtualLowerBoundInclusiveRowIndex = driver._renderBatch.ViewModel.VirtualizationResult.EntryList.First().Index;
-	        var virtualUpperBoundExclusiveRowIndex = 1 + driver._renderBatch.ViewModel.VirtualizationResult.EntryList.Last().Index;
+	        var virtualLowerBoundInclusiveRowIndex = driver._renderBatch.ViewModel.VirtualizationResult.EntryList.First().LineIndex;
+	        var virtualUpperBoundExclusiveRowIndex = 1 + driver._renderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
 	
 	        int useLowerBoundInclusiveRowIndex = virtualLowerBoundInclusiveRowIndex >= selectionBoundsInRowIndexUnits.lowerRowIndexInclusive
 	            ? virtualLowerBoundInclusiveRowIndex
