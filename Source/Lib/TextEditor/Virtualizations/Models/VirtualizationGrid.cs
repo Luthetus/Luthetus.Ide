@@ -69,6 +69,9 @@ public record struct VirtualizationGrid
     	if (viewModel.VirtualizationResult.EntryList.Length == 0)
 			return;
 		
+		var start_TimeElapsed = TimeSpan.Zero;
+    	var start_START_DATE_TIME = DateTime.UtcNow;
+		
 		var tabKeyOutput = "&nbsp;&nbsp;&nbsp;&nbsp;";
 	    var spaceKeyOutput = "&nbsp;";
 			    
@@ -79,13 +82,16 @@ public record struct VirtualizationGrid
 	    }
 		
 		var spanBuilder = new StringBuilder();
-		var currentDecorationByte = (byte)0;
+		byte? currentDecorationByte = null;
 		
     	var aaa_OUTER_LOOP_TimeElapsed = TimeSpan.Zero;
     	var aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow;
 	
 		var aaa_INNER_LOOP_TimeElapsed = TimeSpan.Zero;
 		var aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
+		
+		start_TimeElapsed += DateTime.UtcNow - start_START_DATE_TIME;
+		Console.Write($"CC({start_TimeElapsed.TotalMilliseconds}");
 	
 		for (int entryIndex = 0; entryIndex < viewModel.VirtualizationResult.EntryList.Length; entryIndex++)
 		{
@@ -100,16 +106,9 @@ public record struct VirtualizationGrid
 			// Avoid allocating the List by having it nullable reference?
 			// i.e.: only allocate it if there is text that needs to be rendered on that line.
 			virtualizationEntry.VirtualizationSpanList = new();
-				
-			byte? currentDecorationByte = null;
 			
-			{
-		    	aaa_OUTER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_OUTER_LOOP_START_DATE_TIME;
-		    }
-		    
-		    {
-		    	aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow;
-		    }
+			{ aaa_OUTER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_OUTER_LOOP_START_DATE_TIME; }
+		    { aaa_INNER_LOOP_START_DATE_TIME = DateTime.UtcNow; }
 		    
 		    // WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
 		    //          Presumably this is due to cache misses?
@@ -117,20 +116,83 @@ public record struct VirtualizationGrid
 		    		 	.Skip(virtualizationEntry.PositionIndexInclusiveStart)
 		    			 .Take(virtualizationEntry.PositionIndexExclusiveEnd - virtualizationEntry.PositionIndexInclusiveStart))
 		    {
-		    	// var richCharacter = model.RichCharacterList[positionIndex];
-				
 				if ((currentDecorationByte ??= richCharacter.DecorationByte) == richCharacter.DecorationByte)
 			    {
-			        AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+			        // AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+			        switch (richCharacter.Value)
+			        {
+			            case '\t':
+			                spanBuilder.Append(tabKeyOutput);
+			                break;
+			            case ' ':
+			                spanBuilder.Append(spaceKeyOutput);
+			                break;
+			            case '\r':
+			                break;
+			            case '\n':
+			                break;
+			            case '<':
+			                spanBuilder.Append("&lt;");
+			                break;
+			            case '>':
+			                spanBuilder.Append("&gt;");
+			                break;
+			            case '"':
+			                spanBuilder.Append("&quot;");
+			                break;
+			            case '\'':
+			                spanBuilder.Append("&#39;");
+			                break;
+			            case '&':
+			                spanBuilder.Append("&amp;");
+			                break;
+			            default:
+			                spanBuilder.Append(richCharacter.Value);
+			                break;
+			        }
+			        // END OF INLINING AppendTextEscaped
 			    }
 			    else
 			    {
 			    	virtualizationEntry.VirtualizationSpanList.Add(new VirtualizationSpan(
-			    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
+			    		cssClass: model.DecorationMapper.Map(currentDecorationByte.Value),
 			    		text: spanBuilder.ToString()));
 			        spanBuilder.Clear();
 			        
-			        AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+			        // AppendTextEscaped(spanBuilder, richCharacter, tabKeyOutput, spaceKeyOutput);
+			        switch (richCharacter.Value)
+			        {
+			            case '\t':
+			                spanBuilder.Append(tabKeyOutput);
+			                break;
+			            case ' ':
+			                spanBuilder.Append(spaceKeyOutput);
+			                break;
+			            case '\r':
+			                break;
+			            case '\n':
+			                break;
+			            case '<':
+			                spanBuilder.Append("&lt;");
+			                break;
+			            case '>':
+			                spanBuilder.Append("&gt;");
+			                break;
+			            case '"':
+			                spanBuilder.Append("&quot;");
+			                break;
+			            case '\'':
+			                spanBuilder.Append("&#39;");
+			                break;
+			            case '&':
+			                spanBuilder.Append("&amp;");
+			                break;
+			            default:
+			                spanBuilder.Append(richCharacter.Value);
+			                break;
+			        }
+			        // END OF INLINING AppendTextEscaped
+			        
 					currentDecorationByte = richCharacter.DecorationByte;
 			    }
 
@@ -143,32 +205,31 @@ public record struct VirtualizationGrid
 			{
 				/* Final grouping of contiguous characters */
 				virtualizationEntry.VirtualizationSpanList.Add(new VirtualizationSpan(
-		    		cssClass: model.DecorationMapper.Map(currentDecorationByte),
+		    		cssClass: model.DecorationMapper.Map(currentDecorationByte.Value),
 		    		text: spanBuilder.ToString()));
 				spanBuilder.Clear();
 				currentDecorationByte = null;
 			}
 			
-			{
-				aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow;
-		    }
+			{ aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow; }
 		    
 			viewModel.VirtualizationResult.EntryList[entryIndex] = virtualizationEntry;
 			
 			{
 		    	aaa_OUTER_LOOP_TimeElapsed += DateTime.UtcNow - aaa_OUTER_LOOP_START_DATE_TIME;
-		  		aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow;  	
+		  	  aaa_OUTER_LOOP_START_DATE_TIME = DateTime.UtcNow;  	
 		    }
 		}
 		
 		Console.Write($", o{aaa_OUTER_LOOP_TimeElapsed.TotalMilliseconds}");
-		
 		Console.Write($", i{aaa_INNER_LOOP_TimeElapsed.TotalMilliseconds}");
-		
 		Console.WriteLine($")ms, ");
     }
     
-    private void AppendTextEscaped(
+    /// <summary>
+    /// Inlining this instead of invoking the function definition just to see what happens.
+    /// </summary>
+    /*private void AppendTextEscaped(
         StringBuilder spanBuilder,
         RichCharacter richCharacter,
         string tabKeyOutput,
@@ -205,5 +266,5 @@ public record struct VirtualizationGrid
                 spanBuilder.Append(richCharacter.Value);
                 break;
         }
-    }
+    }*/
 }

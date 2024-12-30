@@ -747,7 +747,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
         try
 		{
 			var aaa_StartDateTime = DateTime.UtcNow;
-			//Console.Write($"CVR(");
+			Console.Write($"CVR(");
 			
 			var virtualizationResult = viewModelModifier.ViewModel.VirtualizationResult;
 			
@@ -814,39 +814,19 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 				var minLineWidthToTriggerVirtualizationExclusive = LINE_WIDTH_TO_TEXT_EDITOR_WIDTH_TO_TRIGGER_HORIZONTAL_VIRTUALIZATION *
 					viewModelModifier.ViewModel.TextEditorDimensions.Width;
 					
-				{
-					var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
-					//Console.Write($"{aaa_TimeElapsed.TotalMilliseconds}");
-					aaa_StartDateTime = DateTime.UtcNow;
-				}
-					
 				for (int lineOffset = 0; lineOffset < lineCountToReturn; lineOffset++)
 				{
 					var lineIndex = verticalStartingIndex + lineOffset;
 					var lineInformation = modelModifier.GetLineInformation(lineIndex);
-					{
-						var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
-						//Console.Write($", pl{aaa_TimeElapsed.TotalMilliseconds}");
-						aaa_StartDateTime = DateTime.UtcNow;
-					}
 								    
 					var lineStartPositionIndexInclusive = lineInformation.StartPositionIndexInclusive;
 					var lineEnd = modelModifier.LineEndList[lineIndex];
 					
+					// TODO: Should the tabs be counted twice?...
+					//       ...It was doing first time to determine if it should horizontally virtualize
+					//       Then the second time was if it actually virtualized,
+					//           what tabs were in the content that was in the virtualization result.
 					var countTabKeysInLine = 0;
-					
-					// TODO: This commented code is extremely slow.
-					//
-					//for (int countTabIndex = lineStartPositionIndexInclusive; countTabIndex < lineInformation.UpperLineEnd.StartPositionIndexInclusive; countTabIndex++)
-					//{
-					//	if (modelModifier.RichCharacterList[countTabIndex].Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
-					//		countTabKeysInLine++;
-					//}
-					{
-						var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
-						//Console.Write($", pt{aaa_TimeElapsed.TotalMilliseconds}");
-						aaa_StartDateTime = DateTime.UtcNow;
-					}
 
 					// TODO: Was this code using length including line ending or excluding? (2024-12-29)
 					var lineLength = lineInformation.EndPositionIndexExclusive - lineInformation.StartPositionIndexInclusive;
@@ -854,12 +834,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 					var widthInPixels = (lineLength + (extraWidthPerTabKey * countTabKeysInLine)) *
 						viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
 
-					{
-						var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
-						//Console.Write($", pp{aaa_TimeElapsed.TotalMilliseconds}");
-						aaa_StartDateTime = DateTime.UtcNow;
-					}
-					
 					if (widthInPixels > minLineWidthToTriggerVirtualizationExclusive)
 					{
 						var localHorizontalStartingIndex = horizontalStartingIndex;
@@ -900,9 +874,13 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 						if (positionIndexExclusiveEnd > lineInformation.UpperLineEnd.StartPositionIndexInclusive)
 							positionIndexExclusiveEnd = lineInformation.UpperLineEnd.StartPositionIndexInclusive;
 						
-						for (int countTabIndex = positionIndexInclusiveStart; countTabIndex < positionIndexExclusiveEnd; countTabIndex++)
+						// WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
+		    			//          Presumably this is due to cache misses?
+						foreach (var richCharacter in modelModifier.RichCharacterList
+							     	.Skip(positionIndexInclusiveStart)
+							     	.Take(positionIndexExclusiveEnd - positionIndexInclusiveStart))
 						{
-							if (modelModifier.RichCharacterList[countTabIndex].Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+							if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
 								countTabKeysInVirtualizedLine++;
 						}
 	
@@ -948,15 +926,24 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							leftInPixels,
 							topInPixels);
-					
-						{
-							var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
-							//Console.Write($", i{aaa_TimeElapsed.TotalMilliseconds}");
-							aaa_StartDateTime = DateTime.UtcNow;
-						}
 					}
 					else
 					{
+						countTabKeysInLine = 0;
+						
+						// WARNING: Making this foreach loop into a for loop causes it to run 300 to 500 times slower.
+		    			//          Presumably this is due to cache misses?
+						foreach (var richCharacter in modelModifier.RichCharacterList
+							     	.Skip(lineInformation.StartPositionIndexInclusive)
+							     	.Take(lineInformation.UpperLineEnd.StartPositionIndexInclusive - lineInformation.StartPositionIndexInclusive))
+						{
+							if (richCharacter.Value == KeyboardKeyFacts.WhitespaceCharacters.TAB)
+								countTabKeysInLine++;
+						}
+						
+						widthInPixels += (extraWidthPerTabKey * countTabKeysInLine) *
+							viewModelModifier.ViewModel.CharAndLineMeasurements.CharacterWidth;
+					
 						virtualizedLineList[lineOffset] = new VirtualizationLine(
 							lineIndex,
 							PositionIndexInclusiveStart: lineInformation.StartPositionIndexInclusive,
@@ -966,12 +953,6 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 							viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight,
 							0,
 							lineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight);
-					
-						{
-							var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
-							//Console.Write($", e{aaa_TimeElapsed.TotalMilliseconds}");
-							aaa_StartDateTime = DateTime.UtcNow;
-						}
 					}
 				}
 			}
@@ -1076,7 +1057,7 @@ public class TextEditorViewModelApi : ITextEditorViewModelApi
 			
 			{
 				var aaa_TimeElapsed = DateTime.UtcNow - aaa_StartDateTime;
-				//Console.Write($")ms, ");
+				Console.Write($"{aaa_TimeElapsed.TotalMilliseconds})ms, ");
 			}
 			
 			virtualizationResult.CreateCache(editContext.TextEditorService, modelModifier, viewModelModifier.ViewModel);
