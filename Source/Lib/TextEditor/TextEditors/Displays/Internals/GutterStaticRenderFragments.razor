@@ -1,6 +1,5 @@
 @using Luthetus.Common.RazorLib.Dimensions.Models;
 @using Luthetus.TextEditor.RazorLib.TextEditors.Models.Internals;
-@using Luthetus.TextEditor.RazorLib.Virtualizations.Displays
 
 @code {
 	public static RenderFragment<GutterDriver> GetRenderFragment = driver => 
@@ -14,8 +13,8 @@
 	    @foreach (var virtualizedRow in driver._renderBatch.ViewModel.VirtualizationResult.EntryList)
 	    {
 	        <div class="luth_te_gutter"
-	             style="@(driver.GetGutterStyleCss(virtualizedRow.Index))">
-	            @(virtualizedRow.Index + 1)
+	             style="@(driver.GetGutterStyleCss(virtualizedRow.LineIndex))">
+	            @(virtualizedRow.LineIndex + 1)
 	        </div>
 	    }
 	    
@@ -35,7 +34,17 @@
 	        // The solution is to calculate the overhang for any virtualization elements that are rendered at the 'top-offscreen'.
 	        //
 	        // Editor scrolltop - 0th element's top == topOffscreenOverhang (2024-03-02)
-	        var topOffscreenOverhang = driver._renderBatch.ViewModel.VirtualizationResult.EntryList.FirstOrDefault()?.TopInPixels ?? -1;
+	        
+	        double topOffscreenOverhang;
+	        
+	        if (driver._renderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
+	        {
+	        	topOffscreenOverhang = driver._renderBatch.ViewModel.VirtualizationResult.EntryList[0].TopInPixels ?? -1;
+	        }
+	        else
+	        {
+	        	 topOffscreenOverhang = -1;
+	        }
 	
 	        if (topOffscreenOverhang != -1)
 	        {
@@ -53,8 +62,18 @@
 	            
 	            var remainingHeightToFillInvariantCulture = remainingHeightToFill.ToCssValue();
 	
-	            var imaginaryNextIndex = (driver._renderBatch.ViewModel.VirtualizationResult.EntryList.LastOrDefault()?.Index ?? -1) + 
-	                1;
+				int lastIndex;
+				
+				if (driver._renderBatch.ViewModel.VirtualizationResult.EntryList.Length > 0)
+				{
+					lastIndex = driver._renderBatch.ViewModel.VirtualizationResult.EntryList.Last().LineIndex;
+				}
+				else
+				{
+					lastIndex = -1;
+				}
+	
+	            var imaginaryNextIndex = lastIndex + 1;
 	            
 	            <div class="luth_te_gutter"
 	                 style="@(driver.GetGutterStyleCss(imaginaryNextIndex)) height: @(remainingHeightToFillInvariantCulture)px;">

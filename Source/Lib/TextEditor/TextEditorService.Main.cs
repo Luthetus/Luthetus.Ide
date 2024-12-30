@@ -289,7 +289,7 @@ public partial class TextEditorService : ITextEditorService
             	if (viewModelModifier.ViewModel.VirtualizationResult.EntryList.Length > 0)
             	{
             		var firstEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.First();
-            		var firstEntryTop = firstEntry.Index * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+            		var firstEntryTop = firstEntry.LineIndex * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
             		
             		if (viewModelModifier.ViewModel.ScrollbarDimensions.ScrollTop < firstEntryTop)
             		{
@@ -301,7 +301,7 @@ public partial class TextEditorService : ITextEditorService
             				viewModelModifier.ViewModel.TextEditorDimensions.Height;
             				
             			var imaginaryLastEntry = viewModelModifier.ViewModel.VirtualizationResult.EntryList.Last();
-            			var imaginaryLastEntryTop = (imaginaryLastEntry.Index + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
+            			var imaginaryLastEntryTop = (imaginaryLastEntry.LineIndex + 1) * viewModelModifier.ViewModel.CharAndLineMeasurements.LineHeight;
             				
             			if (bigTop > imaginaryLastEntryTop)
             				viewModelModifier.ShouldReloadVirtualizationResult = true;

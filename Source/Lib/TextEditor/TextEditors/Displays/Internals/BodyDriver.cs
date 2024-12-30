@@ -55,11 +55,6 @@ public class BodyDriver
         return $"{top} {height} {left}";
     }
 
-    public string RowSection_GetCssClass(TextEditorRenderBatchValidated renderBatchLocal, byte decorationByte)
-    {
-        return renderBatchLocal.Model.DecorationMapper.Map(decorationByte);
-    }
-
     public void RowSection_AppendTextEscaped(
     	TextEditorRenderBatchValidated renderBatchLocal,
         StringBuilder spanBuilder,

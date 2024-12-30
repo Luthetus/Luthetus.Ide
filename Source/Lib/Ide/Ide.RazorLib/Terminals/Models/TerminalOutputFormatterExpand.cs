@@ -146,7 +146,7 @@ public class TerminalOutputFormatterExpand : ITerminalOutputFormatter
             _dispatcher,
             _dialogService,
             _jsRuntime,
-            VirtualizationResult<List<RichCharacter>>.GetEmptyRichCharacters(),
+            VirtualizationGrid.Empty,
 			new TextEditorDimensions(0, 0, 0, 0),
 			new ScrollbarDimensions(0, 0, 0, 0, 0),
     		new CharAndLineMeasurements(0, 0),
