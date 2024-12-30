@@ -67,6 +67,19 @@ public record VirtualizationGrid
     /// 
     /// Another wording: "what can I do here (off the UI thread) prior to the .razor markup"?
     /// Because this method is invoked fom the IBackgroundTaskService.
+    ///
+    /// =====================================================================================
+    ///
+    /// This method might be better off being 'static' because 'this' is purposefully not used,
+    /// instead accessed through 'viewModel.VirtualizationResult'.
+    ///
+    /// There is no confirmed reasoning behind this.
+    /// It is just that modifying a List of structs is giving
+    /// me the heebie-jeebies.
+    ///
+    /// I want to make sure the List is written over.
+    /// I have not tested if referencing the properties through an implicit/explicit 'this' keyword
+    /// would correctly update the List that the struct is contained in.
     /// </summary>
     public void CreateCache(ITextEditorService textEditorService, ITextEditorModel model, TextEditorViewModel viewModel)
     {
