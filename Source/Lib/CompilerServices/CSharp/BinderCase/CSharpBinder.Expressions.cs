@@ -1939,12 +1939,15 @@ public partial class CSharpBinder
 		
 		if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
 		{
-			expressionPrimary = ForceDecisionAmbiguousIdentifier(
-				EmptyExpressionNode.Empty,
-				(AmbiguousIdentifierExpressionNode)expressionPrimary,
-				compilationUnit,
-				ref parserModel,
-				allowFabricatedUndefinedNode: false);
+			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
+			if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
+			{
+				expressionPrimary = ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousIdentifierExpressionNode,
+					compilationUnit,
+					ref parserModel);
+			}
 		}
 	
 		TypeClauseNode? typeClauseNode = null;
@@ -2026,27 +2029,19 @@ public partial class CSharpBinder
 	/// </summary>
 	public IExpressionNode ParseMemberAccessToken_Fallback(int rememberOriginalTokenIndex, IExpressionNode expressionPrimary, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		// If the new code consumed, undo that.
+		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenParenthesisToken &&
+			parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
+		{
+			return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+		}
+		
 		if (parserModel.TokenWalker.Index == 2 + rememberOriginalTokenIndex)
 		{
+			// If the new code consumed, undo that.
 			_ = parserModel.TokenWalker.Backtrack();
 			_ = parserModel.TokenWalker.Backtrack();
 		}
 		
-		if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
-		{
-			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
-			
-			if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
-			{
-				ForceDecisionAmbiguousIdentifier(
-					EmptyExpressionNode.Empty,
-					ambiguousIdentifierExpressionNode,
-					compilationUnit,
-					ref parserModel);
-			}
-		}
-		
-		return EmptyExpressionNode.EmptyFollowsMemberAccessToken;
+		return EmptyExpressionNode.Empty;
 	}
 }
