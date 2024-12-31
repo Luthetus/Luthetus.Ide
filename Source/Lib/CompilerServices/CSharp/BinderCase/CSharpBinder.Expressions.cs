@@ -33,8 +33,11 @@ public partial class CSharpBinder
 		Console.WriteLine($"{expressionPrimary.SyntaxKind} + {token.SyntaxKind}");
 		#endif
 		
-		if (!parserModel.ForceParseGenericParameters && UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
+		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseGenericParameters &&
+			UtilityApi.IsBinaryOperatorSyntaxKind(token.SyntaxKind))
+		{
 			return HandleBinaryOperator(expressionPrimary, token, compilationUnit, ref parserModel);
+		}
 		
 		switch (expressionPrimary.SyntaxKind)
 		{
@@ -453,20 +456,24 @@ public partial class CSharpBinder
 	{
 		if (ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
 		{
-			if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
-				return ambiguousIdentifierExpressionNode;
+			return ambiguousIdentifierExpressionNode;
+			//if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
+			//	return ambiguousIdentifierExpressionNode;
 		}
 		
-		if (parserModel.ForceStatementExpression &&
-			(parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken ||
-			 	UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind)) &&
-			parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.MemberAccessToken)
+		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
 		{
-			parserModel.ForceStatementExpression = false;
-			parserModel.ForceParseTypeClauseNode = true;
+			parserModel.ParserContextKind = CSharpParserContextKind.None;
+			
+			if ((parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken ||
+			 		UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind)) &&
+				 parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.MemberAccessToken)
+			{
+				parserModel.ParserContextKind = CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode;
+			}
 		}
 	
-		if (!parserModel.ForceParseTypeClauseNode &&
+		if (parserModel.ParserContextKind != CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode &&
 			UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
 		{
 			if (TryGetVariableDeclarationHierarchically(
