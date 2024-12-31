@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.CompilerServices.CSharp.ParserCase;
 using Luthetus.CompilerServices.CSharp.CompilerServiceCase;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase.Internals;
@@ -19,7 +20,7 @@ public class ParseFunctions
     {
     	if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
     	{
-    		parserModel.ForceParseGenericParameters = true;
+    		parserModel.ParserContextKind = CSharpParserContextKind.ForceParseGenericParameters;
     		var successGenericParametersListingNode = ParseOthers.TryParseExpression(
     			SyntaxKind.GenericParametersListingNode,
     			compilationUnit,
@@ -163,7 +164,8 @@ public class ParseFunctions
             	}
             
             	var tokenIndexOriginal = parserModel.TokenWalker.Index;
-            	parserModel.ForceParseTypeClauseNode = true;
+            	
+            	parserModel.ParserContextKind = CSharpParserContextKind.ForceParseNextIdentifierAsTypeClauseNode;
 				var successTypeClauseNode = ParseOthers.TryParseExpression(SyntaxKind.TypeClauseNode, compilationUnit, ref parserModel, out var typeClauseNode);
 		    	var successName = false;
 		    	
