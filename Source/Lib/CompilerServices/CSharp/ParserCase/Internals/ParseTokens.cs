@@ -62,6 +62,8 @@ public static class ParseTokens
     		parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.FunctionInvocationNode);
     	}
     	
+    	parserModel.ForceStatementExpression = true;
+    	
 		var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
 		
 		if (!successParse)

@@ -60,6 +60,7 @@ public struct CSharpParserModel
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     public bool ForceParseTypeClauseNode { get; set; }
     public bool ForceParseGenericParameters { get; set; }
+    public bool ForceStatementExpression { get; set; }
     public DiagnosticBag DiagnosticBag { get; }
     public CSharpCodeBlockBuilder GlobalCodeBlockBuilder { get; set; }
     public CSharpCodeBlockBuilder CurrentCodeBlockBuilder { get; set; }

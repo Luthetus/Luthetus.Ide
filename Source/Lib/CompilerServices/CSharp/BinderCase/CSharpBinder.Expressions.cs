@@ -456,6 +456,15 @@ public partial class CSharpBinder
 			if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
 				return ambiguousIdentifierExpressionNode;
 		}
+		
+		if (parserModel.ForceStatementExpression &&
+			(parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenAngleBracketToken ||
+			 	UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind)) &&
+			parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.MemberAccessToken)
+		{
+			parserModel.ForceStatementExpression = false;
+			parserModel.ForceParseTypeClauseNode = true;
+		}
 	
 		if (!parserModel.ForceParseTypeClauseNode &&
 			UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
