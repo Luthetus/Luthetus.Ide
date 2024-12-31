@@ -452,15 +452,9 @@ public partial class CSharpBinder
 		AmbiguousIdentifierExpressionNode ambiguousIdentifierExpressionNode,
 		CSharpCompilationUnit compilationUnit,
 		ref CSharpParserModel parserModel,
-		bool forceVariableReferenceNode = false)
+		bool forceVariableReferenceNode = false,
+		bool allowFabricatedUndefinedNode = true)
 	{
-		if (ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
-		{
-			return ambiguousIdentifierExpressionNode;
-			//if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenAngleBracketToken)
-			//	return ambiguousIdentifierExpressionNode;
-		}
-		
 		if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
 		{
 			parserModel.ParserContextKind = CSharpParserContextKind.None;
@@ -524,25 +518,28 @@ public partial class CSharpBinder
 			}
     	}
 		
-		// Bind an undefined-TypeClauseNode
-		if (!forceVariableReferenceNode ||
-			UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+		if (allowFabricatedUndefinedNode)
 		{
-            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserModel);
-			BindTypeClauseNode(typeClauseNode, compilationUnit);
-		    return typeClauseNode;
-		}
-		
-		// Bind an undefined-variable
-		if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
-		{
-			var identifierToken = UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserModel);
+			// Bind an undefined-TypeClauseNode
+			if (!forceVariableReferenceNode ||
+				UtilityApi.IsConvertibleToTypeClauseNode(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+			{
+	            var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserModel);
+				BindTypeClauseNode(typeClauseNode, compilationUnit);
+			    return typeClauseNode;
+			}
 			
-			var variableReferenceNode = ConstructAndBindVariableReferenceNode(
-				identifierToken,
-				compilationUnit);
-			
-			return variableReferenceNode;
+			// Bind an undefined-variable
+			if (UtilityApi.IsConvertibleToIdentifierToken(ambiguousIdentifierExpressionNode.Token.SyntaxKind))
+			{
+				var identifierToken = UtilityApi.ConvertToIdentifierToken(ambiguousIdentifierExpressionNode.Token, compilationUnit, ref parserModel);
+				
+				var variableReferenceNode = ConstructAndBindVariableReferenceNode(
+					identifierToken,
+					compilationUnit);
+				
+				return variableReferenceNode;
+			}
 		}
 		
 		return ambiguousIdentifierExpressionNode;
@@ -1946,7 +1943,8 @@ public partial class CSharpBinder
 				EmptyExpressionNode.Empty,
 				(AmbiguousIdentifierExpressionNode)expressionPrimary,
 				compilationUnit,
-				ref parserModel);
+				ref parserModel,
+				allowFabricatedUndefinedNode: false);
 		}
 	
 		TypeClauseNode? typeClauseNode = null;
