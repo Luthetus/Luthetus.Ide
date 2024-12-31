@@ -7,6 +7,23 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
+/// <summary>
+/// See 'Luthetus.CompilerServices.CSharp.ParserCase.CSharpParserModel'
+/// for an example of an "implementation".
+///
+/// Actually implementing this interface is not required,
+/// this instead acts only as a guide on 'default' decisions
+/// if one desires it.
+///
+/// In order to avoid implementing this interface you need to
+/// implement ICompilerService.ParseAsync youself.
+///
+/// If you inherit 'CompilerService',
+/// then you need to override 'CompilerService.ParseAsync'.
+///
+/// It is at this point that you now have full control
+/// over how parsing is done.
+/// </summary>
 public interface IParserModel
 {
     public IBinder Binder { get; }
