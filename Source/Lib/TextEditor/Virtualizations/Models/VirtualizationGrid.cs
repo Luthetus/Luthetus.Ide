@@ -21,6 +21,29 @@ namespace Luthetus.TextEditor.RazorLib.Virtualizations.Models;
 /// The 'VirtualizationBoundary's will ensure that the horizontal
 /// and vertical scrollbars stay consistent, regardless of how much
 /// text is "virtually" not being rendered.
+///
+/// ===============================================================================
+/// 
+/// Idea: look in the previous VirtualizationGrid to see if a line of text has already been calculated.
+///       If it was already calculated then re-use the previous calculation.
+///       Otherwise calculate it.
+/// 
+/// Remarks: this idea is in reference to a 'partially' changed virtualization grid.
+///          Not to be confused with how the code currently will 're-use' the previous virtualization grid
+///          if a new virtualization grid was not deemed necessary.
+///          |
+///          This is re-using the virtualization lines that are common between
+///          two separate virtualization grids, that have some overlapping lines.
+///
+/// i.e.:
+/// - Use for scrolling vertically, only calculate the lines that were not previously visible.
+/// - Use for editing text, in the case that only 1 line of text is being edited,
+///   	this would permit re-use of the other 29 lines (relative to the height of the text editor and font-size;
+///       30 lines is what I see currently in mine.).
+/// - Given how the UI is written, all 30 lines have to re-drawn yes.
+///   	But, we still get to avoid the overhead of 'calculating what is to be drawn'.
+///       i.e.: contiguous decoration bytes being grouped in the same '<span>'.
+/// 
 /// </summary>
 public record VirtualizationGrid
 {

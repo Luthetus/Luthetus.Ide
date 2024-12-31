@@ -6,6 +6,22 @@ using Luthetus.TextEditor.RazorLib.TextEditors.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
+/// <summary>
+/// See 'Luthetus.CompilerServices.CSharp.CompilerServiceCase.CSharpCompilerService'
+/// for an example of an "implementation".
+///
+/// A lot of interfaces that relate to this one is not required to be implemented,
+/// they instead act only as a guide on 'default' decisions if one desires it.
+///
+/// In order to avoid implementing the related interfaces you need to
+/// implement ICompilerService.ParseAsync youself.
+///
+/// If you inherit 'CompilerService',
+/// then you need to override 'CompilerService.ParseAsync'.
+///
+/// It is at this point that you now have full control
+/// over how parsing is done.
+/// </summary>
 public interface ICompilerService
 {
     public event Action? ResourceRegistered;
