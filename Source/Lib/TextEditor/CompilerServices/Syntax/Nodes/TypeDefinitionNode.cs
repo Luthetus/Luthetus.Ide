@@ -140,9 +140,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	
 	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
-		if (CloseBraceToken.ConstructorWasInvoked)
-			Console.WriteLine("aaa bad SetCloseBraceToken twice same node");
-	
 		if (StatementDelimiterToken.ConstructorWasInvoked)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
 	
@@ -168,10 +165,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		if (CodeBlockNode is not null)
-		{
-			Console.WriteLine("aaa bad SetCodeBlockNode twice same node");
 			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticBag, tokenWalker);
-		}
 	
 		CodeBlockNode = codeBlockNode;
     	

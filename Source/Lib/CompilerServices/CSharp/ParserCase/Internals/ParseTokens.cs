@@ -267,25 +267,7 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	/*{
-    		Console.Write($"aaa ParseOpenBraceToken");
-    		
-    		Console.Write($"CodeBlockOwner:");
-    		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is null)
-    			Console.Write($"null");
-    		else
-    			Console.Write($"{parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    		
-    		Console.Write($" InnerPendingCodeBlockOwner:");
-    		if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
-    			Console.Write($"null");
-    		else
-    			Console.Write($"{parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SyntaxKind}");
-    		
-    		Console.WriteLine();
-    	}*/
-    	
-		if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
+    	if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
 			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
@@ -320,10 +302,7 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, int closeBraceTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	// Console.WriteLine($"aaa ParseCloseBraceToken CodeBlockOwner:{parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
-    	Console.WriteLine($"??? {closeBraceTokenIndex}");
-    	
-		if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+    	if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 		{
 			deferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, compilationUnit, ref parserModel);
 			return;

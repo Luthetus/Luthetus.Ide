@@ -204,7 +204,6 @@ public static class CSharpParser
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
-				Console.WriteLine($"if (token.SyntaxKind == SyntaxKind.EndOfFileToken)");
 				if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 					deferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
 				else
