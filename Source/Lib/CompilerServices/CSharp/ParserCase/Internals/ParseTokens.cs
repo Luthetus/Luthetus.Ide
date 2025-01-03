@@ -266,7 +266,25 @@ public static class ParseTokens
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
     public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-    {    
+    {
+    	/*{
+    		Console.Write($"aaa ParseOpenBraceToken");
+    		
+    		Console.Write($"CodeBlockOwner:");
+    		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is null)
+    			Console.Write($"null");
+    		else
+    			Console.Write($"{parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    		
+    		Console.Write($" InnerPendingCodeBlockOwner:");
+    		if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
+    			Console.Write($"null");
+    		else
+    			Console.Write($"{parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SyntaxKind}");
+    		
+    		Console.WriteLine();
+    	}*/
+    	
 		if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
@@ -300,11 +318,14 @@ public static class ParseTokens
 	/// CloseBraceToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, int closeBraceTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	// Console.WriteLine($"aaa ParseCloseBraceToken CodeBlockOwner:{parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	Console.WriteLine($"??? {closeBraceTokenIndex}");
+    	
 		if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 		{
-			deferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index - 1, compilationUnit, ref parserModel);
+			deferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, compilationUnit, ref parserModel);
 			return;
 		}
 

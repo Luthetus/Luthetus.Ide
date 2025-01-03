@@ -12,6 +12,8 @@ public class CSharpDeferredChildScope
 		int closeTokenIndex,
 		ICodeBlockOwner pendingCodeBlockOwner)
 	{
+		Console.WriteLine($"new CSharpDeferredChildScope({openTokenIndex}, {closeTokenIndex}, {pendingCodeBlockOwner?.SyntaxKind.ToString() ?? "null"})");
+	
 		OpenTokenIndex = openTokenIndex;
 		CloseTokenIndex = closeTokenIndex;
 		PendingCodeBlockOwner = pendingCodeBlockOwner;
@@ -25,6 +27,8 @@ public class CSharpDeferredChildScope
 	
 	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		Console.WriteLine($"PrepareMainParserLoop({tokenIndexToRestore})");
+	
 		TokenIndexToRestore = tokenIndexToRestore;
 		parserModel.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = true;
 		

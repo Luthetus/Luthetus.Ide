@@ -126,7 +126,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	return null;
     }
     
-    // (2024-11-08)
 	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		if (StatementDelimiterToken.ConstructorWasInvoked)
@@ -138,8 +137,12 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	_memberListIsDirty = true;
     	return this;
 	}
+	
 	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
+		if (CloseBraceToken.ConstructorWasInvoked)
+			Console.WriteLine("aaa bad SetCloseBraceToken twice same node");
+	
 		if (StatementDelimiterToken.ConstructorWasInvoked)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
 	
@@ -149,6 +152,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	_memberListIsDirty = true;
     	return this;
 	}
+	
 	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		if (OpenBraceToken.ConstructorWasInvoked || CloseBraceToken.ConstructorWasInvoked)
@@ -160,10 +164,14 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     	_memberListIsDirty = true;
     	return this;
 	}
+	
 	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
 		if (CodeBlockNode is not null)
+		{
+			Console.WriteLine("aaa bad SetCodeBlockNode twice same node");
 			ICodeBlockOwner.ThrowAlreadyAssignedCodeBlockNodeException(diagnosticBag, tokenWalker);
+		}
 	
 		CodeBlockNode = codeBlockNode;
     	

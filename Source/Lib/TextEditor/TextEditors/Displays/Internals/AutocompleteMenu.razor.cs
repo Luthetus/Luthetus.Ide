@@ -136,6 +136,8 @@ public partial class AutocompleteMenu : ComponentBase, ITextEditorDependentCompo
                 var word = renderBatch.Model.ReadPreviousWordOrDefault(
                     primaryCursor.LineIndex,
                     primaryCursor.ColumnIndex);
+                    
+                Console.WriteLine(word);
 
                 List<MenuOptionRecord> menuOptionRecordsList = new();
 

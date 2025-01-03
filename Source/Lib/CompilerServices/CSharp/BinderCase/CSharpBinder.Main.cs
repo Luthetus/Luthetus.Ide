@@ -771,7 +771,10 @@ public partial class CSharpBinder : IBinder
     	// Check if it is the global scope, if so return early.
     	{
 	    	if (compilationUnit.BinderSession.CurrentScopeIndexKey == 0)
+	    	{
+	    		Console.WriteLine("aaa close global scope");
 	    		return;
+	    	}
     	}
     	
     	var inBuilder = parserModel.CurrentCodeBlockBuilder;
@@ -796,6 +799,7 @@ public partial class CSharpBinder : IBinder
     	// Update CodeBlockOwner
     	if (inOwner is not null)
     	{
+    		Console.WriteLine("aaa if (inOwner is not null)");
 	        inOwner.SetCodeBlockNode(inBuilder.Build(), parserModel.DiagnosticBag, parserModel.TokenWalker);
 			
 			if (inOwner.SyntaxKind == SyntaxKind.NamespaceStatementNode)
@@ -806,8 +810,13 @@ public partial class CSharpBinder : IBinder
 			// Restore Parent CodeBlockBuilder
 			if (outBuilder is not null)
 			{
+				Console.WriteLine("aaa outBuilder is not null");
+			
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
 				outBuilder.InnerPendingCodeBlockOwner = null;
+				
+				Console.WriteLine($"aaa CodeBlockOwner:{parserModel.CurrentCodeBlockBuilder.CodeBlockOwner?.SyntaxKind.ToString() ?? "null"}");
+				Console.WriteLine($"aaa InnerPendingCodeBlockOwner:{parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner?.SyntaxKind.ToString() ?? "null"}");
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&

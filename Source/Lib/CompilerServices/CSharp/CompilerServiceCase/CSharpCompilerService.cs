@@ -125,10 +125,17 @@ public sealed class CSharpCompilerService : CompilerService
 
     public override List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
+    	Console.WriteLine("aaa GetAutocompleteEntries()");
+    	
         var boundScope = CSharpBinder.GetScope(null, textSpan);
 
         if (boundScope is null)
+        {
+        	Console.WriteLine("\taaa GetAutocompleteEntries()");
             return base._emptyAutocompleteEntryList;
+        }
+        
+        Console.WriteLine("\taaa notnull()");
 
         var autocompleteEntryList = new List<AutocompleteEntry>();
 
@@ -136,15 +143,23 @@ public sealed class CSharpCompilerService : CompilerService
         
         if (textSpan.GetText() == ".")
         {
+        	Console.WriteLine("\taaa if (textSpan.GetText() == \".\")");
+        
         	var textEditorModel = _textEditorService.ModelApi.GetOrDefault(textSpan.ResourceUri);
 	    	if (textEditorModel is null)
+	    	{
+	    		Console.WriteLine("\taaa if (textEditorModel is null)");
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
+	    	}
 	    	
 	    	var compilerService = textEditorModel.CompilerService;
 	    	
 	    	var compilerServiceResource = compilerService.GetCompilerServiceResourceFor(textEditorModel.ResourceUri);
 	    	if (compilerServiceResource is null)
+	    	{
+	    		Console.WriteLine("\taaa if (compilerServiceResource is null)");
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
+	    	}
 	
 	    	var targetNode = CSharpBinder.GetSyntaxNode(
 	    		(CSharpCompilationUnit)compilerServiceResource.CompilationUnit,
@@ -153,16 +168,42 @@ public sealed class CSharpCompilerService : CompilerService
 	    		compilerServiceResource);
 	    		
 	    	if (targetNode is null)
+	    	{
+	    		Console.WriteLine("\taaa if (targetNode is null)");
 	    		return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
+	    	}
         
         	TypeClauseNode? typeClauseNode = null;
 	
 			if (targetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
+			{
+				Console.WriteLine("aaa)");
 				typeClauseNode = ((VariableReferenceNode)targetNode).VariableDeclarationNode?.TypeClauseNode;
+			}
+			else if (targetNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+			{
+				Console.WriteLine("aaa else if (targetNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)");
+				typeClauseNode = ((VariableDeclarationNode)targetNode).TypeClauseNode;
+			}
 			else if (targetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+			{
+				Console.WriteLine("aaa)");
 				typeClauseNode = (TypeClauseNode)targetNode;
+			}
+			else if (targetNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+			{
+				Console.WriteLine("aaa)");
+				typeClauseNode = ((TypeDefinitionNode)targetNode).ToTypeClause();
+			}
 			else if (targetNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
+			{
+				Console.WriteLine("aaa)");
 				typeClauseNode = ((ConstructorDefinitionNode)targetNode).ReturnTypeClauseNode;
+			}
+			else
+			{
+				Console.WriteLine("aaa else");
+			}
 			
 			if (typeClauseNode is null)
 				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
@@ -212,6 +253,8 @@ public sealed class CSharpCompilerService : CompilerService
         }
 		else
 		{
+			Console.WriteLine("\telse... != .)");
+			
         	while (targetScope is not null)
 	        {
 	            autocompleteEntryList.AddRange(
