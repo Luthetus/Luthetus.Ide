@@ -266,8 +266,8 @@ public static class ParseTokens
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
     public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-    {    
-		if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
+    {
+    	if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
 			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
@@ -300,11 +300,11 @@ public static class ParseTokens
 	/// CloseBraceToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
 	/// </summary>
-    public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, int closeBraceTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-		if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+    	if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 		{
-			deferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index - 1, compilationUnit, ref parserModel);
+			deferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, compilationUnit, ref parserModel);
 			return;
 		}
 

@@ -769,10 +769,8 @@ public partial class CSharpBinder : IBinder
         ref CSharpParserModel parserModel)
     {
     	// Check if it is the global scope, if so return early.
-    	{
-	    	if (compilationUnit.BinderSession.CurrentScopeIndexKey == 0)
-	    		return;
-    	}
+    	if (compilationUnit.BinderSession.CurrentScopeIndexKey == 0)
+    		return;
     	
     	var inBuilder = parserModel.CurrentCodeBlockBuilder;
     	var inOwner = inBuilder.CodeBlockOwner;

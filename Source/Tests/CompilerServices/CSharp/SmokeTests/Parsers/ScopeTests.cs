@@ -1121,6 +1121,60 @@ ccc;
 			}
 		}
     }
+    
+    [Fact]
+    public void Global_TypeDefinitionNode_Depth_CodeBlock_Surface_CodeBlock()
+    {
+    	// The first codeblock will not have its ending brace parsed properly.
+    	
+    	// 0: PublicTokenKeyword
+    	// 1: ClassTokenKeyword
+    	// 2: IdentifierToken
+    	// 3: OpenBraceToken
+    	// 4: 	OpenBraceToken
+    	// 5: 	CloseBraceToken
+    	// 6: CloseBraceToken
+    	// 7: OpenBraceToken
+    	// 8: CloseBraceToken
+    	// 9: EndOfFileToken
+    	
+    	var test = new Test(
+@"
+public class Aaa
+{
+	{
+	}
+}
+
+{
+}
+".ReplaceLineEndings("\n"));
+
+		var success = test.Binder.TryGetBinderSession(test.ResourceUri, out var binderSession);
+		Assert.True(success);
+		Assert.Equal(2, binderSession.ScopeList.Count);
+		
+		var scope = test.Binder.GetScopeByPositionIndex(test.ResourceUri, 0);
+		Assert.NotNull(scope);
+		
+		{ // Global
+			var globalScope = binderSession.ScopeList[0];
+			Assert.Equal(0, globalScope.IndexKey);
+		    Assert.Null(globalScope.ParentIndexKey);
+		    Assert.Equal(0, globalScope.StartingIndexInclusive);
+		    Assert.Null(globalScope.EndingIndexExclusive);
+		    Assert.Null(globalScope.CodeBlockOwner);
+		    
+		    { // If statement scope
+				var ifStatementScope = binderSession.ScopeList[1];
+				Assert.Equal(1, ifStatementScope.IndexKey);
+			    Assert.Equal(0, ifStatementScope.ParentIndexKey);
+			    Assert.Equal(28, ifStatementScope.StartingIndexInclusive);
+			    Assert.Equal(53, ifStatementScope.EndingIndexExclusive);
+			    Assert.Equal(SyntaxKind.IfStatementNode, ifStatementScope.CodeBlockOwner.SyntaxKind);
+			}
+		}
+    }
 	
 	private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {

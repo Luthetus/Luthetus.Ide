@@ -170,12 +170,67 @@ public static class EventUtils
 
 	public static bool IsSyntaxHighlightingInvoker(KeymapArgs keymapArgs)
     {
-        return keymapArgs.Key == ";" ||
-               KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code) ||
-               keymapArgs.CtrlKey && keymapArgs.Key == "s" ||
-               keymapArgs.CtrlKey && keymapArgs.Key == "v" ||
-               keymapArgs.CtrlKey && keymapArgs.Key == "z" ||
-               keymapArgs.CtrlKey && keymapArgs.Key == "y";
+    	if (keymapArgs.Key == ";" ||
+    		KeyboardKeyFacts.IsWhitespaceCode(keymapArgs.Code))
+    	{
+    		if (keymapArgs.CtrlKey && (keymapArgs.Key == " " || keymapArgs.Key == "SPACE"))
+    		{
+    			// Working on using the binder to populate the autocomplete menu with the members of the type
+    			// that a variable reference is a type of. (2025-01-01)
+    			// ==========================================================================================
+    			//
+    			//
+    			// Introduction to the issue.
+    			// --------------------------------------------------------------------------------
+    			// When typing the '.' after the variable reference's identifier, the autocomplete
+    			// correctly populates with the members using the binder.
+    			//
+    			// But, if the cursor is immediately after an already existing '.' and then
+    			// one presses { 'Ctrl' + 'Space' }, then the autocomplete is empty (with regards to the binder result).
+    			//
+    			//
+    			// Some findings
+    			// -------------------------------------------------------------------------------------
+    			// In the first case where you type a '.', the node that is found at the cursor position
+    			// is a (VariableReferenceNode - need to re-confirm this as I'm speaking from memory), but
+    			// the second case of { 'Ctrl' + 'Space' } and an existing '.' then the found
+    			// node is an EmptyExpressionNode.
+    			//
+    			// 
+    			// Conclusion
+    			// ------------------------------------------------------------------------------------- 
+    			// This 'if' statement is being added temporarily in order to stop the re-parsing of the
+    			// text file.
+    			//
+    			// Because, it is presumed to be the 're-parsing' of the text file, and some timing issue
+    			// such that the node cannot be found correctly, which results
+    			// in no results coming back from binder when asked for the members.
+    			//
+    			// This 'if' statement fixes the issue for now.
+    			// But this is not a good long term solution.
+    			//
+    			// The code for the member autocompletion is being worked on,
+    			// and I don't want to look at the timing issue until I've finished my thoughts
+    			// with the member autocompletion.
+    			return false;
+    		}
+    	
+    		return true;
+    	}
+    	
+    	if (keymapArgs.CtrlKey)
+    	{
+    		switch (keymapArgs.Key)
+    		{
+    			case "s":
+    			case "v":
+    			case "z":
+    			case "y":
+    				return true;
+    		}
+    	}
+    	
+    	return false;
     }
 
     /// <summary>
