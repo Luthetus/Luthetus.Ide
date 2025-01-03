@@ -125,11 +125,11 @@ public sealed class CSharpCompilerService : CompilerService
 
     public override List<AutocompleteEntry> GetAutocompleteEntries(string word, TextEditorTextSpan textSpan)
     {
-        var boundScope = CSharpBinder.GetScope(null, textSpan);
+    	var boundScope = CSharpBinder.GetScope(null, textSpan);
 
         if (boundScope is null)
             return base._emptyAutocompleteEntryList;
-
+        
         var autocompleteEntryList = new List<AutocompleteEntry>();
 
         var targetScope = boundScope;
@@ -159,10 +159,16 @@ public sealed class CSharpCompilerService : CompilerService
 	
 			if (targetNode.SyntaxKind == SyntaxKind.VariableReferenceNode)
 				typeClauseNode = ((VariableReferenceNode)targetNode).VariableDeclarationNode?.TypeClauseNode;
+			else if (targetNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+				typeClauseNode = ((VariableDeclarationNode)targetNode).TypeClauseNode;
 			else if (targetNode.SyntaxKind == SyntaxKind.TypeClauseNode)
 				typeClauseNode = (TypeClauseNode)targetNode;
+			else if (targetNode.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+				typeClauseNode = ((TypeDefinitionNode)targetNode).ToTypeClause();
 			else if (targetNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 				typeClauseNode = ((ConstructorDefinitionNode)targetNode).ReturnTypeClauseNode;
+			else
+				Console.WriteLine("aaa else");
 			
 			if (typeClauseNode is null)
 				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
@@ -212,7 +218,7 @@ public sealed class CSharpCompilerService : CompilerService
         }
 		else
 		{
-        	while (targetScope is not null)
+			while (targetScope is not null)
 	        {
 	            autocompleteEntryList.AddRange(
 	            	CSharpBinder.GetVariableDeclarationNodesByScope(compilationUnit: null, textSpan.ResourceUri, targetScope.IndexKey)

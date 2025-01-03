@@ -93,13 +93,25 @@ public static class CSharpParser
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 					#endif
 					
+					// When consuming a 'CloseBraceToken' it is possible for the
+					// TokenWalker to change the 'Index' to a value that is
+					// more than 1 larger than the current index.
+					//
+					// This is an issue because some code presumes that
+					// 'parserModel.TokenWalker.Index - 1' will always give them
+					// the index of the previous token.
+					//
+					// So, the ParseCloseBraceToken(...) method needs
+					// to be passed the index that was consumed in order to
+					// get the CloseBraceToken.
+					var closeBraceTokenIndex = parserModel.TokenWalker.Index;
 					var closeBraceToken = (CloseBraceToken)parserModel.TokenWalker.Consume();
 					
 					#if DEBUG
 					parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
 					#endif
 					
-                    ParseTokens.ParseCloseBraceToken(closeBraceToken, compilationUnit, ref parserModel);
+                    ParseTokens.ParseCloseBraceToken(closeBraceToken, closeBraceTokenIndex, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.OpenParenthesisToken:
                 	if (parserModel.StatementBuilder.ChildList.Count == 0)
