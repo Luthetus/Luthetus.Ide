@@ -1,6 +1,23 @@
+Given the recent events surrounding "Honey" I need to address the idea that
+"if something is free then you are the product".
+
+I agree with this sentiment. So where is the justification for "Luthetus.Ide" being free?
+
+This repository is a performance art piece that will go down in history.
+
+Even if I have to write 99% of the code myself, I will surpass Visual Studio which was made by an entire company, Microsoft.
+
+I don't want to make millions of dollars, I dont want your data.
+
+I want to send a message.
+
+The 'website-demo' has far less features than when this repo is ran locally.
+
+If I ever commit suicide, the closest thing to a suicide note that I'll leave behind is the Luthetus.Ide source code itself.
+
 # Luthetus.Ide (In Development)
 ![Example GIF](./Images/Ide/Gifs/9.5.1BetterGif.gif)
-The above Gif length is 1 minute 35 seconds
+The above Gif length is 1 minute 35 seconds (this gif is very out-dated)
 
 ![Example GIF](./Images/Ide/Gifs/parseSolutionWideUpdated.gif)
 
