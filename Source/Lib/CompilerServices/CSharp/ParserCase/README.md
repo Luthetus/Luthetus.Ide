@@ -17,11 +17,55 @@ So, more pre-calculation could be useful in the 'type-member-variable' case.
 
 Type-member-variable:
 ---------------------
-Aaa
+Track references by having the binder contain a Dictionary<FullyQualifiedName, List<ResourceUri>>
+such that the 'List<ResourceUri>' is a list that contains all the files which contain at least 1 or more
+references to the 'FullyQualifiedName'.
+
+In order to know the count of references to the 'FullyQualifiedName',
+visit each 'ResourceUri' and at this point decide how to go from here.
+
+Maybe one could check the 'CSharpBinderSession' for each resource uri and
+it has a Dictionary<FullyQualifiedName, List<TextEditorTextSpan>>
+
+Where each 'List<TextEditorTextSpan>' is a list containing all the text spans
+that reference the 'FullyQualifiedName' within that file.
+
+public Dictionary<int, (ResourceUri ResourceUri, int StartInclusiveIndex)> SymbolIdToExternalTextSpanMap { get; } = new();
+
+Binder.cs
+{
+	Dictionary<FullyQualifiedName, List<ResourceUri>> _map;
+	
+	StartBinderSession(ResourceUri resourceUri)
+	{
+		var previousBinderSession = GetPreviousBinderSession(resourceUri);
+		
+		foreach (var fullyQualifiedName in previousBinderSession.ExternalReferenceList)
+		{
+			if (_map.TryGetValue(fullyQualifiedName, out var resourceUriList))
+			{
+				for (int i = resourceUriList.Count - 1; i >= 0; i--)
+				{
+					if (resourceUriList[i] == resourceUri)
+						resourceUriList.RemoveAt(i);
+				}
+			}
+		}
+	}
+	
+	Aaa(string fullyQualifiedName)
+	{
+		if (IsExternallyDefined(fullyQualifiedName))
+		{
+			binderSession.ExternalReferenceList.Add(fullyQualifiedName);
+			_map[fullyQualifiedName].Add(binderSession.ResourceUri);
+		}
+	}
+}
 
 
 Local variable:
 ---------------
-Aaa
+Walk the scope(s)?
 
 
