@@ -375,6 +375,18 @@ finally
     }
     
     [Fact]
+    public void VariableDeclaration_Tuple_Test()
+    {
+    	var test = new Test(@"List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void VariableDeclarationNodeAndAssignment_Property_Auto_Test()
     {
     	var test = new Test(@"int Aaa { get; set; } = 2;");

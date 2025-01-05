@@ -15,15 +15,29 @@ The 'website-demo' has far less features than when this repo is ran locally.
 
 If I ever commit suicide, the closest thing to a suicide note that I'll leave behind is the Luthetus.Ide source code itself.
 
+It is the day after I wrote the sentence just above this. It weirds weird so I wanna clarify. This repo is the result of suicidal psychotic sadness, so my passion for this project is unlimited.
+
 # Luthetus.Ide (In Development)
-![Example GIF](./Images/Ide/Gifs/9.5.1BetterGif.gif)
-The above Gif length is 1 minute 35 seconds (this gif is very out-dated)
 
+Make a new .NET Solution:
+![New .NET Solution](./Images/Ide/Gifs/workflowMakeNew.gif)
+
+Edit a file:
+![Edit a file](./Images/Ide/Gifs/workflowEditFile.gif)
+
+Open an existing solution:
+![Open an existing solution](./Images/Ide/Gifs/workflowOpenExistingSln.gif)
+
+Run unit tests:
+![Run unit tests](./Images/Ide/Gifs/workflowRunUnitTests.gif)
+
+Customize the UI:
+![Customize the UI](./Images/Ide/Gifs/workflowCustomizeUi.gif)
+
+And there are more features that are not shown in these gifs.
+
+Only 287.1 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.7) (The gif is sped up by cutting the frames in half):
 ![Example GIF](./Images/Ide/Gifs/parseSolutionWideUpdated.gif)
-
-Only 287.1 MB Memory usage after opening the source code in a published executable of itself and parsing the entire solution with its own - from scratch - C# parser (v0.9.7.7)
-
-The gif is sped up by cutting the frames in half.
 
 ## Demo:
 https://luthetus.github.io/Luthetus.Ide/
