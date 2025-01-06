@@ -375,7 +375,32 @@ finally
     }
     
     [Fact]
-    public void VariableDeclaration_Tuple_Test()
+    public void VariableDeclaration_TupleNamed_Test()
+    {
+    	var test = new Test(@"(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode) expressionShortCircuitTuple;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclaration_TupleNoName_Test()
+    {
+    	//                    (item1,      item2)
+    	var test = new Test(@"(SyntaxKind, IExpressionNode) expressionShortCircuitTuple;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void VariableDeclaration_GenericArgumentTuple_Test()
     {
     	var test = new Test(@"List<(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode)> ExpressionList;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
