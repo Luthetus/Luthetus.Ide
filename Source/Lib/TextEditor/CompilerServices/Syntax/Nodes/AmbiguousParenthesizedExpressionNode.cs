@@ -6,28 +6,16 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 {
-    public AmbiguousParenthesizedExpressionNode(
-        OpenParenthesisToken openParenthesisToken,
-        IExpressionNode innerExpression,
-        CloseParenthesisToken closeParenthesisToken)
+    public AmbiguousParenthesizedExpressionNode(OpenParenthesisToken openParenthesisToken)
     {
         OpenParenthesisToken = openParenthesisToken;
-        InnerExpression = innerExpression;
-        CloseParenthesisToken = closeParenthesisToken;
-    }
-    
-    public AmbiguousParenthesizedExpressionNode(OpenParenthesisToken openParenthesisToken, TypeClauseNode typeClauseNode)
-    	: this(openParenthesisToken, new EmptyExpressionNode(typeClauseNode), default)
-    {
     }
     
     private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
-    public IExpressionNode InnerExpression { get; private set; }
-    public CloseParenthesisToken CloseParenthesisToken { get; private set; }
-    public TypeClauseNode ResultTypeClauseNode => InnerExpression.ResultTypeClauseNode;
+    public TypeClauseNode ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
     
     /// <summary>
     /// This class is a "builder" class of sorts.
@@ -101,40 +89,23 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
     /// One would have to parse this as an 'AmbiguousParenthesizedExpression'
     /// until it is ruled out that it cannot be a LambdaExpressionNode.
     /// </summary>
-    public List<VariableDeclarationNode> VariableDeclarationNodeList { get; set; }
+    public List<VariableDeclarationNode>? VariableDeclarationNodeList { get; set; }
+    public List<ISyntaxToken>? NameableTokenList { get; set; }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ParenthesizedExpressionNode;
-    
-    public ParenthesizedExpressionNode SetCloseParenthesisToken(CloseParenthesisToken closeParenthesisToken)
-    {
-    	CloseParenthesisToken = closeParenthesisToken;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
-    
-    public ParenthesizedExpressionNode SetInnerExpression(IExpressionNode innerExpression)
-    {
-    	InnerExpression = innerExpression;
-    	
-    	_childListIsDirty = true;
-    	return this;
-    }
+    public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;
     
     public ISyntax[] GetChildList()
     {
     	if (!_childListIsDirty)
     		return _childList;
     	
-    	var childCount = 4; // OpenParenthesisToken, InnerExpression, CloseParenthesisToken, ResultTypeClauseNode,
+    	var childCount = 2; // OpenParenthesisToken, ResultTypeClauseNode,
             
         var childList = new ISyntax[childCount];
 		var i = 0;
 
 		childList[i++] = OpenParenthesisToken;
-		childList[i++] = InnerExpression;
-		childList[i++] = CloseParenthesisToken;
 		childList[i++] = ResultTypeClauseNode;
             
         _childList = childList;

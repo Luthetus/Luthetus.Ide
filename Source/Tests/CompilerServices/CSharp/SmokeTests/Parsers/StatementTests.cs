@@ -375,6 +375,42 @@ finally
     }
     
     [Fact]
+    public void AmbiguousParenthesizedExpressionNode_Aaa_Test()
+    {
+    	var test = new Test(@"(");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_Bbb_Test()
+    {
+    	var test = new Test(@"(int");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_Ccc_Test()
+    {
+    	var test = new Test(@"(2");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void VariableDeclaration_TupleNamed_Test()
     {
     	var test = new Test(@"(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode) expressionShortCircuitTuple;");
@@ -382,8 +418,10 @@ finally
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+		
+		Assert.Equal("expressionShortCircuitTuple", variableDeclarationNode.IdentifierToken.TextSpan.GetText());
     }
     
     [Fact]
