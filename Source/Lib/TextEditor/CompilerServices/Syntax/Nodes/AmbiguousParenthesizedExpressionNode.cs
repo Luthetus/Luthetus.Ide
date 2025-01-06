@@ -14,6 +14,24 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
     private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
+	/// <summary>
+	/// The expression parsing code will "merge" an instance of this type
+	/// with whatever 'ISyntaxToken' is next.
+	///
+	/// But, the first time this "merge" occurs there is some
+	/// disambiguation that needs to be done.
+	///
+	/// Not all of the disambiguation can be done here,
+	/// because if it is a ParenthesizedExpressionNode,
+	/// this would mean writing code to handle function invocation
+	/// within the AmbiguousParenthesizedExpressionNode itself.
+	///
+	/// We only want to look ahead just enough to determine if this is a
+	/// - ParenthesizedExpressionNode
+	/// - or should we continue as an AmbiguousParenthesizedExpressionNode
+	/// </summary>
+	public bool IsFirstLoop { get; set; } = true;
+
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public TypeClauseNode ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
     
