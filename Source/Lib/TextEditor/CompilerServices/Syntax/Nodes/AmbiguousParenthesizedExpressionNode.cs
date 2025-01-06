@@ -29,6 +29,27 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 	/// We only want to look ahead just enough to determine if this is a
 	/// - ParenthesizedExpressionNode
 	/// - or should we continue as an AmbiguousParenthesizedExpressionNode
+	///
+	/// One needs to be able to handle a tuple "literal" not just
+	/// a TypeClauseNode which is a tuple.
+	///
+	/// tuple "literal":
+	/// ````(3, "abc")
+	/// 
+	/// tuple TypeClauseNode:
+	/// ````(int, string)
+	///
+	/// This is something I skipped over in my head when first thinking about this.
+	/// I currently am transforming the AmbiguousParenthesizedExpressionNode
+	/// to a ParenthesizedExpressionNode if I see a non-nameable-token as
+	/// the first entry in the comma separate list.
+	///
+	/// But, with this current way, I'd have to once again
+	/// go from ParenthesizedExpressionNode to AmbiguousParenthesizedExpressionNode
+	/// if it turns out there is an un-accounted for comma amongst the inner expression of the ParenthesizedExpressionNode.
+	///
+	/// This also opens up the idea of maybe having a 'tuple' type that can be used as a TypeClauseNode,
+	/// and having a separate type that can be used for a 'tuple literal'?
 	/// </summary>
 	public bool IsFirstLoop { get; set; } = true;
 
