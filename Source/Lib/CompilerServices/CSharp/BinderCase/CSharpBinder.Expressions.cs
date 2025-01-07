@@ -326,7 +326,7 @@ public partial class CSharpBinder
 							{
 								var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
 							        TypeFacts.Empty.ToTypeClause(),
-							        (IdentifierToken)token,
+							        UtilityApi.ConvertToIdentifierToken(nameableToken, compilationUnit, ref parserModel),
 							        VariableKind.Local,
 							        compilationUnit,
 							        ref parserModel);
