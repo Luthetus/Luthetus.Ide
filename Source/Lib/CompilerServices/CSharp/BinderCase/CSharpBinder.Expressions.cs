@@ -250,12 +250,8 @@ public partial class CSharpBinder
 		
 		if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind) || UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
 		{
-			Console.WriteLine("aaa 3");
-		
 			if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Peek(1).SyntaxKind))
 			{
-				Console.WriteLine("aaa 4");
-			
 				if (ambiguousParenthesizedExpressionNode.NameableTokenList is null)
 				{
 					ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList ??= new();
@@ -279,7 +275,6 @@ public partial class CSharpBinder
 					        VariableKind.Local,
 					        false));
 					
-					Console.WriteLine("aaa 2");
 					return ambiguousParenthesizedExpressionNode;
 				}
 				else
@@ -289,8 +284,6 @@ public partial class CSharpBinder
 			}
 			else
 			{
-				Console.WriteLine("aaa 5");
-				
 				if (ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList is null)
 				{
 					ambiguousParenthesizedExpressionNode.NameableTokenList ??= new();
@@ -309,7 +302,6 @@ public partial class CSharpBinder
 					var nameInterfaceToken = parserModel.TokenWalker.Consume();
 					ambiguousParenthesizedExpressionNode.NameableTokenList.Add(nameInterfaceToken);
 					
-					Console.WriteLine("aaa 1");
 					return ambiguousParenthesizedExpressionNode;
 				}
 				else
@@ -320,20 +312,20 @@ public partial class CSharpBinder
 		}
 		else
 		{
-			Console.WriteLine("aaa asdfg???");
-			
 			if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 			{
 				if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null &&
 					ambiguousParenthesizedExpressionNode.NameableTokenList.Count == 1 &&
 					UtilityApi.IsConvertibleToTypeClauseNode(ambiguousParenthesizedExpressionNode.NameableTokenList[0].SyntaxKind))
 				{
-					Console.WriteLine("aaa explicit cast???");
-					
 					var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(
 						ambiguousParenthesizedExpressionNode.NameableTokenList[0],
 						compilationUnit,
 						ref parserModel);
+						
+					BindTypeClauseNode(
+				        typeClauseNode,
+				        compilationUnit);
 					
 					var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
 					return ExplicitCastMergeToken(explicitCastNode, token, compilationUnit, ref parserModel);

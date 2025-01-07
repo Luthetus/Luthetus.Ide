@@ -399,9 +399,21 @@ finally
     }
     
     [Fact]
-    public void AmbiguousParenthesizedExpressionNode_Transforms_To_ExplicitCast()
+    public void AmbiguousParenthesizedExpressionNode_KeywordType_Transforms_To_ExplicitCast()
     {
     	var test = new Test(@"(int)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ExplicitCastNode, explicitCastNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_IdentifierType_Transforms_To_ExplicitCast()
+    {
+    	var test = new Test(@"(WeatherForecastService);");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
