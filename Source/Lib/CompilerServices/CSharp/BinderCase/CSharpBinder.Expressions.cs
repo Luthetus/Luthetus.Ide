@@ -328,12 +328,11 @@ public partial class CSharpBinder
 						{
 							foreach (var nameableToken in ambiguousParenthesizedExpressionNode.NameableTokenList)
 							{
-								var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+								var variableDeclarationNode = new VariableDeclarationNode(
 							        TypeFacts.Empty.ToTypeClause(),
 							        UtilityApi.ConvertToIdentifierToken(nameableToken, compilationUnit, ref parserModel),
 							        VariableKind.Local,
-							        compilationUnit,
-							        ref parserModel);
+							        false);
 							        
 					    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
 							}
@@ -349,7 +348,6 @@ public partial class CSharpBinder
 						{
 							foreach (var variableDeclarationNode in ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList)
 							{
-								compilationUnit.Binder.BindVariableDeclarationNode(variableDeclarationNode, compilationUnit);
 					    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
 							}
 						}
@@ -359,7 +357,32 @@ public partial class CSharpBinder
 						}
 					}
 					
-					return lambdaExpressionNode;
+					// If the lambda expression's code block is a single expression then there is no end delimiter.
+					// Instead, it is the parent expression's delimiter that causes the lambda expression's code block to short circuit.
+					// At this moment, the lambda expression is given whatever expression was able to be parsed and can take it as its "code block".
+					// And then restore the parent expression as the expressionPrimary.
+					//
+					// -----------------------------------------------------------------------------------------------------------------------------
+					//
+					// If the lambda expression's code block is deliminated by braces
+					// then the end delimiter is the CloseBraceToken.
+					// But, we can only add a "short circuit" for 'CloseBraceToken and lambdaExpressionNode'
+					// if we have seen the 'OpenBraceToken'.
+					
+					parserModel.ExpressionList.Add((SyntaxKind.EndOfFileToken, lambdaExpressionNode));
+					
+					if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
+					{
+						parserModel.ExpressionList.Add((SyntaxKind.CloseBraceToken, lambdaExpressionNode));
+						OpenLambdaExpressionScope(lambdaExpressionNode, (OpenBraceToken)parserModel.TokenWalker.Next, compilationUnit, ref parserModel);
+						SkipLambdaExpressionStatements(lambdaExpressionNode, compilationUnit, ref parserModel);
+					}
+					else
+					{
+						OpenLambdaExpressionScope(lambdaExpressionNode, new OpenBraceToken(token.TextSpan), compilationUnit, ref parserModel);
+					}
+					
+					return EmptyExpressionNode.Empty;
 				}
 				else if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null &&
 					     ambiguousParenthesizedExpressionNode.NameableTokenList.Count == 1 &&
