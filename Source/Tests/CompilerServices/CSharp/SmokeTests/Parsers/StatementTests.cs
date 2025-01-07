@@ -406,8 +406,8 @@ finally
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
-		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ExplicitCastNode, explicitCastNode.SyntaxKind);
     }
     
     [Fact]

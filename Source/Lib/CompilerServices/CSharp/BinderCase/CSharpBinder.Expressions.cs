@@ -248,27 +248,26 @@ public partial class CSharpBinder
 		var isFirstLoop = ambiguousParenthesizedExpressionNode.IsFirstLoop;
 		ambiguousParenthesizedExpressionNode.IsFirstLoop = false;
 		
-		if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind))
+		if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind) || UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
 		{
+			Console.WriteLine("aaa 3");
+		
 			if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Peek(1).SyntaxKind))
 			{
-				if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null)
+				Console.WriteLine("aaa 4");
+			
+				if (ambiguousParenthesizedExpressionNode.NameableTokenList is null)
 				{
 					ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList ??= new();
 					
 					// The method argument 'token' only gets consumed at the end of the expression while loop if no 'Consume()' was invoked during that loop.
 					// So manual consumption at this line is necessary to move the TokenWalker.
 					var typeInterfaceToken = parserModel.TokenWalker.Consume();
-					var typeIdentifierToken = UtilityApi.ConvertToIdentifierToken(typeInterfaceToken, compilationUnit, ref parserModel);
+					var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(typeInterfaceToken, compilationUnit, ref parserModel);
 					
 					var nameInterfaceToken = parserModel.TokenWalker.Consume();
 					var nameIdentifierToken = UtilityApi.ConvertToIdentifierToken(nameInterfaceToken, compilationUnit, ref parserModel);
 					
-					var typeClauseNode = new TypeClauseNode(
-						typeIdentifierToken,
-						valueType: null,
-						genericParametersListingNode: null);
-				
 					BindTypeClauseNode(
 				        typeClauseNode,
 				        compilationUnit);
@@ -280,6 +279,7 @@ public partial class CSharpBinder
 					        VariableKind.Local,
 					        false));
 					
+					Console.WriteLine("aaa 2");
 					return ambiguousParenthesizedExpressionNode;
 				}
 				else
@@ -289,7 +289,9 @@ public partial class CSharpBinder
 			}
 			else
 			{
-				if (ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList is not null)
+				Console.WriteLine("aaa 5");
+				
+				if (ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList is null)
 				{
 					ambiguousParenthesizedExpressionNode.NameableTokenList ??= new();
 					
@@ -302,11 +304,12 @@ public partial class CSharpBinder
 					//
 					// ````(int, bool) myVariable;
 					// ````(x) => 2;
+					//
+					// IsConvertibleToTypeClauseNode(...) is expected to be true for any true result from IsConvertibleToIdentifierToken(...).
 					var nameInterfaceToken = parserModel.TokenWalker.Consume();
-					var nameIdentifierToken = UtilityApi.ConvertToIdentifierToken(nameInterfaceToken, compilationUnit, ref parserModel);
+					ambiguousParenthesizedExpressionNode.NameableTokenList.Add(nameInterfaceToken);
 					
-					ambiguousParenthesizedExpressionNode.NameableTokenList.Add(nameIdentifierToken);
-					
+					Console.WriteLine("aaa 1");
 					return ambiguousParenthesizedExpressionNode;
 				}
 				else
@@ -317,7 +320,30 @@ public partial class CSharpBinder
 		}
 		else
 		{
-			if (isFirstLoop)
+			Console.WriteLine("aaa asdfg???");
+			
+			if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+			{
+				if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null &&
+					ambiguousParenthesizedExpressionNode.NameableTokenList.Count == 1 &&
+					UtilityApi.IsConvertibleToTypeClauseNode(ambiguousParenthesizedExpressionNode.NameableTokenList[0].SyntaxKind))
+				{
+					Console.WriteLine("aaa explicit cast???");
+					
+					var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(
+						ambiguousParenthesizedExpressionNode.NameableTokenList[0],
+						compilationUnit,
+						ref parserModel);
+					
+					var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
+					return ExplicitCastMergeToken(explicitCastNode, token, compilationUnit, ref parserModel);
+				}
+				else
+				{
+					return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
+				}
+			}
+			else if (isFirstLoop)
 			{
 				// Transform the primary expression from an
 				// AmbiguousParenthesizedExpressionNode to a ParenthesizedExpressionNode
@@ -343,6 +369,15 @@ public partial class CSharpBinder
 	public IExpressionNode AmbiguousParenthesizedMergeExpression(
 		AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
+		if (expressionSecondary.SyntaxKind == SyntaxKind.AmbiguousParenthesizedExpressionNode)
+		{
+			// The 'AmbiguousParenthesizedExpressionNode' merging with 'ISyntaxToken' method will
+			// return the existing 'AmbiguousParenthesizedExpressionNode' in various situations.
+			//
+			// One of which is to signify the closing brace token.
+			return ambiguousParenthesizedExpressionNode;
+		}
+		
 		return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, expressionSecondary);
 	}
 	
