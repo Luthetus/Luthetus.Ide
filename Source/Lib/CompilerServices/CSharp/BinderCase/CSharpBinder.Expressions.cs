@@ -312,16 +312,29 @@ public partial class CSharpBinder
 		}
 		else
 		{
-			if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+			if (token.SyntaxKind == SyntaxKind.CommaToken)
 			{
+				return ambiguousParenthesizedExpressionNode;
+			}
+			else if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+			{
+				Console.WriteLine("aaa token.SyntaxKind == SyntaxKind.CloseParenthesisToken");
+				Console.WriteLine($"aaa parserModel.TokenWalker.Current.SyntaxKind: {parserModel.TokenWalker.Current.SyntaxKind}");
+				Console.WriteLine($"aaa parserModel.TokenWalker.Next.SyntaxKind: {parserModel.TokenWalker.Next.SyntaxKind}");
+				
 				if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
 				{
 					var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
 					
 					if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null)
 					{
+						Console.WriteLine("aaa ambiguousParenthesizedExpressionNode.NameableTokenList is not null");
+						
 						if (ambiguousParenthesizedExpressionNode.NameableTokenList.Count >= 1)
 						{
+							Console.WriteLine("aaa ambiguousParenthesizedExpressionNode.NameableTokenList.Count >= 1");
+							Console.WriteLine($"aaa ambiguousParenthesizedExpressionNode.NameableTokenList.Count: {ambiguousParenthesizedExpressionNode.NameableTokenList.Count}");
+						
 							foreach (var nameableToken in ambiguousParenthesizedExpressionNode.NameableTokenList)
 							{
 								var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
