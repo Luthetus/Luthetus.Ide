@@ -379,10 +379,26 @@ public partial class CSharpBinder
 					}
 					else
 					{
-						OpenLambdaExpressionScope(lambdaExpressionNode, new OpenBraceToken(token.TextSpan), compilationUnit, ref parserModel);
+						OpenLambdaExpressionScope(lambdaExpressionNode, new OpenBraceToken(parserModel.TokenWalker.Next.TextSpan), compilationUnit, ref parserModel);
 					}
 					
 					return EmptyExpressionNode.Empty;
+				}
+				else if (ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList is not null &&
+						 ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList.Count >= 1)
+				{
+					var identifierToken = new IdentifierToken(
+						new TextEditorTextSpan(
+						    ambiguousParenthesizedExpressionNode.OpenParenthesisToken.TextSpan.StartingIndexInclusive,
+						    token.TextSpan.EndingIndexExclusive,
+						    default(byte),
+						    token.TextSpan.ResourceUri,
+						    token.TextSpan.SourceText));
+					
+					return new TypeClauseNode(
+						identifierToken,
+				        valueType: null,
+				        genericParametersListingNode: null);
 				}
 				else if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null &&
 					     ambiguousParenthesizedExpressionNode.NameableTokenList.Count == 1 &&
