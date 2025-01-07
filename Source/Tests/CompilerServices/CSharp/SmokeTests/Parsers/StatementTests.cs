@@ -399,6 +399,78 @@ finally
     }
     
     [Fact]
+    public void AmbiguousParenthesizedExpressionNode_Transforms_To_ExplicitCast()
+    {
+    	var test = new Test(@"(int)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_With_GenericArguments_Transforms_To_ExplicitCast()
+    {
+    	var test = new Test(@"(List<bool>)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_Transforms_To_TypeClauseNode()
+    {
+    	var test = new Test(@"(int, bool)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_With_Names_Transforms_To_TypeClauseNode()
+    {
+    	var test = new Test(@"(int Count, bool ShouldReturn)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_Transforms_To_TupleExpressionNode()
+    {
+    	var test = new Test(@"(7, true)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_With_VariableReference_Transforms_To_TupleExpressionNode()
+    {
+    	var test = new Test(@"var x = 7; var y = true; (x, y)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void AmbiguousParenthesizedExpressionNode_Ccc_Test()
     {
     	var test = new Test(@"(2");
