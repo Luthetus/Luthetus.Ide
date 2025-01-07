@@ -314,7 +314,35 @@ public partial class CSharpBinder
 		{
 			if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 			{
-				if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null &&
+				if (parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.EqualsCloseAngleBracketToken)
+				{
+					var lambdaExpressionNode = new LambdaExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
+					
+					if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null)
+					{
+						if (ambiguousParenthesizedExpressionNode.NameableTokenList.Count >= 1)
+						{
+							foreach (var nameableToken in ambiguousParenthesizedExpressionNode.NameableTokenList)
+							{
+								var variableDeclarationNode = ParseVariables.HandleVariableDeclarationExpression(
+							        TypeFacts.Empty.ToTypeClause(),
+							        (IdentifierToken)token,
+							        VariableKind.Local,
+							        compilationUnit,
+							        ref parserModel);
+							        
+					    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
+							}
+						}
+						else
+						{
+							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
+						}
+					}
+					
+					return lambdaExpressionNode;
+				}
+				else if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null &&
 					ambiguousParenthesizedExpressionNode.NameableTokenList.Count == 1 &&
 					UtilityApi.IsConvertibleToTypeClauseNode(ambiguousParenthesizedExpressionNode.NameableTokenList[0].SyntaxKind))
 				{

@@ -435,6 +435,19 @@ finally
     }
     
     [Fact]
+    public void AmbiguousParenthesizedExpressionNode_WhatDoesThisResultIn()
+    {
+    	// List is less than bool and bool is greater than int?
+    	var test = new Test(@"(List < bool > int)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void AmbiguousParenthesizedExpressionNode_Transforms_To_TypeClauseNode()
     {
     	var test = new Test(@"(int, bool)");
@@ -531,15 +544,15 @@ finally
     }
     
     [Fact]
-    public void AmbiguousParenthesizedExpressionNode_Ccc_Test()
+    public void AmbiguousParenthesizedExpressionNode_Transforms_To_ParenthesizedExpressionNode()
     {
     	var test = new Test(@"(2");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
-		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ParenthesizedExpressionNode, parenthesizedExpressionNode.SyntaxKind);
     }
     
     [Fact]
