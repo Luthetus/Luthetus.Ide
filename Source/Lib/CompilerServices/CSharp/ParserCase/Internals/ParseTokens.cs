@@ -316,12 +316,52 @@ public static class ParseTokens
 
     public static void ParseOpenParenthesisToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	Console.WriteLine("aaa ParseOpenParenthesisToken");
+    
     	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
     	{
     		var typeDefinitionNode = (TypeDefinitionNode)parserModel.SyntaxStack.Pop();
     		var functionArgumentsListingNode = ParseFunctions.HandleFunctionArguments(compilationUnit, ref parserModel);
     		typeDefinitionNode.SetPrimaryConstructorFunctionArgumentsListingNode(functionArgumentsListingNode);
+    		return;
     	}
+    	
+    	var originalTokenIndex = parserModel.TokenWalker.Index;
+    	
+    	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableDeclarationNode);
+    	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.TypeClauseNode);
+    	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.AmbiguousParenthesizedExpressionNode);
+    	
+    	parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
+    	
+		var successParse = ParseOthers.TryParseExpression(null, compilationUnit, ref parserModel, out var expressionNode);
+		
+		if (!successParse)
+		{
+			expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+			parserModel.StatementBuilder.ChildList.Add(expressionNode);
+	    	return;
+		}
+		
+		if (expressionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+		{
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken ||
+				parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenAngleBracketToken)
+			{
+				MoveToHandleFunctionDefinition((VariableDeclarationNode)expressionNode, compilationUnit, ref parserModel);
+			    return;
+			}
+			
+			MoveToHandleVariableDeclarationNode((VariableDeclarationNode)expressionNode, compilationUnit, ref parserModel);
+		}
+		
+		//// I am catching the next two but not doing anything with them
+		//// only so that the TryParseExpression won't return early due to those being the
+		//// SyntaxKind(s) that will appear during the process of parsing the VariableDeclarationNode
+		//// given that the TypeClauseNode is a tuple.
+		//
+		// else if (expressionNode.SyntaxKind == SyntaxKind.TypeClauseNode)
+		// else if (expressionNode.SyntaxKind == SyntaxKind.AmbiguousParenthesizedExpressionNode)
     }
 
     public static void ParseCloseParenthesisToken(

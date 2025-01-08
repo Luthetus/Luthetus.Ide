@@ -579,7 +579,7 @@ finally
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
 		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal(SyntaxKind.ReturnStatementNode, lambdaExpressionNode.SyntaxKind);
+		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
     }
     
     [Fact]
