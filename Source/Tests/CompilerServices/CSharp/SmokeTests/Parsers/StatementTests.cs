@@ -556,6 +556,21 @@ finally
     }
     
     [Fact]
+    public void LambdaExpressionNode_NoParenthesisForArguments()
+    {
+    	// Wrapping the lambda expression in a ParenthesizedExpressionNode in order
+    	// to trigger the expression loop while parsing the inner expression
+    	// (rather than having it parsed as a statement).
+    	var test = new Test(@"(x => 2);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.LambdaExpressionNode, lambdaExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void VariableDeclaration_TupleNamed_Test()
     {
     	var test = new Test(@"(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode) expressionShortCircuitTuple;");

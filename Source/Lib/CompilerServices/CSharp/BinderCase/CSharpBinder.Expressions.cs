@@ -248,8 +248,24 @@ public partial class CSharpBinder
 		var isFirstLoop = ambiguousParenthesizedExpressionNode.IsFirstLoop;
 		ambiguousParenthesizedExpressionNode.IsFirstLoop = false;
 		
-		if (UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind) || UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind))
+		var resultExpressionNode = (IExpressionNode)null;
+		
+		// All true values for 'UtilityApi.IsConvertibleToIdentifierToken(...)' are also true for 'UtilityApi.IsConvertibleToIdentifierToken(token.SyntaxKind)'
+		if (UtilityApi.IsConvertibleToTypeClauseNode(token.SyntaxKind)) 
 		{
+			// TODO: Try to read a 'genericParametersListingNode'...
+			// ...if there is one, then it cannot be '(x) => 2;' case.
+			//
+			/// It is more like an explicit cast:
+			// '(List<int>)myVariable;'
+			// or
+			// '(List<int>, bool)'
+			// 
+			// So it would be whether the close brace token is landed
+			// on during the first loop or not.
+			// as to whether it is explicit cast or tuple type clause node.
+			var genericParametersListingNode = (GenericParametersListingNode?)null;
+		
 			if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Peek(1).SyntaxKind))
 			{
 				if (ambiguousParenthesizedExpressionNode.NameableTokenList is null)
@@ -264,9 +280,7 @@ public partial class CSharpBinder
 					var nameInterfaceToken = parserModel.TokenWalker.Consume();
 					var nameIdentifierToken = UtilityApi.ConvertToIdentifierToken(nameInterfaceToken, compilationUnit, ref parserModel);
 					
-					BindTypeClauseNode(
-				        typeClauseNode,
-				        compilationUnit);
+					BindTypeClauseNode(typeClauseNode, compilationUnit);
 					
 					ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList.Add(
 						new VariableDeclarationNode(
@@ -275,11 +289,7 @@ public partial class CSharpBinder
 					        VariableKind.Local,
 					        false));
 					
-					return ambiguousParenthesizedExpressionNode;
-				}
-				else
-				{
-					return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
+					resultExpressionNode = ambiguousParenthesizedExpressionNode;
 				}
 			}
 			else
@@ -303,10 +313,6 @@ public partial class CSharpBinder
 					ambiguousParenthesizedExpressionNode.NameableTokenList.Add(nameInterfaceToken);
 					
 					return ambiguousParenthesizedExpressionNode;
-				}
-				else
-				{
-					return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
 				}
 			}
 		}
@@ -337,10 +343,6 @@ public partial class CSharpBinder
 					    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
 							}
 						}
-						else
-						{
-							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
-						}
 					}
 					else if (ambiguousParenthesizedExpressionNode.VariableDeclarationNodeList is not null)
 					{
@@ -350,10 +352,6 @@ public partial class CSharpBinder
 							{
 					    		lambdaExpressionNode.AddVariableDeclarationNode(variableDeclarationNode);
 							}
-						}
-						else
-						{
-							return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
 						}
 					}
 					
@@ -409,16 +407,10 @@ public partial class CSharpBinder
 						compilationUnit,
 						ref parserModel);
 						
-					BindTypeClauseNode(
-				        typeClauseNode,
-				        compilationUnit);
+					BindTypeClauseNode(typeClauseNode, compilationUnit);
 					
 					var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
 					return ExplicitCastMergeToken(explicitCastNode, token, compilationUnit, ref parserModel);
-				}
-				else
-				{
-					return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
 				}
 			}
 			else if (isFirstLoop)
@@ -436,12 +428,42 @@ public partial class CSharpBinder
 					
 				return EmptyMergeToken(EmptyExpressionNode.Empty, token, compilationUnit, ref parserModel);
 			}
+		}
+		
+		if (isFirstLoop)
+		{
+			if (resultExpressionNode is null)
+			{
+				// If the 'resultExpressionNode is null', then the 'token' parameter was never consumed.
+			
+				// OpenParenthesisToken nested value types?
+				//
+				// Otherwise:
+				// 	'++' or some other syntax that leads to a ParenthesizedExpressionNode is expected.
+				
+				// Transform the primary expression from an
+				// AmbiguousParenthesizedExpressionNode to a ParenthesizedExpressionNode
+				
+				parserModel.NoLongerRelevantExpressionNode = ambiguousParenthesizedExpressionNode;
+				
+				var parenthesizedExpressionNode = new ParenthesizedExpressionNode(
+					ambiguousParenthesizedExpressionNode.OpenParenthesisToken,
+					CSharpFacts.Types.Void.ToTypeClause());
+					
+				parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
+					
+				return EmptyMergeToken(EmptyExpressionNode.Empty, token, compilationUnit, ref parserModel);
+			}
 			else
 			{
-				// It is too late to permit transformation, just return a BadExpressionNode.
-				return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
+				// If the 'resultExpressionNode is null', then the 'token' parameter IS consumed.
 			}
 		}
+		
+		if (resultExpressionNode is null)
+			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
+		
+		return resultExpressionNode;
 	}
 	
 	public IExpressionNode AmbiguousParenthesizedMergeExpression(
