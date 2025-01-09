@@ -167,8 +167,6 @@ public sealed class CSharpCompilerService : CompilerService
 				typeClauseNode = ((TypeDefinitionNode)targetNode).ToTypeClause();
 			else if (targetNode.SyntaxKind == SyntaxKind.ConstructorDefinitionNode)
 				typeClauseNode = ((ConstructorDefinitionNode)targetNode).ReturnTypeClauseNode;
-			else
-				Console.WriteLine("aaa else");
 			
 			if (typeClauseNode is null)
 				return autocompleteEntryList.DistinctBy(x => x.DisplayName).ToList();
