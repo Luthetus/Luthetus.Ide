@@ -2235,15 +2235,7 @@ public partial class CSharpBinder
 					ref parserModel));
 		}
 		
-		var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(
-			ambiguousParenthesizedExpressionNode.NameableTokenList[0],
-			compilationUnit,
-			ref parserModel);
-			
-		BindTypeClauseNode(typeClauseNode, compilationUnit);
-		
-		var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
-		return ExplicitCastMergeToken(explicitCastNode, token, compilationUnit, ref parserModel);
+		return tupleExpressionNode;
 	}
 	
 	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_ExplicitCastNode(
