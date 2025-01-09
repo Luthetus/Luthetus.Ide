@@ -16,14 +16,14 @@ public sealed class ParenthesizedExpressionNode : IExpressionNode
         CloseParenthesisToken = closeParenthesisToken;
     }
 
-	private ISyntax[] _childList = Array.Empty<ISyntax>();
-	private bool _childListIsDirty = true;
-    
-    public ParenthesizedExpressionNode(OpenParenthesisToken openParenthesisToken, TypeClauseNode typeClauseNode)
+	public ParenthesizedExpressionNode(OpenParenthesisToken openParenthesisToken, TypeClauseNode typeClauseNode)
     	: this(openParenthesisToken, new EmptyExpressionNode(typeClauseNode), default)
     {
     }
 
+	private ISyntax[] _childList = Array.Empty<ISyntax>();
+	private bool _childListIsDirty = true;
+    
     public OpenParenthesisToken OpenParenthesisToken { get; }
     public IExpressionNode InnerExpression { get; private set; }
     public CloseParenthesisToken CloseParenthesisToken { get; private set; }
