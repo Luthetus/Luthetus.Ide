@@ -583,6 +583,18 @@ finally
     }
     
     [Fact]
+    public void ReturnStatement_Tuple()
+    {
+    	var test = new Test(@"var aaa = 2; var bbb = ""cat"" return (aaa, bbb);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var returnStatementNode = (ReturnStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ReturnStatementNode, returnStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void VariableDeclaration_TupleNamed_Test()
     {
     	var test = new Test(@"(SyntaxKind DelimiterSyntaxKind, IExpressionNode ExpressionNode) expressionShortCircuitTuple;");

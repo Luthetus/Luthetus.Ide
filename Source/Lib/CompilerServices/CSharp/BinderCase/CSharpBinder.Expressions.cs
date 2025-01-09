@@ -278,7 +278,7 @@ public partial class CSharpBinder
 			{
 				if (ambiguousParenthesizedExpressionNode.NameableTokenList.Count > 1)
 				{
-					return AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(ambiguousParenthesizedExpressionNode, token, compilationUnit, ref parserModel);
+					return AmbiguousParenthesizedExpressionTransformTo_TupleExpressionNode(ambiguousParenthesizedExpressionNode, token, compilationUnit, ref parserModel);
 				}
 				else if (ambiguousParenthesizedExpressionNode.NameableTokenList.Count == 1 &&
 						 UtilityApi.IsConvertibleToTypeClauseNode(ambiguousParenthesizedExpressionNode.NameableTokenList[0].SyntaxKind))
@@ -2118,7 +2118,6 @@ public partial class CSharpBinder
 	{
 		if (ambiguousParenthesizedExpressionNode.NameableTokenList is not null)
 			return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, token);
-			
 	
 		// TODO: Try to read a 'genericParametersListingNode'...
 		// ...if there is one, then it cannot be '(x) => 2;' case.
@@ -2208,6 +2207,43 @@ public partial class CSharpBinder
 		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
 			
 		return EmptyMergeToken(EmptyExpressionNode.Empty, token, compilationUnit, ref parserModel);
+	}
+	
+	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_TupleExpressionNode(
+		AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+	{
+		if (UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
+			return AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(ambiguousParenthesizedExpressionNode, token, compilationUnit, ref parserModel);
+	
+		var tupleExpressionNode = new TupleExpressionNode();
+		
+		foreach (var nameableToken in ambiguousParenthesizedExpressionNode.NameableTokenList)
+		{
+			var ambiguousExpressionNode = new AmbiguousIdentifierExpressionNode(
+				nameableToken,
+		        genericParametersListingNode: null,
+		        CSharpFacts.Types.Void.ToTypeClause());
+		        
+		    //if (parserModel.ParserContextKind == CSharpParserContextKind.ForceStatementExpression)
+			//	parserModel.ParserContextKind = CSharpParserContextKind.None;
+		        
+			tupleExpressionNode.AddInnerExpressionNode(
+				ForceDecisionAmbiguousIdentifier(
+					EmptyExpressionNode.Empty,
+					ambiguousExpressionNode,
+					compilationUnit,
+					ref parserModel));
+		}
+		
+		var typeClauseNode = UtilityApi.ConvertToTypeClauseNode(
+			ambiguousParenthesizedExpressionNode.NameableTokenList[0],
+			compilationUnit,
+			ref parserModel);
+			
+		BindTypeClauseNode(typeClauseNode, compilationUnit);
+		
+		var explicitCastNode = new ExplicitCastNode(ambiguousParenthesizedExpressionNode.OpenParenthesisToken, typeClauseNode);
+		return ExplicitCastMergeToken(explicitCastNode, token, compilationUnit, ref parserModel);
 	}
 	
 	private IExpressionNode AmbiguousParenthesizedExpressionTransformTo_ExplicitCastNode(

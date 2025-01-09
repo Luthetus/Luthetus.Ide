@@ -316,8 +316,6 @@ public static class ParseTokens
 
     public static void ParseOpenParenthesisToken(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	Console.WriteLine("aaa ParseOpenParenthesisToken");
-    
     	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.TypeDefinitionNode)
     	{
     		var typeDefinitionNode = (TypeDefinitionNode)parserModel.SyntaxStack.Pop();
