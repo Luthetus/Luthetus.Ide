@@ -194,6 +194,7 @@ public enum SyntaxKind
 
     // Nodes
     LiteralExpressionNode,
+    AmbiguousParenthesizedExpressionNode,
     ParenthesizedExpressionNode,
     EmptyExpressionNode,
     AmbiguousIdentifierExpressionNode,

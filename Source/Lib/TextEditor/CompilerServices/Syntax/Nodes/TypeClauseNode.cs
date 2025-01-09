@@ -68,6 +68,8 @@ public sealed class TypeClauseNode : IExpressionNode
     
     public bool IsKeywordType { get; } = false;
     
+    public bool IsTuple { get; }
+    
     TypeClauseNode IExpressionNode.ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
     
     public bool HasQuestionMark { get; set; }

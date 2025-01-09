@@ -915,7 +915,10 @@ public class ParseDefaultKeywords
 
     public static void HandleReturnTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	parserModel.StatementBuilder.ChildList.Add((KeywordToken)parserModel.TokenWalker.Consume());
-		// var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-    }
+    	var returnKeywordToken = (KeywordToken)parserModel.TokenWalker.Consume();
+   	 var expressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+   	 var returnStatementNode = new ReturnStatementNode(returnKeywordToken, expressionNode);
+    	
+		parserModel.StatementBuilder.ChildList.Add(returnStatementNode);
+	}
 }

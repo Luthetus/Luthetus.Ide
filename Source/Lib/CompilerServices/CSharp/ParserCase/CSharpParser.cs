@@ -114,10 +114,7 @@ public static class CSharpParser
                     ParseTokens.ParseCloseBraceToken(closeBraceToken, closeBraceTokenIndex, compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.OpenParenthesisToken:
-                	if (parserModel.StatementBuilder.ChildList.Count == 0)
-                		ParseOthers.StartStatement_Expression(compilationUnit, ref parserModel);
-                	else
-                		ParseTokens.ParseOpenParenthesisToken(compilationUnit, ref parserModel);
+                	ParseTokens.ParseOpenParenthesisToken(compilationUnit, ref parserModel);
                     break;
                 case SyntaxKind.CloseParenthesisToken:
                     ParseTokens.ParseCloseParenthesisToken((CloseParenthesisToken)token, compilationUnit, ref parserModel);
