@@ -76,12 +76,6 @@ public class PersonRepository
 			LastName = lastName,
 		};
 		
-		person.FirstName;
-		//     ^ hover mouse here for member access tooltip.
-		
-		FirstName;
-		// ^ contrast the 'member access tooltip' with what happens if the identifier is alone;
-		
 		return person;
 	}
 	
@@ -93,12 +87,6 @@ public class PersonRepository
 		{
 			FirstName = "Asdfg",
 		};
-		
-		person.FirstName;
-		//     ^ hover mouse here for member access tooltip.
-		
-		FirstName;
-		// ^ contrast the 'member access tooltip' with what happens if the identifier is alone;
 		
 		return person;
 	}
@@ -202,11 +190,19 @@ public partial class Counter : ComponentBase
 	}
 }
 
-(int, bool) myVariable;         // Value Tuple TypeClauseNode (not named)
-(int Aaa, bool Bbb) myVariable; // Value Tuple TypeClauseNode (is named)
-List<(int, bool)> myList;       // Value Tuple TypeClauseNode as a generic argument
-(List)myVariable;               // Explicit cast (no generic argument)
-(List<int>)myVariable;          // Explicit cast (with generic argument)
+// Value Tuple TypeClauseNode
+(int, bool) myVariableOne;         // (not named)
+(int Aaa, bool Bbb) myVariableTwo; // (is named)
+
+// Value Tuple TypeClauseNode as a generic argument
+List<(int, bool)> myListOne;         // (not named)
+List<(int Aaa, bool Bbb)> myListTwo; // (is named)
+
+// Explicit cast
+(List)myVariableOne;                      // (no generic argument)
+(List<int>)myVariableTwo;                 // (with generic argument)
+(List<(int, bool)>)myVariableTwo;         // (with generic argument, which is a tuple, not named)
+(List<(int Aaa, bool Bbb)>)myVariableTwo; // (with generic argument, which is a tuple, is named)
 
 return (aaa, bbb, ccc) => 2; // Lambda Function with implicitly typed parameters, expression body
 

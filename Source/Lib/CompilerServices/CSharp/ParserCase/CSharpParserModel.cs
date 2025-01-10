@@ -59,6 +59,18 @@ public struct CSharpParserModel
     public List<SyntaxKind> TryParseExpressionSyntaxKindList { get; } = new();
     public IExpressionNode ForceParseExpressionInitialPrimaryExpression { get; set; }
     
+    /// <summary>
+    /// When parsing a value tuple, this needs to be remembered,
+    /// then reset to the initial value foreach of the value tuple's members.
+    ///
+    /// 'CSharpParserContextKind.ForceStatementExpression' is related
+    /// to disambiguating the less than operator '<' and
+    /// generic arguments '<...>'.
+    ///
+    /// Any case where 'ParserContextKind' says that
+    /// generic arguments '<...>' for variable declaration
+    /// this needs to be available as information to each member.
+    /// </summary>
     public CSharpParserContextKind ParserContextKind { get; set; }
     
     public DiagnosticBag DiagnosticBag { get; }

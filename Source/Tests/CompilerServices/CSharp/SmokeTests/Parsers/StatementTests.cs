@@ -556,6 +556,30 @@ finally
     }
     
     [Fact]
+    public void AmbiguousParenthesizedExpressionNode_As_GenericArgument_NoName()
+    {
+    	var test = new Test(@"List<(int, bool)> myListOne;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_As_GenericArgument_WithName()
+    {
+    	var test = new Test(@"List<(int Aaa, bool Bbb)> myListTwo;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void LambdaExpressionNode_NoParenthesisForArguments()
     {
     	// Wrapping the lambda expression in a ParenthesizedExpressionNode in order
