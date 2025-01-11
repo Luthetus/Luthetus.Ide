@@ -2229,7 +2229,9 @@ public partial class CSharpBinder
 		parenthesizedExpressionNode.SetInnerExpression(expressionSecondary);
 			
 		parserModel.NoLongerRelevantExpressionNode = ambiguousParenthesizedExpressionNode;
-		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
+		
+		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseParenthesisToken)
+			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, parenthesizedExpressionNode));
 			
 		return parenthesizedExpressionNode;
 	}
@@ -2262,8 +2264,12 @@ public partial class CSharpBinder
 			tupleExpressionNode.AddInnerExpressionNode(expressionSecondary);
 		
 		parserModel.NoLongerRelevantExpressionNode = ambiguousParenthesizedExpressionNode;
-		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, tupleExpressionNode));
-		parserModel.ExpressionList.Add((SyntaxKind.CommaToken, tupleExpressionNode));
+		
+		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.CloseParenthesisToken)
+		{
+			parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, tupleExpressionNode));
+			parserModel.ExpressionList.Add((SyntaxKind.CommaToken, tupleExpressionNode));
+		}
 			
 		return tupleExpressionNode;
 	}
