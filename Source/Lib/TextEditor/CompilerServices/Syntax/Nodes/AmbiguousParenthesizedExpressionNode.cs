@@ -6,9 +6,12 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
 public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 {
-    public AmbiguousParenthesizedExpressionNode(OpenParenthesisToken openParenthesisToken)
+    public AmbiguousParenthesizedExpressionNode(
+    	OpenParenthesisToken openParenthesisToken,
+    	bool isParserContextKindForceStatementExpression)
     {
         OpenParenthesisToken = openParenthesisToken;
+        IsParserContextKindForceStatementExpression = isParserContextKindForceStatementExpression;
     }
     
     private ISyntax[] _childList = Array.Empty<ISyntax>();
@@ -54,6 +57,7 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
 	public bool IsFirstLoop { get; set; } = true;
 
     public OpenParenthesisToken OpenParenthesisToken { get; }
+    public bool IsParserContextKindForceStatementExpression { get; }
     public TypeClauseNode ResultTypeClauseNode => TypeFacts.Pseudo.ToTypeClause();
     
     /// <summary>
@@ -128,8 +132,9 @@ public sealed class AmbiguousParenthesizedExpressionNode : IExpressionNode
     /// One would have to parse this as an 'AmbiguousParenthesizedExpression'
     /// until it is ruled out that it cannot be a LambdaExpressionNode.
     /// </summary>
-    public List<VariableDeclarationNode>? VariableDeclarationNodeList { get; set; }
-    public List<ISyntaxToken>? NameableTokenList { get; set; }
+    
+    public List<ISyntaxNode> NodeList { get; set; } = new();
+    public bool? ShouldMatchVariableDeclarationNodes = null;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.AmbiguousParenthesizedExpressionNode;

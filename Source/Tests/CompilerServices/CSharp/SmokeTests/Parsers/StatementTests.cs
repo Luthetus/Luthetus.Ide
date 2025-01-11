@@ -423,6 +423,19 @@ finally
     }
     
     [Fact]
+    public void AmbiguousParenthesizedExpressionNode_IdentifierType_Transforms_To_ExplicitCast_GenericArgs_Are_TupleTypeClauseNode()
+    {
+    	// var test = new Test(@"var myVariable = 2; (List<(int, bool)>)myVariable;");
+    	var test = new Test(@"(List<(int, bool)>);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ExplicitCastNode, explicitCastNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void AmbiguousParenthesizedExpressionNode_With_GenericArguments_Transforms_To_ExplicitCast()
     {
     	var test = new Test(@"(List<bool>)");
@@ -430,8 +443,8 @@ finally
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
-		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ExplicitCastNode, explicitCastNode.SyntaxKind);
     }
     
     [Fact]
@@ -448,15 +461,27 @@ finally
     }
     
     [Fact]
-    public void AmbiguousParenthesizedExpressionNode_Transforms_To_TypeClauseNode()
+    public void AmbiguousParenthesizedExpressionNode_KeywordTypes_Transforms_To_TypeClauseNode()
     {
     	var test = new Test(@"(int, bool)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
-		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_IdentifierTypes_Transforms_To_TypeClauseNode()
+    {
+    	var test = new Test(@"(Apple, Banana)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     }
     
     [Fact]
@@ -498,7 +523,7 @@ finally
     [Fact]
     public void AmbiguousParenthesizedExpressionNode_With_VariableDeclaration_ImplicitType_Transforms_To_LambdaExpressionNode()
     {
-    	var test = new Test(@"(x, y) => 2;");
+    	var test = new Test(@"return (x, y) => 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
@@ -556,6 +581,98 @@ finally
     }
     
     [Fact]
+    public void AmbiguousParenthesizedExpressionNode_KeywordTypes_As_GenericArgument_NoName()
+    {
+    	var test = new Test(@"List<(int, bool)> myListOne;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_IdentifierTypes_As_GenericArgument_NoName()
+    {
+    	var test = new Test(@"List<(Apple, Banana)> myListOne;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_KeywordTypes_As_GenericArgument_WithName()
+    {
+    	var test = new Test(@"List<(int Aaa, bool Bbb)> myListTwo;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_IdentifierTypes_As_GenericArgument_WithName()
+    {
+    	var test = new Test(@"List<(Apple Aaa, Banana Bbb)> myListTwo;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_ValueTuple()
+    {
+    	var test = new Test(@"(aaa, 2);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_ValueTuple_Leading_Literal()
+    {
+    	var test = new Test(@"(2, aaa);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_Inside_If_Does_Not_Break_Scope()
+    {
+    	// If statement erroneously has the semicolon as its closing scope.
+    	//
+    	// As well, the function has its closing scope as what
+    	// should be the closing brace of the if statement's scope.
+    	//
+    	// What should be the opening brace of the if statement's scope
+    	// is not the delimiter of any scope.
+    
+    	var test = new Test(@"public IExpressionNode HandleBinaryOperator()
+{
+	if ((aaa, 2))
+	{
+		;
+	}
+}");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
     public void LambdaExpressionNode_NoParenthesisForArguments()
     {
     	// Wrapping the lambda expression in a ParenthesizedExpressionNode in order
@@ -568,6 +685,26 @@ finally
 		
 		var lambdaExpressionNode = (LambdaExpressionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.LambdaExpressionNode, lambdaExpressionNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void LambdaExpressionNode_CodeBlockStatementBody()
+    {
+    	// Wrapping the lambda expression in a ParenthesizedExpressionNode in order
+    	// to trigger the expression loop while parsing the inner expression
+    	// (rather than having it parsed as a statement).
+    	var test = new Test(@"(x => { return x; });");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var parenthesizedExpressionNode = (ParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
+		var lambdaExpressionNode = (LambdaExpressionNode)parenthesizedExpressionNode.InnerExpression;
+		Assert.Equal(SyntaxKind.LambdaExpressionNode, lambdaExpressionNode.SyntaxKind);
+		Assert.False(lambdaExpressionNode.CodeBlockNodeIsExpression);
+		Assert.NotNull(lambdaExpressionNode.CodeBlockNode);
+		
+		var returnStatementNode = (ReturnStatementNode)lambdaExpressionNode.CodeBlockNode.GetChildList().Single();
     }
     
     [Fact]

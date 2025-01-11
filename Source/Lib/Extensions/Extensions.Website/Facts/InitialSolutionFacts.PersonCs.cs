@@ -76,12 +76,6 @@ public class PersonRepository
 			LastName = lastName,
 		};
 		
-		person.FirstName;
-		//     ^ hover mouse here for member access tooltip.
-		
-		FirstName;
-		// ^ contrast the 'member access tooltip' with what happens if the identifier is alone;
-		
 		return person;
 	}
 	
@@ -93,12 +87,6 @@ public class PersonRepository
 		{
 			FirstName = "Asdfg",
 		};
-		
-		person.FirstName;
-		//     ^ hover mouse here for member access tooltip.
-		
-		FirstName;
-		// ^ contrast the 'member access tooltip' with what happens if the identifier is alone;
 		
 		return person;
 	}
@@ -202,11 +190,28 @@ public partial class Counter : ComponentBase
 	}
 }
 
-(int, bool) myVariable;         // Value Tuple TypeClauseNode (not named)
-(int Aaa, bool Bbb) myVariable; // Value Tuple TypeClauseNode (is named)
-List<(int, bool)> myList;       // Value Tuple TypeClauseNode as a generic argument
-(List)myVariable;               // Explicit cast (no generic argument)
-(List<int>)myVariable;          // Explicit cast (with generic argument)
+// Value Tuple TypeClauseNode
+(int, bool) myVariableOne;              // (not named)
+(Apple, Banana) myVariableTwo;          // (not named)
+(int Aaa, bool Bbb) myVariableThree;    // (is named)
+(Apple Aaa, Banana Bbb) myVariableFour; // (is named)
+
+// Value Tuple TypeClauseNode as a generic argument
+List<(int, bool)> myListOne;              // (not named)
+List<(Apple, Banana)> myListTwo;          // (not named)
+List<(int Aaa, bool Bbb)> myListThree;    // (is named)
+List<(Apple Aaa, Banana Bbb)> myListFour; // (is named)
+
+// Explicit cast
+(int)myVariableOne;                            // (no generic argument)
+(Apple)myVariableOne;                          // (no generic argument)
+(GenericParametersListingNode?)null;           // (nullable)
+(List<int>)myVariableThree;                    // (with generic argument)
+(List<Apple>)myVariableTwo;                    // (with generic argument)
+(List<(int, bool)>)myVariableFour;             // (with generic argument, which is a tuple, not named)
+(List<(Apple, Banana)>)myVariableTwo;          // (with generic argument, which is a tuple, not named)
+(List<(int Aaa, bool Bbb)>)myVariableThree;    // (with generic argument, which is a tuple, is named)
+(List<(Apple Aaa, Banana Bbb)>)myVariableFour; // (with generic argument, which is a tuple, is named)
 
 return (aaa, bbb, ccc) => 2; // Lambda Function with implicitly typed parameters, expression body
 
