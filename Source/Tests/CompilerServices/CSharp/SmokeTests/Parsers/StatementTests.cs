@@ -423,6 +423,19 @@ finally
     }
     
     [Fact]
+    public void AmbiguousParenthesizedExpressionNode_IdentifierType_Transforms_To_ExplicitCast_GenericArgs_Are_TupleTypeClauseNode()
+    {
+    	// var test = new Test(@"var myVariable = 2; (List<(int, bool)>)myVariable;");
+    	var test = new Test(@"(List<(int, bool)>);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var explicitCastNode = (ExplicitCastNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ExplicitCastNode, explicitCastNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void AmbiguousParenthesizedExpressionNode_With_GenericArguments_Transforms_To_ExplicitCast()
     {
     	var test = new Test(@"(List<bool>)");
