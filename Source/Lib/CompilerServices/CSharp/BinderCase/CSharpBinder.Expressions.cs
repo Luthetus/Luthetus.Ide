@@ -249,6 +249,11 @@ public partial class CSharpBinder
 		
 		if (token.SyntaxKind == SyntaxKind.CommaToken)
 		{
+			Console.WriteLine($"ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression: {ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression}");
+		
+			if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression)
+				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
+		
 			parserModel.ExpressionList.Add((SyntaxKind.CommaToken, ambiguousParenthesizedExpressionNode));
 			return EmptyExpressionNode.Empty;
 		}
@@ -286,6 +291,12 @@ public partial class CSharpBinder
 				
 				if (ambiguousParenthesizedExpressionNode.NodeList.Count > 1)
 				{
+					if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression ||
+						ambiguousParenthesizedExpressionNode.NodeList.All(node => node.SyntaxKind == SyntaxKind.TypeClauseNode))
+					{
+						return AmbiguousParenthesizedExpressionTransformTo_TypeClauseNode(ambiguousParenthesizedExpressionNode, token, compilationUnit, ref parserModel);
+					}
+					
 					return AmbiguousParenthesizedExpressionTransformTo_TupleExpressionNode(ambiguousParenthesizedExpressionNode, expressionSecondary: null, compilationUnit, ref parserModel);
 				}
 				else if (ambiguousParenthesizedExpressionNode.NodeList.Count == 1 &&

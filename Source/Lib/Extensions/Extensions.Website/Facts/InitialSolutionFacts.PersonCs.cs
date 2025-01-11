@@ -191,18 +191,27 @@ public partial class Counter : ComponentBase
 }
 
 // Value Tuple TypeClauseNode
-(int, bool) myVariableOne;         // (not named)
-(int Aaa, bool Bbb) myVariableTwo; // (is named)
+(int, bool) myVariableOne;              // (not named)
+(Apple, Banana) myVariableTwo;          // (not named)
+(int Aaa, bool Bbb) myVariableThree;    // (is named)
+(Apple Aaa, Banana Bbb) myVariableFour; // (is named)
 
 // Value Tuple TypeClauseNode as a generic argument
-List<(int, bool)> myListOne;         // (not named)
-List<(int Aaa, bool Bbb)> myListTwo; // (is named)
+List<(int, bool)> myListOne;              // (not named)
+List<(Apple, Banana)> myListTwo;          // (not named)
+List<(int Aaa, bool Bbb)> myListThree;    // (is named)
+List<(Apple Aaa, Banana Bbb)> myListFour; // (is named)
 
 // Explicit cast
-(List)myVariableOne;                      // (no generic argument)
-(List<int>)myVariableTwo;                 // (with generic argument)
-(List<(int, bool)>)myVariableTwo;         // (with generic argument, which is a tuple, not named)
-(List<(int Aaa, bool Bbb)>)myVariableTwo; // (with generic argument, which is a tuple, is named)
+(int)myVariableOne;                            // (no generic argument)
+(Apple)myVariableOne;                          // (no generic argument)
+(GenericParametersListingNode?)null;           // (nullable)
+(List<int>)myVariableThree;                    // (with generic argument)
+(List<Apple>)myVariableTwo;                    // (with generic argument)
+(List<(int, bool)>)myVariableFour;             // (with generic argument, which is a tuple, not named)
+(List<(Apple, Banana)>)myVariableTwo;          // (with generic argument, which is a tuple, not named)
+(List<(int Aaa, bool Bbb)>)myVariableThree;    // (with generic argument, which is a tuple, is named)
+(List<(Apple Aaa, Banana Bbb)>)myVariableFour; // (with generic argument, which is a tuple, is named)
 
 return (aaa, bbb, ccc) => 2; // Lambda Function with implicitly typed parameters, expression body
 

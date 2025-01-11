@@ -448,15 +448,27 @@ finally
     }
     
     [Fact]
-    public void AmbiguousParenthesizedExpressionNode_Transforms_To_TypeClauseNode()
+    public void AmbiguousParenthesizedExpressionNode_KeywordTypes_Transforms_To_TypeClauseNode()
     {
     	var test = new Test(@"(int, bool)");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
 		
-		var ambiguousParenthesizedExpressionNode = (AmbiguousParenthesizedExpressionNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal(SyntaxKind.AmbiguousParenthesizedExpressionNode, ambiguousParenthesizedExpressionNode.SyntaxKind);
+		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_IdentifierTypes_Transforms_To_TypeClauseNode()
+    {
+    	var test = new Test(@"(Apple, Banana)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var typeClauseNode = (TypeClauseNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.TypeClauseNode, typeClauseNode.SyntaxKind);
     }
     
     [Fact]
@@ -556,7 +568,7 @@ finally
     }
     
     [Fact]
-    public void AmbiguousParenthesizedExpressionNode_As_GenericArgument_NoName()
+    public void AmbiguousParenthesizedExpressionNode_KeywordTypes_As_GenericArgument_NoName()
     {
     	var test = new Test(@"List<(int, bool)> myListOne;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
@@ -568,9 +580,33 @@ finally
     }
     
     [Fact]
-    public void AmbiguousParenthesizedExpressionNode_As_GenericArgument_WithName()
+    public void AmbiguousParenthesizedExpressionNode_IdentifierTypes_As_GenericArgument_NoName()
+    {
+    	var test = new Test(@"List<(Apple, Banana)> myListOne;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_KeywordTypes_As_GenericArgument_WithName()
     {
     	var test = new Test(@"List<(int Aaa, bool Bbb)> myListTwo;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_IdentifierTypes_As_GenericArgument_WithName()
+    {
+    	var test = new Test(@"List<(Apple Aaa, Banana Bbb)> myListTwo;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
