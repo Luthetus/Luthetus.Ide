@@ -523,7 +523,7 @@ finally
     [Fact]
     public void AmbiguousParenthesizedExpressionNode_With_VariableDeclaration_ImplicitType_Transforms_To_LambdaExpressionNode()
     {
-    	var test = new Test(@"(x, y) => 2;");
+    	var test = new Test(@"return (x, y) => 2;");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));

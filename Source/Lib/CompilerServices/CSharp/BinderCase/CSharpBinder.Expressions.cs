@@ -249,7 +249,7 @@ public partial class CSharpBinder
 		
 		if (token.SyntaxKind == SyntaxKind.CommaToken)
 		{
-			Console.WriteLine($"ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression: {ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression}");
+			Console.WriteLine($"aaa ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression: {ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression}");
 		
 			if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression)
 				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
@@ -2276,11 +2276,22 @@ public partial class CSharpBinder
 		{
 			if (ambiguousParenthesizedExpressionNode.NodeList.Count >= 1)
 			{
-				foreach (var nameableToken in ambiguousParenthesizedExpressionNode.NodeList)
+				foreach (var node in ambiguousParenthesizedExpressionNode.NodeList)
 				{
+					ISyntax syntax;
+					
+					if (node.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+						syntax = ((AmbiguousIdentifierExpressionNode)node).Token;
+					else if (node.SyntaxKind == SyntaxKind.TypeClauseNode)
+						syntax = ((TypeClauseNode)node).TypeIdentifierToken;
+					else if (node.SyntaxKind == SyntaxKind.VariableReferenceNode)
+						syntax = ((VariableReferenceNode)node).VariableIdentifierToken;
+					else
+						return new BadExpressionNode(CSharpFacts.Types.Void.ToTypeClause(), ambiguousParenthesizedExpressionNode, node);
+				
 					var variableDeclarationNode = new VariableDeclarationNode(
 				        TypeFacts.Empty.ToTypeClause(),
-				        UtilityApi.ConvertToIdentifierToken(nameableToken, compilationUnit, ref parserModel),
+				        UtilityApi.ConvertToIdentifierToken(syntax, compilationUnit, ref parserModel),
 				        VariableKind.Local,
 				        false);
 				        
