@@ -245,12 +245,8 @@ public partial class CSharpBinder
 	public IExpressionNode AmbiguousParenthesizedMergeToken(
 		AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, ISyntaxToken token, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		Console.WriteLine("aaa AmbiguousParenthesizedMergeToken");
-		
 		if (token.SyntaxKind == SyntaxKind.CommaToken)
 		{
-			Console.WriteLine($"aaa ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression: {ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression}");
-		
 			if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression)
 				parserModel.ParserContextKind = CSharpParserContextKind.ForceStatementExpression;
 		
@@ -259,14 +255,8 @@ public partial class CSharpBinder
 		}
 		else if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)
 		{
-			Console.WriteLine("aaa else if (token.SyntaxKind == SyntaxKind.CloseParenthesisToken)");
-			Console.WriteLine($"aaa ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes: {ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes}");
-			Console.WriteLine($"aaa ambiguousParenthesizedExpressionNode.NodeList.Count: {ambiguousParenthesizedExpressionNode.NodeList.Count}");
-			
 			if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes is null)
 			{
-				Console.WriteLine("aaa if (ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes is null)");
-				
 				var parenthesizedExpressionNode = new ParenthesizedExpressionNode(
 					ambiguousParenthesizedExpressionNode.OpenParenthesisToken,
 					CSharpFacts.Types.Void.ToTypeClause());
@@ -286,9 +276,6 @@ public partial class CSharpBinder
 			}
 			else if (!ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes.Value)
 			{
-				Console.WriteLine("aaa else if (!ambiguousParenthesizedExpressionNode.ShouldMatchVariableDeclarationNodes.Value)");
-				Console.WriteLine($"aaa ambiguousParenthesizedExpressionNode.NodeList[0].SyntaxKind: {ambiguousParenthesizedExpressionNode.NodeList[0].SyntaxKind}");
-				
 				if (ambiguousParenthesizedExpressionNode.NodeList.Count > 1)
 				{
 					if (ambiguousParenthesizedExpressionNode.IsParserContextKindForceStatementExpression ||
@@ -316,8 +303,6 @@ public partial class CSharpBinder
 	public IExpressionNode AmbiguousParenthesizedMergeExpression(
 		AmbiguousParenthesizedExpressionNode ambiguousParenthesizedExpressionNode, IExpressionNode expressionSecondary, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		Console.WriteLine("aaa zAmbiguousParenthesizedMergeExpression");
-	
 		switch (expressionSecondary.SyntaxKind)
 		{
 			case SyntaxKind.VariableDeclarationNode:

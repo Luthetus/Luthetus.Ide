@@ -629,6 +629,33 @@ finally
     }
     
     [Fact]
+    public void AmbiguousParenthesizedExpressionNode_Inside_If_Does_Not_Break_Scope()
+    {
+    	// If statement erroneously has the semicolon as its closing scope.
+    	//
+    	// As well, the function has its closing scope as what
+    	// should be the closing brace of the if statement's scope.
+    	//
+    	// What should be the opening brace of the if statement's scope
+    	// is not the delimiter of any scope.
+    
+    	var test = new Test(@"public IExpressionNode HandleBinaryOperator()
+{
+	if ((aaa, 2))
+	{
+		;
+	}
+}
+;");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+    }
+    
+    [Fact]
     public void LambdaExpressionNode_NoParenthesisForArguments()
     {
     	// Wrapping the lambda expression in a ParenthesizedExpressionNode in order
