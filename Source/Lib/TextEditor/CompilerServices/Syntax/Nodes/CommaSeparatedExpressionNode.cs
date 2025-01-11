@@ -16,6 +16,7 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// <see cref="TupleExpressionNode"/>, or <see cref="LambdaExpressionNode"/>
 /// (by checking the tokens that follow the close parenthesis token).
 /// </summary>
+[Obsolete($"Use '{nameof(AmbiguousParenthesizedExpressionNode)}'")]
 public sealed class CommaSeparatedExpressionNode : IExpressionNode
 {
     public CommaSeparatedExpressionNode()

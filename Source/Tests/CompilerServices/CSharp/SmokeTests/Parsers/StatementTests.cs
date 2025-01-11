@@ -629,6 +629,26 @@ finally
     }
     
     [Fact]
+    public void AmbiguousParenthesizedExpressionNode_ValueTuple()
+    {
+    	var test = new Test(@"(aaa, 2);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
+    public void AmbiguousParenthesizedExpressionNode_ValueTuple_Leading_Literal()
+    {
+    	var test = new Test(@"(2, aaa);");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+		throw new NotImplementedException();
+    }
+    
+    [Fact]
     public void AmbiguousParenthesizedExpressionNode_Inside_If_Does_Not_Break_Scope()
     {
     	// If statement erroneously has the semicolon as its closing scope.
@@ -645,14 +665,11 @@ finally
 	{
 		;
 	}
-}
-;");
+}");
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
 		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
-		
-		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList().Single();
-		Assert.Equal(SyntaxKind.VariableDeclarationNode, variableDeclarationNode.SyntaxKind);
+		throw new NotImplementedException();
     }
     
     [Fact]
