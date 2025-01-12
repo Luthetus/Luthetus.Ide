@@ -508,17 +508,9 @@ public static class ParseTokens
 
             parserModel.CurrentCodeBlockBuilder = new(parserModel.CurrentCodeBlockBuilder, nextCodeBlockOwner);
         }
-        else if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null &&
-        		 !parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
+        else if (!parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
         {
-        	var pendingChild = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
-        
-        	compilationUnit.Binder.OpenScope(pendingChild, CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, compilationUnit);
-        	
-			parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: pendingChild);
-			pendingChild.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
-			compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(pendingChild, compilationUnit, ref parserModel);
-			
+			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 	        compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
         }
     }
