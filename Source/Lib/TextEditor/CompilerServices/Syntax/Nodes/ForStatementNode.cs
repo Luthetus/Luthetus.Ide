@@ -18,6 +18,8 @@ public sealed class ForStatementNode : ICodeBlockOwner
         StatementDelimiterToken conditionStatementDelimiterToken,
         IExpressionNode updationExpressionNode,
         CloseParenthesisToken closeParenthesisToken,
+        int startInclusivePreliminaryIndex,
+        int endExclusivePreliminaryIndex,
         CodeBlockNode? codeBlockNode)
     {
         KeywordToken = keywordToken;
@@ -28,6 +30,8 @@ public sealed class ForStatementNode : ICodeBlockOwner
         ConditionStatementDelimiterToken = conditionStatementDelimiterToken;
         UpdationExpressionNode = updationExpressionNode;
         CloseParenthesisToken = closeParenthesisToken;
+        StartInclusivePreliminaryIndex = startInclusivePreliminaryIndex;
+        EndExclusivePreliminaryIndex = endExclusivePreliminaryIndex;
         CodeBlockNode = codeBlockNode;
     }
 
@@ -42,6 +46,8 @@ public sealed class ForStatementNode : ICodeBlockOwner
     public StatementDelimiterToken ConditionStatementDelimiterToken { get; }
     public IExpressionNode UpdationExpressionNode { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
+    public int StartInclusivePreliminaryIndex { get; }
+    public int EndExclusivePreliminaryIndex { get; }
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 

@@ -201,6 +201,25 @@ public class StatementTests
     }
     
     [Fact]
+    public void ForStatementNode_PreliminaryNodeIndices()
+    {
+    	var test = new Test(
+@"
+for (int i = 0; i < list.Count; i++)
+{
+	Console.WriteLine(list[i]);
+}
+");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		var forStatementNode = (ForStatementNode)topCodeBlock.GetChildList().Single();
+		Assert.Equal(SyntaxKind.ForStatementNode, forStatementNode.SyntaxKind);
+		
+		Assert.Equal(2, forStatementNode.StartInclusivePreliminaryIndex);
+		Assert.Equal(15, forStatementNode.EndExclusivePreliminaryIndex);
+    }
+    
+    [Fact]
     public void IfStatementNode_Test()
     {
     	var test = new Test(@"if (false) { }");
