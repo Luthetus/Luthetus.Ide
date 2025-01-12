@@ -48,10 +48,10 @@ public sealed class ForStatementNode : ICodeBlockOwner
     public CloseParenthesisToken CloseParenthesisToken { get; }
     
     /// <summary>
-    /// public MyClass(string abc) : base(abc) { /**/ }
+    /// for (int i = 0; i < list.Count; i++) { /*...*/ }
     ///
-    /// This is marks the tokens inside the 'base(abc)' invocation.
-    /// In this case that would be 'abc' only.
+    /// This is marks the tokens inside the '(int i = 0; i < list.Count; i++)'.
+    /// In this case that would be 'int i = 0; i < list.Count; i++' (does not include parenthesis).
     /// </summary>
     public int StartInclusivePreliminaryIndex { get; }
     /// <inheritdoc cref="StartInclusivePreliminaryIndex"/>

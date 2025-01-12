@@ -36,10 +36,10 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     public ConstraintNode? ConstraintNode { get; }
     
     /// <summary>
-    /// public MyClass(string abc) : base(abc) { /**/ }
+    /// public MyClass(string abc) : base(abc) { /*...*/ }
     ///
     /// This is marks the tokens inside the 'base(abc)' invocation.
-    /// In this case that would be 'abc' only.
+    /// In this case that would be 'abc' only (does not include parenthesis).
     /// </summary>
     public int StartInclusivePreliminaryIndex { get; set; }
     /// <inheritdoc cref="StartInclusivePreliminaryIndex"/>
