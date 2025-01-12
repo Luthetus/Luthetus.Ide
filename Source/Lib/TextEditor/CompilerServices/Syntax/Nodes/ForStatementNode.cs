@@ -56,6 +56,7 @@ public sealed class ForStatementNode : ICodeBlockOwner
     public int StartInclusivePreliminaryIndex { get; }
     /// <inheritdoc cref="StartInclusivePreliminaryIndex"/>
     public int EndExclusivePreliminaryIndex { get; }
+    public bool HasParsedPreliminaryTokens { get; set; }
     
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
@@ -64,8 +65,6 @@ public sealed class ForStatementNode : ICodeBlockOwner
 	public CloseBraceToken CloseBraceToken { get; private set; }
 	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
 	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
-
-	
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 

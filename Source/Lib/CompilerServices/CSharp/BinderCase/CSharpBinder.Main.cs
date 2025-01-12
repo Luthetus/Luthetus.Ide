@@ -805,7 +805,7 @@ public partial class CSharpBinder : IBinder
 			if (outBuilder is not null)
 			{
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
-				outBuilder.InnerPendingCodeBlockOwner = null;
+				outBuilder.SetInnerPendingCodeBlockOwner(null);
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
@@ -1918,6 +1918,26 @@ public partial class CSharpBinder : IBinder
     		
     		if (tryStatementCatchNode.VariableDeclarationNode is not null)
 	    		compilationUnit.Binder.BindVariableDeclarationNode(tryStatementCatchNode.VariableDeclarationNode, compilationUnit);
+    	}
+    	else if (codeBlockOwner.SyntaxKind == SyntaxKind.ForStatementNode)
+    	{
+    		/*var forStatementNode = (ForStatementNode)codeBlockOwner;
+    		
+    		if (!forStatementNode.HasParsedPreliminaryTokens)
+    		{
+    			forStatementNode.HasParsedPreliminaryTokens = true;
+    			
+    			if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+				{
+					deferredChildScope.PrepareMainParserLoop(closeBraceTokenIndex, compilationUnit, ref parserModel);
+					return;
+				}
+		
+				if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
+					parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+				
+		        compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
+    		}*/
     	}
     }
 }

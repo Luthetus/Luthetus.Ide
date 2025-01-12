@@ -2022,7 +2022,7 @@ public partial class CSharpBinder
 	
 	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lambdaExpressionNode;
+		parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(lambdaExpressionNode);
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
 		var nextCodeBlockOwner = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;

@@ -49,11 +49,16 @@ public class CSharpCodeBlockBuilder
 	/// But, if there is any syntax between the syntax that identifies
 	/// a code block owner, and the actual code block itself, things get more complicated.
     /// </summary>
-    public ICodeBlockOwner? InnerPendingCodeBlockOwner { get; set; }
+    public ICodeBlockOwner? InnerPendingCodeBlockOwner { get; private set; }
     
     public Queue<CSharpDeferredChildScope> ParseChildScopeQueue { get; set; } = new();
 	public bool PermitInnerPendingCodeBlockOwnerToBeParsed { get; set; }
 	public int? DequeuedIndexForChildList { get; set; }
+
+	public void SetInnerPendingCodeBlockOwner(ICodeBlockOwner? innerPendingCodeBlockOwner)
+	{
+		InnerPendingCodeBlockOwner = innerPendingCodeBlockOwner;
+	}
 
     public CodeBlockNode Build()
     {

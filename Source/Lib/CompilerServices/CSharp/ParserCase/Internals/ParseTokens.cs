@@ -253,7 +253,7 @@ public static class ParseTokens
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 
             parserModel.SyntaxStack.Push(typeDefinitionNode);
-            parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
+            parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(typeDefinitionNode);
         }
         else
         {
@@ -271,7 +271,7 @@ public static class ParseTokens
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
 			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
-        	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = arbitraryCodeBlockNode;
+        	parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(arbitraryCodeBlockNode);
 		}
 		
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
@@ -482,6 +482,8 @@ public static class ParseTokens
 	/// <summary>
 	/// StatementDelimiterToken is passed in to the method because it is a protected token,
 	/// and is preferably consumed from the main loop so it can be more easily tracked.
+	///
+	/// TODO: Propagate a "single statement body" delimiter to the parents if they as well are "single statement body".
 	/// </summary>
     public static void ParseStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
