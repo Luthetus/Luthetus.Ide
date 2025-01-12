@@ -35,26 +35,21 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     public CodeBlockNode? CodeBlockNode { get; private set; }
     public ConstraintNode? ConstraintNode { get; }
     
+    /// <summary>
+    /// public MyClass(string abc) : base(abc) { /**/ }
+    ///
+    /// This is marks the tokens inside the 'base(abc)' invocation.
+    /// In this case that would be 'abc' only.
+    /// </summary>
+    public int StartInclusivePreliminaryIndex { get; set; }
+    /// <inheritdoc cref="StartInclusivePreliminaryIndex"/>
+    public int EndExclusivePreliminaryIndex { get; set; }
+    
     // (2024-11-08)
     public OpenBraceToken OpenBraceToken { get; private set; }
 	public CloseBraceToken CloseBraceToken { get; private set; }
 	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
 	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
-    
-    /// <summary>
-    /// public MyConstructor(string firstName)
-    /// 	: base(firstName)
-    /// {
-    /// }
-    ///
-    /// This stores the indices of tokens that deliminate the parameters to the 'base()' invocation.
-    /// The reason for this is the invocation needs to have 'string firstName' in scope.
-    /// But, 'string firstName' doesn't come into scope until the '{' token.
-    /// 
-    /// So, remember where the parameters to the 'base()' invocation were,
-    /// then later when 'string firstName' is in scope, parse the parameters.
-    /// </summary>
-    public (int OpenParenthesisIndex,  int CloseParenthesisIndex)? OtherConstructorInvocation { get; set; }
 
 	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Down;
 

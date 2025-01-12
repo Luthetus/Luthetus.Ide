@@ -161,6 +161,24 @@ public class StatementTests
     }
     
     [Fact]
+    public void ConstructorDefinitionNode_PreliminaryIndices()
+    {
+    	var test = new Test(@"public class Aaa { public Aaa(string firstName) :base(firstName) { } }");
+        
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		WriteChildrenIndentedRecursive(topCodeBlock);
+		
+		var typeDefinitionNode = (TypeDefinitionNode)topCodeBlock.GetChildList()[0];
+		
+		var constructorDefinitionNode = (ConstructorDefinitionNode)typeDefinitionNode.CodeBlockNode.GetChildList()[1];
+		Assert.Equal(SyntaxKind.ConstructorDefinitionNode, constructorDefinitionNode.SyntaxKind);
+		
+		Assert.Equal(13, constructorDefinitionNode.StartInclusivePreliminaryIndex);
+		Assert.Equal(14, constructorDefinitionNode.EndExclusivePreliminaryIndex);
+    }
+    
+    [Fact]
     public void ArbitraryCodeBlockNode_Test()
     {
     	var test = new Test(@"{ }");

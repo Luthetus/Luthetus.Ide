@@ -104,20 +104,48 @@ public class ParseFunctions
         		keywordToken = (KeywordToken)parserModel.TokenWalker.Match(SyntaxKind.BaseTokenKeyword);
         	else
         		keywordToken = default;
+        		
+        	var openParenthesisToken = (OpenParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
+    	
+	    	var startInclusivePreliminaryIndex = parserModel.TokenWalker.Index;
+	    	
+	    	var matchBraces = 0;
+	    	var matchParenthesis = 1;
+	    	
+	    	while (!parserModel.TokenWalker.IsEof)
+	    	{
+	    		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+	    		{
+	    			matchBraces++;
+	    		}
+	    		else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+	    		{
+	    			matchBraces--;
+	    			
+	    			if (matchBraces == -1)
+	    				break;
+	    		}
+	    		else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenParenthesisToken)
+	    		{
+	    			matchParenthesis++;
+	    		}
+	    		else if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+	    		{
+	    			matchParenthesis--;
+	    			
+	    			if (matchParenthesis == 0)
+	    				break;
+	    		}
+	    	
+	    		_ = parserModel.TokenWalker.Consume();
+	    	}
+	    	
+	    	var endExclusivePreliminaryIndex = parserModel.TokenWalker.Index;
+	        
+			var closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
         	
-        	while (!parserModel.TokenWalker.IsEof)
-            {
-            	// TODO: This won't work because an OpenBraceToken can appear inside the "other constructor invocation"...
-            	// 	  ...If one were to skip over this syntax for the time being, it should be done by counting the
-            	//       matched OpenParenthesisToken and CloseParenthesisToken until it evens out.
-                if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken ||
-                    parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.EqualsToken)
-                {
-                    break;
-                }
-
-                _ = parserModel.TokenWalker.Consume();
-            }
+        	constructorDefinitionNode.StartInclusivePreliminaryIndex = startInclusivePreliminaryIndex;
+        	constructorDefinitionNode.EndExclusivePreliminaryIndex = endExclusivePreliminaryIndex;
         }
     }
 

@@ -46,8 +46,17 @@ public sealed class ForStatementNode : ICodeBlockOwner
     public StatementDelimiterToken ConditionStatementDelimiterToken { get; }
     public IExpressionNode UpdationExpressionNode { get; }
     public CloseParenthesisToken CloseParenthesisToken { get; }
+    
+    /// <summary>
+    /// public MyClass(string abc) : base(abc) { /**/ }
+    ///
+    /// This is marks the tokens inside the 'base(abc)' invocation.
+    /// In this case that would be 'abc' only.
+    /// </summary>
     public int StartInclusivePreliminaryIndex { get; }
+    /// <inheritdoc cref="StartInclusivePreliminaryIndex"/>
     public int EndExclusivePreliminaryIndex { get; }
+    
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
 
