@@ -253,7 +253,7 @@ public static class ParseTokens
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 
             parserModel.SyntaxStack.Push(typeDefinitionNode);
-            parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(typeDefinitionNode);
+            parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(typeDefinitionNode, compilationUnit, ref parserModel);
         }
         else
         {
@@ -271,7 +271,7 @@ public static class ParseTokens
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
 			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
-        	parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(arbitraryCodeBlockNode);
+        	parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(arbitraryCodeBlockNode, compilationUnit, ref parserModel);
 		}
 		
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);

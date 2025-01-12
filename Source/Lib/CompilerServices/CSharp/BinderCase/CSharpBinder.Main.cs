@@ -805,7 +805,7 @@ public partial class CSharpBinder : IBinder
 			if (outBuilder is not null)
 			{
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
-				outBuilder.SetInnerPendingCodeBlockOwner(null);
+				outBuilder.SetInnerPendingCodeBlockOwner(null, compilationUnit, ref parserModel);
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&

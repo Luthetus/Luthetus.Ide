@@ -47,7 +47,7 @@ public class ParseFunctions
 
         compilationUnit.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit);
         parserModel.SyntaxStack.Push(functionDefinitionNode);
-        parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(functionDefinitionNode);
+        parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(functionDefinitionNode, compilationUnit, ref parserModel);
 
         if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
             typeDefinitionNode.IsInterface)
@@ -88,7 +88,7 @@ public class ParseFunctions
 
         compilationUnit.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit);
         parserModel.SyntaxStack.Push(constructorDefinitionNode);
-        parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(constructorDefinitionNode);
+        parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(constructorDefinitionNode, compilationUnit, ref parserModel);
 
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {
