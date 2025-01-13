@@ -254,6 +254,11 @@ public static class ParseTokens
 
             parserModel.SyntaxStack.Push(typeDefinitionNode);
             parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
+            
+            // (2025-01-13)
+			// ========================================================
+			// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+			//   should all be handled by the same method.
         }
         else
         {
@@ -267,6 +272,11 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	// (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
+    
     	if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
@@ -485,6 +495,11 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	// (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
+    
     	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
         	var namespaceStatementNode = (NamespaceStatementNode)parserModel.SyntaxStack.Pop();

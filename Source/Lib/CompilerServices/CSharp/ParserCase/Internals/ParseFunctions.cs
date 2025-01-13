@@ -48,6 +48,23 @@ public class ParseFunctions
         compilationUnit.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit);
         parserModel.SyntaxStack.Push(functionDefinitionNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = functionDefinitionNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		//
+		// - FunctionDefinitionNode checks encompassing CodeBlockOwner, if it is an interface. 
+		//
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
+		//
+		// - PermitInnerPendingCodeBlockOwnerToBeParsed needs to move
+		//   to the ICodeBlockOwner itself.
+		// 
+		// - 'parserModel.SyntaxStack.Push(PendingCodeBlockOwner);' is unnecessary because
+		//   the CodeBlockBuilder and Scope will be active.
+		//
+		// - '...InnerPendingCodeBlockOwner = PendingCodeBlockOwner;' needs to change
+		//   to 'set active code block builder' and 'set active scope'.
 
         if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is TypeDefinitionNode typeDefinitionNode &&
             typeDefinitionNode.IsInterface)
@@ -89,6 +106,21 @@ public class ParseFunctions
         compilationUnit.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit);
         parserModel.SyntaxStack.Push(constructorDefinitionNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = constructorDefinitionNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// 
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
+		//
+		// - PermitInnerPendingCodeBlockOwnerToBeParsed needs to move
+		//   to the ICodeBlockOwner itself.
+		// 
+		// - 'parserModel.SyntaxStack.Push(PendingCodeBlockOwner);' is unnecessary because
+		//   the CodeBlockBuilder and Scope will be active.
+		//
+		// - '...InnerPendingCodeBlockOwner = PendingCodeBlockOwner;' needs to change
+		//   to 'set active code block builder' and 'set active scope'.
 
         if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.ColonToken)
         {

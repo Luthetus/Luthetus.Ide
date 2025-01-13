@@ -37,5 +37,20 @@ public class CSharpDeferredChildScope
 		
 		parserModel.SyntaxStack.Push(PendingCodeBlockOwner);
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = PendingCodeBlockOwner;
+		
+		// (2025-01-13)
+		// ========================================================
+		// 
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
+		//
+		// - PermitInnerPendingCodeBlockOwnerToBeParsed needs to move
+		//   to the ICodeBlockOwner itself.
+		// 
+		// - 'parserModel.SyntaxStack.Push(PendingCodeBlockOwner);' is unnecessary because
+		//   the CodeBlockBuilder and Scope will be active.
+		//
+		// - '...InnerPendingCodeBlockOwner = PendingCodeBlockOwner;' needs to change
+		//   to 'set active code block builder' and 'set active scope'.
 	}
 }

@@ -2025,6 +2025,11 @@ public partial class CSharpBinder
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lambdaExpressionNode;
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
+		// (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
+		
 		var nextCodeBlockOwner = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 		var nextReturnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
 

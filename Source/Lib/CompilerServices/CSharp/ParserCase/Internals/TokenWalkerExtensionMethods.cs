@@ -22,6 +22,11 @@ internal static class TokenWalkerExtensionMethods
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
 		var pendingCodeBlockOwner = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
+		
+		// (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
 
 		var openTokenIndex = tokenWalker.Index - 1;
 

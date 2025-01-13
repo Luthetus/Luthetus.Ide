@@ -807,6 +807,11 @@ public partial class CSharpBinder : IBinder
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
 				outBuilder.InnerPendingCodeBlockOwner = null;
 				
+				// (2025-01-13)
+				// ========================================================
+				// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+				//   should all be handled by the same method.
+				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementFinallyNode)

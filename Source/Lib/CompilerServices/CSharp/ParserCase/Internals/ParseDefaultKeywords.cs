@@ -90,6 +90,11 @@ public class ParseDefaultKeywords
         	tryStatementNode.SetTryStatementCatchNode(catchNode);
         	parserModel.SyntaxStack.Push(catchNode);
         	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = catchNode;
+        	
+        	// (2025-01-13)
+			// ========================================================
+			// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+			//   should all be handled by the same method.
     	}
     }
 
@@ -149,6 +154,11 @@ public class ParseDefaultKeywords
 		parserModel.SyntaxStack.Push(doWhileStatementNode);
 		parserModel.SyntaxStack.Push(doWhileStatementNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = doWhileStatementNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
     }
 
     public static void HandleDoubleTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -229,6 +239,13 @@ public class ParseDefaultKeywords
 	    	tryStatementNode.SetTryStatementFinallyNode(finallyNode);
 	    	parserModel.SyntaxStack.Push(finallyNode);
         	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = finallyNode;
+        	
+        	// (2025-01-13)
+			// ========================================================
+			// - 'try', 'catch', and 'finally' make use of the 'parserModel.SyntaxStack'.
+			// 
+			// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+			//   should all be handled by the same method.
     	}
     }
 
@@ -345,6 +362,11 @@ public class ParseDefaultKeywords
 	        
         parserModel.SyntaxStack.Push(forStatementNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = forStatementNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
     }
 
     public static void HandleForeachTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -379,6 +401,11 @@ public class ParseDefaultKeywords
 	        
         parserModel.SyntaxStack.Push(foreachStatementNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = foreachStatementNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
     }
 
     public static void HandleGotoTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -426,6 +453,11 @@ public class ParseDefaultKeywords
 	        
         parserModel.SyntaxStack.Push(lockStatementNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lockStatementNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
     }
 
     public static void HandleLongTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -524,6 +556,11 @@ public class ParseDefaultKeywords
 	        
         parserModel.SyntaxStack.Push(switchStatementNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = switchStatementNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
     }
 
     public static void HandleThisTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -564,6 +601,11 @@ public class ParseDefaultKeywords
 		
 		parserModel.SyntaxStack.Push(tryStatementTryNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = tryStatementTryNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
     }
 
     public static void HandleTypeofTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -637,6 +679,11 @@ public class ParseDefaultKeywords
 		        
 	        parserModel.SyntaxStack.Push(whileStatementNode);
         	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = whileStatementNode;
+        	
+        	// (2025-01-13)
+			// ========================================================
+			// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+			//   should all be handled by the same method.
 		}
     }
 
@@ -730,6 +777,11 @@ public class ParseDefaultKeywords
         var boundIfStatementNode = compilationUnit.Binder.BindIfStatementNode(ifTokenKeyword, expression);
         parserModel.SyntaxStack.Push(boundIfStatementNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = boundIfStatementNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
     }
 
     public static void HandleUsingTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -881,6 +933,11 @@ public class ParseDefaultKeywords
         parserModel.SyntaxStack.Push(typeDefinitionNode);
         parserModel.StatementBuilder.ChildList.Add(typeDefinitionNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
     }
 
     public static void HandleClassTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -911,6 +968,11 @@ public class ParseDefaultKeywords
         
         parserModel.SyntaxStack.Push(namespaceStatementNode);
         parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = namespaceStatementNode;
+        
+        // (2025-01-13)
+		// ========================================================
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
+		//   should all be handled by the same method.
     }
 
     public static void HandleReturnTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

@@ -25,32 +25,6 @@ public class CSharpCodeBlockBuilder
     /// </summary>
     public ICodeBlockOwner? CodeBlockOwner { get; }
     
-    /// <summary>
-    /// Method with generic type constraint:
-    /// ````public void M<T>(T? item) where T : struct { } // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/where-generic-type-constraint
-	///
-	/// Any syntax that goes from parentheses to OpenBraceToken / CloseBraceToken to define a scope:
-	/// ````foreach (var item in list)
-    /// ````{
-	/// ````    Console.WriteLine(item);
-	/// ````}
-	///
-	/// Any syntax that goes from parenthesis to a "single statement body" deliminated by StatementDelimiterToken:
-	/// ````foreach (var item in list)
-	/// ````    Console.WriteLine(item);
-	///
-	/// The idea is that syntax which defines a scope does not necessarily flow
-	/// in a simple way.
-	///
-	/// "Any syntax that goes from parentheses to OpenBraceToken / CloseBraceToken to define a scope"
-	/// is a fairly simple case.
-	/// One could go immediately from the CloseParenthesisToken to the OpenBraceToken.
-	///
-	/// But, if there is any syntax between the syntax that identifies
-	/// a code block owner, and the actual code block itself, things get more complicated.
-    /// </summary>
-    public ICodeBlockOwner? InnerPendingCodeBlockOwner { get; set; }
-    
     public Queue<CSharpDeferredChildScope> ParseChildScopeQueue { get; set; } = new();
 	public bool PermitInnerPendingCodeBlockOwnerToBeParsed { get; set; }
 	public int? DequeuedIndexForChildList { get; set; }
