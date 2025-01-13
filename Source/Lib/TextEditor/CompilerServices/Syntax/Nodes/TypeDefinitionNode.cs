@@ -72,6 +72,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     /// </summary>
     public TypeClauseNode? InheritedTypeClauseNode { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
+	public int ScopeIndexKey { get; set; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
 
 	// (2024-11-08)

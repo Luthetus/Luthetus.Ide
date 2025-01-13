@@ -253,7 +253,8 @@ public static class ParseTokens
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 
             parserModel.SyntaxStack.Push(typeDefinitionNode);
-            parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(typeDefinitionNode, compilationUnit, ref parserModel);
+            parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(
+            	createScope: false, typeDefinitionNode, compilationUnit, ref parserModel);
         }
         else
         {
@@ -271,7 +272,12 @@ public static class ParseTokens
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
 			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
-        	parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(arbitraryCodeBlockNode, compilationUnit, ref parserModel);
+        	parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(
+        		createScope: false, arbitraryCodeBlockNode, compilationUnit, ref parserModel);
+		}
+		
+		if (parserModel.CurrentCodeBlockBuilder.ScopeIndexKey)
+		{
 		}
 		
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
@@ -508,10 +514,15 @@ public static class ParseTokens
 
             parserModel.CurrentCodeBlockBuilder = new(parserModel.CurrentCodeBlockBuilder, nextCodeBlockOwner);
         }
-        else if (!parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
+        else if (parserModel.CurrentCodeBlockBuilder is not null &&
+        		 parserModel.CurrentCodeBlockBuilder.StatementDelimiterCanCloseScope)
         {
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
-	        compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
+        	if (!parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.CloseBraceToken.ConstructorWasInvoked &&
+        		!parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.StatementDelimiterToken.ConstructorWasInvoked)
+        	{
+	        	parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		        compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
+		    }
         }
     }
 

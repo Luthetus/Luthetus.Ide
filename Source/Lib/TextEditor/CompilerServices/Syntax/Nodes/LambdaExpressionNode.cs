@@ -54,6 +54,7 @@ public sealed class LambdaExpressionNode : IExpressionNode, ICodeBlockOwner
 	public CloseBraceToken CloseBraceToken { get; private set; }
 	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
+	public int ScopeIndexKey { get; set; }
 	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
 	public TypeClauseNode ReturnTypeClauseNode { get; }
 	

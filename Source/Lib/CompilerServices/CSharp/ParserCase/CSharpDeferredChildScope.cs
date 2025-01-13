@@ -36,6 +36,7 @@ public class CSharpDeferredChildScope
 			TokenIndexToRestore);
 		
 		parserModel.SyntaxStack.Push(PendingCodeBlockOwner);
-		parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(PendingCodeBlockOwner, compilationUnit, ref parserModel);
+		parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(
+			createScope: false, PendingCodeBlockOwner, compilationUnit, ref parserModel);
 	}
 }

@@ -732,6 +732,8 @@ public partial class CSharpBinder : IBinder
 		    textSpan.StartingIndexInclusive,
 		    endingIndexExclusive: null);
 
+		codeBlockOwner.ScopeIndexKey = scope.IndexKey;
+
         compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
         compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
     }
@@ -805,7 +807,8 @@ public partial class CSharpBinder : IBinder
 			if (outBuilder is not null)
 			{
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
-				outBuilder.SetInnerPendingCodeBlockOwner(null, compilationUnit, ref parserModel);
+				outBuilder.SetInnerPendingCodeBlockOwner(
+					createScope: false, null, compilationUnit, ref parserModel);
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&

@@ -24,6 +24,7 @@ public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
 	public CloseBraceToken CloseBraceToken { get; private set; }
 	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
+	public int ScopeIndexKey { get; set; }
 	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
 
 	public ScopeDirectionKind ScopeDirectionKind => ParentCodeBlockOwner?.ScopeDirectionKind ?? ScopeDirectionKind.Down;

@@ -14,6 +14,7 @@ public interface ICodeBlockOwner : ISyntaxNode
 	public StatementDelimiterToken StatementDelimiterToken { get; }
 	public CodeBlockNode? CodeBlockNode { get; }
 	public bool IsSingleStatementBody { get; }
+	public int ScopeIndexKey { get; set; }
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
 	

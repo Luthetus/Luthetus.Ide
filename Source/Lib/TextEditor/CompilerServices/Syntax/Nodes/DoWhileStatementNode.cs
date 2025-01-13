@@ -33,6 +33,7 @@ public sealed class DoWhileStatementNode : ICodeBlockOwner
     public KeywordToken DoKeywordToken { get; }
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
+	public int ScopeIndexKey { get; set; }
     public KeywordToken WhileKeywordToken { get; private set; }
     public OpenParenthesisToken OpenParenthesisToken { get; private set; }
     public IExpressionNode? ExpressionNode { get; private set; }

@@ -41,6 +41,7 @@ public sealed class FunctionDefinitionNode : ICodeBlockOwner
     public ConstraintNode? ConstraintNode { get; private set; }
     public OpenBraceToken OpenBraceToken { get; private set; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
+	public int ScopeIndexKey { get; set; }
 
 	// (2024-11-08)
 	public CloseBraceToken CloseBraceToken { get; private set; }

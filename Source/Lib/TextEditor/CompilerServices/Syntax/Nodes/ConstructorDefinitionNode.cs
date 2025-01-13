@@ -33,6 +33,7 @@ public sealed class ConstructorDefinitionNode : ICodeBlockOwner
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode FunctionArgumentsListingNode { get; }
     public CodeBlockNode? CodeBlockNode { get; private set; }
+	public int ScopeIndexKey { get; set; }
     public ConstraintNode? ConstraintNode { get; }
     
     /// <summary>

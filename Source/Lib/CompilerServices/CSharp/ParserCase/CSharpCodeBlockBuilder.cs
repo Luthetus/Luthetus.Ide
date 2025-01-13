@@ -53,37 +53,45 @@ public class CSharpCodeBlockBuilder
     /// </summary>
     public ICodeBlockOwner? InnerPendingCodeBlockOwner { get; private set; }
     
+    public bool StatementDelimiterCanCloseScope { get; set; }
+    
     public Queue<CSharpDeferredChildScope> ParseChildScopeQueue { get; set; } = new();
 	public bool PermitInnerPendingCodeBlockOwnerToBeParsed { get; set; }
 	public int? DequeuedIndexForChildList { get; set; }
 
 	public void SetInnerPendingCodeBlockOwner(
+		bool createScope,
 		ICodeBlockOwner? innerPendingCodeBlockOwner,
 		CSharpCompilationUnit compilationUnit,
 		ref CSharpParserModel parserModel)
 	{
 		InnerPendingCodeBlockOwner = innerPendingCodeBlockOwner;
 		
-		// ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
-		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
-	    {
-	    	if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null &&
-	    		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SyntaxKind != SyntaxKind.NamespaceStatementNode &&
-	        	!parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
-	        {
-	        	var pendingChild = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
-	        
-	        	compilationUnit.Binder.OpenScope(pendingChild, CSharpFacts.Types.Void.ToTypeClause(), parserModel.TokenWalker.Current.TextSpan, compilationUnit);
-	        	
-				parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: pendingChild);
-				
-				//pendingChild.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
-				
-				compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(pendingChild, compilationUnit, ref parserModel);
-				
-		        //compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
-	        }
-	    }
+		if (!createScope)
+			return;
+		
+		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			return;
+			
+		if (parserModel.TokenWalker.Previous.SyntaxKind == SyntaxKind.OpenBraceToken ||
+			parserModel.TokenWalker.Next.SyntaxKind == SyntaxKind.OpenBraceToken)
+		{
+			Console.WriteLine(
+				$"{nameof(SetInnerPendingCodeBlockOwner)} {InnerPendingCodeBlockOwner?.SyntaxKind.ToString() ?? "null"}");
+		}
+	    
+    	if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null &&
+        	!parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
+        {
+        	compilationUnit.Binder.OpenScope(InnerPendingCodeBlockOwner, CSharpFacts.Types.Void.ToTypeClause(), parserModel.TokenWalker.Current.TextSpan, compilationUnit);
+			
+			parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: InnerPendingCodeBlockOwner)
+			{
+				StatementDelimiterCanCloseScope = true
+			};
+			
+			compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(InnerPendingCodeBlockOwner, compilationUnit, ref parserModel);
+        }
 	}
 
     public CodeBlockNode Build()
