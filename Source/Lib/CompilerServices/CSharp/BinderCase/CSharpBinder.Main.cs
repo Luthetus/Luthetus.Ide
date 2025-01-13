@@ -725,17 +725,25 @@ public partial class CSharpBinder : IBinder
         TextEditorTextSpan textSpan,
         CSharpCompilationUnit compilationUnit)
     {
-        var scope = new Scope(
-        	codeBlockOwner,
-        	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
-		    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
-		    textSpan.StartingIndexInclusive,
-		    endingIndexExclusive: null);
-
-		codeBlockOwner.ScopeIndexKey = scope.IndexKey;
-
-        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
-        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+    	// ScopeIndexKey of 0 is the global scope.
+    	if (codeBlockOwner.ScopeIndexKey != 0)
+    	{
+    		compilationUnit.BinderSession.CurrentScopeIndexKey = codeBlockOwner.ScopeIndexKey;
+    	}
+    	else
+    	{
+	        var scope = new Scope(
+	        	codeBlockOwner,
+	        	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
+			    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
+			    textSpan.StartingIndexInclusive,
+			    endingIndexExclusive: null);
+	
+			codeBlockOwner.ScopeIndexKey = scope.IndexKey;
+	
+	        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
+	        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+    	}
     }
 
 	public void AddNamespaceToCurrentScope(string namespaceString, IParserModel parserModel) =>

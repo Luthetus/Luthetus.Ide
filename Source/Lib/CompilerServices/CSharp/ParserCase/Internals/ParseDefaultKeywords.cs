@@ -89,8 +89,7 @@ public class ParseDefaultKeywords
         
         	tryStatementNode.SetTryStatementCatchNode(catchNode);
         	parserModel.SyntaxStack.Push(catchNode);
-        	parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(
-        		createScope: false, catchNode, compilationUnit, ref parserModel);
+        	parserModel.CurrentCodeBlockBuilder.SetNextCodeBlockOwner(catchNode, compilationUnit, ref parserModel);
     	}
     }
 
@@ -149,8 +148,7 @@ public class ParseDefaultKeywords
         // Have to push twice so it is on the stack when the 'while' keyword is parsed.
 		parserModel.SyntaxStack.Push(doWhileStatementNode);
 		parserModel.SyntaxStack.Push(doWhileStatementNode);
-        parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(
-        	createScope: false, doWhileStatementNode, compilationUnit, ref parserModel);
+        parserModel.CurrentCodeBlockBuilder.SetNextCodeBlockOwner(doWhileStatementNode, compilationUnit, ref parserModel);
     }
 
     public static void HandleDoubleTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -230,8 +228,7 @@ public class ParseDefaultKeywords
 	    
 	    	tryStatementNode.SetTryStatementFinallyNode(finallyNode);
 	    	parserModel.SyntaxStack.Push(finallyNode);
-        	parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(
-        		createScope: false, finallyNode, compilationUnit, ref parserModel);
+        	parserModel.CurrentCodeBlockBuilder.SetNextCodeBlockOwner(finallyNode, compilationUnit, ref parserModel);
     	}
     }
 
@@ -302,8 +299,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(forStatementNode);
-        parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(
-        	createScope: true, forStatementNode, compilationUnit, ref parserModel);
+        parserModel.CurrentCodeBlockBuilder.SetNextCodeBlockOwner(forStatementNode, compilationUnit, ref parserModel);
     }
 
     public static void HandleForeachTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -337,8 +333,7 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(foreachStatementNode);
-        parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(
-        	createScope: false, foreachStatementNode, compilationUnit, ref parserModel);
+        parserModel.CurrentCodeBlockBuilder.SetNextCodeBlockOwner(foreachStatementNode, compilationUnit, ref parserModel);
     }
 
     public static void HandleGotoTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

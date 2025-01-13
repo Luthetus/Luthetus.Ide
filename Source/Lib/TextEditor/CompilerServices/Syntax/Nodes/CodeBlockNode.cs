@@ -9,22 +9,24 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 /// </summary>
 public sealed class CodeBlockNode : ISyntaxNode
 {
-    public CodeBlockNode(ISyntax[] childList)
+    public CodeBlockNode(List<ISyntax> childList)
     {
-        _childList = childList;
+        ChildList = childList;
         DiagnosticsList = Array.Empty<TextEditorDiagnostic>();
     }
 
     public CodeBlockNode(
-        ISyntax[] childList,
-        TextEditorDiagnostic[] diagnostics)
+    	List<ISyntax> childList,
+    	TextEditorDiagnostic[] diagnostics)
     {
-        _childList = childList.ToArray();
+        ChildList = childList.ToArray();
         DiagnosticsList = diagnostics;
     }
 
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
+	
+	public List<ISyntax> ChildList { get; set; }
 
     public TextEditorDiagnostic[] DiagnosticsList { get; init; }
     
@@ -37,6 +39,6 @@ public sealed class CodeBlockNode : ISyntaxNode
     		return _childList;
     	
     	_childListIsDirty = false;
-    	return _childList;
+    	return _childList = ChildList.ToArray();
     }
 }

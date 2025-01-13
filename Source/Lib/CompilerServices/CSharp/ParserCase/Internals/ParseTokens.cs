@@ -253,8 +253,7 @@ public static class ParseTokens
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 
             parserModel.SyntaxStack.Push(typeDefinitionNode);
-            parserModel.CurrentCodeBlockBuilder.SetInnerPendingCodeBlockOwner(
-            	createScope: false, typeDefinitionNode, compilationUnit, ref parserModel);
+            parserModel.CurrentCodeBlockBuilder.SetNextCodeBlockOwner(typeDefinitionNode, compilationUnit, ref parserModel);
         }
         else
         {
@@ -276,9 +275,8 @@ public static class ParseTokens
         		createScope: false, arbitraryCodeBlockNode, compilationUnit, ref parserModel);
 		}
 		
-		if (parserModel.CurrentCodeBlockBuilder.ScopeIndexKey)
-		{
-		}
+		if (parserModel.CurrentCodeBlockBuilder.StatementDelimiterCanCloseScope)
+			parserModel.CurrentCodeBlockBuilder.StatementDelimiterCanCloseScope = false;
 		
 		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
