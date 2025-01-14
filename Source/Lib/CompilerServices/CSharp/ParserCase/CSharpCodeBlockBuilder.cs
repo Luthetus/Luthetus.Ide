@@ -63,6 +63,13 @@ public class CSharpCodeBlockBuilder
 	///
 	/// An implicitly opened code block can have its start text span
 	/// retrieved on a 'per ICodeBlockOwner' basis.
+	///
+	/// I am going to decide that:
+	/// ````public void SomeFunction() => }
+	///
+	/// will not consume the 'CloseBraceToken' as its delimiter.
+	/// This matter is open to be changed though,
+	/// this decision is only being made to create consistency.
 	/// </summary>
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 	

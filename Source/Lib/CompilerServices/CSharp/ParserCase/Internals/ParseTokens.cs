@@ -325,34 +325,41 @@ public static class ParseTokens
 			As for a FunctionDefinitionNode, (or any "secondary syntax" having ICodeBlockOwner),
 			they will disambiguate with the EqualsCloseAngleBracketToken ('=>').
 		*/
-    
-    	if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
+    	
+    	// (2025-01-13)
+		// ========================================================
+		// - It is vital that the global scope has 'true' for 'IsImplicitOpenCodeBlockTextSpan'.
+		// 
+    	if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
 			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
-        	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = arbitraryCodeBlockNode;
+			
+			compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+		    	arbitraryCodeBlockNode,
+		        arbitraryCodeBlockNode.GetReturnTypeClauseNode(),
+		        openBraceToken.TextSpan,
+		        compilationUnit,
+		        ref parserModel);
 		}
 		
-		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
-		var parentScopeDirection = parserModel.CurrentCodeBlockBuilder?.CodeBlockOwner?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+		// '?? ScopeDirectionKind.Both':
+		// - global scope has a null parent.
+		// - global scope itself has a null 'ICodeBlockOwner'
+		var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+		
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
-			if (!parserModel.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed)
+			if (!parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing)
 			{
 				parserModel.TokenWalker.DeferParsingOfChildScope(openBraceToken, compilationUnit, ref parserModel);
 				return;
 			}
 
-			parserModel.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = false;
+			parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = false;
 		}
-
-		var nextCodeBlockOwner = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
-		var nextReturnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
-
-        compilationUnit.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, compilationUnit);
-		parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
-		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit, ref parserModel);
     }
 
 	/// <summary>

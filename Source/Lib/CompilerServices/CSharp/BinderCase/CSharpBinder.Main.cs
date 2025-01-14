@@ -753,6 +753,8 @@ public partial class CSharpBinder : IBinder
         nextCodeBlockBuilder.ScopeIndexKey = scope.IndexKey;
         
         parserModel.CurrentCodeBlockBuilder = nextCodeBlockBuilder;
+        
+        compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserModel);
     }
     
     public void SetCurrentScopeAndBuilder(
