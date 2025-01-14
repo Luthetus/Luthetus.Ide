@@ -2022,20 +2022,21 @@ public partial class CSharpBinder
 	
 	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lambdaExpressionNode;
-		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		lambdaExpressionNode.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
 		// (2025-01-13)
 		// ========================================================
 		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
 		//   should all be handled by the same method.
 		
-		var nextCodeBlockOwner = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
-		var nextReturnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
-
-        compilationUnit.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, compilationUnit);
-		parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
-		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit, ref parserModel);
+		compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	lambdaExpressionNode,
+        	lambdaExpressionNode.GetReturnTypeClauseNode(),
+        	openBraceToken.TextSpan,
+        	compilationUnit,
+	        ref parserModel);
+		
+		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(lambdaExpressionNode, compilationUnit, ref parserModel);
 	}
 	
 	public void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

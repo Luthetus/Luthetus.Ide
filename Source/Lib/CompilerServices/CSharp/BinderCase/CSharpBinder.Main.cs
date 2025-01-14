@@ -749,7 +749,7 @@ public partial class CSharpBinder : IBinder
         compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
         compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
         
-        var nextCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: codeBlockOwner);
+        var nextCodeBlockBuilder = new CSharpCodeBlockBuilder(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: codeBlockOwner);
         nextCodeBlockBuilder.ScopeIndexKey = scope.IndexKey;
         
         parserModel.CurrentCodeBlockBuilder = nextCodeBlockBuilder;
@@ -766,7 +766,7 @@ public partial class CSharpBinder : IBinder
     	else
     	{
     		// TODO: Once confirmed that this code never gets hit, remove the Console.WriteLine(...) / throw exception?
-    		Console.WriteLine($"{nameof(OpenExistingScope)} should never hit this code, this is bad");
+    		Console.WriteLine($"{nameof(SetCurrentScopeAndBuilder)} should never hit this code, this is bad");
     	}
     }
 
@@ -839,7 +839,6 @@ public partial class CSharpBinder : IBinder
 			if (outBuilder is not null)
 			{
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
-				outBuilder.InnerPendingCodeBlockOwner = null;
 				
 				// (2025-01-13)
 				// ========================================================

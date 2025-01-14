@@ -591,7 +591,13 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(switchStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = switchStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	switchStatementNode,
+	        switchStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
@@ -636,7 +642,13 @@ public class ParseDefaultKeywords
 		parserModel.SyntaxStack.Push(tryStatementNode);
 		
 		parserModel.SyntaxStack.Push(tryStatementTryNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = tryStatementTryNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	tryStatementTryNode,
+	        tryStatementTryNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
@@ -714,7 +726,13 @@ public class ParseDefaultKeywords
 		        codeBlockNode: null);
 		        
 	        parserModel.SyntaxStack.Push(whileStatementNode);
-        	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = whileStatementNode;
+        	
+        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+	        	whileStatementNode,
+		        whileStatementNode.GetReturnTypeClauseNode(),
+		        parserModel.TokenWalker.Current.TextSpan,
+		        compilationUnit,
+		        ref parserModel);
         	
         	// (2025-01-13)
 			// ========================================================
@@ -812,7 +830,13 @@ public class ParseDefaultKeywords
 
         var boundIfStatementNode = compilationUnit.Binder.BindIfStatementNode(ifTokenKeyword, expression);
         parserModel.SyntaxStack.Push(boundIfStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = boundIfStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	boundIfStatementNode,
+	        boundIfStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
@@ -968,7 +992,13 @@ public class ParseDefaultKeywords
         
         parserModel.SyntaxStack.Push(typeDefinitionNode);
         parserModel.StatementBuilder.ChildList.Add(typeDefinitionNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	typeDefinitionNode,
+	        typeDefinitionNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
@@ -1003,7 +1033,13 @@ public class ParseDefaultKeywords
         compilationUnit.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, compilationUnit);
         
         parserModel.SyntaxStack.Push(namespaceStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = namespaceStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	namespaceStatementNode,
+	        namespaceStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
