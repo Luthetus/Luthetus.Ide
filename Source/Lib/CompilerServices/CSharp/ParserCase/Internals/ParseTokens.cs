@@ -302,6 +302,15 @@ public static class ParseTokens
 			    {
 			    	SomeProperty = "cat",
 			    };
+			    
+			-------------------------------------------------------
+			
+			You know because an 'if' statement does not have "secondary syntax".
+			Either the OpenBraceToken immediately follows the if statement's
+			predicate, or there isn't one at all as far as the if statement is concerned.
+			
+			As for a FunctionDefinitionNode, (or any "secondary syntax" having ICodeBlockOwner),
+			they will disambiguate with the EqualsCloseAngleBracketToken ('=>').
 		*/
     
     	if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
