@@ -14,8 +14,19 @@ public class CSharpCodeBlockBuilder
         Parent = parent;
         CodeBlockOwner = codeBlockOwner;
         
-        if (CodeBlockOwner.ScopeDirectionKind == ScopeDirectionKind.Both)
+        if (CodeBlockOwner is null ||
+            CodeBlockOwner.ScopeDirectionKind == ScopeDirectionKind.Both)
+        {
         	ParseChildScopeQueue = new();
+        }
+        
+        // The global scope should be the only case where 'CodeBlockOwner' is null.
+        // Furthermore, the global scope needs 'IsImplicitOpenCodeBlockTextSpan' to be 'true'.
+        //
+        // So, this is a bit of an odd solution to setting the global scope's 'IsImplicitOpenCodeBlockTextSpan' to 'true'
+        // TODO: Is there a less "random"/"confusing" place to put this code?
+        if (CodeBlockOwner is null)
+        	IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public List<ISyntax> ChildList { get; } = new();
