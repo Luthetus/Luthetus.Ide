@@ -569,31 +569,21 @@ public static class ParseTokens
             	nextCodeBlockOwner,
                 scopeReturnTypeClauseNode,
                 statementDelimiterToken.TextSpan,
-                compilationUnit);
+                compilationUnit,
+                ref parserModel);
 
             compilationUnit.Binder.AddNamespaceToCurrentScope(
                 namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
                 compilationUnit);
         }
-        else if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null &&
-        		 !parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
+        else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+        		 parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
         {
-        	var pendingChild = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
+        	// 'parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null ...'
+        	// 	since the global scope has a null CodeBlockOwner, and putting a 'semicolon'
+        	// 	should not close the global scope even thought it is 'true' for 'IsImplicitOpenCodeBlockTextSpan'.
         
-        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
-        		pendingChild,
-        		CSharpFacts.Types.Void.ToTypeClause(),
-        		statementDelimiterToken.TextSpan,
-        		compilationUnit);
-        		
-        	// (2025-01-13)
-			// ========================================================
-			// - You wouldn't invoke 'NewScopeAndBuilderFromOwner(...)' here,
-			//   since it should have already been invoked with the new changes.
-
-			pendingChild.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
-			compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(pendingChild, compilationUnit, ref parserModel);
-			
+			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 	        compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
         }
     }
