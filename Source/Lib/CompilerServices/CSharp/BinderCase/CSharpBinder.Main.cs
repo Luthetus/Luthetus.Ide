@@ -725,39 +725,49 @@ public partial class CSharpBinder : IBinder
 	/// to the instantiated scope's 'IndexKey'. As well, the current scope index key will be set to the
 	/// instantiated scope's 'IndexKey'.
 	/// 
-	/// If the 'codeBlockBuilder.ScopeIndexKey' is NOT null, then the
-	/// current scope index key will be set to 'codeBlockBuilder.ScopeIndexKey.Value'
-	/// because a scope had already been instantiated for that codeBlockBuilder.
+	/// Also will update the 'parserModel.CurrentCodeBlockBuilder'.
 	/// </summary>
-    public void OpenScope(
-    	CSharpCodeBlockBuilder codeBlockBuilder,
+    public void NewScopeAndBuilderFromOwner(
+    	ICodeBlockOwner codeBlockOwner,
         TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textSpan,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
     	// (2025-01-13)
 		// ========================================================
 		// - The global scope will probably bug out because of this change
 		//   so make sure you thoroughly check it.
     
+    	var scope = new Scope(
+        	codeBlockOwner,
+        	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
+		    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
+		    textSpan.StartingIndexInclusive,
+		    endingIndexExclusive: null);
+
+        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
+        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+        
+        var nextCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: codeBlockOwner);
+        nextCodeBlockBuilder.ScopeIndexKey = scope.IndexKey;
+        
+        parserModel.CurrentCodeBlockBuilder = nextCodeBlockBuilder;
+    }
+    
+    public void SetCurrentScopeAndBuilder(
+    	CSharpCodeBlockBuilder codeBlockBuilder, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
     	if (codeBlockBuilder.ScopeIndexKey is not null)
     	{
     		compilationUnit.BinderSession.CurrentScopeIndexKey = codeBlockBuilder.ScopeIndexKey.Value;
+    		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
     	}
     	else
     	{
-	        var scope = new Scope(
-	        	codeBlockBuilder.CodeBlockOwner,
-	        	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
-			    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
-			    textSpan.StartingIndexInclusive,
-			    endingIndexExclusive: null);
-	
-	        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
-	        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
-	        
-	        codeBlockBuilder.ScopeIndexKey = scope.IndexKey;
-	    }
+    		// TODO: Once confirmed that this code never gets hit, remove the Console.WriteLine(...) / throw exception?
+    		Console.WriteLine($"{nameof(OpenExistingScope)} should never hit this code, this is bad");
+    	}
     }
 
 	public void AddNamespaceToCurrentScope(string namespaceString, IParserModel parserModel) =>

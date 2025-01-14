@@ -40,7 +40,7 @@ public class CSharpDeferredChildScope
 		
 		parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
 		
-		parserModel.Binder.OpenScope(
+		compilationUnit.Binder.SetCurrentScopeAndBuilder(
 			parserModel.CurrentCodeBlockBuilder,
 			compilationUnit,
 			ref parserModel);

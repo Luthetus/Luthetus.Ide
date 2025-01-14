@@ -253,7 +253,13 @@ public static class ParseTokens
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 
             parserModel.SyntaxStack.Push(typeDefinitionNode);
-            parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
+            
+            compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+	        	typeDefinitionNode,
+		        typeDefinitionNode.GetReturnTypeClauseNode(),
+		        parserModel.TokenWalker.Current.TextSpan,
+		        compilationUnit,
+		        ref parserModel);
             
             // (2025-01-13)
 			// ========================================================
@@ -509,7 +515,7 @@ public static class ParseTokens
             
             namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
-            compilationUnit.Binder.OpenScope(
+            compilationUnit.Binder.NewScopeAndBuilderFromOwner(
             	nextCodeBlockOwner,
                 scopeReturnTypeClauseNode,
                 statementDelimiterToken.TextSpan,
@@ -518,17 +524,23 @@ public static class ParseTokens
             compilationUnit.Binder.AddNamespaceToCurrentScope(
                 namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
                 compilationUnit);
-
-            parserModel.CurrentCodeBlockBuilder = new(parserModel.CurrentCodeBlockBuilder, nextCodeBlockOwner);
         }
         else if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is not null &&
         		 !parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
         {
         	var pendingChild = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
         
-        	compilationUnit.Binder.OpenScope(pendingChild, CSharpFacts.Types.Void.ToTypeClause(), statementDelimiterToken.TextSpan, compilationUnit);
-        	
-			parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: pendingChild);
+        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        		pendingChild,
+        		CSharpFacts.Types.Void.ToTypeClause(),
+        		statementDelimiterToken.TextSpan,
+        		compilationUnit);
+        		
+        	// (2025-01-13)
+			// ========================================================
+			// - You wouldn't invoke 'NewScopeAndBuilderFromOwner(...)' here,
+			//   since it should have already been invoked with the new changes.
+
 			pendingChild.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
 			compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(pendingChild, compilationUnit, ref parserModel);
 			

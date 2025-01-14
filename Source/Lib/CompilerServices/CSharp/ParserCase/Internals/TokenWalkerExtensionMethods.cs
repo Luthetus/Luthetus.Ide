@@ -23,7 +23,7 @@ internal static class TokenWalkerExtensionMethods
 		var deferredCodeBlockBuilder = parserModel.CurrentCodeBlockBuilder;
 		parserModel.CurrentCodeBlockBuilder = deferredCodeBlockBuilder.Parent;
 		
-		parserModel.Binder.OpenScope(
+		compilationUnit.Binder.SetCurrentScopeAndBuilder(
 			parserModel.CurrentCodeBlockBuilder,
 			compilationUnit,
 			ref parserModel);
@@ -51,7 +51,7 @@ internal static class TokenWalkerExtensionMethods
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
-		if (deferredCodeBlockBuilder.OpenBraceToken.ConstructorWasInvoked)
+		if (deferredCodeBlockBuilder.CodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
 		{
 			while (true)
 			{

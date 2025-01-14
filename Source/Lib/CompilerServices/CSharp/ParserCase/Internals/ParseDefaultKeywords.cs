@@ -89,7 +89,13 @@ public class ParseDefaultKeywords
         
         	tryStatementNode.SetTryStatementCatchNode(catchNode);
         	parserModel.SyntaxStack.Push(catchNode);
-        	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = catchNode;
+        	
+        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+	        	catchNode,
+		        catchNode.GetReturnTypeClauseNode(),
+		        parserModel.TokenWalker.Current.TextSpan,
+		        compilationUnit,
+		        ref parserModel);
         	
         	// (2025-01-13)
 			// ========================================================
@@ -153,7 +159,13 @@ public class ParseDefaultKeywords
         // Have to push twice so it is on the stack when the 'while' keyword is parsed.
 		parserModel.SyntaxStack.Push(doWhileStatementNode);
 		parserModel.SyntaxStack.Push(doWhileStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = doWhileStatementNode;
+		
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	doWhileStatementNode,
+	        doWhileStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
@@ -238,7 +250,13 @@ public class ParseDefaultKeywords
 	    
 	    	tryStatementNode.SetTryStatementFinallyNode(finallyNode);
 	    	parserModel.SyntaxStack.Push(finallyNode);
-        	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = finallyNode;
+	    	
+        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+	        	finallyNode,
+		        finallyNode.GetReturnTypeClauseNode(),
+		        parserModel.TokenWalker.Current.TextSpan,
+		        compilationUnit,
+		        ref parserModel);
         	
         	// (2025-01-13)
 			// ========================================================
@@ -361,7 +379,13 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(forStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = forStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	forStatementNode,
+	        forStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
@@ -400,7 +424,13 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(foreachStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = foreachStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	foreachStatementNode,
+	        foreachStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
@@ -452,7 +482,13 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(lockStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lockStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	lockStatementNode,
+	        lockStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================

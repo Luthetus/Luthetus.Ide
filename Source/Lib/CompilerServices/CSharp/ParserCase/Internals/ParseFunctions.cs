@@ -47,7 +47,13 @@ public class ParseFunctions
 
         compilationUnit.Binder.BindFunctionDefinitionNode(functionDefinitionNode, compilationUnit);
         parserModel.SyntaxStack.Push(functionDefinitionNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = functionDefinitionNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	functionDefinitionNode,
+	        functionDefinitionNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
@@ -105,7 +111,13 @@ public class ParseFunctions
 
         compilationUnit.Binder.BindConstructorDefinitionIdentifierToken(consumedIdentifierToken, compilationUnit);
         parserModel.SyntaxStack.Push(constructorDefinitionNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = constructorDefinitionNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	constructorDefinitionNode,
+	        constructorDefinitionNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
         
         // (2025-01-13)
 		// ========================================================
