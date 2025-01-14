@@ -36,6 +36,36 @@ public class CSharpCodeBlockBuilder
     public Queue<CSharpDeferredChildScope>? ParseChildScopeQueue { get; set; }
     
 	public bool PermitCodeBlockParsing { get; set; } = true;
+	
+	/// <summary>
+	/// This belongs on the 'CSharpCodeBlockBuilder', not the 'ICodeBlockOwner'.
+	///
+	/// This is computational state to know whether to search
+	/// for 'StatementDelimiterToken' (if this is true) as the terminator or a 'CloseBraceToken' (if this is false).
+	///
+	/// This is not necessary to disambiguate the SyntaxKind of the text spans that mark
+	/// the start and end of the code block.
+	///
+	/// This is mentioned because that might be an argument for this being moved to 'ICodeBlockOwner'.
+	///
+	/// But, .... interrupting my thought I think I'm wrong hang on....
+	///
+	/// ````public void SomeFunction() => }
+	/// 
+	/// What should the above code snippet parse as?
+	/// Should the '}' be consumed as the closing delimiter token for 'SomeFunction()'?
+	///
+	/// Is it the case that the closing text span of a scope is only
+	/// a 'CloseBracetoken' if the start text span is from an 'OpenBraceToken'?
+	///
+	/// Furthermore, is it true that the start text span is only non-null
+	/// if it is an 'OpenBraceToken' that started the code block?
+	///
+	/// An implicitly opened code block can have its start text span
+	/// retrieved on a 'per ICodeBlockOwner' basis.
+	/// </summary>
+	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
+	
 	public int? DequeuedIndexForChildList { get; set; }
 	
 	public int? ScopeIndexKey { get; set; }

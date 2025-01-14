@@ -280,8 +280,21 @@ public static class ParseTokens
     {
     	// (2025-01-13)
 		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
+		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', 'PermitInnerPendingCodeBlockOwnerToBeParsed',
+		//   and '' should all be handled by the same method.
+		//
+		// With the new changes, you will come into this method
+		// with the CurrentCodeBlockBuilder and CurrentScopeIndexKey already set
+		//
+		// You need to consider coming into this method and transitioning into deferred parsing.
+		//
+		// For the case of 'deferred parsing':
+		// - The CurrentCodeBlockBuilder and CurrentScopeIndexKey
+		//   will need to be set to the parent.
+		// - After setting those to the parent,
+		//   you need to enqueue the "previous code block builder"
+		//   into the "current code block builder's deferred parsing queue".
+		// 
 		
 		/*
 		    (2025-01-13)
