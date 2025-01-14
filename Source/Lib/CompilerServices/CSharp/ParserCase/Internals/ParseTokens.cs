@@ -282,6 +282,27 @@ public static class ParseTokens
 		// ========================================================
 		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
 		//   should all be handled by the same method.
+		
+		/*
+		    (2025-01-13)
+		    ========================================================
+		    
+		    public void SomeMethod(SomeRecord recordInstance) =>
+		    	recordInstance with
+			    {
+			    	SomeProperty = "cat",
+			    };
+			
+			-------------------------------------------------------
+			
+			SomeRecord recordInstance = new();
+			
+			if (false)
+				return recordInstance with
+			    {
+			    	SomeProperty = "cat",
+			    };
+		*/
     
     	if (parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner is null)
 		{
