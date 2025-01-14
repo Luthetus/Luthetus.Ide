@@ -87,10 +87,7 @@ public class StatementTests
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var publicKeywordToken = (KeywordToken)topCodeBlock.GetChildList()[0];
-		Assert.Equal(SyntaxKind.PublicTokenKeyword, publicKeywordToken.SyntaxKind);
-		
-		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList()[1];
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNode.SyntaxKind);
     }
     

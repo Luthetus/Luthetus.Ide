@@ -827,6 +827,8 @@ public class ParseDefaultKeywords
 
 		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
 		var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+		
+		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
         var boundIfStatementNode = compilationUnit.Binder.BindIfStatementNode(ifTokenKeyword, expression);
         parserModel.SyntaxStack.Push(boundIfStatementNode);

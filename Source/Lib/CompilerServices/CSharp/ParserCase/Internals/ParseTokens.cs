@@ -330,7 +330,9 @@ public static class ParseTokens
 		// ========================================================
 		// - It is vital that the global scope has 'true' for 'IsImplicitOpenCodeBlockTextSpan'.
 		// 
-    	if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
+    	if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
+    		(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+    		 	parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenBraceToken.ConstructorWasInvoked))
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
 			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
