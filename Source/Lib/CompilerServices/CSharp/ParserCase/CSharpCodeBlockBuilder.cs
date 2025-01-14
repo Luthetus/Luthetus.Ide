@@ -3,6 +3,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
@@ -12,6 +13,9 @@ public class CSharpCodeBlockBuilder
     {
         Parent = parent;
         CodeBlockOwner = codeBlockOwner;
+        
+        if (CodeBlockOwner.ScopeDirectionKind == ScopeDirectionKind.Both)
+        	ParseChildScopeQueue = new();
     }
 
     public List<ISyntax> ChildList { get; } = new();
@@ -25,8 +29,13 @@ public class CSharpCodeBlockBuilder
     /// </summary>
     public ICodeBlockOwner? CodeBlockOwner { get; }
     
-    public Queue<CSharpDeferredChildScope> ParseChildScopeQueue { get; set; } = new();
-	public bool ShouldDeferSelf { get; set; }
+    // (2025-01-13)
+	// ========================================================
+	// - This was changed so it no longer initialized to 'new();'
+	//   (not every scope uses deferred parsing so no need to allocate everytime).
+    public Queue<CSharpDeferredChildScope>? ParseChildScopeQueue { get; set; }
+    
+	public bool PermitCodeBlockParsing { get; set; } = true;
 	public int? DequeuedIndexForChildList { get; set; }
 	
 	public int? ScopeIndexKey { get; set; }

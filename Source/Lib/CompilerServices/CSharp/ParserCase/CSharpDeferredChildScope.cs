@@ -34,8 +34,16 @@ public class CSharpDeferredChildScope
 	{
 		TokenIndexToRestore = tokenIndexToRestore;
 		
+		parserModel.CurrentCodeBlockBuilder = CodeBlockBuilder;
 		
-		parserModel.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = true;
+		parserModel.SyntaxStack.Push(CodeBlockBuilder.CodeBlockOwner);
+		
+		parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
+		
+		parserModel.Binder.OpenScope(
+			parserModel.CurrentCodeBlockBuilder,
+			compilationUnit,
+			ref parserModel);
 		
 		parserModel.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null;
 		
@@ -43,12 +51,6 @@ public class CSharpDeferredChildScope
 			OpenTokenIndex,
 			CloseTokenIndex,
 			TokenIndexToRestore);
-		
-		parserModel.SyntaxStack.Push(PendingCodeBlockOwner);
-		
-		
-		
-		parserModel.CurrentCodeBlockBuilder = CodeBlockBuilder;
 		
 		// (2025-01-13)
 		// ========================================================

@@ -45,30 +45,51 @@ internal static class TokenWalkerExtensionMethods
 
 		var openBraceCounter = 1;
 		
+		int closeTokenIndex;
+		
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
-		while (true)
+		if (deferredCodeBlockBuilder.OpenBraceToken.ConstructorWasInvoked)
 		{
-			if (tokenWalker.IsEof)
-				break;
-
-			if (tokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+			while (true)
 			{
-				++openBraceCounter;
-			}
-			else if (tokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
-			{
-				if (--openBraceCounter <= 0)
+				if (tokenWalker.IsEof)
 					break;
+	
+				if (tokenWalker.Current.SyntaxKind == SyntaxKind.OpenBraceToken)
+				{
+					++openBraceCounter;
+				}
+				else if (tokenWalker.Current.SyntaxKind == SyntaxKind.CloseBraceToken)
+				{
+					if (--openBraceCounter <= 0)
+						break;
+				}
+	
+				_ = tokenWalker.Consume();
 			}
-
-			_ = tokenWalker.Consume();
+	
+			closeTokenIndex = tokenWalker.Index;
+			var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
 		}
-
-		var closeTokenIndex = tokenWalker.Index;
-		var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
+		else
+		{
+			while (true)
+			{
+				if (tokenWalker.IsEof)
+					break;
+	
+				if (tokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+					break;
+	
+				_ = tokenWalker.Consume();
+			}
+	
+			closeTokenIndex = tokenWalker.Index;
+			var statementDelimiterToken = (StatementDelimiterToken)tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+		}
 		
 		#if DEBUG
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = false;
@@ -77,6 +98,6 @@ internal static class TokenWalkerExtensionMethods
 		parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.Enqueue(new CSharpDeferredChildScope(
 			openTokenIndex,
 			closeTokenIndex,
-			pendingCodeBlockOwner));
+			deferredCodeBlockBuilder));
     }
 }
