@@ -719,21 +719,45 @@ public partial class CSharpBinder : IBinder
             closeSquareBracketToken);
     }
 
+	/// <summary>
+	/// If the 'codeBlockBuilder.ScopeIndexKey' is null then a scope will be instantiated
+	/// added to the list of scopes. The 'codeBlockBuilder.ScopeIndexKey' will then be set
+	/// to the instantiated scope's 'IndexKey'. As well, the current scope index key will be set to the
+	/// instantiated scope's 'IndexKey'.
+	/// 
+	/// If the 'codeBlockBuilder.ScopeIndexKey' is NOT null, then the
+	/// current scope index key will be set to 'codeBlockBuilder.ScopeIndexKey.Value'
+	/// because a scope had already been instantiated for that codeBlockBuilder.
+	/// </summary>
     public void OpenScope(
-    	ICodeBlockOwner codeBlockOwner,
+    	CSharpCodeBlockBuilder codeBlockBuilder,
         TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textSpan,
         CSharpCompilationUnit compilationUnit)
     {
-        var scope = new Scope(
-        	codeBlockOwner,
-        	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
-		    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
-		    textSpan.StartingIndexInclusive,
-		    endingIndexExclusive: null);
-
-        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
-        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+    	// (2025-01-13)
+		// ========================================================
+		// - The global scope will probably bug out because of this change
+		//   so make sure you thoroughly check it.
+    
+    	if (codeBlockBuilder.ScopeIndexKey is not null)
+    	{
+    		compilationUnit.BinderSession.CurrentScopeIndexKey = codeBlockBuilder.ScopeIndexKey.Value;
+    	}
+    	else
+    	{
+	        var scope = new Scope(
+	        	codeBlockBuilder.CodeBlockOwner,
+	        	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
+			    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
+			    textSpan.StartingIndexInclusive,
+			    endingIndexExclusive: null);
+	
+	        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
+	        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+	        
+	        codeBlockBuilder.ScopeIndexKey = scope.IndexKey;
+	    }
     }
 
 	public void AddNamespaceToCurrentScope(string namespaceString, IParserModel parserModel) =>

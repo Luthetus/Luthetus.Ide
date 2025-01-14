@@ -1,8 +1,8 @@
+using System.Collections.Immutable;
 using Luthetus.TextEditor.RazorLib.CompilerServices;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
-using System.Collections.Immutable;
 
 namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
@@ -26,8 +26,10 @@ public class CSharpCodeBlockBuilder
     public ICodeBlockOwner? CodeBlockOwner { get; }
     
     public Queue<CSharpDeferredChildScope> ParseChildScopeQueue { get; set; } = new();
-	public bool PermitInnerPendingCodeBlockOwnerToBeParsed { get; set; }
+	public bool ShouldDeferSelf { get; set; }
 	public int? DequeuedIndexForChildList { get; set; }
+	
+	public int? ScopeIndexKey { get; set; }
 
     public CodeBlockNode Build()
     {

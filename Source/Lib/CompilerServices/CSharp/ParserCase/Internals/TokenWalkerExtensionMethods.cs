@@ -20,13 +20,26 @@ internal static class TokenWalkerExtensionMethods
 		ref CSharpParserModel parserModel)
     {
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
-		var pendingCodeBlockOwner = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
-		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = null;
+		var deferredCodeBlockBuilder = parserModel.CurrentCodeBlockBuilder;
+		parserModel.CurrentCodeBlockBuilder = deferredCodeBlockBuilder.Parent;
+		
+		parserModel.Binder.OpenScope(
+			parserModel.CurrentCodeBlockBuilder,
+			compilationUnit,
+			ref parserModel);
 		
 		// (2025-01-13)
 		// ========================================================
 		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
 		//   should all be handled by the same method.
+		//
+		// - The search for 'CloseBraceToken' should actually be a search
+		//   for whatever 'ISyntaxToken' will terminate the code block.
+		//   Because, it is not always 'CloseBraceToken'.
+		//   Likely, 'StatementDelimiterToken' will be another case.
+		//
+		// - The function argument 'OpenBraceToken consumedOpenBraceToken'
+		//   likely needs to be changed to allow non-brace-deliminated code blocks.
 
 		var openTokenIndex = tokenWalker.Index - 1;
 

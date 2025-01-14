@@ -7,25 +7,34 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public class CSharpDeferredChildScope
 {
+	// (2025-01-13)
+	// ========================================================
+	// 
+	// - 'CSharpDeferredChildScope' needs to accept the 'CSharpCodeBlockBuilder'
+	//   in place of the 'ICodeBlockOwner'.
+	//   (the 'CSharpCodeBlockBuilder' has a property which is the 'ICodeBlockOwner')
+	
 	public CSharpDeferredChildScope(
 		int openTokenIndex,
 		int closeTokenIndex,
-		ICodeBlockOwner pendingCodeBlockOwner)
+		CSharpCodeBlockBuilder codeBlockBuilder)
 	{
 		OpenTokenIndex = openTokenIndex;
 		CloseTokenIndex = closeTokenIndex;
-		PendingCodeBlockOwner = pendingCodeBlockOwner;
+		CodeBlockBuilder = codeBlockBuilder;
 	}
 	
 	public int OpenTokenIndex { get; }
 	public int CloseTokenIndex { get; }
-	public ICodeBlockOwner PendingCodeBlockOwner { get; }
+	public CSharpCodeBlockBuilder CodeBlockBuilder { get; }
 	
 	public int TokenIndexToRestore { get; private set; }
 	
 	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		TokenIndexToRestore = tokenIndexToRestore;
+		
+		
 		parserModel.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = true;
 		
 		parserModel.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null;
@@ -36,7 +45,10 @@ public class CSharpDeferredChildScope
 			TokenIndexToRestore);
 		
 		parserModel.SyntaxStack.Push(PendingCodeBlockOwner);
-		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = PendingCodeBlockOwner;
+		
+		
+		
+		parserModel.CurrentCodeBlockBuilder = CodeBlockBuilder;
 		
 		// (2025-01-13)
 		// ========================================================
