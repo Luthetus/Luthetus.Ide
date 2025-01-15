@@ -2,24 +2,23 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Utility;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 using Luthetus.TextEditor.RazorLib.Exceptions;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 
 public interface ICodeBlockOwner : ISyntaxNode
 {
+	// ICodeBlockOwner properties.
 	public ScopeDirectionKind ScopeDirectionKind { get; }
-	public OpenBraceToken OpenBraceToken { get; }
-	public CloseBraceToken CloseBraceToken { get; }
-	public StatementDelimiterToken StatementDelimiterToken { get; }
-	public CodeBlockNode? CodeBlockNode { get; }
-	public bool IsSingleStatementBody { get; }
+	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; }
+	public CodeBlockNode? CodeBlockNode { get;  }
+	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; }
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
 	
-	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
-	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
-	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
+	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
+	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
 	public ICodeBlockOwner SetCodeBlockNode(CodeBlockNode codeBlockNode, DiagnosticBag diagnosticBag, TokenWalker tokenWalker);
 	
 	public static void ThrowMultipleScopeDelimiterException(DiagnosticBag diagnosticBag, TokenWalker tokenWalker)

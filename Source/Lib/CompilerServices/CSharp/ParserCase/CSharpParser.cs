@@ -201,10 +201,15 @@ public static class CSharpParser
 
             if (token.SyntaxKind == SyntaxKind.EndOfFileToken)
 			{
-				if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+				if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue is not null &&
+					parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
+				{
 					deferredChildScope.PrepareMainParserLoop(parserModel.TokenWalker.Index, compilationUnit, ref parserModel);
+				}
 				else
+				{
 					break;
+				}
 			}
 			
 			if (parserModel.TokenWalker.ConsumeCounter == 0)

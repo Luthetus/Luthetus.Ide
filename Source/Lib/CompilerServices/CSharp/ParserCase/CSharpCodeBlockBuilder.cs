@@ -27,6 +27,12 @@ public class CSharpCodeBlockBuilder
         // TODO: Is there a less "random"/"confusing" place to put this code?
         if (CodeBlockOwner is null)
         	IsImplicitOpenCodeBlockTextSpan = true;
+        
+        var parentScopeDirection = parent?.CodeBlockOwner?.ScopeDirectionKind
+        	?? ScopeDirectionKind.Both;
+        
+        if (parentScopeDirection == ScopeDirectionKind.Both)
+        	PermitCodeBlockParsing = false;
     }
 
     public List<ISyntax> ChildList { get; } = new();

@@ -871,6 +871,30 @@ finally
 		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
     }
     
+    [Fact]
+    public void DeferredParsing()
+    {
+    	var test = new Test(
+@"
+public class Person
+{
+	public Person(string firstName)
+	{
+		FirstName = firstName;
+	}
+	
+	public string FirstName { get; set; }
+}
+");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");

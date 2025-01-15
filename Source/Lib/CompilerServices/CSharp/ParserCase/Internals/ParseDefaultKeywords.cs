@@ -149,8 +149,6 @@ public class ParseDefaultKeywords
     	
     	var doWhileStatementNode = new DoWhileStatementNode(
 	    	doKeywordToken,
-	        openBraceToken: default,
-	        codeBlockNode: null,
 	        whileKeywordToken: default,
 	        openParenthesisToken: default,
 	        expressionNode: null,
@@ -985,9 +983,7 @@ public class ParseDefaultKeywords
             valueType: null,
             genericArgumentsListingNode,
             primaryConstructorFunctionArgumentsListingNode: null,
-            inheritedTypeClauseNode: null,
-            openBraceToken: default,
-            codeBlockNode: null);
+            inheritedTypeClauseNode: null);
 
         compilationUnit.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit);
         compilationUnit.Binder.BindTypeIdentifier(identifierToken, compilationUnit);

@@ -4,6 +4,7 @@ using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Enums;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes.Interfaces;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Tokens;
 using Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
+using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
@@ -20,9 +21,7 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         Type? valueType,
         GenericArgumentsListingNode? genericArgumentsListingNode,
         FunctionArgumentsListingNode? primaryConstructorFunctionArgumentsListingNode,
-        TypeClauseNode? inheritedTypeClauseNode,
-		OpenBraceToken openBraceToken,
-        CodeBlockNode? codeBlockNode)
+        TypeClauseNode? inheritedTypeClauseNode)
     {
         AccessModifierKind = accessModifierKind;
         HasPartialModifier = hasPartialModifier;
@@ -32,8 +31,6 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
         GenericArgumentsListingNode = genericArgumentsListingNode;
         PrimaryConstructorFunctionArgumentsListingNode = primaryConstructorFunctionArgumentsListingNode;
         InheritedTypeClauseNode = inheritedTypeClauseNode;
-        OpenBraceToken = openBraceToken;
-        CodeBlockNode = codeBlockNode;
     }
 
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
@@ -61,30 +58,23 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
     public GenericArgumentsListingNode? GenericArgumentsListingNode { get; }
     public FunctionArgumentsListingNode? PrimaryConstructorFunctionArgumentsListingNode { get; private set; }
     /// <summary>
-    /// The open brace for the body code block node.
-    /// </summary>
-    public OpenBraceToken OpenBraceToken { get; private set; }
-
-    /// <summary>
     /// Given:<br/>
     /// public class Person : IPerson { ... }<br/><br/>
     /// Then: 'IPerson' is the <see cref="InheritedTypeClauseNode"/>
     /// </summary>
     public TypeClauseNode? InheritedTypeClauseNode { get; private set; }
-    public CodeBlockNode? CodeBlockNode { get; private set; }
     public bool IsInterface => StorageModifierKind == StorageModifierKind.Interface;
-
-	// (2024-11-08)
-	public CloseBraceToken CloseBraceToken { get; private set; }
-	public StatementDelimiterToken StatementDelimiterToken { get; private set; }
-	public bool IsSingleStatementBody => StatementDelimiterToken.ConstructorWasInvoked;
-
-	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 
     public bool IsFabricated { get; init; }
     public SyntaxKind SyntaxKind => SyntaxKind.TypeDefinitionNode;
 
     public string EncompassingNamespaceIdentifierString { get; set; }
+    
+    // ICodeBlockOwner properties.
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
+	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; set; }
+	public CodeBlockNode? CodeBlockNode { get; private set; }
+	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
 
     public ImmutableArray<FunctionDefinitionNode> GetFunctionDefinitionNodes()
     {
@@ -121,44 +111,31 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
             null);
     }
     
+	#region ICodeBlockOwner_Methods
     public TypeClauseNode? GetReturnTypeClauseNode()
     {
     	return null;
     }
     
-	public ICodeBlockOwner SetOpenBraceToken(OpenBraceToken openBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
+	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
-		if (StatementDelimiterToken.ConstructorWasInvoked)
+		if (OpenCodeBlockTextSpan is not null)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
 	
-		OpenBraceToken = openBraceToken;
+		OpenCodeBlockTextSpan = openCodeBlockTextSpan;
     	
     	_childListIsDirty = true;
-    	_memberListIsDirty = true;
     	return this;
 	}
 	
-	public ICodeBlockOwner SetCloseBraceToken(CloseBraceToken closeBraceToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
+	public ICodeBlockOwner SetCloseCodeBlockTextSpan(TextEditorTextSpan? closeCodeBlockTextSpan, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
 	{
-		if (StatementDelimiterToken.ConstructorWasInvoked)
+		if (CloseCodeBlockTextSpan is not null)
 			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
 	
-		CloseBraceToken = closeBraceToken;
+		CloseCodeBlockTextSpan = closeCodeBlockTextSpan;
     	
     	_childListIsDirty = true;
-    	_memberListIsDirty = true;
-    	return this;
-	}
-	
-	public ICodeBlockOwner SetStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)
-	{
-		if (OpenBraceToken.ConstructorWasInvoked || CloseBraceToken.ConstructorWasInvoked)
-			ICodeBlockOwner.ThrowMultipleScopeDelimiterException(diagnosticBag, tokenWalker);
-	
-		StatementDelimiterToken = statementDelimiterToken;
-    	
-    	_childListIsDirty = true;
-    	_memberListIsDirty = true;
     	return this;
 	}
 	
@@ -170,9 +147,9 @@ public sealed class TypeDefinitionNode : ICodeBlockOwner
 		CodeBlockNode = codeBlockNode;
     	
     	_childListIsDirty = true;
-    	_memberListIsDirty = true;
     	return this;
 	}
+	#endregion
     
     public ICodeBlockOwner SetPrimaryConstructorFunctionArgumentsListingNode(FunctionArgumentsListingNode functionArgumentsListingNode)
     {
