@@ -46,8 +46,7 @@ public static class ParseTokens
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.VariableReferenceNode);
     	parserModel.TryParseExpressionSyntaxKindList.Add(SyntaxKind.ConstructorInvocationExpressionNode);
     	
-    	if ((parserModel.CurrentCodeBlockBuilder.CodeBlockOwner?.SyntaxKind ?? SyntaxKind.EmptyNode) !=
-    			SyntaxKind.TypeDefinitionNode)
+    	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.TypeDefinitionNode)
     	{
     		// There is a syntax conflict between a ConstructorDefinitionNode and a FunctionInvocationNode.
     		//
@@ -347,10 +346,8 @@ public static class ParseTokens
 		
 		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
-		// '?? ScopeDirectionKind.Both':
-		// - global scope has a null parent.
-		// - global scope itself has a null 'ICodeBlockOwner'
-		var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner?.ScopeDirectionKind ?? ScopeDirectionKind.Both;
+		// Global scope has a null parent.
+		var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner.ScopeDirectionKind ?? ScopeDirectionKind.Both;
 		
 		if (parentScopeDirection == ScopeDirectionKind.Both)
 		{
@@ -563,7 +560,7 @@ public static class ParseTokens
         {
         	var namespaceStatementNode = (NamespaceStatementNode)parserModel.SyntaxStack.Pop();
         	
-            ICodeBlockOwner? nextCodeBlockOwner = namespaceStatementNode;
+            ICodeBlockOwner nextCodeBlockOwner = namespaceStatementNode;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
             
             namespaceStatementNode.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);

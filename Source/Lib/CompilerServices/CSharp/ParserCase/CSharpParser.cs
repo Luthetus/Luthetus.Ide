@@ -19,7 +19,22 @@ public static class CSharpParser
 {
     public static void Parse(CSharpCompilationUnit compilationUnit)
     {
-        var globalCodeBlockBuilder = new CSharpCodeBlockBuilder(null, null);
+    	var globalCodeBlockNode = new GlobalCodeBlockNode();
+    	
+    	var globalOpenCodeBlockTextSpan = new TextEditorTextSpan(
+		    0,
+		    1,
+		    decorationByte: default,
+		    compilationUnit.ResourceUri,
+		    string.Empty,
+		    string.Empty);
+    	
+		var globalCodeBlockBuilder = compilationUnit.Binder.NewScopeAndBuilderFromOwner_GlobalScope_Hack(
+	    	globalCodeBlockNode,
+	        globalCodeBlockNode.GetReturnTypeClauseNode(),
+	        globalOpenCodeBlockTextSpan,
+	        compilationUnit);
+        
         var currentCodeBlockBuilder = globalCodeBlockBuilder;
         var diagnosticBag = new DiagnosticBag();
 

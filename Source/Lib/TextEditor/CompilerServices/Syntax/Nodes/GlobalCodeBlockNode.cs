@@ -8,32 +8,35 @@ using Luthetus.TextEditor.RazorLib.Lexers.Models;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 
-public sealed class ArbitraryCodeBlockNode : ICodeBlockOwner
+/// <summary>
+/// I just realized as I made this type,
+/// is it "global" or "top level statements"?
+///
+/// Now that I think about it I think
+/// this should be named top-level-statements.
+///
+/// But I'm in the middle of a lot of changes
+/// and cannot mess with the name at the moment.
+/// </summary>
+public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 {
-    public ArbitraryCodeBlockNode(ICodeBlockOwner parentCodeBlockOwner)
-    {
-        ParentCodeBlockOwner = parentCodeBlockOwner;
-    }
-
 	private ISyntax[] _childList = Array.Empty<ISyntax>();
 	private bool _childListIsDirty = true;
 
-    public ICodeBlockOwner ParentCodeBlockOwner { get; }
-    
     // ICodeBlockOwner properties.
-	public ScopeDirectionKind ScopeDirectionKind => ParentCodeBlockOwner.ScopeDirectionKind;
+	public ScopeDirectionKind ScopeDirectionKind => ScopeDirectionKind.Both;
 	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
 	public int? ScopeIndexKey { get; set; }
 
     public bool IsFabricated { get; init; }
-    public SyntaxKind SyntaxKind => SyntaxKind.ArbitraryCodeBlockNode;
+    public SyntaxKind SyntaxKind => SyntaxKind.GlobalCodeBlockNode;
     
     #region ICodeBlockOwner_Methods
     public TypeClauseNode? GetReturnTypeClauseNode()
     {
-    	return ParentCodeBlockOwner?.GetReturnTypeClauseNode();
+    	return null;
     }
     
 	public ICodeBlockOwner SetOpenCodeBlockTextSpan(TextEditorTextSpan? openCodeBlockTextSpan, DiagnosticBag diagnosticBag, TokenWalker tokenWalker)

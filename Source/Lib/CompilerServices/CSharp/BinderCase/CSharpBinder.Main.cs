@@ -734,6 +734,8 @@ public partial class CSharpBinder : IBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
+    	Console.WriteLine("aaa NewScopeAndBuilderFromOwner");
+    
     	if (codeBlockOwner.ScopeIndexKey is not null)
     		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT null; an infinite loop?");
     
@@ -761,9 +763,49 @@ public partial class CSharpBinder : IBinder
         compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserModel);
     }
     
+    /// <summary>
+    /// 'NewScopeAndBuilderFromOwner' takes a 'ref CSharpParserModel parserModel',
+    /// but the 'CSharpParserModel' takes the global scope in its constructor.
+    ///
+    /// TODO: Determine a better solution.
+    /// </summary>
+    public CSharpCodeBlockBuilder NewScopeAndBuilderFromOwner_GlobalScope_Hack(
+    	ICodeBlockOwner codeBlockOwner,
+        TypeClauseNode? scopeReturnTypeClauseNode,
+        TextEditorTextSpan textSpan,
+        CSharpCompilationUnit compilationUnit)
+    {
+    	if (codeBlockOwner.ScopeIndexKey is not null)
+    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT null; an infinite loop?");
+    
+    	var scope = new Scope(
+        	codeBlockOwner,
+        	indexKey: 0,
+		    parentIndexKey: null,
+		    textSpan.StartingIndexInclusive,
+		    endingIndexExclusive: null);
+
+        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
+        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+        
+        codeBlockOwner.ScopeIndexKey = scope.IndexKey;
+        
+        return new CSharpCodeBlockBuilder(parent: null, codeBlockOwner: codeBlockOwner)
+        {
+        	IsImplicitOpenCodeBlockTextSpan = true
+        };
+    }
+    
     public void SetCurrentScopeAndBuilder(
     	CSharpCodeBlockBuilder codeBlockBuilder, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	Console.WriteLine("aaa SetCurrentScopeAndBuilder");
+    
+    	if (codeBlockBuilder is null)
+    		Console.WriteLine("aaa codeBlockBuilder is null");
+    	if (codeBlockBuilder.CodeBlockOwner is null)
+    		Console.WriteLine("aaa codeBlockBuilder.CodeBlockOwner is null");
+    
     	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
     		throw new LuthetusTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is null. Invoke {NewScopeAndBuilderFromOwner}?");
     

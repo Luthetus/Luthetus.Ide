@@ -9,26 +9,15 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public class CSharpCodeBlockBuilder
 {
-    public CSharpCodeBlockBuilder(CSharpCodeBlockBuilder? parent, ICodeBlockOwner? codeBlockOwner)
+    public CSharpCodeBlockBuilder(CSharpCodeBlockBuilder? parent, ICodeBlockOwner codeBlockOwner)
     {
         Parent = parent;
         CodeBlockOwner = codeBlockOwner;
         
-        if (CodeBlockOwner is null ||
-            CodeBlockOwner.ScopeDirectionKind == ScopeDirectionKind.Both)
-        {
+        if (CodeBlockOwner.ScopeDirectionKind == ScopeDirectionKind.Both)
         	ParseChildScopeQueue = new();
-        }
         
-        // The global scope should be the only case where 'CodeBlockOwner' is null.
-        // Furthermore, the global scope needs 'IsImplicitOpenCodeBlockTextSpan' to be 'true'.
-        //
-        // So, this is a bit of an odd solution to setting the global scope's 'IsImplicitOpenCodeBlockTextSpan' to 'true'
-        // TODO: Is there a less "random"/"confusing" place to put this code?
-        if (CodeBlockOwner is null)
-        	IsImplicitOpenCodeBlockTextSpan = true;
-        
-        var parentScopeDirection = parent?.CodeBlockOwner?.ScopeDirectionKind
+        var parentScopeDirection = parent?.CodeBlockOwner.ScopeDirectionKind
         	?? ScopeDirectionKind.Both;
         
         if (parentScopeDirection == ScopeDirectionKind.Both)
@@ -44,7 +33,7 @@ public class CSharpCodeBlockBuilder
     /// exist in is one which a class owns. Furthermore, I need to verify that the code-block-owner's
     /// Identifier is equal to the constructor's identifier.
     /// </summary>
-    public ICodeBlockOwner? CodeBlockOwner { get; }
+    public ICodeBlockOwner CodeBlockOwner { get; }
     
     // (2025-01-13)
 	// ========================================================
