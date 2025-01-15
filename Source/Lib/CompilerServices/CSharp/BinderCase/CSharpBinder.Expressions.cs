@@ -1450,7 +1450,7 @@ public partial class CSharpBinder
 		switch (expressionSecondary.SyntaxKind)
 		{
 			default:
-				if (!lambdaExpressionNode.CloseBraceToken.ConstructorWasInvoked)
+				if (lambdaExpressionNode.CloseCodeBlockTextSpan is null)
 					CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
 				
 				return lambdaExpressionNode;
@@ -2022,7 +2022,7 @@ public partial class CSharpBinder
 	
 	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		lambdaExpressionNode.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		lambdaExpressionNode.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
 		// (2025-01-13)
 		// ========================================================
@@ -2044,7 +2044,7 @@ public partial class CSharpBinder
 		var closeBraceToken = new CloseBraceToken(parserModel.TokenWalker.Current.TextSpan);
 	
 		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 		
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
 	}

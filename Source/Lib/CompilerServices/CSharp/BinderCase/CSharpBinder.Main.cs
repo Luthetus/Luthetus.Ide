@@ -1722,10 +1722,10 @@ public partial class CSharpBinder : IBinder
         			var fallbackCodeBlockOwner = ((ICodeBlockOwner)fallbackDefinitionNode);
         			TextEditorTextSpan? fallbackTextSpan = null;
         			
-        			if (fallbackCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
-        				fallbackTextSpan = fallbackCodeBlockOwner.OpenBraceToken.TextSpan;
-        			else if (fallbackCodeBlockOwner.StatementDelimiterToken.ConstructorWasInvoked)
-        				fallbackTextSpan = fallbackCodeBlockOwner.StatementDelimiterToken.TextSpan;
+        			if (fallbackCodeBlockOwner.OpenCodeBlockTextSpan is not null)
+        				fallbackTextSpan = fallbackCodeBlockOwner.OpenCodeBlockTextSpan;
+        			else if (fallbackCodeBlockOwner.CloseCodeBlockTextSpan is not null)
+        				fallbackTextSpan = fallbackCodeBlockOwner.CloseCodeBlockTextSpan;
         				
         			if (fallbackTextSpan is not null && compilerServiceResource is not null)
         			{

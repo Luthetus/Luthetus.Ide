@@ -15,16 +15,14 @@ internal static class TokenWalkerExtensionMethods
 
 	public static void DeferParsingOfChildScope(
 		this TokenWalker tokenWalker,
-		OpenBraceToken consumedOpenBraceToken,
 		CSharpCompilationUnit compilationUnit,
 		ref CSharpParserModel parserModel)
     {
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
 		var deferredCodeBlockBuilder = parserModel.CurrentCodeBlockBuilder;
-		parserModel.CurrentCodeBlockBuilder = deferredCodeBlockBuilder.Parent;
 		
 		compilationUnit.Binder.SetCurrentScopeAndBuilder(
-			parserModel.CurrentCodeBlockBuilder,
+			deferredCodeBlockBuilder.Parent,
 			compilationUnit,
 			ref parserModel);
 		
@@ -51,7 +49,23 @@ internal static class TokenWalkerExtensionMethods
 		parserModel.TokenWalker.SuppressProtectedSyntaxKindConsumption = true;
 		#endif
 		
-		if (deferredCodeBlockBuilder.CodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
+		if (deferredCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
+		{
+			while (true)
+			{
+				if (tokenWalker.IsEof)
+					break;
+	
+				if (tokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
+					break;
+	
+				_ = tokenWalker.Consume();
+			}
+	
+			closeTokenIndex = tokenWalker.Index;
+			var statementDelimiterToken = (StatementDelimiterToken)tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+		}
+		else
 		{
 			while (true)
 			{
@@ -73,22 +87,6 @@ internal static class TokenWalkerExtensionMethods
 	
 			closeTokenIndex = tokenWalker.Index;
 			var closeBraceToken = (CloseBraceToken)tokenWalker.Match(SyntaxKind.CloseBraceToken);
-		}
-		else
-		{
-			while (true)
-			{
-				if (tokenWalker.IsEof)
-					break;
-	
-				if (tokenWalker.Current.SyntaxKind == SyntaxKind.StatementDelimiterToken)
-					break;
-	
-				_ = tokenWalker.Consume();
-			}
-	
-			closeTokenIndex = tokenWalker.Index;
-			var statementDelimiterToken = (StatementDelimiterToken)tokenWalker.Match(SyntaxKind.StatementDelimiterToken);
 		}
 		
 		#if DEBUG

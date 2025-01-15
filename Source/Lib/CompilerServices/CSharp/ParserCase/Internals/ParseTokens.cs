@@ -332,7 +332,7 @@ public static class ParseTokens
 		// 
     	if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
     		(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
-    		 	parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenBraceToken.ConstructorWasInvoked))
+    		 	parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenCodeBlockTextSpan is not null))
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
 			parserModel.SyntaxStack.Push(arbitraryCodeBlockNode);
@@ -345,7 +345,7 @@ public static class ParseTokens
 		        ref parserModel);
 		}
 		
-		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
 		// '?? ScopeDirectionKind.Both':
 		// - global scope has a null parent.
@@ -356,7 +356,7 @@ public static class ParseTokens
 		{
 			if (!parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing)
 			{
-				parserModel.TokenWalker.DeferParsingOfChildScope(openBraceToken, compilationUnit, ref parserModel);
+				parserModel.TokenWalker.DeferParsingOfChildScope(compilationUnit, ref parserModel);
 				return;
 			}
 
@@ -378,7 +378,7 @@ public static class ParseTokens
 		}
 
 		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 		
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
     }
@@ -566,7 +566,7 @@ public static class ParseTokens
             ICodeBlockOwner? nextCodeBlockOwner = namespaceStatementNode;
             TypeClauseNode? scopeReturnTypeClauseNode = null;
             
-            namespaceStatementNode.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+            namespaceStatementNode.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 
             compilationUnit.Binder.NewScopeAndBuilderFromOwner(
             	nextCodeBlockOwner,
@@ -586,7 +586,7 @@ public static class ParseTokens
         	// 	since the global scope has a null CodeBlockOwner, and putting a 'semicolon'
         	// 	should not close the global scope even thought it is 'true' for 'IsImplicitOpenCodeBlockTextSpan'.
         
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetStatementDelimiterToken(statementDelimiterToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 	        compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
         }
     }
