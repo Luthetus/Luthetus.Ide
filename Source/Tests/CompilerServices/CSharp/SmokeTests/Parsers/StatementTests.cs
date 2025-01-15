@@ -895,19 +895,80 @@ public class Person
 		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
     }
     
+    /// <summary>
+    /// Parse minimal combinations of the statement / codeblock delimiters.
+    ///
+    /// Purpose: deferred parsing (if it has a bug) can cause an infinite loop.
+    ///          So this is testing the delimiters to see if they cause an infinite loop
+    ///              just by typing them as a top level statement.
+    ///          If the test completes then it was successful.
+    ///
+    /// Follow-up: This test has an infinite loop at the moment.
+    ///            I'm going to break out the inputs into individual
+    ///            [Fact](s) and find the ones that are causing issues.
+    /// </summary>
     [Fact]
-    public void Empty_String()
+    public void TopLevelStatement_Simple_Delimiter_Typing()
     {
-    	var test = new Test(
-@"
-");
+    	_ = new Test(string.Empty);
+    	_ = new Test(";");
+    	_ = new Test("{");
+    	_ = new Test("}");
+    	_ = new Test("; {");
+    	_ = new Test("; }");
+    	_ = new Test("{ ;");
+    	_ = new Test("} ;");
+    }
+    
+    // aaa passed
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_StringEmpty()
+    {
+    	_ = new Test(string.Empty);
+    }
+    
+    // aaa passed
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_StatementDelimiterToken()
+    {
+    	_ = new Test(";");
+    }
 
-		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
-		
-		//var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
-		//var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
-		
-		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+	// infinite looped    
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_OpenBraceToken()
+    {
+    	_ = new Test("{");
+    }
+    
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_CloseBraceToken()
+    {
+    	_ = new Test("}");
+    }
+    
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_StatementDelimiterToken_OpenBraceToken()
+    {
+    	_ = new Test("; {");
+    }
+    
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_StatementDelimiterToken_CloseBraceToken()
+    {
+    	_ = new Test("; }");
+    }
+    
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_OpenBraceToken_StatementDelimiterToken()
+    {
+    	_ = new Test("{ ;");
+    }
+    
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_CloseBraceToken_StatementDelimiterToken()
+    {
+    	_ = new Test("} ;");
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
