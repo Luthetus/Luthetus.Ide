@@ -132,8 +132,7 @@ public static class ParseTokens
 		{
 			variableKind = VariableKind.Property;
 		}
-		else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
-				 parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
+		else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind == SyntaxKind.TypeDefinitionNode)
 		{
 			variableKind = VariableKind.Field;
 		}
@@ -328,9 +327,11 @@ public static class ParseTokens
     	// (2025-01-13)
 		// ========================================================
 		// - It is vital that the global scope has 'true' for 'IsImplicitOpenCodeBlockTextSpan'.
-		// 
-    	if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
-    		(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+		// - No it isn't
+		//
+		
+    	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.ArbitraryCodeBlockNode &&
+    		(parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
     		 	parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.OpenCodeBlockTextSpan is not null))
 		{
 			var arbitraryCodeBlockNode = new ArbitraryCodeBlockNode(parserModel.CurrentCodeBlockBuilder.CodeBlockOwner);
@@ -374,7 +375,7 @@ public static class ParseTokens
 			return;
 		}
 
-		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
+		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode)
 			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 		
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
@@ -576,13 +577,9 @@ public static class ParseTokens
                 namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
                 compilationUnit);
         }
-        else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null &&
+        else if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.GlobalCodeBlockNode &&
         		 parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
         {
-        	// 'parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null ...'
-        	// 	since the global scope has a null CodeBlockOwner, and putting a 'semicolon'
-        	// 	should not close the global scope even thought it is 'true' for 'IsImplicitOpenCodeBlockTextSpan'.
-        
 			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 	        compilationUnit.Binder.CloseScope(statementDelimiterToken.TextSpan, compilationUnit, ref parserModel);
         }

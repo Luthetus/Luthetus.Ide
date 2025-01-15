@@ -737,7 +737,12 @@ public partial class CSharpBinder : IBinder
     	Console.WriteLine("aaa NewScopeAndBuilderFromOwner");
     
     	if (codeBlockOwner.ScopeIndexKey is not null)
+    	{
+    		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
+    		//       ...When the token walker sets the token index for deferred parsing,
+    		//       a new instance of the node ends up being parsed.
     		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT null; an infinite loop?");
+    	}
     
     	// (2025-01-13)
 		// ========================================================
@@ -776,8 +781,13 @@ public partial class CSharpBinder : IBinder
         CSharpCompilationUnit compilationUnit)
     {
     	if (codeBlockOwner.ScopeIndexKey is not null)
+    	{
+    		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
+    		//       ...When the token walker sets the token index for deferred parsing,
+    		//       a new instance of the node ends up being parsed.
     		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT null; an infinite loop?");
-    
+		}    
+    	
     	var scope = new Scope(
         	codeBlockOwner,
         	indexKey: 0,

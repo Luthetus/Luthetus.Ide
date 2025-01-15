@@ -2043,8 +2043,7 @@ public partial class CSharpBinder
 	{
 		var closeBraceToken = new CloseBraceToken(parserModel.TokenWalker.Current.TextSpan);
 	
-		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 		
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
 	}

@@ -12,14 +12,20 @@ internal static class TokenWalkerExtensionMethods
     {
         return ParseTypes.MatchTypeClause(compilationUnit, ref parserModel);
     }
+    
+    #if DEBUG
+    private static readonly HashSet<int> _seenOpenTokenIndices = new();
+    #endif
 
 	public static void DeferParsingOfChildScope(
 		this TokenWalker tokenWalker,
 		CSharpCompilationUnit compilationUnit,
 		ref CSharpParserModel parserModel)
-    {
+    {    
 		// Pop off the 'TypeDefinitionNode', then push it back on when later dequeued.
 		var deferredCodeBlockBuilder = parserModel.CurrentCodeBlockBuilder;
+		
+		Console.WriteLine($"deferredCodeBlockBuilder.CodeBlockOwner.SyntaxKind: {deferredCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
 		
 		compilationUnit.Binder.SetCurrentScopeAndBuilder(
 			deferredCodeBlockBuilder.Parent,
@@ -40,6 +46,13 @@ internal static class TokenWalkerExtensionMethods
 		//   likely needs to be changed to allow non-brace-deliminated code blocks.
 
 		var openTokenIndex = tokenWalker.Index - 1;
+		
+		#if DEBUG
+		if (!_seenOpenTokenIndices.Add(openTokenIndex))
+		{
+			throw new NotImplementedException("aaa Infinite loop?");
+		}
+		#endif
 
 		var openBraceCounter = 1;
 		
