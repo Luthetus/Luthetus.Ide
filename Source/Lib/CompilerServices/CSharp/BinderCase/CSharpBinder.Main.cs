@@ -743,7 +743,7 @@ public partial class CSharpBinder : IBinder
     		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
     		//       ...When the token walker sets the token index for deferred parsing,
     		//       a new instance of the node ends up being parsed.
-    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT null; an infinite loop?");
+    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT null; an infinite loop? _{codeBlockOwner.SyntaxKind}");
     	}
     
     	// (2025-01-13)

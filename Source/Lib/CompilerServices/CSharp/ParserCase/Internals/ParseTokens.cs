@@ -252,13 +252,6 @@ public static class ParseTokens
 
             parserModel.SyntaxStack.Push(typeDefinitionNode);
             
-            compilationUnit.Binder.NewScopeAndBuilderFromOwner(
-	        	typeDefinitionNode,
-		        typeDefinitionNode.GetReturnTypeClauseNode(),
-		        parserModel.TokenWalker.Current.TextSpan,
-		        compilationUnit,
-		        ref parserModel);
-            
             // (2025-01-13)
 			// ========================================================
 			// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
@@ -569,13 +562,6 @@ public static class ParseTokens
             TypeClauseNode? scopeReturnTypeClauseNode = null;
             
             namespaceStatementNode.SetCloseCodeBlockTextSpan(statementDelimiterToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
-
-            compilationUnit.Binder.NewScopeAndBuilderFromOwner(
-            	nextCodeBlockOwner,
-                scopeReturnTypeClauseNode,
-                statementDelimiterToken.TextSpan,
-                compilationUnit,
-                ref parserModel);
 
             compilationUnit.Binder.AddNamespaceToCurrentScope(
                 namespaceStatementNode.IdentifierToken.TextSpan.GetText(),
