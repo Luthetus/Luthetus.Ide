@@ -30,6 +30,7 @@ public sealed class TryStatementTryNode : ICodeBlockOwner
 	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; set; }
 	public CodeBlockNode? CodeBlockNode { get; private set; }
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; set; }
+	public int? ScopeIndexKey { get; set; }
 
 	public ISyntaxNode? Parent { get; }
 

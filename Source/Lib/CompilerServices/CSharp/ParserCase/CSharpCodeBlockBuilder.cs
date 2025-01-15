@@ -91,8 +91,6 @@ public class CSharpCodeBlockBuilder
 	public bool IsImplicitOpenCodeBlockTextSpan { get; set; }
 	
 	public int? DequeuedIndexForChildList { get; set; }
-	
-	public int? ScopeIndexKey { get; set; }
 
     public CodeBlockNode Build()
     {

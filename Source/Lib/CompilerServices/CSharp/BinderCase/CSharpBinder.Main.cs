@@ -734,6 +734,9 @@ public partial class CSharpBinder : IBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
+    	if (codeBlockOwner.ScopeIndexKey is not null)
+    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT null; an infinite loop?");
+    
     	// (2025-01-13)
 		// ========================================================
 		// - The global scope will probably bug out because of this change
@@ -749,8 +752,9 @@ public partial class CSharpBinder : IBinder
         compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
         compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
         
+        codeBlockOwner.ScopeIndexKey = scope.IndexKey;
+        
         var nextCodeBlockBuilder = new CSharpCodeBlockBuilder(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: codeBlockOwner);
-        nextCodeBlockBuilder.ScopeIndexKey = scope.IndexKey;
         
         parserModel.CurrentCodeBlockBuilder = nextCodeBlockBuilder;
         
@@ -760,16 +764,11 @@ public partial class CSharpBinder : IBinder
     public void SetCurrentScopeAndBuilder(
     	CSharpCodeBlockBuilder codeBlockBuilder, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	if (codeBlockBuilder.ScopeIndexKey is not null)
-    	{
-    		compilationUnit.BinderSession.CurrentScopeIndexKey = codeBlockBuilder.ScopeIndexKey.Value;
-    		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
-    	}
-    	else
-    	{
-    		// TODO: Once confirmed that this code never gets hit, remove the Console.WriteLine(...) / throw exception?
-    		Console.WriteLine($"{nameof(SetCurrentScopeAndBuilder)} should never hit this code, this is bad");
-    	}
+    	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
+    		throw new LuthetusTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is null. Invoke {NewScopeAndBuilderFromOwner}?");
+    
+		compilationUnit.BinderSession.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey.Value;
+		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
     }
 
 	public void AddNamespaceToCurrentScope(string namespaceString, IParserModel parserModel) =>

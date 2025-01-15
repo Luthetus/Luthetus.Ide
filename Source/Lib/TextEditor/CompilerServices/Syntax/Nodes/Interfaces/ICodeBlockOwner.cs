@@ -14,6 +14,7 @@ public interface ICodeBlockOwner : ISyntaxNode
 	public TextEditorTextSpan? OpenCodeBlockTextSpan { get; }
 	public CodeBlockNode? CodeBlockNode { get;  }
 	public TextEditorTextSpan? CloseCodeBlockTextSpan { get; }
+	public int? ScopeIndexKey { get; set; }
 	
 	public TypeClauseNode? GetReturnTypeClauseNode();
 	
