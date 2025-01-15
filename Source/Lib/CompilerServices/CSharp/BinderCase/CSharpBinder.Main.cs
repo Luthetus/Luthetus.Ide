@@ -734,7 +734,9 @@ public partial class CSharpBinder : IBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
-    	Console.WriteLine("aaa NewScopeAndBuilderFromOwner");
+        #if DEBUG
+    	Console.Write($"NewSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
     
     	if (codeBlockOwner.ScopeIndexKey is not null)
     	{
@@ -766,6 +768,10 @@ public partial class CSharpBinder : IBinder
         parserModel.CurrentCodeBlockBuilder = nextCodeBlockBuilder;
         
         compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserModel);
+        
+        #if DEBUG
+    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
     }
     
     /// <summary>
@@ -809,18 +815,19 @@ public partial class CSharpBinder : IBinder
     public void SetCurrentScopeAndBuilder(
     	CSharpCodeBlockBuilder codeBlockBuilder, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	Console.WriteLine("aaa SetCurrentScopeAndBuilder");
-    
-    	if (codeBlockBuilder is null)
-    		Console.WriteLine("aaa codeBlockBuilder is null");
-    	if (codeBlockBuilder.CodeBlockOwner is null)
-    		Console.WriteLine("aaa codeBlockBuilder.CodeBlockOwner is null");
+    	#if DEBUG
+    	Console.Write($"SetSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
     
     	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
     		throw new LuthetusTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is null. Invoke {NewScopeAndBuilderFromOwner}?");
     
 		compilationUnit.BinderSession.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey.Value;
 		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
+		
+		#if DEBUG
+    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
     }
 
 	public void AddNamespaceToCurrentScope(string namespaceString, IParserModel parserModel) =>
@@ -855,6 +862,10 @@ public partial class CSharpBinder : IBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
+    	#if DEBUG
+    	Console.Write($"{nameof(CloseScope)}: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
+    
     	// Check if it is the global scope, if so return early.
     	if (compilationUnit.BinderSession.CurrentScopeIndexKey == 0)
     		return;
@@ -906,6 +917,10 @@ public partial class CSharpBinder : IBinder
 				}
 			}
 		}
+		
+		#if DEBUG
+    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
     }
 
     public void BindTypeDefinitionNode(

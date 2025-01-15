@@ -345,7 +345,7 @@ public static class ParseTokens
 		        ref parserModel);
 		}
 		
-		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = false;
 
 		// Global scope has a null parent.
 		var parentScopeDirection = parserModel.CurrentCodeBlockBuilder.Parent?.CodeBlockOwner.ScopeDirectionKind ?? ScopeDirectionKind.Both;
@@ -360,6 +360,10 @@ public static class ParseTokens
 
 			parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = false;
 		}
+		
+		// This has to come after the 'DeferParsingOfChildScope(...)'
+		// or it makes an ArbitraryCodeBlockNode when it comes back around.
+		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
     }
 
 	/// <summary>
