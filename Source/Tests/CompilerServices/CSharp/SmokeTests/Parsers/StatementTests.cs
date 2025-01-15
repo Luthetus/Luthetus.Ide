@@ -981,6 +981,22 @@ public class Person
     	_ = new Test("} ;");
     }
     
+    [Fact]
+    public void Aaa()
+    {
+    	_ = new Test(
+@"
+namespace BlazorCrudAppAaa.ServerSide.Persons;
+
+public class Person
+{
+	
+}
+");
+
+		
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");

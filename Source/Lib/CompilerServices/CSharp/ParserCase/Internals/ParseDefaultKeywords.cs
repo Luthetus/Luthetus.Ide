@@ -96,11 +96,6 @@ public class ParseDefaultKeywords
 		        parserModel.TokenWalker.Current.TextSpan,
 		        compilationUnit,
 		        ref parserModel);
-        	
-        	// (2025-01-13)
-			// ========================================================
-			// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-			//   should all be handled by the same method.
     	}
     }
 
@@ -164,11 +159,6 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
     }
 
     public static void HandleDoubleTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -255,13 +245,6 @@ public class ParseDefaultKeywords
 		        parserModel.TokenWalker.Current.TextSpan,
 		        compilationUnit,
 		        ref parserModel);
-        	
-        	// (2025-01-13)
-			// ========================================================
-			// - 'try', 'catch', and 'finally' make use of the 'parserModel.SyntaxStack'.
-			// 
-			// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-			//   should all be handled by the same method.
     	}
     }
 
@@ -384,11 +367,6 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
     }
 
     public static void HandleForeachTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -429,11 +407,6 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
     }
 
     public static void HandleGotoTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -487,11 +460,6 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
     }
 
     public static void HandleLongTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -596,11 +564,6 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
     }
 
     public static void HandleThisTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -647,11 +610,6 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
     }
 
     public static void HandleTypeofTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -731,11 +689,6 @@ public class ParseDefaultKeywords
 		        parserModel.TokenWalker.Current.TextSpan,
 		        compilationUnit,
 		        ref parserModel);
-        	
-        	// (2025-01-13)
-			// ========================================================
-			// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-			//   should all be handled by the same method.
 		}
     }
 
@@ -837,11 +790,6 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
     }
 
     public static void HandleUsingTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -997,11 +945,6 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
     }
 
     public static void HandleClassTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -1038,11 +981,6 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-        
-        // (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
     }
 
     public static void HandleReturnTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)

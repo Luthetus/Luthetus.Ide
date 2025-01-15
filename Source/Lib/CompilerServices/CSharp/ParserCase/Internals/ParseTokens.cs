@@ -251,11 +251,6 @@ public static class ParseTokens
 			typeDefinitionNode.SetInheritedTypeClauseNode(inheritedTypeClauseNode);
 
             parserModel.SyntaxStack.Push(typeDefinitionNode);
-            
-            // (2025-01-13)
-			// ========================================================
-			// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-			//   should all be handled by the same method.
         }
         else
         {
@@ -269,24 +264,6 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseOpenBraceToken(OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	// (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', 'PermitInnerPendingCodeBlockOwnerToBeParsed',
-		//   and '' should all be handled by the same method.
-		//
-		// With the new changes, you will come into this method
-		// with the CurrentCodeBlockBuilder and CurrentScopeIndexKey already set
-		//
-		// You need to consider coming into this method and transitioning into deferred parsing.
-		//
-		// For the case of 'deferred parsing':
-		// - The CurrentCodeBlockBuilder and CurrentScopeIndexKey
-		//   will need to be set to the parent.
-		// - After setting those to the parent,
-		//   you need to enqueue the "previous code block builder"
-		//   into the "current code block builder's deferred parsing queue".
-		// 
-		
 		/*
 		    (2025-01-13)
 		    ========================================================
@@ -316,12 +293,6 @@ public static class ParseTokens
 			As for a FunctionDefinitionNode, (or any "secondary syntax" having ICodeBlockOwner),
 			they will disambiguate with the EqualsCloseAngleBracketToken ('=>').
 		*/
-    	
-    	// (2025-01-13)
-		// ========================================================
-		// - It is vital that the global scope has 'true' for 'IsImplicitOpenCodeBlockTextSpan'.
-		// - No it isn't
-		//
 		
     	if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind != SyntaxKind.ArbitraryCodeBlockNode &&
     		(parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan ||
@@ -549,11 +520,6 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseStatementDelimiterToken(StatementDelimiterToken statementDelimiterToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
-    	// (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
-    
     	if (parserModel.SyntaxStack.TryPeek(out var syntax) && syntax.SyntaxKind == SyntaxKind.NamespaceStatementNode)
         {
         	var namespaceStatementNode = (NamespaceStatementNode)parserModel.SyntaxStack.Pop();

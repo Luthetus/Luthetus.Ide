@@ -35,10 +35,6 @@ public class CSharpCodeBlockBuilder
     /// </summary>
     public ICodeBlockOwner CodeBlockOwner { get; }
     
-    // (2025-01-13)
-	// ========================================================
-	// - This was changed so it no longer initialized to 'new();'
-	//   (not every scope uses deferred parsing so no need to allocate everytime).
     public Queue<CSharpDeferredChildScope>? ParseChildScopeQueue { get; set; }
     
 	public bool PermitCodeBlockParsing { get; set; } = true;

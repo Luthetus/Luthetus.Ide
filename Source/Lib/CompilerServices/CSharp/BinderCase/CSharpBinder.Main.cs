@@ -746,11 +746,6 @@ public partial class CSharpBinder : IBinder
     		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT null; an infinite loop? _{codeBlockOwner.SyntaxKind}");
     	}
     
-    	// (2025-01-13)
-		// ========================================================
-		// - The global scope will probably bug out because of this change
-		//   so make sure you thoroughly check it.
-    
     	var scope = new Scope(
         	codeBlockOwner,
         	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
@@ -903,11 +898,6 @@ public partial class CSharpBinder : IBinder
 			if (outBuilder is not null)
 			{
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
-				
-				// (2025-01-13)
-				// ========================================================
-				// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-				//   should all be handled by the same method.
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&

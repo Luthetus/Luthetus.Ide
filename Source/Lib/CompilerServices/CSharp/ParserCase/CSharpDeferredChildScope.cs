@@ -7,13 +7,6 @@ namespace Luthetus.CompilerServices.CSharp.ParserCase;
 
 public class CSharpDeferredChildScope
 {
-	// (2025-01-13)
-	// ========================================================
-	// 
-	// - 'CSharpDeferredChildScope' needs to accept the 'CSharpCodeBlockBuilder'
-	//   in place of the 'ICodeBlockOwner'.
-	//   (the 'CSharpCodeBlockBuilder' has a property which is the 'ICodeBlockOwner')
-	
 	public CSharpDeferredChildScope(
 		int openTokenIndex,
 		int closeTokenIndex,
@@ -34,16 +27,14 @@ public class CSharpDeferredChildScope
 	{
 		TokenIndexToRestore = tokenIndexToRestore;
 		
-		parserModel.CurrentCodeBlockBuilder = CodeBlockBuilder;
-		
 		parserModel.SyntaxStack.Push(CodeBlockBuilder.CodeBlockOwner);
 		
-		parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
-		
 		compilationUnit.Binder.SetCurrentScopeAndBuilder(
-			parserModel.CurrentCodeBlockBuilder,
+			CodeBlockBuilder,
 			compilationUnit,
 			ref parserModel);
+		
+		parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
 		
 		parserModel.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null;
 		
@@ -51,20 +42,5 @@ public class CSharpDeferredChildScope
 			OpenTokenIndex,
 			CloseTokenIndex,
 			TokenIndexToRestore);
-		
-		// (2025-01-13)
-		// ========================================================
-		// 
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
-		//
-		// - PermitInnerPendingCodeBlockOwnerToBeParsed needs to move
-		//   to the ICodeBlockOwner itself.
-		// 
-		// - 'parserModel.SyntaxStack.Push(PendingCodeBlockOwner);' is unnecessary because
-		//   the CodeBlockBuilder and Scope will be active.
-		//
-		// - '...InnerPendingCodeBlockOwner = PendingCodeBlockOwner;' needs to change
-		//   to 'set active code block builder' and 'set active scope'.
 	}
 }

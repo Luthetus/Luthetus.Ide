@@ -2023,11 +2023,6 @@ public partial class CSharpBinder
 	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		lambdaExpressionNode.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
-
-		// (2025-01-13)
-		// ========================================================
-		// - 'SetActiveCodeBlockBuilder', 'SetActiveScope', and 'PermitInnerPendingCodeBlockOwnerToBeParsed'
-		//   should all be handled by the same method.
 		
 		compilationUnit.Binder.NewScopeAndBuilderFromOwner(
         	lambdaExpressionNode,
