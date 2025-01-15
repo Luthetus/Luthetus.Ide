@@ -910,6 +910,10 @@ public class Person
     [Fact]
     public void TopLevelStatement_Simple_Delimiter_Typing()
     {
+    	// Fixed the infinite loop,
+    	// althought it is a short term "#if DEBUG" 'static' fix
+    	// so now this test is still failing since they all are
+    	// in the same test the static checks think its an infinite loop.
     	_ = new Test(string.Empty);
     	_ = new Test(";");
     	_ = new Test("{");
@@ -934,37 +938,43 @@ public class Person
     	_ = new Test(";");
     }
 
-	// infinite looped    
+	// infinite looped
+	// aaa passed (after fix)
     [Fact]
     public void TopLevelStatement_Simple_Delimiter_Typing_OpenBraceToken()
     {
     	_ = new Test("{");
     }
     
+    // aaa passed
     [Fact]
     public void TopLevelStatement_Simple_Delimiter_Typing_CloseBraceToken()
     {
     	_ = new Test("}");
     }
     
+    // aaa passed
     [Fact]
     public void TopLevelStatement_Simple_Delimiter_Typing_StatementDelimiterToken_OpenBraceToken()
     {
     	_ = new Test("; {");
     }
     
+    // aaa passed
     [Fact]
     public void TopLevelStatement_Simple_Delimiter_Typing_StatementDelimiterToken_CloseBraceToken()
     {
     	_ = new Test("; }");
     }
     
+    // aaa passed
     [Fact]
     public void TopLevelStatement_Simple_Delimiter_Typing_OpenBraceToken_StatementDelimiterToken()
     {
     	_ = new Test("{ ;");
     }
     
+    // aaa passed
     [Fact]
     public void TopLevelStatement_Simple_Delimiter_Typing_CloseBraceToken_StatementDelimiterToken()
     {
