@@ -895,6 +895,21 @@ public class Person
 		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
     }
     
+    [Fact]
+    public void Empty_String()
+    {
+    	var test = new Test(
+@"
+");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		//var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		//var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");

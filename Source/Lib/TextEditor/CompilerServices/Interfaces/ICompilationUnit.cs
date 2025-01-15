@@ -1,4 +1,5 @@
 using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
+using Luthetus.TextEditor.RazorLib.CompilerServices.Syntax;
 
 namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 
@@ -7,5 +8,5 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Interfaces;
 /// </summary>
 public interface ICompilationUnit
 {
-	public CodeBlockNode RootCodeBlockNode { get; }
+	public ISyntaxNode RootCodeBlockNode { get; }
 }
