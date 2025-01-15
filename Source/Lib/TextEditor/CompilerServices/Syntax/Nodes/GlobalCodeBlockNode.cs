@@ -17,6 +17,12 @@ namespace Luthetus.TextEditor.RazorLib.CompilerServices.Syntax.Nodes;
 ///
 /// But I'm in the middle of a lot of changes
 /// and cannot mess with the name at the moment.
+///
+/// --------------------------------------------
+///
+/// When invoking 'GetChildList()'
+/// this will return 'CodeBlockNode.GetChildList();'
+/// if 'CodeBlockNode' is not null.
 /// </summary>
 public sealed class GlobalCodeBlockNode : ICodeBlockOwner
 {
@@ -75,6 +81,9 @@ public sealed class GlobalCodeBlockNode : ICodeBlockOwner
     
     public ISyntax[] GetChildList()
     {
+    	if (CodeBlockNode is not null)
+    		return CodeBlockNode.GetChildList();
+    
     	if (!_childListIsDirty)
     		return _childList;
     	

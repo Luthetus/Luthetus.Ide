@@ -254,14 +254,19 @@ public static class CSharpParser
             // The current token here would be the EOF token.
             compilationUnit.Binder.CloseScope(parserModel.TokenWalker.Current.TextSpan, compilationUnit, ref parserModel);
         }
-
+		
         var topLevelStatementsCodeBlock = parserModel.CurrentCodeBlockBuilder.Build(
             parserModel.DiagnosticBag.ToArray()
                 .Union(compilationUnit.Binder.DiagnosticsList)
                 .Union(compilationUnit.LexerOutput.DiagnosticBag.ToList())
                 .ToArray());
                 
-		compilationUnit.RootCodeBlockNode = topLevelStatementsCodeBlock;
+        globalCodeBlockNode.SetCodeBlockNode(
+        	topLevelStatementsCodeBlock,
+        	parserModel.DiagnosticBag,
+        	parserModel.TokenWalker);
+                
+		compilationUnit.RootCodeBlockNode = globalCodeBlockNode;
 		compilationUnit.Binder.FinalizeBinderSession(compilationUnit.BinderSession);
     }
 }
