@@ -1,22 +1,3 @@
-Given the recent events surrounding "Honey" I need to address the idea that
-"if something is free then you are the product".
-
-I agree with this sentiment. So where is the justification for "Luthetus.Ide" being free?
-
-This repository is a performance art piece that will go down in history.
-
-Even if I have to write 99% of the code myself, I will surpass Visual Studio which was made by an entire company, Microsoft.
-
-I don't want to make millions of dollars, I dont want your data.
-
-I want to send a message.
-
-The 'website-demo' has far less features than when this repo is ran locally.
-
-If I ever commit suicide, the closest thing to a suicide note that I'll leave behind is the Luthetus.Ide source code itself.
-
-It is the day after I wrote the sentence just above this. It weirds weird so I wanna clarify. This repo is the result of suicidal psychotic sadness, so my passion for this project is unlimited.
-
 # Luthetus.Ide (In Development)
 
 Make a new .NET Solution:

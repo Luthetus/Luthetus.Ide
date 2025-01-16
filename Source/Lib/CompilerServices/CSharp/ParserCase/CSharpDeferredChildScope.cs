@@ -10,23 +10,31 @@ public class CSharpDeferredChildScope
 	public CSharpDeferredChildScope(
 		int openTokenIndex,
 		int closeTokenIndex,
-		ICodeBlockOwner pendingCodeBlockOwner)
+		CSharpCodeBlockBuilder codeBlockBuilder)
 	{
 		OpenTokenIndex = openTokenIndex;
 		CloseTokenIndex = closeTokenIndex;
-		PendingCodeBlockOwner = pendingCodeBlockOwner;
+		CodeBlockBuilder = codeBlockBuilder;
 	}
 	
 	public int OpenTokenIndex { get; }
 	public int CloseTokenIndex { get; }
-	public ICodeBlockOwner PendingCodeBlockOwner { get; }
+	public CSharpCodeBlockBuilder CodeBlockBuilder { get; }
 	
 	public int TokenIndexToRestore { get; private set; }
 	
 	public void PrepareMainParserLoop(int tokenIndexToRestore, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		TokenIndexToRestore = tokenIndexToRestore;
-		parserModel.CurrentCodeBlockBuilder.PermitInnerPendingCodeBlockOwnerToBeParsed = true;
+		
+		parserModel.SyntaxStack.Push(CodeBlockBuilder.CodeBlockOwner);
+		
+		compilationUnit.Binder.SetCurrentScopeAndBuilder(
+			CodeBlockBuilder,
+			compilationUnit,
+			ref parserModel);
+		
+		parserModel.CurrentCodeBlockBuilder.PermitCodeBlockParsing = true;
 		
 		parserModel.CurrentCodeBlockBuilder.DequeuedIndexForChildList = null;
 		
@@ -34,8 +42,5 @@ public class CSharpDeferredChildScope
 			OpenTokenIndex,
 			CloseTokenIndex,
 			TokenIndexToRestore);
-		
-		parserModel.SyntaxStack.Push(PendingCodeBlockOwner);
-		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = PendingCodeBlockOwner;
 	}
 }

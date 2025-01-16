@@ -89,7 +89,16 @@ public class ParseDefaultKeywords
         
         	tryStatementNode.SetTryStatementCatchNode(catchNode);
         	parserModel.SyntaxStack.Push(catchNode);
-        	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = catchNode;
+        	
+        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+	        	catchNode,
+		        catchNode.GetReturnTypeClauseNode(),
+		        parserModel.TokenWalker.Current.TextSpan,
+		        compilationUnit,
+		        ref parserModel);
+		        
+		    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     	}
     }
 
@@ -138,8 +147,6 @@ public class ParseDefaultKeywords
     	
     	var doWhileStatementNode = new DoWhileStatementNode(
 	    	doKeywordToken,
-	        openBraceToken: default,
-	        codeBlockNode: null,
 	        whileKeywordToken: default,
 	        openParenthesisToken: default,
 	        expressionNode: null,
@@ -148,7 +155,16 @@ public class ParseDefaultKeywords
         // Have to push twice so it is on the stack when the 'while' keyword is parsed.
 		parserModel.SyntaxStack.Push(doWhileStatementNode);
 		parserModel.SyntaxStack.Push(doWhileStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = doWhileStatementNode;
+		
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	doWhileStatementNode,
+	        doWhileStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+	    
+	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleDoubleTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -228,7 +244,16 @@ public class ParseDefaultKeywords
 	    
 	    	tryStatementNode.SetTryStatementFinallyNode(finallyNode);
 	    	parserModel.SyntaxStack.Push(finallyNode);
-        	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = finallyNode;
+	    	
+        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+	        	finallyNode,
+		        finallyNode.GetReturnTypeClauseNode(),
+		        parserModel.TokenWalker.Current.TextSpan,
+		        compilationUnit,
+		        ref parserModel);
+    	
+    		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     	}
     }
 
@@ -245,106 +270,45 @@ public class ParseDefaultKeywords
     public static void HandleForTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var forKeywordToken = (KeywordToken)parserModel.TokenWalker.Consume();
-    	
     	var openParenthesisToken = (OpenParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
-        
-        // Initialization Case One
-        //     ;
-        var initializationExpressionNode = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-        var initializationStatementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-        var badStateInitialization = false;
-        
-        if (initializationStatementDelimiterToken.IsFabricated)
-        {
-        	// Initialization Case Two
-        	//     i = 0;
-        	var identifierToken = (IdentifierToken)parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
-        	
-        	if (identifierToken.IsFabricated)
-        	{
-        		// Initialization Case Three
-	    		//     int i = 0;
-	        	var typeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserModel);
-	        	var isCaseThree = !typeClauseNode.IsFabricated;
-	        	
-	        	if (isCaseThree)
-	        	{
-	        		identifierToken = (IdentifierToken)parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
-	        	}
-	        	else
-	        	{
-	        		// Initialization Case Four
-	        		//     bad syntax?
-	        		badStateInitialization = true;
-	        	}
-        	}
-        	
-        	if (!badStateInitialization)
-        	{
-        		// Read the remainder
-        		//     = 0;
-        		var equalsToken = (EqualsToken)parserModel.TokenWalker.Match(SyntaxKind.EqualsToken);
-        		
-        		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        		initializationExpressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-			    
-			    initializationStatementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-        	}
-        }
-        
-        // Condition Case One
-    	//     ;
-    	var conditionExpressionNode = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-        var conditionStatementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-        
-        if (conditionStatementDelimiterToken.IsFabricated)
-        {
-        	// Condition Case Two
-        	//     i < 10;
-        
-        	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        	conditionExpressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-		    
-		    conditionStatementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-        }
-        
-        // Updation Case One
-        //    )
-        var updationExpressionNode = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-        var closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
-        
-        if (closeParenthesisToken.IsFabricated)
-        {
-        	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        	updationExpressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-		    
-		    closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
-		    
-		    if (closeParenthesisToken.IsFabricated)
-		    {
-		    	while (!parserModel.TokenWalker.IsEof)
-		    	{
-		    		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-		    			break;
-		    		
-		    		_ = parserModel.TokenWalker.Consume();
-		    	}
-		    }
-        }
-		
-		var forStatementNode = new ForStatementNode(
+    	
+    	var forStatementNode = new ForStatementNode(
 	        forKeywordToken,
 	        openParenthesisToken,
 	        ImmutableArray<ISyntax>.Empty,
-	        initializationStatementDelimiterToken,
-	        conditionExpressionNode,
-	        conditionStatementDelimiterToken,
-	        updationExpressionNode,
-	        closeParenthesisToken,
+	        initializationStatementDelimiterToken: default,
+	        conditionExpressionNode: null,
+	        conditionStatementDelimiterToken: default,
+	        updationExpressionNode: null,
+	        closeParenthesisToken: default,
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(forStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = forStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	forStatementNode,
+	        forStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+	    
+	    parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = false;
+        
+        for (int i = 0; i < 3; i++)
+        {
+	        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+			_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+			
+			var statementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+			
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+				break;
+		}
+		
+		var closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        
+		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleForeachTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -378,7 +342,16 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(foreachStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = foreachStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	foreachStatementNode,
+	        foreachStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+	        
+	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleGotoTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -425,7 +398,16 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(lockStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lockStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	lockStatementNode,
+	        lockStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+    
+    	if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleLongTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -523,7 +505,13 @@ public class ParseDefaultKeywords
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(switchStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = switchStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	switchStatementNode,
+	        switchStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
     }
 
     public static void HandleThisTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -563,7 +551,16 @@ public class ParseDefaultKeywords
 		parserModel.SyntaxStack.Push(tryStatementNode);
 		
 		parserModel.SyntaxStack.Push(tryStatementTryNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = tryStatementTryNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	tryStatementTryNode,
+	        tryStatementTryNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+    
+    	if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleTypeofTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -636,7 +633,16 @@ public class ParseDefaultKeywords
 		        codeBlockNode: null);
 		        
 	        parserModel.SyntaxStack.Push(whileStatementNode);
-        	parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = whileStatementNode;
+        	
+        	compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+	        	whileStatementNode,
+		        whileStatementNode.GetReturnTypeClauseNode(),
+		        parserModel.TokenWalker.Current.TextSpan,
+		        compilationUnit,
+		        ref parserModel);
+		
+			if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        		parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
 		}
     }
 
@@ -726,10 +732,21 @@ public class ParseDefaultKeywords
 
 		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
 		var expression = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+		
+		var closeParenthesisToken = parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
 
-        var boundIfStatementNode = compilationUnit.Binder.BindIfStatementNode(ifTokenKeyword, expression);
-        parserModel.SyntaxStack.Push(boundIfStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = boundIfStatementNode;
+        var ifStatementNode = compilationUnit.Binder.BindIfStatementNode(ifTokenKeyword, expression);
+        parserModel.SyntaxStack.Push(ifStatementNode);
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	ifStatementNode,
+	        ifStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+	    
+	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
     public static void HandleUsingTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -871,16 +888,20 @@ public class ParseDefaultKeywords
             valueType: null,
             genericArgumentsListingNode,
             primaryConstructorFunctionArgumentsListingNode: null,
-            inheritedTypeClauseNode: null,
-            openBraceToken: default,
-            codeBlockNode: null);
+            inheritedTypeClauseNode: null);
 
         compilationUnit.Binder.BindTypeDefinitionNode(typeDefinitionNode, compilationUnit);
         compilationUnit.Binder.BindTypeIdentifier(identifierToken, compilationUnit);
         
         parserModel.SyntaxStack.Push(typeDefinitionNode);
         parserModel.StatementBuilder.ChildList.Add(typeDefinitionNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = typeDefinitionNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	typeDefinitionNode,
+	        typeDefinitionNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
     }
 
     public static void HandleClassTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
@@ -910,7 +931,18 @@ public class ParseDefaultKeywords
         compilationUnit.Binder.SetCurrentNamespaceStatementNode(namespaceStatementNode, compilationUnit);
         
         parserModel.SyntaxStack.Push(namespaceStatementNode);
-        parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = namespaceStatementNode;
+        
+        compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	namespaceStatementNode,
+	        namespaceStatementNode.GetReturnTypeClauseNode(),
+	        parserModel.TokenWalker.Current.TextSpan,
+	        compilationUnit,
+	        ref parserModel);
+	        
+	    // TODO: 'if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+        //			parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;'
+        //
+        // or not?
     }
 
     public static void HandleReturnTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
