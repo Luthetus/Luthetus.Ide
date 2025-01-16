@@ -270,102 +270,17 @@ public class ParseDefaultKeywords
     public static void HandleForTokenKeyword(CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
     	var forKeywordToken = (KeywordToken)parserModel.TokenWalker.Consume();
-    	
     	var openParenthesisToken = (OpenParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.OpenParenthesisToken);
-        
-        // Initialization Case One
-        //     ;
-        var initializationExpressionNode = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-        var initializationStatementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-        var badStateInitialization = false;
-        
-        if (initializationStatementDelimiterToken.IsFabricated)
-        {
-        	// Initialization Case Two
-        	//     i = 0;
-        	var identifierToken = (IdentifierToken)parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
-        	
-        	if (identifierToken.IsFabricated)
-        	{
-        		// Initialization Case Three
-	    		//     int i = 0;
-	        	var typeClauseNode = parserModel.TokenWalker.MatchTypeClauseNode(compilationUnit, ref parserModel);
-	        	var isCaseThree = !typeClauseNode.IsFabricated;
-	        	
-	        	if (isCaseThree)
-	        	{
-	        		identifierToken = (IdentifierToken)parserModel.TokenWalker.Match(SyntaxKind.IdentifierToken);
-	        	}
-	        	else
-	        	{
-	        		// Initialization Case Four
-	        		//     bad syntax?
-	        		badStateInitialization = true;
-	        	}
-        	}
-        	
-        	if (!badStateInitialization)
-        	{
-        		// Read the remainder
-        		//     = 0;
-        		var equalsToken = (EqualsToken)parserModel.TokenWalker.Match(SyntaxKind.EqualsToken);
-        		
-        		parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        		initializationExpressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-			    
-			    initializationStatementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-        	}
-        }
-        
-        // Condition Case One
-    	//     ;
-    	var conditionExpressionNode = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-        var conditionStatementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-        
-        if (conditionStatementDelimiterToken.IsFabricated)
-        {
-        	// Condition Case Two
-        	//     i < 10;
-        
-        	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        	conditionExpressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-		    
-		    conditionStatementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
-        }
-        
-        // Updation Case One
-        //    )
-        var updationExpressionNode = (IExpressionNode)new EmptyExpressionNode(CSharpFacts.Types.Void.ToTypeClause());
-        var closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
-        
-        if (closeParenthesisToken.IsFabricated)
-        {
-        	parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
-        	updationExpressionNode = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
-		    
-		    closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
-		    
-		    if (closeParenthesisToken.IsFabricated)
-		    {
-		    	while (!parserModel.TokenWalker.IsEof)
-		    	{
-		    		if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
-		    			break;
-		    		
-		    		_ = parserModel.TokenWalker.Consume();
-		    	}
-		    }
-        }
-		
-		var forStatementNode = new ForStatementNode(
+    	
+    	var forStatementNode = new ForStatementNode(
 	        forKeywordToken,
 	        openParenthesisToken,
 	        ImmutableArray<ISyntax>.Empty,
-	        initializationStatementDelimiterToken,
-	        conditionExpressionNode,
-	        conditionStatementDelimiterToken,
-	        updationExpressionNode,
-	        closeParenthesisToken,
+	        initializationStatementDelimiterToken: default,
+	        conditionExpressionNode: null,
+	        conditionStatementDelimiterToken: default,
+	        updationExpressionNode: null,
+	        closeParenthesisToken: default,
 	        codeBlockNode: null);
 	        
         parserModel.SyntaxStack.Push(forStatementNode);
@@ -376,8 +291,23 @@ public class ParseDefaultKeywords
 	        parserModel.TokenWalker.Current.TextSpan,
 	        compilationUnit,
 	        ref parserModel);
-	        
-	    if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
+	    
+	    parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = false;
+        
+        for (int i = 0; i < 3; i++)
+        {
+	        parserModel.ExpressionList.Add((SyntaxKind.CloseParenthesisToken, null));
+			_ = ParseOthers.ParseExpression(compilationUnit, ref parserModel);
+			
+			var statementDelimiterToken = (StatementDelimiterToken)parserModel.TokenWalker.Match(SyntaxKind.StatementDelimiterToken);
+			
+			if (parserModel.TokenWalker.Current.SyntaxKind == SyntaxKind.CloseParenthesisToken)
+				break;
+		}
+		
+		var closeParenthesisToken = (CloseParenthesisToken)parserModel.TokenWalker.Match(SyntaxKind.CloseParenthesisToken);
+        
+		if (parserModel.TokenWalker.Current.SyntaxKind != SyntaxKind.OpenBraceToken)
         	parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan = true;
     }
 
