@@ -1058,6 +1058,15 @@ namespace BlazorCrudAppAaa.ServerSide.Persons
 			Console.WriteLine($"(89)CloseCodeBlockTextSpan: {ifStatementScope.CodeBlockOwner.CloseCodeBlockTextSpan.Value.StartingIndexInclusive}");
     }
     
+    [Fact]
+    public void ForLoop()
+    {
+    	var test = new Test(@"for (int i = 0; i < 5; i++)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
+    }
+    
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
     {
     	Console.WriteLine($"foreach (var child in {name}.GetChildList())");

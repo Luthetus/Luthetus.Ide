@@ -515,6 +515,14 @@ public partial class CSharpBinder
 				closeBraceToken: default,
 				CSharpFacts.Types.Void.ToTypeClause());
 		}
+		else if (token.SyntaxKind == SyntaxKind.PlusPlusToken)
+		{
+			var decidedExpression = ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				ambiguousIdentifierExpressionNode,
+				compilationUnit,
+				ref parserModel);
+		}
 		else if (token.SyntaxKind == SyntaxKind.IdentifierToken)
 		{
 			var decidedExpression = ForceDecisionAmbiguousIdentifier(
