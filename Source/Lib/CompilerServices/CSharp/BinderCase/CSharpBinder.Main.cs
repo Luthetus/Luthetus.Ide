@@ -1634,6 +1634,9 @@ public partial class CSharpBinder : IBinder
     public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind, ITextEditorSymbol? symbol = null, string? getTextResult = null)
     {
     	var scope = GetScope(compilationUnit, textSpan);
+
+        if (scope is null)
+            return null;
         
         switch (syntaxKind)
         {
