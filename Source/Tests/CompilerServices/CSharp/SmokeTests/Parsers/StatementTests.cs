@@ -993,8 +993,69 @@ public class Person
 	
 }
 ");
+	}
 
+	[Fact]
+    public void Bbb()
+    {
+    	var test = new Test(
+@"
+namespace BlazorCrudAppAaa.ServerSide.Persons
+{
+	public class Person
+	{
 		
+	}
+}
+");
+
+		foreach (var scope in test.CompilationUnit.BinderSession.ScopeList)
+		{
+			Console.WriteLine($"scope.CodeBlockOwner.SyntaxKind: {scope.CodeBlockOwner.SyntaxKind}");
+		}
+		Console.WriteLine($"ScopeList.Count: {test.CompilationUnit.BinderSession.ScopeList.Count}");
+    }
+    
+    [Fact]
+    public void Ccc()
+    {
+    	var test = new Test(
+@"
+namespace BlazorCrudAppAaa.ServerSide.Persons
+{
+	public class Person
+	{
+		if (false)
+			return;
+	}
+}
+".ReplaceLineEndings("\n"));
+
+		foreach (var scope in test.CompilationUnit.BinderSession.ScopeList)
+		{
+			Console.WriteLine($"scope.CodeBlockOwner.SyntaxKind: {scope.CodeBlockOwner.SyntaxKind}");
+		}
+		Console.WriteLine($"ScopeList.Count: {test.CompilationUnit.BinderSession.ScopeList.Count}");
+		
+		var ifStatementScope = test.CompilationUnit.BinderSession.ScopeList.Single(x =>
+			x.CodeBlockOwner.SyntaxKind == SyntaxKind.IfStatementNode);
+			
+		Console.WriteLine($"CodeBlockOwner: {ifStatementScope.CodeBlockOwner}");
+		Console.WriteLine($"IndexKey: {ifStatementScope.IndexKey}");
+		Console.WriteLine($"ParentIndexKey: {ifStatementScope.ParentIndexKey}");
+		
+		Console.WriteLine($"(89)scope.StartingIndexInclusive: {ifStatementScope.StartingIndexInclusive}");
+		Console.WriteLine($"(95)scope.EndingIndexExclusive: {ifStatementScope.EndingIndexExclusive}");
+		
+		if (ifStatementScope.CodeBlockOwner.OpenCodeBlockTextSpan is null)
+			Console.WriteLine($"(89)OpenCodeBlockTextSpan: null");
+		else
+			Console.WriteLine($"(89)OpenCodeBlockTextSpan: {ifStatementScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive}");
+			
+		if (ifStatementScope.CodeBlockOwner.CloseCodeBlockTextSpan is null)
+			Console.WriteLine($"(89)CloseCodeBlockTextSpan: null");
+		else
+			Console.WriteLine($"(89)CloseCodeBlockTextSpan: {ifStatementScope.CodeBlockOwner.CloseCodeBlockTextSpan.Value.StartingIndexInclusive}");
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")

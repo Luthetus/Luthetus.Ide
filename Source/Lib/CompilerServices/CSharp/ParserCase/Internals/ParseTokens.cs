@@ -336,6 +336,13 @@ public static class ParseTokens
 	/// </summary>
     public static void ParseCloseBraceToken(CloseBraceToken closeBraceToken, int closeBraceTokenIndex, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
     {
+    	// while () if not CloseBraceToken accepting bubble up until someone takes it or null parent.
+    	
+    	/*if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)
+    	{
+    		throw new NotImplementedException("ParseCloseBraceToken(...) -> if (parserModel.CurrentCodeBlockBuilder.IsImplicitOpenCodeBlockTextSpan)");
+    	}*/
+    
     	if (parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue is not null &&
     		parserModel.CurrentCodeBlockBuilder.ParseChildScopeQueue.TryDequeue(out var deferredChildScope))
 		{

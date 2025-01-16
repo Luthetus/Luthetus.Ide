@@ -13,9 +13,9 @@ internal static class TokenWalkerExtensionMethods
         return ParseTypes.MatchTypeClause(compilationUnit, ref parserModel);
     }
     
-    #if DEBUG
+    /*#if DEBUG
     private static readonly HashSet<int> _seenOpenTokenIndices = new();
-    #endif
+    #endif*/
 
 	public static void DeferParsingOfChildScope(
 		this TokenWalker tokenWalker,
@@ -36,12 +36,12 @@ internal static class TokenWalkerExtensionMethods
 
 		var openTokenIndex = tokenWalker.Index - 1;
 		
-		#if DEBUG
+		/*#if DEBUG
 		if (!_seenOpenTokenIndices.Add(openTokenIndex))
 		{
 			throw new NotImplementedException("aaa Infinite loop?");
 		}
-		#endif
+		#endif*/
 
 		var openBraceCounter = 1;
 		

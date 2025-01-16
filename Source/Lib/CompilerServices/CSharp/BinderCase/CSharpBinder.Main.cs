@@ -36,7 +36,7 @@ public partial class CSharpBinder : IBinder
     /// inserted for the user if they decide to use that autocomplete option.
     /// </summary>
     private readonly Dictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> _allTypeDefinitions = new();
-    private readonly IScope _globalScope = CSharpFacts.ScopeFacts.GetInitialGlobalScope();
+    // private readonly IScope _globalScope = CSharpFacts.ScopeFacts.GetInitialGlobalScope();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
     public CSharpBinder()
@@ -45,9 +45,9 @@ public partial class CSharpBinder : IBinder
     	++LuthetusDebugSomething.Binder_ConstructorInvocationCount;
     	#endif
 
-    	var globalBinderSession = StartBinderSession(ResourceUri.Empty);
-    	globalBinderSession.ScopeList.Add(_globalScope);
-    	FinalizeBinderSession(globalBinderSession);
+    	//var globalBinderSession = StartBinderSession(ResourceUri.Empty);
+    	//globalBinderSession.ScopeList.Add(_globalScope);
+    	//FinalizeBinderSession(globalBinderSession);
         // _boundScopes.Add(_globalScope.ResourceUri, new List<IScope> { _globalScope });
     }
 
@@ -111,7 +111,7 @@ public partial class CSharpBinder : IBinder
             0,
             _topLevelNamespaceStatementNode);
             
-        cSharpBinderSession.ScopeList.Add(_globalScope);
+        // cSharpBinderSession.ScopeList.Add(_globalScope);
         
         return cSharpBinderSession;
     }
@@ -1237,8 +1237,8 @@ public partial class CSharpBinder : IBinder
     	
     	if (TryGetBinderSession(compilationUnit, resourceUri, out var targetBinderSession))
     		scopeList.AddRange(targetBinderSession.ScopeList);
-		if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
-    		scopeList.AddRange(globalBinderSession.ScopeList);
+		//if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
+    	//	scopeList.AddRange(globalBinderSession.ScopeList);
         
         var possibleScopes = scopeList.Where(x =>
         {
@@ -1259,8 +1259,8 @@ public partial class CSharpBinder : IBinder
     	
     	if (TryGetBinderSession(compilationUnit, resourceUri, out var targetBinderSession))
     		scopeList.AddRange(targetBinderSession.ScopeList);
-		if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
-    		scopeList.AddRange(globalBinderSession.ScopeList);
+		//if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
+    	//	scopeList.AddRange(globalBinderSession.ScopeList);
         
         return scopeList[scopeIndexKey];
     }
@@ -1274,8 +1274,8 @@ public partial class CSharpBinder : IBinder
     
     	if (TryGetBinderSession(compilationUnit, resourceUri, out var targetBinderSession))
     		scopeList.AddRange(targetBinderSession.ScopeList);
-		if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
-    		scopeList.AddRange(globalBinderSession.ScopeList);
+		//if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
+    	//	scopeList.AddRange(globalBinderSession.ScopeList);
     		
     	return scopeList.ToArray();
     }
