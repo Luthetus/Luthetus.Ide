@@ -36,7 +36,7 @@ public partial class CSharpBinder : IBinder
     /// inserted for the user if they decide to use that autocomplete option.
     /// </summary>
     private readonly Dictionary<NamespaceAndTypeIdentifiers, TypeDefinitionNode> _allTypeDefinitions = new();
-    private readonly IScope _globalScope = CSharpFacts.ScopeFacts.GetInitialGlobalScope();
+    // private readonly IScope _globalScope = CSharpFacts.ScopeFacts.GetInitialGlobalScope();
     private readonly NamespaceStatementNode _topLevelNamespaceStatementNode = CSharpFacts.Namespaces.GetTopLevelNamespaceStatementNode();
     
     public CSharpBinder()
@@ -45,9 +45,9 @@ public partial class CSharpBinder : IBinder
     	++LuthetusDebugSomething.Binder_ConstructorInvocationCount;
     	#endif
 
-    	var globalBinderSession = StartBinderSession(ResourceUri.Empty);
-    	globalBinderSession.ScopeList.Add(_globalScope);
-    	FinalizeBinderSession(globalBinderSession);
+    	//var globalBinderSession = StartBinderSession(ResourceUri.Empty);
+    	//globalBinderSession.ScopeList.Add(_globalScope);
+    	//FinalizeBinderSession(globalBinderSession);
         // _boundScopes.Add(_globalScope.ResourceUri, new List<IScope> { _globalScope });
     }
 
@@ -111,7 +111,7 @@ public partial class CSharpBinder : IBinder
             0,
             _topLevelNamespaceStatementNode);
             
-        cSharpBinderSession.ScopeList.Add(_globalScope);
+        // cSharpBinderSession.ScopeList.Add(_globalScope);
         
         return cSharpBinderSession;
     }
@@ -719,13 +719,34 @@ public partial class CSharpBinder : IBinder
             closeSquareBracketToken);
     }
 
-    public void OpenScope(
+	/// <summary>
+	/// If the 'codeBlockBuilder.ScopeIndexKey' is null then a scope will be instantiated
+	/// added to the list of scopes. The 'codeBlockBuilder.ScopeIndexKey' will then be set
+	/// to the instantiated scope's 'IndexKey'. As well, the current scope index key will be set to the
+	/// instantiated scope's 'IndexKey'.
+	/// 
+	/// Also will update the 'parserModel.CurrentCodeBlockBuilder'.
+	/// </summary>
+    public void NewScopeAndBuilderFromOwner(
     	ICodeBlockOwner codeBlockOwner,
         TypeClauseNode? scopeReturnTypeClauseNode,
         TextEditorTextSpan textSpan,
-        CSharpCompilationUnit compilationUnit)
+        CSharpCompilationUnit compilationUnit,
+        ref CSharpParserModel parserModel)
     {
-        var scope = new Scope(
+        #if DEBUG
+    	Console.Write($"NewSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
+    
+    	if (codeBlockOwner.ScopeIndexKey is not null)
+    	{
+    		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
+    		//       ...When the token walker sets the token index for deferred parsing,
+    		//       a new instance of the node ends up being parsed.
+    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockOwner.ScopeIndexKey is NOT null; an infinite loop? _{codeBlockOwner.SyntaxKind}");
+    	}
+    
+    	var scope = new Scope(
         	codeBlockOwner,
         	indexKey: compilationUnit.BinderSession.GetNextIndexKey(),
 		    parentIndexKey: compilationUnit.BinderSession.CurrentScopeIndexKey,
@@ -734,6 +755,74 @@ public partial class CSharpBinder : IBinder
 
         compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
         compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+        
+        codeBlockOwner.ScopeIndexKey = scope.IndexKey;
+        
+        var nextCodeBlockBuilder = new CSharpCodeBlockBuilder(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: codeBlockOwner);
+        
+        parserModel.CurrentCodeBlockBuilder = nextCodeBlockBuilder;
+        
+        compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockBuilder.CodeBlockOwner, compilationUnit, ref parserModel);
+        
+        #if DEBUG
+    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
+    }
+    
+    /// <summary>
+    /// 'NewScopeAndBuilderFromOwner' takes a 'ref CSharpParserModel parserModel',
+    /// but the 'CSharpParserModel' takes the global scope in its constructor.
+    ///
+    /// TODO: Determine a better solution.
+    /// </summary>
+    public CSharpCodeBlockBuilder NewScopeAndBuilderFromOwner_GlobalScope_Hack(
+    	ICodeBlockOwner codeBlockOwner,
+        TypeClauseNode? scopeReturnTypeClauseNode,
+        TextEditorTextSpan textSpan,
+        CSharpCompilationUnit compilationUnit)
+    {
+    	if (codeBlockOwner.ScopeIndexKey is not null)
+    	{
+    		// TODO: This does not catch nearly as many infinite loop cases as I initially thought it would...
+    		//       ...When the token walker sets the token index for deferred parsing,
+    		//       a new instance of the node ends up being parsed.
+    		throw new LuthetusTextEditorException($"{nameof(NewScopeAndBuilderFromOwner)} codeBlockBuilder.ScopeIndexKey is NOT null; an infinite loop?");
+		}    
+    	
+    	var scope = new Scope(
+        	codeBlockOwner,
+        	indexKey: 0,
+		    parentIndexKey: null,
+		    textSpan.StartingIndexInclusive,
+		    endingIndexExclusive: null);
+
+        compilationUnit.BinderSession.ScopeList.Insert(scope.IndexKey, scope);
+        compilationUnit.BinderSession.CurrentScopeIndexKey = scope.IndexKey;
+        
+        codeBlockOwner.ScopeIndexKey = scope.IndexKey;
+        
+        return new CSharpCodeBlockBuilder(parent: null, codeBlockOwner: codeBlockOwner)
+        {
+        	IsImplicitOpenCodeBlockTextSpan = true
+        };
+    }
+    
+    public void SetCurrentScopeAndBuilder(
+    	CSharpCodeBlockBuilder codeBlockBuilder, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
+    {
+    	#if DEBUG
+    	Console.Write($"SetSB: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
+    
+    	if (codeBlockBuilder.CodeBlockOwner.ScopeIndexKey is null)
+    		throw new LuthetusTextEditorException($"{nameof(SetCurrentScopeAndBuilder)} codeBlockBuilder.CodeBlockBuilder.ScopeIndexKey is null. Invoke {NewScopeAndBuilderFromOwner}?");
+    
+		compilationUnit.BinderSession.CurrentScopeIndexKey = codeBlockBuilder.CodeBlockOwner.ScopeIndexKey.Value;
+		parserModel.CurrentCodeBlockBuilder = codeBlockBuilder;
+		
+		#if DEBUG
+    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
     }
 
 	public void AddNamespaceToCurrentScope(string namespaceString, IParserModel parserModel) =>
@@ -768,6 +857,10 @@ public partial class CSharpBinder : IBinder
         CSharpCompilationUnit compilationUnit,
         ref CSharpParserModel parserModel)
     {
+    	#if DEBUG
+    	Console.Write($"{nameof(CloseScope)}: {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
+    
     	// Check if it is the global scope, if so return early.
     	if (compilationUnit.BinderSession.CurrentScopeIndexKey == 0)
     		return;
@@ -805,7 +898,6 @@ public partial class CSharpBinder : IBinder
 			if (outBuilder is not null)
 			{
 				parserModel.CurrentCodeBlockBuilder = outBuilder;
-				outBuilder.InnerPendingCodeBlockOwner = null;
 				
 				if (inOwner.SyntaxKind != SyntaxKind.TryStatementTryNode &&
 					inOwner.SyntaxKind != SyntaxKind.TryStatementCatchNode &&
@@ -815,6 +907,10 @@ public partial class CSharpBinder : IBinder
 				}
 			}
 		}
+		
+		#if DEBUG
+    	Console.WriteLine($" -> {parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SyntaxKind}");
+    	#endif
     }
 
     public void BindTypeDefinitionNode(
@@ -1141,8 +1237,8 @@ public partial class CSharpBinder : IBinder
     	
     	if (TryGetBinderSession(compilationUnit, resourceUri, out var targetBinderSession))
     		scopeList.AddRange(targetBinderSession.ScopeList);
-		if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
-    		scopeList.AddRange(globalBinderSession.ScopeList);
+		//if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
+    	//	scopeList.AddRange(globalBinderSession.ScopeList);
         
         var possibleScopes = scopeList.Where(x =>
         {
@@ -1163,8 +1259,8 @@ public partial class CSharpBinder : IBinder
     	
     	if (TryGetBinderSession(compilationUnit, resourceUri, out var targetBinderSession))
     		scopeList.AddRange(targetBinderSession.ScopeList);
-		if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
-    		scopeList.AddRange(globalBinderSession.ScopeList);
+		//if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
+    	//	scopeList.AddRange(globalBinderSession.ScopeList);
         
         return scopeList[scopeIndexKey];
     }
@@ -1178,8 +1274,8 @@ public partial class CSharpBinder : IBinder
     
     	if (TryGetBinderSession(compilationUnit, resourceUri, out var targetBinderSession))
     		scopeList.AddRange(targetBinderSession.ScopeList);
-		if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
-    		scopeList.AddRange(globalBinderSession.ScopeList);
+		//if (TryGetBinderSession(compilationUnit, ResourceUri.Empty, out var globalBinderSession))
+    	//	scopeList.AddRange(globalBinderSession.ScopeList);
     		
     	return scopeList.ToArray();
     }
@@ -1538,6 +1634,9 @@ public partial class CSharpBinder : IBinder
     public ISyntaxNode? GetDefinitionNode(CSharpCompilationUnit? compilationUnit, TextEditorTextSpan textSpan, SyntaxKind syntaxKind, ITextEditorSymbol? symbol = null, string? getTextResult = null)
     {
     	var scope = GetScope(compilationUnit, textSpan);
+
+        if (scope is null)
+            return null;
         
         switch (syntaxKind)
         {
@@ -1682,10 +1781,10 @@ public partial class CSharpBinder : IBinder
         			var fallbackCodeBlockOwner = ((ICodeBlockOwner)fallbackDefinitionNode);
         			TextEditorTextSpan? fallbackTextSpan = null;
         			
-        			if (fallbackCodeBlockOwner.OpenBraceToken.ConstructorWasInvoked)
-        				fallbackTextSpan = fallbackCodeBlockOwner.OpenBraceToken.TextSpan;
-        			else if (fallbackCodeBlockOwner.StatementDelimiterToken.ConstructorWasInvoked)
-        				fallbackTextSpan = fallbackCodeBlockOwner.StatementDelimiterToken.TextSpan;
+        			if (fallbackCodeBlockOwner.OpenCodeBlockTextSpan is not null)
+        				fallbackTextSpan = fallbackCodeBlockOwner.OpenCodeBlockTextSpan;
+        			else if (fallbackCodeBlockOwner.CloseCodeBlockTextSpan is not null)
+        				fallbackTextSpan = fallbackCodeBlockOwner.CloseCodeBlockTextSpan;
         				
         			if (fallbackTextSpan is not null && compilerServiceResource is not null)
         			{

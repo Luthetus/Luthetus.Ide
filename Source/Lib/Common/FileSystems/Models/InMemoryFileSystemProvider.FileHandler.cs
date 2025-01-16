@@ -256,7 +256,7 @@ public partial class InMemoryFileSystemProvider : IFileSystemProvider
                 !f.IsDirectory);
 
             if (existingFile is null)
-                return Task.FromResult(string.Empty);
+            	throw new LuthetusCommonException($"File with path: '{absolutePathString}' was not found.");
 
             return Task.FromResult(existingFile.Data);
         }

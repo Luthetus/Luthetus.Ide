@@ -515,6 +515,22 @@ public partial class CSharpBinder
 				closeBraceToken: default,
 				CSharpFacts.Types.Void.ToTypeClause());
 		}
+		else if (token.SyntaxKind == SyntaxKind.PlusPlusToken)
+		{
+			var decidedExpression = ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				ambiguousIdentifierExpressionNode,
+				compilationUnit,
+				ref parserModel);
+		}
+		else if (token.SyntaxKind == SyntaxKind.MinusMinusToken)
+		{
+			var decidedExpression = ForceDecisionAmbiguousIdentifier(
+				EmptyExpressionNode.Empty,
+				ambiguousIdentifierExpressionNode,
+				compilationUnit,
+				ref parserModel);
+		}
 		else if (token.SyntaxKind == SyntaxKind.IdentifierToken)
 		{
 			var decidedExpression = ForceDecisionAmbiguousIdentifier(
@@ -1450,7 +1466,7 @@ public partial class CSharpBinder
 		switch (expressionSecondary.SyntaxKind)
 		{
 			default:
-				if (!lambdaExpressionNode.CloseBraceToken.ConstructorWasInvoked)
+				if (lambdaExpressionNode.CloseCodeBlockTextSpan is null)
 					CloseLambdaExpressionScope(lambdaExpressionNode, compilationUnit, ref parserModel);
 				
 				return lambdaExpressionNode;
@@ -2022,23 +2038,23 @@ public partial class CSharpBinder
 	
 	public void OpenLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, OpenBraceToken openBraceToken, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
-		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner = lambdaExpressionNode;
-		parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner.SetOpenBraceToken(openBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
-
-		var nextCodeBlockOwner = parserModel.CurrentCodeBlockBuilder.InnerPendingCodeBlockOwner;
-		var nextReturnTypeClauseNode = nextCodeBlockOwner.GetReturnTypeClauseNode();
-
-        compilationUnit.Binder.OpenScope(nextCodeBlockOwner, nextReturnTypeClauseNode, openBraceToken.TextSpan, compilationUnit);
-		parserModel.CurrentCodeBlockBuilder = new(parent: parserModel.CurrentCodeBlockBuilder, codeBlockOwner: nextCodeBlockOwner);
-		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(nextCodeBlockOwner, compilationUnit, ref parserModel);
+		lambdaExpressionNode.SetOpenCodeBlockTextSpan(openBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		
+		compilationUnit.Binder.NewScopeAndBuilderFromOwner(
+        	lambdaExpressionNode,
+        	lambdaExpressionNode.GetReturnTypeClauseNode(),
+        	openBraceToken.TextSpan,
+        	compilationUnit,
+	        ref parserModel);
+		
+		compilationUnit.Binder.OnBoundScopeCreatedAndSetAsCurrent(lambdaExpressionNode, compilationUnit, ref parserModel);
 	}
 	
 	public void CloseLambdaExpressionScope(LambdaExpressionNode lambdaExpressionNode, CSharpCompilationUnit compilationUnit, ref CSharpParserModel parserModel)
 	{
 		var closeBraceToken = new CloseBraceToken(parserModel.TokenWalker.Current.TextSpan);
 	
-		if (parserModel.CurrentCodeBlockBuilder.CodeBlockOwner is not null)
-			parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseBraceToken(closeBraceToken, parserModel.DiagnosticBag, parserModel.TokenWalker);
+		parserModel.CurrentCodeBlockBuilder.CodeBlockOwner.SetCloseCodeBlockTextSpan(closeBraceToken.TextSpan, parserModel.DiagnosticBag, parserModel.TokenWalker);
 		
         compilationUnit.Binder.CloseScope(closeBraceToken.TextSpan, compilationUnit, ref parserModel);
 	}
@@ -2097,87 +2113,95 @@ public partial class CSharpBinder
 	{
 		var rememberOriginalExpressionPrimary = expressionPrimary;
 		var rememberOriginalTokenIndex = parserModel.TokenWalker.Index;
-		
-		if (!UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
-
-		_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
-		
-		var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(
-			parserModel.TokenWalker.Consume(),
-			compilationUnit,
-			ref parserModel);
 			
-		if (!memberIdentifierToken.ConstructorWasInvoked || memberIdentifierToken.TextSpan.SourceText is null)
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
-		
-		if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+		try
 		{
-			var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
-			if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
-			{
-				expressionPrimary = ForceDecisionAmbiguousIdentifier(
-					EmptyExpressionNode.Empty,
-					ambiguousIdentifierExpressionNode,
-					compilationUnit,
-					ref parserModel);
-			}
-		}
+			if (!UtilityApi.IsConvertibleToIdentifierToken(parserModel.TokenWalker.Next.SyntaxKind))
+				return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
 	
-		TypeClauseNode? typeClauseNode = null;
-	
-		if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
-			typeClauseNode = ((VariableReferenceNode)expressionPrimary).VariableDeclarationNode?.TypeClauseNode;
-		else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
-			typeClauseNode = (TypeClauseNode)expressionPrimary;
-		
-		if (typeClauseNode is null)
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
-		
-		var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
-		if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
-			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+			_ = parserModel.TokenWalker.Consume(); // Consume the 'MemberAccessToken'
 			
-		var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
-		var memberList = typeDefinitionNode.GetMemberList();
-		ISyntaxNode? foundDefinitionNode = null;
-		
-		foreach (var node in memberList)
-		{
-			if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-			{
-				var variableDeclarationNode = (VariableDeclarationNode)node;
-				if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked || variableDeclarationNode.IdentifierToken.TextSpan.SourceText is null)
-					continue;
+			var memberIdentifierToken = UtilityApi.ConvertToIdentifierToken(
+				parserModel.TokenWalker.Consume(),
+				compilationUnit,
+				ref parserModel);
 				
-				if (variableDeclarationNode.IdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
+			if (!memberIdentifierToken.ConstructorWasInvoked || memberIdentifierToken.TextSpan.SourceText is null)
+				return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+			
+			if (expressionPrimary.SyntaxKind == SyntaxKind.AmbiguousIdentifierExpressionNode)
+			{
+				var ambiguousIdentifierExpressionNode = (AmbiguousIdentifierExpressionNode)expressionPrimary;
+				if (!ambiguousIdentifierExpressionNode.FollowsMemberAccessToken)
 				{
-					foundDefinitionNode = variableDeclarationNode;
-					break;
+					expressionPrimary = ForceDecisionAmbiguousIdentifier(
+						EmptyExpressionNode.Empty,
+						ambiguousIdentifierExpressionNode,
+						compilationUnit,
+						ref parserModel);
 				}
 			}
-		}
 		
-		if (foundDefinitionNode is null)
-			 return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
-			 
-		if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
-		{
-			var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
+			TypeClauseNode? typeClauseNode = null;
+		
+			if (expressionPrimary.SyntaxKind == SyntaxKind.VariableReferenceNode)
+				typeClauseNode = ((VariableReferenceNode)expressionPrimary).VariableDeclarationNode?.TypeClauseNode;
+			else if (expressionPrimary.SyntaxKind == SyntaxKind.TypeClauseNode)
+				typeClauseNode = (TypeClauseNode)expressionPrimary;
 			
-			var variableReferenceNode = new VariableReferenceNode(
-	            memberIdentifierToken,
-	            variableDeclarationNode);
-	        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
-	        
-	        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
-	        	symbolId,
-	        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive));
-	        
-	    	return variableReferenceNode;
+			if (typeClauseNode is null)
+				return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+			
+			var maybeTypeDefinitionNode = GetDefinitionNode(compilationUnit, typeClauseNode.TypeIdentifierToken.TextSpan, SyntaxKind.TypeClauseNode);
+			if (maybeTypeDefinitionNode is null || maybeTypeDefinitionNode.SyntaxKind != SyntaxKind.TypeDefinitionNode)
+				return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+				
+			var typeDefinitionNode = (TypeDefinitionNode)maybeTypeDefinitionNode;
+			var memberList = typeDefinitionNode.GetMemberList();
+			ISyntaxNode? foundDefinitionNode = null;
+			
+			foreach (var node in memberList)
+			{
+				if (node.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+				{
+					var variableDeclarationNode = (VariableDeclarationNode)node;
+					if (!variableDeclarationNode.IdentifierToken.ConstructorWasInvoked || variableDeclarationNode.IdentifierToken.TextSpan.SourceText is null)
+						continue;
+					
+					if (variableDeclarationNode.IdentifierToken.TextSpan.GetText() == memberIdentifierToken.TextSpan.GetText())
+					{
+						foundDefinitionNode = variableDeclarationNode;
+						break;
+					}
+				}
+			}
+			
+			if (foundDefinitionNode is null)
+				 return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+				 
+			if (foundDefinitionNode.SyntaxKind == SyntaxKind.VariableDeclarationNode)
+			{
+				var variableDeclarationNode = (VariableDeclarationNode)foundDefinitionNode;
+				
+				var variableReferenceNode = new VariableReferenceNode(
+		            memberIdentifierToken,
+		            variableDeclarationNode);
+		        var symbolId = CreateVariableSymbol(variableReferenceNode.VariableIdentifierToken, variableDeclarationNode.VariableKind, compilationUnit);
+		        
+		        compilationUnit.BinderSession.SymbolIdToExternalTextSpanMap.TryAdd(
+		        	symbolId,
+		        	(variableDeclarationNode.IdentifierToken.TextSpan.ResourceUri, variableDeclarationNode.IdentifierToken.TextSpan.StartingIndexInclusive));
+		        
+		    	return variableReferenceNode;
+			}
+		
+			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
 		}
-	
-		return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+		catch (NullReferenceException e)
+		{
+			Console.WriteLine("asd");
+			return ParseMemberAccessToken_Fallback(rememberOriginalTokenIndex, rememberOriginalExpressionPrimary, token, compilationUnit, ref parserModel);
+		}
 	}
 	
 	/// <summary>

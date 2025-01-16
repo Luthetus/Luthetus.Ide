@@ -91,78 +91,89 @@ public partial class TextEditorCompilerServiceHeaderDisplay : ComponentBase, ITe
     	
     	TextEditorService.PostUnique(nameof(TextEditorCompilerServiceHeaderDisplay), editContext =>
     	{
-    		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
-            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
-            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
-            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
-
-            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
-                return Task.CompletedTask;
-            
-            _lineIndexPrevious = primaryCursorModifier.LineIndex;
-            _columnIndexPrevious = primaryCursorModifier.ColumnIndex;
-            
-            if (!viewModelModifier.ViewModel.FirstPresentationLayerKeysList.Contains(
-            		TextEditorDevToolsPresentationFacts.PresentationKey))
-            {
-	            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+    		try
+    		{
+	    		var modelModifier = editContext.GetModelModifier(renderBatch.Model.ResourceUri);
+	            var viewModelModifier = editContext.GetViewModelModifier(renderBatch.ViewModel.ViewModelKey);
+	            var cursorModifierBag = editContext.GetCursorModifierBag(viewModelModifier?.ViewModel);
+	            var primaryCursorModifier = editContext.GetPrimaryCursorModifier(cursorModifierBag);
+	
+	            if (modelModifier is null || viewModelModifier is null || cursorModifierBag is null || primaryCursorModifier is null)
+	                return Task.CompletedTask;
+	            
+	            _lineIndexPrevious = primaryCursorModifier.LineIndex;
+	            _columnIndexPrevious = primaryCursorModifier.ColumnIndex;
+	            
+	            if (!viewModelModifier.ViewModel.FirstPresentationLayerKeysList.Contains(
+	            		TextEditorDevToolsPresentationFacts.PresentationKey))
 	            {
-	            	FirstPresentationLayerKeysList = viewModelModifier.ViewModel.FirstPresentationLayerKeysList
-	            		.Add(TextEditorDevToolsPresentationFacts.PresentationKey)
-	            };
-	        }
-    	
-    		TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
-				editContext,
-		        modelModifier,
-		        TextEditorDevToolsPresentationFacts.PresentationKey,
-				TextEditorDevToolsPresentationFacts.EmptyPresentationModel);
-	
-			var presentationModel = modelModifier.PresentationModelList.First(
-				x => x.TextEditorPresentationKey == TextEditorDevToolsPresentationFacts.PresentationKey);
-	
-			if (presentationModel.PendingCalculation is null)
-				throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
-	
-	        var resourceUri = modelModifier.ResourceUri;
-	
-			var targetScope = modelModifier.CompilerService.Binder.
-				GetScopeByPositionIndex(resourceUri, modelModifier.GetPositionIndex(primaryCursorModifier));
-			
-			if (targetScope is null)
-				return Task.CompletedTask;
-    
-    		var textSpanStart = new TextEditorTextSpan(
-	            targetScope.StartingIndexInclusive,
-	            targetScope.StartingIndexInclusive + 1,
-			    (byte)TextEditorDevToolsDecorationKind.Scope,
-			    resourceUri,
-			    sourceText: string.Empty,
-			    getTextPrecalculatedResult: string.Empty);
-    		
-			var textSpanEnd = new TextEditorTextSpan(
-	            (targetScope.EndingIndexExclusive ?? presentationModel.PendingCalculation.ContentAtRequest.Length) - 1,
-			    targetScope.EndingIndexExclusive ?? presentationModel.PendingCalculation.ContentAtRequest.Length,
-			    (byte)TextEditorDevToolsDecorationKind.Scope,
-			    resourceUri,
-			    sourceText: string.Empty,
-			    getTextPrecalculatedResult: string.Empty);
-	
-			var diagnosticTextSpans = new [] { textSpanStart, textSpanEnd }
-				.ToImmutableArray();
-
-			modelModifier.CompletePendingCalculatePresentationModel(
-				TextEditorDevToolsPresentationFacts.PresentationKey,
-				TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
-				diagnosticTextSpans);
+		            viewModelModifier.ViewModel = viewModelModifier.ViewModel with
+		            {
+		            	FirstPresentationLayerKeysList = viewModelModifier.ViewModel.FirstPresentationLayerKeysList
+		            		.Add(TextEditorDevToolsPresentationFacts.PresentationKey)
+		            };
+		        }
+	    	
+	    		TextEditorService.ModelApi.StartPendingCalculatePresentationModel(
+					editContext,
+			        modelModifier,
+			        TextEditorDevToolsPresentationFacts.PresentationKey,
+					TextEditorDevToolsPresentationFacts.EmptyPresentationModel);
+		
+				var presentationModel = modelModifier.PresentationModelList.First(
+					x => x.TextEditorPresentationKey == TextEditorDevToolsPresentationFacts.PresentationKey);
+		
+				if (presentationModel.PendingCalculation is null)
+					throw new LuthetusTextEditorException($"{nameof(presentationModel)}.{nameof(presentationModel.PendingCalculation)} was not expected to be null here.");
+		
+		        var resourceUri = modelModifier.ResourceUri;
+		
+				var targetScope = modelModifier.CompilerService.Binder.
+					GetScopeByPositionIndex(resourceUri, modelModifier.GetPositionIndex(primaryCursorModifier));
 				
-			if (_codeBlockOwner != targetScope.CodeBlockOwner)
-			{
-				_codeBlockOwner = targetScope.CodeBlockOwner;
-				_shouldRender = true;
-			}
+				if (targetScope is null)
+				{
+					Console.WriteLine("aaa if (targetScope is null)");
+					return Task.CompletedTask;
+				}
+	    
+	    		var textSpanStart = new TextEditorTextSpan(
+		            targetScope.StartingIndexInclusive,
+		            targetScope.StartingIndexInclusive + 1,
+				    (byte)TextEditorDevToolsDecorationKind.Scope,
+				    resourceUri,
+				    sourceText: string.Empty,
+				    getTextPrecalculatedResult: string.Empty);
+	    		
+				var textSpanEnd = new TextEditorTextSpan(
+		            (targetScope.EndingIndexExclusive ?? presentationModel.PendingCalculation.ContentAtRequest.Length) - 1,
+				    targetScope.EndingIndexExclusive ?? presentationModel.PendingCalculation.ContentAtRequest.Length,
+				    (byte)TextEditorDevToolsDecorationKind.Scope,
+				    resourceUri,
+				    sourceText: string.Empty,
+				    getTextPrecalculatedResult: string.Empty);
+		
+				var diagnosticTextSpans = new [] { textSpanStart, textSpanEnd }
+					.ToImmutableArray();
 	
-    		return Task.CompletedTask;
+				modelModifier.CompletePendingCalculatePresentationModel(
+					TextEditorDevToolsPresentationFacts.PresentationKey,
+					TextEditorDevToolsPresentationFacts.EmptyPresentationModel,
+					diagnosticTextSpans);
+					
+				if (_codeBlockOwner != targetScope.CodeBlockOwner)
+				{
+					_codeBlockOwner = targetScope.CodeBlockOwner;
+					_shouldRender = true;
+				}
+		
+	    		return Task.CompletedTask;
+	    	}
+	    	catch (Exception e)
+	    	{
+	    		Console.WriteLine(e);
+	    		return Task.CompletedTask;
+	    	}
     	});
     }
 
