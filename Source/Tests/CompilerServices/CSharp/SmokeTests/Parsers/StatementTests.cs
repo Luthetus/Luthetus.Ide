@@ -87,10 +87,7 @@ public class StatementTests
         
 		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
 		
-		var publicKeywordToken = (KeywordToken)topCodeBlock.GetChildList()[0];
-		Assert.Equal(SyntaxKind.PublicTokenKeyword, publicKeywordToken.SyntaxKind);
-		
-		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList()[1];
+		var functionDefinitionNode = (FunctionDefinitionNode)topCodeBlock.GetChildList().Single();
 		Assert.Equal(SyntaxKind.FunctionDefinitionNode, functionDefinitionNode.SyntaxKind);
     }
     
@@ -872,6 +869,202 @@ finally
 		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
 		
 		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    [Fact]
+    public void DeferredParsing()
+    {
+    	var test = new Test(
+@"
+public class Person
+{
+	public Person(string firstName)
+	{
+		FirstName = firstName;
+	}
+	
+	public string FirstName { get; set; }
+}
+");
+
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		
+		var variableDeclarationNode = (VariableDeclarationNode)topCodeBlock.GetChildList()[0];
+		var variableAssignmentNode = (VariableAssignmentExpressionNode)topCodeBlock.GetChildList()[1];
+		
+		// Assert.Equal(SyntaxKind.WhileStatementNode, whileStatementNode.SyntaxKind);
+    }
+    
+    /// <summary>
+    /// Parse minimal combinations of the statement / codeblock delimiters.
+    ///
+    /// Purpose: deferred parsing (if it has a bug) can cause an infinite loop.
+    ///          So this is testing the delimiters to see if they cause an infinite loop
+    ///              just by typing them as a top level statement.
+    ///          If the test completes then it was successful.
+    ///
+    /// Follow-up: This test has an infinite loop at the moment.
+    ///            I'm going to break out the inputs into individual
+    ///            [Fact](s) and find the ones that are causing issues.
+    /// </summary>
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing()
+    {
+    	// Fixed the infinite loop,
+    	// althought it is a short term "#if DEBUG" 'static' fix
+    	// so now this test is still failing since they all are
+    	// in the same test the static checks think its an infinite loop.
+    	_ = new Test(string.Empty);
+    	_ = new Test(";");
+    	_ = new Test("{");
+    	_ = new Test("}");
+    	_ = new Test("; {");
+    	_ = new Test("; }");
+    	_ = new Test("{ ;");
+    	_ = new Test("} ;");
+    }
+    
+    // aaa passed
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_StringEmpty()
+    {
+    	_ = new Test(string.Empty);
+    }
+    
+    // aaa passed
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_StatementDelimiterToken()
+    {
+    	_ = new Test(";");
+    }
+
+	// infinite looped
+	// aaa passed (after fix)
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_OpenBraceToken()
+    {
+    	_ = new Test("{");
+    }
+    
+    // aaa passed
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_CloseBraceToken()
+    {
+    	_ = new Test("}");
+    }
+    
+    // aaa passed
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_StatementDelimiterToken_OpenBraceToken()
+    {
+    	_ = new Test("; {");
+    }
+    
+    // aaa passed
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_StatementDelimiterToken_CloseBraceToken()
+    {
+    	_ = new Test("; }");
+    }
+    
+    // aaa passed
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_OpenBraceToken_StatementDelimiterToken()
+    {
+    	_ = new Test("{ ;");
+    }
+    
+    // aaa passed
+    [Fact]
+    public void TopLevelStatement_Simple_Delimiter_Typing_CloseBraceToken_StatementDelimiterToken()
+    {
+    	_ = new Test("} ;");
+    }
+    
+    [Fact]
+    public void Aaa()
+    {
+    	_ = new Test(
+@"
+namespace BlazorCrudAppAaa.ServerSide.Persons;
+
+public class Person
+{
+	
+}
+");
+	}
+
+	[Fact]
+    public void Bbb()
+    {
+    	var test = new Test(
+@"
+namespace BlazorCrudAppAaa.ServerSide.Persons
+{
+	public class Person
+	{
+		
+	}
+}
+");
+
+		foreach (var scope in test.CompilationUnit.BinderSession.ScopeList)
+		{
+			Console.WriteLine($"scope.CodeBlockOwner.SyntaxKind: {scope.CodeBlockOwner.SyntaxKind}");
+		}
+		Console.WriteLine($"ScopeList.Count: {test.CompilationUnit.BinderSession.ScopeList.Count}");
+    }
+    
+    [Fact]
+    public void Ccc()
+    {
+    	var test = new Test(
+@"
+namespace BlazorCrudAppAaa.ServerSide.Persons
+{
+	public class Person
+	{
+		if (false)
+			return;
+	}
+}
+".ReplaceLineEndings("\n"));
+
+		foreach (var scope in test.CompilationUnit.BinderSession.ScopeList)
+		{
+			Console.WriteLine($"scope.CodeBlockOwner.SyntaxKind: {scope.CodeBlockOwner.SyntaxKind}");
+		}
+		Console.WriteLine($"ScopeList.Count: {test.CompilationUnit.BinderSession.ScopeList.Count}");
+		
+		var ifStatementScope = test.CompilationUnit.BinderSession.ScopeList.Single(x =>
+			x.CodeBlockOwner.SyntaxKind == SyntaxKind.IfStatementNode);
+			
+		Console.WriteLine($"CodeBlockOwner: {ifStatementScope.CodeBlockOwner}");
+		Console.WriteLine($"IndexKey: {ifStatementScope.IndexKey}");
+		Console.WriteLine($"ParentIndexKey: {ifStatementScope.ParentIndexKey}");
+		
+		Console.WriteLine($"(89)scope.StartingIndexInclusive: {ifStatementScope.StartingIndexInclusive}");
+		Console.WriteLine($"(95)scope.EndingIndexExclusive: {ifStatementScope.EndingIndexExclusive}");
+		
+		if (ifStatementScope.CodeBlockOwner.OpenCodeBlockTextSpan is null)
+			Console.WriteLine($"(89)OpenCodeBlockTextSpan: null");
+		else
+			Console.WriteLine($"(89)OpenCodeBlockTextSpan: {ifStatementScope.CodeBlockOwner.OpenCodeBlockTextSpan.Value.StartingIndexInclusive}");
+			
+		if (ifStatementScope.CodeBlockOwner.CloseCodeBlockTextSpan is null)
+			Console.WriteLine($"(89)CloseCodeBlockTextSpan: null");
+		else
+			Console.WriteLine($"(89)CloseCodeBlockTextSpan: {ifStatementScope.CodeBlockOwner.CloseCodeBlockTextSpan.Value.StartingIndexInclusive}");
+    }
+    
+    [Fact]
+    public void ForLoop()
+    {
+    	var test = new Test(@"for (int i = 0; i < 5; i++)");
+		var topCodeBlock = test.CompilationUnit.RootCodeBlockNode;
+		WriteChildrenIndentedRecursive(topCodeBlock, nameof(topCodeBlock));
+    	throw new NotImplementedException("See ExpressionAsStatementTests");
     }
     
     private void WriteChildrenIndented(ISyntaxNode node, string name = "node")
